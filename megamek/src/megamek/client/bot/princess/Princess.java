@@ -165,7 +165,7 @@ public class Princess extends BotClient {
     private final MoraleUtil moraleUtil = new MoraleUtil();
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> crippledUnits = new HashSet<>();
-
+    private final ArtilleryCommandAndControl artilleryCommandAndControl = new ArtilleryCommandAndControl();
     // Track entities that fired an AMS manually this round
     private List<Integer> manualAMSIds;
 
@@ -419,6 +419,9 @@ public class Princess extends BotClient {
     }
 
     public UnitBehavior getUnitBehaviorTracker() {
+        if (unitBehaviorTracker == null) {
+            unitBehaviorTracker = new UnitBehavior();
+        }
         return unitBehaviorTracker;
     }
 
@@ -2063,7 +2066,7 @@ public class Princess extends BotClient {
                 break;
             }
 
-            if (entity instanceof MekWarrior) {
+            if (entity instanceof EjectedCrew) {
                 msg.append("is ejected crew.");
                 movingEntity = entity;
                 break;
@@ -2139,7 +2142,7 @@ public class Princess extends BotClient {
             }
 
             // the original bot's physical options seem superior
-            return PhysicalCalculator.getBestPhysical(attacker, game);
+            return PhysicalCalculator.getBestPhysical(attacker, game, getBehaviorSettings(), getHonorUtil());
         } catch (Exception ignored) {
             return null;
         }
@@ -3599,4 +3602,7 @@ public class Princess extends BotClient {
         }
     }
 
+    public ArtilleryCommandAndControl getArtilleryCommandAndControl() {
+        return artilleryCommandAndControl;
+    }
 }

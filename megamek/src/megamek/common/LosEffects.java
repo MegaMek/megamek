@@ -1630,7 +1630,7 @@ public class LosEffects {
     /**
      * Finds out if the left or right side of the divided LOS is better for the
      * target
-     * 
+     *
      * @param in
      * @param game             The current {@link Game}
      * @param ai

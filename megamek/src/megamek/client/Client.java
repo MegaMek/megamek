@@ -16,22 +16,6 @@
  */
 package megamek.client;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
@@ -42,21 +26,9 @@ import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameBoardChangeEvent;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.event.GameVictoryEvent;
+import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.enums.PacketCommand;
@@ -71,6 +43,16 @@ import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 /**
  * This class is instantiated for each client and for each bot running on that
@@ -369,25 +351,19 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends an "add entity" packet with only one Entity.
-     *
-     * @param entity
-     *               The Entity to add.
-     */
-    public void sendAddEntity(Entity entity) {
-        ArrayList<Entity> entities = new ArrayList<>(1);
-        entities.add(entity);
-        sendAddEntity(entities);
-    }
-
-    /**
      * Sends an "add entity" packet that contains a collection of Entity
      * objects.
      *
-     * @param entities
-     *                 The collection of Entity objects to add.
+     * @see megamek.server.totalwarfare.TWGameManager#receiveEntityAdd(Packet, int)
+     *
+     * @param entities The collection of Entity objects to add.
+     *                 This should ideally be an {@link ArrayList<Entity>}, but other kinds of {@link List} will be converted to an {@link ArrayList}.
      */
     public void sendAddEntity(List<Entity> entities) {
+        // Trying to pass a non-ArrayList jams the receiving client and prevents it from ever receiving more packets.
+        if (!(entities instanceof ArrayList<Entity>)) {
+            entities = new ArrayList<>(entities);
+        }
         for (Entity entity : entities) {
             checkDuplicateNamesDuringAdd(entity);
         }

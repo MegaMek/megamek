@@ -65,6 +65,17 @@ MEGAMEK VERSION HISTORY:
 + PR #6606: Improve Deployment-Phase Towing Logic
 + PR #6611: Add VTOL/WiGE exemption for AAA and LAA missiles
 + PR #6505: Remove XStream from Image Atlas Generation
++ PR #6617: Preliminary handheld weapon support
++ Fix #6604: Fuel Air Explosives do no damage to off-board units
++ PR #6615: Feat: More princess commands - ignore player/turret, order offboard artillery
++ Fix #6622: Putting multiple shields on a mek's arm is not flagged as invalid. 
++ Fix #6641: Validate that HHWs can't have multiple different ammo bins for a single weapon kind.
++ Fix #6048: All short range artillery fire now happens in the weapon attack phase and uses attacker movement modifiers
++ Fix #6147: Infantry can now be carried in both infantry and cargo bays on vehicles
++ Fix #3425: Swarm Missiles have wrong mods for secondary targets
++ PR #6643: Fix MekHQ Issue 3655 - vehicle crew requirements for trailers
++ PR #6645: Support multiselect in the Add Unit dialog
++ PR #6647: Allow pasting units into selected player list (if selected)
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

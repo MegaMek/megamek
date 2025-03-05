@@ -86,57 +86,6 @@ class AreaEffectHelperTest {
     void tearDown() {
     }
 
-    Mek createMek(String chassis, String model, String crewName) {
-        // Create a real Mek with some mocked fields
-        Mek mockMek = new BipedMek();
-        mockMek.setGame(game);
-        mockMek.setChassis(chassis);
-        mockMek.setModel(model);
-
-        Crew mockCrew = mock(Crew.class);
-        PilotOptions pOpt = new PilotOptions();
-        when(mockCrew.getName(anyInt())).thenCallRealMethod();
-        when(mockCrew.getNames()).thenReturn(new String[] { crewName });
-        when(mockCrew.getOptions()).thenReturn(pOpt);
-        mockMek.setCrew(mockCrew);
-
-        return mockMek;
-    }
-
-    Infantry createInfantry(String chassis, String model, String crewName) {
-        // Create a real Infantry unit with some mocked fields
-        Infantry mockInfantry = new Infantry();
-        mockInfantry.setGame(game);
-        mockInfantry.setChassis(chassis);
-        mockInfantry.setModel(model);
-
-        Crew mockCrew = mock(Crew.class);
-        PilotOptions pOpt = new PilotOptions();
-        when(mockCrew.getName(anyInt())).thenCallRealMethod();
-        when(mockCrew.getNames()).thenReturn(new String[] { crewName });
-        when(mockCrew.getOptions()).thenReturn(pOpt);
-        mockInfantry.setCrew(mockCrew);
-
-        return mockInfantry;
-    }
-
-    AeroSpaceFighter createASF(String chassis, String model, String crewName) {
-        // Create a real AeroSpaceFighter unit with some mocked fields
-        AeroSpaceFighter mockAeroSpaceFighter = new AeroSpaceFighter();
-        mockAeroSpaceFighter.setGame(game);
-        mockAeroSpaceFighter.setChassis(chassis);
-        mockAeroSpaceFighter.setModel(model);
-
-        Crew mockCrew = mock(Crew.class);
-        PilotOptions pOpt = new PilotOptions();
-        when(mockCrew.getName(anyInt())).thenCallRealMethod();
-        when(mockCrew.getNames()).thenReturn(new String[] { crewName });
-        when(mockCrew.getOptions()).thenReturn(pOpt);
-        mockAeroSpaceFighter.setCrew(mockCrew);
-
-        return mockAeroSpaceFighter;
-    }
-
     @Test
     void testShapeBlastRingR2ArtilleryAttackOnBoardNoAETerrainLevel0() {
         game.setBoard(new Board(16,17));

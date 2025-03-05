@@ -267,7 +267,19 @@ public class ArtilleryTargetingControl {
         targetSet = new HashSet<>();
         boolean adaAvailable = getADAAvailable(shooter);
         boolean homingAvailable = getHomingAvailable(shooter);
-
+        // if we're not in auto mode, we're going to shoot at the targets we've been
+        // given.
+        if (owner.getArtilleryCommandAndControl().isArtilleryVolley()
+            || owner.getArtilleryCommandAndControl().isArtilleryBarrage()
+            || owner.getArtilleryCommandAndControl().isArtillerySingle()) {
+            for (Coords coords : owner.getArtilleryCommandAndControl().getArtilleryTargets()) {
+                targetSet.add(new HexTarget(coords, Targetable.TYPE_HEX_ARTILLERY));
+            }
+            if (!targetSet.isEmpty()) {
+                return;
+            }
+        }
+        // Auto mode will target all enemy units it can target
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
             Entity e = enemies.next();
 
@@ -379,10 +391,11 @@ public class ArtilleryTargetingControl {
     private FiringPlan calculateIndirectArtilleryPlan(Entity shooter, Game game, Princess owner, int facingChange) {
         FiringPlan returnValue = new FiringPlan();
         FiringPlan TAGPlan = new FiringPlan();
-
+        ArtilleryCommandAndControl artilleryCommandAndControl = owner.getArtilleryCommandAndControl();
         // if we're fleeing and haven't been shot at, then try not to agitate guys that
         // may pursue us.
-        if (owner.isFallingBack(shooter) && !owner.canShootWhileFallingBack(shooter)) {
+        if ((owner.isFallingBack(shooter) && !owner.canShootWhileFallingBack(shooter))
+            || artilleryCommandAndControl.isArtilleryHalted()) {
             return returnValue;
         }
 
@@ -400,11 +413,16 @@ public class ArtilleryTargetingControl {
         if (targetSet == null) {
             buildTargetList(shooter, game, owner);
             // If we decided not to shoot this phase, no reason to continue calculating.
-            if (targetSet == null) {
+            if (targetSet == null || targetSet.isEmpty()) {
                 return returnValue;
             }
         }
-
+        // when doing volleys, each unit can shoot only once, after all of them have shoot, they will have to sit and wait.
+        if (artilleryCommandAndControl.isArtilleryVolley()) {
+            if (!artilleryCommandAndControl.setShooter(shooter)) {
+                return returnValue;
+            }
+        }
         // loop through all weapons on entity
         // each indirect artillery piece randomly picks a target from the priority list
         // by the end of this loop, we either have 0 max damage/0 top valued
@@ -430,12 +448,23 @@ public class ArtilleryTargetingControl {
                             munitions -> munitions.containsAll(ammo.getType().getMunitionType())
                         )
                     );
+
+
                     for (Targetable target : targetSet) {
                         double damageValue;
                         if (isZeroDamageMunition) {
                             // Skip zero-damage utility munitions for now.
                             // XXX: update when utility munition handling goes in
                             damageValue = 0.0;
+                            if (artilleryCommandAndControl.contains(target.getPosition())) {
+                                if (artilleryCommandAndControl.isMineAmmo() && MINE_MUNITIONS.containsAll(ammo.getType().getMunitionType())) {
+                                    damageValue = Integer.MAX_VALUE;
+                                } else if (artilleryCommandAndControl.isSmokeAmmo() && SMOKE_MUNITIONS.containsAll(ammo.getType().getMunitionType())) {
+                                    damageValue = Integer.MAX_VALUE;
+                                } else if (artilleryCommandAndControl.isFlareAmmo() && FLARE_MUNITIONS.containsAll(ammo.getType().getMunitionType())) {
+                                    damageValue = Integer.MAX_VALUE;
+                                }
+                            }
                         } else {
                             if (target.getTargetType() == Targetable.TYPE_ENTITY) {
                                 damageValue = damage;
@@ -497,7 +526,9 @@ public class ArtilleryTargetingControl {
                     if (topValuedFireInfos.size() == 1) {
                         actualFireInfo = topValuedFireInfos.get(0);
                     } else {
-                        actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValuedFireInfos.size()));
+                        // lets choose from the top 5 if we have that many
+                        int topValues = Math.min(5, topValuedFireInfos.size());
+                        actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValues));
                         if (!actualFireInfo.getAmmo().equals(actualFireInfo.getWeapon().getLinked())) {
                             // Announce why we switched
                             actualFireInfo.getAmmo().setSwitchedReason(1507);
@@ -505,6 +536,11 @@ public class ArtilleryTargetingControl {
                     }
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
                     HelperAmmo ammo = findAmmo(shooter, actualFireInfo.getWeapon(), actualFireInfo.getAmmo());
+
+                    if (artilleryCommandAndControl.isArtillerySingle()) {
+                        artilleryCommandAndControl.setArtilleryOrder(ArtilleryCommandAndControl.ArtilleryOrder.HALT);
+                        artilleryCommandAndControl.removeArtilleryTargets();
+                    }
 
                     if (ammo.equipmentNum > NO_AMMO) {
                         // This can happen if princess is towing ammo trailers, which she really

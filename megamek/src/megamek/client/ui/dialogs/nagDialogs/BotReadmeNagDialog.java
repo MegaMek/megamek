@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
  *
- * This file is part of MekHQ.
+ * This file is part of MegaMek.
  *
  * MekHQ is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

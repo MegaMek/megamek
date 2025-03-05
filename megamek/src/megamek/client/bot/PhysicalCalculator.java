@@ -22,6 +22,10 @@ package megamek.client.bot;
 
 import java.util.Iterator;
 
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.HonorUtil;
+import megamek.client.bot.princess.IHonorUtil;
+import megamek.client.bot.princess.Princess;
 import megamek.common.*;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -37,7 +41,7 @@ public final class PhysicalCalculator {
         // should never call this
     }
 
-    public static PhysicalOption getBestPhysical(Entity entity, Game game) {
+    public static PhysicalOption getBestPhysical(Entity entity, Game game, BehaviorSettings behaviorSettings, IHonorUtil honorUtil) {
         // Infantry can't conduct physical attacks.
         if (entity instanceof Infantry) {
             return null;
@@ -263,8 +267,16 @@ public final class PhysicalCalculator {
                 continue;
             }
 
-            // don't bother stomping MekWarriors
-            if (target instanceof MekWarrior) {
+            // don't bother stomping EjectedCrew
+            if (target instanceof EjectedCrew) {
+                continue;
+            }
+
+            if (behaviorSettings.getIgnoredUnitTargets().contains(target.getId())) {
+                continue;
+            }
+
+            if (honorUtil.isEnemyBroken(entity.getId(), entity.getOwnerId(), behaviorSettings.isForcedWithdrawal())) {
                 continue;
             }
 

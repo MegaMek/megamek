@@ -1,0 +1,69 @@
+#Saved from version 0.50.03-SNAPSHOT on 2025-02-04
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Jump Triplus Contubernium (MHAF)
+</Name>
+
+<Model>
+(LRM)
+</Model>
+
+<year>
+3057
+</year>
+
+<originalBuildYear>
+3057
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<Troopers Equipment>
+AntiMekGear
+Generic Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+The Triplus Contubernium is a three-squad deployment of Marian Hegemony infantry.  Multiple contubernium working together constitute an infantry Century in the MHAF, typically numbering 50 total soldiers for jump infantry.
+</capabilities>
+
+<notes>
+Marian Hegemony infantry platoons consist of a 100-trooper Century comprised of ten 10-trooper contubernia or squads. Game play requires this to be broken down into units of 30 or fewer troopers, with the Duplus Contubernium being a two-squad (20 trooper) deployment and the Triplus Contubernium being a three-squad (30 trooper) deployment.
+</notes>
+
+<squad_size>
+10
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+
+<Secondary>
+InfantryLRM
+</Secondary>
+

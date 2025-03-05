@@ -523,7 +523,7 @@ public class BasicPathRanker extends PathRanker {
         boolean losRange = isLosRange(game);
         for (Entity enemy : enemies) {
             // Skip ejected pilots.
-            if (enemy instanceof MekWarrior) {
+            if (enemy instanceof EjectedCrew) {
                 continue;
             }
 
@@ -717,7 +717,7 @@ public class BasicPathRanker extends PathRanker {
     protected boolean isExtremeRange(Game game) {
         return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
     }
-  
+
     private static Coords getEnemiesMedianCoordinate(List<Entity> enemies, Entity movingUnit) {
         List<Entity> closestEnemies = enemies.stream().filter(e -> e.getPosition() != null).sorted((e1, e2) -> {
             boolean hasMoved1 = e1.isDone();

@@ -298,6 +298,8 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_CHAIN_DRAPE_APRON = MiscTypeFlag.F_CHAIN_DRAPE_APRON;
     public static final MiscTypeFlag F_CHAIN_DRAPE_PONCHO = MiscTypeFlag.F_CHAIN_DRAPE_PONCHO;
 
+    public static final MiscTypeFlag F_WEAPON_ENHANCEMENT = MiscTypeFlag.F_WEAPON_ENHANCEMENT;
+
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR - Indicates an Improvised Club
     public static final long S_TREE_CLUB = 1L << 1;// BMR
@@ -1350,7 +1352,12 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(F_FUEL)) {
             return (int) Math.ceil(getTonnage(entity));
-        } else if (hasFlag(F_CARGO) || hasFlag(F_LIQUID_CARGO) || hasFlag(F_COMMUNICATIONS)) {
+        } else if (hasFlag(F_CARGO)) {
+            if (entity.isAero()) {
+                return 0;
+            }
+            return (int) Math.ceil(size);
+        } else if (hasFlag(F_LIQUID_CARGO) || hasFlag(F_COMMUNICATIONS)) {
             return (int) Math.ceil(size);
         }
         // right, well I'll just guess then
@@ -5450,7 +5457,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.tankslots = 0;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_ARTEMIS).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(F_ARTEMIS).or(F_WEAPON_ENHANCEMENT).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT)
                 .or(F_HEAVY_EQUIPMENT);
@@ -5472,7 +5479,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.tankslots = 0;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_ARTEMIS_PROTO).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(F_ARTEMIS_PROTO).or(F_WEAPON_ENHANCEMENT).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
                 .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_HEAVY_EQUIPMENT).or(F_PROTOTYPE);
         misc.rulesRefs = "217, IO";
@@ -5495,7 +5502,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 100000;
         misc.criticals = 1;
         misc.tankslots = 0;
-        misc.flags = misc.flags.or(F_ARTEMIS).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(F_ARTEMIS).or(F_WEAPON_ENHANCEMENT).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT)
                 .or(F_HEAVY_EQUIPMENT);
@@ -5519,7 +5526,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 250000;
         misc.criticals = 2;
         misc.tankslots = 0;
-        misc.flags = misc.flags.or(F_ARTEMIS_V).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(F_ARTEMIS_V).or(F_WEAPON_ENHANCEMENT).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT)
                 .or(F_HEAVY_EQUIPMENT);
@@ -5543,7 +5550,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.0f;
         misc.criticals = 1;
         misc.cost = 125000;
-        misc.flags = misc.flags.or(F_APOLLO).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(F_APOLLO).or(F_WEAPON_ENHANCEMENT).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT)
                 .or(F_HEAVY_EQUIPMENT);
@@ -6642,7 +6649,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.svslots = 0;
         misc.cost = 3000;
-        misc.flags = misc.flags.or(MiscType.F_LASER_INSULATOR).or(MiscType.F_SUPPORT_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(MiscType.F_LASER_INSULATOR).or(F_WEAPON_ENHANCEMENT).or(MiscType.F_SUPPORT_TANK_EQUIPMENT)
                 .or(MiscType.F_MEK_EQUIPMENT).or(MiscType.F_FIGHTER_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT)
                 .or(F_HEAVY_EQUIPMENT);
         misc.rulesRefs = "322, TO";
@@ -6853,10 +6860,10 @@ public class MiscType extends EquipmentType {
         misc.name = "Cargo Container (10 tons)";
         misc.setInternalName(misc.name);
         misc.tonnage = 10;
-        misc.criticals = 1;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
-                .or(F_SC_EQUIPMENT)
+                .or(F_SC_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.industrial = true;
         misc.tankslots = 1;
@@ -7590,7 +7597,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.tankslots = 0;
-        misc.flags = misc.flags.or(F_RISC_LASER_PULSE_MODULE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(F_RISC_LASER_PULSE_MODULE).or(F_WEAPON_ENHANCEMENT).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
                 .or(F_SS_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_PROTOMEK_EQUIPMENT).or(F_HEAVY_EQUIPMENT);
@@ -7700,7 +7707,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.cost = 150000;
         misc.setModes(new String[] { "Off", "Charge" });
-        misc.flags = misc.flags.or(F_PPC_CAPACITOR).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(F_PPC_CAPACITOR).or(F_WEAPON_ENHANCEMENT).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
                 .or(F_SS_EQUIPMENT)

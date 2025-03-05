@@ -17,7 +17,7 @@ package megamek.common;
  * Represents a volume of space set aside for carrying general cargo aboard large spacecraft and
  * mobile structures.
  */
-public final class CargoBay extends Bay {
+public final class CargoBay extends Bay implements InfantryTransporter {
     private static final long serialVersionUID = 4161027191694822726L;
 
     /**
@@ -43,19 +43,18 @@ public final class CargoBay extends Bay {
         currentdoors = doors;
     }
 
-    /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
-     *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
-     */
     @Override
     public boolean canLoad(Entity unit) {
-        // Assume that we cannot carry the unit.
-        return false;
+        if (!unit.isInfantry()) {
+            return false;
+        }
+        return super.canLoad(unit);
+    }
+
+    // Use the calculated original weight for infantry in cargo bays
+    @Override
+    public double spaceForUnit(Entity unit) {
+        return Math.round(unit.getWeight() / unit.getInternalRemainingPercent());
     }
 
     @Override

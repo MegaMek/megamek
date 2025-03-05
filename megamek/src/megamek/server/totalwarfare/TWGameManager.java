@@ -3763,7 +3763,32 @@ public class TWGameManager extends AbstractGameManager {
         drop.setFacing(entity.getFacing());
         drop.setSecondaryFacing(entity.getFacing());
 
-        drop.setAltitude(altitude);
+        // Units dropped at NOE / Altitude 1 are instantly placed on the ground,
+        // or at elevation 8 for VTOL (TW pg. 225)
+        // Infantry treated as did not move; Jump/VTOL infantry get a +1 "Jumped" mod
+        if (altitude == 1) {
+            Hex hex = getGame().getBoard().getHex(curPos);
+            int elevation = 0;
+            if (hex != null) {
+                elevation = (hex.getTerrain(Terrains.BLDG_ELEV) != null) ? hex.maxTerrainFeatureElevation(false) : 0;
+            }
+            EntityMovementMode moveMode = drop.getMovementMode();
+            if (moveMode == EntityMovementMode.VTOL) {
+                drop.moved = EntityMovementType.MOVE_JUMP;
+                elevation = 8;
+            } else if (moveMode == EntityMovementMode.INF_JUMP || drop.getOriginalJumpMP() > 0) {
+                drop.moved = EntityMovementType.MOVE_JUMP;
+            }
+
+            // Remove Airborne by setting Altitude to 0
+            drop.setAltitude(0);
+            drop.setElevation(elevation);
+        } else {
+            drop.setAltitude(altitude);
+            // For non-aeros, we need to temporarily set elevation to 999 until they land
+            drop.setElevation(Aero.AERO_EFFECTIVE_ELEVATION);
+        }
+        drop.setUnloaded(true);
         entityUpdate(drop.getId());
     }
 
@@ -26567,7 +26592,7 @@ public class TWGameManager extends AbstractGameManager {
         // Map MUL force ids to real Server-given force ids;
         Map<Integer, Integer> forceMapping = new HashMap<>();
 
-        // Need to use a new ArrayLiut to prevent a concurrent modification exception
+        // Need to use a new ArrayList to prevent a concurrent modification exception
         // when removing
         // illegal entities
         for (final Entity entity : new ArrayList<>(entities)) {
@@ -31425,124 +31450,127 @@ public class TWGameManager extends AbstractGameManager {
           Vector<Report> vPhaseReport, boolean asfFlak,
           Vector<Integer> alreadyHit, boolean variableDamage, DamageFalloff falloff) {
 
+        // Values used later
+        boolean isFuelAirBomb = ammo != null &&
+            (BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_SMALL ||
+                BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_LARGE);
+        Building bldg = game.getBoard().getBuildingAt(coords);
         Hex hex = game.getBoard().getHex(coords);
-        if (hex == null) {
-            return alreadyHit; // not on board.
-        }
+        int effectiveLevel = (hex != null) ? hex.getLevel() : 0;
 
         Report r;
 
-        // Non-flak artillery damages terrain
-        // TODO: account for altitude vs: terrain height
-        if (!flak) {
-            // Report that damage applied to terrain, if there's TF to damage
-            Hex h = game.getBoard().getHex(coords);
-            if ((h != null) && h.hasTerrainFactor()) {
-                r = new Report(3384);
-                r.indent(2);
-                r.subject = subjectId;
-                r.add(coords.getBoardNum());
-                r.add(damage * 2);
-                vPhaseReport.addElement(r);
-            }
-            // Update hex and report any changes
-            Vector<Report> newReports = tryClearHex(coords, damage * 2, subjectId);
-            for (Report nr : newReports) {
-                nr.indent(3);
-            }
-            vPhaseReport.addAll(newReports);
-        }
+        // We only process _some_ of the normal damage when a hex is off-board
+        if (hex != null) {
 
-        boolean isFuelAirBomb = ammo != null &&
-                (BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_SMALL ||
-                        BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_LARGE);
+            // Non-flak artillery damages terrain
+            // TODO: account for altitude vs: terrain height
+            if (!flak) {
+                // Report that damage applied to terrain, if there's TF to damage
+                Hex h = game.getBoard().getHex(coords);
+                if ((h != null) && h.hasTerrainFactor()) {
+                    r = new Report(3384);
+                    r.indent(2);
+                    r.subject = subjectId;
+                    r.add(coords.getBoardNum());
+                    r.add(damage * 2);
+                    vPhaseReport.addElement(r);
+                }
+                // Update hex and report any changes
+                Vector<Report> newReports = tryClearHex(coords, damage * 2, subjectId);
+                for (Report nr : newReports) {
+                    nr.indent(3);
+                }
+                vPhaseReport.addAll(newReports);
+            }
 
-        // TODO: account for altitude vs: terrain height
-        // Buildings do _not_ shield housed units from artillery damage!
-        Building bldg = game.getBoard().getBuildingAt(coords);
-        if ((bldg != null)
+            // TODO: account for altitude vs: terrain height
+            // Buildings do _not_ shield housed units from artillery damage!
+            if ((bldg != null)
                 && !(flak && (((altitude > hex.terrainLevel(Terrains.BLDG_ELEV))
-                        || (altitude > hex.terrainLevel(Terrains.BRIDGE_ELEV)))))) {
-            if (!((ammo != null) && (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)))) {
-                int buildingDamage;
-                if (variableDamage) {
-                    // Dropship exhaust?  Sayonara, buildings!
-                    buildingDamage = Compute.d6(damage) * 3;
-                } else {
-                    // Central hex damage is determined by AE radius
-                    buildingDamage = damage * ((falloff.radius > 0) ? 3 : 2);
-                    // Lower damage as distance increases
-                    int hDist = coords.distance(attackSource);
-                    int vDist = Math.abs(targetLevel - altitude);
-                    if (falloff.radius == 0) {
-                        // For single-hex AE attacks, damage above and below center is normal damage
-                        if (hDist == 0 && vDist == 1) {
-                            buildingDamage = damage;
-                        }
+                || (altitude > hex.terrainLevel(Terrains.BRIDGE_ELEV)))))) {
+                if (!((ammo != null) && (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)))) {
+                    int buildingDamage;
+                    if (variableDamage) {
+                        // Dropship exhaust?  Sayonara, buildings!
+                        buildingDamage = Compute.d6(damage) * 3;
                     } else {
-                        // For multi-hex AE attacks, damage reduces in two stages
-                        if (hDist + vDist == 1) {
-                            buildingDamage = damage * 2;
-                        } else if (hDist + vDist >= 2) {
-                            buildingDamage = damage;
+                        // Central hex damage is determined by AE radius
+                        buildingDamage = damage * ((falloff.radius > 0) ? 3 : 2);
+                        // Lower damage as distance increases
+                        int hDist = coords.distance(attackSource);
+                        int vDist = Math.abs(targetLevel - altitude);
+                        if (falloff.radius == 0) {
+                            // For single-hex AE attacks, damage above and below center is normal damage
+                            if (hDist == 0 && vDist == 1) {
+                                buildingDamage = damage;
+                            }
+                        } else {
+                            // For multi-hex AE attacks, damage reduces in two stages
+                            if (hDist + vDist == 1) {
+                                buildingDamage = damage * 2;
+                            } else if (hDist + vDist >= 2) {
+                                buildingDamage = damage;
+                            }
                         }
                     }
-                }
 
-                if (isFuelAirBomb) {
-                    // light buildings take 1.5x damage from fuel-air bombs
-                    if (bldg.getType() == BuildingType.LIGHT) {
-                        buildingDamage = (int) Math.ceil(buildingDamage * 1.5);
+                    if (isFuelAirBomb) {
+                        // light buildings take 1.5x damage from fuel-air bombs
+                        if (bldg.getType() == BuildingType.LIGHT) {
+                            buildingDamage = (int) Math.ceil(buildingDamage * 1.5);
 
-                        r = new Report(9991);
-                        r.indent(1);
-                        r.subject = killer.getId();
-                        r.newlines = 1;
-                        vPhaseReport.addElement(r);
+                            r = new Report(9991);
+                            r.indent(1);
+                            r.subject = killer.getId();
+                            r.newlines = 1;
+                            vPhaseReport.addElement(r);
+                        }
+
+                        // armored and "castle brian" buildings take .5 damage from fuel-air bombs
+                        // but I have no idea how to determine if a building is a castle or a brian
+                        // note that being armored and being "light" are not mutually exclusive
+                        if (bldg.getArmor(coords) > 0) {
+                            buildingDamage = (int) Math.floor(buildingDamage * .5);
+
+                            r = new Report(9992);
+                            r.indent(1);
+                            r.subject = killer.getId();
+                            r.newlines = 1;
+                            vPhaseReport.addElement(r);
+                        }
                     }
 
-                    // armored and "castle brian" buildings take .5 damage from fuel-air bombs
-                    // but I have no idea how to determine if a building is a castle or a brian
-                    // note that being armored and being "light" are not mutually exclusive
-                    if (bldg.getArmor(coords) > 0) {
-                        buildingDamage = (int) Math.floor(buildingDamage * .5);
-
-                        r = new Report(9992);
-                        r.indent(1);
-                        r.subject = killer.getId();
-                        r.newlines = 1;
-                        vPhaseReport.addElement(r);
+                    // damage the building
+                    Vector<Report> buildingReport = damageBuilding(bldg, buildingDamage, coords);
+                    for (Report report : buildingReport) {
+                        report.subject = subjectId;
                     }
+                    vPhaseReport.addAll(buildingReport);
                 }
-
-                // damage the building
-                Vector<Report> buildingReport = damageBuilding(bldg, buildingDamage, coords);
-                for (Report report : buildingReport) {
-                    report.subject = subjectId;
-                }
-                vPhaseReport.addAll(buildingReport);
             }
-        }
 
-        if (flak && ((altitude <= 0)
-                || (altitude <= hex.terrainLevel(Terrains.BLDG_ELEV))
-                || (altitude == hex.terrainLevel(Terrains.BRIDGE_ELEV)))) {
-            // Flak in this hex would only hit landed units
-            return alreadyHit;
+            if (flak && ((altitude <= 0)
+                    || (altitude <= hex.terrainLevel(Terrains.BLDG_ELEV))
+                    || (altitude == hex.terrainLevel(Terrains.BRIDGE_ELEV)))) {
+                // Flak in this hex would only hit landed units
+                return alreadyHit;
+            }
         }
 
         // get units in hex at the specified altitude (elevation + hex level for non-Aerospace)
-        for (Entity entity : game.getEntitiesVector(coords)) {
+        // ignoring targetability (if it's there, it's fair)
+        for (Entity entity : game.getEntitiesVector(coords, true)) {
             // Check: is entity excluded?
             if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                 continue;
-            } else if ((entity.getElevation() + hex.getLevel() > altitude)
-                || (entity.getElevation() + entity.getHeight() + hex.getLevel() < altitude) ) {
+            // We now track the blast on a per-level basis
+            } else if ((entity.getElevation() + effectiveLevel > altitude)
+                || (entity.getElevation() + entity.getHeight() + effectiveLevel < altitude) ) {
                 StringBuilder msg = new StringBuilder("Missed due to elevation difference: ")
                     .append("entity lvl/ht: ").append(hex.getLevel()).append("/").append(entity.getElevation())
                         .append("; current blast level: ").append(altitude);
                 logger.debug(msg.toString());
-                // We now track the blast on a per-level basis
                 continue;
             }
             else {

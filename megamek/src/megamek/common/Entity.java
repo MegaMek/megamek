@@ -130,6 +130,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public static final long ETYPE_AEROSPACEFIGHTER = 1L << 28;
 
+    public static final long ETYPE_HANDHELD_WEAPON = 1L << 29;
+
     public static final int BLOOD_STALKER_TARGET_CLEARED = -2;
 
     public static final int LOC_NONE = -1;
@@ -1896,7 +1898,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return true if unit is permanently immobile
      */
     public boolean isPermanentlyImmobilized(boolean checkCrew) {
-        if (checkCrew && ((getCrew() == null) || getCrew().isDead())) {
+        if ((checkCrew || defaultCrewType().equals(CrewType.NONE)) && ((getCrew() == null) || getCrew().isDead())) {
             return true;
         } else if (((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
                 // Need to make sure here that we're ignoring heat because
@@ -8747,9 +8749,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // I should only add entities in bays that are functional
         for (Transporter next : transports) {
-            if ((next instanceof Bay nextbay) && (nextbay.getCurrentDoors() > 0)) {
-                for (Entity e : nextbay.getDroppableUnits()) {
-                    result.addElement(e);
+            if (next instanceof InfantryCompartment nextCompartment) {
+                result.addAll(nextCompartment.getDroppableUnits());
+            } else if (next instanceof Bay nextBay) {
+                // Infantry (Conventional and BA) do not need doors to deploy (TM 209)
+                if (nextBay instanceof InfantryTransporter || nextBay.getCurrentDoors() > 0) {
+                    result.addAll(nextBay.getDroppableUnits());
                 }
             }
         }
@@ -13261,8 +13266,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public boolean hasUnloadedUnitsFromBays() {
         for (Transporter next : transports) {
-            if ((next instanceof Bay)
-                    && (((Bay) next).getNumberUnloadedThisTurn() > 0)) {
+            if ((next instanceof Bay nextBay)
+                    && (nextBay.getNumberUnloadedThisTurn() > 0)) {
                 return true;
             }
         }

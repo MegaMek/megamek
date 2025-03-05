@@ -1156,7 +1156,15 @@ public class Infantry extends Entity {
 
     @Override
     public boolean canAssaultDrop() {
-        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS);
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS)) {
+            return true;
+        };
+        EntityMovementMode moveMode = getMovementMode();
+        return (List.of(
+                EntityMovementMode.INF_JUMP, EntityMovementMode.HOVER, EntityMovementMode.VTOL
+            ).contains(moveMode)
+            || hasSpecialization(PARATROOPS)
+        );
     }
 
     @Override

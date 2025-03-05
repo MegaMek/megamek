@@ -4,6 +4,8 @@ import megamek.common.loaders.BLKFile;
 import megamek.logging.MMLogger;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.KeyFactory;
@@ -220,6 +222,7 @@ public class FileSignerTool {
 
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
         KeyFactory factory = KeyFactory.getInstance("RSA");
+
         return factory.generatePrivate(spec);
     }
 

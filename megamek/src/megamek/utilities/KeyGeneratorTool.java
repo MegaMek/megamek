@@ -1,6 +1,8 @@
 package megamek.utilities;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.KeyFactory;
@@ -44,6 +46,16 @@ public class KeyGeneratorTool {
 
         // Save private key
         Files.write(privateKeyFile.toPath(), pair.getPrivate().getEncoded());
+
+        byte[] encodedPublicKey = pair.getPrivate().getEncoded();
+        String b64PrivateKey = Base64.getEncoder().encodeToString(encodedPublicKey);
+        File privateKeyFile64 = new File(privateKeyFile.getParentFile(), privateKeyFile.getName() + ".b64");
+        try (OutputStreamWriter privateKeyWriter =
+                 new OutputStreamWriter(
+                     new FileOutputStream(privateKeyFile64),
+                     StandardCharsets.US_ASCII.newEncoder())) {
+            privateKeyWriter.write(b64PrivateKey);
+        }
 
         // Save public key
         Files.write(publicKeyFile.toPath(), pair.getPublic().getEncoded());

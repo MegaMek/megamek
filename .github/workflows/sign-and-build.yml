@@ -1,4 +1,4 @@
-name: Build and Sign MegaMek Distribution
+name: Sign Units and Build MegaMek Distribution
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
         java-version: [17]
       fail-fast: false
 
-    name: Nightly MegaMek CI ${{ matrix.os }} on ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+    name: Sign all Megamek Units and Build MegaMek CI ${{ matrix.os }} on ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
 
     steps:
       - uses: actions/checkout@v4
@@ -39,13 +39,13 @@ jobs:
 
       - name: Setup private key for file signing
         run: |
-          mkdir -p megamek/keystore
-          echo "${{ secrets.FILE_SIGNING_PRIVATE_KEY }}" > megamek/keystore/private.key
-          chmod 600 megamek/keystore/private.key
+          mkdir -p megamek/megamek/keystore
+          echo "${{ secrets.FILE_SIGNING_PRIVATE_KEY }}" | base64 --decode > megamek/megamek/keystore/private.key
+          chmod 600 megamek/megamek/keystore/private.key
 
-      - name: Sign canonical files
+      - name: Sign canonical unit files
         working-directory: megamek
-        run: ./gradlew signCanonicalFiles megamek/keystore/private.key megamek/data/mekfiles --stacktrace
+        run: ./gradlew signCanonicalFiles megamek/megamek/keystore/private.key megamek/megamek/data/mekfiles --stacktrace
 
       - name: Build with Gradle
         working-directory: megamek

@@ -43,17 +43,9 @@ jobs:
           echo "${{ secrets.FILE_SIGNING_PRIVATE_KEY }}" > megamek/keystore/private.key
           chmod 600 megamek/keystore/private.key
 
-      - name: Setup private key
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-        run: |
-          mkdir -p keystore
-          echo "${{ secrets.FILE_SIGNING_PRIVATE_KEY }}" > keystore/private.key
-          chmod 600 keystore/private.key
-
-
       - name: Sign canonical files
         working-directory: megamek
-        run: ./gradlew signCanonicalFiles --stacktrace
+        run: ./gradlew signCanonicalFiles megamek/keystore/private.key megamek/data/mekfiles --stacktrace
 
       - name: Build with Gradle
         working-directory: megamek

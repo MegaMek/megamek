@@ -35,6 +35,7 @@ import java.util.zip.ZipFile;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
+import megamek.common.util.SignatureUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.ppc.CLERPPC;
@@ -226,7 +227,7 @@ public class MekFileParser {
         }
 
         m_entity = loader.getEntity();
-        boolean canon = megamek.common.util.SignatureUtil.isCanonicalFile(tempFile);
+        boolean canon = SignatureUtil.isCanonicalFile(tempFile, m_entity);
         m_entity.setCanon(canon);
         MekFileParser.postLoadInit(m_entity);
         tempFile.delete();

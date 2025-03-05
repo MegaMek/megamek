@@ -19,27 +19,20 @@
  */
 package megamek.common;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.battlevalue.BVCalculator;
+import megamek.common.equipment.WeaponMounted;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.BVCalculator;
-import megamek.common.equipment.WeaponMounted;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -131,17 +124,13 @@ class EntityTest {
     }
 
     /**
-     * Verify that if a unit's name appears in the list of canon unit names, it is
-     * canon
+     * Verify that if a unit's has a mul id that it is canon
      */
     @Test
     void testCanon() {
         File f;
         MekFileParser mfp;
         Entity e;
-        Vector<String> unitNames = new Vector<>();
-        unitNames.add("Exterminator EXT-4A");
-        MekFileParser.setCanonUnitNames(unitNames);
 
         // Test 1/1
         try {
@@ -155,22 +144,19 @@ class EntityTest {
     }
 
     /**
-     * Verify that if a unit's name does _not_ appear in the list of canon unit
-     * names, it is not canon
+     * Verify that if a unit does not have a MUL ID that it is not canon
      */
     @Test
     void testForceCanonicityFailure() {
         File f;
         MekFileParser mfp;
         Entity e;
-        Vector<String> unitNames = new Vector<>();
-        unitNames.add("Beheadanator BHD-999.666Z");
-        MekFileParser.setCanonUnitNames(unitNames);
 
         try {
             f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
             mfp = new MekFileParser(f);
             e = mfp.getEntity();
+            e.setMulId(-1);
             assertFalse(e.isCanon());
         } catch (Exception ex) {
             fail(ex.getMessage());
@@ -186,8 +172,6 @@ class EntityTest {
         File f;
         MekFileParser mfp;
         Entity e;
-        File oulDir = new File("testresources/megamek/common/units/");
-        MekFileParser.initCanonUnitNames(oulDir, "mockOfficialUnitList.txt");
 
         try {
             // MTF file check

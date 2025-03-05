@@ -14,39 +14,22 @@
  */
 package megamek.common;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Vector;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.zip.ZipFile;
-
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestInfantry;
-import megamek.common.weapons.ppc.CLERPPC;
-import megamek.common.weapons.ppc.CLEnhancedPPC;
-import megamek.common.weapons.ppc.CLImprovedPPC;
-import megamek.common.weapons.ppc.ISERPPC;
-import megamek.common.weapons.ppc.ISHeavyPPC;
-import megamek.common.weapons.ppc.ISKinsSlaughterPPC;
-import megamek.common.weapons.ppc.ISLightPPC;
-import megamek.common.weapons.ppc.ISPPC;
-import megamek.common.weapons.ppc.ISSnubNosePPC;
+import megamek.common.weapons.ppc.*;
 import megamek.logging.MMLogger;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Vector;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.zip.ZipFile;
 
 /**
  * Switches between the various type-specific parsers depending on suffix
@@ -55,8 +38,18 @@ public class MekFileParser {
     private static final MMLogger logger = MMLogger.create(MekFileParser.class);
 
     private Entity m_entity = null;
+    /**
+     * @deprecated
+     * Canonicity is now determined by MUL ID. See
+     * {@link Entity#isCanon()}
+     */
     private static Vector<String> canonUnitNames = null;
-    public static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt"; // TODO : Remove inline filename
+    /**
+     * @deprecated
+     * Canonicity is now determined by MUL ID. See
+     * {@link Entity#isCanon()}
+     */
+    public static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt";
 
     public MekFileParser(File f) throws EntityLoadingException {
         this(f, null);
@@ -103,6 +96,13 @@ public class MekFileParser {
         }
     }
 
+    /**
+     * @deprecated
+     * Canonicity is now determined by MUL ID. See
+     * {@link Entity#isCanon()}
+     *
+     */
+    @Deprecated (since="0.50.04")
     public static void initCanonUnitNames() {
         initCanonUnitNames(Configuration.docsDir(), FILENAME_OFFICIAL_UNITS);
     }
@@ -112,9 +112,14 @@ public class MekFileParser {
      * canonUnitNames is null or
      * needs to be reinitialized.
      *
+     * @deprecated
+     * Canonicity is now determined by MUL ID. See
+     * {@link Entity#isCanon()}
+     *
      * @param dir      location where the canonUnitNames file should be
      * @param fileName String name of the file containing canon unit names
      */
+    @Deprecated (since="0.50.04")
     protected static void initCanonUnitNames(File dir, String fileName) {
         Vector<String> unitNames = new Vector<>();
         try (FileReader fr = new FileReader(new MegaMekFile(
@@ -131,7 +136,6 @@ public class MekFileParser {
             }
             Collections.sort(unitNames);
         } catch (Exception ignored) {
-
         }
 
         // Update names
@@ -140,9 +144,13 @@ public class MekFileParser {
 
     /**
      * Directly assign a Vector of unit names; protected for unit testing purposes
+     * @deprecated
+     * Canonicity is now determined by MUL ID. See
+     * {@link Entity#isCanon()}
      *
      * @param unitNames
      */
+    @Deprecated (since="0.50.04")
     protected static void setCanonUnitNames(Vector<String> unitNames) {
         canonUnitNames = unitNames;
     }
@@ -785,16 +793,6 @@ public class MekFileParser {
             TestInfantry.adaptAntiMekAttacks((Infantry) ent);
         }
 
-        // Check if it's canon; if it is, mark it as such.
-        ent.setCanon(false);// Guilty until proven innocent
-        if (canonUnitNames == null) {
-            initCanonUnitNames();
-        }
-
-        int index = Collections.binarySearch(canonUnitNames, ent.getShortNameRaw());
-        if (index >= 0) {
-            ent.setCanon(true);
-        }
         ent.initMilitary();
         linkDumpers(ent);
     }
@@ -948,6 +946,12 @@ public class MekFileParser {
         return entity;
     }
 
+    /**
+     * @deprecated
+     * Canonicity is now determined by MUL ID. See
+     * {@link Entity#isCanon()}
+     */
+    @Deprecated (since="0.50.04")
     public static void dispose() {
         canonUnitNames = null;
     }

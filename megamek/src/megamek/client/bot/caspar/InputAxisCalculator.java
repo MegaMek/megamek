@@ -1,5 +1,6 @@
 package megamek.client.bot.caspar;
 
+import megamek.client.bot.Agent;
 import megamek.common.MovePath;
 
 /**
@@ -13,5 +14,5 @@ public interface InputAxisCalculator {
      * @param movePath The movement path to evaluate
      * @return A normalized input vector
      */
-    double[] calculateInputVector(MovePath movePath);
+    double[] calculateInputVector(MovePath movePath, Agent agent, GameState gameState);
 }

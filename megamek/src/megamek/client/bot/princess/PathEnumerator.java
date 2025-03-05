@@ -53,8 +53,7 @@ public class PathEnumerator {
     private final static MMLogger logger = MMLogger.create(PathEnumerator.class);
 
     private final Agent owner;
-    private final Game game;
-    private final Board board;
+
     private final Map<Integer, List<MovePath>> unitPaths = new ConcurrentHashMap<>();
     private final Map<Integer, List<BulldozerMovePath>> longRangePaths = new ConcurrentHashMap<>();
     private final Map<Integer, ConvexBoardArea> unitMovableAreas = new ConcurrentHashMap<>();
@@ -64,14 +63,20 @@ public class PathEnumerator {
     private AtomicBoolean mapHasBridges = null;
     private final Object BRIDGE_LOCK = new Object();
 
-    public PathEnumerator(Agent agent, Game game, Board board) {
+    public PathEnumerator(Agent agent) {
         this.owner = agent;
-        this.game = game;
-        this.board = board;
     }
 
     private Agent getOwner() {
         return owner;
+    }
+
+    private Board getBoard() {
+        return getGame().getBoard();
+    }
+
+    protected Game getGame() {
+        return getOwner().getGame();
     }
 
     void clear() {
@@ -227,34 +232,34 @@ public class PathEnumerator {
                 // logAllPaths(paths);
                 // this handles the case of the mover being an aerospace unit and "advances
                 // space flight" rules being on
-            } else if (mover.isAero() && game.useVectorMove()) {
+            } else if (mover.isAero() && getGame().useVectorMove()) {
                 NewtonianAerospacePathFinder npf = NewtonianAerospacePathFinder.getInstance(getGame());
-                npf.run(new MovePath(game, mover, wayPoint));
+                npf.run(new MovePath(getGame(), mover, wayPoint));
                 paths.addAll(npf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being an aerospace unit on a space map
-            } else if (mover.isAero() && game.getBoard().inSpace()) {
+            } else if (mover.isAero() && getBoard().inSpace()) {
                 AeroSpacePathFinder apf = AeroSpacePathFinder.getInstance(getGame());
-                apf.run(new MovePath(game, mover, wayPoint));
+                apf.run(new MovePath(getGame(), mover, wayPoint));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being a winged aerospace unit on a
                 // low-atmosphere map
-            } else if (mover.isAero() && game.getBoard().inAtmosphere()
-                    && !Compute.useSpheroidAtmosphere(game, mover)) {
+            } else if (mover.isAero() && getBoard().inAtmosphere()
+                    && !Compute.useSpheroidAtmosphere(getGame(), mover)) {
                 AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
-                apf.run(new MovePath(game, mover, wayPoint));
+                apf.run(new MovePath(getGame(), mover, wayPoint));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover acting like a spheroid aerospace unit in
                 // an atmosphere
-            } else if (Compute.useSpheroidAtmosphere(game, mover)) {
-                int dir = AeroPathUtil.getSpheroidDir(game, mover);
-                SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game, dir);
-                spf.run(new MovePath(game, mover, wayPoint));
+            } else if (Compute.useSpheroidAtmosphere(getGame(), mover)) {
+                int dir = AeroPathUtil.getSpheroidDir(getGame(), mover);
+                SpheroidPathFinder spf = SpheroidPathFinder.getInstance(getGame(), dir);
+                spf.run(new MovePath(getGame(), mover, wayPoint));
                 paths.addAll(spf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being an infantry unit of some kind,
                 // that's not airborne.
             } else if (mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && !mover.isAirborne()) {
                 InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
-                ipf.run(new MovePath(game, mover, wayPoint));
+                ipf.run(new MovePath(getGame(), mover, wayPoint));
                 paths.addAll(ipf.getAllComputedPathsUncategorized());
 
                 // generate long-range paths appropriate to the bot's current state
@@ -264,7 +269,7 @@ public class PathEnumerator {
                 // such as an ejected pilot or a unit hot dropping from a DropShip, as these
                 // cannot move
             } else if (!mover.isAero() && mover.isAirborne()) {
-                paths.add(new MovePath(game, mover, wayPoint));
+                paths.add(new MovePath(getGame(), mover, wayPoint));
             } else { // Non-Aero movement
                 // TODO: Will this cause Princess to never use MASC?
                 int maxMove = Math.min(mover.getRunMPwithoutMASC(), mover.getRunMP(MPCalculationSetting.NO_GRAVITY));
@@ -272,7 +277,7 @@ public class PathEnumerator {
                 LongestPathFinder lpf = LongestPathFinder.newInstanceOfLongestPath(maxMove,
                         MoveStepType.FORWARDS, getGame());
                 lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                lpf.run(new MovePath(game, mover, wayPoint));
+                lpf.run(new MovePath(getGame(), mover, wayPoint));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 // add walking moves
@@ -292,7 +297,7 @@ public class PathEnumerator {
                     ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getJumpMP(),
                             MoveStepType.FORWARDS, getGame());
                     spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                    spf.run((new MovePath(game, mover, wayPoint)).addStep(MoveStepType.START_JUMP));
+                    spf.run((new MovePath(getGame(), mover, wayPoint)).addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
@@ -329,7 +334,7 @@ public class PathEnumerator {
             // calculate bounding area for move
             ConvexBoardArea myArea = new ConvexBoardArea();
             myArea.addCoordFacingCombos(getUnitPotentialLocations().get(
-                    mover.getId()).iterator(), board);
+                    mover.getId()).iterator(), getBoard());
             getUnitMovableAreas().put(mover.getId(), myArea);
 
             return true;
@@ -520,11 +525,11 @@ public class PathEnumerator {
         logger.debug(path.length() + ":" + path + ":" + whyNot);
     }
 
-    protected Map<Integer, List<BulldozerMovePath>> getLongRangePaths() {
+    public Map<Integer, List<BulldozerMovePath>> getLongRangePaths() {
         return longRangePaths;
     }
 
-    protected Map<Integer, List<MovePath>> getUnitPaths() {
+    public Map<Integer, List<MovePath>> getUnitPaths() {
         return unitPaths;
     }
 
@@ -538,10 +543,6 @@ public class PathEnumerator {
 
     protected Map<Integer, CoordFacingCombo> getLastKnownLocations() {
         return lastKnownLocations;
-    }
-
-    protected Game getGame() {
-        return game;
     }
 
     private boolean worryAboutBridges() {

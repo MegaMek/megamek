@@ -5,6 +5,7 @@ import megamek.client.bot.princess.FireControlState;
 import megamek.client.bot.princess.UnitBehavior;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.pathfinder.BoardClusterTracker;
 
@@ -30,4 +31,6 @@ public interface Agent {
     FireControlState getFireControlState();
 
     BoardClusterTracker getClusterTracker();
+
+    Game getGame();
 }

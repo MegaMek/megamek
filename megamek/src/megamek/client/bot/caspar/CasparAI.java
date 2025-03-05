@@ -27,6 +27,7 @@
  */
 package megamek.client.bot.caspar;
 
+import megamek.client.bot.Agent;
 import megamek.client.bot.princess.RankedPath;
 import megamek.common.Entity;
 import megamek.common.MovePath;
@@ -47,6 +48,7 @@ public class CasparAI {
     private final FormationManager formationManager;
     private final TacticalPlanner tacticalPlanner;
     private final DifficultyManager difficultyManager;
+    private final Agent casparAgent;
 
     private CasparAI(Builder builder) {
         this.neuralNetwork = builder.neuralNetwork;
@@ -56,6 +58,7 @@ public class CasparAI {
         this.formationManager = builder.formationManager;
         this.tacticalPlanner = builder.tacticalPlanner;
         this.difficultyManager = builder.difficultyManager;
+        this.casparAgent = new CasparAgent(this);
     }
 
     /**
@@ -65,8 +68,21 @@ public class CasparAI {
      * @return A score between 0 and 1
      */
     public double evaluateMovePath(MovePath movePath) {
-        double[] inputVector = inputCalculator.calculateInputVector(movePath);
+        double[] inputVector = inputCalculator.calculateInputVector(movePath, getAgent(), gameState());
         return neuralNetwork.predict(inputVector);
+    }
+
+    public Agent getAgent() {
+        return casparAgent;
+    }
+
+    /**
+     * Returns the current game state.
+     *
+     * @return The current game state
+     */
+    public GameState gameState() {
+        return GameState.getInstance();
     }
 
     /**

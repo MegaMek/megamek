@@ -15,4 +15,6 @@ public interface GameState {
     List<Entity> getFriendlyUnits();
 
     List<Hex> getStrategicPoints();
+
+    double getEnemyUnitsCohesion();
 }

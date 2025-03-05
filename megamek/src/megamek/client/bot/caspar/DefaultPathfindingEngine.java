@@ -15,13 +15,14 @@ import java.util.List;
 public class DefaultPathfindingEngine implements PathfindingEngine {
     private final PathEnumerator pathEnumerator;
 
-    public DefaultPathfindingEngine(Agent agent, Game game, Board board) {
-        this.pathEnumerator = new PathEnumerator(agent, game, board);
+    public DefaultPathfindingEngine(Agent agent) {
+        this.pathEnumerator = new PathEnumerator(agent);
     }
 
     @Override
     public List<MovePath> generatePaths(Entity unit, Game game, int depth) {
         // Use Princess's PathEnumerator to generate paths
-        return pathEnumerator.getUnitPaths(unit, game, depth);
+        pathEnumerator.recalculateMovesFor(unit);
+        return pathEnumerator.getUnitPaths().getOrDefault(unit.getId(), List.of());
     }
 }

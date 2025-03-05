@@ -10971,12 +10971,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Is this unit canon in Battletech? For Meks and
      * other normal entities we should check the MUL ID.
-     * MUL ID is -1, not canon - Any entity type that
+     * MUL ID less than 1, not canon - Any entity type that
      * doesn't follow this rule should override this
      * @return true if this unit is canon
      */
     public boolean isCanon() {
-        return hasMulId() && getMulId() > -1;
+        return hasMulId() && getMulId() > 0;
     }
 
     /**

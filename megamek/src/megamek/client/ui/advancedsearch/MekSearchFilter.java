@@ -464,7 +464,7 @@ public class MekSearchFilter {
             return false;
         }
 
-        if (!isMatch(f.iOfficial, (mek.getMulId() > -1))) {
+        if (!isMatch(f.iOfficial, (mek.getMulId() > 0))) {
             return false;
         }
 

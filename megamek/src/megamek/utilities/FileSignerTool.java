@@ -1,11 +1,8 @@
 package megamek.utilities;
 
-import megamek.common.loaders.BLKFile;
 import megamek.logging.MMLogger;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.KeyFactory;
@@ -41,7 +38,7 @@ public class FileSignerTool {
      *             [1...n] - Directories to scan for files
      */
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
+        if (args.length < 3) {
             System.out.println("Usage: FileSignerTool <private_key_path> <directory1> [<directory2> ...]");
             System.exit(1);
         }
@@ -52,8 +49,14 @@ public class FileSignerTool {
             System.exit(1);
         }
 
+        File publicKeyFile = new File(args[1]);
+        if (!publicKeyFile.exists()) {
+            System.out.println("Public key file not found: " + publicKeyFile.getAbsolutePath());
+            System.exit(1);
+        }
+
         List<File> directories = new ArrayList<>();
-        for (int i = 1; i < args.length; i++) {
+        for (int i = 2; i < args.length; i++) {
             File dir = new File(args[i]);
             if (dir.exists() && dir.isDirectory()) {
                 directories.add(dir);
@@ -68,7 +71,7 @@ public class FileSignerTool {
         }
 
         FileSignerTool signer = new FileSignerTool();
-        boolean success = signer.signDirectories(privateKeyFile, directories);
+        boolean success = signer.signDirectories(privateKeyFile, publicKeyFile, directories);
 
         System.exit(success ? 0 : 1);
     }
@@ -80,7 +83,7 @@ public class FileSignerTool {
      * @param directories List of directories to scan
      * @return true if signing succeeded, false if there were errors
      */
-    public boolean signDirectories(File privateKeyFile, List<File> directories) {
+    public boolean signDirectories(File privateKeyFile, File publicKeyFile, List<File> directories) {
         long startTime = System.currentTimeMillis();
 
         try {
@@ -90,7 +93,7 @@ public class FileSignerTool {
 
             // Process each directory
             for (File dir : directories) {
-                processDirectory(dir, privateKey);
+                processDirectory(dir, publicKeyFile, privateKey);
             }
 
             // Print summary
@@ -121,7 +124,7 @@ public class FileSignerTool {
     /**
      * Process a directory recursively, signing all applicable files.
      */
-    private void processDirectory(File dir, PrivateKey privateKey) {
+    private void processDirectory(File dir, File publicKeyFile, PrivateKey privateKey) {
         System.out.println("Processing directory: " + dir.getPath());
 
         // Get all files in this directory and subdirectories
@@ -131,7 +134,7 @@ public class FileSignerTool {
         // Sign each file
         for (File file : filesToSign) {
             try {
-                signFile(file, privateKey);
+                signFile(file, publicKeyFile, privateKey);
                 fileCounter++;
 
                 if (fileCounter % 500 == 0) {
@@ -144,6 +147,7 @@ public class FileSignerTool {
 
                 if (errorCounter <= 10) { // Only print the first 10 errors to avoid cluttering the console
                     System.out.println(message);
+                    e.printStackTrace();
                 } else if (errorCounter == 11) {
                     System.out.println("More errors found. All errors will be listed in the summary.");
                 }
@@ -178,9 +182,9 @@ public class FileSignerTool {
     /**
      * Sign a single file.
      */
-    private void signFile(File file, PrivateKey privateKey) throws Exception {
+    private void signFile(File file, File publicKeyFile, PrivateKey privateKey) throws Exception {
 
-        if (verifyFile(file, new File("/Users/coppio/Projects/megamek/megamek/resources/public.key"))) {
+        if (verifyFile(file, publicKeyFile)) {
             return;
         }
 
@@ -257,13 +261,13 @@ public class FileSignerTool {
         // Find signature
         int signatureStartPos = content.lastIndexOf(SIGNATURE_START);
         if (signatureStartPos == -1) {
-            logger.debug("No signature found in the content");
+            // logger.debug("No signature found in the content");
             return false;
         }
 
         int signatureEndPos = content.lastIndexOf(SIGNATURE_END);
         if (signatureEndPos == -1 || signatureEndPos < signatureStartPos) {
-            logger.debug("Invalid signature format");
+            // logger.debug("Invalid signature format");
             return false;
         }
 

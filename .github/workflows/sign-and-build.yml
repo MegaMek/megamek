@@ -41,11 +41,13 @@ jobs:
         run: |
           mkdir -p megamek/megamek/keystore
           echo "${{ secrets.FILE_SIGNING_PRIVATE_KEY }}" | base64 --decode > megamek/megamek/keystore/private.key
-          chmod 600 megamek/megamek/keystore/private.key
 
       - name: Sign canonical unit files
         working-directory: megamek
-        run: ./gradlew signCanonicalFiles megamek/megamek/keystore/private.key megamek/megamek/data/mekfiles --stacktrace
+        run: |
+          ./gradlew signCanonicalFiles -PsignFilesArgs="keystore/private.key resources/public.key data/mekfiles" --stacktrace
+          echo "Signing canonical unit files complete."
+          rm megamek/keystore/private.key
 
       - name: Build with Gradle
         working-directory: megamek

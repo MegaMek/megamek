@@ -55,7 +55,7 @@ https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resource
 
     <module name="LineLength">
         <property name="fileExtensions" value="java" />
-        <property name="max" value="140" />
+        <property name="max" value="120" />
         <property name="ignorePattern"
             value="^package.*|^import.*|href\s*=\s*&quot;[^&quot;]*&quot;|http://|https://|ftp://" />
     </module>

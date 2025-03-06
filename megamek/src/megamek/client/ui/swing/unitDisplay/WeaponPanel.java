@@ -67,11 +67,14 @@ import megamek.common.weapons.AreaEffectHelper;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * This class contains the all the gizmos for firing the mek's weapons.
  */
 public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener, IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(WeaponPanel.class);
+
     /**
      * Mouse adaptor for the weapon list. Supports rearranging the weapons
      * to define a custom ordering.
@@ -1120,31 +1123,35 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         Coords position = entity.getPosition();
         if (!en.isOffBoard() && (position != null)) {
             Hex hex = game.getBoard().getHex(position);
-            if (hex.containsTerrain(Terrains.FIRE)
-                    && (hex.getFireTurn() > 0)) {
-                // standing in fire
-                if ((en instanceof Mek)
-                        && ((Mek) en).hasIntactHeatDissipatingArmor()) {
-                    currentHeatBuildup += 2;
-                } else {
-                    currentHeatBuildup += 5;
+            if (hex != null) {
+                if (hex.containsTerrain(Terrains.FIRE)
+                        && (hex.getFireTurn() > 0)) {
+                    // standing in fire
+                    if ((en instanceof Mek)
+                            && ((Mek) en).hasIntactHeatDissipatingArmor()) {
+                        currentHeatBuildup += 2;
+                    } else {
+                        currentHeatBuildup += 5;
+                    }
                 }
-            }
 
-            if (hex.terrainLevel(Terrains.MAGMA) == 1) {
-                if ((en instanceof Mek)
-                        && ((Mek) en).hasIntactHeatDissipatingArmor()) {
-                    currentHeatBuildup += 2;
-                } else {
-                    currentHeatBuildup += 5;
+                if (hex.terrainLevel(Terrains.MAGMA) == 1) {
+                    if ((en instanceof Mek)
+                            && ((Mek) en).hasIntactHeatDissipatingArmor()) {
+                        currentHeatBuildup += 2;
+                    } else {
+                        currentHeatBuildup += 5;
+                    }
+                } else if (hex.terrainLevel(Terrains.MAGMA) == 2) {
+                    if ((en instanceof Mek)
+                            && ((Mek) en).hasIntactHeatDissipatingArmor()) {
+                        currentHeatBuildup += 5;
+                    } else {
+                        currentHeatBuildup += 10;
+                    }
                 }
-            } else if (hex.terrainLevel(Terrains.MAGMA) == 2) {
-                if ((en instanceof Mek)
-                        && ((Mek) en).hasIntactHeatDissipatingArmor()) {
-                    currentHeatBuildup += 5;
-                } else {
-                    currentHeatBuildup += 10;
-                }
+            } else {
+                logger.warn("An entity is not offboard but has a position not on board.");
             }
         }
 

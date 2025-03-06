@@ -183,6 +183,14 @@ task deleteAtlasedImages(dependsOn: createImageAtlases) {
     }
 }
 
+task officialUnitList(type: JavaExec, dependsOn: jar) {
+    description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
+}
+
 task unitFilesZip (dependsOn: copyFiles) {
     description = 'Creates zip archives of all the unit file folders.'
     file(unitFiles).eachDir {subDir ->
@@ -211,6 +219,7 @@ task ratZip (type: Zip) {
 task stageFiles {
     description = 'Process data files to be included in distribution'
     group = 'distribution'
+    dependsOn officialUnitList
     dependsOn unitFilesZip
     dependsOn ratZip
     dependsOn deleteAtlasedImages
@@ -333,20 +342,11 @@ task testWithGUITests(type: Test) {
     jvmArgs = mmJvmOptions
     environment 'GUITests', "true"
 
-    group 'verification'
-    description 'Sets environment var to include GUI unit tests; no report generated.'
+    group='verification'
+    description='Sets environment var to include GUI unit tests; no report generated.'
 }
 
 // These are utility classes for all of the classes with the src/utilities folder.
-
-task officialUnitList(type: JavaExec, dependsOn: jar) {
-    description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
-    group = 'utility'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'megamek.MegaMek'
-    args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
-}
-
 task equipmentList(type: JavaExec, dependsOn: jar) {
     description = 'Generate Full Equipment Database'
     group = 'database'
@@ -460,7 +460,7 @@ task nameChangesValidator(type: JavaExec, dependsOn: jar) {
 }
 
 task ratGeneratorEditor(type: JavaExec, dependsOn: copyFiles) {
-    description = 'Checks for issues related to name changes.'
+    description = 'RAT Editor.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.RATGeneratorEditor'
@@ -474,7 +474,7 @@ task techLevelCompareTool(type: JavaExec, dependsOn: jar) {
 }
 
 task unitFileMigrationTool(type: JavaExec, dependsOn: jar) {
-    description = 'Tech Level Comparison Tool'
+    description = 'Unit File Migration Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.UnitFileMigrationTool'

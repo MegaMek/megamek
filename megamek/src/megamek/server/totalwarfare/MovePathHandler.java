@@ -3121,6 +3121,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Handle unloading units.
             if (step.getType() == MovePath.MoveStepType.UNLOAD) {
                 Targetable unloaded = step.getTarget(getGame());
+                Bay currentBay = (unloaded instanceof Entity ulEntity) ? entity.getBay(ulEntity) : null;
                 Coords unloadPos = curPos;
                 int unloadFacing = curFacing;
                 if (null != step.getTargetPosition()) {
@@ -3136,9 +3137,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
                 // some additional stuff to take care of for small
                 // craft/DropShip unloading
-                if ((entity instanceof SmallCraft) && (unloaded instanceof Entity)) {
-                    Bay currentBay = entity.getBay((Entity) unloaded);
-                    if ((null != currentBay) && (Compute.d6(2) == 2)) {
+                if ((entity instanceof SmallCraft) && (unloaded instanceof Entity) ) {
+                    if ((null != currentBay) && (!(unloaded.isInfantry()))
+                        && (Compute.d6(2) == 2)
+                    ) {
                         r = new Report(9390);
                         r.subject = entity.getId();
                         r.indent(1);

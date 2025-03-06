@@ -48,7 +48,16 @@ public final class CargoBay extends Bay implements InfantryTransporter {
         if (!unit.isInfantry()) {
             return false;
         }
-        return super.canLoad(unit);
+        // Infantry is only restricted by adjacency requirements (TW pp. 223 - 225)
+        return true;
+    }
+
+    @Override
+    public boolean canUnloadUnits() {
+        // Infantry is only restricted by adjacency requirements (TW pp. 223 - 225)
+        return super.canUnloadUnits() || troops.stream()
+            .map(unit -> game.getEntity(unit))
+            .anyMatch(e -> (e != null && e.isInfantry()));
     }
 
     // Use the calculated original weight for infantry in cargo bays

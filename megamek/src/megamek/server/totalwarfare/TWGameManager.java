@@ -3401,6 +3401,8 @@ public class TWGameManager extends AbstractGameManager {
 
         // Update the unloaded unit.
         entityUpdate(unit.getId());
+        // Try to update the unloader too?
+        entityUpdate(unloader.getId());
 
         // Unloaded successfully.
         return true;

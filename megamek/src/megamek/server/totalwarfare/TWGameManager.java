@@ -3412,18 +3412,23 @@ public class TWGameManager extends AbstractGameManager {
      * @param entity The <code>Entity</code> that is landing
      * @param roll   The <code>PilotingRollData</code> to be used for this landing.
      */
-    void attemptLanding(Entity entity, PilotingRollData roll) {
+    boolean attemptLanding(Entity entity, PilotingRollData roll, Vector<Report> vReport) {
         if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-            return;
+            return true;
         }
-        Vector<Report> vDesc = new Vector<>();
+
+        boolean success;
+
+        if (vReport == null) {
+            vReport = new Vector<>();
+        }
 
         // okay, print the info
         Report r = new Report(9605);
         r.subject = entity.getId();
         r.addDesc(entity);
         r.add(roll.getLastPlainDesc(), true);
-        vDesc.add(r);
+        vReport.add(r);
 
         // roll
         final Roll diceRoll = Compute.rollD6(2);
@@ -3433,23 +3438,23 @@ public class TWGameManager extends AbstractGameManager {
         r.add(roll.getDesc());
         r.add(diceRoll);
         if (diceRoll.getIntValue() < roll.getValue()) {
-            r.choose(false);
+            success = false;
         } else {
-            r.choose(true);
+            success = true;
         }
-        vDesc.add(r);
+        r.choose(success);
+        vReport.add(r);
 
         int mof = roll.getValue() - diceRoll.getIntValue();
 
-        if (mof > 0) {
-            executeCrashLanding(vDesc, entity, mof);
+        if (!success) {
+            executeCrashLanding(entity, mof, vReport);
         }
 
-        // Finally, post reports
-        addReport(vDesc);
+        return success;
     }
 
-    void executeCrashLanding(Vector<Report> vDesc, Entity entity, int mof) {
+    void executeCrashLanding(Entity entity, int mof, Vector<Report> vReport) {
         int damage = 10 * (mof);
         // Report damage taken
         Report r = new Report(9609);
@@ -3457,7 +3462,7 @@ public class TWGameManager extends AbstractGameManager {
         r.addDesc(entity);
         r.add(damage);
         r.add(mof);
-        vDesc.add(r);
+        vReport.add(r);
 
         int side = ToHitData.SIDE_FRONT;
         if ((entity instanceof Aero) && ((Aero) entity).isSpheroid()) {
@@ -3465,7 +3470,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         while (damage > 0) {
             HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
-            addReport(damageEntity(entity, hit, 10));
+            vReport.addAll(damageEntity(entity, hit, 10));
             damage -= 10;
         }
     }
@@ -5185,7 +5190,8 @@ public class TWGameManager extends AbstractGameManager {
     Vector<Report> processCrash(Entity entity, int vel, Coords c) {
         Vector<Report> vReport = new Vector<>();
         Report r;
-        boolean crashLand = false;
+        boolean canCrashLand = true;
+        boolean crashLanded = false;
         boolean destroyDropShip = false; // save for later
         if (c == null) {
             r = new Report(9701);
@@ -5195,6 +5201,7 @@ public class TWGameManager extends AbstractGameManager {
             return vReport;
         }
 
+        // Low-altitude map: just crash and destroy the unit
         if (game.getBoard().inAtmosphere()) {
             r = new Report(9393, Report.PUBLIC);
             r.indent();
@@ -5202,27 +5209,33 @@ public class TWGameManager extends AbstractGameManager {
             vReport.add(r);
             entity.setDoomed(true);
         } else {
-            // Prepare for last-ditch landing attempt per TW Crash and Landing sections
-            // 1. If Dropship / Jumpship or larger, destroy if out of control.
-            if (entity instanceof Dropship || entity instanceof Jumpship) {
-                // If out of control and unable to attempt landing,
-                // destruction (of DropShips and larger) is assured.
-                // Reasons: crew incapacitated, ship shut down, engines destroyed for more than this turn.
-                destroyDropShip = (!entity.getCrew().isActive() || entity.isShutDown()
-                        || (((Aero) entity).getEnginesLostRound() < game.getCurrentRound()));
+            // 1. Prepare for last-ditch landing attempt per TW Crash and Landing sections.
+            //    If an Aerospace unit or LAM cannot attempt to land, it will fully crash.
+            if (!entity.getCrew().isActive() || entity.isShutDown()
+                || (((Aero) entity).getEnginesLostRound() < game.getCurrentRound())) {
+                if (entity instanceof Dropship || entity instanceof Jumpship) {
+                    // If out of control and unable to attempt landing,
+                    // destruction (of DropShips and larger) is assured.
+                    // Reasons: crew incapacitated, ship shut down, engines destroyed for more than this turn.
+                    destroyDropShip = true;
+                    canCrashLand = false;
+                }
             }
 
-            // 2. If not a dropship that will be destroyed, for all types, get position and velocity
-            if (!destroyDropShip){
+            // 2. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
+            if (canCrashLand){
                 IAero aero = (IAero) entity;
                 boolean vertical = aero.isSpheroid() || aero.isVSTOL();
-                // Make a piloting roll to attempt to land.  This includes all landing mods from
+                // Generate piloting roll to attempt to land.  This includes all landing mods from
                 // TW pg 86
                 PilotingRollData rollTarget = aero.checkLanding(
                     EntityMovementType.MOVE_FLYING, aero.getCurrentVelocity(),
-                    c, entity.getFacing(), vertical);
+                    c, entity.getFacing(), vertical
+                );
+
                 if (aero.isOutControl()) {
-                    rollTarget.addModifier(PilotingRollData.AUTOMATIC_FAIL, "Out of control!");
+                    // Rules say the roll is made but fails automatically at 10 MOF.
+                    rollTarget.addModifier(PilotingRollData.AUTOMATIC_FAIL, "Out of control; Landing Roll Automatically Fails!");
 
                     // Report auto-failing control roll
                     r = new Report(9600);
@@ -5231,17 +5244,24 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(rollTarget.getLastPlainDesc(), true);
                     vReport.add(r);
 
-                    // For an out-of-control Aero/LAM unit, this becomes an automatic failure with an MOF of 10.
-                    executeCrashLanding(vReport, entity, 10);
-
+                    executeCrashLanding(entity, 10, vReport);
                 } else {
-                    attemptLanding(entity, rollTarget);
+                    attemptLanding(entity, rollTarget, vReport);
                 }
-                checkLandingTerrainEffects(aero, vertical, c,
-                    c.translated(entity.getFacing(), aero.getLandingLength()), entity.getFacing());
+                // horizontal fliers take some space to land; calc final position, check terrain
+                // effects, move to final position.
+                Coords finalPosition = (vertical) ? c : c.translated(entity.getFacing(), aero.getLandingLength());
+                checkLandingTerrainEffects(aero, vertical, c, finalPosition, entity.getFacing());
+                if (!finalPosition.equals(c)) {
+                    entity.setPosition(finalPosition, true);
+                }
+
             }
             // Technically bring to a halt; actual landing is handled elsewhere.
             ((IAero) entity).land();
+
+            // No more damage for the crash-landed entity needs to be calculated
+            crashLanded = true;
         }
 
         // we might hit multiple hexes, if we're a DropShip, so we do some
@@ -5285,8 +5305,8 @@ public class TWGameManager extends AbstractGameManager {
             vel = 2;
         }
 
-        // deal crash damage only once
-        boolean damageDealt = false;
+        // deal crash damage only once; if entity already crash-landed, don't damage it again.
+        boolean damageDealt = crashLanded;
         for (Coords hitCoords : coords) {
             int orig_crash_damage = Compute.d6(2) * 10 * vel;
             int crash_damage = orig_crash_damage;
@@ -5490,8 +5510,8 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         if (destroyDropShip
-                && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE)) {
-            // Out-of-control DropShips that without making a landing attempt
+                && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE)) {
+            // Out-of-control DropShips that impact the surface without making a landing attempt
             // are automatically destroyed (TW pg 81)
             r = new Report(9708, Report.PUBLIC);
             r.indent();

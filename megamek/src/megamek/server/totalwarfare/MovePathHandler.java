@@ -210,7 +210,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             IAero a = (IAero) entity;
             rollTarget = a.checkLanding(md.getLastStepMovementType(), md.getFinalVelocity(),
                     md.getFinalCoords(), md.getFinalFacing(), false);
-            gameManager.attemptLanding(entity, rollTarget);
+            gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
             gameManager.checkLandingTerrainEffects(a, true, md.getFinalCoords(),
                     md.getFinalCoords().translated(md.getFinalFacing(), a.getLandingLength()), md.getFinalFacing());
             a.land();
@@ -226,7 +226,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             rollTarget = a.checkLanding(md.getLastStepMovementType(),
                     md.getFinalVelocity(), md.getFinalCoords(),
                     md.getFinalFacing(), true);
-            gameManager.attemptLanding(entity, rollTarget);
+            gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
             if (entity instanceof Dropship) {
                 gameManager.applyDropShipLandingDamage(md.getFinalCoords(), (Dropship) a);
             }

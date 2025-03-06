@@ -3095,6 +3095,7 @@ public class Princess extends BotClient {
         turnOnSearchLight(retVal, expectedDamage >= 0);
         unloadTransportedInfantry(retVal);
         launchFighters(retVal);
+        abandonShip(retVal);
         unjamRAC(retVal, expectedDamage >= 5 );
 
         // if we are using vector movement, there's a whole bunch of post-processing that happens to
@@ -3278,6 +3279,128 @@ public class Princess extends BotClient {
         // only add the step if we're actually launching something
         if (executeLaunch) {
             path.addStep(MoveStepType.LAUNCH, unitsToLaunch);
+        }
+    }
+
+    /**
+     * Helper function that starts unloading a transport if it is crippled, doomed, unable to move,
+     * or otherwise no longer functional as a transport.
+     * We don't care if there are enemies on the board here; get the units out as soon as possible.
+     * @param path
+     */
+    private void abandonShip(MovePath path) {
+        Entity movingEntity = path.getEntity();
+        Coords pathEndpoint = path.getFinalCoords();
+
+        // If no method of carrying units, skip it.
+        Vector<Transporter> transporters = movingEntity.getTransports();
+        if (transporters == null || transporters.isEmpty()) {
+            return;
+        }
+
+        // If this entity is still able to maneuver and fight, don't abandon it yet.
+        boolean shouldAbandon = false;
+        // Nonfunctional entity?  Abandon!
+        if ((
+            movingEntity.isPermanentlyImmobilized(true)
+                || movingEntity.isCrippled()
+                || movingEntity.isShutDown()
+                || movingEntity.isDoomed()
+        )){
+            shouldAbandon = true;
+        }
+        if (movingEntity instanceof Tank tank) {
+            // Immobile tank?  Abandon!
+            if (tank.isImmobile()) {
+                shouldAbandon = true;
+            }
+            // Ground-bound VTOL?  Abandon!
+            if (tank.getMovementMode().isVTOL() && !tank.canGoUp(0, tank.getPosition())) {
+                shouldAbandon = true;
+            }
+        }
+        if ((movingEntity instanceof Aero aero && aero.getAltitude() < 1 && !aero.isAirborne())){
+            // Aero and unable to take off?  Abandon!
+            if (!aero.canTakeOffHorizontally() && !aero.canTakeOffVertically()) {
+                shouldAbandon = true;
+            }
+            // Aero and no clearance to take off?  You guessed it: straight to Abandon!
+            if (aero.canTakeOffHorizontally() && (null != aero.hasRoomForHorizontalTakeOff())) {
+                shouldAbandon = true;
+            }
+        }
+        if (!shouldAbandon) {
+            return;
+        }
+
+        // Handle compartments
+        List<Coords> dismountLocations = List.of(pathEndpoint);
+        if (movingEntity.isDropShip() || movingEntity.isSupportVehicle() && movingEntity.isSuperHeavy()) {
+            int distance = (movingEntity.isDropShip()) ? 2 : 1;
+            dismountLocations = pathEndpoint.allAtDistance(distance);
+        }
+        int dismountIndex = 0;
+        for (Transporter transporter : transporters) {
+            if (dismountIndex >= dismountLocations.size()) {
+                break;
+            }
+            if (transporter instanceof InfantryCompartment infantryCompartment) {
+                for (Entity loadedEntity : infantryCompartment.getLoadedUnits()) {
+                    Coords dismountLocation = dismountLocations.get(dismountIndex);
+
+                    // this condition is a simple check that we're not unloading infantry into deep space
+                    // or into lava or some other such nonsense
+                    boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType())
+                        || loadedEntity.isLocationProhibited(dismountLocation)
+                        || loadedEntity.isLocationDeadly(dismountLocation);
+
+                    // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
+                    boolean unloadIllegal = Compute.stackingViolation(getGame(), loadedEntity, dismountLocation, movingEntity,
+                        loadedEntity.climbMode()) != null;
+
+                    if (!unloadFatal && !unloadIllegal) {
+                        path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
+                        dismountIndex += 1;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Handle bays
+        int unitsUnloaded;
+        dismountIndex = 0;
+
+        Vector<Bay> bays = movingEntity.getTransportBays();
+        for (int bayIndex = 0; bayIndex < bays.size(); bayIndex++) {
+            unitsUnloaded = 0;
+            Bay bay = bays.get(bayIndex);
+            for (Entity loadedEntity : bay.getUnloadableUnits()) {
+                Coords dismountLocation = dismountLocations.get(dismountIndex);
+
+                // for now, just unload bays at 'safe' rate
+                if (unitsUnloaded < bay.getCurrentDoors()) {
+                    // this condition is a simple check that we're not unloading units into fatal conditions
+                    boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType())
+                        || loadedEntity.isLocationProhibited(dismountLocation)
+                        || loadedEntity.isLocationDeadly(dismountLocation);
+
+                    // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
+                    boolean unloadIllegal = Compute.stackingViolation(getGame(), loadedEntity, dismountLocation, movingEntity,
+                        loadedEntity.climbMode()) != null;
+
+                    if (!(unloadFatal || unloadIllegal)) {
+                        unitsUnloaded++;
+                        dismountIndex++;
+                        path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
+                    }
+                } else {
+                    break;
+                }
+            }
+            if (dismountIndex >= dismountLocations.size()) {
+                break;
+            }
         }
     }
 

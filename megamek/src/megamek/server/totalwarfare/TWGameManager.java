@@ -5264,12 +5264,12 @@ public class TWGameManager extends AbstractGameManager {
                     entity.setPosition(finalPosition, true);
                 }
 
-                // Technically bring to a halt; actual landing is handled elsewhere.
-                ((IAero) entity).land();
-
                 // No more damage needs to be calculated for the crash-landed entity
                 crashLanded = true;
             }
+
+            // Technically bring to a halt; actual landing is handled elsewhere.
+            ((IAero) entity).land();
         }
 
         // we might hit multiple hexes, if we're a DropShip, so we do some

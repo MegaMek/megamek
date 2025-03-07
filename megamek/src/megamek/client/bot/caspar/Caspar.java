@@ -165,39 +165,4 @@ public class Caspar extends Princess implements AdvancedAgent {
         resetQuickRepresentation();
     }
 
-    private record MinefieldNumbers(int number, int type) {}
-
-    @Override
-    protected void deployMinefieldSetup() {
-        // if there are mines to deploy, deploy mines in random places of the map in clear hexes that have no water
-        Vector<Minefield> deployedMinefields = new Vector<>();
-        MinefieldNumbers[] minefieldNumbers = {
-              new MinefieldNumbers(getLocalPlayer().getNbrMFActive(), Minefield.TYPE_ACTIVE),
-              new MinefieldNumbers(getLocalPlayer().getNbrMFInferno(), Minefield.TYPE_INFERNO),
-              new MinefieldNumbers(getLocalPlayer().getNbrMFConventional(), Minefield.TYPE_CONVENTIONAL),
-              new MinefieldNumbers(0, Minefield.TYPE_COMMAND_DETONATED), // no command detonated mines
-              new MinefieldNumbers(getLocalPlayer().getNbrMFVibra(), Minefield.TYPE_VIBRABOMB),
-              new MinefieldNumbers(0, Minefield.TYPE_EMP),
-        };
-
-        for (MinefieldNumbers minefieldNumber : minefieldNumbers) {
-            if (minefieldNumber.number() == 0) {
-                continue;
-            }
-            var coordsSet = getBoardQuickRepresentation().getRandomClearCoords(minefieldNumber.number());
-            for (Coords coords : coordsSet) {
-                int density = Compute.randomIntInclusive(30) + 5;
-                Minefield minefield = Minefield.createMinefield(
-                      coords, getLocalPlayer().getId(), minefieldNumber.type(), density);
-                deployedMinefields.add(minefield);
-            }
-        }
-        getLocalPlayer().setNbrMFActive(0);
-        getLocalPlayer().setNbrMFCommand(0);
-        getLocalPlayer().setNbrMFConventional(0);
-        getLocalPlayer().setNbrMFInferno(0);
-        getLocalPlayer().setNbrMFVibra(0);
-        sendDeployMinefields(deployedMinefields);
-        sendPlayerInfo();
-    }
 }

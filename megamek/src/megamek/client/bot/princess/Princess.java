@@ -3377,12 +3377,12 @@ public class Princess extends BotClient {
                     ) != null;
 
                     if (!unloadFatal && !unloadIllegal) {
-                        // Princess has to track this as we don't see entity updates until fully done
-                        /**
+                        // Princess *has* to track this as we don't see entity updates
+                        // to our local game instance until movement is fully done!
                         movingEntity.unload(loadedEntity);
                         loadedEntity.setUnloaded(true);
                         loadedEntity.setTransportId(Entity.NONE);
-                         */
+
                         path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
                         return;
                     }
@@ -3422,12 +3422,11 @@ public class Princess extends BotClient {
                     ) != null;
 
                     if (!unloadFatal && !unloadIllegal) {
-                        // Princess has to track this as we don't see entity updates until fully done
-                        /**
+                        // Princess *has* to track this as we don't see entity updates
+                        // to our local game instance until movement is fully done!
                         movingEntity.unload(loadedEntity);
                         loadedEntity.setUnloaded(true);
                         loadedEntity.setTransportId(Entity.NONE);
-                         */
 
                         path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
                         return;

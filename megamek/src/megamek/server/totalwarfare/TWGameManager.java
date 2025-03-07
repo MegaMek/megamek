@@ -5226,7 +5226,7 @@ public class TWGameManager extends AbstractGameManager {
 
             // 2. Check if there is space available to land:
             IAero aero = (IAero) entity;
-            boolean vertical = aero.isSpheroid() || aero.isVSTOL();
+            boolean vertical = aero.isSpheroid() || (aero.isVSTOL() && !entity.isDropShip());
             canCrashLand &= (null == ((vertical) ? aero.hasRoomForVerticalLanding() : aero.hasRoomForHorizontalLanding()));
 
             // 3. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
@@ -5261,12 +5261,12 @@ public class TWGameManager extends AbstractGameManager {
                     entity.setPosition(finalPosition, true);
                 }
 
-            }
-            // Technically bring to a halt; actual landing is handled elsewhere.
-            ((IAero) entity).land();
+                // Technically bring to a halt; actual landing is handled elsewhere.
+                ((IAero) entity).land();
 
-            // No more damage for the crash-landed entity needs to be calculated
-            crashLanded = true;
+                // No more damage for the crash-landed entity needs to be calculated
+                crashLanded = true;
+            }
         }
 
         // we might hit multiple hexes, if we're a DropShip, so we do some

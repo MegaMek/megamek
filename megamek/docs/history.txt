@@ -76,6 +76,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6643: Fix MekHQ Issue 3655 - vehicle crew requirements for trailers
 + PR #6645: Support multiselect in the Add Unit dialog
 + PR #6647: Allow pasting units into selected player list (if selected)
++ PR #6667: feat: allow princess to deploy mines in random clear hexes on the map 
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

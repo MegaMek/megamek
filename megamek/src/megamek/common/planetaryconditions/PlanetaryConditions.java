@@ -16,11 +16,10 @@
 
 package megamek.common.planetaryconditions;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import megamek.common.*;
+
+import java.io.Serializable;
 
 
 /**
@@ -373,14 +372,18 @@ public class PlanetaryConditions implements Serializable {
             // Wind strength changes on a roll of 1 or 6
             switch (Compute.d6()) {
                 case 1: // weaker
-                    wind = wind.lowerWind();
-                    doSleetCheck();
-                    doSandStormCheck();
+                    if (wind.isStrongerThan(windMin)) {
+                        wind = wind.lowerWind();
+                        doSleetCheck();
+                        doSandStormCheck();
+                    }
                     break;
                 case 6: // stronger
-                    wind = wind.raiseWind();
-                    doSleetCheck();
-                    doSandStormCheck();
+                    if (wind.isWeakerThan(windMax)) {
+                        wind = wind.raiseWind();
+                        doSleetCheck();
+                        doSandStormCheck();
+                    }
                     break;
             }
         }

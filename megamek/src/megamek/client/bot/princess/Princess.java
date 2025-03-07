@@ -3286,11 +3286,14 @@ public class Princess extends BotClient {
      * Helper function that starts unloading a transport if it is crippled, doomed, unable to move,
      * or otherwise no longer functional as a transport.
      * We don't care if there are enemies on the board here; get the units out as soon as possible.
-     * @param path
+     * Returns after one unload b/c MovePathHandler will give us another Turn if we still have
+     * more to unload (up to standard limits).
+     *
+     * @param path MovePath that brought us here.
      */
     private void abandonShip(MovePath path) {
+        /**** Can Unload? ****/
         Entity movingEntity = path.getEntity();
-        Coords pathEndpoint = path.getFinalCoords();
 
         // If no method of carrying units, skip it.
         Vector<Transporter> transporters = movingEntity.getTransports();
@@ -3298,6 +3301,7 @@ public class Princess extends BotClient {
             return;
         }
 
+        /**** Should Unload? ****/
         // If this entity is still able to maneuver and fight, don't abandon it yet.
         boolean shouldAbandon = false;
         // Nonfunctional entity?  Abandon!
@@ -3308,8 +3312,7 @@ public class Princess extends BotClient {
                 || movingEntity.isDoomed()
         )){
             shouldAbandon = true;
-        }
-        if (movingEntity instanceof Tank tank) {
+        } else if (movingEntity instanceof Tank tank) {
             // Immobile tank?  Abandon!
             if (tank.isImmobile()) {
                 shouldAbandon = true;
@@ -3318,8 +3321,7 @@ public class Princess extends BotClient {
             if (tank.getMovementMode().isVTOL() && !tank.canGoUp(0, tank.getPosition())) {
                 shouldAbandon = true;
             }
-        }
-        if ((movingEntity instanceof Aero aero && aero.getAltitude() < 1 && !aero.isAirborne())){
+        } else if ((movingEntity instanceof Aero aero && aero.getAltitude() < 1 && !aero.isAirborne())){
             // Aero and unable to take off?  Abandon!
             if (!aero.canTakeOffHorizontally() && !aero.canTakeOffVertically()) {
                 shouldAbandon = true;
@@ -3337,7 +3339,9 @@ public class Princess extends BotClient {
             return;
         }
 
-        // Set dismount locations
+        /**** Unload What, Where? ****/
+
+        // Set dismount locations: this hex / adjacent hexes / outer-ring adjacent hexes
         List<Coords> dismountLocations = List.of(movingEntity.getPosition());
         if (movingEntity.isDropShip() || movingEntity.isSupportVehicle() && movingEntity.isSuperHeavy()) {
             int distance = (movingEntity.isDropShip()) ? 2 : 1;
@@ -3374,9 +3378,11 @@ public class Princess extends BotClient {
 
                     if (!unloadFatal && !unloadIllegal) {
                         // Princess has to track this as we don't see entity updates until fully done
+                        /**
                         movingEntity.unload(loadedEntity);
                         loadedEntity.setUnloaded(true);
                         loadedEntity.setTransportId(Entity.NONE);
+                         */
                         path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
                         return;
                     }
@@ -3397,12 +3403,6 @@ public class Princess extends BotClient {
                 if (dismountIndex >= dismountLocations.size()) {
                     break;
                 }
-                /**if (loadedEntity.isUnloadedThisTurn()) {
-                    // Move on to the next unit and unload location
-                    unitsUnloaded++;
-                    dismountIndex++;
-                    continue;
-                }*/
                 Coords dismountLocation = dismountLocations.get(dismountIndex);
 
                 // for now, just unload bays at 'safe' rate
@@ -3423,9 +3423,11 @@ public class Princess extends BotClient {
 
                     if (!unloadFatal && !unloadIllegal) {
                         // Princess has to track this as we don't see entity updates until fully done
+                        /**
                         movingEntity.unload(loadedEntity);
                         loadedEntity.setUnloaded(true);
                         loadedEntity.setTransportId(Entity.NONE);
+                         */
 
                         path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
                         return;

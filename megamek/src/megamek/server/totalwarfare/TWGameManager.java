@@ -5224,10 +5224,13 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // 2. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
+            // 2. Check if there is space available to land:
+            IAero aero = (IAero) entity;
+            boolean vertical = aero.isSpheroid() || aero.isVSTOL();
+            canCrashLand &= (null == ((vertical) ? aero.hasRoomForVerticalLanding() : aero.hasRoomForHorizontalLanding()));
+
+            // 3. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
             if (canCrashLand){
-                IAero aero = (IAero) entity;
-                boolean vertical = aero.isSpheroid() || aero.isVSTOL();
                 // Generate piloting roll to attempt to land.  This includes all landing mods from
                 // TW pg 86
                 PilotingRollData rollTarget = aero.checkLanding(

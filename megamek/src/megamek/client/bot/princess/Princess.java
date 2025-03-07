@@ -3282,6 +3282,42 @@ public class Princess extends BotClient {
         }
     }
 
+    boolean shouldAbandon(Entity entity) {
+        boolean shouldAbandon = false;
+        // Nonfunctional entity?  Abandon!
+        if ((
+            entity.isPermanentlyImmobilized(true)
+                || entity.isCrippled()
+                || entity.isShutDown()
+                || entity.isDoomed()
+        )){
+            shouldAbandon = true;
+        } else if (entity instanceof Tank tank) {
+            // Immobile tank?  Abandon!
+            if (tank.isImmobile()) {
+                shouldAbandon = true;
+            }
+            // Ground-bound VTOL?  Abandon!
+            if (tank.getMovementMode().isVTOL() && !tank.canGoUp(0, tank.getPosition())) {
+                shouldAbandon = true;
+            }
+        } else if ((entity instanceof Aero aero && aero.getAltitude() < 1 && !aero.isAirborne())){
+            // Aero and unable to take off?  Abandon!
+            if (!aero.canTakeOffHorizontally() && !aero.canTakeOffVertically()) {
+                shouldAbandon = true;
+            }
+            // Aero and no clearance to take off?  You guessed it: straight to Abandon!
+            if (aero.canTakeOffHorizontally() && (null != aero.hasRoomForHorizontalTakeOff())) {
+                shouldAbandon = true;
+            }
+            // Effectively immobile Aerospace?  Believe it or not, Abandon!
+            if (EntityMovementType.MOVE_NONE == aero.moved && EntityMovementType.MOVE_NONE == aero.movedLastRound) {
+                shouldAbandon = true;
+            }
+        }
+        return shouldAbandon;
+    }
+
     /**
      * Helper function that starts unloading a transport if it is crippled, doomed, unable to move,
      * or otherwise no longer functional as a transport.
@@ -3303,39 +3339,7 @@ public class Princess extends BotClient {
 
         /**** Should Unload? ****/
         // If this entity is still able to maneuver and fight, don't abandon it yet.
-        boolean shouldAbandon = false;
-        // Nonfunctional entity?  Abandon!
-        if ((
-            movingEntity.isPermanentlyImmobilized(true)
-                || movingEntity.isCrippled()
-                || movingEntity.isShutDown()
-                || movingEntity.isDoomed()
-        )){
-            shouldAbandon = true;
-        } else if (movingEntity instanceof Tank tank) {
-            // Immobile tank?  Abandon!
-            if (tank.isImmobile()) {
-                shouldAbandon = true;
-            }
-            // Ground-bound VTOL?  Abandon!
-            if (tank.getMovementMode().isVTOL() && !tank.canGoUp(0, tank.getPosition())) {
-                shouldAbandon = true;
-            }
-        } else if ((movingEntity instanceof Aero aero && aero.getAltitude() < 1 && !aero.isAirborne())){
-            // Aero and unable to take off?  Abandon!
-            if (!aero.canTakeOffHorizontally() && !aero.canTakeOffVertically()) {
-                shouldAbandon = true;
-            }
-            // Aero and no clearance to take off?  You guessed it: straight to Abandon!
-            if (aero.canTakeOffHorizontally() && (null != aero.hasRoomForHorizontalTakeOff())) {
-                shouldAbandon = true;
-            }
-            // Effectively immobile Aerospace?  Believe it or not, Abandon!
-            if (EntityMovementType.MOVE_NONE == aero.moved && EntityMovementType.MOVE_NONE == aero.movedLastRound) {
-                shouldAbandon = true;
-            }
-        }
-        if (!shouldAbandon) {
+        if (!shouldAbandon(movingEntity)) {
             return;
         }
 

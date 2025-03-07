@@ -5213,20 +5213,22 @@ public class TWGameManager extends AbstractGameManager {
         } else {
             // 1. Prepare for last-ditch landing attempt per TW Crash and Landing sections.
             //    If an Aerospace unit or LAM cannot attempt to land, it will fully crash.
+            IAero aero = (IAero) entity;
+            boolean vertical = aero.isSpheroid() || (aero.isVSTOL() && !entity.isDropShip());
+
             if (!entity.getCrew().isActive() || entity.isShutDown()
-                || (((Aero) entity).getEnginesLostRound() < game.getCurrentRound())) {
+                || (aero.getEnginesLostRound() < game.getCurrentRound())) {
                 if (entity instanceof Dropship || entity instanceof Jumpship) {
                     // If out of control and unable to attempt landing,
                     // destruction (of DropShips and larger) is assured.
-                    // Reasons: crew incapacitated, ship shut down, engines destroyed for more than this turn.
+                    // Reasons: crew incapacitated, ship shut down, engines destroyed prior to this turn.
                     destroyDropShip = true;
                     canCrashLand = false;
                 }
             }
 
-            // 2. Check if there is space available to land:
-            IAero aero = (IAero) entity;
-            boolean vertical = aero.isSpheroid() || (aero.isVSTOL() && !entity.isDropShip());
+            // 2. Check if there is space available to land; if not, they will crash
+            //    (but not be auto-destroyed since the attempt was made)
             canCrashLand &= (null == ((vertical) ? aero.hasRoomForVerticalLanding() : aero.hasRoomForHorizontalLanding()));
 
             // 3. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
@@ -5240,7 +5242,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (aero.isOutControl()) {
                     // Rules say the roll is made but fails automatically at 10 MOF.
-                    rollTarget.addModifier(PilotingRollData.AUTOMATIC_FAIL, "Out of control; Landing Roll Automatically Fails!");
+                    rollTarget.addModifier(PilotingRollData.AUTOMATIC_FAIL, "Landing while Out of Control: Landing Roll automatically fails!");
 
                     // Report auto-failing control roll
                     r = new Report(9600);
@@ -5253,6 +5255,7 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     attemptLanding(entity, rollTarget, vReport);
                 }
+
                 // horizontal fliers take some space to land; calc final position, check terrain
                 // effects, move to final position.
                 Coords finalPosition = (vertical) ? c : c.translated(entity.getFacing(), aero.getLandingLength());
@@ -5264,7 +5267,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Technically bring to a halt; actual landing is handled elsewhere.
                 ((IAero) entity).land();
 
-                // No more damage for the crash-landed entity needs to be calculated
+                // No more damage needs to be calculated for the crash-landed entity
                 crashLanded = true;
             }
         }

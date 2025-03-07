@@ -29,7 +29,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import megamek.client.bot.Agent;
+import megamek.client.bot.common.Agent;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
@@ -39,10 +39,7 @@ import megamek.common.pathfinder.*;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
-import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
-
-import static megamek.client.bot.princess.UnitBehavior.BehaviorType.ForcedWithdrawal;
 
 /**
  * This class contains logic that calculates and stores
@@ -368,7 +365,7 @@ public class PathEnumerator {
         Set<Coords> destinations = new HashSet<>();
         // if we're going to an edge or can't see anyone, generate long-range paths to
         // the opposite edge
-        switch (getOwner().getBehaviorType(mover, getOwner())) {
+        switch (getOwner().getBehaviorType(mover)) {
             case ForcedWithdrawal:
                 destinations = getOwner().getDestinationCoordsWithTerrainReduction(mover);
                 break;

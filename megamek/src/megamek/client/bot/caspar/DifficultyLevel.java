@@ -32,7 +32,7 @@ package megamek.client.bot.caspar;
  * @author Luana Coppio
  */
 public enum DifficultyLevel {
-    EASY(50),
+    EASY(20),
     MEDIUM(10),
     HARD(3),
     HARDCORE(1);

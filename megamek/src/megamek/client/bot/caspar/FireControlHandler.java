@@ -1,8 +1,35 @@
+/*
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 2 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ */
 package megamek.client.bot.caspar;
 
+import megamek.client.bot.common.GameState;
 import megamek.client.bot.princess.FiringPlan;
 import megamek.common.Entity;
-import megamek.common.util.FiringSolution;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,7 +43,11 @@ import java.util.stream.Collectors;
  */
 public class FireControlHandler {
     private final DifficultyManager difficultyManager;
-    private final Map<Integer, Entity> targetPriorities = new HashMap<>();
+
+    private record UnitId(int id) {}
+    private final Map<Integer, UnitId> targetPriorities = new HashMap<>();
+    private final Map<UnitId, Integer> enemyTargetCounts = new HashMap<>();
+
 
     /**
      * Creates a fire control handler with the specified difficulty manager.
@@ -30,14 +61,14 @@ public class FireControlHandler {
     /**
      * Determines the firing solution for a unit.
      *
-     * @param unit The unit to fire with
+     * @param unit            The unit to fire with
      * @param possibleTargets List of possible targets
-     * @param gameState The current game state
+     * @param gameState       The current game state
      * @return The selected firing solution
      */
     public FiringPlan determineFiringPlan(Entity unit, List<Entity> possibleTargets, GameState gameState) {
         if (possibleTargets.isEmpty()) {
-            return new FiringPlan(unit, List.of(), false);
+            return new FiringPlan();
         }
 
         // Update target priorities
@@ -45,23 +76,25 @@ public class FireControlHandler {
 
         // Calculate target scores
         Map<Entity, Double> targetScores = possibleTargets.stream()
-            .collect(Collectors.toMap(
-                target -> target,
-                target -> calculateTargetScore(unit, target, gameState)
-            ));
+              .collect(Collectors.toMap(
+                    target -> target,
+                    target -> calculateTargetScore(unit, target, gameState)
+              ));
 
         // Sort targets by score
         List<Entity> sortedTargets = possibleTargets.stream()
-            .sorted(Comparator.comparingDouble(targetScores::get).reversed())
-            .collect(Collectors.toList());
+              .sorted(Comparator.comparingDouble(targetScores::get).reversed())
+              .toList();
 
-        // Determine whether to use special attacks
-        boolean useSpecialAttack = shouldUseSpecialAttack(unit, sortedTargets.get(0), gameState);
+        return new FiringPlan(sortedTargets.get(0));
+    }
 
-        // Select weapons and allocate to targets
-        List<WeaponAllocation> weaponAllocations = allocateWeapons(unit, sortedTargets, gameState);
+    private double calculateTargetScore(Entity unit, Entity target, GameState gameState) {
+        return 0d;
+    }
 
-        return new FiringSolution(unit, weaponAllocations, useSpecialAttack);
+    private boolean shouldUseSpecialAttack(Entity unit, Entity target, GameState gameState) {
+        return false;
     }
 
     /**
@@ -74,3 +107,9 @@ public class FireControlHandler {
 
         // Prioritize targets based on threat level, role, and position
         List<Entity> enemies = gameState.getEnemyUnits();
+        for (Entity enemy : enemies) {
+            int priority = calculateTargetPriority(enemy, gameState);
+            targetPriorities.put(priority, new UnitId(enemy.getId()));
+        }
+    }
+}

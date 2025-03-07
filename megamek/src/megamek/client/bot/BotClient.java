@@ -403,6 +403,12 @@ public abstract class BotClient extends Client {
                 case LOUNGE:
                     sendChat(Messages.getString("BotClient.Hi"));
                     break;
+                case EXCHANGE:
+                    exchangeSetup();
+                    break;
+                case DEPLOY_MINEFIELDS:
+                    deployMinefieldSetup();
+                    break;
                 case DEPLOYMENT:
                     initialize();
                     break;
@@ -1233,7 +1239,15 @@ public abstract class BotClient extends Client {
         this.clientGUI = clientGUI;
     }
 
-    public void endOfTurnProcessing() {
+    protected void endOfTurnProcessing() {
+        // Do nothing;
+    }
+
+    protected void exchangeSetup() {
+        // Do nothing;
+    }
+
+    protected void deployMinefieldSetup() {
         // Do nothing;
     }
 

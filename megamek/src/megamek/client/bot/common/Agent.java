@@ -1,4 +1,4 @@
-package megamek.client.bot;
+package megamek.client.bot.common;
 
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.FireControlState;
@@ -17,13 +17,19 @@ public interface Agent {
 
     Player getLocalPlayer();
 
-    UnitBehavior.BehaviorType getBehaviorType(Entity mover, Agent owner);
+    UnitBehavior.BehaviorType getBehaviorType(Entity mover);
     // get homeEdge
     Set<Coords> getDestinationCoords(Entity mover);
     // get homeEdge
     Set<Coords> getDestinationCoordsWithTerrainReduction(Entity mover);
     // CardinalEdge oppositeEdge = BoardUtilities.determineOppositeEdge(mover);
     Set<Coords> getOppositeSideDestinationCoordsWithTerrainReduction(Entity mover);
+
+    /**
+     * Returns the edge of the map that the unit should move towards to reach its home edge.
+     * @param unit The unit to move
+     * @return The edge of the map that the unit should move towards
+     */
     CardinalEdge getHomeEdge(Entity unit);
 
     List<Coords> getEnemyHotSpots();
@@ -33,4 +39,10 @@ public interface Agent {
     BoardClusterTracker getClusterTracker();
 
     Game getGame();
+
+    List<Entity> getEnemyEntities();
+
+    List<Entity> getEntitiesOwned();
+
+    List<Entity> getFriendEntities();
 }

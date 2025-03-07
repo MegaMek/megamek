@@ -136,4 +136,22 @@ public class DifficultyManager {
             case HARDCORE -> 0.5;
         };
     }
+
+    public double getMaxSearchDepth() {
+        return switch (difficultyLevel) {
+            case EASY -> 1.5d;
+            case MEDIUM -> 3d;
+            case HARD -> 5d;
+            case HARDCORE -> 10d;
+        };
+    }
+
+    public double adjustDecisionQuality(double prediction) {
+        return switch (difficultyLevel) {
+            case EASY -> prediction * 0.8;
+            case MEDIUM -> prediction * 0.9;
+            case HARD -> prediction;
+            case HARDCORE -> prediction * 1.1;
+        };
+    }
 }

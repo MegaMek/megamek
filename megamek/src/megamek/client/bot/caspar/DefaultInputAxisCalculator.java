@@ -28,15 +28,11 @@
 package megamek.client.bot.caspar;
 
 
-import megamek.client.bot.Agent;
+import megamek.client.bot.common.Agent;
+import megamek.client.bot.common.GameState;
 import megamek.common.Entity;
 import megamek.common.MovePath;
 import megamek.common.UnitRole;
-
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Default implementation of the InputAxisCalculator interface.
@@ -81,13 +77,14 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
             case DECOY_POTENTIAL -> new DecoyPotentialCalculator();
             case ECM_COVERAGE -> new EcmCoverageCalculator();
             case ENEMY_ECM_COVERAGE -> new UnderEnemyEcmCoverageCalculator();
-            case ARMY_COHESION -> new ArmyCohesionCalculator();
             case ENVIRONMENTAL_COVER -> new EnvironmentalCoverCalculator();
             case ENVIRONMENTAL_HAZARDS -> new EnvironmentalHazardsCalculator();
             case FACING_ENEMY -> new FacingEnemyCalculator();
             case FAVORITE_TARGET_IN_RANGE -> new FavoriteTargetInRangeCalculator();
             case FLANKING_POSITION -> new FlankingPositionCalculator();
             case FORMATION_COHESION -> new FormationCohesionCalculator();
+            case FORMATION_SEPARATION -> new FormationSeparationCalculator();
+            case FORMATION_ALIGNMENT -> new FormationAlignmentCalculator();
             case FRIENDLY_ARTILLERY_FIRE -> new FriendlyArtilleryFireCalculator();
             case COVERING_UNITS -> new CoveringUnitsCalculator();
             case HEAT_MANAGEMENT -> new HeatManagementCalculator();
@@ -113,14 +110,14 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
     }
 
     @Override
-    public double[] calculateInputVector(MovePath movePath, Agent agent, GameState gameState) {
+    public double[] calculateInputVector(MovePath movePath, GameState gameState) {
         // Start index for writing values
         int index = 0;
 
         // Calculate and insert each axis group
         for (AxisType axisType : AxisType.values()) {
             AxisCalculator calculator = axisCalculators[axisType.ordinal()];
-            double[] axisValues = calculator.calculateAxis(movePath, agent, gameState);
+            double[] axisValues = calculator.calculateAxis(movePath, gameState);
 
             // Copy values to the input vector
             System.arraycopy(axisValues, 0, inputVector, index, axisValues.length);
@@ -128,6 +125,11 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
         }
 
         return inputVector;
+    }
+
+    @Override
+    public int getInputSize() {
+        return inputVector.length;
     }
 
     /**
@@ -144,13 +146,14 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
         DECOY_POTENTIAL,
         ECM_COVERAGE,
         ENEMY_ECM_COVERAGE,
-        ARMY_COHESION,
         ENVIRONMENTAL_COVER,
         ENVIRONMENTAL_HAZARDS,
         FACING_ENEMY,
         FAVORITE_TARGET_IN_RANGE,
         FLANKING_POSITION,
         FORMATION_COHESION,
+        FORMATION_SEPARATION,
+        FORMATION_ALIGNMENT,
         FRIENDLY_ARTILLERY_FIRE,
         COVERING_UNITS,
         HEAT_MANAGEMENT,
@@ -192,7 +195,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
          * @param movePath The movement path to evaluate
          * @return An array of normalized values (0-1)
          */
-        double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState);
+        double[] calculateAxis(MovePath movePath, GameState gameState);
     }
 
     /**
@@ -229,7 +232,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
         }
 
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This would calculate the 10x10 heatmap for enemy threats
             double[] heatmap = axis();
 
@@ -251,7 +254,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
         }
 
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This would calculate the 10x10 heatmap for friendly threats
             double[] heatmap = axis();
 
@@ -272,7 +275,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
         }
 
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This would calculate the threat in the final position and all hexes up to 3 away
             double[] threats = axis();
 
@@ -293,7 +296,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
         }
 
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This would calculate the threat in the final position and all hexes up to 3 away
             double[] threats = axis();
 
@@ -314,7 +317,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
         }
 
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This would calculate the health of the unit as a percentage for
             // 0 - average
             // 1 - front
@@ -336,7 +339,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
     public static class PositionCrowdingCalculator extends BaseAxisCalculator {
 
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This would calculate the health of the unit as a percentage for
             // 0 - average
             // 1 - front
@@ -358,7 +361,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class DamageRatioCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the best expected damage ratio for the current attack
             double[] damageRatio = axis();
 
@@ -373,7 +376,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class DecoyPotentialCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the potential of the unit to act as a decoy
             double[] decoyPotential = axis();
 
@@ -388,7 +391,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class EcmCoverageCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the potential of the unit to act as a decoy
             double[] ecmCoverage = axis();
 
@@ -403,7 +406,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class UnderEnemyEcmCoverageCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the potential of the unit to act as a decoy
             double[] ecmCoverage = axis();
 
@@ -414,24 +417,11 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
     }
 
     /**
-     * Calculates the cohesion of the enemy army
-     */
-    public static class ArmyCohesionCalculator extends BaseAxisCalculator {
-        @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
-            // This calculates the potential of the unit to act as a decoy
-            double[] armyCohesion = axis();
-            armyCohesion[0] = gameState.getEnemyUnitsCohesion();
-            return armyCohesion;
-        }
-    }
-
-    /**
      * Calculates the environmental cover of the final position against 5 enemy units that have you in sight
      */
     public static class EnvironmentalCoverCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the potential of the unit to act as a decoy
             double[] cover = axis();
 
@@ -444,7 +434,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class EnvironmentalHazardsCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the potential of the unit to act as a decoy
             double[] hazards = axis();
 
@@ -457,7 +447,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class FacingEnemyCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates if the unit is facing the enemy
             double[] facing = axis();
 
@@ -476,7 +466,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
         }
 
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // calculate if the favorite target role type is in range
             double[] favoriteTarget = axis();
             // 0 - SNIPER
@@ -491,7 +481,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class FlankingPositionCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates if the unit is in a flanking position
             double[] flanking = axis();
 
@@ -504,7 +494,33 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class FormationCohesionCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
+            // This calculates the formation cohesion of the unit
+            double[] formationCohesion = axis();
+
+            return formationCohesion;
+        }
+    }
+
+    /**
+     * Calculates the formation separation of the unit
+     */
+    public static class FormationSeparationCalculator extends BaseAxisCalculator {
+        @Override
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
+            // This calculates the formation cohesion of the unit
+            double[] formationCohesion = axis();
+
+            return formationCohesion;
+        }
+    }
+
+    /**
+     * Calculates the formation alignment of the unit
+     */
+    public static class FormationAlignmentCalculator extends BaseAxisCalculator {
+        @Override
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the formation cohesion of the unit
             double[] formationCohesion = axis();
 
@@ -517,7 +533,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class FriendlyArtilleryFireCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the friendly artillery fire potential
             double[] artilleryFire = axis();
 
@@ -530,7 +546,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class CoveringUnitsCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the number of units that the unit is covering
             double[] coveringUnits = axis();
 
@@ -543,7 +559,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class HeatManagementCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the heat management of the unit
             double[] heatManagement = axis();
 
@@ -556,7 +572,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class EnemyVipDistanceCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the distance to the closest enemy VIP
             double[] vipDistance = axis();
 
@@ -569,7 +585,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class NearbyEnemyCountCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the number of nearby enemy units
             double[] nearbyEnemies = axis();
 
@@ -582,7 +598,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class OriginalBotSettingsCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the original bot settings
             double[] botSettings = axis();
 
@@ -595,7 +611,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class IsCrippledCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates if the unit is crippled
             double[] isCrippled = axis();
 
@@ -608,7 +624,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class MovingTowardWaypointCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates if the unit is moving toward the waypoint
             double[] movingTowardWaypoint = axis();
 
@@ -621,7 +637,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class UnitMovementCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the unit movement
             double[] unitMovement = axis();
 
@@ -637,7 +653,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
             return new double[UnitRole.values().length];
         }
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the unit role
             double[] unitRole = axis();
             Entity unit = movePath.getEntity();
@@ -655,7 +671,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
             return new double[UnitRole.values().length];
         }
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the threat by role
             double[] threatByRole = axis();
 
@@ -668,7 +684,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class UnitTmmCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the unit TMM
             double[] unitTmm = axis();
 
@@ -681,7 +697,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class KillChanceCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the kill chance
             double[] killChance = axis();
 
@@ -694,7 +710,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class PilotingCautionCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the piloting caution
             double[] pilotingCaution = axis();
 
@@ -707,7 +723,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class RetreatCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the retreat
             double[] retreat = axis();
 
@@ -720,7 +736,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class ScoutingCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the scouting
             double[] scouting = axis();
 
@@ -733,7 +749,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class StandingStillCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the standing still
             double[] standingStill = axis();
 
@@ -746,7 +762,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class StrategicGoalCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the strategic goal
             double[] strategicGoal = axis();
 
@@ -759,7 +775,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class TargetHealthCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the target health
             double[] targetHealth = axis();
 
@@ -772,7 +788,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class TargetWithinOptimalRangeCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the target within optimal range
             double[] targetWithinOptimalRange = axis();
 
@@ -785,7 +801,7 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
      */
     public static class TurnsToEncounterCalculator extends BaseAxisCalculator {
         @Override
-        public double[] calculateAxis(MovePath movePath, Agent agent, GameState gameState) {
+        public double[] calculateAxis(MovePath movePath, GameState gameState) {
             // This calculates the turns to encounter
             double[] turnsToEncounter = axis();
 

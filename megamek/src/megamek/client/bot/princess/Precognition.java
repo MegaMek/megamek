@@ -101,7 +101,7 @@ public class Precognition implements Runnable {
                 wakeUp();
             }
         });
-        setPathEnumerator(new PathEnumerator(owner, getGame()));
+        setPathEnumerator(new PathEnumerator(owner));
         // Initialize ECM Info, especially important if Princess added mid-game
         ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
                 getGame().getEntitiesVector());

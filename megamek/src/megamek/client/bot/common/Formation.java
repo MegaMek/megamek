@@ -26,7 +26,7 @@
  * InMediaRes Productions, LLC.
  */
 
-package megamek.client.bot.caspar;
+package megamek.client.bot.common;
 
 import megamek.common.Coords;
 import megamek.common.Entity;

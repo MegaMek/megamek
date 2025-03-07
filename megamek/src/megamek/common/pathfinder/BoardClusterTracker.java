@@ -44,7 +44,7 @@ public class BoardClusterTracker {
      * Have a close relationship but are not exactly one to one with entity movement
      * modes.
      */
-    public static enum MovementType {
+    public enum MovementType {
         Walker,
         Wheeled,
         WheeledAmphi,

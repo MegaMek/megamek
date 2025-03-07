@@ -24,14 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -1247,8 +1240,83 @@ public abstract class BotClient extends Client {
         // Do nothing;
     }
 
+    private record MinefieldNumbers(int number, int type) {}
+
+    /**
+     * Deploy minefields for the bot
+     */
     protected void deployMinefieldSetup() {
-        // Do nothing;
+        MinefieldNumbers[] minefieldNumbers = getMinefieldNumbers();
+        int totalMines = Arrays.stream(minefieldNumbers).mapToInt(MinefieldNumbers::number).sum();
+        Deque<Coords> coordsSet = getMinefieldDeploymentPlanner().getRandomMinefieldPositions(totalMines);
+        Vector<Minefield> deployedMinefields = new Vector<>();
+        for (MinefieldNumbers minefieldNumber : minefieldNumbers) {
+            deployMinefields(minefieldNumber, coordsSet, deployedMinefields);
+        }
+        performMinefieldDeployment(deployedMinefields);
+    }
+
+    /**
+     * Deploy the specified number of minefields
+     * @param deployedMinefields the vector to add the deployed minefields to
+     */
+    private void performMinefieldDeployment(Vector<Minefield> deployedMinefields) {
+        sendDeployMinefields(deployedMinefields);
+        resetMinefieldCounters();
+    }
+
+    /**
+     * Reset the minefield counters for the bot and push the updated player info to the server
+     */
+    private void resetMinefieldCounters() {
+        getLocalPlayer().setNbrMFActive(0);
+        getLocalPlayer().setNbrMFCommand(0);
+        getLocalPlayer().setNbrMFConventional(0);
+        getLocalPlayer().setNbrMFInferno(0);
+        getLocalPlayer().setNbrMFVibra(0);
+        sendPlayerInfo();
+    }
+
+    /**
+     * Deploy the specified number of minefields of the specified type
+     * @param minefieldNumber the number of minefields to deploy and the type of minefield to deploy
+     * @param coordsSet the set of coordinates to deploy the minefields to
+     * @param deployedMinefields the vector to add the deployed minefields to
+     */
+    private void deployMinefields(MinefieldNumbers minefieldNumber, Deque<Coords> coordsSet, Vector<Minefield> deployedMinefields) {
+        int minesToDeploy = minefieldNumber.number();
+        while(!coordsSet.isEmpty() && minesToDeploy > 0) {
+            Coords coords = coordsSet.poll();
+            int density = Compute.randomIntInclusive(30) + 5;
+            Minefield minefield = Minefield.createMinefield(
+                  coords, getLocalPlayer().getId(), minefieldNumber.type(), density);
+            deployedMinefields.add(minefield);
+            minesToDeploy--;
+        }
+    }
+
+    /**
+     * Get the number of minefields of each type that the bot should deploy
+     * @return an array of MinefieldNumbers, each representing the number of a specific type of minefield to deploy
+     */
+    private MinefieldNumbers[] getMinefieldNumbers() {
+        return new MinefieldNumbers[]{
+              new MinefieldNumbers(getLocalPlayer().getNbrMFActive(), Minefield.TYPE_ACTIVE),
+              new MinefieldNumbers(getLocalPlayer().getNbrMFInferno(), Minefield.TYPE_INFERNO),
+              new MinefieldNumbers(getLocalPlayer().getNbrMFConventional(), Minefield.TYPE_CONVENTIONAL),
+              new MinefieldNumbers(getLocalPlayer().getNbrMFVibra(), Minefield.TYPE_VIBRABOMB),
+              // the following are added for completeness, but are not used by the bot
+              new MinefieldNumbers(0, Minefield.TYPE_COMMAND_DETONATED), // no command detonated mines
+              new MinefieldNumbers(0, Minefield.TYPE_EMP), // no field for EMP mines exists
+        };
+    }
+
+    /**
+     * Get the minefield deployment planner to use for this bot
+     * @return the minefield deployment planner
+     */
+    protected MinefieldDeploymentPlanner getMinefieldDeploymentPlanner() {
+        return new RandomMinefieldDeploymentPlanner(getBoard());
     }
 
     @Override

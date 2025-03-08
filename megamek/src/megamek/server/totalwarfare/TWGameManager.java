@@ -3491,6 +3491,11 @@ public class TWGameManager extends AbstractGameManager {
      */
     void checkLandingTerrainEffects(IAero aero, boolean vertical, Coords touchdownPos, Coords finalPos, int facing) {
         // Landing in a rough for rubble hex damages landing gear.
+        Hex hex = game.getBoard().getHex(finalPos);
+        if (hex == null) {
+            logger.debug("Attempted to check landing terrain effects for null hex " + finalPos.toFriendlyString());
+            return;
+        }
         Set<Coords> landingPositions = aero.getLandingCoords(vertical, touchdownPos, facing);
         if (landingPositions.stream().map(c -> game.getBoard().getHex(c)).filter(Objects::nonNull)
                 .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
@@ -3500,7 +3505,6 @@ public class TWGameManager extends AbstractGameManager {
             addReport(r);
         }
         // Landing in water can destroy or immobilize the unit.
-        Hex hex = game.getBoard().getHex(finalPos);
         if ((aero instanceof Aero) && hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
                 && (hex.terrainLevel(Terrains.WATER) > 0)
                 && !((Entity) aero).hasWorkingMisc(MiscType.F_FLOTATION_HULL)) {
@@ -5264,7 +5268,17 @@ public class TWGameManager extends AbstractGameManager {
                     attemptLanding(entity, rollTarget, vReport);
                 }
 
-                checkLandingTerrainEffects(aero, vertical, c, finalPosition, entity.getFacing());
+                if (game.getBoard().contains(c) && game.getBoard().contains(finalPosition)) {
+                    checkLandingTerrainEffects(aero, vertical, c, finalPosition, entity.getFacing());
+                } else {
+                    // Somehow left the map while crashing!  This will count as destroyed.
+                    r = new Report(9701);
+                    r.subject = entity.getId();
+                    vReport.add(r);
+                    vReport.addAll(destroyEntity(entity, "crashed off the map", true, true));
+                    return vReport;
+                }
+
                 // No more damage needs to be calculated for the crash-landed entity
                 crashLanded = true;
             }

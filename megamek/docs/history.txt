@@ -82,6 +82,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6665: Wind strength adheres to wind min and max settings
 + PR #6669: Replace Java accent normalization wtih ICU4J, a capable unicode library to normalize text in more scenarios 
 + PR #6661: Weapon Panel null check and logging
++ Fix #6630: Attempts to fix saving GIFs and improves error messages
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

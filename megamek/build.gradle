@@ -64,6 +64,8 @@ dependencies {
 
     implementation 'com.squareup:gifencoder:0.10.1'
 
+    implementation 'com.ibm.icu:icu4j:76.1'
+
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'

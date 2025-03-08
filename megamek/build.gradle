@@ -492,6 +492,29 @@ task testAi(type: JavaExec, dependsOn: jar) {
     jvmArgs = mmJvmOptions
 }
 
+task signCanonicalFiles(type: JavaExec, dependsOn: classes) {
+    description = 'Sign files and verifies them using the key pair'
+    group = 'security'
+
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.FileSignerTool'
+    args(project.hasProperty("signFilesArgs") ? project.property("signFilesArgs").split(' ') : "")
+
+    jvmArgs = mmJvmOptions
+}
+
+task generateKeyPair(type: JavaExec, dependsOn: classes) {
+    description = 'Generates a key pair for file signing'
+    group = 'security'
+
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.KeyGeneratorTool'
+    args(project.hasProperty("keyArgs") ? project.property("keyArgs").split(' ') : "")
+
+    jvmArgs = mmJvmOptions
+}
+
+
 tasks.withType(Checkstyle) {
     minHeapSize = "200m"
     maxHeapSize = "1g"

@@ -5184,6 +5184,16 @@ public class TWGameManager extends AbstractGameManager {
      * the unit is a Spheroid dropship with engines disabled since before this turn,
      * or some other TBD state, does the unit actually _crash_
      * (and in the case of DropShips or larger, become destroyed immediately).
+     * Outcomes:
+     * 1. Crash occurred off-map: destroyed
+     * 2. Crash occurred on-map on a Low Atmosphere map: destroyed (should do a crash landing but needs 2-level maps)
+     * 3. Crash occurred on ground map:
+     *   A. If able, attempt landing; suffer damage from failure
+     *     i. out of control: auto-fail at MoF 10
+     *     ii. otherwise: roll for landing
+     *   B. If not able:
+     *     i. DropShip or larger is destroyed
+     *     ii. Other aerospace units suffer crash damage rather than failed landing damage
      * @param entity    unit that is possibly crashing.
      * @param vel       velocity the unit is traveling at.
      * @param c         Coords of central hex of unit.
@@ -5215,6 +5225,7 @@ public class TWGameManager extends AbstractGameManager {
             //    If an Aerospace unit or LAM cannot attempt to land, it will fully crash.
             IAero aero = (IAero) entity;
             boolean vertical = aero.isSpheroid() || (aero.isVSTOL() && !entity.isDropShip());
+            Coords finalPosition = (vertical) ? c : c.translated(entity.getFacing(), aero.getLandingLength());
 
             if (!entity.getCrew().isActive() || entity.isShutDown()
                 || (aero.getEnginesLostRound() < game.getCurrentRound())) {
@@ -5227,11 +5238,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // 2. Check if there is space available to land; if not, they will crash
-            //    (but not be auto-destroyed since the attempt was made)
-            canCrashLand &= (null == ((vertical) ? aero.hasRoomForVerticalLanding() : aero.hasRoomForHorizontalLanding()));
-
-            // 3. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
+            // 2. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
             if (canCrashLand){
                 // Generate piloting roll to attempt to land.  This includes all landing mods from
                 // TW pg 86
@@ -5242,7 +5249,8 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (aero.isOutControl()) {
                     // Rules say the roll is made but fails automatically at 10 MOF.
-                    rollTarget.addModifier(PilotingRollData.AUTOMATIC_FAIL, "Landing while Out of Control: Landing Roll automatically fails!");
+                    rollTarget.addModifier(PilotingRollData.AUTOMATIC_FAIL,
+                        "OOC Landing attempt: Landing Roll automatically fails! (MoF 10)");
 
                     // Report auto-failing control roll
                     r = new Report(9600);
@@ -5256,19 +5264,20 @@ public class TWGameManager extends AbstractGameManager {
                     attemptLanding(entity, rollTarget, vReport);
                 }
 
-                // horizontal fliers take some space to land; calc final position, check terrain
-                // effects, move to final position.
-                Coords finalPosition = (vertical) ? c : c.translated(entity.getFacing(), aero.getLandingLength());
                 checkLandingTerrainEffects(aero, vertical, c, finalPosition, entity.getFacing());
-                if (!finalPosition.equals(c)) {
-                    entity.setPosition(finalPosition, true);
-                }
-
                 // No more damage needs to be calculated for the crash-landed entity
                 crashLanded = true;
             }
 
-            // Technically bring to a halt; actual landing is handled elsewhere.
+            // Horizontal fliers take some space to land; calc final position, check terrain
+            // effects, move to final position.
+            // Also update 'c' to represent final position.
+            if (!finalPosition.equals(c)) {
+                entity.setPosition(finalPosition, true);
+                c = finalPosition;
+            }
+
+            // Technically bring to a halt; actual landing is handled above.
             ((IAero) entity).land();
         }
 
@@ -24651,9 +24660,9 @@ public class TWGameManager extends AbstractGameManager {
                         r.addDesc(other);
                         vDesc.addElement(r);
                     }
-                    // Can we unload the unit to the current hex?
-                    // TODO : unloading into stacking violation is not
-                    // explicitly prohibited in the BMRr.
+                    // Can we unload the unit to the current hex(es)?
+                    // TODO: update this section to implement Total Warfare Destroyed Carrier
+                    // rules per pp 90, 223-224, 239, 250
                     else if ((null != Compute.stackingViolation(game, other.getId(), curPos, entity.climbMode()))
                             || other.isLocationProhibited(curPos)) {
                         // Nope.

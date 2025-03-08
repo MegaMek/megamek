@@ -3290,7 +3290,7 @@ public class Princess extends BotClient {
                 || entity.isCrippled()
                 || entity.isShutDown()
                 || entity.isDoomed()
-        )){
+        ) && (entity.getAltitude() < 1)){
             shouldAbandon = true;
         } else if (entity instanceof Tank tank) {
             // Immobile tank?  Abandon!
@@ -3316,6 +3316,82 @@ public class Princess extends BotClient {
             }
         }
         return shouldAbandon;
+    }
+
+    void abandonShipOneUnit(Entity movingEntity, Vector<Transporter> transporters, MovePath path) {
+
+        // Set dismount locations: this hex / adjacent hexes / outer-ring adjacent hexes
+        List<Coords> dismountLocations = List.of(movingEntity.getPosition());
+        if (
+            movingEntity.isDropShip()
+            || movingEntity.isSmallCraft()
+            || (movingEntity.isSupportVehicle() && movingEntity.isSuperHeavy())
+        ) {
+            int distance = (movingEntity.isDropShip()) ? 2 : 1;
+            dismountLocations = movingEntity.getPosition()
+                .allAtDistance(distance).stream()
+                .filter(c -> game.getBoard().contains(c)).toList();
+        }
+
+        int dismountIndex = 0;
+        int unitsUnloaded = 0;
+
+        for (Transporter transporter : transporters) {
+            unitsUnloaded = transporter.getNumberUnloadedThisTurn();
+            // Infantry can stack
+            dismountIndex = unitsUnloaded / ((transporter instanceof InfantryTransporter) ? 2 : 1);
+            Vector<Entity> entityList;
+            int currentDoors;
+            if (transporter instanceof InfantryTransporter infantryTransporter) {
+                entityList = infantryTransporter.getLoadedUnits();
+                currentDoors = infantryTransporter.getCurrentDoors();
+            } else if (transporter instanceof Bay bay) {
+                entityList = bay.getLoadedUnits();
+                currentDoors = bay.getCurrentDoors();
+            } else {
+                // Currently unhandled.
+                continue;
+            }
+            for (Entity loadedEntity : entityList) {
+                Coords dismountLocation = dismountLocations.get(dismountIndex);
+
+                // for now, just unload transporters at 'safe' rate
+                // (1 per transporter door per turn except for infantry which limited by adj. hexes, TW 91)
+                int maxDismountsPerBay = (loadedEntity.isInfantry()) ? Integer.MAX_VALUE : currentDoors;
+                if (unitsUnloaded < maxDismountsPerBay) {
+                    while (dismountIndex < dismountLocations.size()) {
+                        // this condition is a simple check that we're not unloading units into fatal conditions
+                        boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType())
+                            || loadedEntity.isLocationProhibited(dismountLocation)
+                            || loadedEntity.isLocationDeadly(dismountLocation);
+
+                        // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
+                        boolean unloadIllegal = Compute.stackingViolation(
+                            getGame(), loadedEntity, dismountLocation,
+                            (dismountLocations.size() == 1) ? movingEntity : null,
+                            loadedEntity.climbMode()
+                        ) != null;
+
+                        if (unloadIllegal) {
+                            // Try the next hex
+                            dismountIndex++;
+                        } else if (!unloadFatal) {
+                            // Princess *has* to track this as we don't see entity updates
+                            // to our local game instance until movement is fully done!
+                            movingEntity.unload(loadedEntity);
+                            loadedEntity.setUnloaded(true);
+                            loadedEntity.setTransportId(Entity.NONE);
+
+                            path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
+                            return;
+                        }
+                    }
+                } else {
+                    // Hit the max for this bay
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -3358,37 +3434,38 @@ public class Princess extends BotClient {
         int unitsUnloaded;
         int dismountIndex = 0;
         for (Transporter transporter : transporters) {
-            if (dismountIndex >= dismountLocations.size()) {
-                break;
-            }
             if (transporter instanceof InfantryCompartment infantryCompartment) {
                 for (Entity loadedEntity : infantryCompartment.getLoadedUnits()) {
-                    Coords dismountLocation = dismountLocations.get(dismountIndex);
-                    unitsUnloaded = infantryCompartment.getNumberUnloadedThisTurn();
-                    dismountIndex = unitsUnloaded / 2;
+                    while (dismountIndex < dismountLocations.size()) {
+                        Coords dismountLocation = dismountLocations.get(dismountIndex);
+                        unitsUnloaded = infantryCompartment.getNumberUnloadedThisTurn();
+                        dismountIndex = unitsUnloaded / 2;
 
-                    // this condition is a simple check that we're not unloading infantry into deep space
-                    // or into lava or some other such nonsense
-                    boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType())
-                        || loadedEntity.isLocationProhibited(dismountLocation)
-                        || loadedEntity.isLocationDeadly(dismountLocation);
+                        // this condition is a simple check that we're not unloading infantry into deep space
+                        // or into lava or some other such nonsense
+                        boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType())
+                            || loadedEntity.isLocationProhibited(dismountLocation)
+                            || loadedEntity.isLocationDeadly(dismountLocation);
 
-                    // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
-                    boolean unloadIllegal = Compute.stackingViolation(
-                        getGame(), loadedEntity, dismountLocation,
-                        (dismountLocations.size() == 1) ? movingEntity : null,
-                        loadedEntity.climbMode()
-                    ) != null;
+                        // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
+                        boolean unloadIllegal = Compute.stackingViolation(
+                            getGame(), loadedEntity, dismountLocation,
+                            (dismountLocations.size() == 1) ? movingEntity : null,
+                            loadedEntity.climbMode()
+                        ) != null;
 
-                    if (!unloadFatal && !unloadIllegal) {
-                        // Princess *has* to track this as we don't see entity updates
-                        // to our local game instance until movement is fully done!
-                        movingEntity.unload(loadedEntity);
-                        loadedEntity.setUnloaded(true);
-                        loadedEntity.setTransportId(Entity.NONE);
+                        if (unloadIllegal) {
+                            dismountIndex++;
+                        } else if (!unloadFatal) {
+                            // Princess *has* to track this as we don't see entity updates
+                            // to our local game instance until movement is fully done!
+                            movingEntity.unload(loadedEntity);
+                            loadedEntity.setUnloaded(true);
+                            loadedEntity.setTransportId(Entity.NONE);
 
-                        path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
-                        return;
+                            path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
+                            return;
+                        }
                     }
                 }
             }
@@ -3404,39 +3481,40 @@ public class Princess extends BotClient {
             // Infantry can stack
             dismountIndex = unitsUnloaded / ((bay instanceof InfantryTransporter) ? 2 : 1);
             for (Entity loadedEntity : bay.getUnloadableUnits()) {
-                if (dismountIndex >= dismountLocations.size()) {
-                    break;
-                }
-                Coords dismountLocation = dismountLocations.get(dismountIndex);
+                while (dismountIndex < dismountLocations.size()) {
+                    Coords dismountLocation = dismountLocations.get(dismountIndex);
 
-                // for now, just unload bays at 'safe' rate
-                // (1 per bay door per turn except for infantry, TW 91)
-                int maxDismountsPerBay = (loadedEntity.isInfantry()) ? Integer.MAX_VALUE : bay.getCurrentDoors();
-                if (unitsUnloaded < maxDismountsPerBay) {
-                    // this condition is a simple check that we're not unloading units into fatal conditions
-                    boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType())
-                        || loadedEntity.isLocationProhibited(dismountLocation)
-                        || loadedEntity.isLocationDeadly(dismountLocation);
+                    // for now, just unload bays at 'safe' rate
+                    // (1 per bay door per turn except for infantry, TW 91)
+                    int maxDismountsPerBay = (loadedEntity.isInfantry()) ? Integer.MAX_VALUE : bay.getCurrentDoors();
+                    if (unitsUnloaded < maxDismountsPerBay) {
+                        // this condition is a simple check that we're not unloading units into fatal conditions
+                        boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType())
+                            || loadedEntity.isLocationProhibited(dismountLocation)
+                            || loadedEntity.isLocationDeadly(dismountLocation);
 
-                    // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
-                    boolean unloadIllegal = Compute.stackingViolation(
-                        getGame(), loadedEntity, dismountLocation,
-                        (dismountLocations.size() == 1) ? movingEntity : null,
-                        loadedEntity.climbMode()
-                    ) != null;
+                        // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
+                        boolean unloadIllegal = Compute.stackingViolation(
+                            getGame(), loadedEntity, dismountLocation,
+                            (dismountLocations.size() == 1) ? movingEntity : null,
+                            loadedEntity.climbMode()
+                        ) != null;
 
-                    if (!unloadFatal && !unloadIllegal) {
-                        // Princess *has* to track this as we don't see entity updates
-                        // to our local game instance until movement is fully done!
-                        movingEntity.unload(loadedEntity);
-                        loadedEntity.setUnloaded(true);
-                        loadedEntity.setTransportId(Entity.NONE);
+                        if (unloadIllegal) {
+                            dismountIndex++;
+                        } else if (!unloadFatal) {
+                            // Princess *has* to track this as we don't see entity updates
+                            // to our local game instance until movement is fully done!
+                            movingEntity.unload(loadedEntity);
+                            loadedEntity.setUnloaded(true);
+                            loadedEntity.setTransportId(Entity.NONE);
 
-                        path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
-                        return;
+                            path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
+                            return;
+                        }
+                    } else {
+                        break;
                     }
-                } else {
-                    break;
                 }
             }
         }

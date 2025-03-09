@@ -27,13 +27,13 @@ public enum EntityFinalState {
     final boolean crewMustSurvive;
     final boolean entityMustSurvive;
     final boolean noCrewDamage;
-    final boolean entityMystBeDevastated;
+    final boolean entityMustBeDevastated;
 
-    EntityFinalState(boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage, boolean entityMystBeDevastated) {
+    EntityFinalState(boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage, boolean entityMustBeDevastated) {
         this.crewMustSurvive = crewMustSurvive;
         this.entityMustSurvive = entityMustSurvive;
         this.noCrewDamage = noCrewDamage;
-        this.entityMystBeDevastated  = entityMystBeDevastated;
+        this.entityMustBeDevastated = entityMustBeDevastated;
     }
 
     public static EntityFinalState fromEntityRemovalState(int removalState) {

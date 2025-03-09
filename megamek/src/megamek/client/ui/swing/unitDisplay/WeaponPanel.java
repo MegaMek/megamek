@@ -21,7 +21,6 @@ package megamek.client.ui.swing.unitDisplay;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -37,7 +36,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 
-import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.ui.GBC;
@@ -48,7 +46,6 @@ import megamek.client.ui.swing.FiringDisplay;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.client.ui.swing.widget.PicMap;
@@ -67,11 +64,14 @@ import megamek.common.weapons.AreaEffectHelper;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * This class contains the all the gizmos for firing the mek's weapons.
  */
 public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener, IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(WeaponPanel.class);
+
     /**
      * Mouse adaptor for the weapon list. Supports rearranging the weapons
      * to define a custom ordering.
@@ -1120,31 +1120,35 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         Coords position = entity.getPosition();
         if (!en.isOffBoard() && (position != null)) {
             Hex hex = game.getBoard().getHex(position);
-            if (hex.containsTerrain(Terrains.FIRE)
-                    && (hex.getFireTurn() > 0)) {
-                // standing in fire
-                if ((en instanceof Mek)
-                        && ((Mek) en).hasIntactHeatDissipatingArmor()) {
-                    currentHeatBuildup += 2;
-                } else {
-                    currentHeatBuildup += 5;
+            if (hex != null) {
+                if (hex.containsTerrain(Terrains.FIRE)
+                        && (hex.getFireTurn() > 0)) {
+                    // standing in fire
+                    if ((en instanceof Mek)
+                            && ((Mek) en).hasIntactHeatDissipatingArmor()) {
+                        currentHeatBuildup += 2;
+                    } else {
+                        currentHeatBuildup += 5;
+                    }
                 }
-            }
 
-            if (hex.terrainLevel(Terrains.MAGMA) == 1) {
-                if ((en instanceof Mek)
-                        && ((Mek) en).hasIntactHeatDissipatingArmor()) {
-                    currentHeatBuildup += 2;
-                } else {
-                    currentHeatBuildup += 5;
+                if (hex.terrainLevel(Terrains.MAGMA) == 1) {
+                    if ((en instanceof Mek)
+                            && ((Mek) en).hasIntactHeatDissipatingArmor()) {
+                        currentHeatBuildup += 2;
+                    } else {
+                        currentHeatBuildup += 5;
+                    }
+                } else if (hex.terrainLevel(Terrains.MAGMA) == 2) {
+                    if ((en instanceof Mek)
+                            && ((Mek) en).hasIntactHeatDissipatingArmor()) {
+                        currentHeatBuildup += 5;
+                    } else {
+                        currentHeatBuildup += 10;
+                    }
                 }
-            } else if (hex.terrainLevel(Terrains.MAGMA) == 2) {
-                if ((en instanceof Mek)
-                        && ((Mek) en).hasIntactHeatDissipatingArmor()) {
-                    currentHeatBuildup += 5;
-                } else {
-                    currentHeatBuildup += 10;
-                }
+            } else {
+                logger.warn("An entity is not offboard but has a position not on board.");
             }
         }
 

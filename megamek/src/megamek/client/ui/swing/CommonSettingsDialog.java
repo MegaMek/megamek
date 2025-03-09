@@ -2123,9 +2123,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             Collections.sort(xmlFiles);
             var model = new DefaultComboBoxModel<>(xmlFiles.toArray(new String[0]));
             skinFiles.setModel(model);
-            // Select the default file first
-            skinFiles.setSelectedItem(SkinXMLHandler.defaultSkinXML);
-            // If this select fails, the default skin will be selected
             skinFiles.setSelectedItem(GUIP.getSkinFile());
 
             uiThemes.removeAllItems();

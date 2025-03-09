@@ -1577,6 +1577,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getDefaultString(SKIN_FILE);
     }
 
+    public String getDefaultSkinFile() {
+        return store.getDefaultString(SKIN_FILE);
+    }
+
     public String getUITheme() {
         return store.getString(UI_THEME);
     }

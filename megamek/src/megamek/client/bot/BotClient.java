@@ -403,7 +403,7 @@ public abstract class BotClient extends Client {
                     exchangeSetup();
                     break;
                 case DEPLOY_MINEFIELDS:
-                    deployMinefieldSetup();
+                    deployMinefields();
                     break;
                 case DEPLOYMENT:
                     initialize();
@@ -1242,13 +1242,13 @@ public abstract class BotClient extends Client {
     protected void exchangeSetup() {
         // Do nothing;
     }
-
+  
     private record MinefieldNumbers(int number, int type) {}
 
     /**
      * Deploy minefields for the bot
      */
-    protected void deployMinefieldSetup() {
+    protected void deployMinefields() {
         MinefieldNumbers[] minefieldNumbers = getMinefieldNumbers();
         int totalMines = Arrays.stream(minefieldNumbers).mapToInt(MinefieldNumbers::number).sum();
         Deque<Coords> coordsSet = getMinefieldDeploymentPlanner().getRandomMinefieldPositions(totalMines);

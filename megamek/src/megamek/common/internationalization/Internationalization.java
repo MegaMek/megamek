@@ -13,6 +13,7 @@
  */
 package megamek.common.internationalization;
 
+import com.ibm.icu.text.Transliterator;
 import megamek.MegaMek;
 
 import java.io.IOException;
@@ -108,4 +109,20 @@ public class Internationalization {
         return MessageFormat.format(getTextAt(bundleName, key), args);
     }
 
+    // Only handles Latin characters like ø.
+    // Characters from other scripts will be left unchanged.
+    // This is probably unnecessary at this time, but if it becomes relevant, replace "Latin-ASCII" with "Any-Latin; Latin-ASCII" to attempt to convert other scripts to ASCII.
+    // The Any-Latin transliteration will attempt phonetic transliteration based on the most likely pronunciation for the given characters,
+    private static final Transliterator normalizer = Transliterator.getInstance("Latin-ASCII");
+
+    /**
+     * Takes a string of Unicode text and attempts to convert it to an ASCII representation of that string.
+     * Characters such as ø and ö will be converted to o.
+     * @param text A String, such as <i>Gún</i> or <i>Götterdämmerung</i>
+     * @return The normalized String, such as <i>Gun</i> or <i>Gotterdammerung</i>.<br/>
+     *  The returned string is <i>not</i> guaranteed to be only ASCII. Normalization will fail if there's no direct mapping from a character to its ASCII equivalent.
+     */
+    public static String normalizeTextToASCII(String text) {
+        return normalizer.transliterate(text);
+    }
 }

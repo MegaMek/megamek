@@ -77,6 +77,12 @@ MEGAMEK VERSION HISTORY:
 + PR #6645: Support multiselect in the Add Unit dialog
 + PR #6647: Allow pasting units into selected player list (if selected)
 + PR #6667: feat: allow princess to deploy mines in random clear hexes on the map 
++ PR #6653: Fixes MekHQ Issue 6026 - Prevents overkilling Aero when they should survive (ACAR)
++ Fix #6654: Prevents crashing when selected skin file is missing
++ Fix #6665: Wind strength adheres to wind min and max settings
++ PR #6669: Replace Java accent normalization wtih ICU4J, a capable unicode library to normalize text in more scenarios 
++ PR #6661: Weapon Panel null check and logging
++ Fix #6630: Attempts to fix saving GIFs and improves error messages
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

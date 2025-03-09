@@ -33,7 +33,7 @@ import megamek.ai.dataset.UnitAction;
 import megamek.ai.dataset.UnitState;
 import megamek.client.bot.caspar.DefaultInputAxisCalculator;
 import megamek.client.bot.common.DifficultyLevel;
-import megamek.client.bot.caspar.axis.InputAxisCalculator;
+import megamek.ai.axis.InputAxisCalculator;
 import megamek.logging.MMLogger;
 
 import java.io.IOException;

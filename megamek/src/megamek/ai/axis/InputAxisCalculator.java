@@ -25,11 +25,10 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  */
-package megamek.client.bot.caspar.axis;
+package megamek.ai.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
-import megamek.common.MovePath;
 
 /**
  * Interface for calculating input vectors for the neural network.

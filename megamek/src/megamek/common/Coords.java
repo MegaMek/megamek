@@ -447,18 +447,23 @@ public class Coords implements Serializable {
 
     /** Returns the distance to the coordinate given as distx, disty. */
     public int distance(int distx, int disty) {
+        return distance(x, y, distx, disty);
+    }
+
+    /** Returns the distance to the coordinate given as distx, disty. */
+    public static int distance(int originX, int originY, int distX, int distY) {
         // based on
         // http://www.rossmack.com/ab/RPG/traveller/AstroHexDistance.asp
-        int xd = Math.abs(x - distx);
-        int yo = (xd / 2) + (!isXOdd() && ((distx & 1) == 1) ? 1 : 0);
-        int ymin = y - yo;
-        int ymax = ymin + xd;
+        int xd = Math.abs(originX - distX);
+        int yo = (xd / 2) + (!((originX & 1) == 1) && ((distX & 1) == 1) ? 1 : 0);
+        int yMin = originY - yo;
+        int yMax = yMin + xd;
         int ym = 0;
-        if (disty < ymin) {
-            ym = ymin - disty;
+        if (distY < yMin) {
+            ym = yMin - distY;
         }
-        if (disty > ymax) {
-            ym = disty - ymax;
+        if (distY > yMax) {
+            ym = distY - yMax;
         }
         return xd + ym;
     }

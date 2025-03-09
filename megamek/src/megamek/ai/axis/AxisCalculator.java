@@ -1,4 +1,4 @@
-package megamek.client.bot.caspar.axis;
+package megamek.ai.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;

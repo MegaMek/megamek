@@ -25,9 +25,8 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  */
-package megamek.client.bot.caspar;
+package megamek.client.bot.common;
 
-import megamek.client.bot.common.GameState;
 import megamek.common.Entity;
 import megamek.common.MovePath;
 

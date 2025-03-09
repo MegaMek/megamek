@@ -32,7 +32,7 @@ import megamek.client.bot.common.DifficultyLevel;
 import megamek.client.bot.common.ScoutingPlanner;
 import megamek.client.bot.common.formation.FormationManager;
 import megamek.client.bot.common.GameState;
-import megamek.client.bot.caspar.axis.InputAxisCalculator;
+import megamek.ai.axis.InputAxisCalculator;
 import megamek.client.bot.neuralnetwork.NeuralNetwork;
 import megamek.client.bot.princess.RankedPath;
 import megamek.common.MovePath;

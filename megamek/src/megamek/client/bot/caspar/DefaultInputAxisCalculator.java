@@ -30,10 +30,9 @@ package megamek.client.bot.caspar;
 
 import megamek.client.bot.caspar.axis.AxisType;
 import megamek.client.bot.common.GameState;
-import megamek.client.bot.caspar.axis.AxisCalculator;
-import megamek.client.bot.caspar.axis.InputAxisCalculator;
+import megamek.ai.axis.AxisCalculator;
+import megamek.ai.axis.InputAxisCalculator;
 import megamek.client.bot.common.Pathing;
-import megamek.common.MovePath;
 
 /**
  * Default implementation of the InputAxisCalculator interface.

@@ -29,6 +29,7 @@ package megamek.client.bot.caspar;
 
 import megamek.client.bot.common.Agent;
 import megamek.client.bot.common.GameState;
+import megamek.client.bot.common.PathfindingEngine;
 import megamek.client.bot.princess.PathEnumerator;
 import megamek.common.Entity;
 import megamek.common.MovePath;

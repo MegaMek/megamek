@@ -29,7 +29,8 @@ package megamek.client.bot.caspar;
 
 
 import megamek.client.bot.common.GameState;
-import megamek.client.bot.caspar.axis.InputAxisCalculator;
+import megamek.ai.axis.InputAxisCalculator;
+import megamek.client.bot.common.PathfindingEngine;
 import megamek.client.bot.neuralnetwork.NeuralNetwork;
 import megamek.client.bot.princess.RankedPath;
 import megamek.common.Entity;

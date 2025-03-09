@@ -29,6 +29,7 @@
 package megamek.client.bot.common;
 
 import megamek.common.Entity;
+import megamek.common.IAero;
 import megamek.logging.MMLogger;
 
 import java.util.Iterator;
@@ -52,6 +53,9 @@ public class StructOfUnitArrays implements Iterable<Integer> {
     private int[] teamId;
     private int[] maxRange;
     private int[] role;
+    private int[] armor;
+    private int[] internal;
+    private int[] ecm;
     private int length;
 
     /**
@@ -68,6 +72,9 @@ public class StructOfUnitArrays implements Iterable<Integer> {
         this.teamId = new int[length];
         this.maxRange = new int[length];
         this.role = new int[length];
+        this.armor = new int[length];
+        this.internal = new int[length];
+        this.ecm = new int[length];
         update(entities);
         logger.debug("Created StructOfUnitArrays with {} entities", length);
     }
@@ -89,6 +96,10 @@ public class StructOfUnitArrays implements Iterable<Integer> {
             this.teamId[i] = entity.getOwner().getTeam();
             this.maxRange[i] = entity.getMaxWeaponRange();
             this.role[i] = entity.getRole().ordinal();
+            this.armor[i] = Math.max(entity.getTotalArmor(), 0);
+            this.internal[i] = (entity instanceof IAero aero) ?  Math.max(aero.getSI(), 0) :
+                  Math.max(entity.getTotalInternal(), 0);
+            this.ecm[i] = entity.hasECM() ? 1 : 0;
         }
         logger.debug("Updated StructOfUnitArrays with {} entities", length);
     }
@@ -103,6 +114,9 @@ public class StructOfUnitArrays implements Iterable<Integer> {
             this.teamId = new int[length];
             this.maxRange = new int[length];
             this.role = new int[length];
+            this.armor = new int[length];
+            this.internal = new int[length];
+            this.ecm = new int[length];
         }
         this.length = length;
     }
@@ -302,9 +316,9 @@ public class StructOfUnitArrays implements Iterable<Integer> {
     }
 
     /**
-     * Get the facing of the entity at the given index.
+     * Get the facing of the unit at the given index.
      * @param index index of the unit
-     * @return the facing of the entity
+     * @return the facing of the unit
      */
     public int getFacing(int index) {
         assertIndex(index);
@@ -318,9 +332,9 @@ public class StructOfUnitArrays implements Iterable<Integer> {
     }
 
     /**
-     * Get the owner id of the entity at the given index.
+     * Get the owner id of the unit at the given index.
      * @param index index of the unit
-     * @return the owner id of the entity
+     * @return the owner id of the unit
      */
     public int getOwnerId(int index) {
         assertIndex(index);
@@ -328,9 +342,9 @@ public class StructOfUnitArrays implements Iterable<Integer> {
     }
 
     /**
-     * Get the team id of the entity at the given index.
+     * Get the team id of the unit at the given index.
      * @param index index of the unit
-     * @return the team id of the entity
+     * @return the team id of the unit
      */
     public int getTeamId(int index) {
         assertIndex(index);
@@ -338,15 +352,44 @@ public class StructOfUnitArrays implements Iterable<Integer> {
     }
 
     /**
-     * Get the role of the entity at the given index.
+     * Get the role of the unit at the given index.
      * @param index index of the unit
-     * @return the role of the entity
+     * @return the role of the unit
      */
     public int getRole(int index) {
         assertIndex(index);
         return role[index];
     }
 
+    /**
+     * Get the armor remaining of the unit at the given index.
+     * @param index index of the unit
+     * @return the armor remaining of the unit
+     */
+    public int getArmor(int index) {
+        assertIndex(index);
+        return armor[index];
+    }
+
+    /**
+     * Get the armor remaining of the unit at the given index.
+     * @param index index of the unit
+     * @return the armor remaining of the unit
+     */
+    public int getInternal(int index) {
+        assertIndex(index);
+        return internal[index];
+    }
+
+    /**
+     * True if the unit has ECM, false otherwise.
+     * @param index index of the unit
+     * @return true if the unit has ECM, false otherwise
+     */
+    public boolean hasECM(int index) {
+        assertIndex(index);
+        return ecm[index] == 1;
+    }
 
     public enum Index {
         ID,
@@ -356,7 +399,10 @@ public class StructOfUnitArrays implements Iterable<Integer> {
         OWNER_ID,
         TEAM_ID,
         ROLE,
-        MAX_RANGE;
+        MAX_RANGE,
+        ARMOR,
+        INTERNAL,
+        ECM
     }
 
     /**
@@ -374,6 +420,9 @@ public class StructOfUnitArrays implements Iterable<Integer> {
             array[i][Index.TEAM_ID.ordinal()] = teamId[i];
             array[i][Index.ROLE.ordinal()] = role[i];
             array[i][Index.MAX_RANGE.ordinal()] = maxRange[i];
+            array[i][Index.ARMOR.ordinal()] = armor[i];
+            array[i][Index.INTERNAL.ordinal()] = internal[i];
+            array[i][Index.ECM.ordinal()] = ecm[i];
         }
         return array;
     }

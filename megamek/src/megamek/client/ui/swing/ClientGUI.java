@@ -97,6 +97,7 @@ import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import static megamek.common.Configuration.gameSummaryImagesMMDir;
@@ -2261,7 +2262,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     private void saveGifGameSummary() {
-        String filename = StringUtil.addDateTimeStamp(client.getLocalPlayer().getName());
+        String filename = StringUtil.addDateTimeStamp("combat_summary_");
         String gameUuid = client.getGame().getUUIDString();
         File tempGifFile = new File(gameSummaryImagesMMDir(), gameUuid + CG_FILEEXTENTIONGIF);
 
@@ -2284,7 +2285,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             if (tempGifFile.delete()) {
                 logger.info("Game summary GIF deleted");
             } else {
-                logger.error("Failed to delete game summary GIF");
+                logger.warn("Failed to delete game summary GIF");
             }
             return;
         }
@@ -2306,19 +2307,22 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     return;
                 }
             }
-
-            try {
-                if (tempGifFile.renameTo(gifFile)) {
-                    logger.info("Game summary GIF saved to {}", gifFile);
-                } else {
-                    logger.error("Failed to save game summary GIF to {}", gifFile);
+            File finalGifFile = gifFile;
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    if (tempGifFile.renameTo(finalGifFile)) {
+                        logger.info("Game summary GIF saved to {}", finalGifFile);
+                    } else {
+                        logger.error("Unable to rename {} to {}", tempGifFile, finalGifFile);
+                        doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"),
+                            Messages.getString("ClientGUI.errorSavingFileGifMessage", finalGifFile.toString(), tempGifFile.toString()));
+                    }
+                } catch (Exception ex) {
+                    logger.error(ex, "saveGifGameSummary");
                     doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"),
-                        Messages.getString("ClientGUI.errorSavingFileGifMessage", gifFile.toString()));
+                        Messages.getString("ClientGUI.errorSavingFileGifMessage", finalGifFile.toString(), tempGifFile.toString()));
                 }
-            } catch (Exception ex) {
-                logger.error(ex, "saveVictoryList");
-                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
-            }
+            });
         }
     }
 

@@ -33,9 +33,6 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
 
     // Target roll to hit the rear arc of the mek randomly
     private static final int REAR_ARC_HIT_CHANCE = 11;
-    private static final Set<Integer> criticalSystems = Set.of(Mek.SYSTEM_ENGINE, Mek.SYSTEM_GYRO, Mek.SYSTEM_LIFE_SUPPORT,
-        Mek.SYSTEM_SENSORS, Mek.SYSTEM_COCKPIT);
-    private static final Set<Integer> criticalLocations = Set.of(Mek.LOC_CT, Mek.LOC_HEAD, Mek.LOC_LT, Mek.LOC_RT);
 
     @Override
     public int devastateUnit() {
@@ -244,8 +241,7 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
     }
 
     private boolean canHaveAmmoExplosion() {
-        return entityFinalState.equals(ENTITY_MUST_BE_DEVASTATED) || entityFinalState.equals(DAMAGE_ONLY_THE_ENTITY)
-            || entityFinalState.equals(ANY);
+        return entityFinalState.equals(ENTITY_MUST_BE_DEVASTATED) || entityFinalState.equals(ANY);
     }
 
     private static ArrayList<CriticalSlot> getCriticalSlots(Mek entity, HitData hit) {

@@ -23,9 +23,16 @@ import megamek.client.ui.models.XTableColumnModel;
 import megamek.client.ui.panes.EntityViewPane;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitLoadingDialog;
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
+import megamek.common.TechConstants;
+import megamek.common.UnitType;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
+import megamek.common.internationalization.Internationalization;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -45,10 +52,17 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.awt.event.*;
-import java.text.Normalizer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
@@ -665,9 +679,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     protected boolean matchesTextFilter(MekSummary unit) {
         if (!textFilter.getText().isBlank()) {
-            String text = stripAccents(textFilter.getText().toLowerCase());
+            String text = Internationalization.normalizeTextToASCII(textFilter.getText()).toLowerCase();
             String[] tokens = text.split(" ");
-            String searchText = stripAccents(unit.getName().toLowerCase() + "###" + unit.getModel().toLowerCase());
+            String searchText = Internationalization.normalizeTextToASCII(unit.getName() + "###" + unit.getModel()).toLowerCase();
             for (String token : tokens) {
                 if (!searchText.contains(token)) {
                     return false;
@@ -675,14 +689,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             }
         }
         return true;
-    }
-
-    public static String stripAccents(String input) {
-        if (input == null) {
-            return null;
-        }
-        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-        return normalized.replaceAll("\\p{M}", "");
     }
 
     /**

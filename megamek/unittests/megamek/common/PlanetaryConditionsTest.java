@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,21 +18,24 @@
  */
 package megamek.common;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
+import megamek.common.planetaryconditions.WindDirection;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
+
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class PlanetaryConditionsTest {
 
@@ -210,5 +213,259 @@ class PlanetaryConditionsTest {
 
         // Regular temperature
         assertEquals("25", PlanetaryConditions.getTemperatureDisplayableName(25));
+    }
+
+    /**
+     * @see PlanetaryConditions#determineWind()
+     */
+    @Nested
+    class DetermineWindTests {
+        PlanetaryConditions planetaryConditions;
+
+        @BeforeEach
+        void beforeEach() {
+            planetaryConditions = new PlanetaryConditions();
+            planetaryConditions.setWindDirection(WindDirection.NORTH); //Set an initial direction
+            planetaryConditions.setWind(Wind.MOD_GALE);
+        }
+
+        @Test
+        void testNoOptionsEnabled() {
+            // Arrange
+            try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+
+                // Act
+                planetaryConditions.determineWind();
+
+                // Assert
+                compute.verify(Compute::d6, times(0));
+            }
+        }
+
+        @Nested
+        class ThinOrTraceAtmosphereTests {
+
+            private static Stream<Arguments> atmosphereAndStrongestWind() {
+                return Stream.of(
+                      Arguments.of(Atmosphere.TRACE, Wind.STORM),
+                      Arguments.of(Atmosphere.THIN, Wind.TORNADO_F1_TO_F3)
+                );
+            }
+
+            @ParameterizedTest
+            @MethodSource(value = "atmosphereAndStrongestWind")
+            void testStrongestWindValid(Atmosphere atmosphere, Wind strongestWind) {
+                // Arrange
+                planetaryConditions.setWind(strongestWind);
+                planetaryConditions.setAtmosphere(atmosphere);
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+
+                    // Act
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    compute.verify(Compute::d6, times(0));
+                    // Nothing should've changed
+                    assertEquals(strongestWind, planetaryConditions.getWind());
+                }
+            }
+
+            @ParameterizedTest
+            @MethodSource(value = "atmosphereAndStrongestWind")
+            void testStrongerWindSlowed(Atmosphere atmosphere, Wind strongestWind) {
+                // Arrange
+                // We need to increase the wind beyond the "strongest" wind to verify it gets slowed.
+                planetaryConditions.setWind(strongestWind.raiseWind());
+                planetaryConditions.setAtmosphere(atmosphere);
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+
+                    // Act
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    compute.verify(Compute::d6, times(0));
+                    assertEquals(strongestWind, planetaryConditions.getWind());
+                }
+            }
+        }
+
+        @Nested
+        class ShiftingWindDirectionTests {
+            @BeforeEach
+            void beforeEach() {
+                planetaryConditions.setShiftingWindDirection(true);
+            }
+
+            @Test
+            void testShiftingWindDirectionEnabled () {
+                // Arrange
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+
+                    // Act
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    // Should be rolled once
+                    compute.verify(Compute::d6, times(1));
+                }
+            }
+
+            @Test
+            void testShiftingWindDirectionCW () {
+                // Arrange
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+                    compute.when(Compute::d6).thenReturn(1);
+
+                    // Act
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    // Should be rolled once
+                    compute.verify(Compute::d6, times(1));
+                    assertEquals(WindDirection.NORTHEAST, planetaryConditions.getWindDirection());
+                }
+            }
+            @Test
+            void testShiftingWindDirectionCCW () {
+                // Arrange
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+                    compute.when(Compute::d6).thenReturn(6);
+
+                    // Act
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    // Should be rolled once
+                    compute.verify(Compute::d6, times(1));
+                    assertEquals(WindDirection.NORTHWEST, planetaryConditions.getWindDirection());
+                }
+            }
+        }
+
+        @Nested
+        class ShiftingWindStrengthTests {
+            @BeforeEach
+            void beforeEach() {
+                planetaryConditions.setShiftingWindStrength(true);
+            }
+
+            @Test
+            void testShiftingWindStrengthEnabled () {
+                // Arrange
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+
+                    // Act
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    // Should be rolled once
+                    compute.verify(Compute::d6, times(1));
+                }
+            }
+
+            @Test
+            void testShiftingWindStrengthDecreaseStrength () {
+                // Arrange
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+                    compute.when(Compute::d6).thenReturn(1);
+
+                    // Act
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    // Should be rolled once
+                    compute.verify(Compute::d6, times(1));
+                    assertEquals(Wind.LIGHT_GALE, planetaryConditions.getWind());
+                }
+            }
+
+            @Test
+            void testShiftingWindStrengthDecreaseTowardsLimit () {
+                // Arrange
+                planetaryConditions.setWindMin(Wind.LIGHT_GALE);
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+                    compute.when(Compute::d6).thenReturn(1);
+
+                    // Act
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    // Should be rolled once
+                    compute.verify(Compute::d6, times(1));
+                    assertEquals(Wind.LIGHT_GALE, planetaryConditions.getWind());
+                }
+            }
+
+            @Test
+            void testShiftingWindStrengthDecreasePastLimit () {
+                // Arrange
+                planetaryConditions.setWindMin(Wind.LIGHT_GALE);
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+                    compute.when(Compute::d6).thenReturn(1);
+
+                    // Act
+                    planetaryConditions.determineWind();
+                    // Run it again - It should not change the speed
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    // Should have rolled twice, but still only a light gale
+                    compute.verify(Compute::d6, times(2));
+                    assertEquals(Wind.LIGHT_GALE, planetaryConditions.getWind());
+                }
+            }
+
+            @Test
+            void testShiftingWindStrengthIncreaseStrength () {
+                // Arrange
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+                    compute.when(Compute::d6).thenReturn(6);
+
+                    // Act
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    // Should be rolled once
+                    compute.verify(Compute::d6, times(1));
+                    assertEquals(Wind.STORM, planetaryConditions.getWind());
+                }
+            }
+
+            @Test
+            void testShiftingWindStrengthIncreaseTowardsLimit () {
+                // Arrange
+                planetaryConditions.setWindMax(Wind.STORM);
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+                    compute.when(Compute::d6).thenReturn(6);
+
+                    // Act
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    // Should be rolled once
+                    compute.verify(Compute::d6, times(1));
+                    assertEquals(Wind.STORM, planetaryConditions.getWind());
+                }
+            }
+
+            @Test
+            void testShiftingWindStrengthIncreasePastLimit () {
+                // Arrange
+                planetaryConditions.setWindMax(Wind.STORM);
+                try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
+                    compute.when(Compute::d6).thenReturn(6);
+
+                    // Act
+                    planetaryConditions.determineWind();
+                    // Run it again - It should not change the speed
+                    planetaryConditions.determineWind();
+
+                    // Assert
+                    // Should be rolled twice, but still just a storm
+                    compute.verify(Compute::d6, times(2));
+                    assertEquals(Wind.STORM, planetaryConditions.getWind());
+                }
+            }
+        }
     }
 }

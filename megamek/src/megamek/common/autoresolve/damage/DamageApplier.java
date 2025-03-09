@@ -64,8 +64,8 @@ public interface DamageApplier<E extends Entity> {
         return entityFinalState().crewMustSurvive;
     }
 
-    default boolean entityMystBeDevastated() {
-        return entityFinalState().entityMystBeDevastated;
+    default boolean entityMustBeDevastated() {
+        return entityFinalState().entityMustBeDevastated;
     }
 
     /**
@@ -88,7 +88,7 @@ public interface DamageApplier<E extends Entity> {
             totalDamage -= clusterDamage;
             damageApplied += clusterDamage;
         }
-        if (entityMystBeDevastated()) {
+        if (entityMustBeDevastated()) {
             damageApplied += devastateUnit();
         }
         return damageApplied;
@@ -111,7 +111,7 @@ public interface DamageApplier<E extends Entity> {
             totalDamage -= clusterDamage;
             damageApplied += clusterDamage;
         }
-        if (entityMystBeDevastated()) {
+        if (entityMustBeDevastated()) {
             damageApplied += devastateUnit();
         }
         return damageApplied;

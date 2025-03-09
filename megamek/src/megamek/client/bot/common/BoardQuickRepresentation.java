@@ -53,7 +53,9 @@ public class BoardQuickRepresentation {
     private final int[] boardTerrainLevels;
     private final int[] threatLevelDiscrete;
     private final double[] threatLevel;
+    private final double[] alliedThreatLevel;
     private final double[] normalizedThreatLevel;
+    private final double[] normalizedAlliedThreatLevel;
     private final BitSet hasWaterLevel;
     private final BitSet woodedTerrain;
     private final BitSet buildings;
@@ -73,7 +75,9 @@ public class BoardQuickRepresentation {
         boardTerrainLevels = new int[numberOfHexes];
         threatLevelDiscrete = new int[numberOfHexes];
         normalizedThreatLevel = new double[NORMALIZED_THREAT_HEATMAP];
+        normalizedAlliedThreatLevel = new double[NORMALIZED_THREAT_HEATMAP];
         threatLevel = new double[numberOfHexes];
+        alliedThreatLevel = new double[numberOfHexes];
         hazardousTerrain = new BitSet(numberOfHexes);
         woodedTerrain = new BitSet(numberOfHexes);
         buildings = new BitSet(numberOfHexes);
@@ -121,42 +125,49 @@ public class BoardQuickRepresentation {
         return boardTerrainLevels[getIndexFromCoords(position)];
     }
 
-    public void updateThreatHeatmap(StructOfUnitArrays enemyUnits) {
+    public void updateThreatHeatmap(StructOfUnitArrays enemies, StructOfUnitArrays own) {
+        updateThreatHeatmap(enemies, normalizedThreatLevel, threatLevelDiscrete, threatLevel);
+        updateThreatHeatmap(own, normalizedAlliedThreatLevel, threatLevelDiscrete, alliedThreatLevel);
+    }
+
+    public void updateThreatHeatmap(StructOfUnitArrays units, double[] normalizedHeatmap, int[] discreteHeatmap,
+                                    double[] threatHeatmap) {
         int width = boardWidth;
         int height = boardHeight;
         int maxValue = 0;
-        int[][] xyr = enemyUnits.getAllXYMaxRange();
+        int[][] xyr = units.getAllXYMaxRange();
 
         // first pass of heatmap decay
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                threatLevelDiscrete[y * width + x] = threatLevelDiscrete[y * width + x] / DECAY;
+                discreteHeatmap[y * width + x] = discreteHeatmap[y * width + x] / DECAY;
             }
         }
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 double maxThreat = getMaxThreat(xyr, x, y);
-                double oldValue = threatLevelDiscrete[y * width + x];
+                double oldValue = discreteHeatmap[y * width + x];
                 int newValue =  (int) Math.round(Math.max(oldValue, maxThreat));
                 maxValue =  Math.max(maxValue, newValue);
-                threatLevelDiscrete[y * width + x] = newValue;
+                discreteHeatmap[y * width + x] = newValue;
             }
-        }
-        if (maxValue == 0) {
-            return;
         }
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                double newValue = threatLevelDiscrete[y * width + x] / (double) maxValue;
-                threatLevel[y * width + x] = newValue;
+                if (maxValue == 0) {
+                    threatHeatmap[y * width + x] = 0;
+                } else {
+                    double newValue = discreteHeatmap[y * width + x] / (double) maxValue;
+                    threatHeatmap[y * width + x] = newValue;
+                }
             }
         }
-        resizeHeatmapBilinear();
+        resizeHeatmapBiLinear(threatHeatmap, normalizedHeatmap);
     }
 
-    private void resizeHeatmapBilinear() {
-        Arrays.fill(normalizedThreatLevel, 0.0);
+    private void resizeHeatmapBiLinear(double[] threatHeatmap, double[] normalizedHeatmap) {
+        Arrays.fill(normalizedHeatmap, 0.0);
         int newWidth = NORMALIZED_THREAT_MAP_SIZE;
         int newHeight = NORMALIZED_THREAT_MAP_SIZE;
         for (int newY = 0; newY < newHeight; newY++) {
@@ -170,20 +181,24 @@ public class BoardQuickRepresentation {
                 int x1 = (int) Math.floor(oldX);
                 int x2 = Math.min(x1 + 1, boardWidth - 1);
                 double dx = oldX - x1;
-                double topLeft = threatLevel[y1 * boardWidth + x1];
-                double topRight = threatLevel[y1 * boardWidth + x2];
+                double topLeft = threatHeatmap[y1 * boardWidth + x1];
+                double topRight = threatHeatmap[y1 * boardWidth + x2];
                 double top = topLeft * (1 - dx) + topRight * dx;
-                double bottomLeft = threatLevel[y2 * boardWidth + x1];
-                double bottomRight = threatLevel[y2 * boardWidth + x2];
+                double bottomLeft = threatHeatmap[y2 * boardWidth + x1];
+                double bottomRight = threatHeatmap[y2 * boardWidth + x2];
                 double bottom = bottomLeft * (1 - dx) + bottomRight * dx;
                 double value = top * (1 - dy) + bottom * dy;
-                normalizedThreatLevel[newY * newWidth + newX] = value;
+                normalizedHeatmap[newY * newWidth + newX] = value;
             }
         }
     }
 
     public double[] getNormalizedThreatLevelHeatmap() {
         return normalizedThreatLevel;
+    }
+
+    public double[] getNormalizedAlliedThreatLevel() {
+        return normalizedAlliedThreatLevel;
     }
 
     private double getMaxThreat(int[][] enemyUnitsXYMaxRange, int x, int y) {
@@ -209,8 +224,38 @@ public class BoardQuickRepresentation {
         return Math.sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
     }
 
+    /**
+     * Returns the threat level at a given position. It clamps the position to the board if it is outside of it.
+     * @param position the position to get the threat level from
+     * @return the threat level at the given position, normalized between 0 and 1
+     */
     public double getThreatLevel(Coords position) {
-        return threatLevel[getIndexFromCoords(position)];
+        return threatLevel[getIndexFromCoords(clampToBoard(position))];
+    }
+
+    /**
+     * Returns the threat level at a given position. It clamps the position to the board if it is outside of it.
+     * @param position the position to get the threat level from
+     * @return the threat level at the given position, normalized between 0 and 1
+     */
+    public double getAlliedThreatLevel(Coords position) {
+        return alliedThreatLevel[getIndexFromCoords(clampToBoard(position))];
+    }
+
+    private Coords clampToBoard(Coords position) {
+        int x = position.getX();
+        int y = position.getY();
+        if (x < 0) {
+            x = 0;
+        } else if (x >= boardWidth) {
+            x = boardWidth - 1;
+        }
+        if (y < 0) {
+            y = 0;
+        } else if (y >= boardHeight) {
+            y = boardHeight - 1;
+        }
+        return new Coords(x, y);
     }
 
     public double getThreatLevel(Coords position, int radius) {

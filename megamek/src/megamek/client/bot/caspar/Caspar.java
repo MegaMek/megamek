@@ -161,7 +161,7 @@ public class Caspar extends Princess implements AdvancedAgent {
 
     private void resetQuickRepresentation() {
         getBoardQuickRepresentation().update(getBoard());
-        getBoardQuickRepresentation().updateThreatHeatmap(getEnemyUnitsSOU());
+        getBoardQuickRepresentation().updateThreatHeatmap(getEnemyUnitsSOU(), getOwnUnitsSOU());
     }
 
     @Override

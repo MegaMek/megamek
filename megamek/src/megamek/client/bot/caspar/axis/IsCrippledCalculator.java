@@ -39,7 +39,7 @@ public class IsCrippledCalculator extends BaseAxisCalculator {
     public double[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates if the unit is crippled
         double[] isCrippled = axis();
-
+        isCrippled[0] = pathing.getEntity().isCrippled() ? 1 : 0;
         return isCrippled;
     }
 }

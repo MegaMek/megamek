@@ -30,25 +30,23 @@ package megamek.client.bot.caspar.axis;
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
 
+import java.util.Arrays;
+
+import static megamek.client.bot.common.BoardQuickRepresentation.NORMALIZED_THREAT_HEATMAP;
+
 /**
- * Calculates the enemy threat heatmap (100 values).
+ * Calculates the enemy threat heatmap (10x10 heatmap).
  * @author Luana Coppio
  */
 public class EnemyThreatHeatmapCalculator extends BaseAxisCalculator {
 
     @Override
     public double[] axis() {
-        return new double[31];
+        return new double[NORMALIZED_THREAT_HEATMAP];
     }
 
     @Override
     public double[] calculateAxis(Pathing pathing, GameState gameState) {
-        // This would calculate the 10x10 heatmap for enemy threats
-        double[] heatmap = axis();
-
-        // Implementation goes here
-        // For now, we'll just return a placeholder
-
-        return heatmap;
+        return gameState.getBoardQuickRepresentation().getNormalizedThreatLevelHeatmap();
     }
 }

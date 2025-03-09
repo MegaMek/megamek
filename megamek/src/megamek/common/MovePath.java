@@ -247,6 +247,7 @@ public class MovePath implements Cloneable, Serializable, Pathing {
      * Checks if there is a waypoint referenced by this MovePath.
      * @return true if there is a waypoint, false otherwise.
      */
+    @Override
     public boolean hasWaypoint() {
         return waypoint != null;
     }
@@ -255,6 +256,7 @@ public class MovePath implements Cloneable, Serializable, Pathing {
      * Returns the waypoint referenced by this MovePath.
      * @return the waypoint, or null if there is none.
      */
+    @Override
     public @Nullable Coords getWaypoint() {
         return waypoint;
     }

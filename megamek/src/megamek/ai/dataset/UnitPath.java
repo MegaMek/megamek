@@ -79,4 +79,14 @@ public class UnitPath implements Pathing {
     public int getDistanceTravelled() {
         return unitAction.distance();
     }
+
+    @Override
+    public boolean hasWaypoint() {
+        return false;
+    }
+
+    @Override
+    public Coords getWaypoint() {
+        return null;
+    }
 }

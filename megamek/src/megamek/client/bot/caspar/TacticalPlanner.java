@@ -27,6 +27,7 @@
  */
 package megamek.client.bot.caspar;
 
+import megamek.client.bot.common.UnitClassifier;
 import megamek.client.bot.common.formation.Formation;
 import megamek.client.bot.common.GameState;
 import megamek.common.Compute;
@@ -106,7 +107,7 @@ public class TacticalPlanner {
     private void identifyDefensiveObjectives(GameState gameState) {
         // Protect VIPs or important units
         List<Entity> vips = gameState.getFriendlyUnits().stream()
-            .filter(u -> isVIP(u) || isTransport(u))
+            .filter(u -> UnitClassifier.isVIP(u) || UnitClassifier.isTransport(u))
             .toList();
 
         for (Entity vip : vips) {
@@ -386,16 +387,6 @@ public class TacticalPlanner {
     private double distance(Coords a, Coords b) {
         // Manhattan distance for hex grid
         return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY());
-    }
-
-    private boolean isVIP(Entity unit) {
-        // TODO - implement a way to find out if VIP
-        return false;
-    }
-
-    private boolean isTransport(Entity unit) {
-        // TODO - implement a way to find out if transport
-        return false;
     }
 
     /**

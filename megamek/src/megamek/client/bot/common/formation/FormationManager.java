@@ -29,15 +29,21 @@
 package megamek.client.bot.common.formation;
 
 
+import megamek.client.bot.common.UnitClassifier;
 import megamek.client.ratgenerator.MissionRole;
-import megamek.client.ratgenerator.ModelRecord;
-import megamek.client.ratgenerator.RATGenerator;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
-import megamek.common.annotations.Nullable;
 import megamek.common.util.Counter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -69,23 +75,6 @@ public class FormationManager {
         createCombatFormations(getUnassignedUnits(friendlyUnits));
     }
 
-    /**
-     * Determines the primary role of a unit based on its capabilities.
-     *
-     * @param unit The unit to analyze
-     * @return The determined role
-     */
-    private Set<MissionRole> determineUnitRole(Entity unit) {
-        // if the unit is a "transport" and UnitRole.NONE even tough it is
-        // not correct and it should instead return its actual role, I need something to make sure it is a transport.
-        return RATGenerator.getInstance().getModelList().stream()
-                .filter(e -> e.getModel().equals(unit.getModel()))
-                .map(ModelRecord::getRoles).findFirst().orElse(EnumSet.of(MissionRole.CIVILIAN));
-    }
-
-    private boolean containsAnyRole(Entity unit, Set<MissionRole> roles) {
-        return determineUnitRole(unit).stream().anyMatch(roles::contains);
-    }
 
     /**
      * Creates formations of transports and their escorts.
@@ -95,9 +84,9 @@ public class FormationManager {
     private void createTransportEscortFormations(List<Entity> units) {
         List<Entity> transports = units.stream()
                 .filter(e ->
-                        containsAnyRole(e, Set.of(MissionRole.CIVILIAN, MissionRole.CARGO))).toList();
+                        UnitClassifier.containsAnyRole(e, Set.of(MissionRole.CIVILIAN, MissionRole.CARGO))).toList();
         List<Entity> escorts = units.stream()
-                .filter(e -> containsAnyRole(e,
+                .filter(e -> UnitClassifier.containsAnyRole(e,
                         Set.of(MissionRole.CAVALRY, MissionRole.INF_SUPPORT, MissionRole.RAIDER))).toList();
 
         if (transports.isEmpty()) {
@@ -149,10 +138,10 @@ public class FormationManager {
     private void createSniperFormations(List<Entity> units) {
         List<Entity> rangedUnits = units.stream()
                 .filter(e ->
-                        containsAnyRole(e, Set.of(MissionRole.MIXED_ARTILLERY, MissionRole.ARTILLERY,
+                      UnitClassifier.containsAnyRole(e, Set.of(MissionRole.MIXED_ARTILLERY, MissionRole.ARTILLERY,
                                 MissionRole.MISSILE_ARTILLERY, MissionRole.FIRE_SUPPORT))).toList();
         List<Entity> spotters = units.stream()
-                .filter(e -> containsAnyRole(e,
+                .filter(e -> UnitClassifier.containsAnyRole(e,
                         Set.of(MissionRole.SPOTTER))).toList();
 
         if (rangedUnits.isEmpty()) {
@@ -199,7 +188,7 @@ public class FormationManager {
      * @param units Units grouped by role
      */
     private void createScoutFormations(List<Entity> units) {
-        List<Entity> scouts = units.stream().filter(e -> containsAnyRole(e, Set.of(MissionRole.RECON))).toList();
+        List<Entity> scouts = units.stream().filter(e -> UnitClassifier.containsAnyRole(e, Set.of(MissionRole.RECON))).toList();
 
         if (scouts.isEmpty()) {
             return;
@@ -348,7 +337,7 @@ public class FormationManager {
                 .filter(e -> e.isCommander() || e.isC3CompanyCommander())
                 .findFirst()
                 .orElseGet(() -> units.stream()
-                        .filter(e -> !containsAnyRole(e, Set.of(MissionRole.CIVILIAN, MissionRole.CARGO)))
+                        .filter(e -> !UnitClassifier.containsAnyRole(e, Set.of(MissionRole.CIVILIAN, MissionRole.CARGO)))
                         .findFirst()
                         .orElse(units.iterator().next()));
     }

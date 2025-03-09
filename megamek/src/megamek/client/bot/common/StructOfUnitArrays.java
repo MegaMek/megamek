@@ -28,12 +28,15 @@
 
 package megamek.client.bot.common;
 
+import megamek.client.ratgenerator.MissionRole;
 import megamek.common.Entity;
 import megamek.common.IAero;
 import megamek.logging.MMLogger;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
@@ -55,7 +58,10 @@ public class StructOfUnitArrays implements Iterable<Integer> {
     private int[] role;
     private int[] armor;
     private int[] internal;
-    private int[] ecm;
+    private boolean[] ecm;
+    private boolean[] vip;
+    private boolean[] cargoTransport;
+    private int[][] missionRole;
     private int length;
 
     /**
@@ -74,7 +80,10 @@ public class StructOfUnitArrays implements Iterable<Integer> {
         this.role = new int[length];
         this.armor = new int[length];
         this.internal = new int[length];
-        this.ecm = new int[length];
+        this.ecm = new boolean[length];
+        this.vip = new boolean[length];
+        this.cargoTransport = new boolean[length];
+        this.missionRole = new int[length][];
         update(entities);
         logger.debug("Created StructOfUnitArrays with {} entities", length);
     }
@@ -99,7 +108,11 @@ public class StructOfUnitArrays implements Iterable<Integer> {
             this.armor[i] = Math.max(entity.getTotalArmor(), 0);
             this.internal[i] = (entity instanceof IAero aero) ?  Math.max(aero.getSI(), 0) :
                   Math.max(entity.getTotalInternal(), 0);
-            this.ecm[i] = entity.hasECM() ? 1 : 0;
+            this.ecm[i] = entity.hasECM();
+            this.vip[i] = UnitClassifier.isVIP(entity);
+            this.cargoTransport[i] = UnitClassifier.isTransport(entity);
+            int[] missionRoles = UnitClassifier.determineUnitMissionRole(entity).stream().mapToInt(Enum::ordinal).toArray();
+            this.missionRole[i] = missionRoles;
         }
         logger.debug("Updated StructOfUnitArrays with {} entities", length);
     }
@@ -116,7 +129,10 @@ public class StructOfUnitArrays implements Iterable<Integer> {
             this.role = new int[length];
             this.armor = new int[length];
             this.internal = new int[length];
-            this.ecm = new int[length];
+            this.ecm = new boolean[length];
+            this.vip = new boolean[length];
+            this.cargoTransport = new boolean[length];
+            this.missionRole = new int[length][];
         }
         this.length = length;
     }
@@ -388,43 +404,57 @@ public class StructOfUnitArrays implements Iterable<Integer> {
      */
     public boolean hasECM(int index) {
         assertIndex(index);
-        return ecm[index] == 1;
-    }
-
-    public enum Index {
-        ID,
-        X,
-        Y,
-        FACING,
-        OWNER_ID,
-        TEAM_ID,
-        ROLE,
-        MAX_RANGE,
-        ARMOR,
-        INTERNAL,
-        ECM
+        return ecm[index];
     }
 
     /**
-     * Get the id, x, y, facing, owner id, team id and role (ordinal) of the entity at the given index.
-     * @return an array with the id, x, y, facing, owner id, team id and role (ordinal) of all entities
+     * True if the unit is VIP, false otherwise.
+     * @param index index of the unit
+     * @return true if the unit is VIP, false otherwise
      */
-    public int[][] toArray() {
-        int[][] array = new int[length][7];
+    public boolean isVIP(int index) {
+        assertIndex(index);
+        return vip[index];
+    }
+
+    /**
+     * True if the unit is cargo transport, false otherwise.
+     * @param index index of the unit
+     * @return true if the unit is cargo transport, false otherwise
+     */
+    public boolean isCargoTransport(int index) {
+        assertIndex(index);
+        return cargoTransport[index];
+    }
+
+    /**
+     * True if the unit has the given mission role, false otherwise.
+     * @param missionRole mission role to check
+     * @return true if the unit has the given mission role, false otherwise
+     */
+    public boolean hasMissionRole(MissionRole missionRole) {
         for (int i = 0; i < length; i++) {
-            array[i][Index.ID.ordinal()] = id[i];
-            array[i][Index.X.ordinal()] = x[i];
-            array[i][Index.Y.ordinal()] = y[i];
-            array[i][Index.FACING.ordinal()] = facing[i];
-            array[i][Index.OWNER_ID.ordinal()] = ownerId[i];
-            array[i][Index.TEAM_ID.ordinal()] = teamId[i];
-            array[i][Index.ROLE.ordinal()] = role[i];
-            array[i][Index.MAX_RANGE.ordinal()] = maxRange[i];
-            array[i][Index.ARMOR.ordinal()] = armor[i];
-            array[i][Index.INTERNAL.ordinal()] = internal[i];
-            array[i][Index.ECM.ordinal()] = ecm[i];
+            for (int role : this.missionRole[i]) {
+                if (role == missionRole.ordinal()) {
+                    return true;
+                }
+            }
         }
-        return array;
+        return false;
+    }
+
+    /**
+     * Get the mission roles of the unit at the given index.
+     * @param index index of the unit
+     * @return the mission roles of the unit
+     */
+    public Set<MissionRole> getMissionRole(int index) {
+        assertIndex(index);
+        Set<MissionRole> missionRoles = new HashSet<>();
+        for (int role : this.missionRole[index]) {
+            missionRoles.add(MissionRole.values()[role]);
+        }
+        return missionRoles;
     }
 
     @Override

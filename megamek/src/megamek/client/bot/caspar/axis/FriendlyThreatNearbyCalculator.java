@@ -29,24 +29,33 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
+import megamek.common.Coords;
+
+import java.util.List;
 
 /**
  * Calculates the enemy threat in nearby hexes (31 values).
- * @Author Luana Coppio
+ * @author Luana Coppio
  */
 public class FriendlyThreatNearbyCalculator extends BaseAxisCalculator {
 
+    private static final int NUMBER_OF_HEXES_ON_3_DIST_RADIUS = 37; // 6 * 3 + 6 * 2 + 6 + 1;
+
     @Override
     public double[] axis() {
-        return new double[31];
+        return new double[NUMBER_OF_HEXES_ON_3_DIST_RADIUS];
     }
 
     @Override
     public double[] calculateAxis(Pathing pathing, GameState gameState) {
-        // This would calculate the threat in the final position and all hexes up to 3 away
         double[] threats = axis();
+        List<Coords> nearbyHexes = pathing.getFinalCoords().allAtDistanceOrLess(3);
 
-        // Implementation goes here
+        var quickBoardRepresentation = gameState.getBoardQuickRepresentation();
+        int i = 0;
+        for (Coords coords : nearbyHexes) {
+            threats[i++] = quickBoardRepresentation.getAlliedThreatLevel(coords);
+        }
 
         return threats;
     }

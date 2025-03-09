@@ -32,7 +32,6 @@ import megamek.client.bot.common.Pathing;
 
 /**
  * Calculates the heat management of the unit
- * @author Luana Coppio
  */
 public class HeatManagementCalculator extends BaseAxisCalculator {
     @Override

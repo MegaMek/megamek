@@ -33,6 +33,10 @@ import megamek.common.annotations.Nullable;
 
 import java.util.Set;
 
+/**
+ * Represents the pathing of an entity
+ * @author Luana Coppio
+ */
 public interface Pathing {
     @Nullable Coords getStartCoords();
     @Nullable Coords getFinalCoords();
@@ -41,4 +45,6 @@ public interface Pathing {
     Set<Coords> getCoordsSet();
     int getHexesMoved();
     int getDistanceTravelled();
+    boolean hasWaypoint();
+    @Nullable Coords getWaypoint();
 }

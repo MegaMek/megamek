@@ -94,11 +94,7 @@ public class BattleArmorCostCalculator {
 
         double cost = 0; // calculate the total
         for (int x = 0; x < idx; x++) {
-            if (costs[x] < 0) {
-                cost *= -costs[x];
-            } else {
-                cost += costs[x];
-            }
+            cost += costs[x];
         }
 
         String[] systemNames = { "Chassis", "Jumping/VTOL/UMU", "Ground Movement", "Manipulators", "Armor",

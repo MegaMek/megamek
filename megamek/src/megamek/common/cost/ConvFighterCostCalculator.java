@@ -42,7 +42,7 @@ public class ConvFighterCostCalculator {
         }
 
         // Structure and Additional flight systems
-        costs[idx++] = 4000 * fighter.getSI();
+        costs[idx++] = 4000 * Math.max(fighter.getSI(), 0);
         costs[idx++] = 25000 + 10 * fighter.getWeight();
 
         // Engine

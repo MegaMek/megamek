@@ -3282,7 +3282,7 @@ public class Princess extends BotClient {
         }
     }
 
-    boolean shouldAbandon(Entity entity) {
+    protected boolean shouldAbandon(Entity entity) {
         boolean shouldAbandon = false;
         // Nonfunctional entity?  Abandon!
         if ((
@@ -3294,11 +3294,8 @@ public class Princess extends BotClient {
             shouldAbandon = true;
         } else if (entity instanceof Tank tank) {
             // Immobile tank?  Abandon!
-            if (tank.isImmobile()) {
-                shouldAbandon = true;
-            }
             // Ground-bound VTOL?  Abandon!
-            if (tank.getMovementMode().isVTOL() && !tank.canGoUp(0, tank.getPosition())) {
+            if (tank.isImmobile()) {
                 shouldAbandon = true;
             }
         } else if ((entity instanceof Aero aero && aero.getAltitude() < 1 && !aero.isAirborne())){
@@ -3318,7 +3315,7 @@ public class Princess extends BotClient {
         return shouldAbandon;
     }
 
-    void abandonShipOneUnit(Entity movingEntity, Vector<Transporter> transporters, MovePath path) {
+    protected void abandonShipOneUnit(Entity movingEntity, Vector<Transporter> transporters, MovePath path) {
 
         // Set dismount locations: this hex / adjacent hexes / outer-ring adjacent hexes
         List<Coords> dismountLocations = List.of(movingEntity.getPosition());

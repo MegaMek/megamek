@@ -24814,6 +24814,10 @@ public class TWGameManager extends AbstractGameManager {
         return vDesc;
     }
 
+    protected int destroyTransportedUnits(Entity entity, Coords coords, Vector<Report> vPhaseReport) {
+
+    }
+
     /**
      * Worker function that drops cargo from an entity at the given coordinates.
      */

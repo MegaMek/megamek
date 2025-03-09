@@ -28,23 +28,23 @@
 package megamek.client.bot.caspar;
 
 import megamek.client.bot.common.AdvancedAgent;
-import megamek.client.bot.common.Agent;
 import megamek.client.bot.common.BoardQuickRepresentation;
+import megamek.client.bot.common.formation.Formation;
+import megamek.client.bot.common.minefield.MinefieldDeploymentPlannerStrategy;
 import megamek.client.bot.common.StructOfUnitArrays;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.PathRanker;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.UnitBehavior;
-import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.Minefield;
 import megamek.common.Player;
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
+import org.nd4j.linalg.api.ops.Op;
 
+import java.util.Optional;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  * The bot client for CASPAR (Combat Algorithmic System for Predictive Analysis and Response).
@@ -57,7 +57,7 @@ public class Caspar extends Princess implements AdvancedAgent {
     private StructOfUnitArrays enemyUnitsSOU;
     private StructOfUnitArrays friendlyUnitsSOU;
     private StructOfUnitArrays ownUnitsSOU;
-
+    private final CasparAI casparAI;
     /**
      * Constructor - initializes a new instance of the Princess bot.
      *
@@ -65,8 +65,10 @@ public class Caspar extends Princess implements AdvancedAgent {
      * @param host The host address to which to connect.
      * @param port The port on the host where to connect.
      */
-    public Caspar(String name, String host, int port) {
+    public Caspar(String name, String host, int port, String modelName) {
         super(name, host, port);
+        this.deploymentPlannerStrategy = MinefieldDeploymentPlannerStrategy.STRATEGIC;
+        this.casparAI = new CasparAI.Builder(this, modelName).build();
     }
 
     @Override
@@ -141,6 +143,16 @@ public class Caspar extends Princess implements AdvancedAgent {
         return boardQuickRepresentation;
     }
 
+    @Override
+    public Optional<Formation> getFormationFor(Entity unit) {
+        return casparAI.getFormationManager().getUnitFormation(unit);
+    }
+
+    @Override
+    public TacticalPlanner getTacticalPlanner() {
+        return casparAI.getTacticalPlanner();
+    }
+
     private void resetSOU() {
         getEnemyUnitsSOU().update(getEnemyEntities());
         getFriendlyUnitsSOU().update(getFriendEntities());
@@ -164,5 +176,4 @@ public class Caspar extends Princess implements AdvancedAgent {
         resetSOU();
         resetQuickRepresentation();
     }
-
 }

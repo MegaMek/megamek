@@ -14,9 +14,11 @@
  */
 package megamek.ai.dataset;
 
+import megamek.client.bot.common.Pathing;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 
@@ -89,5 +91,9 @@ public record UnitAction(int id, int teamId, int playerId, String chassis, Strin
 
     public Coords finalPosition() {
         return new Coords(toX, toY);
+    }
+
+    public Pathing movePath(Entity entity) {
+        return new UnitPath(this, entity);
     }
 }

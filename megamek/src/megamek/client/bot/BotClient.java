@@ -34,6 +34,8 @@ import javax.swing.ScrollPaneConstants;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.common.minefield.MinefieldDeploymentPlanner;
+import megamek.client.bot.common.minefield.MinefieldDeploymentPlannerStrategy;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
@@ -63,6 +65,7 @@ public abstract class BotClient extends Client {
 
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
+    protected MinefieldDeploymentPlannerStrategy deploymentPlannerStrategy;
 
     // a frame, to show stuff in
     public JFrame frame;
@@ -91,7 +94,7 @@ public abstract class BotClient extends Client {
 
     public BotClient(String playerName, String host, int port) {
         super(playerName, host, port);
-
+        deploymentPlannerStrategy = MinefieldDeploymentPlannerStrategy.RANDOM;
         boardClusterTracker = new BoardClusterTracker();
 
         game.addGameListener(new GameListenerAdapter() {
@@ -1315,8 +1318,8 @@ public abstract class BotClient extends Client {
      * Get the minefield deployment planner to use for this bot
      * @return the minefield deployment planner
      */
-    protected MinefieldDeploymentPlanner getMinefieldDeploymentPlanner() {
-        return new RandomMinefieldDeploymentPlanner(getBoard());
+    private MinefieldDeploymentPlanner getMinefieldDeploymentPlanner() {
+        return deploymentPlannerStrategy.getPlanner(getBoard());
     }
 
     @Override

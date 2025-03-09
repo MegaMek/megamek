@@ -1064,7 +1064,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         if (getSelectedEntity() != null) {
             Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
             princess.getGame().setBoard(this.game.getBoard());
-            PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
+            PathEnumerator pathEnum = new PathEnumerator(princess);
             pathEnum.recalculateMovesFor(this.getSelectedEntity());
 
             ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(this.getSelectedEntity().getId());

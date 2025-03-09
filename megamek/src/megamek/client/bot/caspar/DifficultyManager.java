@@ -27,6 +27,8 @@
  */
 package megamek.client.bot.caspar;
 
+import megamek.client.bot.common.DifficultyLevel;
+import megamek.client.bot.neuralnetwork.NeuralNetwork;
 import megamek.client.bot.princess.RankedPath;
 import megamek.common.MovePath;
 
@@ -42,18 +44,18 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class DifficultyManager {
     private final DifficultyLevel difficultyLevel;
+    private final String modelName;
     private final Random random;
-    private final NeuralNetwork.ModelType modelType;
 
     /**
      * Creates a difficulty manager with the specified level and model type.
      *
      * @param difficultyLevel The difficulty level
-     * @param modelType The neural network model type to use
+     * @param modelName The neural network model type to use
      */
-    public DifficultyManager(DifficultyLevel difficultyLevel, NeuralNetwork.ModelType modelType) {
+    public DifficultyManager(DifficultyLevel difficultyLevel, String modelName) {
         this.difficultyLevel = difficultyLevel;
-        this.modelType = modelType;
+        this.modelName = modelName;
         this.random = ThreadLocalRandom.current();
     }
 
@@ -79,9 +81,9 @@ public class DifficultyManager {
 
         // Select based on difficulty
         return switch (difficultyLevel) {
-            case EASY -> topPaths.get(random.nextInt(topPaths.size())).getPath();
             case MEDIUM, HARD -> weightedSelection(topPaths);
             case HARDCORE -> topPaths.get(0).getPath();
+            default -> topPaths.get(random.nextInt(topPaths.size())).getPath();
         };
     }
 
@@ -119,7 +121,7 @@ public class DifficultyManager {
      * @return A neural network instance
      */
     public NeuralNetwork createNeuralNetwork() {
-        return NeuralNetwork.loadModel(modelType, difficultyLevel);
+        return NeuralNetwork.loadModel(modelName, difficultyLevel);
     }
 
     /**
@@ -129,16 +131,27 @@ public class DifficultyManager {
      * @return The risk-taking probability (0-1)
      */
     public double getRiskTakingProbability() {
+        // TODO ADD THIS INTO THE AXIS SOMEWAY
         return switch (difficultyLevel) {
-            case EASY -> 0.1;
+            case BEGINNER -> 0.1;
+            case EASY -> 0.15;
             case MEDIUM -> 0.2;
             case HARD -> 0.4;
             case HARDCORE -> 0.5;
         };
     }
 
+    /**
+     * Gets the current difficulty level.
+     * @return The difficulty level
+     */
+    public DifficultyLevel getDifficultyLevel() {
+        return difficultyLevel;
+    }
+
     public double getMaxSearchDepth() {
         return switch (difficultyLevel) {
+            case BEGINNER -> 1d;
             case EASY -> 1.5d;
             case MEDIUM -> 3d;
             case HARD -> 5d;
@@ -148,6 +161,7 @@ public class DifficultyManager {
 
     public double adjustDecisionQuality(double prediction) {
         return switch (difficultyLevel) {
+            case BEGINNER ->  prediction * 0.6;
             case EASY -> prediction * 0.8;
             case MEDIUM -> prediction * 0.9;
             case HARD -> prediction;

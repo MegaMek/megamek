@@ -28,7 +28,7 @@
 
 package megamek.client.bot.common;
 
-import megamek.common.Board;
+import megamek.client.bot.common.formation.Formation;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -37,6 +37,7 @@ import megamek.common.Player;
 import megamek.common.pathfinder.BoardClusterTracker;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -69,6 +70,12 @@ public interface GameState {
      * @return A list of owned units
      */
     List<Entity> getOwnedUnits();
+
+    /**
+     * Returns the units owned and friendly to this current player.
+     * @return A list of owned units that are not in the agent's team
+     */
+    List<Entity> getMyTeamUnits();
 
     /**
      * Get the StructOfUnitArrays for the enemy units, this is a special data structure that allows for quick access
@@ -105,4 +112,7 @@ public interface GameState {
 
     // Pathfinding support
     BoardClusterTracker getClusterTracker();
+
+    // Formation support
+    Optional<Formation> getFormationFor(Entity unit);
 }

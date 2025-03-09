@@ -25,22 +25,26 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  */
-package megamek.client.bot;
+package megamek.client.bot.common.minefield;
 
 import megamek.common.Coords;
 
-import java.util.Deque;
+import java.util.List;
 
 /**
- * Interface for classes that can plan minefield deployments.
- * @author Luana Coppio
+ * Interface for cluster generation strategies.
  */
-public interface MinefieldDeploymentPlanner {
-
+interface ClusterGenerator {
     /**
-     * Get a set of planed positions on the board to be used to lay minefields.
-     * @param numberOfCoords the number of positions to get
-     * @return a deque of positions
+     * Generates clusters of coordinates from candidate cells.
+     *
+     * @param candidates  List of candidate cells
+     * @param numClusters Number of clusters to generate
+     * @param clusterSize Size of each cluster
+     * @return List of coordinate clusters
      */
-    Deque<Coords> getRandomMinefieldPositions(int numberOfCoords);
+    List<List<Coords>> generateClusters(
+          List<CandidateCell> candidates,
+          int numClusters,
+          int clusterSize);
 }

@@ -27,12 +27,14 @@
  */
 package megamek.client.bot.caspar;
 
-import megamek.client.bot.common.Formation;
+import megamek.client.bot.common.formation.Formation;
 import megamek.client.bot.common.GameState;
+import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.UnitRole;
+import megamek.common.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -111,8 +113,8 @@ public class TacticalPlanner {
             TacticalObjective objective = new TacticalObjective(
                 "protect_" + vip.getId(),
                 ObjectiveType.PROTECT,
-                vip.getPosition(),
-                1,
+                vip,
+                2,
                 1.0
             );
             objectives.put(objective.getId(), objective);
@@ -124,7 +126,7 @@ public class TacticalPlanner {
                 "hold_" + hex.getCoords().toFriendlyString(),
                 ObjectiveType.HOLD_POSITION,
                 hex.getCoords(),
-                1,
+                3,
                 calculateStrategicValue(hex, gameState)
             );
             objectives.put(objective.getId(), objective);
@@ -148,21 +150,16 @@ public class TacticalPlanner {
                 continue;
             }
 
-            // Calculate center position
-            Coords center = calculateCenter(enemies.stream()
-                .map(Entity::getPosition)
-                .collect(Collectors.toList()));
-
             // Calculate priority based on threat level and composition
             double priority = calculateThreatLevel(enemies);
 
             // Create objective
             TacticalObjective objective = new TacticalObjective(
-                "attack_" + cluster.getKey(),
-                ObjectiveType.ATTACK,
-                center,
-                enemies.size(),
-                priority
+                  "attack_" + cluster.getKey(),
+                  ObjectiveType.ATTACK,
+                  enemies,
+                  enemies.size(),
+                  priority
             );
             objectives.put(objective.getId(), objective);
         }
@@ -253,7 +250,8 @@ public class TacticalPlanner {
      */
     private double calculateUnitThreatLevel(Entity unit) {
         // Would be implemented based on unit capabilities
-        return 1.0;
+        int unitInitialBV = unit.getOwner().getInitialBV();
+        return unit.getInitialBV() / (double) unitInitialBV;
     }
 
     /**
@@ -390,23 +388,13 @@ public class TacticalPlanner {
         return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY());
     }
 
-    /**
-     * Gets a unit's role based on its capabilities.
-     *
-     * @param unit The unit to analyze
-     * @return The determined role
-     */
-    private UnitRole determineUnitRole(Entity unit) {
-        // Implementation would analyze unit capabilities
-        // For now, we'll use a placeholder
-        return unit.getRole();
-    }
-
     private boolean isVIP(Entity unit) {
+        // TODO - implement a way to find out if VIP
         return false;
     }
 
     private boolean isTransport(Entity unit) {
+        // TODO - implement a way to find out if transport
         return false;
     }
 
@@ -417,6 +405,7 @@ public class TacticalPlanner {
         private final String id;
         private final ObjectiveType type;
         private final Coords position;
+        private final int[] unitIds;
         private final int requiredUnits;
         private final double priority;
 
@@ -425,6 +414,27 @@ public class TacticalPlanner {
             this.id = id;
             this.type = type;
             this.position = position;
+            this.unitIds = new int[0];
+            this.requiredUnits = requiredUnits;
+            this.priority = priority;
+        }
+
+        public TacticalObjective(String id, ObjectiveType type, Entity unit,
+                                 int requiredUnits, double priority) {
+            this.id = id;
+            this.type = type;
+            this.position = null;
+            this.unitIds = new int[] {unit.getId()};
+            this.requiredUnits = requiredUnits;
+            this.priority = priority;
+        }
+
+        public TacticalObjective(String id, ObjectiveType type, List<Entity> units,
+                                 int requiredUnits, double priority) {
+            this.id = id;
+            this.type = type;
+            this.position = null;
+            this.unitIds = units.stream().mapToInt(Entity::getId).toArray();
             this.requiredUnits = requiredUnits;
             this.priority = priority;
         }
@@ -443,6 +453,10 @@ public class TacticalPlanner {
 
         public int getRequiredUnits() {
             return requiredUnits;
+        }
+
+        public int[] getUnitIds() {
+            return unitIds;
         }
 
         public double getPriority() {

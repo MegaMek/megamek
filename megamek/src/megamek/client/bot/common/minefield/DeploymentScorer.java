@@ -25,25 +25,22 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  */
-package megamek.client.bot.caspar;
+package megamek.client.bot.common.minefield;
+
+import megamek.common.Coords;
+
+import java.util.List;
 
 /**
- * Enum for difficulty levels of the CASPAR AI.
- * @author Luana Coppio
+ * Interface for scoring deployment positions.
  */
-public enum DifficultyLevel {
-    EASY(20),
-    MEDIUM(10),
-    HARD(3),
-    HARDCORE(1);
-
-    private final int topPathsToConsider;
-
-    DifficultyLevel(int topPathsToConsider) {
-        this.topPathsToConsider = topPathsToConsider;
-    }
-
-    public int getTopPathsToConsider() {
-        return topPathsToConsider;
-    }
+interface DeploymentScorer {
+    /**
+     * Scores a deployment position based on terrain and strategic value.
+     *
+     * @param coord    The coordinate to score
+     * @param adjacent List of adjacent valid coordinates
+     * @return Score value (higher is better)
+     */
+    double scorePosition(Coords coord, List<Coords> adjacent);
 }

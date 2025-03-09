@@ -25,29 +25,32 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  */
-package megamek.client.bot.caspar;
-
-import megamek.client.bot.common.Agent;
-import megamek.client.bot.common.GameState;
-import megamek.common.MovePath;
+package megamek.client.bot.common;
 
 /**
- * Interface for calculating input vectors for the neural network.
+ * Enum for difficulty levels of the CASPAR AI.
  * @author Luana Coppio
  */
-public interface InputAxisCalculator {
-    /**
-     * Calculates the input vector for a movement path.
-     *
-     * @param movePath The movement path to evaluate
-     * @return A normalized input vector
-     */
-    double[] calculateInputVector(MovePath movePath, GameState gameState);
+public enum DifficultyLevel {
+    BEGINNER(40, 0.8),
+    EASY(20, 0.9),
+    MEDIUM(10, 1.0),
+    HARD(3, 1.1),
+    HARDCORE(1, 1.2);
 
-    /**
-     * Returns the size of the input vector.
-     *
-     * @return The size of the input vector
-     */
-    int getInputSize();
+    private final int topPathsToConsider;
+    private final double alphaValue;
+
+    DifficultyLevel(int topPathsToConsider, double alphaValue) {
+        this.topPathsToConsider = topPathsToConsider;
+        this.alphaValue = alphaValue;
+    }
+
+    public int getTopPathsToConsider() {
+        return topPathsToConsider;
+    }
+
+    public double getAlphaValue() {
+        return alphaValue;
+    }
 }

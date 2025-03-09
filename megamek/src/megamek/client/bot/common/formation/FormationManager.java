@@ -26,15 +26,15 @@
  * InMediaRes Productions, LLC.
  */
 
-package megamek.client.bot.caspar;
+package megamek.client.bot.common.formation;
 
 
-import megamek.client.bot.common.Formation;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.Counter;
 
 import java.util.*;
@@ -384,9 +384,9 @@ public class FormationManager {
      * @param unit The unit to check
      * @return The formation, or null if not in a formation
      */
-    public Formation getUnitFormation(Entity unit) {
+    public Optional<Formation> getUnitFormation(Entity unit) {
         String formationId = unitFormationMap.get(unit);
-        return formationId != null ? formations.get(formationId) : null;
+        return formationId != null ? Optional.ofNullable(formations.get(formationId)) : Optional.empty();
     }
 
     /**

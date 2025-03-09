@@ -28,8 +28,12 @@
 package megamek.client.bot.caspar;
 
 import megamek.client.bot.common.AdvancedAgent;
-import megamek.client.bot.common.Agent;
+import megamek.client.bot.common.DifficultyLevel;
+import megamek.client.bot.common.ScoutingPlanner;
+import megamek.client.bot.common.formation.FormationManager;
 import megamek.client.bot.common.GameState;
+import megamek.client.bot.caspar.axis.InputAxisCalculator;
+import megamek.client.bot.neuralnetwork.NeuralNetwork;
 import megamek.client.bot.princess.RankedPath;
 import megamek.common.MovePath;
 
@@ -42,14 +46,15 @@ import java.util.TreeSet;
  * @author Luana Coppio
  */
 public class CasparAI {
-    private final NeuralNetwork neuralNetwork;
     private final InputAxisCalculator inputCalculator;
     private final MovementHandler movementHandler;
     private final FireControlHandler fireControlHandler;
     private final FormationManager formationManager;
     private final TacticalPlanner tacticalPlanner;
-    private final DifficultyManager difficultyManager;
     private final AdvancedAgent agent;
+    private final ScoutingPlanner scoutingPlanner;
+    private NeuralNetwork neuralNetwork;
+    private DifficultyManager difficultyManager;
 
     private CasparAI(Builder builder) {
         this.neuralNetwork = builder.neuralNetwork;
@@ -59,6 +64,7 @@ public class CasparAI {
         this.formationManager = builder.formationManager;
         this.tacticalPlanner = builder.tacticalPlanner;
         this.difficultyManager = builder.difficultyManager;
+        this.scoutingPlanner = builder.scoutingPlanner;
         this.agent = builder.agent;
     }
 
@@ -69,7 +75,7 @@ public class CasparAI {
      * @return A score between 0 and 1
      */
     public double evaluateMovePath(MovePath movePath) {
-        double[] inputVector = inputCalculator.calculateInputVector(movePath, gameState());
+        double[] inputVector = inputCalculator.calculateInputVector(movePath, getGameState());
         return neuralNetwork.predict(inputVector);
     }
 
@@ -82,7 +88,7 @@ public class CasparAI {
      *
      * @return The current game state
      */
-    public GameState gameState() {
+    public GameState getGameState() {
         return new CasparGameState(getAgent());
     }
 
@@ -104,22 +110,62 @@ public class CasparAI {
         return difficultyManager.selectFromTopPaths(scoredPaths);
     }
 
+    public NeuralNetwork getNeuralNetwork() {
+        return neuralNetwork;
+    }
+
+    public InputAxisCalculator getInputCalculator() {
+        return inputCalculator;
+    }
+
+    public MovementHandler getMovementHandler() {
+        return movementHandler;
+    }
+
+    public FireControlHandler getFireControlHandler() {
+        return fireControlHandler;
+    }
+
+    public FormationManager getFormationManager() {
+        return formationManager;
+    }
+
+    public TacticalPlanner getTacticalPlanner() {
+        return tacticalPlanner;
+    }
+
+    public DifficultyManager getDifficultyManager() {
+        return difficultyManager;
+    }
+
+    public void changeDifficulty(String modelName, DifficultyLevel level) {
+        difficultyManager = new DifficultyManager(level, modelName);
+        this.neuralNetwork = this.difficultyManager.createNeuralNetwork();
+    }
+
     /**
      * Builder pattern for creating CasparAI instances.
      */
     public static class Builder {
-        private final NeuralNetwork neuralNetwork;
+        private NeuralNetwork neuralNetwork;
         private InputAxisCalculator inputCalculator;
         private MovementHandler movementHandler;
         private FireControlHandler fireControlHandler;
         private FormationManager formationManager;
         private TacticalPlanner tacticalPlanner;
         private DifficultyManager difficultyManager;
+        private ScoutingPlanner scoutingPlanner;
         private final AdvancedAgent agent;
+        private final String modelName;
 
-        public Builder(AdvancedAgent agent, NeuralNetwork neuralNetwork) {
+        public Builder(AdvancedAgent agent, String modelName) {
             this.agent = agent;
-            this.neuralNetwork = neuralNetwork;
+            this.modelName = modelName;
+        }
+
+        public Builder withStrategicGoalsPlanner(ScoutingPlanner scoutingPlanner) {
+            this.scoutingPlanner = scoutingPlanner;
+            return this;
         }
 
         public Builder withInputCalculator(InputAxisCalculator inputCalculator) {
@@ -154,9 +200,6 @@ public class CasparAI {
 
         public CasparAI build() {
             // Validate and provide defaults if needed
-            if (neuralNetwork == null) {
-                throw new IllegalStateException("Neural network must be provided");
-            }
 
             if (agent == null) {
                 throw new IllegalStateException("Agent must be provided");
@@ -171,7 +214,7 @@ public class CasparAI {
             }
 
             if (difficultyManager == null) {
-                this.difficultyManager = new DifficultyManager(DifficultyLevel.MEDIUM, NeuralNetwork.ModelType.FOURTH_MODEL);
+                this.difficultyManager = new DifficultyManager(DifficultyLevel.MEDIUM, modelName);
             }
 
             if (movementHandler == null) {
@@ -186,6 +229,12 @@ public class CasparAI {
             if (tacticalPlanner == null) {
                 this.tacticalPlanner = new TacticalPlanner(difficultyManager);
             }
+
+            if (scoutingPlanner == null) {
+                this.scoutingPlanner = new ScoutingPlanner();
+            }
+
+            this.neuralNetwork = this.difficultyManager.createNeuralNetwork();
 
             return new CasparAI(this);
         }

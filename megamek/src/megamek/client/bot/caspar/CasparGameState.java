@@ -5,6 +5,7 @@ import megamek.client.bot.common.Agent;
 import megamek.client.bot.common.BoardQuickRepresentation;
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.StructOfUnitArrays;
+import megamek.client.bot.common.formation.Formation;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -14,6 +15,7 @@ import megamek.common.pathfinder.BoardClusterTracker;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class CasparGameState implements GameState {
@@ -44,6 +46,13 @@ public class CasparGameState implements GameState {
     }
 
     @Override
+    public List<Entity> getMyTeamUnits() {
+        List<Entity> units = agent.getEntitiesOwned();
+        units.removeAll(agent.getFriendEntities());
+        return units;
+    }
+
+    @Override
     public StructOfUnitArrays getEnemyUnitsSOU() {
         return agent.getEnemyUnitsSOU();
     }
@@ -60,7 +69,12 @@ public class CasparGameState implements GameState {
 
     @Override
     public List<Hex> getStrategicPoints() {
-        throw new NotImplementedException("TODO - Implement");
+        return List.of();
+    }
+
+    @Override
+    public Optional<Formation> getFormationFor(Entity unit) {
+        return agent.getFormationFor(unit);
     }
 
     @Override

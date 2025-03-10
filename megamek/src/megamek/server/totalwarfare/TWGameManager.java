@@ -5248,7 +5248,29 @@ public class TWGameManager extends AbstractGameManager {
             //    (but not be auto-destroyed since the attempt was made)
             canCrashLand &= (null == ((vertical) ? aero.hasRoomForVerticalLanding() : aero.hasRoomForHorizontalLanding()));
 
-            // 3. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
+            // 3. Place in final position on ground.  This is to prevent utter destruction
+            //    of carried units in some cases.
+            // Also update 'c' to represent final position.
+            entity.setPosition(finalPosition, true);
+            c = finalPosition;
+
+            // Technically bring to a halt; actual landing is handled above.
+            ((IAero) entity).land();
+
+            // Check if still on board
+            if (game.getBoard().contains(c) && game.getBoard().contains(finalPosition)) {
+                checkLandingTerrainEffects(aero, vertical, c, finalPosition, entity.getFacing());
+            } else {
+                // Somehow left the map while crashing!  This will count as destroyed.
+                r = new Report(9701);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                vReport.add(r);
+                vReport.addAll(destroyEntity(entity, "crashed off the map", true, true));
+                return vReport;
+            }
+
+            // 4. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
             if (canCrashLand){
                 // Generate piloting roll to attempt to land.  This includes all landing mods from
                 // TW pg 86
@@ -5274,30 +5296,9 @@ public class TWGameManager extends AbstractGameManager {
                     attemptLanding(entity, rollTarget, vReport);
                 }
 
-                if (game.getBoard().contains(c) && game.getBoard().contains(finalPosition)) {
-                    checkLandingTerrainEffects(aero, vertical, c, finalPosition, entity.getFacing());
-                } else {
-                    // Somehow left the map while crashing!  This will count as destroyed.
-                    r = new Report(9701);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    vReport.add(r);
-                    vReport.addAll(destroyEntity(entity, "crashed off the map", true, true));
-                    return vReport;
-                }
-
                 // No more damage needs to be calculated for the crash-landed entity
                 crashLanded = true;
             }
-
-            // Horizontal fliers take some space to land; calc final position, check terrain
-            // effects, move to final position.
-            // Also update 'c' to represent final position.
-            entity.setPosition(finalPosition, true);
-            c = finalPosition;
-
-            // Technically bring to a halt; actual landing is handled above.
-            ((IAero) entity).land();
         }
 
         // we might hit multiple hexes, if we're a DropShip, so we do some
@@ -16977,10 +16978,10 @@ public class TWGameManager extends AbstractGameManager {
     void checkForSuffocation() {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext();) {
             final Entity entity = i.next();
-            if ((null == entity.getPosition()) || entity.isOffBoard()) {
+            final Hex curHex = game.getBoard().getHex(entity.getPosition());
+            if ((null == entity.getPosition()) || entity.isOffBoard() || curHex == null) {
                 continue;
             }
-            final Hex curHex = game.getBoard().getHex(entity.getPosition());
 
             boolean depthOneProne = (curHex.terrainLevel(Terrains.WATER) == 1)
                     && entity.isProne();

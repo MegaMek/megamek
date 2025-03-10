@@ -238,8 +238,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public static final String CG_FILEEXTENTIONMUL = ".mul";
     public static final String CG_FILEEXTENTIONXML = ".xml";
     public static final String CG_FILEEXTENTIONPNG = ".png";
-    public static final String CG_FILEEXTENTIONGIF = ".gif";
-    public static final String CG_FILEPATHGIF = "gif";
     public static final String CG_FILEFORMATNAMEPNG = "png";
 
     // a frame, to show stuff in
@@ -2261,70 +2259,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
-    private void saveGifGameSummary() {
-        String filename = StringUtil.addDateTimeStamp("combat_summary_");
-        String gameUuid = client.getGame().getUUIDString();
-        File tempGifFile = new File(gameSummaryImagesMMDir(), gameUuid + CG_FILEEXTENTIONGIF);
-
-        // Build the "save gif" dialog, if necessary.
-        if (dlgSaveGifList == null) {
-            dlgSaveGifList = new JFileChooser(".");
-            dlgSaveGifList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-            dlgSaveGifList.setDialogTitle(Messages.getString("ClientGUI.saveGameSummaryGifFileDialog.title"));
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                Messages.getString("ClientGUI.descriptionGIFFiles"), CG_FILEPATHGIF);
-            dlgSaveGifList.setFileFilter(filter);
-        }
-
-        dlgSaveGifList.setSelectedFile(new File(filename + CG_FILEEXTENTIONGIF));
-
-        int returnVal = dlgSaveGifList.showSaveDialog(frame);
-        if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgSaveGifList.getSelectedFile() == null)) {
-            // without a file there is no saving for the file, which them means we can't save the gif
-            // and instead we delete it
-            if (tempGifFile.delete()) {
-                logger.info("Game summary GIF deleted");
-            } else {
-                logger.warn("Failed to delete game summary GIF");
-            }
-            return;
-        }
-
-        // Did the player select a file?
-        File gifFile = dlgSaveGifList.getSelectedFile();
-        if (gifFile != null) {
-            if (!gifFile.getName().toLowerCase().endsWith(CG_FILEEXTENTIONGIF)) {
-                try {
-                    gifFile = new File(gifFile.getCanonicalPath() + CG_FILEEXTENTIONGIF);
-                } catch (Exception ignored) {
-                    // without a file there is no saving for the file, which them means we can't save the gif
-                    // and instead we delete it
-                    if (tempGifFile.delete()) {
-                        logger.info("Game summary GIF deleted");
-                    } else {
-                        logger.error("Failed to delete game summary GIF");
-                    }
-                    return;
-                }
-            }
-            File finalGifFile = gifFile;
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    if (tempGifFile.renameTo(finalGifFile)) {
-                        logger.info("Game summary GIF saved to {}", finalGifFile);
-                    } else {
-                        logger.error("Unable to rename {} to {}", tempGifFile, finalGifFile);
-                        doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"),
-                            Messages.getString("ClientGUI.errorSavingFileGifMessage", finalGifFile.toString(), tempGifFile.toString()));
-                    }
-                } catch (Exception ex) {
-                    logger.error(ex, "saveGifGameSummary");
-                    doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"),
-                        Messages.getString("ClientGUI.errorSavingFileGifMessage", finalGifFile.toString(), tempGifFile.toString()));
-                }
-            });
-        }
-    }
 
     protected void saveVictoryList() {
         String filename = client.getLocalPlayer().getName();
@@ -2545,23 +2479,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                     saveVictoryList();
                 }
             }
-
-            if (GUIP.getGifGameSummaryMinimap()) {
-                // Ask if you want to persist the final unit list from a battle encounter
-                if (doYesNoDialog(Messages.getString("ClientGUI.SaveGifDialog.title"),
-                    Messages.getString("ClientGUI.SaveGifDialog.message"))) {
-                    saveGifGameSummary();
-                } else {
-                    String gameUuid = client.getGame().getUUIDString();
-                    File tempGifFile = new File(gameSummaryImagesMMDir(), gameUuid + CG_FILEEXTENTIONGIF);
-                    if (tempGifFile.delete()) {
-                        logger.info("Deleted temporary game summary GIF {}", tempGifFile);
-                    } else {
-                        logger.error("Failed to delete temporary game summary GIF {}", tempGifFile);
-                    }
-                }
-            }
-
 
             // save all destroyed units in a separate "salvage MUL"
             ArrayList<Entity> destroyed = new ArrayList<>();

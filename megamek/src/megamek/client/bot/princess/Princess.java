@@ -3354,6 +3354,10 @@ public class Princess extends BotClient {
                 continue;
             }
             for (Entity loadedEntity : entityList) {
+                if (dismountIndex >= dismountLocations.size()) {
+                    // Exhausted dismount locations
+                    break;
+                }
                 Coords dismountLocation = dismountLocations.get(dismountIndex);
 
                 // for now, just unload transporters at 'safe' rate

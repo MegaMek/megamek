@@ -3136,8 +3136,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             + curPos.getBoardNum());
                 } else {
                     // Report unloading; anyone who can see the carrier should see the new unit too.
-                    r = new Report(2514, Report.OBSCURED);
-                    r.subject = entity.getId();
+                    r = new Report(2514);
+                    r.subject = unloaded.getId();
                     r.add(entity.getDisplayName());
                     r.add(unloaded.generalName());
                     r.add(unloadPos.toFriendlyString());

@@ -5210,6 +5210,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean canCrashLand = true;
         boolean crashLanded = false;
         boolean destroyDropShip = false; // save for later
+        List<Entity> passengers = entity.getLoadedUnits();
         if (c == null) {
             r = new Report(9701);
             r.subject = entity.getId();
@@ -5266,7 +5267,7 @@ public class TWGameManager extends AbstractGameManager {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 vReport.add(r);
-                vReport.addAll(destroyEntity(entity, "crashed off the map", true, true));
+                vReport.addAll(destroyEntity(entity, "crashed off the map", false, true));
                 return vReport;
             }
 
@@ -5396,10 +5397,11 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // ok, now lets cycle through the entities in this spot and
-            // potentially
-            // damage them
+            // potentially damage them.
+            // Ignore passengers of the crashing unit; they will be destroyed (or not)
+            // as part of the crash damage handling.
             for (Entity victim : game.getEntitiesVector(hitCoords)) {
-                if (victim.getId() == entity.getId()) {
+                if (victim.getId() == entity.getId() || passengers.contains(victim)) {
                     continue;
                 }
                 if (((victim.getElevation() > 0) && victim
@@ -16976,8 +16978,7 @@ public class TWGameManager extends AbstractGameManager {
      * life support. Called during the end phase.
      */
     void checkForSuffocation() {
-        for (Iterator<Entity> i = game.getEntities(); i.hasNext();) {
-            final Entity entity = i.next();
+        for (Entity entity: game.inGameTWEntities()) {
             final Hex curHex = game.getBoard().getHex(entity.getPosition());
             if ((null == entity.getPosition()) || entity.isOffBoard() || curHex == null) {
                 continue;
@@ -19499,7 +19500,11 @@ public class TWGameManager extends AbstractGameManager {
                                                 && a.isCondEjectSIDest()))) {
                             vDesc.addAll(ejectEntity(te, true, false));
                         } else {
-                            vDesc.addAll(destroyEntity(te, "Structural Integrity Collapse", damageType != DamageType.CRASH));
+                            vDesc.addAll(
+                                destroyEntity(
+                                    te, "Structural Integrity Collapse", damageType != DamageType.CRASH
+                                )
+                            );
                         }
                         a.setSI(0);
                         if (hit.getAttackerId() != Entity.NONE) {

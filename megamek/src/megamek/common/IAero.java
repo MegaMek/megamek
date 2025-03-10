@@ -705,8 +705,9 @@ public interface IAero {
     }
 
     default String hasRoomForHorizontalLanding() {
+        Coords pos = ((Entity) this).getPosition();
         // walk along the hexes in the facing of the unit
-        Hex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
+        Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
         int elev = hex.getLevel();
         int facing = ((Entity) this).getFacing();
         String lenString = " (" + getLandingLength() + " hexes required)";
@@ -717,20 +718,20 @@ public interface IAero {
             startingPos.add(((Entity) this).getPosition().translated((facing + 5) % 6));
             startingPos.add(((Entity) this).getPosition().translated((facing + 1) % 6));
         }
-        for (Coords pos : startingPos) {
+        for (Coords position : startingPos) {
             for (int i = 0; i < getLandingLength(); i++) {
-                pos = pos.translated(facing);
+                position = position.translated(facing);
                 // check for buildings
-                if (((Entity) this).getGame().getBoard().getBuildingAt(pos) != null) {
+                if (((Entity) this).getGame().getBoard().getBuildingAt(position) != null) {
                     return "Buildings in the way" + lenString;
                 }
                 // no units in the way
-                for (Entity en : ((Entity) this).getGame().getEntitiesVector(pos)) {
+                for (Entity en : ((Entity) this).getGame().getEntitiesVector(position)) {
                     if (!en.isAirborne()) {
                         return "Ground units in the way" + lenString;
                     }
                 }
-                hex = ((Entity) this).getGame().getBoard().getHex(pos);
+                hex = ((Entity) this).getGame().getBoard().getHex(position);
                 // if the hex is null, then we are offboard. Don't let units
                 // land offboard.
                 if (null == hex) {
@@ -751,7 +752,7 @@ public interface IAero {
 
     default String hasRoomForVerticalLanding() {
         Coords pos = ((Entity) this).getPosition();
-        Hex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
+        Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
         if (((Entity) this).getGame().getBoard().getBuildingAt(pos) != null) {
             return "Buildings in the way";
         }
@@ -761,7 +762,6 @@ public interface IAero {
                 return "Ground units in the way";
             }
         }
-        hex = ((Entity) this).getGame().getBoard().getHex(pos);
         // if the hex is null, then we are offboard. Don't let units
         // land offboard.
         if (null == hex) {

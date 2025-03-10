@@ -33,6 +33,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
@@ -5212,6 +5213,7 @@ public class TWGameManager extends AbstractGameManager {
         if (c == null) {
             r = new Report(9701);
             r.subject = entity.getId();
+
             vReport.add(r);
             vReport.addAll(destroyEntity(entity, "crashed off the map", true, true));
             return vReport;
@@ -5242,7 +5244,11 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // 2. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
+            // 2. Check if there is space available to land; if not, they will crash
+            //    (but not be auto-destroyed since the attempt was made)
+            canCrashLand &= (null == ((vertical) ? aero.hasRoomForVerticalLanding() : aero.hasRoomForHorizontalLanding()));
+
+            // 3. If not a DropShip that *will* be destroyed, Aeros get one last-ditch landing attempt.
             if (canCrashLand){
                 // Generate piloting roll to attempt to land.  This includes all landing mods from
                 // TW pg 86
@@ -5274,6 +5280,7 @@ public class TWGameManager extends AbstractGameManager {
                     // Somehow left the map while crashing!  This will count as destroyed.
                     r = new Report(9701);
                     r.subject = entity.getId();
+                    r.addDesc(entity);
                     vReport.add(r);
                     vReport.addAll(destroyEntity(entity, "crashed off the map", true, true));
                     return vReport;
@@ -5286,10 +5293,8 @@ public class TWGameManager extends AbstractGameManager {
             // Horizontal fliers take some space to land; calc final position, check terrain
             // effects, move to final position.
             // Also update 'c' to represent final position.
-            if (!finalPosition.equals(c)) {
-                entity.setPosition(finalPosition, true);
-                c = finalPosition;
-            }
+            entity.setPosition(finalPosition, true);
+            c = finalPosition;
 
             // Technically bring to a halt; actual landing is handled above.
             ((IAero) entity).land();
@@ -5364,13 +5369,28 @@ public class TWGameManager extends AbstractGameManager {
                         hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     }
 
+                    // Mark this damage as Crash damage in case the aero is destroyed by damage and we need to
+                    // kill every single thing inside of it!
                     if (crash_damage > 10) {
-                        vReport.addAll(damageEntity(entity, hit, 10));
+                        vReport.addAll(damageEntity(entity, hit, 10, false, DamageType.CRASH, false, false));
                     } else {
-                        vReport.addAll(damageEntity(entity, hit, crash_damage));
+                        vReport.addAll(damageEntity(entity, hit, crash_damage, false, DamageType.CRASH, false, false));
                     }
                     crash_damage -= 10;
                 }
+
+                // If the aerospace unit survived the crash, destroy 2/3rds of all carried units per TW pg 90.
+                // If the entity _was_ destroyed by crash damage, see destroyTransportedUnits()
+                if (!entity.isDoomed()) {
+                    for (Entity passenger: entity.getLoadedUnits()) {
+                        if (Compute.d6() > 2) {
+                            // Destroy on a 3+
+                            // Should be salvageable though.
+                            destroyCarriedUnit(entity, passenger, IEntityRemovalConditions.REMOVE_SALVAGEABLE, 6376, vReport);
+                        }
+                    }
+                }
+
                 damageDealt = true;
             }
 
@@ -5547,7 +5567,8 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(9708, Report.PUBLIC);
             r.indent();
             r.addDesc(entity);
-            vReport.addAll(destroyEntity(entity, "Crashed while out of control!"));
+            // This destruction is not survivable by carried units
+            vReport.addAll(destroyEntity(entity, "Crashed while out of control!", false));
         }
 
         return vReport;
@@ -19477,7 +19498,7 @@ public class TWGameManager extends AbstractGameManager {
                                                 && a.isCondEjectSIDest()))) {
                             vDesc.addAll(ejectEntity(te, true, false));
                         } else {
-                            vDesc.addAll(destroyEntity(te, "Structural Integrity Collapse"));
+                            vDesc.addAll(destroyEntity(te, "Structural Integrity Collapse", damageType != DamageType.CRASH));
                         }
                         a.setSI(0);
                         if (hit.getAttackerId() != Entity.NONE) {
@@ -24555,20 +24576,6 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
-        // We'll need this later...
-        Aero ship = null;
-        if (entity.isLargeCraft()) {
-            ship = (Aero) entity;
-        }
-
-        // regardless of what was passed in, units loaded onto aeros not on the
-        // ground are destroyed
-        if (entity.isAirborne()) {
-            survivable = false;
-        } else if (entity.isAero()) {
-            survivable = true;
-        }
-
         // The unit can suffer an ammo explosion after it has been destroyed.
         int condition = IEntityRemovalConditions.REMOVE_SALVAGEABLE;
         if (!canSalvage) {
@@ -24586,32 +24593,6 @@ public class TWGameManager extends AbstractGameManager {
 
             entity.setDoomed(true);
 
-            // Kill any picked up MekWarriors
-            Enumeration<Integer> iter = entity.getPickedUpMekWarriors().elements();
-            while (iter.hasMoreElements()) {
-                int mekWarriorId = iter.nextElement();
-                Entity mw = game.getEntity(mekWarriorId);
-
-                // in some situations, a "picked up" mekwarrior won't actually exist
-                // probably this is brought about by picking up a mekwarrior in a previous MekHQ
-                // scenario
-                // then having the same unit get blown up in a subsequent scenario
-                // in that case, we simply move on
-                if (mw == null) {
-                    continue;
-                }
-
-                mw.setDestroyed(true);
-                // We can safely remove these, as they can't be targeted
-                game.removeEntity(mw.getId(), condition);
-                entityUpdate(mw.getId());
-                send(createRemoveEntityPacket(mw.getId(), condition));
-                r = new Report(6370);
-                r.subject = mw.getId();
-                r.addDesc(mw);
-                vDesc.addElement(r);
-            }
-
             // make any remaining telemissiles operated by this entity
             // out of contact
             for (int missileId : entity.getTMTracker().getMissiles()) {
@@ -24622,81 +24603,8 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // Mechanized BA that could die on a 3+
-            List<Entity> externalUnits = entity.getExternalUnits();
-
-            // Handle escape of transported units.
-            if (!entity.getLoadedUnits().isEmpty()) {
-                Coords curPos = entity.getPosition();
-                int curFacing = entity.getFacing();
-                for (Entity other : entity.getLoadedUnits()) {
-                    // If the unit has been destroyed (as from a cargo hit), skip it
-                    if (other.isDestroyed()) {
-                        continue;
-                    }
-                    // Can the other unit survive?
-                    boolean survived = false;
-                    if (entity instanceof Tank) {
-                        if (entity.getMovementMode().isNaval()
-                                || entity.getMovementMode().isHydrofoil()) {
-                            if (other.getMovementMode().isUMUInfantry()) {
-                                survived = Compute.d6() <= 3;
-                            } else if (other.getMovementMode().isJumpInfantry()) {
-                                survived = Compute.d6() == 1;
-                            } else if (other.getMovementMode().isVTOL()) {
-                                survived = Compute.d6() <= 2;
-                            }
-                        } else if (entity.getMovementMode().isSubmarine()) {
-                            if (other.getMovementMode().isUMUInfantry()) {
-                                survived = Compute.d6() == 1;
-                            }
-                        } else {
-                            survived = Compute.d6() <= 4;
-                        }
-                    } else if (entity instanceof Mek) {
-                        // mechanized BA can escape on a roll of 1 or 2
-                        if (externalUnits.contains(other)) {
-                            survived = Compute.d6() < 3;
-                        }
-                    }
-                    if (!survivable || (externalUnits.contains(other) && !survived)
-                    // Don't unload from ejecting spacecraft. The crews aren't in their units...
-                            || (ship != null && ship.isEjecting())) {
-                        // Nope.
-                        other.setDestroyed(true);
-                        // We need to unload the unit, since it's ID goes away
-                        entity.unload(other);
-                        // Safe to remove, as they aren't targeted
-                        game.moveToGraveyard(other.getId());
-                        send(createRemoveEntityPacket(other.getId(), condition));
-                        r = new Report(6370);
-                        r.subject = other.getId();
-                        r.addDesc(other);
-                        vDesc.addElement(r);
-                    }
-                    // Can we unload the unit to the current hex(es)?
-                    // TODO: update this section to implement Total Warfare Destroyed Carrier
-                    // rules per pp 90, 223-224, 239, 250
-                    else if ((null != Compute.stackingViolation(game, other.getId(), curPos, entity.climbMode()))
-                            || other.isLocationProhibited(curPos)) {
-                        // Nope.
-                        other.setDestroyed(true);
-                        // We need to unload the unit, since it's ID goes away
-                        entity.unload(other);
-                        // Safe to remove, as they aren't targeted
-                        game.moveToGraveyard(other.getId());
-                        send(createRemoveEntityPacket(other.getId(), condition));
-                        r = new Report(6375);
-                        r.subject = other.getId();
-                        r.addDesc(other);
-                        vDesc.addElement(r);
-                    } else {
-                        // The other unit survives.
-                        unloadUnit(entity, other, curPos, curFacing, entity.getElevation(),
-                                true, false);
-                    }
-                }
-            }
+            // Handle all held, riding, carried, and enclosed units together.
+            destroyTransportedUnits(entity, condition, survivable, vDesc);
 
             // Handle transporting unit.
             if (Entity.NONE != entity.getTransportId()) {
@@ -24814,8 +24722,270 @@ public class TWGameManager extends AbstractGameManager {
         return vDesc;
     }
 
-    protected int destroyTransportedUnits(Entity entity, Coords coords, Vector<Report> vPhaseReport) {
+    protected void destroyTransportedUnits(Entity entity, int condition, boolean survivable, Vector<Report> vDesc) {
+        destroyTransportedUnits(entity, condition, survivable, false, vDesc);
+    }
 
+    protected void destroyTransportedUnits(Entity entity, int condition, boolean survivable, boolean crashingAero, Vector<Report> vDesc) {
+        Report r;
+
+        // We'll need this later...
+        Aero ship = null;
+        if (entity.isLargeCraft()) {
+            ship = (Aero) entity;
+        }
+
+        // Regardless of what was passed in, units loaded onto ships not on the
+        // ground are destroyed.
+        // Units in an Aerospace unit destroyed in a crash are also destroyed.
+        // Units in an Aerospace unit that is already on the ground usually survive if
+        // they can evacuate the wreck.
+        if (entity.isAirborne()) {
+            survivable = false;
+        }
+
+        // Kill any picked up MekWarriors
+        Enumeration<Integer> iter = entity.getPickedUpMekWarriors().elements();
+        while (iter.hasMoreElements()) {
+            int mekWarriorId = iter.nextElement();
+            Entity mw = game.getEntity(mekWarriorId);
+
+            // in some situations, a "picked up" mekwarrior won't actually exist
+            // probably this is brought about by picking up a mekwarrior in a previous MekHQ
+            // scenario
+            // then having the same unit get blown up in a subsequent scenario
+            // in that case, we simply move on
+            if (mw == null) {
+                continue;
+            }
+
+            mw.setDestroyed(true);
+            // We can safely remove these, as they can't be targeted
+            game.removeEntity(mw.getId(), condition);
+            entityUpdate(mw.getId());
+            send(createRemoveEntityPacket(mw.getId(), condition));
+            r = new Report(6370);
+            r.subject = mw.getId();
+            r.addDesc(mw);
+            vDesc.addElement(r);
+        }
+
+        // Mechanized BA that could die on a 3+ (TW pg 227)
+        List<Entity> externalUnits = entity.getExternalUnits();
+
+        // Handle escape of transported units.
+        if (!entity.getLoadedUnits().isEmpty()) {
+            Coords curPos = entity.getPosition();
+            int curFacing = entity.getFacing();
+
+            // Set dismount locations: this hex / adjacent hexes / outer-ring adjacent hexes
+            List<Coords> dismountLocations = List.of(entity.getPosition());
+            if (
+                entity.isDropShip()
+                    || entity.isSmallCraft()
+                    || (entity.isSupportVehicle() && entity.isSuperHeavy())
+            ) {
+                int distance = (entity.isDropShip()) ? 2 : 1;
+                dismountLocations = entity.getPosition()
+                    .allAtDistanceOrLess(distance).stream()
+                    .filter(c -> game.getBoard().contains(c)).toList();
+            }
+
+            // Get mounted units, but place Aeros first: they cannot move out of the
+            // carrier's occupied hexes!
+            LinkedHashSet<Entity> others = new LinkedHashSet<>();
+            LinkedHashSet<Entity> grounds = new LinkedHashSet<>();
+            for (Entity other: entity.getLoadedUnits()) {
+                if (other instanceof Aero) {
+                    others.add(other);
+                } else {
+                    grounds.add(other);
+                }
+            }
+            others.addAll(grounds);
+
+            for (Entity other : others) {
+                // If the unit has been destroyed (as from a cargo hit), skip it
+                if (other.isDestroyed()) {
+                    continue;
+                }
+                // Can the other unit survive?
+                boolean survived = false;
+                // Riding a tank/VTOL
+                if (entity instanceof Tank) {
+                    if (entity.getMovementMode().isNaval()
+                        || entity.getMovementMode().isHydrofoil()) {
+                        if (other.getMovementMode().isUMUInfantry()) {
+                            survived = Compute.d6() <= 3;
+                        } else if (other.getMovementMode().isJumpInfantry()) {
+                            survived = Compute.d6() == 1;
+                        } else if (other.getMovementMode().isVTOL()) {
+                            survived = Compute.d6() <= 2;
+                        }
+                    } else if (entity.getMovementMode().isSubmarine()) {
+                        if (other.getMovementMode().isUMUInfantry()) {
+                            survived = Compute.d6() == 1;
+                        }
+                    } else {
+                        survived = Compute.d6() <= 4;
+                    }
+                } else if (entity instanceof Mek) {
+                    // mechanized BA can escape on a roll of 1 or 2
+                    if (externalUnits.contains(other)) {
+                        survived = Compute.d6() < 3;
+                    }
+                }
+
+                if (!survivable || (externalUnits.contains(other) && !survived)
+                    // Don't unload from ejecting spacecraft. The crews aren't in their units...
+                    || (ship != null && ship.isEjecting())) {
+                    destroyCarriedUnit(entity, other, condition, 6370, vDesc);
+                } else {
+                    // Handle all _possibly_ survivable destruction:
+                    // 1. BAs mounting an Omni / Mechanized mounting anything (TW pg 227):
+                    //    Survive on 1-2 (above)
+                    //    Placed in carrier's hex if not stacking violation or prohibited
+                    if (other instanceof BattleArmor ba) {
+                        if (externalUnits.contains(ba)) {
+                            // Can only dismount in current location
+                            dismountLocations = List.of(entity.getPosition());
+                        }
+                    }
+
+                    // Get the best coords to evacuate to, or kill the unit.
+                    // N.B. this may overlap with unloadStranded() functionality, although it's
+                    // not clear that that is actually working currently.
+                    Coords escapeTo = findLegalDismount(entity, other, dismountLocations);
+                    if (escapeTo == null ) {
+                        // Destroy them!
+                        destroyCarriedUnit(entity, other, condition, 6375, vDesc);
+                    } else {
+                        // Unload them!
+                        int facing = curPos.direction(escapeTo);
+                        int elevation = game.getBoard().getHex(escapeTo).getLevel();
+                        unloadUnit(entity, other, escapeTo, facing, elevation,
+                            true, false);
+
+                        // Report unloading
+                        r = new Report(2518, Report.OBSCURED);
+                        r.subject = entity.getId();
+                        r.add(other.generalName());
+                        r.add(entity.getDisplayName());
+                        r.add(escapeTo.toFriendlyString());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Helper to execute reporting and destruction of a carried unit
+     * @param carrier       The transporting entity
+     * @param passenger     The unit to be destroyed
+     * @param condition     IEntityRemovalConditions (which governs if passenger is recoverable)
+     * @param reportId      Which report to use
+     * @param vDesc         Reprt vector to which this report will be added.
+     */
+    protected void destroyCarriedUnit(Entity carrier, Entity passenger, int condition, int reportId, Vector<Report> vDesc) {
+        passenger.setDestroyed(true);
+        // We need to unload the unit, since it's ID goes away
+        carrier.unload(passenger);
+        // Safe to remove, as they aren't targeted
+        game.moveToGraveyard(passenger.getId());
+        send(createRemoveEntityPacket(passenger.getId(), condition));
+        Report r = new Report(reportId);
+        r.subject = passenger.getId();
+        r.addDesc(passenger);
+        vDesc.addElement(r);
+    }
+
+    /**
+     * Attempt to find a safe evacuation hex per the rules for destroyed carriers on TW pg 90.
+     * Non-aerospace units causing stacking violations have to try to move out to an adjacent hex.
+     * Predicate: candidateCoords are arranged in center-out ring order
+     *            so that minimum-displacement is maintained
+     * @param carrier           Destroyed
+     * @param loadedEntity      Entity trying to escape this calamity.
+     * @param candidateCoords   Pre-determined set of coordinates to disembark into.
+     * @return                  Coords, or null if no legal.
+     */
+    @Nullable
+    protected Coords findLegalDismount(Entity carrier, Entity loadedEntity, List<Coords> candidateCoords) {
+        // We don't care about doors anymore, just trying to find the closest legal spot to go to.
+        Coords dismount = null;
+        boolean unloadFatal;
+        boolean unloadIllegal;
+        HashMap<Integer, ArrayList<Coords>> viableCoords = new HashMap<Integer, ArrayList<Coords>>();
+        HashSet<Coords> disembarkCoords = carrier.getOccupiedCoords();
+        // For smaller carriers, only takes one pass to check same-hex legality
+        for (Coords candidate: candidateCoords) {
+            // this condition is a simple check that we're not unloading units into fatal conditions
+            unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType())
+                || loadedEntity.isLocationProhibited(candidate)
+                || loadedEntity.isLocationDeadly(candidate);
+
+            // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
+            unloadIllegal = Compute.stackingViolation(
+                getGame(), loadedEntity, candidate, null, loadedEntity.climbMode()
+            ) != null;
+            if (!(unloadFatal || unloadIllegal)) {
+                // The loaded entity can legally exit to this candidate hex, if it can get there.
+                int mpRequired = 0;
+                if (!disembarkCoords.contains(candidate)) {
+                    // Adjacent hex means we need to spend MP to get there.
+                    // Rules require we spend the minimum for least displacement
+                    Coords exit = null;
+
+                    // Find first hex in the carrier's occupied coordinates that is a neighbor
+                    exit = candidate.allAdjacent().stream()
+                        .filter(disembarkCoords::contains)
+                        .findFirst().orElse(exit);
+                    if (exit == null) {
+                        continue;
+                    }
+                    // Hexes have to exist to compute MP
+                    Hex exitHex = game.getBoard().getHex(exit);
+                    Hex disembarkHex = game.getBoard().getHex(candidate);
+                    if (exitHex == null || disembarkHex == null) {
+                        continue;
+                    }
+
+                    // Need movePath to compute cost.
+                    // First, move entity to exit coords.
+                    // Then set to correct elevation.
+                    // Finally, get cost to move into the final hex, including elevation and
+                    // terrain costs.
+                    loadedEntity.setPosition(exit);
+                    loadedEntity.setElevation(exitHex.getLevel());
+                    MovePath cmd = new MovePath(game, loadedEntity);
+                    cmd.addStep(MoveStepType.FORWARDS);
+                    cmd.compile(game, loadedEntity, false);
+
+                    mpRequired = cmd.getMpUsed();
+                    if (mpRequired > loadedEntity.getRunMP()) {
+                        // Can't exit this way
+                        continue;
+                    }
+
+                }
+
+                // If MP required is zero, it's one of the carrier's occupied hexes so
+                // we can just squat there for no MP.
+                // Aeros get first dibs, though.
+                if (!viableCoords.containsKey(mpRequired)) {
+                    viableCoords.put(mpRequired, new ArrayList<>());
+                }
+                viableCoords.get(mpRequired).add(candidate);
+            }
+        }
+        // Once viable coords are recorded, select the first-cheapest
+        if (!viableCoords.isEmpty()) {
+            int lowestCost = Collections.min(viableCoords.keySet());
+            // Take first of the cheapest options
+            dismount = (viableCoords.get(lowestCost).isEmpty()) ? null : viableCoords.get(lowestCost).get(0);
+        }
+
+        return dismount;
     }
 
     /**

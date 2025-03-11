@@ -21,14 +21,18 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
 class CoordsTest {
     //========================================================
@@ -300,6 +304,76 @@ class CoordsTest {
 
         List<Coords> intervening = Coords.intervening(source, target);
         assertFalse(intervening.isEmpty());
+    }
+
+    @Test
+    void testHex2HexInterveningDistance2() {
+        Coords source = new Coords(0, 0);
+        Coords target = new Coords(3, 3);
+
+        List<Coords> intervening = Coords.intervening(source, target);
+        assertFalse(intervening.isEmpty());
+        assertEquals(6, intervening.size());
+
+        List<CubeCoords> line = source.toCube().lineTo(target.toCube());
+        assertFalse(line.isEmpty());
+        assertEquals(6, line.size());
+        List<Coords> convertedCoords = line.stream().map(CubeCoords::toOffset).toList();
+        assertFalse(line.isEmpty());
+        assertEquals(6, convertedCoords.size());
+        for (int i = 0; i < convertedCoords.size(); i++) {
+            assertEquals(convertedCoords.get(i), intervening.get(i));
+        }
+    }
+
+    @Test
+    void testInterveningPerformance() {
+        Coords source = new Coords(0, 0);
+        Coords target = new Coords(100, 100);
+
+        int numIterations = 1000;
+        long totalDurationIntervening = 0;
+        long totalDurationLineTo = 0;
+
+        for (int i = 0; i < numIterations; i++) {
+            // Test Coords.intervening performance
+            long startTimeIntervening = System.nanoTime();
+            List<Coords> intervening = Coords.intervening(source, target);
+            long endTimeIntervening = System.nanoTime();
+            totalDurationIntervening += (endTimeIntervening - startTimeIntervening);
+
+            // Test CubeCoords.lineTo performance
+            long startTimeLineTo = System.nanoTime();
+            List<CubeCoords> line = source.toCube().lineTo(target.toCube());
+            List<Coords> convertedCoords = line.stream().map(CubeCoords::toOffset).toList();
+            long endTimeLineTo = System.nanoTime();
+            totalDurationLineTo += (endTimeLineTo - startTimeLineTo);
+        }
+
+        long averageDurationIntervening = totalDurationIntervening / numIterations;
+        long averageDurationLineTo = totalDurationLineTo / numIterations;
+
+        System.out.println("Coords.intervening average duration: " + averageDurationIntervening + " ns");
+        System.out.println("CubeCoords.lineTo average duration: " + averageDurationLineTo + " ns");
+        assertTrue(averageDurationIntervening > averageDurationLineTo);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> testCoordsToCubeToOffset() {
+        return generateCoords().map(target -> dynamicTest(
+              "Test Coords(" + target.getX() + ", " + target.getY() + ") to Cube to Offset",
+              () -> assertEquals(target, target.toCube().toOffset())
+        ));
+    }
+
+    private Stream<Coords> generateCoords() {
+        List<Coords> coordsList = new ArrayList<>();
+        for (int x = 0; x < 100; x++) {
+            for (int y = 0; y < 100; y++) {
+                coordsList.add(new Coords(x, y));
+            }
+        }
+        return coordsList.stream();
     }
 
     @Test

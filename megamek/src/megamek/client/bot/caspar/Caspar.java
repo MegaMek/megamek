@@ -41,7 +41,6 @@ import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
-import org.nd4j.linalg.api.ops.Op;
 
 import java.util.Optional;
 import java.util.Set;

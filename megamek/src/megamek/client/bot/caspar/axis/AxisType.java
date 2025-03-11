@@ -63,7 +63,6 @@ public enum AxisType {
     UNIT_ROLE(new UnitRoleCalculator()),
     THREAT_BY_ROLE(new ThreatByRoleCalculator()),
     UNIT_TMM(new UnitTmmCalculator()),
-    KILL_CHANCE(new KillChanceCalculator()),
     PILOTING_CAUTION(new PilotingCautionCalculator()),
     RETREAT(new RetreatCalculator()),
     SCOUTING(new ScoutingCalculator()),

@@ -77,8 +77,8 @@ public class CubeCoords {
      */
     public Coords toOffset() {
         // Implement your hex grid's conversion logic
-        int x = (int) Math.round(q);
-        int y = (int) Math.round(r + (q - Math.round(q)) / 2);
+        int x = (int) q;
+        int y = (int) (r + q / 2);
         return new Coords(x, y);
     }
 
@@ -222,8 +222,13 @@ public class CubeCoords {
         int N = distanceTo(other);
         List<CubeCoords> results = new ArrayList<>();
         for (int i = 0; i <= N; i++) {
-            results.add(lerp(this, other, 1.0 / N * i).roundToNearestHex());
+            if (i == N) {
+                results.add(other);
+            } else {
+                results.add(lerp(this, other, 1.0 / N * i).roundToNearestHex());
+            }
         }
+
         return results;
     }
 

@@ -29,6 +29,12 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
+import megamek.client.bot.common.StructOfUnitArrays;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.UnitRole;
+
+import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
  * Calculates if the favorite target role type is in range
@@ -38,7 +44,7 @@ public class FavoriteTargetInRangeCalculator extends BaseAxisCalculator {
 
     @Override
     public double[] axis() {
-        return new double[3];
+        return new double[UnitRole.values().length];
     }
 
     @Override
@@ -48,6 +54,40 @@ public class FavoriteTargetInRangeCalculator extends BaseAxisCalculator {
         // 0 - SNIPER
         // 1 - MISSILE BOAT
         // 2 - JUGGERNAUT
+        Entity unit = pathing.getEntity();
+        int maxRange = unit.getMaxWeaponRange();
+        for (int i = 0; i < UnitRole.values().length; i++) {
+            favoriteTarget[i] = getDistanceToClosestEnemyWithRole(pathing, gameState.getEnemyUnitsSOU(), maxRange, UnitRole.values()[i]);
+        }
         return favoriteTarget;
+    }
+
+
+    /**
+     * Counts the number of units covering the current unit
+     * @param pathing The movement path to evaluate
+     * @param structOfUnitArrays The struct of unit arrays to evaluate
+     * @return The number of units covering the current unit
+     */
+    private double getDistanceToClosestEnemyWithRole(Pathing pathing, StructOfUnitArrays structOfUnitArrays, int distance, UnitRole role) {
+        int xd;
+        int yd;
+        int x = pathing.getFinalCoords().getX();
+        int y = pathing.getFinalCoords().getY();
+        int length = structOfUnitArrays.size();
+
+        double dist;
+        double closedDist = Integer.MAX_VALUE;
+        for (int i = 0; i < length; i++) {
+            int id = structOfUnitArrays.getId(i);
+
+            xd = structOfUnitArrays.getX(i);
+            yd = structOfUnitArrays.getY(i);
+            if (role == structOfUnitArrays.getRole(i)) {
+                dist = Coords.distance(x, y, xd, yd);
+                closedDist = Math.min(closedDist, dist);
+            }
+        }
+        return 1 - clamp01(closedDist / (distance + 1d));
     }
 }

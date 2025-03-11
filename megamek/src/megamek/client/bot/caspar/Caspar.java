@@ -53,6 +53,8 @@ import java.util.Set;
 public class Caspar extends Princess implements AdvancedAgent {
     private static final MMLogger logger = MMLogger.create(Caspar.class);
 
+    private static final int QUADRANT_SIZE = 6;
+
     private BoardQuickRepresentation boardQuickRepresentation;
     private StructOfUnitArrays enemyUnitsSOU;
     private StructOfUnitArrays friendlyUnitsSOU;
@@ -164,16 +166,32 @@ public class Caspar extends Princess implements AdvancedAgent {
         getBoardQuickRepresentation().updateThreatHeatmap(getEnemyUnitsSOU(), getOwnUnitsSOU());
     }
 
+    private void initializeStrategicGoals() {
+        this.strategicGoalsManager.initializeStrategicGoals(getGame().getBoard(), QUADRANT_SIZE, QUADRANT_SIZE);
+    }
+
+    private void updateStrategicGoals() {
+        for (Entity unit : getEntitiesOwned()) {
+            if (unit.isDoomed() || unit.isDestroyed()) {
+                continue;
+            }
+            logger.debug("Updating strategic goals for unit: {}", unit);
+            this.strategicGoalsManager.removeAllStrategicGoalsOnCoordsQuadrant(unit.getPosition());
+        }
+    }
+
     @Override
     protected void endOfTurnProcessing() {
         super.endOfTurnProcessing();;
         resetSOU();
         resetQuickRepresentation();
+        updateStrategicGoals();
     }
 
     @Override
     protected void exchangeSetup() {
         resetSOU();
         resetQuickRepresentation();
+        initializeStrategicGoals();
     }
 }

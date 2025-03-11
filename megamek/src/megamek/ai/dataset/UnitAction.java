@@ -17,6 +17,7 @@ package megamek.ai.dataset;
 import megamek.client.bot.common.Pathing;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Coords;
+import megamek.common.CubeCoords;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.MovePath;
@@ -83,6 +84,14 @@ public record UnitAction(int id, int teamId, int playerId, String chassis, Strin
 
     public Coords currentPosition() {
         return new Coords(fromX, fromY);
+    }
+
+    public CubeCoords currentCubePosition() {
+        return currentPosition().toCube();
+    }
+
+    public CubeCoords finalCubePosition() {
+        return finalPosition().toCube();
     }
 
     public boolean isHuman() {

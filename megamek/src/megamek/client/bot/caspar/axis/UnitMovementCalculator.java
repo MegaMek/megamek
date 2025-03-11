@@ -29,6 +29,9 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
+import megamek.common.Entity;
+
+import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
  * Calculates the unit movement
@@ -40,6 +43,9 @@ public class UnitMovementCalculator extends BaseAxisCalculator {
         // This calculates the unit movement
         double[] unitMovement = axis();
 
+        Entity unit = pathing.getEntity();
+        double move = pathing.getDistanceTravelled() / (double) unit.getRunMP();
+        unitMovement[0] = clamp01(move);
         return unitMovement;
     }
 }

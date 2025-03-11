@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import megamek.client.bot.common.Agent;
 import megamek.client.bot.common.BoardQuickRepresentation;
+import megamek.client.bot.common.StrategicGoalsManager;
 import megamek.client.bot.common.StructOfUnitArrays;
 import megamek.client.ui.swing.TowLinkWarning;
 import org.apache.logging.log4j.Level;
@@ -179,6 +180,7 @@ public class Princess extends BotClient implements Agent {
     private List<Integer> enhancedTargetingTargetTypes;
     private List<Integer> enhancedTargetingAttackerTypes;
     private SwarmContext swarmContext;
+    protected StrategicGoalsManager strategicGoalsManager = new StrategicGoalsManager();
     // Controls whether Princess will use called shots on immobile targets
     private boolean useCalledShotsOnImmobileTarget;
 
@@ -1983,10 +1985,6 @@ public class Princess extends BotClient implements Agent {
 
     }
 
-
-
-
-
     /**
      * Gets an entity eligible to fire from a list contained in the fire control state.
      */
@@ -2734,7 +2732,7 @@ public class Princess extends BotClient implements Agent {
         this.swarmContext = new SwarmContext();
         this.swarmCenterManager = new SwarmCenterManager(this);
         int quadrantSize = Math.min(getGame().getBoard().getWidth(), Math.min(getGame().getBoard().getHeight(), 11));
-        this.swarmContext.initializeStrategicGoals(getGame().getBoard(), quadrantSize, quadrantSize);
+        this.strategicGoalsManager.initializeStrategicGoals(getGame().getBoard(), quadrantSize, quadrantSize);
     }
 
     /**
@@ -3056,7 +3054,7 @@ public class Princess extends BotClient implements Agent {
 
         for (var entity : getEntitiesOwned()) {
             if (entity.isDeployed()) {
-                swarmContext.removeAllStrategicGoalsOnCoordsQuadrant(entity.getPosition());
+                strategicGoalsManager.removeAllStrategicGoalsOnCoordsQuadrant(entity.getPosition());
             }
         }
     }
@@ -3639,5 +3637,10 @@ public class Princess extends BotClient implements Agent {
 
     public ArtilleryCommandAndControl getArtilleryCommandAndControl() {
         return artilleryCommandAndControl;
+    }
+
+    @Override
+    public StrategicGoalsManager getStrategicGoalsManager() {
+        return strategicGoalsManager;
     }
 }

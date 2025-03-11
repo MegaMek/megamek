@@ -17,6 +17,7 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -172,7 +173,7 @@ public class Coords implements Serializable {
      * @param positions list of positions
      * @return the median of the given list of positions
      */
-    public static @Nullable Coords median(List<Coords> positions) {
+    public static @Nullable Coords median(Collection<Coords> positions) {
         if (positions.isEmpty()) {
             return null;
         }
@@ -180,7 +181,7 @@ public class Coords implements Serializable {
         int n = positions.size();
 
         if (n == 1) {
-            return positions.get(0);
+            return positions.stream().findAny().orElse(null);
         }
 
         double x0 = 0.0;

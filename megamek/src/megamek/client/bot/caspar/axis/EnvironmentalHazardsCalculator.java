@@ -29,6 +29,11 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
+import megamek.common.Coords;
+import megamek.common.Entity;
+
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Calculates the environmental hazards around the final position
@@ -39,6 +44,28 @@ public class EnvironmentalHazardsCalculator extends BaseAxisCalculator {
     public double[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the potential of the unit to act as a decoy
         double[] hazards = axis();
+        Entity unit = pathing.getEntity();
+        var boardQuickRepresentation = gameState.getBoardQuickRepresentation();
+        if (!boardQuickRepresentation.onGround() || unit.isAirborneAeroOnGroundMap()) {
+            hazards[0] = 0.0d;
+            return hazards;
+        }
+
+        Set<Coords> path = pathing.getCoordsSet();
+        AtomicInteger hazardCounter = new AtomicInteger();
+        path.forEach(coords -> {
+            if (boardQuickRepresentation.hasHazard(coords)) {
+                hazardCounter.getAndIncrement();
+            }
+        });
+
+        boolean hasHazard = pathing.getFinalCoords().allAdjacent().stream().anyMatch(boardQuickRepresentation::hasHazard);
+
+        if (hasHazard) {
+            hazardCounter.getAndIncrement();
+        }
+
+        hazards[0] = normalize(1.0 - (hazardCounter.get() / (pathing.getHexesMoved() + 1.0d)), 0, 1);
 
         return hazards;
     }

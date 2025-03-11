@@ -235,7 +235,7 @@ public class UtilityPathRanker extends BasicPathRanker {
 
         // Existing strategic goal calculation
         double maxGoalUtility = 0.0;
-        for (Coords goal : getOwner().getSwarmContext().getStrategicGoalsOnCoordsQuadrant(path.getFinalCoords())) {
+        for (Coords goal : getOwner().getStrategicGoalsManager().getStrategicGoalsOnCoordsQuadrant(path.getFinalCoords())) {
             double distance = path.getFinalCoords().distance(goal);
             double utility = (10.0 / (distance + 1.0));
             maxGoalUtility = Math.max(maxGoalUtility, utility);

@@ -34,8 +34,10 @@ import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.pathfinder.BoardClusterTracker;
 
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -103,16 +105,23 @@ public interface GameState {
      * building, a turret, elevator, etc.
      * @return A list of hexes
      */
-    List<Hex> getStrategicPoints();
+    List<Coords> getStrategicPoints();
 
     // Basic game information
     Game getGame();
     BoardQuickRepresentation getBoardQuickRepresentation();
     Player getLocalPlayer();
 
-    // Pathfinding support
-    BoardClusterTracker getClusterTracker();
-
-    // Formation support
+    /**
+     * Returns the formation that the unit is part of.
+     * @param unit The unit to get the formation for
+     * @return The formation the unit is part of, or empty if the unit is not part of a formation
+     */
     Optional<Formation> getFormationFor(Entity unit);
+
+    /**
+     * Returns the artillery attacks that are available to the agent at this moment in time.
+     * @return An enumeration of artillery attacks
+     */
+    Enumeration<ArtilleryAttackAction> getArtilleryAttacks();
 }

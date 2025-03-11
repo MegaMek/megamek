@@ -122,7 +122,7 @@ public class BoardQuickRepresentation {
     }
 
     public int levelAt(Coords position) {
-        return boardTerrainLevels[getIndexFromCoords(position)];
+        return boardTerrainLevels[getIndexFromCoordsClampedToBoard(position)];
     }
 
     public void updateThreatHeatmap(StructOfUnitArrays enemies, StructOfUnitArrays own) {
@@ -230,7 +230,7 @@ public class BoardQuickRepresentation {
      * @return the threat level at the given position, normalized between 0 and 1
      */
     public double getThreatLevel(Coords position) {
-        return threatLevel[getIndexFromCoords(clampToBoard(position))];
+        return threatLevel[getIndexFromCoordsClampedToBoard(position)];
     }
 
     /**
@@ -239,7 +239,7 @@ public class BoardQuickRepresentation {
      * @return the threat level at the given position, normalized between 0 and 1
      */
     public double getAlliedThreatLevel(Coords position) {
-        return alliedThreatLevel[getIndexFromCoords(clampToBoard(position))];
+        return alliedThreatLevel[getIndexFromCoordsClampedToBoard(position)];
     }
 
     private Coords clampToBoard(Coords position) {
@@ -288,23 +288,23 @@ public class BoardQuickRepresentation {
     }
 
     public boolean hasWoods(Coords position) {
-        return woodedTerrain.get(getIndexFromCoords(position));
+        return woodedTerrain.get(getIndexFromCoordsClampedToBoard(position));
     }
 
     public boolean hasBuilding(Coords position) {
-        return buildings.get(getIndexFromCoords(position));
+        return buildings.get(getIndexFromCoordsClampedToBoard(position));
     }
 
     public boolean hasHazard(Coords position) {
-        return hazardousTerrain.get(getIndexFromCoords(position));
+        return hazardousTerrain.get(getIndexFromCoordsClampedToBoard(position));
     }
 
     public boolean hasWater(Coords position) {
-        return hasWaterLevel.get(getIndexFromCoords(position));
+        return hasWaterLevel.get(getIndexFromCoordsClampedToBoard(position));
     }
 
     public boolean isClear(Coords position) {
-        return clearTerrain.get(getIndexFromCoords(position));
+        return clearTerrain.get(getIndexFromCoordsClampedToBoard(position));
     }
 
     public int getIndexFromCoords(int x, int y) {
@@ -318,8 +318,12 @@ public class BoardQuickRepresentation {
         return new Coords(idx % boardWidth, idx / boardWidth);
     }
 
-    public int getIndexFromCoords(Coords c) {
+    private int getIndexFromCoords(Coords c) {
         return getIndexFromCoords(c.getY(), c.getX());
+    }
+
+    public int getIndexFromCoordsClampedToBoard(Coords coords) {
+        return getIndexFromCoords(clampToBoard(coords));
     }
 
     public boolean insideBoard(Coords position) {
@@ -328,12 +332,12 @@ public class BoardQuickRepresentation {
     }
 
     public boolean hasPartialCover(Coords position, int baseHeight, int unitHeight) {
-        return (boardTerrainLevels[getIndexFromCoords(position)] > baseHeight) &&
-              (boardTerrainLevels[getIndexFromCoords(position)] < baseHeight+unitHeight);
+        return (boardTerrainLevels[getIndexFromCoordsClampedToBoard(position)] > baseHeight) &&
+              (boardTerrainLevels[getIndexFromCoordsClampedToBoard(position)] < baseHeight+unitHeight);
     }
 
     public boolean hasFullCover(Coords position, int baseHeight, int unitHeight) {
-        return boardTerrainLevels[getIndexFromCoords(position)] >= baseHeight+unitHeight;
+        return boardTerrainLevels[getIndexFromCoordsClampedToBoard(position)] >= baseHeight+unitHeight;
     }
 
     public boolean onGround() {

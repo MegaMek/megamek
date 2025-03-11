@@ -47,7 +47,7 @@ public class UnitRoleCalculator extends BaseAxisCalculator {
         // This calculates the unit role
         double[] unitRole = axis();
         Entity unit = pathing.getEntity();
-        unitRole[unit.getRole().ordinal()] = 1d;
+        unitRole[unit.getRole().ordinal()] = 1.0d;
         return unitRole;
     }
 }

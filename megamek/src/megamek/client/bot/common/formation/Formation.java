@@ -48,11 +48,33 @@ public class Formation {
     private Coords formationCenter;
 
     public enum FormationType {
-        BOX,
-        LINE,
-        WEDGE,
-        COLUMN,
-        SCATTERED
+        BOX(3, 4, 5),
+        LINE(2, 3, 4),
+        WEDGE(2, 3, 4),
+        COLUMN(2, 3, 5),
+        SCATTERED(3, 5, 10);
+
+        private final int minDistance;
+        private final int idealDistance;
+        private final int maxDistance;
+
+        FormationType(int minDistance, int idealDistance, int maxDistance) {
+            this.minDistance = minDistance;
+            this.idealDistance = idealDistance;
+            this.maxDistance = maxDistance;
+        }
+
+        public int getMinDistance() {
+            return minDistance;
+        }
+
+        public int getIdealDistance() {
+            return idealDistance;
+        }
+
+        public int getMaxDistance() {
+            return maxDistance;
+        }
     }
 
     public Formation(String id, Set<Entity> members, UnitRole primaryRole, Entity leader,

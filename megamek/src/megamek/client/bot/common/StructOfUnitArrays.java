@@ -31,6 +31,7 @@ package megamek.client.bot.common;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.common.Entity;
 import megamek.common.IAero;
+import megamek.common.UnitRole;
 import megamek.logging.MMLogger;
 
 import java.util.HashSet;
@@ -372,9 +373,9 @@ public class StructOfUnitArrays implements Iterable<Integer> {
      * @param index index of the unit
      * @return the role of the unit
      */
-    public int getRole(int index) {
+    public UnitRole getRole(int index) {
         assertIndex(index);
-        return role[index];
+        return UnitRole.values()[role[index]];
     }
 
     /**

@@ -27,6 +27,7 @@
  */
 package megamek.client.bot.caspar;
 
+import megamek.client.bot.common.BoardQuickRepresentation;
 import megamek.client.bot.common.UnitClassifier;
 import megamek.client.bot.common.formation.Formation;
 import megamek.client.bot.common.GameState;
@@ -122,13 +123,13 @@ public class TacticalPlanner {
         }
 
         // Hold strategic points
-        for (Hex hex : gameState.getStrategicPoints()) {
+        for (Coords coords : gameState.getStrategicPoints()) {
             TacticalObjective objective = new TacticalObjective(
-                "hold_" + hex.getCoords().toFriendlyString(),
+                "hold_" + coords.toFriendlyString(),
                 ObjectiveType.HOLD_POSITION,
-                hex.getCoords(),
-                3,
-                calculateStrategicValue(hex, gameState)
+                  coords,
+                2,
+                calculateStrategicValue(coords, gameState.getBoardQuickRepresentation())
             );
             objectives.put(objective.getId(), objective);
         }
@@ -258,13 +259,21 @@ public class TacticalPlanner {
     /**
      * Calculates the strategic value of a hex.
      *
-     * @param hex The hex to evaluate
-     * @param gameState The current game state
+     * @param coords The coords of the hex
+     * @param boardQuickRepresentation the board representation
      * @return A strategic value score
      */
-    private double calculateStrategicValue(Hex hex, GameState gameState) {
-        // Would be implemented based on terrain, cover, and position
-        return 1.0;
+    private double calculateStrategicValue(Coords coords, BoardQuickRepresentation boardQuickRepresentation) {
+        if (boardQuickRepresentation.hasBuilding(coords)) {
+            return 9.0;
+        } else if (boardQuickRepresentation.hasHazard(coords)) {
+            return 0.1;
+        } else if (boardQuickRepresentation.hasWater(coords)) {
+            return 0.1;
+        } else if (boardQuickRepresentation.hasWoods(coords)) {
+            return 0.7;
+        }
+        return 0.3;
     }
 
     /**

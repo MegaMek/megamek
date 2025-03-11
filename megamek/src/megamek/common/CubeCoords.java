@@ -30,6 +30,7 @@ import java.util.Set;
  */
 public class CubeCoords {
 
+    public static final CubeCoords ORIGIN = new CubeCoords(0, 0, 0);
     /**
      * Enum for the six directions in a hex grid.
      */
@@ -202,6 +203,16 @@ public class CubeCoords {
         return distanceBetween(this, other);
     }
 
+
+
+    /**
+     * Gets the distance between this cube coordinate and another.
+     * @return the distance from origin
+     */
+    public int magnitude() {
+        return distanceBetween(this, ORIGIN);
+    }
+
     /**
      * Gets the cube coordinates of a line between two cube coordinates.
      * @param other the other cube coordinate
@@ -214,5 +225,29 @@ public class CubeCoords {
             results.add(lerp(this, other, 1.0 / N * i).roundToNearestHex());
         }
         return results;
+    }
+
+    /**
+     * Gets the dot product of this cube coordinate and another.
+     * @param other the other cube coordinate
+     * @return the dot product of the two coordinates
+     */
+    public double dot(CubeCoords other) {
+        return q * other.q + r * other.r + s * other.s;
+    }
+
+    /**
+     * Gets the cross product of this cube coordinate and another.
+     * @param vector the other cube coordinate
+     * @return the cross product of the two coordinates
+     */
+    public double getCrossMagnitude(CubeCoords vector) {
+        double crossQ = (r * vector.s) - (s * vector.r);
+        double crossR = (s * vector.q) - (q * vector.s);
+        double crossS = (q * vector.r) - (r * vector.q);
+
+        // Magnitude of the cross product
+        double crossMagnitude = Math.sqrt(crossQ*crossQ + crossR*crossR + crossS*crossS);
+        return crossMagnitude;
     }
 }

@@ -10,8 +10,10 @@ import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.pathfinder.BoardClusterTracker;
 
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -65,7 +67,7 @@ public class SyntheticGameState implements GameState {
     }
 
     @Override
-    public List<Hex> getStrategicPoints() {
+    public List<Coords> getStrategicPoints() {
         return List.of();
     }
 
@@ -85,12 +87,22 @@ public class SyntheticGameState implements GameState {
     }
 
     @Override
-    public BoardClusterTracker getClusterTracker() {
-        return null;
+    public Optional<Formation> getFormationFor(Entity unit) {
+        return Optional.empty();
     }
 
     @Override
-    public Optional<Formation> getFormationFor(Entity unit) {
-        return Optional.empty();
+    public Enumeration<ArtilleryAttackAction> getArtilleryAttacks() {
+        return new Enumeration<>() {
+            @Override
+            public boolean hasMoreElements() {
+                return false;
+            }
+
+            @Override
+            public ArtilleryAttackAction nextElement() {
+                return null;
+            }
+        };
     }
 }

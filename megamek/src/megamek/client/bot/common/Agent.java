@@ -73,4 +73,6 @@ public interface Agent {
     List<Entity> getEntitiesOwned();
 
     List<Entity> getFriendEntities();
+
+    StrategicGoalsManager getStrategicGoalsManager();
 }

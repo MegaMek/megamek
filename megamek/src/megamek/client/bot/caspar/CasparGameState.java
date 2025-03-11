@@ -6,14 +6,17 @@ import megamek.client.bot.common.BoardQuickRepresentation;
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.StructOfUnitArrays;
 import megamek.client.bot.common.formation.Formation;
+import megamek.client.bot.princess.Princess;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.pathfinder.BoardClusterTracker;
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -68,8 +71,8 @@ public class CasparGameState implements GameState {
     }
 
     @Override
-    public List<Hex> getStrategicPoints() {
-        return List.of();
+    public List<Coords> getStrategicPoints() {
+        return agent.getStrategicGoalsManager().getStrategicGoals();
     }
 
     @Override
@@ -93,7 +96,7 @@ public class CasparGameState implements GameState {
     }
 
     @Override
-    public BoardClusterTracker getClusterTracker() {
-        return agent.getClusterTracker();
+    public Enumeration<ArtilleryAttackAction> getArtilleryAttacks() {
+        return agent.getGame().getArtilleryAttacks();
     }
 }

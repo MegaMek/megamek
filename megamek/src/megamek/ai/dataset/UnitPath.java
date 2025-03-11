@@ -29,8 +29,11 @@ package megamek.ai.dataset;
 
 import megamek.client.bot.common.Pathing;
 import megamek.common.Coords;
+import megamek.common.CubeCoords;
 import megamek.common.Entity;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class UnitPath implements Pathing {
@@ -42,7 +45,9 @@ public class UnitPath implements Pathing {
     public UnitPath(UnitAction unitAction, Entity entity) {
         this.unitAction = unitAction;
         this.entity = entity;
-        this.coords = Set.of(unitAction.currentPosition(), unitAction.finalPosition());
+        this.coords = new HashSet<>();
+        List<CubeCoords> cubeCoordsLine = unitAction.currentCubePosition().lineTo(unitAction.finalCubePosition());
+        cubeCoordsLine.forEach(c -> coords.add(c.toOffset()));
     }
 
     @Override

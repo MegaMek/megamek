@@ -41,7 +41,7 @@ import java.util.Optional;
  * @author Luana Coppio
  */
 public class EnemyVipDistanceCalculator extends BaseAxisCalculator {
-    private static final int MAX_DISTANCE = 32;
+    private static final int MAX_DISTANCE = 34; // approximately 2 boards
 
     @Override
     public double[] calculateAxis(Pathing pathing, GameState gameState) {

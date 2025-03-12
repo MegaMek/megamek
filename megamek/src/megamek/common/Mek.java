@@ -4173,7 +4173,7 @@ public abstract class Mek extends Entity {
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         Hex hex = game.getBoard().getHex(c);
-        if (hex == null) {
+        if (hex.isOffBoard()) {
             return false;
         }
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {

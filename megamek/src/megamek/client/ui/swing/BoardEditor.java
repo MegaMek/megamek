@@ -1234,7 +1234,7 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
     }
 
     private void repaintWorkingHex() {
-        if (curHex != null) {
+        if (curHex.isOnBoard()) {
             TilesetManager tm = bv.getTilesetManager();
             tm.clearHex(curHex);
         }
@@ -2360,7 +2360,7 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
-            if (curHex != null) {
+            if (curHex.isOnBoard()) {
                 // draw the terrain images
                 TilesetManager tm = bv.getTilesetManager();
                 g.drawImage(tm.baseFor(curHex), 0, 0, HexTileset.HEX_W, HexTileset.HEX_H, this);
@@ -2455,7 +2455,7 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
             try {
                 String clipboardString = (String) contents.getTransferData(DataFlavor.stringFlavor);
                 Hex pastedHex = Hex.parseClipboardString(clipboardString);
-                if (pastedHex != null) {
+                if (pastedHex.isOnBoard()) {
                     setCurrentHex(pastedHex);
                 }
             } catch (Exception ex) {

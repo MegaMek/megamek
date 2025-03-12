@@ -312,7 +312,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         // move? Currently not, but if we did, this is probably where this logic would
         // go.
         return path.getCachedEntityState().getNumBreachedLegs() > 0 &&
-                hex != null &&
+                hex.isOnBoard() &&
                 hex.terrainLevel(Terrains.WATER) > 0;
     }
 

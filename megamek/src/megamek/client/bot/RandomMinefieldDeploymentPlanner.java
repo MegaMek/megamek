@@ -60,7 +60,7 @@ public class RandomMinefieldDeploymentPlanner implements MinefieldDeploymentPlan
             Coords coords = new Coords(Compute.randomInt(board.getWidth()),
                   Compute.randomInt(board.getHeight()));
             Hex hex = board.getHex(coords);
-            if ((hex != null)
+            if ((hex.isOnBoard())
                   && !hex.hasDepth1WaterOrDeeper()
                   && (hex.hasPavementOrRoad() || hex.hasVegetation()
                   || (hex.isClearHex() && (maxTries < numberOfCoords * 10))))

@@ -550,7 +550,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (te == null) {
             Hex hex = game.getBoard().getHex(target.getPosition());
 
-            targEl = hex == null ? 0 : -hex.depth();
+            targEl = hex.isOffBoard() ? 0 : -hex.depth();
         } else {
             targEl = te.relHeight();
         }
@@ -4572,8 +4572,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Target's hex
         Hex targHex = game.getBoard().getHex(target.getPosition());
 
-        boolean targetHexContainsWater = targHex != null && targHex.containsTerrain(Terrains.WATER);
-        boolean targetHexContainsFortified = targHex != null && targHex.containsTerrain(Terrains.FORTIFIED);
+        boolean targetHexContainsWater = targHex.isOnBoard() && targHex.containsTerrain(Terrains.WATER);
+        boolean targetHexContainsFortified = targHex.isOnBoard() && targHex.containsTerrain(Terrains.FORTIFIED);
 
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
@@ -4803,7 +4803,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         Entity targetEntity = (Entity) target;
 
         Hex targetHex = targetEntity.getGame().getBoard().getHex(target.getPosition());
-        if (targetHex == null) {
+        if (targetHex.isOffBoard()) {
             return false;
         }
 

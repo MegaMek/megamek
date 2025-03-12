@@ -433,7 +433,7 @@ public class PathEnumerator {
         boolean needsAdjust = false;
         for (Coords c : path.getCoordsSet()) {
             Hex hex = getGame().getBoard().getHex(c);
-            if ((hex != null) && hex.containsTerrain(Terrains.BRIDGE)) {
+            if (hex.isOnBoard() && hex.containsTerrain(Terrains.BRIDGE)) {
                 if (getGame().getBoard().getBuildingAt(c).getCurrentCF(c) >= path.getEntity().getWeight()) {
                     needsAdjust = true;
                     break;

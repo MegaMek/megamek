@@ -404,7 +404,7 @@ public interface IAero {
             for (int dir = 0; dir < 6; dir++) {
                 Coords adj = currPos.translated(dir);
                 adjHex = ((Entity) this).getGame().getBoard().getHex(adj);
-                if (!positions.contains(adj) && (adjHex != null) && adjHex.getLevel() <= hex.getLevel()) {
+                if (!positions.contains(adj) && adjHex.isOnBoard() && adjHex.getLevel() <= hex.getLevel()) {
                     allAdjacentHigher = false;
                     break;
                 }
@@ -515,7 +515,7 @@ public interface IAero {
         boolean clear = false;
         for (Coords pos : landingPositions) {
             Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
-            if (hex == null) {
+            if (hex.isOffBoard()) {
                 continue;
             }
             if (hex.hasPavementOrRoad()) {

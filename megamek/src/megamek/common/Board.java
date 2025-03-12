@@ -303,10 +303,10 @@ public class Board implements Serializable {
      *
      * @param x the x Coords.
      * @param y the y Coords.
-     * @return the Hex, if this Board contains the (x, y) location; A clean, plain hex at level 0 marked as off board otherwise.
+     * @return the Hex, if this Board contains the (x, y) location; A clean, plain hex at level 0 and the coords, marked as off board otherwise.
      */
     public Hex getHex(final int x, final int y) {
-        return contains(x, y) ? data[(y * width) + x] : new Hex(0, false);
+        return contains(x, y) ? data[(y * width) + x] : new Hex(0, new Coords(x, y) , false);
     }
 
     /**

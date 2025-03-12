@@ -63,6 +63,14 @@ public class Hex implements Serializable {
     }
 
     /**
+     * Constructs a clean plain hex at the specified level and coordinates which may be marked on or off the board
+     */
+    public Hex(int level, Coords coords, boolean isOnBoard) {
+        this(level, new Terrain[Terrains.SIZE], null, coords, isOnBoard);
+    }
+
+
+    /**
      * Constructs a Hex with all parameters.
      */
     public Hex(int level, Terrain[] terrains, String theme, Coords c, boolean isOnBoard) {

@@ -376,10 +376,11 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                     && conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
             }
-        }
-        // Hackish; set this round as the "engines destroyed" round if all "thrust" is lost
-        if (j == 0 && getEnginesLostRound() == Integer.MAX_VALUE ) {
-            setEnginesLostRound(game.getCurrentRound());
+
+            // Hackish; set this round as the "engines destroyed" round if all "thrust" is lost
+            if (j == 0 && getEnginesLostRound() == Integer.MAX_VALUE ) {
+                setEnginesLostRound(game.getCurrentRound());
+            }
         }
         return j;
     }

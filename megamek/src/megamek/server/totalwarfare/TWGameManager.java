@@ -24729,10 +24729,6 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     protected void destroyTransportedUnits(Entity entity, int condition, boolean survivable, Vector<Report> vDesc) {
-        destroyTransportedUnits(entity, condition, survivable, false, vDesc);
-    }
-
-    protected void destroyTransportedUnits(Entity entity, int condition, boolean survivable, boolean crashingAero, Vector<Report> vDesc) {
         Report r;
 
         // We'll need this later...
@@ -24782,7 +24778,6 @@ public class TWGameManager extends AbstractGameManager {
         // Handle escape of transported units.
         if (!entity.getLoadedUnits().isEmpty()) {
             Coords curPos = entity.getPosition();
-            int curFacing = entity.getFacing();
 
             // Set dismount locations: this hex / adjacent hexes / outer-ring adjacent hexes
             List<Coords> dismountLocations = List.of(entity.getPosition());

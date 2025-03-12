@@ -888,7 +888,6 @@ public class Hex implements Serializable {
                 .filter(t -> !Terrains.AUTOMATIC.contains(t))
                 .mapToObj(t -> getTerrain(t).toString()).collect(Collectors.toList());
         hexString.append(String.join(";", terrains));
-
         return hexString.toString();
     }
 

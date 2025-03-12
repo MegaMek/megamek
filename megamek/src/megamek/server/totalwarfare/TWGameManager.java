@@ -24728,6 +24728,14 @@ public class TWGameManager extends AbstractGameManager {
         return vDesc;
     }
 
+    /**
+     * Helper function that handles destroying units transported by a unit that is itself being destroyed.
+     *
+     * @param entity        Carrier unit
+     * @param condition     int representing the salvage state of destroyed units
+     * @param survivable    boolean indicating whether carried units have any chance to avoid destruction themselves
+     * @param vDesc         Vector of Reports
+     */
     protected void destroyTransportedUnits(Entity entity, int condition, boolean survivable, Vector<Report> vDesc) {
         Report r;
 
@@ -24933,6 +24941,12 @@ public class TWGameManager extends AbstractGameManager {
                 // The loaded entity can legally exit to this candidate hex, if it can get there.
                 int mpRequired = 0;
                 if (!disembarkCoords.contains(candidate)) {
+                    // Aerospace units can't exit to adjacent hexes; they must stay in the carrier's
+                    // hexes.
+                    if (loadedEntity.isAero()) {
+                        continue;
+                    }
+
                     // Adjacent hex means we need to spend MP to get there.
                     // Rules require we spend the minimum for least displacement
                     Coords exit = null;
@@ -24944,6 +24958,7 @@ public class TWGameManager extends AbstractGameManager {
                     if (exit == null) {
                         continue;
                     }
+
                     // Hexes have to exist to compute MP
                     Hex exitHex = game.getBoard().getHex(exit);
                     Hex disembarkHex = game.getBoard().getHex(candidate);
@@ -24967,7 +24982,6 @@ public class TWGameManager extends AbstractGameManager {
                         // Can't exit this way
                         continue;
                     }
-
                 }
 
                 // If MP required is zero, it's one of the carrier's occupied hexes so
@@ -24979,6 +24993,7 @@ public class TWGameManager extends AbstractGameManager {
                 viableCoords.get(mpRequired).add(candidate);
             }
         }
+
         // Once viable coords are recorded, select the first-cheapest
         if (!viableCoords.isEmpty()) {
             int lowestCost = Collections.min(viableCoords.keySet());

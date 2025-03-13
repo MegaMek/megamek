@@ -139,8 +139,6 @@ public class Board implements Serializable {
      */
     private final Map<Integer, HexArea> areas = new HashMap<>();
 
-    private static final OffBoardHex offBoardHex = new OffBoardHex();
-
     // endregion Variable Declarations
 
     // region Constructors
@@ -232,7 +230,7 @@ public class Board implements Serializable {
         int index = 0;
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
-                data[index++] = new Hex(0, "sky:1", "", new Coords(w, h));
+                data[index++] = new Hex(0, "sky:1", "", new Coords(w, h), true);
             }
         }
         Board result = new Board(width, height, data);
@@ -252,7 +250,7 @@ public class Board implements Serializable {
         int index = 0;
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
-                data[index++] = new Hex(0, "space:1", "", new Coords(w, h));
+                data[index++] = new Hex(0, "space:1", "", new Coords(w, h), true);
             }
         }
         Board result = new Board(width, height, data);
@@ -305,10 +303,10 @@ public class Board implements Serializable {
      *
      * @param x the x Coords.
      * @param y the y Coords.
-     * @return the Hex, if this Board contains the (x, y) location; A clean, plain hex at level 0 and the coords, lomarked as off board otherwise.
+     * @return the Hex, if this Board contains the (x, y) location; A clean, plain hex at level 0 and the coords, marked as off board otherwise.
      */
     public Hex getHex(final int x, final int y) {
-        return contains(x, y) ? data[(y * width) + x] : offBoardHex;
+        return contains(x, y) ? data[(y * width) + x] : new Hex(0, new Coords(x, y) , false);
     }
 
     /**
@@ -1072,7 +1070,7 @@ public class Board implements Serializable {
                     }
                     int elevation = Integer.parseInt(args[1]);
                     // The coordinates in the .board file are ignored!
-                    nd[index] = new Hex(elevation, args[2], args[3], new Coords(index % nw, index / nw));
+                    nd[index] = new Hex(elevation, args[2], args[3], new Coords(index % nw, index / nw), true);
                     index++;
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("description")) {
                     st.nextToken();

@@ -1640,7 +1640,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * Worker function - does the entity gain partial cover from shallow water?
      */
     protected boolean unitGainsPartialCoverFromWater(Hex targetHex, Entity entityTarget) {
-        return (targetHex.isOnBoard()) &&
+        return (targetHex != null) &&
                 targetHex.containsTerrain(Terrains.WATER) &&
                 (entityTarget.relHeight() == targetHex.getLevel());
     }
@@ -1654,7 +1654,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // be tall enough for it to make a difference,
         // target "feet" are below the "ceiling"
         // target "head" is above the "ceiling"
-        return (targetHex.isOnBoard()) &&
+        return (targetHex != null) &&
                 (entityTarget.getHeight() > 0) &&
                 (entityTarget.getElevation() < targetHex.ceiling()) &&
                 (entityTarget.relHeight() >= targetHex.ceiling());

@@ -48,7 +48,6 @@ public class WeaponAttackActionToHitTest {
     GameOptions mockOptions;
     PlanetaryConditions mockPlanetaryConditions;
 
-    Hex mockHex;
     Board mockBoard;
     Game mockGame;
     LosEffects mockLos;
@@ -74,14 +73,9 @@ public class WeaponAttackActionToHitTest {
         when(mockPlayer.isEnemyOf(mockEnemy)).thenReturn(true);
         when(mockEnemy.isEnemyOf(mockPlayer)).thenReturn(true);
 
-        //Mock a Hex
-        mockHex = mock(Hex.class);
-
         // Mock the board
         mockBoard = mock(Board.class);
         when(mockBoard.inSpace()).thenReturn(false);
-        when(mockBoard.getHex(anyInt(), anyInt())).thenReturn(mockHex);
-        when(mockBoard.getHex(any(Coords.class))).thenReturn(mockHex);
 
         // Mock Options
         mockOptions = mock(GameOptions.class);

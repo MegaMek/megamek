@@ -190,7 +190,7 @@ public class Dropship extends SmallCraft {
             Coords secondaryCoord = c.translated(dir);
             Hex secondaryHex = game.getBoard().getHex(secondaryCoord);
             boolean occupied = game.getEntities(secondaryCoord).hasNext();
-            if (secondaryHex.isOffBoard()) {
+            if (secondaryHex == null) {
                 // Don't allow landed dropships to hang off the board
                 isProhibited = true;
             } else {
@@ -247,7 +247,7 @@ public class Dropship extends SmallCraft {
         int secondElev = centralElev;
         Hex currHex = game.getBoard().getHex(c.translated(5));
         // Ensure we aren't trying to deploy off the board
-        if (currHex.isOffBoard()) {
+        if (currHex == null) {
             return true;
         }
         for (int dir = 0; dir < 6; dir++) {
@@ -256,7 +256,7 @@ public class Dropship extends SmallCraft {
             }
             Hex nextHex = game.getBoard().getHex(c.translated(dir));
             // Ensure we aren't trying to deploy off the board
-            if (nextHex.isOffBoard()) {
+            if (nextHex == null) {
                 return true;
             }
             if ((currHex.getLevel() != centralElev) && (currHex.getLevel() == nextHex.getLevel())) {
@@ -492,7 +492,7 @@ public class Dropship extends SmallCraft {
         // A grounded dropship with the center hex in level 1 water is immobile.
         if ((game != null) && !game.getBoard().inSpace() && !isAirborne()) {
             Hex hex = game.getBoard().getHex(getPosition());
-            if (hex.isOnBoard() && (hex.containsTerrain(Terrains.WATER, 1) && !hex.containsTerrain(Terrains.ICE))) {
+            if ((hex != null) && (hex.containsTerrain(Terrains.WATER, 1) && !hex.containsTerrain(Terrains.ICE))) {
                 return 0;
             }
         }

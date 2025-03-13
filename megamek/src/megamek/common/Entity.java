@@ -3275,7 +3275,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int elevationOccupied(Hex hex, int elevation) {
-        if (hex.isOffBoard()) {
+        if (hex == null) {
             return 0;
         }
         if ((movementMode == EntityMovementMode.VTOL)
@@ -7790,12 +7790,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             addPilotingModifierForTerrain(roll, lastPos);
         }
 
-        boolean prevStepPavement = (prevStep != null) ? prevStep.isPavementStep() : (prevHex.isOnBoard() && prevHex.hasPavement());
+        boolean prevStepPavement = (prevStep != null) ? prevStep.isPavementStep() : ((prevHex != null) && prevHex.hasPavement());
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean affectedByIce = !movementMode.isHoverOrWiGE() || conditions.getWind().isStrongerThan(Wind.STRONG_GALE);
         boolean runOrSprint = (overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT);
-        boolean unitTouchesIce = prevHex.isOnBoard() && prevHex.containsTerrain(Terrains.ICE) && (currStep.getElevation() == 0);
-        boolean unitTouchesBlackIce = prevHex.isOnBoard() && prevHex.containsTerrain(Terrains.BLACK_ICE)
+        boolean unitTouchesIce = (prevHex != null) && prevHex.containsTerrain(Terrains.ICE) && (currStep.getElevation() == 0);
+        boolean unitTouchesBlackIce = (prevHex != null) && prevHex.containsTerrain(Terrains.BLACK_ICE)
             && (((currStep.getElevation() == 0) && prevHex.containsAnyTerrainOf(Terrains.ROAD, Terrains.PAVEMENT))
             || (prevHex.containsTerrain(Terrains.BRIDGE_ELEV) && (currStep.getElevation() == prevHex.terrainLevel(Terrains.BRIDGE_ELEV))));
         boolean isMoveAndTurn = (prevFacing != curFacing) && !Objects.equals(curPos, lastPos);
@@ -8022,7 +8022,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             rv += 4;
         }
         // check previous hex for building
-        if (prevHex.isOnBoard()) {
+        if (prevHex != null) {
             int prevEl = getElevation();
             if (prevStep != null) {
                 prevEl = prevStep.getElevation();
@@ -10058,7 +10058,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && hasWorkingMisc(MiscType.F_TOOLS,
                         MiscType.S_DEMOLITION_CHARGE)) {
             Hex hex = game.getBoard().getHex(getPosition());
-            if (hex.isOffBoard()) {
+            if (hex == null) {
                 return false;
             }
             return hex.containsTerrain(Terrains.BUILDING);
@@ -11061,7 +11061,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((fa % 30) == 0) {
             Hex srcHex = game.getBoard().getHex(src);
             Hex curHex = game.getBoard().getHex(getPosition());
-            if (srcHex.isOnBoard() && curHex.isOnBoard()) {
+            if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
                         getPosition(), 1, getElevation(), srcHex.floor(),
                         curHex.floor());
@@ -11544,7 +11544,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if ((moveType != EntityMovementType.MOVE_JUMP)
-                && prevHex.isOnBoard()
+                && (prevHex != null)
                 && (distance > 1)
                 && ((overallMoveType == EntityMovementType.MOVE_RUN)
                         || (overallMoveType == EntityMovementType.MOVE_VTOL_RUN)

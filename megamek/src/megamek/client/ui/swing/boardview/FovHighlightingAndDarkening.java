@@ -367,13 +367,13 @@ public class FovHighlightingAndDarkening {
         GUIPreferences guip = GUIPreferences.getInstance();
         Board board = this.boardView1.game.getBoard();
         Hex srcHex = board.getHex(src);
-        if (srcHex == null) {
-            logger.error("Cannot process line of sight effects with a null source hex.");
+        if (srcHex.isOffBoard()) {
+            logger.error("Cannot process line of sight effects with a hex outside the board.");
             return null;
         }
         Hex dstHex = board.getHex(dest);
-        if (dstHex == null) {
-            logger.error("Cannot process line of sight effects with a null destination hex.");
+        if (dstHex.isOffBoard()) {
+            logger.error("Cannot process line of sight effects with a hex outside the board.");
             return null;
         }
 

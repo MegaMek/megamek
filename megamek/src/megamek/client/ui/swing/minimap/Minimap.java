@@ -48,8 +48,6 @@ import javax.swing.SwingUtilities;
 
 import megamek.MMConstants;
 import megamek.client.Client;
-import megamek.client.CloseClientListener;
-import megamek.client.IClient;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
@@ -315,7 +313,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                         dir.mkdirs();
                     }
                     File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
-                        + e.getOldPhase() + ".png");
+                          + e.getOldPhase() + ".png");
 
                     try {
                         BufferedImage image = getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null, movePathLines);
@@ -332,14 +330,16 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     } catch (Exception ex) {
                         logger.error(ex, "Error saving game summary image.");
                     }
-                    if (e.getNewPhase().isVictory() && (gifWriterThread != null) && gifWriterThread.isAlive()) {
-                        try {
-                            gifWriterThread.stopThread();
-                        } catch (Exception ex) {
-                            logger.error(ex, "Error closing gif writer.");
-                        }
+                }
+
+                if (e.getNewPhase().isVictory() && (gifWriterThread != null) && gifWriterThread.isAlive()) {
+                    try {
+                        gifWriterThread.stopThread();
+                    } catch (Exception ex) {
+                        logger.error(ex, "Error closing gif writer.");
                     }
                 }
+
                 // We clear the move path lines locally, since the game does not currently hold this information until the end of the turn
                 if (e.getNewPhase().isDeployment() || e.getNewPhase().isLounge() || e.getNewPhase().isVictory()) {
                     movePathLines.clear();
@@ -694,7 +694,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             for (int j = 0; j < board.getWidth(); j++) {
                 for (int k = 0; k < board.getHeight(); k++) {
                     Hex h = board.getHex(j, k);
-                    if (h == null) {
+                    if (h.isOffBoard()) {
                         continue;
                     }
                     if (dirtyMap || dirty[j / 10][k / 10]) {

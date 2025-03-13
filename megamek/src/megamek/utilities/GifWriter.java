@@ -177,6 +177,14 @@ public class GifWriter {
         return isLive;
     }
 
+    public boolean delete() {
+        return outputFile.delete();
+    }
+
+    public File getOutputFile() {
+        return outputFile;
+    }
+
     public static void main(String[] args) throws Exception {
         GifWriter.createGifFromGameSummary(args[0]);
     }

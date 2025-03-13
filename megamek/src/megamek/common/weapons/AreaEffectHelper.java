@@ -372,7 +372,7 @@ public class AreaEffectHelper {
         int cluster = 5;
 
         // Check: is entity inside building?
-        if ((bldg != null) && (bldgAbsorbs > 0) && hex != null
+        if ((bldg != null) && (bldgAbsorbs > 0) && hex != null && hex.isOnBoard()
                 && (entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV))) {
             cluster -= bldgAbsorbs;
             // some buildings scale remaining damage that is not absorbed
@@ -457,7 +457,7 @@ public class AreaEffectHelper {
         // Entity/ammo specific damage modifiers
         if (ammo != null) {
             if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
-                if (hex != null && hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
+                if (hex != null && hex.isOnBoard() && hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
                     hits *= 2;
                 }
             }
@@ -1037,7 +1037,7 @@ public class AreaEffectHelper {
         }
 
         Hex hex = game.getBoard().getHex(center);
-        boolean effectivelyAE = (hex != null && hex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER)));
+        boolean effectivelyAE = (hex.isOnBoard() && hex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER)));
         // 1. Handle Artillery-specific blast column (N levels up from _any_ hit where N
         // is base damage / 10 for most artillery, damage / 25 for Cruise Missiles)
         // Note that this falloff is separate from horizontal blast falloff, above.

@@ -162,7 +162,7 @@ public class SummaryPanel extends PicMap {
 
             Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
 
-            if (mhex != null) {
+            if (mhex.isOnBoard()) {
                 String terrainTip = HexTooltip.getTerrainTip(mhex, GUIP, entity.getGame());
                 String attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
                 col = UIUtil.tag("TD", attr, terrainTip);

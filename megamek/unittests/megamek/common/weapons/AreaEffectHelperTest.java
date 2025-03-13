@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,6 +113,11 @@ class AreaEffectHelperTest {
     void testShapeBlastR2ArtilleryAttackOnBoardNoAETerrainLevel0() {
         game.setBoard(new Board(16,17));
         Coords centerPoint = new Coords(7,7);
+        ArrayList<Coords> areaOfEffectHexCoords = centerPoint.allAtDistanceOrLess(1);
+        areaOfEffectHexCoords.forEach(coords -> {
+            Hex adjacentHex = new Hex(0);
+            game.getBoard().setHex(coords, adjacentHex);
+        });
         AmmoType ammo = mockLTAmmoType;
         DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
         HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
@@ -126,6 +132,11 @@ class AreaEffectHelperTest {
     void testShapeBlastR1ArtilleryAttackOnBoardNoAETerrainLevel0() {
         game.setBoard(new Board(16,17));
         Coords centerPoint = new Coords(7,7);
+        ArrayList<Coords> areaOfEffectHexCoords = centerPoint.allAtDistanceOrLess(1);
+        areaOfEffectHexCoords.forEach(coords -> {
+            Hex adjacentHex = new Hex(0);
+            game.getBoard().setHex(coords, adjacentHex);
+        });
         HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
             mockSniperAmmoType,
             centerPoint, 0, true, false, false, game, false
@@ -139,6 +150,11 @@ class AreaEffectHelperTest {
     void testShapeBlastR1ArtilleryAttackOnBoardNoAETerrainLevel2Flak() {
         game.setBoard(new Board(16,17));
         Coords centerPoint = new Coords(7,7);
+        ArrayList<Coords> areaOfEffectHexCoords = centerPoint.allAtDistanceOrLess(1);
+        areaOfEffectHexCoords.forEach(coords -> {
+            Hex adjacentHex = new Hex(0);
+            game.getBoard().setHex(coords, adjacentHex);
+        });
         int height = 2;
         HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
             mockSniperAmmoType,
@@ -159,6 +175,15 @@ class AreaEffectHelperTest {
         int expectedHalfDamage = (int) Math.ceil(mockBombHEAmmoType.getDamagePerShot() / 2.0);
         game.setBoard(new Board(16,17));
         Coords centerPoint = new Coords(7,7);
+        // The radial hexes have to be set first so they are not null when the centerPoint
+        // hex is added.  It has exitable terrain and attempts to update the adjacent hexes
+        ArrayList<Coords> areaOfEffectHexCoords = centerPoint.allAtDistanceOrLess(1);
+        areaOfEffectHexCoords.forEach(coords -> {
+            if (!coords.equals(centerPoint)) {
+                Hex adjacentHex = new Hex(0);
+                game.getBoard().setHex(coords, adjacentHex);
+            }
+        });
         Hex hex = new Hex(0);
         hex.addTerrain(new Terrain(Terrains.BUILDING, height, true, 63));
         game.getBoard().setHex(centerPoint, hex);
@@ -182,6 +207,15 @@ class AreaEffectHelperTest {
         int expectedHalfDamage = (int) Math.ceil(mockBombFAEAmmoType.getDamagePerShot() / 2.0);
         game.setBoard(new Board(16,17));
         Coords centerPoint = new Coords(7,7);
+        // The radial hexes have to be set first so they are not null when the centerPoint
+        // hex is added.  It has exitable terrain and attempts to update the adjacent hexes
+        ArrayList<Coords> areaOfEffectHexCoords = centerPoint.allAtDistanceOrLess(2);
+        areaOfEffectHexCoords.forEach(coords -> {
+            if (!coords.equals(centerPoint)) {
+                Hex adjacentHex = new Hex(0);
+                game.getBoard().setHex(coords, adjacentHex);
+            }
+        });
         Hex hex = new Hex(0);
         hex.addTerrain(new Terrain(Terrains.BUILDING, height, true, 63));
         game.getBoard().setHex(centerPoint, hex);

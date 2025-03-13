@@ -90,7 +90,7 @@ public enum IlluminationLevel {
 
         // Fires can reduce nighttime penalties by up to 2 points.
         final Hex hex = game.getBoard().getHex(coords);
-        if ((hex != null) && hex.containsTerrain(Terrains.FIRE)) {
+        if (hex.isOnBoard() && hex.containsTerrain(Terrains.FIRE)) {
             return IlluminationLevel.FIRE;
         }
 

@@ -1497,7 +1497,7 @@ public class MapMenu extends JPopupMenu {
 
         Hex h = board.getHex(coords);
         // If the hex is null, we're done here
-        if (h == null) {
+        if (h.isOffBoard()) {
             return menu;
         }
 

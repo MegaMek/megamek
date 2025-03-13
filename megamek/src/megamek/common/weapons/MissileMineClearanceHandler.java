@@ -173,7 +173,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         // Damage Terrain if applicable
         Hex h = game.getBoard().getHex(targetPos);
         newReports = new Vector<>();
-        if ((h != null) && h.hasTerrainFactor()) {
+        if (h.isOnBoard() && h.hasTerrainFactor()) {
             r = new Report(3384);
             r.indent(2);
             r.subject = subjectId;

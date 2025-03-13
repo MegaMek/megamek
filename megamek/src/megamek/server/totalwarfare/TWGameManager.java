@@ -3275,10 +3275,10 @@ public class TWGameManager extends AbstractGameManager {
         unit.setSecondaryFacing(facing);
 
         Hex hex = game.getBoard().getHex(pos);
-        boolean isBridge = (hex != null)
+        boolean isBridge = (hex.isOnBoard())
                 && hex.containsTerrain(Terrains.PAVEMENT);
 
-        if (hex == null) {
+        if (hex.isOffBoard()) {
             unit.setElevation(elevation);
         } else if (unloader.getMovementMode() == EntityMovementMode.VTOL) {
             if (unit.getMovementMode() == EntityMovementMode.VTOL) {
@@ -3776,7 +3776,7 @@ public class TWGameManager extends AbstractGameManager {
         if (altitude == 1) {
             Hex hex = getGame().getBoard().getHex(curPos);
             int elevation = 0;
-            if (hex != null) {
+            if (hex.isOnBoard()) {
                 elevation = (hex.getTerrain(Terrains.BLDG_ELEV) != null) ? hex.maxTerrainFeatureElevation(false) : 0;
             }
             EntityMovementMode moveMode = drop.getMovementMode();
@@ -6501,7 +6501,7 @@ public class TWGameManager extends AbstractGameManager {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
         Hex hex = game.getBoard().getHex(coords);
-        if (hex != null) {
+        if (hex.isOnBoard()) {
             hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
             sendChangedHex(coords);
             for (int dir = 0; dir <= 5; dir++) {
@@ -6807,7 +6807,7 @@ public class TWGameManager extends AbstractGameManager {
             case Targetable.TYPE_BLDG_IGNITE:
                 // Report that damage applied to terrain, if there's TF to damage
                 Hex h = game.getBoard().getHex(t.getPosition());
-                if ((h != null) && h.hasTerrainFactor()) {
+                if (h.isOnBoard() && h.hasTerrainFactor()) {
                     r = new Report(3384);
                     r.indent(2);
                     r.subject = attId;
@@ -8080,7 +8080,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vPhaseReport = new Vector<>();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean aeroSpaceborne = (entity.getEntityType() & Entity.ETYPE_AERO) == 0 && entity.isSpaceborne();
-        if (hex == null) {
+        if (hex.isOffBoard()) {
             return vPhaseReport;
         }
         if ((hex.terrainLevel(Terrains.WATER) > 0) && !isJump
@@ -8917,7 +8917,7 @@ public class TWGameManager extends AbstractGameManager {
         final int direction = src.direction(dest);
 
         // Handle null hexes.
-        if ((srcHex == null) || (destHex == null)) {
+        if (srcHex.isOffBoard() || destHex.isOffBoard()) {
             logger.error("Can not displace " + entity.getShortName()
                     + " from " + src + " to " + dest + ".");
             return displacementReport;
@@ -11080,7 +11080,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r;
 
         // Ignore bad coordinates.
-        if (hex == null) {
+        if (hex.isOffBoard()) {
             return false;
         }
 
@@ -11213,7 +11213,7 @@ public class TWGameManager extends AbstractGameManager {
     public Vector<Report> tryClearHex(Coords c, int nDamage, int entityId) {
         Vector<Report> vPhaseReport = new Vector<>();
         Hex h = game.getBoard().getHex(c);
-        if (h == null) {
+        if (h.isOffBoard()) {
             return vPhaseReport;
         }
         Terrain woods = h.getTerrain(Terrains.WOODS);
@@ -15335,7 +15335,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            if (entity.tracksHeat() && (entityHex != null) && entityHex.containsTerrain(Terrains.FIRE)
+            if (entity.tracksHeat() && entityHex.isOnBoard() && entityHex.containsTerrain(Terrains.FIRE)
                     && (entityHex.getFireTurn() > 0)
                     && (entity.getElevation() <= 1) && (entity.getAltitude() == 0)) {
                 int heatToAdd = 5;
@@ -15465,7 +15465,7 @@ public class TWGameManager extends AbstractGameManager {
 
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.
-            if (entityHex != null) {
+            if (entityHex.isOnBoard()) {
                 int magma = entityHex.terrainLevel(Terrains.MAGMA);
                 if ((magma > 0) && (entity.getElevation() == 0)) {
                     int heatToAdd = 5 * magma;
@@ -20391,7 +20391,7 @@ public class TWGameManager extends AbstractGameManager {
         int maxDist = damages.length;
         Hex hex = game.getBoard().getHex(position);
         // Center hex starts on fire for engine explosions
-        if (engineExplosion && (hex != null) && !hex.containsTerrain(Terrains.FIRE)) {
+        if (engineExplosion && hex.isOnBoard() && !hex.containsTerrain(Terrains.FIRE)) {
             r = new Report(5136);
             r.indent(2);
             r.type = Report.PUBLIC;
@@ -20404,7 +20404,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             vDesc.addAll(reports);
         }
-        if ((hex != null) && hex.hasTerrainFactor()) {
+        if (hex.isOnBoard() && hex.hasTerrainFactor()) {
             r = new Report(3384);
             r.indent(2);
             r.type = Report.PUBLIC;
@@ -20423,7 +20423,7 @@ public class TWGameManager extends AbstractGameManager {
             List<Coords> coords = position.allAtDistance(dist);
             for (Coords c : coords) {
                 hex = game.getBoard().getHex(c);
-                if ((hex != null) && hex.hasTerrainFactor()) {
+                if (hex.isOnBoard() && hex.hasTerrainFactor()) {
                     r = new Report(3384);
                     r.indent(2);
                     r.type = Report.PUBLIC;
@@ -20641,7 +20641,7 @@ public class TWGameManager extends AbstractGameManager {
         Hex shelteringHex = game.getBoard().getHex(shelteringCoords);
 
         // This is an error condition. It really shouldn't ever happen.
-        if (shelteringHex == null) {
+        if (shelteringHex.isOffBoard()) {
             return false;
         }
 
@@ -24714,7 +24714,7 @@ public class TWGameManager extends AbstractGameManager {
         Coords curPos = entity.getPosition();
         Hex entityHex = game.getBoard().getHex(curPos);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK)
-                && (entityHex != null) && game.getBoard().onGround()
+                && entityHex.isOnBoard() && game.getBoard().onGround()
                 && !entityHex.containsTerrain(Terrains.ULTRA_SUBLEVEL)
                 && !((entity instanceof Infantry) || (entity instanceof ProtoMek))) {
             // large support vees will create ultra rough, otherwise rough
@@ -25850,7 +25850,7 @@ public class TWGameManager extends AbstractGameManager {
         for (Coords smokeCoords : coords) {
             Hex smokeHex = game.getBoard().getHex(smokeCoords);
             Report r;
-            if (smokeHex == null) {
+            if (smokeHex.isOffBoard()) {
                 continue;
             }
             // Have to check if it's inferno smoke or from a heavy/hardened
@@ -30357,7 +30357,7 @@ public class TWGameManager extends AbstractGameManager {
         // Terrain modifiers should only apply if the unit is on the ground...
         // TO:AR 6th ed p165
         if (!entity.isSpaceborne() && !entity.isAirborne()) {
-            if (targetHex != null) {
+            if (targetHex.isOnBoard()) {
                 if ((targetHex.terrainLevel(Terrains.WATER) > 0)
                         && !targetHex.containsTerrain(Terrains.ICE)) {
                     rollTarget.addModifier(-1, "landing in water");
@@ -31481,19 +31481,19 @@ public class TWGameManager extends AbstractGameManager {
                         BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_LARGE);
         Building bldg = game.getBoard().getBuildingAt(coords);
         Hex hex = game.getBoard().getHex(coords);
-        int effectiveLevel = (hex != null) ? hex.getLevel() : 0;
+        int effectiveLevel = hex.isOnBoard() ? hex.getLevel() : 0;
 
         Report r;
 
         // We only process _some_ of the normal damage when a hex is off-board
-        if (hex != null) {
+        if (hex.isOnBoard()) {
 
             // Non-flak artillery damages terrain
             // TODO: account for altitude vs: terrain height
             if (!flak) {
                 // Report that damage applied to terrain, if there's TF to damage
                 Hex h = game.getBoard().getHex(coords);
-                if ((h != null) && h.hasTerrainFactor()) {
+                if (h.isOnBoard() && h.hasTerrainFactor()) {
                     r = new Report(3384);
                     r.indent(2);
                     r.subject = subjectId;
@@ -31701,7 +31701,7 @@ public class TWGameManager extends AbstractGameManager {
         // Pretend we know what level the user was aiming at.
         // TODO: remove once we can pass targetLevel info between client and server
         int targetLevel = 0;
-        if (hex != null) {
+        if (hex.isOnBoard()) {
             targetLevel = hex.getLevel();
             if (hex.getTerrain(Terrains.BLDG_ELEV) != null) {
                 // Get an entity that's near or below the ceiling level
@@ -32005,7 +32005,7 @@ public class TWGameManager extends AbstractGameManager {
     public void removeSmokeTerrain(SmokeCloud cloud) {
         for (Coords coords : cloud.getCoordsList()) {
             Hex hex = game.getBoard().getHex(coords);
-            if ((hex != null) && hex.containsTerrain(Terrains.SMOKE)) {
+            if (hex.isOnBoard() && hex.containsTerrain(Terrains.SMOKE)) {
                 hex.removeTerrain(Terrains.SMOKE);
                 sendChangedHex(coords);
             }

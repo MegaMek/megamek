@@ -983,7 +983,7 @@ public class Compute {
         Hex secondHex = game.getBoard().getHex(second);
         Entity entity = game.getEntity(entityId);
 
-        if ((firstHex == null) || (secondHex == null)) {
+        if ((firstHex.isOffBoard()) || (secondHex.isOffBoard())) {
             // leave it, will be handled
         } else if (entity.elevationOccupied(firstHex) > entity
                 .elevationOccupied(secondHex)) {
@@ -1247,7 +1247,7 @@ public class Compute {
         boolean targetUnderwater = false;
         boolean weaponUnderwater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET);
         if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                && (targHex != null) && targHex.containsTerrain(Terrains.WATER)
+                && targHex.isOnBoard() && targHex.containsTerrain(Terrains.WATER)
                 && (targBottom < 0)) {
 
             if (targTop >= 0) {
@@ -1274,7 +1274,7 @@ public class Compute {
         }
 
         // allow ice to be cleared from below
-        if ((targHex != null) && targHex.containsTerrain(Terrains.WATER)
+        if (targHex.isOnBoard() && targHex.containsTerrain(Terrains.WATER)
                 && (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             targetInPartialWater = true;
         }
@@ -2831,7 +2831,7 @@ public class Compute {
         ToHitData toHit = new ToHitData();
 
         // space screens; bonus depends on number (level)
-        if ((hex != null) && (hex.terrainLevel(Terrains.SCREEN) > 0)) {
+        if (hex.isOnBoard() && (hex.terrainLevel(Terrains.SCREEN) > 0)) {
             toHit.addModifier(hex.terrainLevel(Terrains.SCREEN) + 1,
                     "attacker in screen(s)");
         }
@@ -2873,7 +2873,7 @@ public class Compute {
         Hex hex = game.getBoard().getHex(t.getPosition());
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
             entityTarget = (Entity) t;
-            if (hex == null) {
+            if (hex.isOffBoard()) {
                 entityTarget.setPosition(game.getEntity(entityTarget.getId())
                         .getPosition());
                 hex = game.getBoard().getHex(
@@ -2882,7 +2882,7 @@ public class Compute {
         }
 
         // if the hex doesn't exist, it's unlikely to have terrain modifiers
-        if (hex == null) {
+        if (hex.isOffBoard()) {
             return toHit;
         }
 
@@ -5674,7 +5674,7 @@ public class Compute {
         int metalContent = 0;
         for (Coords c : coords) {
             Hex hex = board.getHex(c);
-            if (hex != null && hex.containsTerrain(Terrains.METAL_CONTENT)) {
+            if (hex.isOnBoard() && hex.containsTerrain(Terrains.METAL_CONTENT)) {
                 metalContent += hex.terrainLevel(Terrains.METAL_CONTENT);
             }
         }
@@ -6475,7 +6475,7 @@ public class Compute {
         // Get the Hex at those coordinates.
         final Hex curHex = game.getBoard().getHex(coords);
 
-        if (curHex == null) {
+        if (curHex.isOffBoard()) {
             // probably off board artillery or reinforcement
             return false;
         }
@@ -7959,7 +7959,7 @@ public class Compute {
         // are too deep or too high for _any_ blast damage to reach.
 
         Hex hex = game.getBoard().getHex(position);
-        final boolean causeAEBlast = hex != null && hex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.WATER);
+        final boolean causeAEBlast = hex.isOnBoard() && hex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.WATER);
         final int baseHeight;
         final int ceiling;
         if (flak) {
@@ -7969,8 +7969,8 @@ public class Compute {
                 ceiling = baseHeight = target.getElevation();
             }
         } else {
-            baseHeight = (hex != null) ? hex.getLevel() : 0;
-            ceiling = (hex != null) ? hex.ceiling() : baseHeight;
+            baseHeight = hex.isOnBoard() ? hex.getLevel() : 0;
+            ceiling = hex.isOnBoard() ? hex.ceiling() : baseHeight;
         }
 
         // Get radius, base damage

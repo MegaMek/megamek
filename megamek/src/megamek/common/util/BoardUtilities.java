@@ -136,9 +136,9 @@ public class BoardUtilities {
         for (int h = 0; h < mapSettings.getBoardHeight(); h++) {
             for (int w = 0; w < mapSettings.getBoardWidth(); w++) {
                 if (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
-                    nb[index++] = new Hex(0, "space:1", mapSettings.getTheme(), new Coords(w, h));
+                    nb[index++] = new Hex(0, "space:1", mapSettings.getTheme(), new Coords(w, h), true);
                 } else {
-                    nb[index++] = new Hex(elevationMap[w][h], "", mapSettings.getTheme(), new Coords(w, h));
+                    nb[index++] = new Hex(elevationMap[w][h], "", mapSettings.getTheme(), new Coords(w, h), true);
                 }
             }
         }
@@ -639,7 +639,7 @@ public class BoardUtilities {
             for (int dir = 0; dir < 6; dir++) {
                 Point loc = reverseHex.get(field);
                 Hex newHex = board.getHexInDir(loc.x, loc.y, dir);
-                if ((newHex != null) && (!alreadyUsed.contains(newHex))
+                if (newHex.isOnBoard() && (!alreadyUsed.contains(newHex))
                         && (!notYetUsed.contains(newHex))
                         && (!unUsed.contains(newHex))) {
                     ((newHex.containsTerrain(terrainType)) ? notYetUsed : unUsed).add(newHex);
@@ -893,7 +893,7 @@ public class BoardUtilities {
         Hex hex;
 
         hex = board.getHexInDir(current.x, current.y, direction);
-        while ((hex != null) && (width-- > 0)) {
+        while (hex.isOnBoard() && (width-- > 0)) {
             hex.removeAllTerrains();
             hex.addTerrain(new Terrain(Terrains.WATER, 1));
             result.add(hex);

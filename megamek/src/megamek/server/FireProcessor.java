@@ -243,7 +243,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         // unless a higher hex intervenes
         Hex nextHex = game.getBoard().getHex(nextCoords);
         Hex jumpHex = game.getBoard().getHex(nextCoords.translated(windDir.ordinal()));
-        if ((nextHex != null) && (jumpHex != null) && !(nextHex.containsTerrain(Terrains.FIRE))
+        if (nextHex.isOnBoard() && jumpHex.isOnBoard() && !(nextHex.containsTerrain(Terrains.FIRE))
                 && ((curHeight >= nextHex.ceiling()) || (jumpHex.ceiling() >= nextHex.ceiling()))) {
             // we've already gone one step in the wind direction, now go another
             directroll.addModifier(3, "crossing non-burning hex");
@@ -269,7 +269,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
     public void spreadFire(final Coords origin, final Coords coords, final TargetRoll roll,
             final int height) {
         Hex hex = game.getBoard().getHex(coords);
-        if ((hex == null) || (Math.abs(hex.ceiling() - height) > 4)) {
+        if ((hex.isOffBoard()) || (Math.abs(hex.ceiling() - height) > 4)) {
             // Don't attempt to spread fire off the board or for large differences in height
             return;
         }
@@ -348,7 +348,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         for (SmokeCloud cloud : game.getSmokeCloudList()) {
             for (Coords coords : cloud.getCoordsList()) {
                 Hex smokeHex = gameManager.getGame().getBoard().getHex(coords);
-                if (smokeHex != null) {
+                if (smokeHex.isOnBoard()) {
                     if (smokeHex.containsTerrain(Terrains.SMOKE)) {
                         if (smokeHex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LIGHT) {
                             smokeHex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));

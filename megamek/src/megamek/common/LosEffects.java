@@ -376,12 +376,35 @@ public class LosEffects {
         return ai;
     }
 
-    @Deprecated // Deprecated for nullable passing
+    /**
+     * Returns a LosEffects object representing the LOS effects of intervening
+     * terrain between the attacker and target. Checks to see if the attacker and
+     * target are at an angle where the LOS line will pass between two hexes.
+     *
+     * @param game
+     * @param attackerId
+     * @param target
+     * @return
+     *
+     * @deprecated since 0.50.04 - Use
+     *             {@link #calculateLOS(Game, Entity, Targetable)} instead
+     */
+    @Deprecated(since = "0.50.04") // Deprecated for nullable passing
     public static LosEffects calculateLos(final Game game, final int attackerId,
             final @Nullable Targetable target) {
         return calculateLOS(game, game.getEntity(attackerId), target, false);
     }
 
+    /**
+     * Returns a LosEffects object representing the LOS effects of intervening
+     * terrain between the attacker and target. Checks to see if the attacker and
+     * target are at an angle where the LOS line will pass between two hexes.
+     *
+     * @param game
+     * @param attackerId
+     * @param target
+     * @return
+     */
     public static LosEffects calculateLOS(final Game game, final @Nullable Entity attacker,
             final @Nullable Targetable target) {
         return calculateLOS(game, attacker, target, false);
@@ -389,11 +412,9 @@ public class LosEffects {
 
     /**
      * Returns a LosEffects object representing the LOS effects of intervening
-     * terrain between the
-     * attacker and target. Checks to see if the attacker and target are at an angle
-     * where the LOS
-     * line will pass between two hexes. If so, calls losDivided, otherwise calls
-     * losStraight.
+     * terrain between the attacker and target. Checks to see if the attacker and
+     * target are at an angle where the LOS line will pass between two hexes. If so,
+     * calls losDivided, otherwise calls losStraight.
      *
      * @param game     The current {@link Game}
      * @param attacker the attacker, which may be null. If it is, the view is

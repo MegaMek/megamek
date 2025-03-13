@@ -150,7 +150,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public Game() {
         setBoard(0, new Board());
-        // empty
     }
 
     // Added public accessors for external game id
@@ -324,7 +323,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void setupTeams() {
         Vector<Team> initTeams = new Vector<>();
         boolean useTeamInit = getOptions().getOption(OptionsConstants.BASE_TEAM_INITIATIVE)
-            .booleanValue();
+                .booleanValue();
 
         // Get all NO_TEAM players. If team_initiative is false, all
         // players are on their own teams for initiative purposes.
@@ -431,25 +430,25 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
                 // per errata, TAG will spot for LRMs and such
                 if ((ammoType.getAmmoType() == AmmoType.T_LRM)
-                    || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (ammoType.getAmmoType() == AmmoType.T_MML)
-                    || (ammoType.getAmmoType() == AmmoType.T_NLRM)
-                    || (ammoType.getAmmoType() == AmmoType.T_MEK_MORTAR)) {
+                        || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
+                        || (ammoType.getAmmoType() == AmmoType.T_MML)
+                        || (ammoType.getAmmoType() == AmmoType.T_NLRM)
+                        || (ammoType.getAmmoType() == AmmoType.T_MEK_MORTAR)) {
                     return true;
                 }
 
                 if (((ammoType.getAmmoType() == AmmoType.T_ARROW_IV)
-                    || (ammoType.getAmmoType() == AmmoType.T_LONG_TOM)
-                    || (ammoType.getAmmoType() == AmmoType.T_SNIPER)
-                    || (ammoType.getAmmoType() == AmmoType.T_THUMPER))
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING))) {
+                        || (ammoType.getAmmoType() == AmmoType.T_LONG_TOM)
+                        || (ammoType.getAmmoType() == AmmoType.T_SNIPER)
+                        || (ammoType.getAmmoType() == AmmoType.T_THUMPER))
+                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING))) {
                     return true;
                 }
             }
 
             if (entity.getBombs().stream().anyMatch(bomb -> !bomb.isDestroyed()
-                && (bomb.getUsableShotsLeft() > 0)
-                && (bomb.getType().getBombType() == BombType.B_LG))) {
+                    && (bomb.getUsableShotsLeft() > 0)
+                    && (bomb.getType().getBombType() == BombType.B_LG))) {
                 return true;
             }
         }
@@ -460,9 +459,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         // aerospace
         // unit having left the field already, for example
         return getAttacksVector().stream()
-            .map(AttackHandler::getWaa)
-            .filter(Objects::nonNull)
-            .anyMatch(waa -> waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING));
+                .map(AttackHandler::getWaa)
+                .filter(Objects::nonNull)
+                .anyMatch(waa -> waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING));
     }
 
     @Override
@@ -511,7 +510,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         int count = 0;
         for (Entity entity : inGameTWEntities()) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
-                && !entity.isCarcass()) {
+                    && !entity.isCarcass()) {
                 count++;
             }
         }
@@ -527,8 +526,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         int count = 0;
         for (Entity entity : inGameTWEntities()) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
-                && !entity.isCarcass()
-                && !entity.isOffBoard() && !entity.isCaptured()) {
+                    && !entity.isCarcass()
+                    && !entity.isOffBoard() && !entity.isCaptured()) {
                 count++;
             }
         }
@@ -544,9 +543,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         int count = 0;
         for (Entity entity : inGameTWEntities()) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
-                && !entity.isCarcass()
-                && entity.isCommander() && !entity.isOffBoard()
-                && !entity.isCaptured()) {
+                    && !entity.isCarcass()
+                    && entity.isCommander() && !entity.isOffBoard()
+                    && !entity.isCaptured()) {
                 count++;
             }
         }
@@ -560,8 +559,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public boolean hasTacticalGenius(Player player) {
         for (Entity entity : inGameTWEntities()) {
             if (entity.hasAbility(OptionsConstants.MISC_TACTICAL_GENIUS)
-                && entity.getOwner().equals(player) && !entity.isDestroyed() && entity.isDeployed()
-                && !entity.isCarcass() && !entity.getCrew().isUnconscious()) {
+                    && entity.getOwner().equals(player) && !entity.isDestroyed() && entity.isDeployed()
+                    && !entity.isCarcass() && !entity.getCrew().isUnconscious()) {
                 return true;
             }
         }
@@ -581,17 +580,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             // Even if friendly fire is acceptable, do not shoot yourself
             // Enemy units not on the board can not be shot.
             if ((otherEntity.getPosition() != null)
-                && !otherEntity.isOffBoard()
-                && otherEntity.isTargetable()
-                && !otherEntity.isHidden()
-                && !otherEntity.isSensorReturn(entity.getOwner())
-                && otherEntity.hasSeenEntity(entity.getOwner())
-                && (entity.isEnemyOf(otherEntity) || (friendlyFire && (entity
-                .getId() != otherEntity.getId())))) {
+                    && !otherEntity.isOffBoard()
+                    && otherEntity.isTargetable()
+                    && !otherEntity.isHidden()
+                    && !otherEntity.isSensorReturn(entity.getOwner())
+                    && otherEntity.hasSeenEntity(entity.getOwner())
+                    && (entity.isEnemyOf(otherEntity) || (friendlyFire && (entity
+                            .getId() != otherEntity.getId())))) {
                 // Air to Ground - target must be on flight path
                 if (Compute.isAirToGround(entity, otherEntity)) {
                     if (entity.getPassedThrough().contains(
-                        otherEntity.getPosition())) {
+                            otherEntity.getPosition())) {
                         ents.add(otherEntity);
                     }
                 } else {
@@ -616,15 +615,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
     }
 
-    @Override
-    public boolean hasMoreTurns() {
-        return super.hasMoreTurns();
-    }
-
     /**
      * @return the first GameTurn object for the specified player, or null if the
-     *         player has no
-     *         turns to play
+     *         player has no turns to play
      */
     public @Nullable GameTurn getTurnForPlayer(int pn) {
         if ((turnIndex >= 0) && (turnIndex < turnVector.size())) {
@@ -771,7 +764,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @return an enumeration of all the entities in the game.
      * @deprecated Use {@link #inGameTWEntities()} instead.
      */
-    @Deprecated
+    @Deprecated(since = "0.50.4")
     public Iterator<Entity> getEntities() {
         return inGameTWEntities().iterator();
     }
@@ -933,7 +926,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         // WOR
         // Handle null, C3i, NC3, and company commander units.
         if ((entity == null) || entity.hasC3i() || entity.hasNavalC3() || entity.hasActiveNovaCEWS()
-            || entity.C3MasterIs(entity)) {
+                || entity.C3MasterIs(entity)) {
             return getC3NetworkMembers(entity);
         }
 
@@ -999,7 +992,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         for (Entity entity : vOutOfGame) {
             if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)
-                || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED)) {
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED)) {
                 graveyard.addElement(entity);
             }
         }
@@ -1014,8 +1007,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         Vector<Entity> wrecks = new Vector<>();
         for (Entity entity : vOutOfGame) {
             if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)
-                || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED)
-                || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED)) {
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED)
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED)) {
                 wrecks.addElement(entity);
             }
         }
@@ -1032,8 +1025,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         for (Entity entity : vOutOfGame) {
             if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT)
-                || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_CAPTURED)
-                || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_PUSHED)) {
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_CAPTURED)
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_PUSHED)) {
                 sanctuary.addElement(entity);
             }
         }
@@ -1128,11 +1121,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * When it has to exist, the entity HAS to exists. If it doesn't, throw a no such element exception.
-     * This is to be used in place of the previous getEntity method when the entity is expected to exist and the following actions
+     * When it has to exist, the entity HAS to exists. If it doesn't, throw a no
+     * such element exception. This is to be used in place of the previous getEntity
+     * method when the entity is expected to exist and the following actions
      * will cause a null pointer exception if the entity does not exist.
+     *
      * @param id The id number of the entity to get.
-     * @return The entity with the given id number or throw a no such element exception.
+     * @return The entity with the given id number or throw a no such element
+     *         exception.
      */
     public Entity getEntityOrThrow(final int id) {
         return (Entity) getInGameObject(id).orElseThrow();
@@ -1171,13 +1167,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Adds a new Entity. The id parameter is ignored and addEntity(Entity) is
-     * called instead. This
-     * is just to maintain compatibility.
+     * called instead. This is just to maintain compatibility.
      *
      * @param id     Value that is ignored: the id is pulled from the passed Entity
      * @param entity The Entity to add to the game.
+     *
+     * @deprecated since 0.50.4 - Use {@link #addEntity(Entity)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "0.50.4", forRemoval = true)
     public void addEntity(int id, Entity entity) {
         // Disregard the passed id, addEntity(Entity) pulls the id from the
         // Entity instance.
@@ -1202,20 +1199,21 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public synchronized void addEntity(Entity entity, boolean genEvent) {
         entity.setGame(this);
-        if (entity instanceof Mek) {
-            ((Mek) entity).setBAGrabBars();
-            ((Mek) entity).setProtoMekClampMounts();
-        } else if (entity instanceof Tank) {
-            ((Tank) entity).setBAGrabBars();
-            ((Tank) entity).setTrailerHitches();
+        if (entity instanceof Mek entityMek) {
+            entityMek.setBAGrabBars();
+            entityMek.setProtoMekClampMounts();
+        } else if (entity instanceof Tank entityTank) {
+            entityTank.setBAGrabBars();
+            entityTank.setTrailerHitches();
         }
 
         // Add magnetic clamp mounts
         if ((entity instanceof Mek) && !entity.isOmni() && !entity.hasBattleArmorHandles()) {
             entity.addTransporter(new ClampMountMek());
-        } else if ((entity instanceof Tank) && !entity.isOmni()
-            && !entity.hasBattleArmorHandles()) {
-            entity.addTransporter(new ClampMountTank());
+        } else if ((entity instanceof Tank entityTank)
+                && !entityTank.isOmni()
+                && !entityTank.hasBattleArmorHandles()) {
+            entityTank.addTransporter(new ClampMountTank());
         }
 
         entity.setGameOptions();
@@ -1328,7 +1326,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         // do not keep never-joined entities
         if ((vOutOfGame != null)
-            && (condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED)) {
+                && (condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED)) {
             vOutOfGame.addElement(toRemove);
         }
 
@@ -1428,8 +1426,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public Entity getFirstEnemyEntity(Coords c, Entity currentEntity) {
         for (Entity entity : inGameTWEntities()) {
-            if (c.equals(entity.getPosition()) && entity.isTargetable()
-                && entity.isEnemyOf(currentEntity)) {
+            if (c.equals(entity.getPosition())
+                    && entity.isTargetable()
+                    && entity.isEnemyOf(currentEntity)) {
                 return entity;
             }
         }
@@ -1452,8 +1451,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Return an {@link Entity} <code>List</code> at {@link Coords} <code>c</code>,
-     * checking if
-     * they can be targetted.
+     * checking if they can be targeted.
      *
      * @param c The coordinates to check
      * @return the {@link Entity} <code>List</code>
@@ -1571,7 +1569,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Returns a Target for an Accidental Fall From above, or null if no
      * possible target is there
      *
-     * @param coords      The <code>Coords</code> of the hex in which the accidental fall
+     * @param coords The <code>Coords</code> of the hex in which the accidental fall
      *               from above happens
      * @param ignore The entity who is falling, so shouldn't be returned
      * @return The <code>Entity</code> that should be an AFFA target.
@@ -1582,10 +1580,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             Hex hex = getBoard().getHex(coords);
             for (Entity entity : getEntitiesVector(coords)) {
                 if (entity.isTargetable()
-                    && ((entity.getElevation() == 0) // Standing on hex surface
-                    || (entity.getElevation() == -hex.depth())) // Standing on hex floor
-                    && (entity.getAltitude() == 0)
-                    && !(entity instanceof Infantry) && (entity != ignore)) {
+                        && ((entity.getElevation() == 0) // Standing on hex surface
+                                || (entity.getElevation() == -hex.depth())) // Standing on hex floor
+                        && (entity.getAltitude() == 0)
+                        && !(entity instanceof Infantry) && (entity != ignore)) {
                     vector.addElement(entity);
                 }
             }
@@ -1611,7 +1609,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public Iterator<Entity> getEnemyEntities(final Coords coords, final Entity currentEntity) {
         return getSelectedEntities(entity -> coords.equals(entity.getPosition())
-            && entity.isTargetable() && entity.isEnemyOf(currentEntity));
+                && entity.isTargetable()
+                && entity.isEnemyOf(currentEntity));
     }
 
     /**
@@ -1623,7 +1622,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *         enemies of the given unit.
      */
     public Iterator<Entity> getAllEnemyEntities(final Entity currentEntity) {
-        return getSelectedEntities(entity -> entity.isTargetable() && entity.isEnemyOf(currentEntity));
+        return getSelectedEntities(entity -> entity.isTargetable()
+                && entity.isEnemyOf(currentEntity));
     }
 
     public Iterator<Entity> getTeamEntities(final Team team) {
@@ -1642,7 +1642,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public Iterator<Entity> getFriendlyEntities(final Coords coords, final Entity currentEntity) {
         return getSelectedEntities(entity -> coords.equals(entity.getPosition())
-            && entity.isTargetable() && !entity.isEnemyOf(currentEntity));
+                && entity.isTargetable()
+                && !entity.isEnemyOf(currentEntity));
     }
 
     /**
@@ -1758,7 +1759,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             return Entity.NONE;
         }
         int startingIndex = i;
-        while (!((hasLooped == true) && (i == startingIndex))) {
+        while (!(hasLooped && (i == startingIndex))) {
             final Entity entity = sortedEntities.get(i);
             if (turn.isValidEntity(entity, this)) {
                 return entity.getId();
@@ -1793,7 +1794,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             i = sortedEntities.size() - 1;
         }
         int startingIndex = i;
-        while (!((hasLooped == true) && (i == startingIndex))) {
+        while (!(hasLooped && (i == startingIndex))) {
             final Entity entity = sortedEntities.get(i);
             if (turn.isValidEntity(entity, this)) {
                 return entity.getId();
@@ -1849,15 +1850,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public int getFirstHiddenEntityNum(final @Nullable GameTurn turn) {
         // Reviewers: Not sure if this is where to add filtering (this is hoe deployment
-        // does it)
-        // or if the right way is to create a subclass of GameTurn.EntityClassTurn that
-        // overrides isValidEntity
-        // the latter seems more correct, but I see no other examples of that
+        // does it) or if the right way is to create a subclass of
+        // GameTurn.EntityClassTurn that overrides isValidEntity the latter seems more
+        // correct, but I see no other examples of that
 
         // Repeat the logic from getFirstEntityNum.
         if (turn == null) {
             return -1;
         }
+
         for (Entity entity : inGameTWEntities()) {
             if ((!entity.isDone()) && turn.isValidEntity(entity, this) && entity.isHidden()) {
                 return entity.getId();
@@ -1933,9 +1934,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         ArrayList<Entity> output = new ArrayList<>();
         for (Entity entity : vOutOfGame) {
             if (player.equals(entity.getOwner()) &&
-                ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT)
-                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_CAPTURED)
-                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_PUSHED))) {
+                    ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT)
+                            || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_CAPTURED)
+                            || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_PUSHED))) {
                 output.add(entity);
             }
         }
@@ -1945,13 +1946,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Determines if the indicated entity is stranded on a transport that can't
      * move.
-     * <p>
-     * According to
-     * <a href=
-     * "http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart=">Randall
-     * Bills</a>,
-     * the "minimum move" rule allow stranded units to dismount at the start of the
-     * turn.
+     *
+     * According to Randall Bills, the "minimum move" rule allow stranded units to
+     * dismount at the start of the turn.
      *
      * @param entity the <code>Entity</code> that may be stranded
      * @return <code>true</code> if the entity is stranded <code>false</code>
@@ -1987,8 +1984,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         int remaining = 0;
 
         for (Entity entity : inGameTWEntities()) {
-            if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
-                && (entity instanceof Infantry)) {
+            if (player.equals(entity.getOwner())
+                    && entity.isSelectableThisTurn()
+                    && (entity instanceof Infantry)) {
                 remaining++;
             }
         }
@@ -2006,8 +2004,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         int remaining = 0;
 
         for (Entity entity : inGameTWEntities()) {
-            if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
-                && (entity instanceof ProtoMek)) {
+            if (player.equals(entity.getOwner())
+                    && entity.isSelectableThisTurn()
+                    && (entity instanceof ProtoMek)) {
                 remaining++;
             }
         }
@@ -2025,8 +2024,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         int remaining = 0;
 
         for (Entity entity : inGameTWEntities()) {
-            if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
-                && (entity instanceof Tank)) {
+            if (player.equals(entity.getOwner())
+                    && entity.isSelectableThisTurn()
+                    && (entity instanceof Tank)) {
                 remaining++;
             }
         }
@@ -2043,8 +2043,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         int remaining = 0;
 
         for (Entity entity : inGameTWEntities()) {
-            if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
-                && (entity instanceof Mek)) {
+            if (player.equals(entity.getOwner())
+                    && entity.isSelectableThisTurn()
+                    && (entity instanceof Mek)) {
                 remaining++;
             }
         }
@@ -2086,18 +2087,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         // A turn only needs to be removed when going from 4 inf (2 turns) to
         // 3 inf (1 turn)
         if (getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
-            && (entity instanceof Infantry) && getPhase().isMovement()) {
+                && (entity instanceof Infantry) && getPhase().isMovement()) {
             if ((getInfantryLeft(entity.getOwnerId()) % getOptions().intOption(
-                OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
+                    OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
                 // exception, if the _next_ turn is an infantry turn, remove that
                 // contrived, but may come up e.g. one inf accidentally kills another
                 synchronized (turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof EntityClassTurn) {
-                            EntityClassTurn ect = (EntityClassTurn) nextTurn;
+                        if (nextTurn instanceof EntityClassTurn ect) {
                             if (ect.isValidClass(EntityClassTurn.CLASS_INFANTRY)
-                                && !ect.isValidClass(~EntityClassTurn.CLASS_INFANTRY)) {
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_INFANTRY)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2108,18 +2108,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         // Same thing but for ProtoMeks
         if (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)
-            && (entity instanceof ProtoMek) && getPhase().isMovement()) {
+                && (entity instanceof ProtoMek) && getPhase().isMovement()) {
             if ((getProtoMeksLeft(entity.getOwnerId()) % getOptions()
-                .intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
+                    .intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
                 // exception, if the _next_ turn is an ProtoMek turn, remove that
                 // contrived, but may come up e.g. one inf accidentally kills another
                 synchronized (turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof EntityClassTurn) {
-                            EntityClassTurn ect = (EntityClassTurn) nextTurn;
+                        if (nextTurn instanceof EntityClassTurn ect) {
                             if (ect.isValidClass(EntityClassTurn.CLASS_PROTOMEK)
-                                && !ect.isValidClass(~EntityClassTurn.CLASS_PROTOMEK)) {
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_PROTOMEK)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2131,18 +2130,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         // Same thing but for vehicles
         if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
-            && (entity instanceof Tank) && getPhase().isMovement()) {
+                && (entity instanceof Tank) && getPhase().isMovement()) {
             if ((getVehiclesLeft(entity.getOwnerId()) % getOptions()
-                .intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER)) != 1) {
+                    .intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER)) != 1) {
                 // exception, if the _next_ turn is a tank turn, remove that
                 // contrived, but may come up e.g. one tank accidentally kills another
                 synchronized (turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof EntityClassTurn) {
-                            EntityClassTurn ect = (EntityClassTurn) nextTurn;
+                        if (nextTurn instanceof EntityClassTurn ect) {
                             if (ect.isValidClass(EntityClassTurn.CLASS_TANK)
-                                && !ect.isValidClass(~EntityClassTurn.CLASS_TANK)) {
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_TANK)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2154,18 +2152,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         // Same thing but for meks
         if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
-            && (entity instanceof Mek) && getPhase().isMovement()) {
+                && (entity instanceof Mek) && getPhase().isMovement()) {
             if ((getMeksLeft(entity.getOwnerId()) % getOptions()
-                .intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER)) != 1) {
+                    .intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER)) != 1) {
                 // exception, if the _next_ turn is a mek turn, remove that
                 // contrived, but may come up e.g. one mek accidentally kills another
                 synchronized (turnVector) {
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                        if (nextTurn instanceof EntityClassTurn) {
-                            EntityClassTurn ect = (EntityClassTurn) nextTurn;
+                        if (nextTurn instanceof EntityClassTurn ect) {
                             if (ect.isValidClass(EntityClassTurn.CLASS_MEK)
-                                && !ect.isValidClass(~EntityClassTurn.CLASS_MEK)) {
+                                    && !ect.isValidClass(~EntityClassTurn.CLASS_MEK)) {
                                 turnVector.removeElementAt(turnIndex + 1);
                             }
                         }
@@ -2180,10 +2177,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         // rules, then we may be removing an infantry unit that would be
         // considered invalid unless we don't consider the extra validity
         // checks.
-        if ((getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER) &&
-            (entity instanceof Infantry)) ||
-            (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER) &&
-                (entity instanceof ProtoMek))) {
+        if ((getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER) && (entity instanceof Infantry))
+                || (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)
+                        && (entity instanceof ProtoMek))) {
             useInfantryMoveLaterCheck = false;
         }
 
@@ -2201,9 +2197,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Removes any turns that can only be taken by the specified entity. Useful if
-     * the specified
-     * Entity is being removed from the game to ensure any turns that only it can
-     * take are gone.
+     * the specified Entity is being removed from the game to ensure any turns that
+     * only it can take are gone.
      *
      * @param entity the entity to remove turns for
      * @return The number of turns returned
@@ -2213,8 +2208,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         synchronized (turnVector) {
             for (GameTurn turn : turnVector) {
-                if (turn instanceof SpecificEntityTurn) {
-                    int turnOwner = ((SpecificEntityTurn) turn).getEntityNum();
+                if (turn instanceof SpecificEntityTurn specificEntityTurn) {
+                    int turnOwner = specificEntityTurn.getEntityNum();
                     if (entity.getId() == turnOwner) {
                         turnsToRemove.add(turn);
                     }
@@ -2227,6 +2222,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Set the new vector of orbital bombardments for this round.
+     *
      * @param orbitalBombardments
      */
     public void setOrbitalBombardmentVector(Vector<OrbitalBombardment> orbitalBombardments) {
@@ -2288,7 +2284,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             TurnOrdered.rollInitAndResolveTies(getEntitiesVector(), vRerolls, false);
         } else {
             TurnOrdered.rollInitAndResolveTies(teams, initiativeRerollRequests,
-                getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
+                    getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
         }
         initiativeRerollRequests.removeAllElements();
 
@@ -2297,7 +2293,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void handleInitiativeCompensation() {
         if (getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION)) {
             TurnOrdered.resetInitiativeCompensation(teams,
-                getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
+                    getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
         }
     }
 
@@ -2376,7 +2372,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * @return an Enumeration of telemissile attacks.
+     * @return an Enumeration of tele-missile attacks.
      */
     public Enumeration<AttackAction> getTeleMissileAttacks() {
         return pendingTeleMissileAttacks.elements();
@@ -2390,9 +2386,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * This is used to send all telemissile attacks to the client.
+     * This is used to send all tele-missile attacks to the client.
      *
-     * @return an unmodifiable list of pending telemissile attacks.
+     * @return an unmodifiable list of pending tele-missile attacks.
      */
     public List<AttackAction> getTeleMissileAttacksVector() {
         return Collections.unmodifiableList(pendingTeleMissileAttacks);
@@ -2561,7 +2557,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return forceVictory;
     }
 
-
     public boolean isIgnorePlayerDefeatVotes() {
         return ignorePlayerDefeatVotes;
     }
@@ -2581,9 +2576,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Setter for property endImmediately.
-     * The endImmediately flag is used to signal that the game should check for victory conditions
-     * as soon as possible, instead of waiting for the end phase. This does bypass the server option to not
-     * end the game immediately, so it should be used with caution.
+     *
+     * The endImmediately flag is used to signal that the game should check for
+     * victory conditions as soon as possible, instead of waiting for the end phase.
+     * This does bypass the server option to not end the game immediately, so it
+     * should be used with caution.
      *
      * @param endImmediately New value of property endImmediately.
      */
@@ -2592,8 +2589,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Setter for property ignorePlayerDefeatVotes. This flag is used to signal that the game should ignore the need
-     * for players voting for the end of the game. This is used to give the gamemaster the ability to end the game
+     * Setter for property ignorePlayerDefeatVotes. This flag is used to signal that
+     * the game should ignore the need for players voting for the end of the game.
+     * This is used to give the game master the ability to end the game
      * without player input.
      *
      * @param ignorePlayerDefeatVotes New value of property ignorePlayerDefeatVotes.
@@ -2689,8 +2687,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * @return true if the specified player is either the victor, or is on the
-     *         winning team. Best
-     *         to call during GamePhase.VICTORY.
+     *         winning team. Best to call during GamePhase.VICTORY.
      */
     public boolean isPlayerVictor(Player player) {
         if (player.getTeam() == Player.TEAM_NONE) {
@@ -2701,11 +2698,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * @return the currently active context-object for VictoryCondition checking.
-     *         This should be a
-     *         mutable object, and it will be modified by the victory condition
-     *         checkers. Whoever saves the
-     *         game state when doing saves is also responsible for saving this
-     *         state. At the start of the
+     *         This should be a mutable object, and it will be modified by the
+     *         victory condition checkers. Whoever saves the game state when doing
+     *         saves is also responsible for saving this state. At the start of the
      *         game this should be initialized to an empty HashMap
      */
     public HashMap<String, Object> getVictoryContext() {
@@ -2722,8 +2717,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @param selector the <code>EntitySelector</code> that implements test that an
      *                 entity must pass to be included. This value may be
      *                 <code>null</code> (in which case all entities in the game
-     *                 will
-     *                 be returned).
+     *                 will be returned).
      * @return an <code>Enumeration</code> of all entities that the selector
      *         accepts. This value will not be <code>null</code> but it may be
      *         empty.
@@ -2830,14 +2824,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @param selector the <code>EntitySelector</code> that implements test that an
      *                 entity must pass to be included. This value may be
      *                 <code>null</code> (in which case all entities in the game
-     *                 will
-     *                 be returned).
+     *                 will be returned).
      * @return an <code>Enumeration</code> of all entities that the selector
      *         accepts. This value will not be <code>null</code> but it may be
      *         empty.
      */
-    public Enumeration<Entity> getSelectedOutOfGameEntities(
-        EntitySelector selector) {
+    public Enumeration<Entity> getSelectedOutOfGameEntities(EntitySelector selector) {
         Enumeration<Entity> retVal;
 
         // If no selector was supplied, return all entities.
@@ -2930,22 +2922,22 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Returns true if the player has any valid units this turn that are not
-     * infantry, not protomeks, or not either of those. This method is
-     * utitilized by the "A players Infantry moves after that players other
-     * units", and "A players Protomeks move after that players other units"
+     * infantry, not ProtoMeks, or not either of those. This method is
+     * utilized by the "A players Infantry moves after that players other
+     * units", and "A players ProtoMeks move after that players other units"
      * options.
      */
     public boolean checkForValidNonInfantryAndOrProtoMeks(int playerId) {
         Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-            .iterator();
+                .iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             boolean excluded = false;
             if ((entity instanceof Infantry)
-                && getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER)) {
+                    && getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER)) {
                 excluded = true;
             } else if ((entity instanceof ProtoMek)
-                && getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)) {
+                    && getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)) {
                 excluded = true;
             }
 
@@ -2963,9 +2955,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @param attacker The attacking <code>Entity</code>.
      * @param target   The <code>Coords</code> of the original target.
      * @return an <code>Enumeration</code> of entities that have nemesis pods
-     *         attached, are
-     *         located between attacker and target, and are friendly with the
-     *         attacker.
+     *         attached, are located between attacker and target, and are friendly
+     *         with the attacker.
      */
     public Enumeration<Entity> getNemesisTargets(Entity attacker, Coords target) {
         final Coords attackerPos = attacker.getPosition();
@@ -2974,7 +2965,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         for (Coords c : in) {
             for (Entity entity : getEntitiesVector(c)) {
                 if (entity.isINarcedWith(INarcPod.NEMESIS)
-                    && !entity.isEnemyOf(attacker)) {
+                        && !entity.isEnemyOf(attacker)) {
                     nemesisTargets.addElement(entity);
                 }
             }
@@ -3031,8 +3022,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * Note: coords could be illuminated by other sources as well, it's likely
      * that IlluminationLevel::isPositionIlluminated is desired unless the
-     * searchlighted hex
-     * set is being sent to the client or server.
+     * hex illuminated by the searchlight set is being sent to the client or server.
      */
     public HashSet<Coords> getIlluminatedPositions() {
         return illuminatedPositions;
@@ -3094,7 +3084,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     if (!planetaryConditions.getWind().isCalm()) {
                         WindDirection dir = planetaryConditions.getWindDirection();
                         flare.position = flare.position.translated(dir.ordinal(),
-                            (wind.ordinal() > 1) ? (wind.ordinal() - 1) : wind.ordinal());
+                                (wind.ordinal() > 1) ? (wind.ordinal() - 1) : wind.ordinal());
                         if (getBoard().contains(flare.position)) {
                             r = new Report(5236);
                             r.add(flare.position.getBoardNum());
@@ -3131,21 +3121,20 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public boolean gameTimerIsExpired() {
         return getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT)
-            && (getRoundCount() == getOptions().intOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT));
+                && (getRoundCount() == getOptions().intOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT));
     }
 
     /**
      * Uses VictoryFactory to generate a new VictoryCondition checker provided that
-     * the
-     * VictoryContext is saved properly. Calling this method at any time is ok and
-     * should not affect
-     * anything unless the VictoryCondition Config Options have changed.
+     * the VictoryContext is saved properly. Calling this method at any time is ok
+     * and should not affect anything unless the VictoryCondition Config Options
+     * have changed.
      */
     public void createVictoryConditions() {
         victoryHelper = new VictoryHelper(this);
     }
 
-    @Deprecated
+    @Deprecated(since = "0.50.04", forRemoval = true)
     public VictoryHelper getVictory() {
         return victoryHelper;
     }
@@ -3158,7 +3147,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     // applicable
     public boolean useVectorMove() {
         return getOptions().booleanOption(OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT)
-            && getBoard().inSpace();
+                && getBoard().inSpace();
     }
 
     /**
@@ -3210,11 +3199,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public boolean checkForValidSpaceStations(int playerId) {
         Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-            .iterator();
+                .iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if ((entity instanceof SpaceStation)
-                && getTurn().isValidEntity(entity, this)) {
+                    && getTurn().isValidEntity(entity, this)) {
                 return true;
             }
         }
@@ -3226,7 +3215,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if ((entity instanceof Dropship)
-                && getTurn().isValidEntity(entity, this)) {
+                    && getTurn().isValidEntity(entity, this)) {
                 return true;
             }
         }
@@ -3235,7 +3224,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public boolean checkForValidSmallCraft(int playerId) {
         return getPlayerEntities(getPlayer(playerId), false).stream()
-            .anyMatch(e -> (e instanceof SmallCraft) && getTurn().isValidEntity(e, this));
+                .anyMatch(e -> (e instanceof SmallCraft) && getTurn().isValidEntity(e, this));
     }
 
     @Override
@@ -3276,12 +3265,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Only needed for Entity's that have secondaryPositions. This method
-     * is used to make sure setPosition() doesn't get an inaccurate list
-     * of positions for an entity that changed from between
-     * using secondaryPositions and not, such as a Dropship taking off.
-     * Iterates through all cached coords to get where the provided entity is.
-     * Inefficient, and usually unnecessary.
+     * Only needed for Entity's that have secondaryPositions. This method is used to
+     * make sure setPosition() doesn't get an inaccurate list of positions for an
+     * entity that changed from between using secondaryPositions and not, such as a
+     * Dropship taking off. Iterates through all cached coords to get where the
+     * provided entity is. Inefficient, and usually unnecessary.
+     *
      * @see Dropship#setPosition(Coords)
      * @param entity Entity we want to get the cached old positions of
      * @return cached coords that contain this entity
@@ -3306,8 +3295,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @param e
      */
-    public synchronized void updateEntityPositionLookup(Entity e,
-                                                        HashSet<Coords> oldPositions) {
+    public synchronized void updateEntityPositionLookup(Entity e, HashSet<Coords> oldPositions) {
         HashSet<Coords> newPositions = e.getOccupiedCoords();
         // Check to see that the position has actually changed
         if (newPositions.equals(oldPositions)) {
@@ -3385,10 +3373,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         Collections.sort(entitiesInCache);
         Collections.sort(entitiesInVector);
         if ((entitiesInCacheCount != entityVectorSize) && !getPhase().isDeployment()
-            && !getPhase().isExchange() && !getPhase().isLounge()
-            && !getPhase().isInitiativeReport() && !getPhase().isInitiative()) {
+                && !getPhase().isExchange() && !getPhase().isLounge()
+                && !getPhase().isInitiativeReport() && !getPhase().isInitiative()) {
             logger.warn("Entities vector has " + inGameTWEntities().size()
-                + " but pos lookup cache has " + entitiesInCache.size() + "entities!");
+                    + " but pos lookup cache has " + entitiesInCache.size() + "entities!");
             List<Integer> missingIds = new ArrayList<>();
             for (Integer id : entitiesInVector) {
                 if (!entitiesInCache.contains(id)) {
@@ -3403,8 +3391,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 HashSet<Integer> ents = entityPosLookup.get(c);
                 if ((ents != null) && !ents.contains(e.getId())) {
                     logger.warn("Entity " + e.getId() + " is in "
-                        + e.getPosition() + " however the position cache "
-                        + "does not have it in that position!");
+                            + e.getPosition() + " however the position cache "
+                            + "does not have it in that position!");
                 }
             }
         }
@@ -3417,7 +3405,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 HashSet<Coords> positions = e.getOccupiedCoords();
                 if (!positions.contains(c)) {
                     logger.warn("Entity Position Cache thinks Entity " + eId
-                        + "is in " + c + " but the Entity thinks it's in " + e.getPosition());
+                            + "is in " + c + " but the Entity thinks it's in " + e.getPosition());
                 }
             }
         }

@@ -915,7 +915,6 @@ public class Hex implements Serializable {
         String theme = "";
         int hexLevel = 0;
         String terrainString = "";
-        boolean isOnBoard = true;
         String[] tokens = clipboardString.split("///");
         for (String token : tokens) {
             String[] infos = token.split("###");

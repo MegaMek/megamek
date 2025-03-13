@@ -84,7 +84,7 @@ public class BulldozerMovePath extends MovePath {
     public MovePath addStep(final MoveStepType type) {
         BulldozerMovePath mp = (BulldozerMovePath) super.addStep(type);
         Hex hex = mp.getGame().getBoard().getHex(mp.getFinalCoords());
-        int hexWaterDepth = (hex.isOnBoard() && hex.containsTerrain(Terrains.WATER)) ? hex.depth() : Integer.MIN_VALUE;
+        int hexWaterDepth = ((hex != null) && hex.containsTerrain(Terrains.WATER)) ? hex.depth() : Integer.MIN_VALUE;
 
         if (!mp.isMoveLegal() && !mp.isJumping()) {
             // here, we will check if the step is illegal because the unit in question
@@ -117,7 +117,7 @@ public class BulldozerMovePath extends MovePath {
             // water)
             // then we are impeding future jump movement and should add an extra cost to
             // this step
-            if (hex.isOnBoard() && !hex.containsTerrain(Terrains.BRIDGE)) {
+            if ((hex != null) && !hex.containsTerrain(Terrains.BRIDGE)) {
                 // special case - mek jumping into depth 1 water might not be all that bad, jump
                 // mp cost wise
                 if (hexWaterDepth == 1) {
@@ -191,7 +191,7 @@ public class BulldozerMovePath extends MovePath {
         Hex destHex = board.getHex(finalCoords);
         int levelingCost = CANNOT_LEVEL;
 
-        if (destHex.isOffBoard()) {
+        if (destHex == null) {
             return levelingCost;
         }
 

@@ -1140,7 +1140,7 @@ public class FireControl {
             ) {
                 Hex hex = game.getBoard().getHex(target.getPosition());
                 // If somehow we get an off-board hex, it's impossible to hit.
-                if (hex.isOffBoard()) {
+                if (hex == null) {
                     return new ToHitData(TH_NULL_POSITION);
                 }
                 if (Compute.allEnemiesOutsideBlast(target, shooter, firingAmmo.getType(), false, false, false, game)) {
@@ -2015,7 +2015,7 @@ public class FireControl {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity entity = (Entity) target;
             Hex hex = game.getBoard().getHex(entity.getPosition());
-            hexToBomb.setTargetLevel(hex.isOnBoard() ? hex.getLevel() : 0);
+            hexToBomb.setTargetLevel((hex != null) ? hex.getLevel() : 0);
 
             if (entity.isAirborne()) {
                 return diveBombPlan;
@@ -2023,7 +2023,7 @@ public class FireControl {
             if (entity.isAirborneVTOLorWIGE()) {
                 // If VTOL / WiGE movement and flying, can only be hit if over water
                 // or buildings, and only if within a specific level range
-                if (hex.isOffBoard() || !hex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.WATER)) {
+                if (hex == null || !hex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.WATER)) {
                     return diveBombPlan;
                 }
                 hexToBomb.setTargetLevel(hex.getLevel() + entity.getElevation());
@@ -2031,7 +2031,7 @@ public class FireControl {
             // Submarine units can be bombed, but bombs impact the water surface and transfers 1 to 2
             // levels of depth downward.
             if (entity.getMovementMode().isSubmarine()) {
-                if (hex.isOffBoard() || !hex.containsAnyTerrainOf(Terrains.WATER)) {
+                if (hex == null || !hex.containsAnyTerrainOf(Terrains.WATER)) {
                     return diveBombPlan;
                 }
                 if (entity.getElevation() < -2) {

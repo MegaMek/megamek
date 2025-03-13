@@ -172,7 +172,7 @@ public class InfantryPathFinder {
             // if we're definitely going to collapse a bridge we're stepping on let's just
             // stop right here. we're walking *through* buildings, so collapsing them isn't
             // going to be a problem
-            if (destinationHex.isOffBoard() ||
+            if (destinationHex == null ||
                     destinationHex.containsTerrain(Terrains.BRIDGE_CF) &&
                             (destinationHex.getTerrain(Terrains.BRIDGE_CF).getLevel() < startingPath.getEntity()
                                     .getWeight())) {

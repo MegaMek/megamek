@@ -210,7 +210,7 @@ public class LargeSupportTank extends SupportTank {
         if ((fa % 30) == 0) {
             Hex srcHex = game.getBoard().getHex(src);
             Hex curHex = game.getBoard().getHex(getPosition());
-            if (srcHex.isOnBoard() && curHex.isOnBoard()) {
+            if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
                         getPosition(), 1, getElevation(), srcHex.floor(),
                         curHex.floor());

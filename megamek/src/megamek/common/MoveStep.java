@@ -3244,7 +3244,7 @@ public class MoveStep implements Serializable {
         final Coords dest = getPosition();
         final Hex destHex = game.getBoard().getHex(dest);
         final Entity entity = getEntity();
-        if (destHex.isOffBoard()) {
+        if (destHex == null) {
             return false;
         }
         if (null == dest) {

@@ -331,7 +331,7 @@ public class PathEnumerator {
             logger.debug(ex, "Lost sight of a unit while plotting predicted paths");
             return false;
         } catch (Exception e) {
-            logger.error(e, "reclaculateMovesForWorker");
+            logger.error(e, "recalculateMovesForWorker");
             return false;
         }
     }

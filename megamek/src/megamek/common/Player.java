@@ -618,16 +618,17 @@ public final class Player extends TurnOrdered {
         for (InGameObject unit : game.getInGameObjects()) {
             if (unit instanceof Entity) {
                 Entity entity = (Entity) unit;
-                if ((null != entity.getOwner())
+                boolean useCommandInit = game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
+                boolean checkThisTurn = ((null != entity.getOwner())
                         && entity.getOwner().equals(this)
                         && !entity.isDestroyed()
-                        && entity.isDeployed()
-                        && !entity.isOffBoard()
                         && entity.getCrew().isActive()
                         && !entity.isCaptured()
-                        && !(entity instanceof MekWarrior)) {
+                        && !(entity instanceof MekWarrior))
+                      && (useCommandInit || entity.isDeployed() && !entity.isOffBoard());
+                if (checkThisTurn) {
                     int bonus = 0;
-                    if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+                    if (useCommandInit) {
                         bonus = entity.getCrew().getCommandBonus();
                     }
                     //Even if the RPG option is not enabled, we still get the command bonus provided by special equipment.
@@ -654,7 +655,7 @@ public final class Player extends TurnOrdered {
     public String getColoredPlayerNameWithTeam() {
         if (team == -1) {
             team = 0;
-        } 
+        }
         return "<B><font color='" + getColour().getHexString(0x00F0F0F0) + "'>" + getName() +
             " (" + TEAM_NAMES[team] + ")</font></B>";
     }

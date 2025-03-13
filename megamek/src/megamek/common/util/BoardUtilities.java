@@ -136,9 +136,9 @@ public class BoardUtilities {
         for (int h = 0; h < mapSettings.getBoardHeight(); h++) {
             for (int w = 0; w < mapSettings.getBoardWidth(); w++) {
                 if (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
-                    nb[index++] = new Hex(0, "space:1", mapSettings.getTheme(), new Coords(w, h), true);
+                    nb[index++] = new Hex(0, "space:1", mapSettings.getTheme(), new Coords(w, h));
                 } else {
-                    nb[index++] = new Hex(elevationMap[w][h], "", mapSettings.getTheme(), new Coords(w, h), true);
+                    nb[index++] = new Hex(elevationMap[w][h], "", mapSettings.getTheme(), new Coords(w, h));
                 }
             }
         }

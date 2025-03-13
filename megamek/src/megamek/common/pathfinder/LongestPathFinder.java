@@ -141,102 +141,100 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      */
     static public class LongestPathRelaxer implements EdgeRelaxer<Deque<MovePath>, MovePath> {
         @Override
-        public Deque<MovePath> doRelax(Deque<MovePath> v, MovePath mpCandidate, Comparator<MovePath> comparator) {
-            if (mpCandidate == null) {
-                throw new NullPointerException();
+        public Deque<MovePath> doRelax(Deque<MovePath> possibleMovePaths, MovePath movePathCandidate, Comparator<MovePath> comparator) {
+            if (movePathCandidate == null) {
+                throw new NullPointerException("MovePath candidate is null");
             }
-            if (v == null) {
-                return new ArrayDeque<>(Collections.singleton(mpCandidate));
+            if (possibleMovePaths == null) {
+                return new ArrayDeque<>(Collections.singleton(movePathCandidate));
             }
-            while (!v.isEmpty()) { // we could get rid of this loop, since we require a proper comparator
-                MovePath topMP = v.getLast();
-
-                // standing up is always reasonable for meks
-                boolean vprone = topMP.getFinalProne(), eprone = mpCandidate.getFinalProne();
-                if (vprone != eprone) {
-                    if (vprone) {
-                        break;
-                    } else {
-                        return null;
-                    }
-                }
-                if (!(topMP.getEntity() instanceof Tank)) {
-                    boolean vhdown = topMP.getFinalHullDown(), ehdown = mpCandidate.getFinalHullDown();
-                    if (vhdown != ehdown) {
-                        if (vhdown) {
-                            break;
-                        } else {
-                            return null;
-                        }
-                    }
-                }
-                /*
-                 * We require that the priority queue v of MovePath is sorted
-                 * lexicographically using product MPUsed x (-HexesMoved).
-                 */
-                int topMpUsed = topMP.getMpUsed(), mpCMpUsed = mpCandidate.getMpUsed();
-
-                if (topMpUsed > mpCMpUsed) {
-                    /*
-                     * topMP should have less or equal 'movement points used'
-                     * since it was taken from candidates priority queue earlier
-                     *
-                     * Current implementation of doRelax() assumes that v is
-                     * sorted in such way that this situation is impossible.
-                     */
-                    logger.error(
-                            "Top Move Path uses more MPs than Move Path Candidate.",
-                            new IllegalStateException());
-                    return null;
-                } else {
-                    if (topMP.getHexesMoved() > mpCandidate.getHexesMoved()) {
-                        return null; // topMP path is longer and uses less or same mp.
-                    }
-                    if (topMP.getHexesMoved() == mpCandidate.getHexesMoved()) {
-                        // we want to preserve both forward and backward movements
-                        // that end in the same spot with the same cost.
-                        MoveStep topStep = topMP.getLastStep();
-                        boolean topBackwards = topStep != null && topStep.isThisStepBackwards();
-                        MoveStep mpCandStep = mpCandidate.getLastStep();
-                        boolean mpCandBackwars = mpCandStep != null && mpCandStep.isThisStepBackwards();
-                        if (!(topMP.getEntity() instanceof Infantry) && topBackwards != mpCandBackwars) {
-                            break;
-                        }
-
-                        // 2b) Then *also* compare distance to the desired destination:
-                        // If we want to favor whichever is closer to `desiredDestination`,
-                        // we measure from each path's final position:
-                        if (mpCandidate.hasWaypoint()
-                            && topMP.getFinalCoords() != null
-                            && mpCandidate.getFinalCoords() != null) {
-                            double topDist = topMP.getFinalCoords().distance(mpCandidate.getWaypoint());
-                            double candDist = mpCandidate.getFinalCoords().distance(mpCandidate.getWaypoint());
-
-                            // if the candidate is strictly closer, prefer it:
-                            if (candDist < topDist) {
-                                // break out of loop so we add candidate to `v`
-                                break;
-                            } else {
-                                // candidate is not better, discard it
-                                return null;
-                            }
-                        }
-                        return null;
-                    }
-
-                    if (topMpUsed == mpCMpUsed) {
-                        // mpCandidate is not strictly better than topMp so we won't use it.
-                        return null;
-                    } else {
-                        // topMP travels less but also uses less movement points so we should keep it
-                        // and add mpCandidate to the list of optimal longest paths.
-                        break;
-                    }
-                }
+            // Should be a comparator instead of this function call
+            if (candidateIsWorseThanTopOfStack(possibleMovePaths, movePathCandidate)) {
+                return null;
             }
-            v.addLast(mpCandidate);
-            return v;
+            possibleMovePaths.addLast(movePathCandidate);
+            return possibleMovePaths;
         }
+    }
+
+    /**
+     * Evaluates if the candidate is worse than the top of the stack or not.
+     * @param possibleMovePaths the stack of possible move paths
+     * @param movePathCandidate the candidate move path
+     * @return returns false if the candidate is better than the top of the stack, true otherwise
+     */
+    private static boolean candidateIsWorseThanTopOfStack(Deque<MovePath> possibleMovePaths, MovePath movePathCandidate) {
+        if (possibleMovePaths.isEmpty()) {
+            return false;
+        }
+
+        MovePath topMP = possibleMovePaths.getLast();
+
+        if (topMP.getFinalProne() != movePathCandidate.getFinalProne()) {
+            return !topMP.getFinalProne();
+        }
+        if (!(topMP.getEntity() instanceof Tank)) {
+            if (topMP.getFinalHullDown() != movePathCandidate.getFinalHullDown()) {
+                return !topMP.getFinalHullDown();
+            }
+        }
+        /*
+         * We require that the priority queue v of MovePath is sorted
+         * lexicographically using product MPUsed x (-HexesMoved).
+         */
+        int topMpUsed = topMP.getMpUsed();
+        int mpCMpUsed = movePathCandidate.getMpUsed();
+
+        if (topMpUsed > mpCMpUsed) {
+            /*
+             * topMP should have less or equal 'movement points used'
+             * since it was taken from candidates priority queue earlier
+             *
+             * Current implementation of doRelax() assumes that v is
+             * sorted in such way that this situation is impossible.
+             */
+            logger.debug(
+                    "Top Move Path uses more MPs than Move Path Candidate. Top={} Candidate={}",
+                  topMpUsed, mpCMpUsed);
+            return true;
+        }
+
+        if (topMP.getHexesMoved() > movePathCandidate.getHexesMoved()) {
+            return true;
+        }
+        if (topMP.getHexesMoved() == movePathCandidate.getHexesMoved()) {
+            // we want to preserve both forward and backward movements
+            // that end in the same spot with the same cost.
+            MoveStep topStep = topMP.getLastStep();
+            boolean topBackwards = topStep != null && topStep.isThisStepBackwards();
+            MoveStep candidateLastStep = movePathCandidate.getLastStep();
+            boolean lastStepIsBackwards = (candidateLastStep != null) && candidateLastStep.isThisStepBackwards();
+            if (!(topMP.getEntity() instanceof Infantry) && topBackwards != lastStepIsBackwards) {
+                return false;
+            }
+
+            // 2b) Then *also* compare distance to the desired destination:
+            // If we want to favor whichever is closer to `desiredDestination`,
+            // we measure from each path's final position:
+            if (movePathCandidate.hasWaypoint()
+                && topMP.getFinalCoords() != null
+                && movePathCandidate.getFinalCoords() != null) {
+                double topDist = topMP.getFinalCoords().distance(movePathCandidate.getWaypoint());
+                double candDist = movePathCandidate.getFinalCoords().distance(movePathCandidate.getWaypoint());
+
+                // if the candidate is strictly closer, prefer it:
+                // break out of loop so we add candidate to `v`
+                // candidate is not better, discard it
+                return !(candDist < topDist);
+            }
+            return true;
+        }
+
+        // mpCandidate is not strictly better than topMp so we won't use it.
+        // topMP travels less but also uses less movement points so we should keep it
+        // and add mpCandidate to the list of optimal longest paths.
+        return topMpUsed == mpCMpUsed;
+
     }
 
     /**

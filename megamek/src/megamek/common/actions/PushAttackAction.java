@@ -92,10 +92,10 @@ public class PushAttackAction extends DisplacementAttackAction {
         Hex attHex = game.getBoard().getHex(ae.getPosition());
         Hex targHex = game.getBoard().getHex(te.getPosition());
 
-        if (attHex.isOffBoard()) {
+        if (attHex == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Entity #" + ae.getId() + " does not know its position.");
         }
-        if (targHex.isOffBoard()) {
+        if (targHex == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Entity #" + te.getId() + " does not know its position.");
         }
 

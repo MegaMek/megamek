@@ -400,16 +400,16 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             return 0;
         }
         Hex currHex = board.getHex(mp.getFinalCoords());
-        if (currHex.isOffBoard()) {
-            logger.debug("getLevelDiff: currHex is off the board!" +
+        if (currHex == null) {
+            logger.debug("getLevelDiff: currHex was null!" +
                     "\nStart: " + mp.getStartCoords() +
                     "\ncurrHex:  " + mp.getFinalCoords() +
                     "\nPath: " + mp);
             return 0;
         }
         Hex destHex = board.getHex(dest);
-        if (destHex.isOffBoard()) {
-            logger.debug("getLevelDiff: destHex is off the board!" +
+        if (destHex == null) {
+            logger.debug("getLevelDiff: destHex was null!" +
                     "\nStart: " + mp.getStartCoords() +
                     "\ndestHex: " + dest +
                     "\nPath: " + mp);

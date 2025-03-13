@@ -1309,7 +1309,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     // Draw hexes that are legal at a higher deployment elevation
                     Hex hex = board.getHex(c);
                     // Default to Elevation 1 if ceiling + 1 <= 0.
-                    int maxHeight = (isWiGE) ? 1 : hex.isOnBoard() ? Math.max(hex.ceiling() + 1, 1) : 1;
+                    int maxHeight = (isWiGE) ? 1 : (hex != null) ? Math.max(hex.ceiling() + 1, 1) : 1;
                     if (board.isLegalDeployment(c, en_Deployer) &&
                         !en_Deployer.isLocationProhibited(c, maxHeight)) {
                         drawHexBorder(g, getHexLocation(c), Color.cyan);
@@ -1816,7 +1816,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                         // to get correct occlusion; drawX may be any int though
                         Coords c = new Coords(x + drawX / 2 * 2, y + drawY);
                         Hex hex = board.getHex(c);
-                        if (hex.isOnBoard()) {
+                        if ((hex != null)) {
                             drawHex(c, g, saveBoardImage);
                             drawOrthograph(c, g);
                             drawHexSpritesForHex(c, g, behindTerrainHexSprites);
@@ -1832,7 +1832,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 for (int x = 0; x < drawWidth; x++) {
                     Coords c = new Coords(x + drawX, y + drawY);
                     Hex hex = board.getHex(c);
-                    if (hex.isOnBoard()) {
+                    if (hex != null) {
                         if (!saveBoardImage) {
                             if (GUIP.getShowWrecks()) {
                                 drawIsometricWreckSpritesForHex(c, g, isometricWreckSprites);
@@ -1871,7 +1871,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         final Hex hex = game.getBoard().getHex(c);
-        if (hex.isOffBoard()) {
+        if (hex == null) {
             return;
         }
         final Point hexLoc = getHexLocation(c);
@@ -1920,7 +1920,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             int largestLevelDiff = 0;
             for (int dir : allDirections) {
                 Hex adjHex = game.getBoard().getHexInDir(c, dir);
-                if (adjHex.isOffBoard()) {
+                if (adjHex == null) {
                     continue;
                 }
                 int levelDiff = Math.abs(level - adjHex.getLevel());
@@ -2415,7 +2415,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             // Determine the depth of the edge that needs to be drawn.
             int height = elev;
             Hex southHex = game.getBoard().getHexInDir(c, 3);
-            if ((dir != 3) && southHex.isOnBoard() && (elev > southHex.getLevel())) {
+            if ((dir != 3) && (southHex != null) && (elev > southHex.getLevel())) {
                 height = elev - southHex.getLevel();
             }
             int scaledHeight = (int) (HEX_ELEV * scale * height);
@@ -2491,9 +2491,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private boolean drawElevationLine(Coords src, int direction) {
         final Hex srcHex = game.getBoard().getHex(src);
         final Hex destHex = game.getBoard().getHexInDir(src, direction);
-        if (destHex.isOffBoard() && (srcHex.getLevel() != 0)) {
+        if ((destHex == null) && (srcHex.getLevel() != 0)) {
             return true;
-        } else if (destHex.isOffBoard()) {
+        } else if (destHex == null) {
             return false;
         } else if (srcHex.getLevel() != destHex.getLevel()) {
             return true;
@@ -2554,7 +2554,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         final Hex destHex = game.getBoard().getHexInDir(src, direction);
 
         // When at the board edge, create a shadow in hexes of level < 0
-        if (destHex.isOffBoard()) {
+        if (destHex == null) {
             if (srcHex.getLevel() >= 0) {
                 return null;
             }
@@ -2583,7 +2583,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         final Hex srcHex = game.getBoard().getHex(src);
         final Hex destHex = game.getBoard().getHexInDir(src, direction);
 
-        if (destHex.isOffBoard()) {
+        if (destHex == null) {
             return null;
         }
 
@@ -2615,7 +2615,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         float elevationAdjust = 0.0f;
 
         Hex hex = game.getBoard().getHex(x, y);
-        if (hex.isOnBoard() && useIsometric() && !ignoreElevation) {
+        if ((hex != null) && useIsometric() && !ignoreElevation) {
             elevationAdjust = hex.getLevel() * HEX_ELEV * scale * -1.0f;
         }
         int ypos = (y * (int) (HEX_H * scale))

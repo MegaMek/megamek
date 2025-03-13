@@ -33,7 +33,6 @@ public class Hex implements Serializable {
     private String theme;
     private String originalTheme;
     private int fireTurn;
-    private final boolean isOnBoard;
     //endregion Variable Declarations
 
     //region Constructors
@@ -48,35 +47,19 @@ public class Hex implements Serializable {
      * Constructs a clean, plain hex at specified level.
      */
     public Hex(int level) {
-        this(level, new Terrain[Terrains.SIZE], null, new Coords(0, 0), true);
+        this(level, new Terrain[Terrains.SIZE], null, new Coords(0, 0));
     }
 
     public Hex(int level, Terrain[] terrains, String theme) {
-        this(level, terrains, theme, new Coords(0, 0), true);
+        this(level, terrains, theme, new Coords(0, 0));
     }
-
-    /**
-     * Constructs a clean, plain hex at the specified level which may be marked on or off the board
-     */
-    public Hex(int level, boolean isOnBoard) {
-        this(level, new Terrain[Terrains.SIZE], null, new Coords(0, 0), isOnBoard);
-    }
-
-    /**
-     * Constructs a clean plain hex at the specified level and coordinates which may be marked on or off the board
-     */
-    public Hex(int level, Coords coords, boolean isOnBoard) {
-        this(level, new Terrain[Terrains.SIZE], null, coords, isOnBoard);
-    }
-
 
     /**
      * Constructs a Hex with all parameters.
      */
-    public Hex(int level, Terrain[] terrains, String theme, Coords c, boolean isOnBoard) {
+    public Hex(int level, Terrain[] terrains, String theme, Coords c) {
         this.level = level;
         coords = c;
-        this.isOnBoard = isOnBoard;
         for (final Terrain t : terrains) {
             if (t != null) {
                 this.terrains.put(t.getType(), t);
@@ -92,14 +75,14 @@ public class Hex implements Serializable {
     }
 
     public Hex(int level, String terrain, String theme) {
-        this(level, terrain, theme, new Coords(0, 0),true);
+        this(level, terrain, theme, new Coords(0, 0));
     }
 
     /**
      * Constructs a Hex from a combined string terrains format
      */
-    public Hex(int level, String terrain, String theme, Coords c, boolean isOnBoard) {
-        this(level, new Terrain[Terrains.SIZE], theme, c, isOnBoard);
+    public Hex(int level, String terrain, String theme, Coords c) {
+        this(level, new Terrain[Terrains.SIZE], theme, c);
         for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st.hasMoreTokens();) {
             addTerrain(new Terrain(st.nextToken()));
         }
@@ -197,7 +180,7 @@ public class Hex implements Serializable {
                 continue;
             }
 
-            if (other.isOnBoard()) {
+            if (other != null) {
                 oTerr = other.getTerrain(i);
             } else {
                 oTerr = null;
@@ -206,20 +189,20 @@ public class Hex implements Serializable {
             cTerr.setExit(direction, cTerr.exitsTo(oTerr));
 
             // Water gets a special treatment: Water at the board edge
-            // (hex.isOffBoard()) should usually look like ocean and
+            // (hex == null) should usually look like ocean and
             // therefore always gets connection to outside the board
-            if ((cTerr.getType() == Terrains.WATER) && (other.isOffBoard())) {
+            if ((cTerr.getType() == Terrains.WATER) && (other == null)) {
                 cTerr.setExit(direction, true);
             }
 
             // Roads exit into pavement, too.
-            if ((other.isOffBoard()) && roadsAutoExit && (cTerr.getType() == Terrains.ROAD)
+            if ((other != null) && roadsAutoExit && (cTerr.getType() == Terrains.ROAD)
                     && other.containsTerrain(Terrains.PAVEMENT)) {
                 cTerr.setExit(direction, true);
             }
 
             // buildings must have the same building class
-            if ((other.isOnBoard()) && (cTerr.getType() == Terrains.BUILDING)
+            if ((other != null) && (cTerr.getType() == Terrains.BUILDING)
                     && (terrainLevel(Terrains.BLDG_CLASS) != other.terrainLevel(Terrains.BLDG_CLASS))) {
                 cTerr.setExit(direction, false);
             }
@@ -580,7 +563,7 @@ public class Hex implements Serializable {
         for (Integer i : terrains.keySet()) {
             tcopy[i] = new Terrain(terrains.get(i));
         }
-        return new Hex(level, tcopy, theme, coords, isOnBoard);
+        return new Hex(level, tcopy, theme, coords);
     }
 
     /**
@@ -711,20 +694,6 @@ public class Hex implements Serializable {
      */
     public void setCoords(Coords c) {
         coords = c;
-    }
-
-    /**
-     * @return if this hex is on the board.
-     */
-    public boolean isOnBoard() {
-        return isOnBoard;
-    }
-
-    /**
-     * @return if this hex is off the board.
-     */
-    public boolean isOffBoard() {
-        return !isOnBoard;
     }
 
     /**
@@ -939,6 +908,6 @@ public class Hex implements Serializable {
                     break;
             }
         }
-        return new Hex(hexLevel, terrainString, theme, new Coords(0, 0), true);
+        return new Hex(hexLevel, terrainString, theme, new Coords(0, 0));
     }
 }

@@ -31,7 +31,7 @@ import megamek.server.totalwarfare.TWGameManager;
  * This command exists to print tile information to the chat window and is
  * primarily intended for
  * visually impaired users.
- *
+ * 
  * @author dirk
  */
 public class ShowTileCommand extends ServerCommand {
@@ -59,7 +59,7 @@ public class ShowTileCommand extends ServerCommand {
 
             do {
                 hex = gameManager.getGame().getBoard().getHex(coord);
-                if (hex.isOnBoard()) {
+                if (hex != null) {
                     str = "Details for hex (" + (coord.getX() + 1) + ", "
                             + (coord.getY() + 1) + ") : " + hex;
 

@@ -79,7 +79,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
 
         final Hex attHex = game.getBoard().getHex(ae.getPosition());
         final Hex targHex = game.getBoard().getHex(target.getPosition());
-        if ((attHex.isOffBoard()) || (targHex.isOffBoard())) {
+        if ((attHex == null) || (targHex == null)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }
 

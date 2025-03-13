@@ -372,7 +372,7 @@ public class AreaEffectHelper {
         int cluster = 5;
 
         // Check: is entity inside building?
-        if ((bldg != null) && (bldgAbsorbs > 0) && hex.isOnBoard()
+        if ((bldg != null) && (bldgAbsorbs > 0) && hex != null && hex.isOnBoard()
                 && (entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV))) {
             cluster -= bldgAbsorbs;
             // some buildings scale remaining damage that is not absorbed
@@ -457,7 +457,7 @@ public class AreaEffectHelper {
         // Entity/ammo specific damage modifiers
         if (ammo != null) {
             if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
-                if (hex.isOnBoard() && hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
+                if (hex != null && hex.isOnBoard() && hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
                     hits *= 2;
                 }
             }

@@ -519,8 +519,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * @return the number of non-destroyed entities owned by the player, including
-     *         entities not yet
-     *         deployed. Ignores offboard units and captured Mek pilots.
+     *         entities not yet deployed. Ignores offboard units and captured Mek
+     *         pilots.
      */
     public int getLiveDeployedEntitiesOwnedBy(Player player) {
         int count = 0;
@@ -536,8 +536,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * @return the number of non-destroyed commander entities owned by the player.
-     *         Ignores offboard
-     *         units and captured Mek pilots.
+     *         Ignores offboard units and captured Mek pilots.
      */
     public int getLiveCommandersOwnedBy(Player player) {
         int count = 0;
@@ -572,7 +571,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * entity
      */
     public List<Entity> getValidTargets(Entity entity) {
-        List<Entity> ents = new ArrayList<>();
+        List<Entity> entities = new ArrayList<>();
 
         boolean friendlyFire = getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
@@ -591,15 +590,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 if (Compute.isAirToGround(entity, otherEntity)) {
                     if (entity.getPassedThrough().contains(
                             otherEntity.getPosition())) {
-                        ents.add(otherEntity);
+                        entities.add(otherEntity);
                     }
                 } else {
-                    ents.add(otherEntity);
+                    entities.add(otherEntity);
                 }
             }
         }
 
-        return Collections.unmodifiableList(ents);
+        return Collections.unmodifiableList(entities);
     }
 
     /**
@@ -773,9 +772,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @param current The <code>Entity</code> whose list position you wish to start
      *                from.
      * @return The previous <code>Entity</code> from the master list of entities.
-     *         Will wrap around
-     *         to the end of the list if necessary, returning null if there are no
-     *         entities.
+     *         Will wrap around to the end of the list if necessary, returning null
+     *         if there are no entities.
      */
     public @Nullable Entity getPreviousEntityFromList(final @Nullable Entity current) {
         if ((current != null) && inGameTWEntities().contains(current)) {
@@ -2312,6 +2310,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Returns an Enumeration of displacement attacks scheduled for the end of
      * the physical phase.
+     *
+     * @return
      */
     public Enumeration<AttackAction> getCharges() {
         return pendingCharges.elements();
@@ -2325,8 +2325,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Returns the charges vector. Do not modify. &gt;:[ Used for sending all
-     * charges to the client.
+     * @return the charges vector. Do not modify. &gt;:[ Used for sending all
+     *         charges to the client.
      */
     public List<AttackAction> getChargesVector() {
         return Collections.unmodifiableList(pendingCharges);
@@ -2334,6 +2334,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Adds a pending ramming attack to the list for this phase.
+     *
+     * @param ea Pending Ramming Attack.
      */
     public void addRam(AttackAction ea) {
         pendingRams.addElement(ea);
@@ -2341,8 +2343,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Returns an Enumeration of ramming attacks scheduled for the end of the
-     * physical phase.
+     * @return Returns an Enumeration of ramming attacks scheduled for the end of
+     *         the physical phase.
      */
     public Enumeration<AttackAction> getRams() {
         return pendingRams.elements();
@@ -2365,6 +2367,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Adds a pending ramming attack to the list for this phase.
+     *
+     * @param ea
      */
     public void addTeleMissileAttack(AttackAction ea) {
         pendingTeleMissileAttacks.addElement(ea);
@@ -2396,6 +2400,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Adds a pending PSR to the list for this phase.
+     *
+     * @see PilotingRollData
+     *
+     * @param psr Pending PSR.
      */
     public void addPSR(PilotingRollData psr) {
         pilotRolls.addElement(psr);
@@ -3501,6 +3509,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
+     * @param playerName The name of the Player to find.
+     *
      * @return The ID of the Player with the given name, if there is such a Player.
      */
     public Optional<Integer> idForPlayername(String playerName) {
@@ -3508,6 +3518,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
+     * @param playerName The name of the Player to find.
+     *
      * @return The ID of the Player with the given name, if there is such a Player.
      */
     public Optional<Player> playerForPlayername(String playerName) {

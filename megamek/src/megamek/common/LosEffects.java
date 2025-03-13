@@ -341,8 +341,8 @@ public class LosEffects {
      * LOS check from ae to te.
      */
     public boolean canSee() {
-        return hasLoS;// !blocked && (lightWoods + lightSmoke) + ((heavyWoods
-                      // + heavySmoke) * 2) < 3;
+        // !blocked && (lightWoods + lightSmoke) + ((heavyWoods + heavySmoke) * 2) < 3;
+        return hasLoS;
     }
 
     public static AttackInfo prepLosAttackInfo(Game game, @Nullable Entity ae, @Nullable Entity te,
@@ -390,8 +390,7 @@ public class LosEffects {
      *             {@link #calculateLOS(Game, Entity, Targetable)} instead
      */
     @Deprecated(since = "0.50.04") // Deprecated for nullable passing
-    public static LosEffects calculateLos(final Game game, final int attackerId,
-            final @Nullable Targetable target) {
+    public static LosEffects calculateLos(final Game game, final int attackerId, final @Nullable Targetable target) {
         return calculateLOS(game, game.getEntity(attackerId), target, false);
     }
 
@@ -401,7 +400,7 @@ public class LosEffects {
      * target are at an angle where the LOS line will pass between two hexes.
      *
      * @param game
-     * @param attackerId
+     * @param attacker
      * @param target
      * @return
      */

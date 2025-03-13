@@ -87,6 +87,8 @@ MEGAMEK VERSION HISTORY:
 + PR #6674: Added Check for Gender Neutral Pronouns
 + PR #6684: Add isOnBoard flag to Hex
 + PR #6688: Simplify Hex class to handle on board check
++ PR #6690: Revert PR #6688
++ PR #6691: Revert PR #6684
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

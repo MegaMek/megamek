@@ -31789,7 +31789,7 @@ public class TWGameManager extends AbstractGameManager {
             if (!flak) {
                 // Report that damage applied to terrain, if there's TF to damage
                 Hex h = game.getBoard().getHex(coords);
-                if ((h != null) && h.hasTerrainFactor()) {
+                if ((h != null) && h.hasTerrainFactor() && h.hasTerrainFactor() && (altitude == h.getLevel())) {
                     r = new Report(3384);
                     r.indent(2);
                     r.subject = subjectId;

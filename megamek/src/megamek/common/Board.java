@@ -230,7 +230,7 @@ public class Board implements Serializable {
         int index = 0;
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
-                data[index++] = new Hex(0, "sky:1", "", new Coords(w, h));
+                data[index++] = new Hex(0, "sky:1", "", new Coords(w, h), true);
             }
         }
         Board result = new Board(width, height, data);
@@ -250,7 +250,7 @@ public class Board implements Serializable {
         int index = 0;
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
-                data[index++] = new Hex(0, "space:1", "", new Coords(w, h));
+                data[index++] = new Hex(0, "space:1", "", new Coords(w, h), true);
             }
         }
         Board result = new Board(width, height, data);
@@ -303,10 +303,10 @@ public class Board implements Serializable {
      *
      * @param x the x Coords.
      * @param y the y Coords.
-     * @return the Hex, if this Board contains the (x, y) location; null otherwise.
+     * @return the Hex, if this Board contains the (x, y) location; A clean, plain hex at level 0 and the coords, marked as off board otherwise.
      */
-    public @Nullable Hex getHex(final int x, final int y) {
-        return contains(x, y) ? data[(y * width) + x] : null;
+    public Hex getHex(final int x, final int y) {
+        return contains(x, y) ? data[(y * width) + x] : new Hex(0, new Coords(x, y) , false);
     }
 
     /**
@@ -350,7 +350,7 @@ public class Board implements Serializable {
             for (int x = 0; x < width; x++) {
                 // Does this hex contain a building?
                 Hex curHex = getHex(x, y);
-                if ((curHex != null) && (curHex.containsTerrain(Terrains.BUILDING))) {
+                if (curHex.isOnBoard() && (curHex.containsTerrain(Terrains.BUILDING))) {
                     // Yup, but is it a repeat?
                     Coords coords = new Coords(x, y);
                     if (!bldgByCoords.containsKey(coords)) {
@@ -379,7 +379,7 @@ public class Board implements Serializable {
                     }
                 }
 
-                if ((curHex != null) && (curHex.containsTerrain(Terrains.FUEL_TANK))) {
+                if (curHex.isOnBoard() && (curHex.containsTerrain(Terrains.FUEL_TANK))) {
                     // Yup, but is it a repeat?
                     Coords coords = new Coords(x, y);
                     if (!bldgByCoords.containsKey(coords)) {
@@ -406,7 +406,7 @@ public class Board implements Serializable {
                     }
                 }
 
-                if ((curHex != null) && curHex.containsTerrain(Terrains.BRIDGE)) {
+                if (curHex.isOnBoard() && curHex.containsTerrain(Terrains.BRIDGE)) {
                     // Yup, but is it a repeat?
                     Coords coords = new Coords(x, y);
                     if (!bldgByCoords.containsKey(coords)) {
@@ -475,7 +475,7 @@ public class Board implements Serializable {
     private void initializeHex(int x, int y, boolean event) {
         Hex hex = getHex(x, y);
 
-        if (hex == null) {
+        if (hex.isOffBoard()) {
             return;
         }
 
@@ -1070,7 +1070,7 @@ public class Board implements Serializable {
                     }
                     int elevation = Integer.parseInt(args[1]);
                     // The coordinates in the .board file are ignored!
-                    nd[index] = new Hex(elevation, args[2], args[3], new Coords(index % nw, index / nw));
+                    nd[index] = new Hex(elevation, args[2], args[3], new Coords(index % nw, index / nw), true);
                     index++;
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("description")) {
                     st.nextToken();
@@ -1148,11 +1148,11 @@ public class Board implements Serializable {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Hex hex = data[(y * width) + x];
-                if (hex == null) {
+                if (hex.isOffBoard()) {
                     if (errors != null) {
-                        errors.add("Null hex for coordinates " + x + "; " + y + ". Breaking off validity check.");
+                        errors.add("Hex coordinates " + x + "; " + y + " are off the board. Breaking off validity check.");
                     }
-                    // A null hex must never happen. No need to process the rest of the board.
+                    // An off board hex must never happen. No need to process the rest of the board.
                     return false;
                 }
                 List<String> hexErrors = new ArrayList<>();
@@ -1164,7 +1164,7 @@ public class Board implements Serializable {
                 if (hex.containsTerrain(Terrains.BUILDING) && hex.getTerrain(Terrains.BUILDING).hasExitsSpecified()) {
                     for (int dir = 0; dir < 6; dir++) {
                         Hex adjHex = getHexInDir(x, y, dir);
-                        if ((adjHex != null)
+                        if ((adjHex.isOnBoard())
                                 && adjHex.containsTerrain(Terrains.BUILDING)
                                 && hex.containsTerrainExit(Terrains.BUILDING, dir)) {
                             if (adjHex.getTerrain(Terrains.BUILDING).getLevel() != hex.getTerrain(Terrains.BUILDING)

@@ -478,7 +478,7 @@ public class LosEffects {
 
         final Hex attackerHex = game.getBoard().getHex(attackerPosition);
         final Hex targetHex = game.getBoard().getHex(targetPosition);
-        if ((attackerHex == null) || (targetHex == null)) {
+        if (attackerHex.isOffBoard() || targetHex.isOffBoard()) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
             los.hasLoS = false;
@@ -612,7 +612,7 @@ public class LosEffects {
 
         final Hex attackerHex = game.getBoard().getHex(attackerPosition);
         final Hex targetHex = game.getBoard().getHex(targetPosition);
-        if ((attackerHex == null) || (targetHex == null)) {
+        if (attackerHex.isOffBoard() || targetHex.isOffBoard()) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
             los.hasLoS = false;

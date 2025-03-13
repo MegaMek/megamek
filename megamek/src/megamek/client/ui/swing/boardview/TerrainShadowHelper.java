@@ -185,7 +185,7 @@ class TerrainShadowHelper {
                     surrounded = false;
                 } else {
                     Hex nhex = board.getHex(c.translated(dir));
-                    if (nhex != null) {
+                    if (nhex.isOnBoard()) {
                         int lv = nhex.getLevel();
                         if (lv < level) {
                             surrounded = false;

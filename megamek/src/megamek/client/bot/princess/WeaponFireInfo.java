@@ -672,7 +672,7 @@ public class WeaponFireInfo {
                 ? ((Entity) target).getElevation()
                 : ((HexTarget) target).getTargetLevel();
 
-            if (hex != null && hex.containsAnyTerrainOf(Terrains.WATER, Terrains.BLDG_ELEV)) {
+            if (hex.isOnBoard() && hex.containsAnyTerrainOf(Terrains.WATER, Terrains.BLDG_ELEV)) {
                 if ((hex.ceiling() + 2 ) < (hex.getLevel() + targetLevel)) {
                     return new ToHitData(FireControl.TH_NO_TARGETS_IN_BLAST);
                 }
@@ -776,7 +776,7 @@ public class WeaponFireInfo {
                     Coords coords = entry.getValue();
                     Hex hex = game.getBoard().getHex(coords);
                     // Currently, bombs off board are not supported.
-                    if (hex == null) {
+                    if (hex.isOffBoard()) {
                         continue;
                     }
                     // Record collateral damage to buildings

@@ -68,7 +68,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
             return null;
         }
         Hex hex = game.getBoard().getHex(coords);
-        if (hex == null) {
+        if (hex.isOffBoard()) {
             return "Error: No hex found at " + coords;
         }
 

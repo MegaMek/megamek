@@ -3014,10 +3014,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         ArrayList<WreckSprite> newWrecks = new ArrayList<>();
         ArrayList<IsometricWreckSprite> newIsometricWrecks = new ArrayList<>();
 
+        Board board = game.getBoard();
         Enumeration<Entity> e = game.getWreckedEntities();
         while (e.hasMoreElements()) {
             Entity entity = e.nextElement();
-            if (!(entity instanceof Infantry) && (entity.getPosition() != null)) {
+            Coords position = entity.getPosition();
+            if (!(entity instanceof Infantry) && (position != null) && board.contains(position)) {
                 WreckSprite ws;
                 IsometricWreckSprite iws;
                 if (entity.getSecondaryPositions().isEmpty()) {

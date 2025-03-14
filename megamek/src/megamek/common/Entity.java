@@ -4947,7 +4947,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // RISC ECS
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
-                sb.append(", +MoS with RISC ECS");
+                sb.append(", ").append(capacity + 6).append("+MoS with RISC ECS");
             }
         }
 

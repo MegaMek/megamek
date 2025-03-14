@@ -42,11 +42,7 @@ public class CostCalculator {
     static double calculateCost(double[] costs) {
         double cost = 0;
         for (double v : costs) {
-            if (v < 0) {
-                cost *= -v;
-            } else {
-                cost += v;
-            }
+            cost += v;
         }
         return cost;
     }

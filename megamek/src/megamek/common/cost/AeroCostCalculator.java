@@ -32,7 +32,7 @@ public class AeroCostCalculator {
         costs[idx++] = 200000;
         costs[idx++] = 50000;
         costs[idx++] = 2000 * aero.getWeight();
-        costs[idx++] = 50000 * aero.getSI();
+        costs[idx++] = 50000 * Math.max(aero.getSI(), 0);
         costs[idx++] = 25000 + 10 * aero.getWeight();
 
         // Engine

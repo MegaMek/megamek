@@ -571,7 +571,7 @@ public class TeamLoadOutGenerator {
         boolean darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
         boolean groundMap = (g.getMapSettings().getMedium() == MapSettings.MEDIUM_GROUND);
         boolean spaceEnvironment = (g.getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE);
-
+        int year = gOpts.intOption(OptionsConstants.ALLOWED_YEAR);
         if (blind) {
             enemyEntities.clear();
         }
@@ -586,7 +586,8 @@ public class TeamLoadOutGenerator {
                 groundMap,
                 spaceEnvironment,
                 rating,
-                fillRatio);
+                fillRatio,
+                year);
     }
 
     public static ReconfigurationParameters generateParameters(
@@ -599,7 +600,8 @@ public class TeamLoadOutGenerator {
             boolean groundMap,
             boolean spaceEnvironment,
             int rating,
-            float fillRatio) {
+            float fillRatio,
+            int gameYear) {
         ReconfigurationParameters reconfigurationParameters = new ReconfigurationParameters();
 
         // Set own faction and quality rating (default to generic IS if faction is not
@@ -659,7 +661,7 @@ public class TeamLoadOutGenerator {
 
         // General parameters
         reconfigurationParameters.darkEnvironment = darkEnvironment;
-
+        reconfigurationParameters.allowedYear = gameYear;
         return reconfigurationParameters;
     }
     // endregion generateParameters

@@ -220,11 +220,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     public void resetMinefieldDensity(Vector<Minefield> newMinefields) {
-        if (newMinefields.size() < 1) {
+        if (newMinefields.isEmpty()) {
             return;
         }
         Vector<Minefield> mfs = minefields.get(newMinefields.firstElement().getCoords());
-        mfs.clear();
+        if (mfs != null) {
+            mfs.clear();
+        }
         for (int i = 0; i < newMinefields.size(); i++) {
             Minefield mf = newMinefields.elementAt(i);
             addMinefieldHelper(mf);

@@ -45,7 +45,7 @@ public class LookCommand extends ClientCommand {
         Coords pos = getClientGUI().getCurrentHex();
         Hex hex = getClient().getGame().getBoard().getHex(pos);
         String str;
-        if (hex.isOnBoard()) {
+        if (hex != null) {
             str = "Looking around hex (" + (pos.getX() + 1) + ", "
                     + (pos.getY() + 1) + ")\n";
             for (String dir : directions) {
@@ -53,7 +53,7 @@ public class LookCommand extends ClientCommand {
                 str += "To the " + dir  + " (" + (coord.getX() + 1) + ", "
                         + (coord.getY() + 1) + "): ";
                 hex = getClient().getGame().getBoard().getHex(coord);
-                if (hex.isOnBoard()) {
+                if (hex != null) {
                     str += hex.toString();
                 } else {
                     str += "off map.\n";

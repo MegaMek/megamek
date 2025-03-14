@@ -321,7 +321,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                             ImageIO.write(image, "png", imgFile);
                         }
                         if (GUIP.getGifGameSummaryMinimap()) {
-                            if (gifWriterThread == null) {
+                            if (gifWriterThread == null || !gifWriterThread.isAlive()) {
                                 gifWriterThread = new GifWriterThread(new GifWriter(game.getUUIDString()), "GifWriterThread");
                                 gifWriterThread.start();
                             }
@@ -396,7 +396,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         if (client != null) {
             client.addCloseClientListener(() -> {
                 if (gifWriterThread != null && gifWriterThread.isAlive()) {
-                    gifWriterThread.stopThread();
+                    gifWriterThread.stopThread(true);
                 }
             });
         }
@@ -694,7 +694,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             for (int j = 0; j < board.getWidth(); j++) {
                 for (int k = 0; k < board.getHeight(); k++) {
                     Hex h = board.getHex(j, k);
-                    if (h.isOffBoard()) {
+                    if (h == null) {
                         continue;
                     }
                     if (dirtyMap || dirty[j / 10][k / 10]) {

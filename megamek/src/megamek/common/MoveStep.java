@@ -3244,7 +3244,7 @@ public class MoveStep implements Serializable {
         final Coords dest = getPosition();
         final Hex destHex = game.getBoard().getHex(dest);
         final Entity entity = getEntity();
-        if (destHex.isOffBoard()) {
+        if (destHex == null) {
             return false;
         }
         if (null == dest) {
@@ -3763,6 +3763,11 @@ public class MoveStep implements Serializable {
                     return false;
                 }
             } else if (elevation <= (destHex.ceiling() - destHex.getLevel())) {
+                // WiGE are not prohibited from flying over planted fields.
+                if ((entity.getMovementMode() == EntityMovementMode.WIGE) && destHex.containsTerrain(Terrains.FIELDS)) {
+                    return true;
+                }
+
                 // VTOLs and WiGEs can fly through woods and jungle below the level of the
                 // treetops on a road.
                 if (destHex.containsTerrain(Terrains.WOODS) || destHex.containsTerrain(Terrains.JUNGLE)) {

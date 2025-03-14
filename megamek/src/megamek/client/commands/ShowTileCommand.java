@@ -81,7 +81,7 @@ public class ShowTileCommand extends ClientCommand {
             do {
                 hex = getClient().getGame().getBoard().getHex(coord);
                 getClientGUI().setCurrentHex(hex);
-                if (hex.isOnBoard()) {
+                if (hex != null) {
                     str = "Details for hex (" + (coord.getX() + 1) + ", "
                           + (coord.getY() + 1) + ") : " + hex;
 

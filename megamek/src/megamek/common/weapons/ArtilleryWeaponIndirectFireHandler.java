@@ -323,7 +323,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         if (atype.getMunitionType().contains(Munitions.M_FAE)) {
             Hex finalHex = game.getBoard().getHex(finalPos);
-            altitude = finalHex.isOnBoard() ? finalHex.getLevel() : altitude;
+            altitude = (finalHex != null) ? finalHex.getLevel() : altitude;
             handleArtilleryDriftMarker(targetPos, finalPos, aaa,
                     AreaEffectHelper.processFuelAirDamage(
                             finalPos, altitude, atype, aaa.getEntity(game), vPhaseReport, gameManager));

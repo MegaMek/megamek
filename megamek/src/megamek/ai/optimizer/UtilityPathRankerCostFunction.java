@@ -317,7 +317,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             for (int y = 0; y < board.getHeight(); y++) {
                 idx = y * board.getWidth() + x;
                 Hex hex = board.getHex(x, y);
-                if (hex.isOnBoard()) {
+                if (hex != null) {
                     level = hex.floor();
                     temp = hex.terrainLevel(Terrains.BUILDING);
                     if (temp != Terrain.LEVEL_NONE) {
@@ -1057,7 +1057,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
                     var yMidPoint = (startY + endY) / 2;
                     for (var coords : new Coords(xMidPoint, yMidPoint).allAtDistanceOrLess(3)) {
                         var hex = board.getHex(coords);
-                        if (hex.isOffBoard() || hex.isClearHex() && hasNoHazards(hex)) {
+                        if (hex == null || hex.isClearHex() && hasNoHazards(hex)) {
                             addStrategicGoal(coords);
                             break;
                         }

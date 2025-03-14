@@ -3289,7 +3289,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * Set the Current Hex, used by client commands for the visually impaired
      */
     public void setCurrentHex(Hex hex) {
-        if (hex.isOnBoard()) {
+        if (hex != null) {
             currentHex = hex.getCoords();
         }
     }

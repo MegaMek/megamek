@@ -72,7 +72,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         String result = "";
 
         // Hex Terrain
-        if (GUIP.getShowMapHexPopup() && (mhex.isOnBoard())) {
+        if (GUIP.getShowMapHexPopup() && (mhex != null)) {
             StringBuffer sbTerrain = new StringBuffer();
             appendTerrainTooltip(sbTerrain, mhex, GUIP);
             String sTerrain = sbTerrain.toString();
@@ -140,7 +140,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
         // Show the player(s) that may deploy here
         // in the artillery autohit designation phase
-        if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex.isOnBoard())) {
+        if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex != null)) {
             result += HexTooltip.getAttilleryHit(GUIP, game, coords);
         }
 
@@ -345,8 +345,8 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
     /**
      * Appends HTML describing the terrain of a given hex
      */
-    public void appendTerrainTooltip(StringBuffer txt, Hex mhex, GUIPreferences GUIP) {
-        if (mhex.isOffBoard()) {
+    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex, GUIPreferences GUIP) {
+        if (mhex == null) {
             return;
         }
 
@@ -356,8 +356,8 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
     /**
      * Appends HTML describing the buildings and minefields in a given hex
      */
-    public void appendBuildingsTooltip(StringBuffer txt, Hex mhex) {
-        if ((mhex.isOnBoard()) && (clientGui != null)) {
+    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
+        if ((mhex != null) && (clientGui != null)) {
             String result = HexTooltip.getHexTip(mhex, clientGui.getClient(), GUIP);
             txt.append(result);
         }

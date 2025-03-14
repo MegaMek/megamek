@@ -20,7 +20,7 @@ import megamek.common.*;
 /**
  * This class handles logic for displaying various kinds of damage and
  * destruction decals
- *
+ * 
  * @author NickAragua
  *
  */
@@ -132,7 +132,7 @@ public class EntityWreckHelper {
      */
     public static boolean entityOnBridge(Entity entity) {
         Hex hex = entity.getGame().getBoard().getHex(entity.getPosition());
-        if (hex.isOnBoard()) {
+        if (hex != null) {
             boolean hexHasBridge = hex.containsTerrain(Terrains.BRIDGE_CF);
 
             if (hexHasBridge && entity.getElevation() >= hex.ceiling()) {

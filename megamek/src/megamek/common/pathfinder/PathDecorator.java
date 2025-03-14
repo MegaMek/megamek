@@ -35,10 +35,10 @@ import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMin
  * @author NickAragua
  */
 public class PathDecorator {
-
+    
     public static Set<MovePath> decoratePath(BulldozerMovePath source) {
         Set<MovePath> result = new HashSet<>();
-
+        
         // paths that aren't on the ground require separate and special logic
         if (source.isJumping()) {
             result.addAll(decorateJumpPath(source));
@@ -49,51 +49,51 @@ public class PathDecorator {
         } else {
             result.addAll(decorateGroundPath(source));
         }
-
+        
         return result;
     }
-
+    
     /**
      * Takes a given (jumping) path and returns a list of child paths that lead up to max jump MP or
      * max jump MP without gravity.
      */
     public static Set<MovePath> decorateJumpPath(BulldozerMovePath source) {
         Set<MovePath> retVal = new HashSet<>();
-
+        
         MovePath clippedSource = source.clone();
         clippedSource.clipToPossible();
-
+        
         // jumping move paths are pretty easy to clip
         // there are two interesting MP amounts - current jump MP and jump MP without "bonus" for low gravity.
         Set<Integer> desiredMPs = new HashSet<>();
         desiredMPs.add(source.getCachedEntityState().getJumpMP());
         desiredMPs.add(source.getCachedEntityState().getJumpMPNoGravity());
-
+        
         for (int desiredMP : desiredMPs) {
             List<MovePath> clippedPaths = clipToDesiredMP(clippedSource, desiredMP);
             retVal.addAll(clippedPaths);
         }
-
+        
         // if there is a bad guy in the last step, clip to one step short and see if we can't get around.
         if ((clippedSource.getLastStep() != null) &&
             clippedSource.getGame().getFirstEnemyEntity(clippedSource.getLastStep().getPosition(), clippedSource.getEntity()) != null) {
             clippedSource.removeLastStep();
-
+            
             for (int desiredMP : desiredMPs) {
                 List<MovePath> clippedPaths = clipToDesiredMP(clippedSource, desiredMP);
                 retVal.addAll(clippedPaths);
             }
         }
-
+        
         return retVal;
     }
-
+    
     /**
      * Takes the given path and returns a list of child paths that go up to walk/run/run+masc/sprint/sprint+masc MP usage.
      */
     public static Set<MovePath> decorateGroundPath(BulldozerMovePath source) {
         Set<MovePath> retVal = new HashSet<>();
-
+     
         // we want to generate the following paths and decorations:
         // a "walking" path
         // a "running" path
@@ -101,10 +101,10 @@ public class PathDecorator {
         // a "sprinting" path
         // a "sprint with masc" path
         // decorations are movement possibilities that "fill up" any remaining MP with turns and unrelated moves
-
+        
         MovePath clippedSource = source.clone();
         clippedSource.clipToPossible();
-
+        
         Set<Integer> desiredMPs = new HashSet<>();
         desiredMPs.add(source.getCachedEntityState().getSprintMP());
         desiredMPs.add(source.getCachedEntityState().getSprintMPwithoutMASC());
@@ -117,21 +117,21 @@ public class PathDecorator {
             List<MovePath> clippedPaths = clipToDesiredMP(clippedSource, desiredMP);
             retVal.addAll(clippedPaths);
         }
-
+        
         // if there is a bad guy in the last step, clip to one step short and see if we can't get around.
         if ((clippedSource.getLastStep() != null) &&
             clippedSource.getGame().getFirstEnemyEntity(clippedSource.getLastStep().getPosition(), clippedSource.getEntity()) != null) {
             clippedSource.removeLastStep();
-
+            
             for (int desiredMP : desiredMPs) {
                 List<MovePath> clippedPaths = clipToDesiredMP(clippedSource, desiredMP);
                 retVal.addAll(clippedPaths);
             }
         }
-
+        
         return retVal;
     }
-
+    
     /**
      * Clips the given path until it only uses the desired MP or less.
      */
@@ -142,7 +142,7 @@ public class PathDecorator {
         }
         return generatePossiblePaths(newPath, desiredMP);
     }
-
+    
     /**
      * Uses the LongestPathFinder to generate all paths possible from a starting path,
      * up to the desired MP
@@ -155,9 +155,9 @@ public class PathDecorator {
         lpf.run(source);
         return new ArrayList<>(lpf.getLongestComputedPaths());
     }
-
+    
     /**
-     * For units using VTOL movement, add "UP" steps to the end of the MovePath source
+     * For units using VTOL movement, add "UP" steps to the end of the MovePath source 
      * so that a forward movement can pass over intervening terrain
      */
     public static void AdjustElevationForForwardMovement(MovePath source) {
@@ -165,29 +165,29 @@ public class PathDecorator {
         if (source.getEntity().getMovementMode() != EntityMovementMode.VTOL) {
             return;
         }
-
+        
         // get the hex that is in the direction we're facing
         Coords destinationCoords = source.getFinalCoords().translated(source.getFinalFacing());
         Hex destHex = source.getGame().getBoard().getHex(destinationCoords);
-        if (destHex.isOffBoard()) {
+        if (destHex == null) {
             return;
         }
-
+        
         // If the unit cannot go up in it's current hex, nothing can be done
         int entityElevation = source.getFinalElevation();
         boolean canGoUp = source.getEntity().canGoUp(entityElevation, source.getFinalCoords());
         if (!canGoUp) {
             return;
         }
-
+        
         Hex srcHex = source.getGame().getBoard().getHex(source.getFinalCoords());
-        int absHeight = srcHex.getLevel() + entityElevation;
+        int absHeight = srcHex.getLevel() + entityElevation;  
         int destElevation = absHeight - destHex.getLevel();
         int safeElevation = destHex.maxTerrainFeatureElevation(false);
-
-        // Add as many UP steps as MP will allow, until able to move forward
+        
+        // Add as many UP steps as MP will allow, until able to move forward 
         while (destElevation <= safeElevation) {
-            // Do not go up if the unit can go forward before rising above the
+            // Do not go up if the unit can go forward before rising above the 
             // maximum terrain elevation, e.g. under a bridge
             // VTOLs shouldn't land in this way, however.
             boolean noLanding = (destElevation >= 1);
@@ -199,7 +199,7 @@ public class PathDecorator {
             }
             if (source.getEntity().isElevationValid(destElevation, destHex) && noLanding) {
                 return;
-            }
+            }   
 
             source.addStep(MoveStepType.UP);
 
@@ -207,7 +207,7 @@ public class PathDecorator {
                 source.removeLastStep();
                 return;
             }
-
+            
             destElevation++;
         }
     }

@@ -451,7 +451,7 @@ public class MovePath implements Cloneable, Serializable {
         // jumping into heavy woods is danger
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
             Hex hex = game.getBoard().getHex(step.getPosition());
-            if (hex.isOnBoard() && isJumping() && step.isEndPos(this)) {
+            if ((hex != null) && isJumping() && step.isEndPos(this)) {
                 PilotingRollData psr = entity.checkLandingInHeavyWoods(step.getMovementType(false), hex);
                 if (psr.getValue() != PilotingRollData.CHECK_FALSE) {
                     step.setDanger(true);

@@ -331,7 +331,7 @@ public class PathEnumerator {
             logger.debug(ex, "Lost sight of a unit while plotting predicted paths");
             return false;
         } catch (Exception e) {
-            logger.error(e, "reclaculateMovesForWorker");
+            logger.error(e, "recalculateMovesForWorker");
             return false;
         }
     }
@@ -433,7 +433,7 @@ public class PathEnumerator {
         boolean needsAdjust = false;
         for (Coords c : path.getCoordsSet()) {
             Hex hex = getGame().getBoard().getHex(c);
-            if (hex.isOnBoard() && hex.containsTerrain(Terrains.BRIDGE)) {
+            if ((hex != null) && hex.containsTerrain(Terrains.BRIDGE)) {
                 if (getGame().getBoard().getBuildingAt(c).getCurrentCF(c) >= path.getEntity().getWeight()) {
                     needsAdjust = true;
                     break;

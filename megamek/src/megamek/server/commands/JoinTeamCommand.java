@@ -27,22 +27,23 @@ import megamek.server.Server;
  * This command allows a player to join a specified team.
  *
  * @author arlith
- * @deprecated Planned to be removed, use the GM command {@link ChangeTeamCommand} instead.
+ * @deprecated Planned to be removed, use the GM command
+ *             {@link ChangeTeamCommand} instead.
  */
-@Deprecated
+@Deprecated(since = "0.50.04")
 public class JoinTeamCommand extends ServerCommand {
 
     public static String SERVER_VOTE_PROMPT_MSG = "All players with an assigned team "
-        + "must allow this change.  Use /allowTeamChange "
-        + "to allow this change.";
+            + "must allow this change.  Use /allowTeamChange "
+            + "to allow this change.";
 
     public JoinTeamCommand(Server server) {
         super(server, "joinTeam", "Planned to be removed, use the GM command /changeTeam instead. "
-            + "Switches a player's team at the end phase. "
-            + "Usage: /joinTeam # where the first number is the team "
-            + "number to join. 0 is for no team, "
-            + "-1 is for unassigned team. "
-            + "Only one player can be changed teams per round.");
+                + "Switches a player's team at the end phase. "
+                + "Usage: /joinTeam # where the first number is the team "
+                + "number to join. 0 is for no team, "
+                + "-1 is for unassigned team. "
+                + "Only one player can be changed teams per round.");
     }
 
     /**
@@ -58,8 +59,8 @@ public class JoinTeamCommand extends ServerCommand {
 
             if (args.length != 2) {
                 server.sendServerChat(connId, "Incorrect number of arguments "
-                    + "for joinTeam command!  Expected 1, received, "
-                    + (args.length - 1) + ".");
+                        + "for joinTeam command!  Expected 1, received, "
+                        + (args.length - 1) + ".");
                 server.sendServerChat(connId, getHelp());
                 return;
             }
@@ -68,7 +69,7 @@ public class JoinTeamCommand extends ServerCommand {
 
             if ((Player.TEAM_UNASSIGNED == teamId) && (numEntities != 0)) {
                 server.sendServerChat(connId, "Player must have no more " +
-                    "units to join the unassigned team!");
+                        "units to join the unassigned team!");
                 return;
             }
             String teamString = "join Team " + teamId + ".  ";
@@ -81,8 +82,8 @@ public class JoinTeamCommand extends ServerCommand {
             for (Player p : server.getGame().getPlayersList()) {
                 if (p.getId() != player.getId()) {
                     server.sendServerChat(p.getId(), player.getName()
-                        + " wants to " + teamString
-                        + SERVER_VOTE_PROMPT_MSG);
+                            + " wants to " + teamString
+                            + SERVER_VOTE_PROMPT_MSG);
                 }
             }
 

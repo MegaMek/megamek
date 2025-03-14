@@ -312,7 +312,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     // This is here for legacy purposes to not break the API
-    @Deprecated
+    @Deprecated(since = "0.50.4", forRemoval = true)
     public static String determineUnitType(Entity e) {
         return UnitType.determineUnitType(e);
     }

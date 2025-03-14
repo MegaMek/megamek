@@ -3183,7 +3183,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 pathObjs[index++] = force;
             }
 
-            pathObjs[index + 1] = game().getEntity(entityId);
+            pathObjs[index] = game().getEntity(entityId);
             return new TreePath(pathObjs);
         } else {
             throw new IllegalArgumentException(Messages.getString("ChatLounge.TreePath.methodRequiresEntityForce"));

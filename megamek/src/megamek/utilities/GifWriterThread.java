@@ -43,7 +43,7 @@ public class GifWriterThread extends Thread {
     private final GifWriter gifWriter;
     private final Deque<Frame> imageDeque = new ConcurrentLinkedDeque<>();
     private boolean isLive = true;
-
+    private boolean forceInterrupt = false;
     public static final String CG_FILEEXTENTIONGIF = ".gif";
     public static final String CG_FILEPATHGIF = "gif";
 
@@ -94,11 +94,15 @@ public class GifWriterThread extends Thread {
         } finally {
             gifWriter.close();
             imageDeque.clear();
-            try {
-                saveGifNag();
-            } catch (Exception e) {
-                logger.error(e, "Error deleting gif or opening JOptionPane");
+            if (!forceInterrupt) {
+                try {
+                    saveGifNag();
+                } catch (Exception e) {
+                    logger.error(e, "Error deleting gif or opening JOptionPane");
+                }
             }
+            isLive = false;
+            forceInterrupt = false;
         }
     }
 
@@ -183,7 +187,12 @@ public class GifWriterThread extends Thread {
      * Stops the thread.
      */
     public void stopThread() {
+        stopThread(false);
+    }
+
+    public void stopThread(boolean forceInterrupt) {
         isLive = false;
+        this.forceInterrupt = forceInterrupt;
         interrupt();
     }
 }

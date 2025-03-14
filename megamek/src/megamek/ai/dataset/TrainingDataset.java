@@ -188,6 +188,33 @@ public class TrainingDataset {
     }
 
     /**
+     * Split the training dataset into two datasets.
+     * @return A list of two training datasets.
+     */
+    public List<TrainingDataset> split() {
+        List<TrainingDataset> datasets = new ArrayList<>();
+        int size = actionAndStates.size();
+        int half = size / 2;
+        datasets.add(new TrainingDataset(actionAndStates.subList(0, half), nextRoundActionAndState.subList(0, half)));
+        datasets.add(new TrainingDataset(actionAndStates.subList(half, size), nextRoundActionAndState.subList(half, size)));
+        return datasets;
+    }
+
+    /**
+     * Split the training dataset into two datasets.
+     * @param ratio The ratio of the split.
+     * @return A list of two training datasets.
+     */
+    public List<TrainingDataset> split(double ratio) {
+        List<TrainingDataset> datasets = new ArrayList<>();
+        int size = actionAndStates.size();
+        int split = (int) (size * ratio);
+        datasets.add(new TrainingDataset(actionAndStates.subList(0, split), nextRoundActionAndState.subList(0, split)));
+        datasets.add(new TrainingDataset(actionAndStates.subList(split, size), nextRoundActionAndState.subList(split, size)));
+        return datasets;
+    }
+
+    /**
      * Copy the training dataset.
      * @return A new training dataset with the same data.
      */

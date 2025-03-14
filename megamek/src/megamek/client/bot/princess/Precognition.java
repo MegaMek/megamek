@@ -101,7 +101,7 @@ public class Precognition implements Runnable {
                 wakeUp();
             }
         });
-        setPathEnumerator(new PathEnumerator(owner, getGame()));
+        setPathEnumerator(new PathEnumerator(owner));
         // Initialize ECM Info, especially important if Princess added mid-game
         ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
                 getGame().getEntitiesVector());
@@ -605,7 +605,7 @@ public class Precognition implements Runnable {
         }
     }
 
-    PathEnumerator getPathEnumerator() {
+    public PathEnumerator getPathEnumerator() {
         PATH_ENUMERATOR_LOCK.readLock().lock();
         try {
             logger.debug("PATH_ENUMERATOR_LOCK read locked.");

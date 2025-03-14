@@ -210,7 +210,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             IAero a = (IAero) entity;
             rollTarget = a.checkLanding(md.getLastStepMovementType(), md.getFinalVelocity(),
                     md.getFinalCoords(), md.getFinalFacing(), false);
-            gameManager.attemptLanding(entity, rollTarget);
+            gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
             gameManager.checkLandingTerrainEffects(a, true, md.getFinalCoords(),
                     md.getFinalCoords().translated(md.getFinalFacing(), a.getLandingLength()), md.getFinalFacing());
             a.land();
@@ -226,7 +226,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             rollTarget = a.checkLanding(md.getLastStepMovementType(),
                     md.getFinalVelocity(), md.getFinalCoords(),
                     md.getFinalFacing(), true);
-            gameManager.attemptLanding(entity, rollTarget);
+            gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
             if (entity instanceof Dropship) {
                 gameManager.applyDropShipLandingDamage(md.getFinalCoords(), (Dropship) a);
             }
@@ -3121,6 +3121,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Handle unloading units.
             if (step.getType() == MovePath.MoveStepType.UNLOAD) {
                 Targetable unloaded = step.getTarget(getGame());
+                Bay currentBay = (unloaded instanceof Entity ulEntity) ? entity.getBay(ulEntity) : null;
                 Coords unloadPos = curPos;
                 int unloadFacing = curFacing;
                 if (null != step.getTargetPosition()) {
@@ -3133,12 +3134,21 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             + unloaded.getDisplayName() + " from "
                             + entity.getDisplayName() + " into "
                             + curPos.getBoardNum());
+                } else {
+                    // Report unloading; anyone who can see the carrier should see the new unit too.
+                    r = new Report(2514);
+                    r.subject = unloaded.getId();
+                    r.add(entity.getDisplayName());
+                    r.add(unloaded.generalName());
+                    r.add(unloadPos.toFriendlyString());
+                    addReport(r);
                 }
                 // some additional stuff to take care of for small
                 // craft/DropShip unloading
-                if ((entity instanceof SmallCraft) && (unloaded instanceof Entity)) {
-                    Bay currentBay = entity.getBay((Entity) unloaded);
-                    if ((null != currentBay) && (Compute.d6(2) == 2)) {
+                if ((entity instanceof SmallCraft) && (unloaded instanceof Entity) ) {
+                    if ((null != currentBay) && (!(unloaded.isInfantry()))
+                        && (Compute.d6(2) == 2)
+                    ) {
                         r = new Report(9390);
                         r.subject = entity.getId();
                         r.indent(1);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2024 - The MegaMek Team. All Rights Reserved
+ * Copyright (C) 2020-2025 - The MegaMek Team. All Rights Reserved
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
  */
 package megamek.common.enums;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.logging.MMLogger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * In this context, sex relates to the character's capacity to incubate
@@ -70,6 +70,13 @@ public enum Gender {
      */
     public boolean isFemale() {
         return (this == FEMALE) || (this == OTHER_FEMALE);
+    }
+
+    /**
+     * @return {@code true} if the person uses gender-neutral pronouns, otherwise {@code false}.
+     */
+    public boolean isGenderNeutral() {
+        return (this == OTHER_MALE) || (this == OTHER_FEMALE);
     }
 
     /**

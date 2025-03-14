@@ -76,7 +76,6 @@ public class CubeCoords {
      * @return a new Coords object with the offset coordinates
      */
     public Coords toOffset() {
-        // Implement your hex grid's conversion logic
         int x = (int) q;
         int y = (int) (r + q / 2);
         return new Coords(x, y);

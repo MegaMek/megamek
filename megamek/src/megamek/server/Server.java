@@ -1192,17 +1192,21 @@ public class Server implements Runnable {
 
     /**
      * Player can request its own change of team
+     *
      * @param teamId target team id
      * @param player player requesting the change
-     * @deprecated Planned to be removed. Use {@link #requestTeamChangeForPlayer(int, Player)} instead.
+     *
+     * @deprecated Planned to be removed. Use
+     *             {@link #requestTeamChangeForPlayer(int, Player)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "0.50.04")
     public void requestTeamChange(int teamId, Player player) {
         gameManager.requestTeamChange(teamId, player);
     }
 
     /**
      * Player can request its own change of team
+     *
      * @param teamID target team id
      * @param player player requesting the change
      */
@@ -1439,8 +1443,9 @@ public class Server implements Runnable {
 
             for (Coords coords : selectedCoords) {
                 numberOfStrikes--;
-                processCommand(SERVER_CONN, "/ob "+ coords.getX() + 1 + " " + coords.getY() + 1);
-                sendServerChat("DANGER ZONE: Incoming strategic strike at " + (coords.getX() + 1) + ", " + (coords.getY() + 1));
+                processCommand(SERVER_CONN, "/ob " + coords.getX() + 1 + " " + coords.getY() + 1);
+                sendServerChat("DANGER ZONE: Incoming strategic strike at " + (coords.getX() + 1) + ", "
+                        + (coords.getY() + 1));
             }
         }
 
@@ -1455,7 +1460,6 @@ public class Server implements Runnable {
             }
         });
     }
-
 
     /**
      * Listen for incoming clients.

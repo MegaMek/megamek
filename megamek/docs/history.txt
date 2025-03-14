@@ -95,6 +95,9 @@ MEGAMEK VERSION HISTORY:
 + Fix #2459, #6620, #6666: Aero and Dropship crash landing fixes: last chance, carried units, UI crashes
 + Fix 6678: Only show artillery auto hits when on the board
 + Fix #6585: WiGE allowed to enter planted field hexes
++ Fix #6694: Gracefully close GIF Writter, and gracefully initialize it on a second run (MHQ #6259)
++ PR #6687: Updated Deprecated Tags with Version, fixed formating with new editorconfig file
++ Fix #6696: Save gif dialog had its message and title reversed
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

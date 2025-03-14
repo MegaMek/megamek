@@ -50,8 +50,10 @@ public class QuirkEntry {
      * @param code   The quirk being created.
      * @param unitId The ID (chassis &amp; model) of the unit to which the quirk
      *               belongs.
+     *
+     * @deprecated since 0.50.04 - Use {@link #QuirkEntry(String)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "0.50.04", forRemoval = true)
     public QuirkEntry(String code, String unitId) {
         if (StringUtility.isNullOrBlank(code)) {
             throw new IllegalArgumentException("Quirk definition missing for " + unitId);
@@ -92,9 +94,11 @@ public class QuirkEntry {
      * @param weaponName The MegaMek name for the weapon (i.e. ISERLargeLaser)
      * @param unitId     The ID (chassis &amp; model) of the unit to which the quirk
      *                   belongs.
-     * @deprecated
+     *
+     * @deprecated since 0.50.04 - Use
+     *             {@link #QuirkEntry(String, String, int, String)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "0.50.04", forRemoval = true)
     public QuirkEntry(String code, String location, int slot, String weaponName, String unitId) {
         if (StringUtility.isNullOrBlank(code)) {
             throw new IllegalArgumentException("Quirk definition missing for " + unitId);

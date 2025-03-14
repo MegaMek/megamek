@@ -91,13 +91,16 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
             result = false;
         }
 
-        // is the door functional
-        if (getCurrentDoors() < getNumberLoadedThisTurn()) {
-            result = false;
-        }
-
         // Return our result.
         return result;
+    }
+
+    @Override
+    public boolean canUnloadUnits() {
+        // Infantry is only restricted by adjacency requirements (TW pp. 223 - 225)
+        return super.canUnloadUnits() || troops.stream()
+            .map(unit -> game.getEntity(unit))
+            .anyMatch(e -> (e != null && e.isInfantry()));
     }
 
     @Override

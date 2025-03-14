@@ -3095,6 +3095,7 @@ public class Princess extends BotClient {
         turnOnSearchLight(retVal, expectedDamage >= 0);
         unloadTransportedInfantry(retVal);
         launchFighters(retVal);
+        abandonShip(retVal);
         unjamRAC(retVal, expectedDamage >= 5 );
 
         // if we are using vector movement, there's a whole bunch of post-processing that happens to
@@ -3279,6 +3280,152 @@ public class Princess extends BotClient {
         if (executeLaunch) {
             path.addStep(MoveStepType.LAUNCH, unitsToLaunch);
         }
+    }
+
+    protected boolean shouldAbandon(Entity entity) {
+        boolean shouldAbandon = false;
+        // Nonfunctional entity?  Abandon!
+        if ((
+            entity.isPermanentlyImmobilized(true)
+                || entity.isCrippled()
+                || entity.isShutDown()
+                || entity.isDoomed()
+        ) && (entity.getAltitude() < 1)){
+            shouldAbandon = true;
+        } else if (entity instanceof Tank tank) {
+            // Immobile tank?  Abandon!
+            // Ground-bound VTOL?  Abandon!
+            if (tank.isImmobile()) {
+                shouldAbandon = true;
+            }
+        } else if ((entity instanceof Aero aero && aero.getAltitude() < 1 && !aero.isAirborne())){
+            // Aero and unable to take off?  Abandon!
+            if (!aero.canTakeOffHorizontally() && !aero.canTakeOffVertically()) {
+                shouldAbandon = true;
+            }
+            // Aero and no clearance to take off?  You guessed it: straight to Abandon!
+            if (aero.canTakeOffHorizontally() && (null != aero.hasRoomForHorizontalTakeOff())) {
+                shouldAbandon = true;
+            }
+            // Effectively immobile Aerospace?  Believe it or not, Abandon!
+            if (EntityMovementType.MOVE_NONE == aero.moved && EntityMovementType.MOVE_NONE == aero.movedLastRound) {
+                shouldAbandon = true;
+            }
+        }
+        return shouldAbandon;
+    }
+
+    protected void abandonShipOneUnit(Entity movingEntity, Vector<Transporter> transporters, MovePath path) {
+
+        // Set dismount locations: this hex / adjacent hexes / outer-ring adjacent hexes
+        List<Coords> dismountLocations = List.of(movingEntity.getPosition());
+        if (
+            movingEntity.isDropShip()
+            || movingEntity.isSmallCraft()
+            || (movingEntity.isSupportVehicle() && movingEntity.isSuperHeavy())
+        ) {
+            int distance = (movingEntity.isDropShip()) ? 2 : 1;
+            dismountLocations = movingEntity.getPosition()
+                .allAtDistance(distance).stream()
+                .filter(c -> game.getBoard().contains(c)).toList();
+        }
+
+        int dismountIndex = 0;
+        int unitsUnloaded = 0;
+
+        for (Transporter transporter : transporters) {
+            // Roundabout bookkeeping method required by the fact that we do multiple dismounts by
+            // giving the carrier multiple _turns_; we leave and return to this method several times in one round.
+            unitsUnloaded = transporter.getNumberUnloadedThisTurn();
+
+            // Infantry can stack
+            dismountIndex = unitsUnloaded / ((transporter instanceof InfantryTransporter) ? 2 : 1);
+
+            Vector<Entity> entityList;
+            int currentDoors;
+            if (transporter instanceof InfantryTransporter infantryTransporter) {
+                entityList = infantryTransporter.getLoadedUnits();
+                currentDoors = infantryTransporter.getCurrentDoors();
+            } else if (transporter instanceof Bay bay) {
+                entityList = bay.getLoadedUnits();
+                currentDoors = bay.getCurrentDoors();
+            } else {
+                // Currently unhandled.
+                continue;
+            }
+            for (Entity loadedEntity : entityList) {
+                if (dismountIndex >= dismountLocations.size()) {
+                    // Exhausted dismount locations
+                    break;
+                }
+                Coords dismountLocation = dismountLocations.get(dismountIndex);
+
+                // for now, just unload transporters at 'safe' rate
+                // (1 per transporter door per turn except for infantry which limited by adj. hexes, TW 91)
+                int maxDismountsPerBay = (loadedEntity.isInfantry()) ? Integer.MAX_VALUE : currentDoors;
+                if (unitsUnloaded < maxDismountsPerBay) {
+                    while (dismountIndex < dismountLocations.size()) {
+                        // this condition is a simple check that we're not unloading units into fatal conditions
+                        boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType())
+                            || loadedEntity.isLocationProhibited(dismountLocation)
+                            || loadedEntity.isLocationDeadly(dismountLocation);
+
+                        // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
+                        boolean unloadIllegal = Compute.stackingViolation(
+                            getGame(), loadedEntity, dismountLocation,
+                            (dismountLocations.size() == 1) ? movingEntity : null,
+                            loadedEntity.climbMode()
+                        ) != null;
+
+                        if (unloadIllegal) {
+                            // Try the next hex
+                            dismountIndex++;
+                        } else if (!unloadFatal) {
+                            // Princess *has* to track this as we don't see entity updates
+                            // to our local game instance until movement is fully done!
+                            movingEntity.unload(loadedEntity);
+                            loadedEntity.setUnloaded(true);
+                            loadedEntity.setTransportId(Entity.NONE);
+
+                            path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
+                            return;
+                        }
+                    }
+                } else {
+                    // Hit the max for this bay
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Helper function that starts unloading a transport if it is crippled, doomed, unable to move,
+     * or otherwise no longer functional as a transport.
+     * We don't care if there are enemies on the board here; get the units out as soon as possible.
+     * Returns after one unload b/c MovePathHandler will give us another Turn if we still have
+     * more to unload (up to standard limits).
+     *
+     * @param path MovePath that brought us here.
+     */
+    private void abandonShip(MovePath path) {
+        /**** Can Unload? ****/
+        Entity movingEntity = path.getEntity();
+
+        // If no method of carrying units, skip it.
+        Vector<Transporter> transporters = movingEntity.getTransports();
+        if (transporters == null || transporters.isEmpty()) {
+            return;
+        }
+
+        /**** Should Unload? ****/
+        // If this entity is still able to maneuver and fight, don't abandon it yet.
+        if (!shouldAbandon(movingEntity)) {
+            return;
+        }
+
+        /**** Unload What, Where? ****/
+        abandonShipOneUnit(movingEntity, transporters, path);
     }
 
     /**

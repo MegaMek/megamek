@@ -227,6 +227,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     private int eccmRoll = 0;
 
+    private int enginesLostRound = Integer.MAX_VALUE;
+
     // List of escape craft used by this ship
     private final Set<String> escapeCraftList = new HashSet<>();
 
@@ -762,6 +764,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     public void setEngineHits(int hits) {
         engineHits = hits;
+        if ((engineHits >= getMaxEngineHits()) && getEnginesLostRound() == Integer.MAX_VALUE ) {
+            setEnginesLostRound(game.getCurrentRound());
+        }
     }
 
     @Override
@@ -3280,5 +3285,15 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      */
     public void setEjecting(boolean ejecting) {
         this.ejecting = ejecting;
+    }
+
+    @Override
+    public int getEnginesLostRound() {
+        return this.enginesLostRound;
+    }
+
+    @Override
+    public void setEnginesLostRound(int enginesLostRound) {
+        this.enginesLostRound = enginesLostRound;
     }
 }

@@ -4410,6 +4410,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     immobileMod = Compute.getImmobileMod(target, aimingAt, AimingMode.NONE);
                 }
             }
+
+            if (immobileMod != null) {
+                toHit.append(immobileMod);
+            }
         }
 
         // Unit-specific modifiers

@@ -109,8 +109,8 @@ public class GifWriterThread extends Thread {
     private void saveGifNag() {
         if (GUIPreferences.getInstance().getGifGameSummaryMinimap()) {
             int response = JOptionPane.showConfirmDialog(null,
-                  Messages.getString("ClientGUI.SaveGifDialog.title"),
                   Messages.getString("ClientGUI.SaveGifDialog.message"),
+                  Messages.getString("ClientGUI.SaveGifDialog.title"),
                   JOptionPane.YES_NO_OPTION,
                   JOptionPane.INFORMATION_MESSAGE);
             if (response == JOptionPane.YES_OPTION) {

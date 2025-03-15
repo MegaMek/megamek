@@ -227,88 +227,58 @@ these rolls will be displayed.
 
 ### Weapons Fire Phase
 
-If you need to check the range and line of sight (LoS) between two hexes, there are two tools
-available for you to use; the LoS tool and the ruler tool. To use the LoS tool, hold `CTRL` and
-click on the two hexes you want to check. The ruler tool works like the LoS tool, but uses the
+If you need to check the range and line of sight (LOS) between two hexes, there are two tools
+available for you to use: The LOS tool and the ruler tool. To use the LOS tool, hold `CTRL` and
+click on the two hexes you want to check. The ruler tool works like the LOS tool, but uses the
 `ALT` key instead of the `CTRL` key. The ruler tool can also be used by middle-clicking the two
-hexes with a three-button mouse. Both tools will pop up a window that tells you what terrain is
-intervening and whether one or both hexes has partial cover. The ruler tool also draws the line
-of sight on the board so that you can see which hexes LoS passes through.
+hexes with a three-button mouse. Both tools will display a window that tells you what terrain is
+intervening and whether one or both hexes have partial cover. The ruler tool also draws the LOS 
+on the board so that you can see which hexes the LOS passes through.
 
-You can switch between 'Mech line of sight and non-'Mech line of sight in the "LoS Setting"
-panel, located under the "View" menu at the top of the screen. 'Mech line of sight and
-non-'Mech line of sight differ in that 'Mechs are assumed to be "looking" from one elevation
-level above that of the hex they are in, whereas infantry and vehicles only take up the
-elevation level of their hex.
+You can switch between Mek and non-Mek LOS in the "LOS Setting"
+panel, located under the "View" menu at the top of the screen.
 
 The buttons at the bottom of the screen allow you to fire your weapons, switch to another unit,
-or commit to your currently declared fire. Again, you do not need to declare fire for your
+or commit to your currently declared weapons fire. You do not need to declare fire for your
 first selected unit first.
 
 To target another unit, click on it on the board. Targeting information for your current weapon
-should appear in the mech display window. To fire your current weapon at the target, press the
+should appear in the unit display window. To fire your current weapon at the target, press the
 "Fire" button at the bottom of the screen. To switch to another weapon, click on its name at
-the top of the mech display window. Spread your fire among multiple targets by repeating these
+the top of the unit display window. Spread your fire among multiple targets by repeating these
 steps using unassigned weapons. When all desired weapons have been assigned to a target, press
 the "Done" button at the bottom of the screen.
 
-Note that fire is resolved in the order that it is declared, so if you feel that it is a good
-idea to fire weapons in a different order than they are listed, go ahead.
+Note that fire is resolved in the order that it is declared regardless of a weapon's position 
+in the weapons list.
 
-Secondary facing changes (torso twists) are accomplished by holding `Shift` and clicking on the
-board. Your unit will attempt to change its secondary facing in the direction specified. If you
-assign a weapon to a target and then attempt a facing change, the weapons fire will be canceled.
+Torso and turret twists are accomplished by holding `Shift` and clicking on the
+board. Your unit will attempt to change its torso/turret facing in the direction specified. If you
+assign a weapon to a target and then attempt a twist, the weapons fire will be canceled.
 
 You can not switch to another unit after declaring some weapons fire. To switch to another
 unit, first cancel all current fire by hitting the `Esc` key. When you hit the fire button for
 your last available weapon, all declared fire will be committed.
 
-An Anti-Mek trained infantry platoon or Battle Armor squad that is in the same hex as a Mek can
-conduct a Leg Attack or a Swarm Mek attack. The base to-hit number varies with the number of
-men in the unit. A Swarm Mek attack against a Mek that is prone and/or immobile gains a -4
-modifier to its to-hit roll. A successful Leg Attack may cause critical damage to one of the
-Meks legs; if no critical is rolled, the leg will take 4 points of damage (which may damage the
-leg's internal structure, and cause another critical roll). A successful Swarm Mek attack does
-no damage in the turn it hits, but it means that the unit has attached itself to the Mek, and
-can begin to cause significant damage on subsequent turns. Starting the turn after the unit
-starts a Swarming a Mek, all attacks by that unit automatically hit, use a location chart that
-is more dangerous than normally, and automatically roll for a Thru-Armor Critical. A unit that
-is Swarming a Mek can also choose to Stop Swarming in any weapons phase. The Leg Attack, Swarm
-Mek, and Stop Swarm actions are all "solo" actions: the unit can take no other action in the
-Weapons Fire Phase. Attempts to do so will cancel the "solo" action. Swarming infantry can not
-be targeted by any attacks other than a "Brush Off" attack (see Physical Attacks Phase).
-
 ### Weapons Fire Report
 
-If there were any weapon attacks, the server will resolve them all at the end of the phase in
+If there were any weapon attacks, the server will resolve them all at the end of the weapons attack phase in
 the order they were declared. The results will be shown in a report.
 
 ### Physical Attacks Phase
 
 To declare a physical attack, select your target on the board and click the button
-corresponding to the attack you want to make. If a physical attack type is unavailable (or
-isn't programmed yet) the button will be greyed out.
+corresponding to the attack you want to make.
 
-Units ineligible to make physical attacks due to being out of range, having made weapons
-attacks, or for any other reason, will be skipped. If all units are ineligible, the entire
+Units ineligible to make physical attacks will be skipped. If all units are ineligible, the entire
 phase will be skipped.
-
-Prone Meks that are in the same hex as a vehicle can punch the vehicle, if they have both arms.
-Prone Meks that are in a Clear or Pavement hex as an infantry platoon or Battle Armor squad can
-"thrash" at the unit if they have at least one arm or leg. Be warned, that "thrashing" causes a
-Pilot Skill Roll that, if failed, causes the Mek to suffer damage as if it has fallen 1 level.
-
-Meks that are not prone that have been Swarmed by an infantry platoon or Battle Armor squad can
-attempt to "Brush Off" the squad with either or both arms. Any "Brush Off" attack that fails to
-hit the infantry will inflict punch damage on the Mek. Any successful "Brush Off" attack ends a
-Swarm Mek attack.
 
 ### End of Turn Report
 
 If there were any physical attacks, the results will be shown. The results of the Heat and End
 phases will be shown.
 
-After this phase, it's time for initiative again! Hurrah!
+After this phase, a new turn begins.
 
 ### CUSTOM UNITS
 

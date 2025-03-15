@@ -146,7 +146,7 @@ public final class Player extends TurnOrdered {
 
     public boolean hasMinefields() {
         return (numMfCmd > 0) || (numMfConv > 0) || (numMfVibra > 0) || (numMfActive > 0) || (numMfInferno > 0)
-        		|| getGroundObjectsToPlace().size() > 0;
+              || getGroundObjectsToPlace().size() > 0;
     }
 
     public void setNbrMFConventional(int nbrMF) {
@@ -462,7 +462,7 @@ public final class Player extends TurnOrdered {
             return true;
         }
         return (id != other.getId())
-            && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) || (team != other.getTeam()));
+              && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) || (team != other.getTeam()));
     }
 
     public void setAdmitsDefeat(boolean admitsDefeat) {
@@ -478,20 +478,20 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-	 * Collection of carryable objects that this player will be placing during the game.
-	 */
-	public List<ICarryable> getGroundObjectsToPlace() {
-		return groundObjectsToPlace;
-	}
+     * Collection of carryable objects that this player will be placing during the game.
+     */
+    public List<ICarryable> getGroundObjectsToPlace() {
+        return groundObjectsToPlace;
+    }
 
-	/**
-	 * Present for serialization purposes only
-	 */
-	public void setGroundObjectsToPlace(List<ICarryable> groundObjectsToPlace) {
-		this.groundObjectsToPlace = groundObjectsToPlace;
-	}
+    /**
+     * Present for serialization purposes only
+     */
+    public void setGroundObjectsToPlace(List<ICarryable> groundObjectsToPlace) {
+        this.groundObjectsToPlace = groundObjectsToPlace;
+    }
 
-	public void setVotedToAllowTeamChange(boolean allowChange) {
+    public void setVotedToAllowTeamChange(boolean allowChange) {
         votedToAllowTeamChange = allowChange;
     }
 
@@ -539,9 +539,9 @@ public final class Player extends TurnOrdered {
      */
     public int getBV() {
         return game.getInGameObjects().stream()
-                .filter(this::isMyUnit)
-                .filter(InGameObject::countForStrengthSum)
-                .mapToInt(InGameObject::getStrength).sum();
+              .filter(this::isMyUnit)
+              .filter(InGameObject::countForStrengthSum)
+              .mapToInt(InGameObject::getStrength).sum();
     }
 
     /**
@@ -618,16 +618,17 @@ public final class Player extends TurnOrdered {
         for (InGameObject unit : game.getInGameObjects()) {
             if (unit instanceof Entity) {
                 Entity entity = (Entity) unit;
-                if ((null != entity.getOwner())
-                        && entity.getOwner().equals(this)
-                        && !entity.isDestroyed()
-                        && entity.isDeployed()
-                        && !entity.isOffBoard()
-                        && entity.getCrew().isActive()
-                        && !entity.isCaptured()
-                        && !(entity instanceof MekWarrior)) {
+                boolean useCommandInit = game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
+                boolean checkThisTurn = ((null != entity.getOwner())
+                      && entity.getOwner().equals(this)
+                      && !entity.isDestroyed()
+                      && entity.getCrew().isActive()
+                      && !entity.isCaptured()
+                      && !(entity instanceof MekWarrior))
+                      && ((entity.isDeployed() && !entity.isOffBoard()) || (entity.getDeployRound() == (game.getCurrentRound() + 1)));
+                if (checkThisTurn) {
                     int bonus = 0;
-                    if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+                    if (useCommandInit) {
                         bonus = entity.getCrew().getCommandBonus();
                     }
                     //Even if the RPG option is not enabled, we still get the command bonus provided by special equipment.
@@ -654,9 +655,9 @@ public final class Player extends TurnOrdered {
     public String getColoredPlayerNameWithTeam() {
         if (team == -1) {
             team = 0;
-        } 
+        }
         return "<B><font color='" + getColour().getHexString(0x00F0F0F0) + "'>" + getName() +
-            " (" + TEAM_NAMES[team] + ")</font></B>";
+              " (" + TEAM_NAMES[team] + ")</font></B>";
     }
 
     /**

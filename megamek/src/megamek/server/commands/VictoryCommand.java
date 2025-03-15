@@ -14,6 +14,7 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
 

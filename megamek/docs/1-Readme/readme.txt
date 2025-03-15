@@ -159,12 +159,12 @@ here.
 ### Movement Phase
 
 The buttons at the bottom of the screen let you change between different modes of movement,
-switch to another unit, or commit to your current path. You do not have to move the first
+switch to another unit, or commit to your current movement path. You do not have to move the first
 selected unit first.
 
 Left-click on the map to specify a hex to move to. A path should appear on the board, showing
 your unit's path to the target hex. The numbers in the center represent how many movement
-points you will have to use to reach each hex. Cyan indicates walking, yellow running, and red
+points you will have to use to cross each hex. Cyan indicates walking, yellow running, and red
 jump movement. Dark grey sections of the path indicate where you have exceeded your movement
 capacity, or other illegal moves. You can drag the mouse to see movement options for several
 different hexes. Please note that you can change the colors used to display the movement points
@@ -180,60 +180,50 @@ without moving. Since you automatically change facing while moving, this is best
 end of any movement.
 
 To move backwards, click the "Back Up" button before clicking a hex in the arc behind the unit.
-To jump, click the "Jump" button before the destination hex. Facing changes during jumps are
-free.
+To jump, click the "Jump" button before clicking on the destination hex.
 
 Prone units can change facing without getting up at the normal cost. To get up, click the "Get
-Up" button, then the desired destination hex and/or facing. Facing changes performed
-immediately after getting up are free. To get up and back up, click "Get Up," then "Back Up,"
-then the destination hex and/or facing. You cannot get up and jump in the same turn.
+Up" button, then the desired destination hex and/or facing. To get up and back up, click "Get Up," then "Back Up,"
+then the destination hex and/or facing.
 
-Charging and death from above attacks are also declared during the movement phase. Click the
+Charging and death from above (D.F.A.) attacks are also declared during the movement phase. Click the
 "Charge" or "D.F.A." button and then click on the mech you wish to target. If the attack is
-valid, it will be sent to the server immediately (but resolve during the physical attack
-phase.) If the program is not using the path you want for your attack, you may plot a path near
-the target using the appropriate type of movement and then use the charge or dfa button to
+valid, it will be sent to the server immediately, but resolved during the physical attack
+phase. If the program is not using the path you want for your attack, you may plot a path near
+the target using the appropriate type of movement and then use the charge or D.F.A. button to
 complete the attack.
 
 If a vehicle or Mek that has sufficient empty space starts a turn in the same hex as a friendly
-infantry unit, it can Load the unit as its first move of the turn. A vehicle or Mek that is
+infantry unit, it can load the unit as its first move of the turn. A vehicle or Mek that is
 already carrying an infantry unit can unload the unit as its last movement of the turn.
 
-If an Anti-Mek infantry platoon or Battle Armor squad has succeeded in mounting a Mek with a
-Swarm attack, the Mek can attempt to dislodge the squad during the movement phase in one of
-three ways:
-
-1) jumping (requires a Pilot Skill Roll, with a +4 modifier),
-2) walking into (and perhaps through) a Level 2 or deeper water hex, or
-3) ending its turn in a hex that is on fire (this will not work against Battle Armor squads).
-
-Swarming infantry automatically die if they are dislodged into a Level 1 or deeper water hex.
-Infantry dislodged in the Movement Phase can not move or fire for the rest of the turn.
-Swarming units can not move off of their target Mek until they use the Stop Swarm action in the
+If an anti-Mek infantry platoon or battle armor squad has succeeded in mounting a Mek with a
+swarm attack, the Mek can attempt to dislodge the squad during the movement phase.  Swarming 
+units can not move off of their target Mek until they use the "Stop Swarm" action in the
 Weapons Fire Phase.
 
-VTOLs and VTOL BA use the "go up" and "go down" buttons to change elevation (flight level).
+VTOLs and VTOL battle armor use the "Go up" and "Go down" buttons to change elevation (flight level).
 
 Movement around structures (buildings/bridges) is a little more complicated, because of the
-different floors a unit can occupy. The "climb mode" button sets your current preference. "Go
+different floors a unit can occupy. The "Climb mode" button sets your current preference. "Go
 thru" means you prefer to go under bridges or through the walls of buildings, if there is a
 choice. "Climb up" means you prefer to climb on top of structures when possible. You can change
-mode multiple times during your movement, for example a StormCrow Prime could use "climb up" to
-go over a heavy building to save MP, then change to "go thru" to pass a light building that
+mode multiple times during your movement.  For example, a Mek could use "Climb up" to
+go over a heavy building to save MP, then change to "Go thru" to pass a light building that
 won't support its weight.
 
 Infantry can move up and down inside buildings using the stairs. This is accomplished by using
-the "go up" and "go down" buttons. Also, infantry that jump into a building can use the "go up"
-and "go down" buttons to choose which floor to jump through the window of. Click the building
-hex you want to jump into first, and the game will pick the highest floor you can reach (or the
-roof). Then use the "go down" button to select a lower floor if you want to.
+the "Go up" and "Go down" buttons. Also, infantry that jump into a building can use the "Go up"
+and "Go down" buttons to choose which floor to jump into. Click the building
+hex you want to jump into first, and the game will pick the highest floor you can reach. 
+Then use the "Go down" button to select a lower floor if you want to.
 
 The `Esc` key clears all current movement.
 
 ### Movement Report
 
 If any units needed piloting skill rolls during their movement, a report showing the results of
-these rolls will be shown.
+these rolls will be displayed.
 
 ### Weapons Fire Phase
 

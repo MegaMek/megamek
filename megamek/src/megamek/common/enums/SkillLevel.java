@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,43 +18,54 @@
  */
 package megamek.common.enums;
 
-import megamek.MegaMek;
-import megamek.logging.MMLogger;
-
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import megamek.MegaMek;
+import megamek.logging.MMLogger;
 
 public enum SkillLevel {
     // region Enum Declarations
-    NONE("SkillLevel.NONE.text", "SkillLevel.NONE.toolTipText"),
-    ULTRA_GREEN("SkillLevel.ULTRA_GREEN.text", "SkillLevel.ULTRA_GREEN.toolTipText"),
-    GREEN("SkillLevel.GREEN.text", "SkillLevel.GREEN.toolTipText"),
-    REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText"),
-    VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText"),
-    ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText"),
-    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText"),
-    LEGENDARY("SkillLevel.LEGENDARY.text", "SkillLevel.LEGENDARY.toolTipText");
+    NONE("SkillLevel.NONE.text", "SkillLevel.NONE.toolTipText", -1),
+    ULTRA_GREEN("SkillLevel.ULTRA_GREEN.text", "SkillLevel.ULTRA_GREEN.toolTipText", 0),
+    GREEN("SkillLevel.GREEN.text", "SkillLevel.GREEN.toolTipText", 1),
+    REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText", 2),
+    VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText", 3),
+    ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText", 4),
+    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText", 5),
+    LEGENDARY("SkillLevel.LEGENDARY.text", "SkillLevel.LEGENDARY.toolTipText", 6);
     // endregion Enum Declarations
 
     // region Variable Declarations
     private final String name;
     private final String toolTipText;
+    private final int experienceLevel;
     // endregion Variable Declarations
 
     // region Constructors
-    SkillLevel(final String name, final String toolTipText) {
+    SkillLevel(final String name, final String toolTipText, final int experienceLevel) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
                 MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
         this.toolTipText = resources.getString(toolTipText);
+        this.experienceLevel = experienceLevel;
     }
     // endregion Constructors
 
     // region Getters
     public String getToolTipText() {
         return toolTipText;
+    }
+
+    /**
+     * Retrieves the current experience level of this entity. Where None is {@code -1}, Ultra-Green
+     * is {@code 0}, Green is {@code 1} and so forth.
+     *
+     * @return the experience level as an integer.
+     */
+    public int getExperienceLevel() {
+        return experienceLevel;
     }
     // endregion Getters
 
@@ -118,9 +129,12 @@ public enum SkillLevel {
 
     /**
      * @return the skill level adjusted so that 0 is the level for Ultra-Green
+     * @deprecated Use {@code getExperienceLevel}. This will be removed in the next Milestone
+     * following 50.04.
      */
+    @Deprecated(since = "50.04")
     public int getAdjustedValue() {
-        return ordinal() - 1;
+        return getExperienceLevel();
     }
 
     /**

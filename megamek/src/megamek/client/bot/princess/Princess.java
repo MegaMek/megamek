@@ -2616,7 +2616,7 @@ public class Princess extends BotClient {
             initialize();
             checkMorale();
             unitBehaviorTracker.clear();
-            this.swarmContext.assignClusters(getFriendEntities());
+            this.swarmContext.assignClusters(getEntitiesOwned());
             this.enemyTracker.updateThreatAssessment(swarmContext.getCurrentCenter());
             // reset strategic targets
             fireControlState.setAdditionalTargets(new ArrayList<>());

@@ -1164,7 +1164,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
          * @param allUnits The units to assign
          */
         public void assignClusters(Collection<UnitState> allUnits) {
-            if (clusterUnitsSize == allUnits.size()){
+            if (clusterUnitsSize >= allUnits.size()){
                 clusters.forEach(SwarmCluster::updateCentroid);
                 return;
             }

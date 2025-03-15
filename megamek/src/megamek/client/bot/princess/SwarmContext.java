@@ -248,6 +248,19 @@ public class SwarmContext {
         return cluster;
     }
 
+    /**
+     * Get the cluster center for a unit
+     * @param unitId The unit to get the cluster for
+     * @return The cluster for the unit, initializes a new cluster if it doesn't exist
+     */
+    public Coords getCenterForUnit(int unitId) {
+        var cluster = unitClusters.get(unitId);
+        if (cluster == null) {
+            return getCurrentCenter();
+        }
+        return cluster.getCentroid();
+    }
+
     public static class SwarmCluster {
         List<Entity> members = new ArrayList<>();
         Coords centroid;
@@ -269,6 +282,8 @@ public class SwarmContext {
 
         private void updateCentroid() {
             if (members.isEmpty()) return;
+            members.removeIf(Entity::isDoomed);
+            members.removeIf(Entity::isDestroyed);
             centroid = calculateClusterCentroid(members);
         }
 
@@ -292,15 +307,21 @@ public class SwarmContext {
                     sSum / count
             );
 
-            return weightedCube.roundToNearestHex().toOffset();
+            return weightedCube.toOffset();
 
         }
     }
 
     private int calculateOptimalClusterSize(int totalUnits) {
-        if (totalUnits <= 4) return 4;
-        if (totalUnits % 4 == 0) return 4;
-        if (totalUnits % 5 == 0) return 5;
+        if (totalUnits <= 4) {
+            return totalUnits;
+        }
+        if (totalUnits % 4 == 0) {
+            return 4;
+        }
+        if (totalUnits % 5 == 0) {
+            return 5;
+        }
         return (totalUnits % 4) > (totalUnits % 5) ? 5 : 4;
     }
 
@@ -311,7 +332,7 @@ public class SwarmContext {
      * @param allUnits The units to assign
      */
     public void assignClusters(List<Entity> allUnits) {
-        if (clusterUnitsSize == allUnits.size()){
+        if (clusterUnitsSize >= allUnits.size()){
             clusters.forEach(SwarmCluster::updateCentroid);
             return;
         }

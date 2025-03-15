@@ -625,7 +625,7 @@ public final class Player extends TurnOrdered {
                       && entity.getCrew().isActive()
                       && !entity.isCaptured()
                       && !(entity instanceof MekWarrior))
-                      && (entity.isDeployed() && !entity.isOffBoard() || entity.getDeployRound() == game.getCurrentRound());
+                      && ((entity.isDeployed() && !entity.isOffBoard()) || (entity.getDeployRound() == (game.getCurrentRound() + 1)));
                 if (checkThisTurn) {
                     int bonus = 0;
                     if (useCommandInit) {

@@ -282,26 +282,24 @@ After this phase, a new turn begins.
 
 ### CUSTOM UNITS
 
-All units (mechs, vehicles, infantry, etc.) are located in the data/mechfiles directory. They
+All units are located in the data/mechfiles directory. They
 may be individual files or zipped up into archives (".zip"), and you may also create
-subdirectories if you like.
+subdirectories.
 
-We recommend creating a folder called Customs in the data/mechfiles directory. Then using this
-folder to store all custom units.
+We recommend creating a separate folder in the data/mechfiles directory to store all custom units.
 
-As of 0.49.13 We've removed the unsupported and unofficial folders. Over the years the
+As of 0.49.13 we've removed the unsupported and unofficial folders. Over the years the
 unsupported units dropped to only a couple. The unofficial folder is available from
 [the Extras repository](https://github.com/MegaMek/megamek-extras).
 
-Over the years the number of custom mech builders that support MegaMek has shrunk. For best
+Over the years the number of custom Mek builders that support MegaMek has shrunk. For best
 compatibility we recommend using MegaMekLab. Any issues from the use of other programs should
 be directed to their developers for support.
 
 #### Note of file types
 
-MegaMek uses two file types for units. Files with the extension MTF are mechs, and all other
-unit types are BLK files.  Both our editable with a quality text editor, but we recommend not
-hand editing files as it can break the programs.
+MegaMek uses two file types for units. Files with the extension MTF are for Meks only, and Meks and other unit types are BLK files.  
+Both our editable with a quality text editor, but we recommend not hand editing files as manual mistakes may break the programs.
 
 ### ADVANCED MAP SETTINGS
 
@@ -311,29 +309,29 @@ the values from the basic settings._
 - **Board Size** - set the size of the map sheet generated. When using generated maps, it is better to generate one large play area than to try and combine multiple map sheets.
 - **Theme** - leave blank, or enter a theme supported by the tileset. Grass, Lunar, Mars, Snow are themes supported by the standard tileset.
 - **Elevation settings:**
-  - **Amount of elevation** - changes the "roughness" of the map, a low number will have less elevation changes than a high number Elevation range: height difference between the lowest and highest hex on the map. Level 0 is set to the most common height.
+  - **Amount of elevation** - changes the "roughness" of the map, a low number will have less elevation changes than a high number.  Elevation range specifies the height difference between the lowest and highest hex on the map. Level 0 is set to the most common height.
   - **Probability of inverting** - % chance to make a sinkhole instead of a mountain.
-  - **Algorithm** - 0 generates rolling hills, 1 generates spiky terrain, 2 combines both generators. 0 is likely to have less LOS blocking terrain.
-  - **Cliffs** - % chance to change a steep slope into a cliff. For example, if a group of level 1 hexes have level 0 and level 2 hexes adjacent, they will all be moved to level 0, giving a cliff for mechs to hide behind. The effect is quite subtle unless you have quite a high elevation range to begin with.
+  - **Algorithm** - 0 generates rolling hills, 1 generates spiky terrain, 2 combines both generators. 0 is likely to have less LOS-blocking terrain.
+  - **Cliffs** - % chance to change a steep slope into a cliff. For example, if a group of level 1 hexes have level 0 and level 2 hexes adjacent, they will all be moved to level 0, giving a cliff for Meks to hide behind. The effect is quite subtle unless you have quite a high elevation range to begin with.
 - **Patch terrain settings (woods, roughs, swamps, lakes, pavements, rubble, fortified, ice):** Each of these work the same way, but place a different type of terrain.
-  - **Number of XXX** - the number of patches which would be present on a 16x17 map. scales up if you have a bigger map.
+  - **Number of XXX** - the number of patches which would be present on a 16x17 map. It scales up if you have a bigger map.
   - **XXX size in hexes** - the size of each patch of terrain
   - **Probability for heavy woods/deep water** - % chance to place instead of light.
   - **River/road settings** - Probability is a % chance to have one on the map. If a road crosses water, you'll get a bridge.
 - **Crater settings:**
-  - **Probability for craters:** - % chance that craters are present Number of craters: as for number of woods, the number that would be present on a 16x17 map, scaled up for larger maps.
-  - **Crater radius** - size range for each crater.
-- **Special effects settings:** Each probability is a % chance. FX modifier changes the amount of effect each one has. Values should be small, e.g -3 to +3
+  - **Probability for craters:** - % chance that craters are present. Number of craters: as for number of woods, the number that would be present on a 16x17 map, scaled up for larger maps.
+  - **Crater radius** - size range for each crater
+- **Special effects settings:** Each probability is a % chance. FX modifier changes the amount of effect each one has. Values should be small, e.g. -3 to +3
   - **Fires** - woods hexes will be set on fire or already burned down to rough at the start of the game. + modifier increases number of burned down hexes, - modifier increases number of unscathed woods.
-  - **Frozen water** - water hexes are ice-covered. +modifier decreases the water depth, so for example with a modifier of 1, shallow water hexes are frozen solid and deep water hexes are converted to ice covered shallow water.
-  - **Flooded map:** - hexes with negative elevations are converted to water hexes, while level 0 hexes are converted to swamps. Ideal for hovercraft and naval units. modifier changes the "sea level"
-  - **Drought** - water hexes are dried up, to shallower water, swamp or rough. Modifier changes the severity of the drought.
+  - **Frozen water** - water hexes are ice-covered. +modifier decreases the water depth, so for example with a modifier of 1, shallow water hexes are frozen solid and deep water hexes are converted to ice-covered shallow water.
+  - **Flooded map:** - hexes with negative elevations are converted to water hexes, while level 0 hexes are converted to swamps. Ideal for hovercraft and naval units. Modifier changes the "sea level"
+  - **Drought** - water hexes are dried up to shallower water, swamp or rough. Modifier changes the severity of the drought.
   - **Special effects can be combined** - e.g. flood + drought = rocky shore, flood + frozen + high modifier = glacier
 - **City Settings:** City type is the same as for the basic settings.
   - **City Blocks (0-) [16 default]** - higher numbers mean more roads on the map. Scales with map size.
-  - **CF min/max (1-150) [10-100 default]** - CF range for generated buildings. The CF determines the building type from the table in BMR.
+  - **CF min/max (1-150) [10-100 default]** - CF range for generated buildings. The CF determines the building type from the Building Types section in Total Warfare.
   - **Floors min/max (1-50) [1-6 default]** - height range for generated buildings
-  - **Density (1-100) [75 default]** - % chance of a building in each hex where a building is possible. Also chance to try and build multi-hex buildings.
+  - **Density (1-100) [75 default]** - % chance of a building in each hex where a building is possible. Also a chance to try and build multi-hex buildings.
 
 ## DIFFERENCES BETWEEN THE BOARD GAME AND MEGAMEK
 

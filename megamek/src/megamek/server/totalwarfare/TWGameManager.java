@@ -1360,6 +1360,8 @@ public class TWGameManager extends AbstractGameManager {
      * round.
      */
     public void forceVictory(Player victor, boolean endImmediately, boolean ignorePlayerVotes) {
+        // endImmediately if passed true, or if game option set
+        endImmediately |= game.getOptions().booleanOption(OptionsConstants.VICTORY_SKIP_FORCED_VICTORY);
         game.setEndImmediately(endImmediately);
         game.setIgnorePlayerDefeatVotes(ignorePlayerVotes);
         game.setForceVictory(true);
@@ -2152,6 +2154,9 @@ public class TWGameManager extends AbstractGameManager {
     private void changeToNextTurn(int prevPlayerId) {
         boolean minefieldPhase = game.getPhase().isDeployMinefields();
         boolean artyPhase = game.getPhase().isSetArtilleryAutohitHexes();
+        if (isPlayerForcedVictory()) {
+            setIneligible(game.getPhase());
+        }
 
         GameTurn nextTurn = null;
         Entity nextEntity = null;
@@ -3050,6 +3055,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (isPlayerForcedVictory()) {
             assistants.addAll(game.getEntitiesVector());
+            game.setTurnVector(new ArrayList<>());
         } else {
             for (Entity entity : game.getEntitiesVector()) {
                 if (entity.isEligibleFor(phase)) {

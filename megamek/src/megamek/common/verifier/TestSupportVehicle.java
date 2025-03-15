@@ -814,7 +814,8 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double getWeightControls() {
-        return getWeightFireControl() + getWeightCrewAccommodations();
+        // No need to add Firecontrol weights here; they are included in Misc Equipment
+        return getWeightCrewAccommodations();
     }
 
     @Override

@@ -8,14 +8,14 @@ Operations are constantly in the works, and many of those rules and weapons are 
 implemented.
 
 Players can create their own units, maps, and scenarios for use with MegaMek. MegaMek supports
-all unit types, from infantry, BattleMechs, and vehicles, to Aerospace fighters, DropShips,
-and warships. Ground battles as well as space battles can be played.
+most unit types, from infantry, BattleMeks, and vehicles, to aerospace fighters, DropShips,
+and WarShips. Ground battles as well as space battles can be played.
 
 If you would like information about how to play the game, see the "PLAYING THE GAME" section,
 below. If you're having trouble getting MegaMek started, see the next section, "RUNNING
 MEGAMEK".
 
-For complete game rules, consult the Classic BattleTech rule books published by Catalyst Game
+For complete game rules, consult the BattleTech rule books published by Catalyst Game
 Labs. These books include [Total Warfare](https://store.catalystgamelabs.com/collections/battletech/products/battletech-total-warfare-pdf),
 [Tactical Operations: Advanced Rules](https://store.catalystgamelabs.com/collections/battletech/products/battletech-tactical-operations-advanced-rules),
 [Tactical Operations: Advanced Units & Equipment](https://store.catalystgamelabs.com/collections/battletech/products/battletech-tactical-operations-advanced-units-equipement),
@@ -56,7 +56,7 @@ installed correctly for the most seamless experience.
 
 For Mac, download the installer from
 [Adoptium]( https://adoptium.net/temurin/releases/?os=mac&version=17&arch=aarch64&package=jre)
-directly for your version of macOS and underling platform (AARCH64 is for M-Series Mac's).
+directly for your version of macOS and underlying platform (AARCH64 is for M-Series Mac's).
 
 ### Linux
 
@@ -64,13 +64,13 @@ For Linux, your distribution should have a version of Java available via your pa
 
 ## CONNECTING
 
-MegaMek is a network game. One player hosts a game and the rest of the players connect. The
-connecting players can connect from anywhere with a TCP/IP connection to the host, including
-the same computer (see hot seat, below.)
+MegaMek can be played as a network game. One player hosts a game and the rest of the players 
+connect. The connecting players can connect from anywhere with a TCP/IP connection to the 
+host, including the same computer (see hot seat, below).
 
 To host a game, press the "Host a New Game..." button in the main menu. Fill in your name and
 click "Okay". The password field allows you to specify a password for certain server commands
-(Type /help in the chat line to get a list of server commands.) If you don't specify a
+(Type /help in the chat line to get a list of server commands). If you don't specify a
 password, anybody is allowed to reset the server or kick players, so be careful.
 
 Once the lobby screen comes up, other players can connect and the game can begin. The other

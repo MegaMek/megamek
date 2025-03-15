@@ -27,14 +27,14 @@ import megamek.logging.MMLogger;
 
 public enum SkillLevel {
     // region Enum Declarations
-    NONE("SkillLevel.NONE.text", "SkillLevel.NONE.toolTipText", -1),
-    ULTRA_GREEN("SkillLevel.ULTRA_GREEN.text", "SkillLevel.ULTRA_GREEN.toolTipText", 0),
-    GREEN("SkillLevel.GREEN.text", "SkillLevel.GREEN.toolTipText", 1),
-    REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText", 2),
-    VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText", 3),
-    ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText", 4),
-    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText", 5),
-    LEGENDARY("SkillLevel.LEGENDARY.text", "SkillLevel.LEGENDARY.toolTipText", 6);
+    NONE("SkillLevel.NONE.text", "SkillLevel.NONE.toolTipText", 0),
+    ULTRA_GREEN("SkillLevel.ULTRA_GREEN.text", "SkillLevel.ULTRA_GREEN.toolTipText", 1),
+    GREEN("SkillLevel.GREEN.text", "SkillLevel.GREEN.toolTipText", 2),
+    REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText", 3),
+    VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText", 4),
+    ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText", 5),
+    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText", 6),
+    LEGENDARY("SkillLevel.LEGENDARY.text", "SkillLevel.LEGENDARY.toolTipText", 7);
     // endregion Enum Declarations
 
     // region Variable Declarations
@@ -59,8 +59,8 @@ public enum SkillLevel {
     }
 
     /**
-     * Retrieves the current experience level of this entity. Where None is {@code -1}, Ultra-Green
-     * is {@code 0}, Green is {@code 1} and so forth.
+     * Retrieves the current experience level of this entity. Where None is {@code 0}, Ultra-Green
+     * is {@code 1}, Green is {@code 2} and so forth.
      *
      * @return the experience level as an integer.
      */
@@ -129,12 +129,9 @@ public enum SkillLevel {
 
     /**
      * @return the skill level adjusted so that 0 is the level for Ultra-Green
-     * @deprecated Use {@code getExperienceLevel}. This will be removed in the next Milestone
-     * following 50.04.
      */
-    @Deprecated(since = "50.04")
     public int getAdjustedValue() {
-        return getExperienceLevel();
+        return experienceLevel - 1;
     }
 
     /**

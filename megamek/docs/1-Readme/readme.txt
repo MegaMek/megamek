@@ -87,13 +87,13 @@ and the host's IP address.
 To play in a hot seat fashion, you can run the host and any number of other players on the
 same computer. First, launch and host a game. Then, launch another copy of the game for each
 connecting player, and in the "Server Address" field of the connect dialog, type `localhost`.
-Each player will need to switch to his/her copy of the game to play their turn.
+Each player will need to switch to their copy of the game to play their turn.
 
 To start a dedicated server, use the `-dedicated` command line switch. A dedicated server just
 runs the server, in the console, without a "host" player in the game. People, including
 yourself, can join it like a game with a host. The dedicated server reads the password and
 port options from the `clientsettings.xml` file, or uses the default (no password and port
-2346.) If you want the dedicated server to load a saved game, supply the filename at the end of
+2346). If you want the dedicated server to load a saved game, supply the filename at the end of
 `-dedicated` args, like this: `-dedicated savedgame.sav` or
 `-dedicated -port 2346 savedgame.sav`. To stop the server, you will need to tell the Java
 machine to halt execution, which is `CTRL + C` on most platforms.
@@ -103,7 +103,7 @@ machine to halt execution, which is `CTRL + C` on most platforms.
 ### Pre-game Lobby
 
 Here you can chat, specify what units you wish to use, select map settings, declare starting
-positions, and change your player's color. When everybody has at least one unit, you may all
+positions, and change your units' color. When everybody has at least one unit, you may all
 hit "ready" to start the game. Most changes to the game parameters will cancel your ready
 status, so you should wait for everybody to finish choosing their units and positions. Note:
 If you wish to use custom unit designs, please see the section below entitled "CUSTOM UNITS".
@@ -113,7 +113,7 @@ You can change the dimensions of the map boards (in hexes) or the dimensions of 
 (in boards). All maps are loaded off the server. Most of the map boards that MegaMek comes
 with are 16x17.
 
-Below the map size inputs is a not-to-scale representation of how the boards are laid out
+Below the map size inputs is a representation of how the boards are laid out
 relative to each other. The middle column lists the current maps and the rightmost column
 lists the available maps. To change a current map, select it in the middle column, select the
 map you want in the right column, and press the "<<" button between the two columns. You may
@@ -123,24 +123,24 @@ becomes South, East becomes West, and vice versa) by clicking on the "Rotate Boa
 the fact that the map is rotated will be shown in the middle column.
 
 - **[SURPRISE]** means that the Server will pick a random map and not tell you what it has picked until the game starts.
-- **[RANDOM]** means that the Server will pick a map as soon as you hit "Okay".
+- **[RANDOM]** means that the Server will pick a map and show you what it is in the map list.
 - **[GENERATED]** means that the server will create random terrain for you to play on. You need to use the "generated map settings" button to select what kind of terrain you want.
 
-There is a set of settings with drop down list of choices. For most settings, you can pick
-"none", "low", "medium" or "high". Except for cities, where you pick a type of city instead.
+There are multiple settings with a dropdown list of choices. For most settings, you can pick
+"none", "low", "medium" or "high". For cities, you pick a type of city to generate.
 
-- **Theme** - leave blank for the default theme, or enter a theme supported by your tileset. grass, jungle, lunar, mars, snow, and volcano are supported by the standard tileset
+- **Theme** - leave blank for the default theme, or enter a theme supported by your tileset. Grass, jungle, lunar, mars, snow, and volcano are supported by the standard tileset.
 - **Elevation** - how hilly you want the map
 - **Cliffs** - chance of 2+ level elevation changes, if you have enough elevation already
 - **Woods** - higher settings have more and larger tree patches and more heavy woods
 - **Roughs** - higher settings have more and larger rough patches
-- **Lakes** - works the same as woods, but deep water instead of heavy woods Swamps/Pavement/Ice/Rubble/Fortified all work like roughs. Fortified hexes are described in the MaxTech rulebook.
+- **Lakes** - works the same as woods, but deep water instead of heavy woods. Swamps/Pavement/Ice/Rubble/Fortified all work like roughs. Fortified hexes are described in the Maximum Tech rulebook.
 - **River** - chance to have a river running across the map
 - **Road** - chance to have a single road running across the map
-- **Craters** - chance for craters, also the size and number. Good for a "moonscape" map
+- **Craters** - chance for craters, also the size and number. Good for a "moonscape" map.
 - **City:**
   - **HUB** - roads wander out from the centre with plenty of twists and turns. A common pattern for older european cities.
-  - **GRID** - vertical and horizontal roads divide the city into rectangular blocks. A pattern common in newer cities, especially in north america and asia.
+  - **GRID** - vertical and horizontal roads divide the city into rectangular blocks. A pattern common in newer cities, especially in North America and Asia.
   - **METRO** - a grid with roads forming a diagonal X from the centre as well.
 
 Water and swamp will affect the city plan, as the builders will have to make bridges to cross
@@ -149,7 +149,7 @@ build on, so they will only build in the valleys. Other terrain will just be bul
 name of progress, though you may find a few hexes left between buildings.
 
 There is also an "advanced" button, which lets you fine-tune the map to your liking. See the
-"advanced map settings" section near the end of this file
+"advanced map settings" section near the end of this file.
 
 ### Initiative Report
 

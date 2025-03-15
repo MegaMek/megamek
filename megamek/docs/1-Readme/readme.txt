@@ -339,10 +339,10 @@ Although MegaMek tries to be faithful to the original board game rules, in some 
 technical or design limitations, this is not possible. These differences are not considered
 "bugs." If you spot any more discrepancies, please contact the author (see "CONTACT" below.)
 
-- If the line of fire lies along the edge of two hexes, in the board game, the defender chooses which hex to use. Instead, MegaMek chooses the hex that most favors the defender.
-- When punching, you automatically punch with both arms, if possible. This means you can not punch two different targets in the same round.
+- In the board game, if the line of fire lies along the edge of two hexs, the defender chooses which hex to use. Instead, MegaMek chooses the hex that favors the defender.
+- When punching, both arms punch automatically if possible. This means you can not punch two different targets in the same round.
 - When kicking, you automatically use the leg with the better chance to hit.
-- There are several situations, notably death from above, where a unit is displaced out of a hex, and that unit's owner may pick the hex to move to. MegaMek currently picks the hex for you, choosing high elevations over low ones, to avoid falling damage.
+- There are several situations, notably death from above, where a unit is displaced out of a hex, and that unit's owner may pick the hex to move to. MegaMek currently picks the hex for you, choosing high elevations over low ones to avoid falling damage.
 
 ## CONTACT & FURTHER INFORMATION
 

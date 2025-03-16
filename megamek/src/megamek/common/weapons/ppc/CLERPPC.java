@@ -31,11 +31,11 @@ public class CLERPPC extends PPCWeapon {
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 23;
-        this.extremeRange = 28;
+        this.extremeRange = 34;
         this.waterShortRange = 4;
         this.waterMediumRange = 10;
         this.waterLongRange = 16;
-        this.waterExtremeRange = 20;
+        this.waterExtremeRange = 24;
         this.tonnage = 6.0;
         this.criticals = 2;
         this.bv = 412;

@@ -41,7 +41,7 @@ public class ISLGaussRifle extends GaussWeapon {
         shortRange = 8;
         mediumRange = 17;
         longRange = 25;
-        extremeRange = 34;
+        extremeRange = 37;
         tonnage = 12.0;
         criticals = 5;
         bv = 159;

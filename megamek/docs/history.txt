@@ -101,7 +101,8 @@ MEGAMEK VERSION HISTORY:
 + Fix #6699: return missing immobile mod (#6701)
 + Fix #6700, #6575, #6574, #6573: Prevent GUI error when changing attributes in the lobby while in ForceView
 + PR #6697: Correct license header text for AI module
-+ Fix #6650: - Correct weight calculation for support vehicles with Fire Control Systems; correct armor type for SOAR VTOL
++ Fix #6650: Correct weight calculation for support vehicles with Fire Control Systems; correct armor type for SOAR VTOL
++ Fix #6301: Corrected phases not skipped when using /victory with phase skipping enabled (#6705)
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

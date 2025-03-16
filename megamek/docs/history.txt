@@ -103,6 +103,9 @@ MEGAMEK VERSION HISTORY:
 + PR #6697: Correct license header text for AI module
 + Fix #6650: Correct weight calculation for support vehicles with Fire Control Systems; correct armor type for SOAR VTOL
 + Fix #6301: Corrected phases not skipped when using /victory with phase skipping enabled (#6705)
++ PR #6704: Add Tactics Command bonus to deployment initiative
++ PR #6703: Fortify internal SkillLevel enumeration to support MekHQ skill overrides
++ PR #6695: Improvement for experimental AI for Princess; path ranking
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

@@ -53,7 +53,7 @@ public class UnitStateSerde extends TsvSerde<UnitState> {
         row[UnitStateField.PLAYER_ID.ordinal()] = String.valueOf(obj.playerId());
         row[UnitStateField.ENTITY_ID.ordinal()] = String.valueOf(obj.id());
         row[UnitStateField.CHASSIS.ordinal()] = obj.chassis();
-        row[UnitStateField.MODEL.ordinal()] = obj.chassis();
+        row[UnitStateField.MODEL.ordinal()] = obj.model();
         row[UnitStateField.TYPE.ordinal()] = obj.type();
         row[UnitStateField.ROLE.ordinal()] = obj.role() == null ? UnitRole.NONE.name() : obj.role().name();
         row[UnitStateField.X.ordinal()] = String.valueOf(obj.x());

@@ -41,7 +41,7 @@ public class CLGaussRifle extends GaussWeapon {
         this.shortRange = 7;
         this.mediumRange = 15;
         this.longRange = 22;
-        this.extremeRange = 30;
+        this.extremeRange = 33;
         this.tonnage = 12.0;
         this.criticals = 6;
         this.bv = 320;

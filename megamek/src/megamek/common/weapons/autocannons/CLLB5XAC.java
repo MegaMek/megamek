@@ -36,7 +36,7 @@ public class CLLB5XAC extends LBXACWeapon {
         shortRange = 8;
         mediumRange = 15;
         longRange = 24;
-        extremeRange = 30;
+        extremeRange = 36;
         tonnage = 7.0;
         criticals = 4;
         bv = 93;

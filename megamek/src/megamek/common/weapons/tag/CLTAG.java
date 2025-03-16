@@ -35,7 +35,7 @@ public class CLTAG extends TAGWeapon {
         shortRange = 5;
         mediumRange = 9;
         longRange = 15;
-        extremeRange = 18;
+        extremeRange = 22;
         bv = 0;
         cost = 50000;
         rulesRefs = "238, TM";

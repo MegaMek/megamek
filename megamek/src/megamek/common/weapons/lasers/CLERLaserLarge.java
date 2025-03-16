@@ -31,11 +31,11 @@ public class CLERLaserLarge extends LaserWeapon {
         shortRange = 8;
         mediumRange = 15;
         longRange = 25;
-        extremeRange = 30;
+        extremeRange = 37;
         waterShortRange = 5;
         waterMediumRange = 10;
         waterLongRange = 16;
-        waterExtremeRange = 20;
+        waterExtremeRange = 24;
         tonnage = 4.0;
         criticals = 1;
         bv = 248;

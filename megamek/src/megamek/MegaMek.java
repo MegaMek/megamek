@@ -35,7 +35,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import megamek.server.DedicatedServer;
 import megamek.utilities.GifWriter;
-import megamek.utilities.PrincessFineTuning;
 import megamek.utilities.RATGeneratorEditor;
 
 import javax.swing.*;
@@ -139,10 +138,6 @@ public class MegaMek {
         }
         if (parser.writeGif()) {
             startGifWriter(restArgs);
-            return;
-        }
-        if (parser.aiFineTuning()) {
-            startPrincessFineTuning(restArgs);
             return;
         }
         if (parser.ratGenEditor()) {
@@ -359,10 +354,6 @@ public class MegaMek {
         } catch (IOException e) {
             logger.error(e, "Error creating GIF");
         }
-    }
-
-    private static void startPrincessFineTuning(String... args) {
-        PrincessFineTuning.main(args);
     }
 
     /**

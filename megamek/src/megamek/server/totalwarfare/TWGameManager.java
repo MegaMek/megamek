@@ -32,6 +32,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
+import megamek.common.AmmoType.Munitions;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
@@ -31778,9 +31779,9 @@ public class TWGameManager extends AbstractGameManager {
             Vector<Integer> alreadyHit, boolean variableDamage, DamageFalloff falloff) {
 
         // Values used later
-        boolean isFuelAirBomb = ammo != null &&
-                (BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_SMALL ||
-                        BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_LARGE);
+        boolean isFuelAirBomb = ammo != null && ( ammo.getMunitionType().contains(Munitions.M_FAE)
+              || (BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_SMALL
+                      || BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_LARGE));
         Building bldg = game.getBoard().getBuildingAt(coords);
         Hex hex = game.getBoard().getHex(coords);
         int effectiveLevel = (hex != null) ? hex.getLevel() : 0;
@@ -31791,11 +31792,10 @@ public class TWGameManager extends AbstractGameManager {
         if (hex != null) {
 
             // Non-flak artillery damages terrain
-            // TODO: account for altitude vs: terrain height
             if (!flak) {
                 // Report that damage applied to terrain, if there's TF to damage
                 Hex h = game.getBoard().getHex(coords);
-                if ((h != null) && h.hasTerrainFactor()) {
+                if ((h != null) && h.hasTerrainFactor() && (altitude == h.getLevel())) {
                     r = new Report(3384);
                     r.indent(2);
                     r.subject = subjectId;
@@ -31811,7 +31811,6 @@ public class TWGameManager extends AbstractGameManager {
                 vPhaseReport.addAll(newReports);
             }
 
-            // TODO: account for altitude vs: terrain height
             // Buildings do _not_ shield housed units from artillery damage!
             if ((bldg != null)
                     && !(flak && (((altitude > hex.terrainLevel(Terrains.BLDG_ELEV))

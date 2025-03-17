@@ -395,17 +395,19 @@ public class MekMapSet implements DisplayMapSet {
             maxHeat = 30;
             steps = 4;
         }
-        Graphics g = heatImage.getGraphics();
-        for (int i = 0; i < maxHeat; i++) {
-            y = 120 - (i + 1) * steps;
-            if (i < t) {
-                g.setColor(Color.red);
-            } else {
-                g.setColor(Color.lightGray);
+        if (heatImage != null) {
+            Graphics g = heatImage.getGraphics();
+            for (int i = 0; i < maxHeat; i++) {
+                y = 120 - (i + 1) * steps;
+                if (i < t) {
+                    g.setColor(Color.red);
+                } else {
+                    g.setColor(Color.lightGray);
+                }
+                g.fillRect(0, y, 10, steps);
+                g.setColor(Color.black);
+                g.drawRect(0, y, 10, steps);
             }
-            g.fillRect(0, y, 10, steps);
-            g.setColor(Color.black);
-            g.drawRect(0, y, 10, steps);
         }
     }
 }

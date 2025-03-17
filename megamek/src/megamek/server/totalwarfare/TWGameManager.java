@@ -31786,11 +31786,10 @@ public class TWGameManager extends AbstractGameManager {
         if (hex != null) {
 
             // Non-flak artillery damages terrain
-            // TODO: account for altitude vs: terrain height
             if (!flak) {
                 // Report that damage applied to terrain, if there's TF to damage
                 Hex h = game.getBoard().getHex(coords);
-                if ((h != null) && h.hasTerrainFactor() && h.hasTerrainFactor() && (altitude == h.getLevel())) {
+                if ((h != null) && h.hasTerrainFactor() && (altitude == h.getLevel())) {
                     r = new Report(3384);
                     r.indent(2);
                     r.subject = subjectId;
@@ -31806,7 +31805,6 @@ public class TWGameManager extends AbstractGameManager {
                 vPhaseReport.addAll(newReports);
             }
 
-            // TODO: account for altitude vs: terrain height
             // Buildings do _not_ shield housed units from artillery damage!
             if ((bldg != null)
                     && !(flak && (((altitude > hex.terrainLevel(Terrains.BLDG_ELEV))

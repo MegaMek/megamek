@@ -31772,7 +31772,7 @@ public class TWGameManager extends AbstractGameManager {
             Vector<Report> vPhaseReport, boolean asfFlak,
             Vector<Integer> alreadyHit, boolean variableDamage, DamageFalloff falloff) {
 
-        // Values used later (TODO: include FAE munition here)
+        // Values used later
         boolean isFuelAirBomb = ammo != null && ( ammo.getMunitionType().contains(Munitions.M_FAE)
               || (BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_SMALL
                       || BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_LARGE));

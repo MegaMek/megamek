@@ -39,6 +39,8 @@ Aikido,1
 Aimless,1
 Airborne,1
 Airburst,1
+Airfang,1
+Airfoil,1
 Airhorn,1
 Airlift,1
 Airtight,1
@@ -53,6 +55,7 @@ Alias,1
 Alien,1
 Allegiance,1
 Alleycat,1
+Alloy,1
 Alpha,1
 Alpha Strike, 1,1
 Alphabet,1
@@ -64,6 +67,7 @@ Amaterasu,1
 Amazon,1
 Ambassador,1
 Amber,1
+Amberglow,1
 Ambrosia,1
 Ambush,1
 Amethyst,1
@@ -95,6 +99,7 @@ Anvil,1
 Apache,1
 Ape,1
 Apex,1
+Apex Jackal,1
 Aphelion,1
 Aphrodite,1
 Apocalypse,1
@@ -216,6 +221,7 @@ Bagpipe,1
 Bailiff,1
 Bailout,1
 Baja,1
+Balance,1
 Balancer,1
 Baldy,1
 Balisong,1
@@ -227,6 +233,7 @@ Bam Bam,1
 Bambi,1
 Banana,1
 Band,1
+Band-Aid,1
 Bandit,1
 Bando,1
 Bandsaw,1
@@ -254,6 +261,7 @@ Barn Owl,1
 Barnacle,1
 Barnet,1
 Baron,1
+Barracade,1
 Barracuda,1
 Barrage,1
 Barrel,1
@@ -263,11 +271,14 @@ Barricade,1
 Barrier,1
 Barrister,1
 Barter,1
+Basalt,1
 Basher,1
 Bashful,1
 Basil,1
 Basilisk,1
+Basin,1
 Bass,1
+Bassline,1
 Bast,1
 Bastion,1
 Bat,1
@@ -307,6 +318,7 @@ Beehive,1
 Beetle,1
 Behemoth,1
 Bell,1
+Bellerophon,1
 Bellows,1
 Belly Flop,1
 Beloved,1
@@ -320,7 +332,9 @@ Beta,1
 Beyond,1
 Bicep,1
 Bifrost,1
+Big Al,1
 Big Dog,1
+Big Rig,1
 Big Texas,1
 Big Ticket,1
 Big Top,1
@@ -341,7 +355,9 @@ Birdbrain,1
 Birdhand,1
 Birdie,1
 Birdstrike,1
+Biscotti,1
 Biscuit,1
+Biscuit Bandit,1
 Bishop,1
 Bison,1
 Bittersweet,1
@@ -363,6 +379,7 @@ Blaster,1
 Blazar,1
 Blaze,1
 Blazer,1
+Bleak,1
 Blender,1
 Blight,1
 Blind,1
@@ -373,6 +390,7 @@ Blip,1
 Bliss,1
 Blister,1
 Blitz,1
+Blitzkrieg,1
 Blizzard,1
 Blobfish,1
 Blockade,1
@@ -383,7 +401,9 @@ Blood,1
 Bloodfang,1
 Bloodhound,1
 Bloodname,1
+Bloodrider,1
 Bloodstone,1
+Bloom,1
 Blossom,1
 Blot,1
 Blowfly,1
@@ -412,6 +432,7 @@ Bolt,1
 Bomber,1
 Bombshell,1
 Bond,1
+Bonebreaker,1
 Bonecrusher,1
 Boneless,1
 Bones,1
@@ -425,6 +446,7 @@ Bookie,1
 Bookworm,1
 Boombox,1
 Boomer,1
+Boomerang,1
 Boomslang,1
 Boomstick,1
 Boomtube,1
@@ -451,6 +473,7 @@ Brainiac,1
 Brains,1
 Brainy,1
 Bramble,1
+Brandy,1
 Branth,1
 Brass,1
 Brave,1
@@ -466,6 +489,7 @@ Breakwater,1
 Breeze,1
 Brew,1
 Brewer,1
+Briar,1
 Brick,1
 Brickwall,1
 Brickyard,1
@@ -475,6 +499,7 @@ Bright,1
 Brilliance,1
 Brim,1
 Brimstone,1
+Brine,1
 Brisket,1
 Broadside,1
 Broadway,1
@@ -548,6 +573,7 @@ Buzz,1
 Buzzard,1
 Buzzkill,1
 Buzzsaw,1
+Byte,1
 C-Bill,1
 Cabal,1
 Cabbage,1
@@ -556,6 +582,7 @@ Cable,1
 Caboose,1
 Cactus,1
 Caddy,1
+Cadence,1
 Caesar,1
 Caffeine,1
 Cage,1
@@ -570,6 +597,7 @@ Caldera,1
 Caliber,1
 Caliper,1
 Caller,1
+Calliope,1
 Callisto,1
 Calm,1
 Calypso,1
@@ -621,6 +649,7 @@ Carrion,1
 Carrot,1
 Cartel,1
 Carton,1
+Cartridge,1
 Carver,1
 Caryatid,1
 Cascade,1
@@ -682,6 +711,7 @@ Charger,1
 Charlemagne,1
 Charm,1
 Charmer,1
+Charon,1
 Charter,1
 Charybdis,1
 Chase,1
@@ -713,6 +743,7 @@ Chili,1
 Chill,1
 Chillbox,1
 Chiller,1
+Chime,1
 Chimera,1
 Chimney,1
 Chinook,1
@@ -728,15 +759,19 @@ Chokehold,1
 Chomper,1
 Chopper,1
 Chopstick,1
+Chorus,1
 Chosen,1
+Chowder,1
 Chrome,1
 Chrome Dog,1
+Chrono,1
 Chuck,1
 Chuckles,1
 Chuckwagon,1
 Chum,1
 Chupacabra,1
 Church,1
+Cicada,1
 Cicerone,1
 Cider,1
 Cinder,1
@@ -754,6 +789,7 @@ Clam,1
 Clamp,1
 Clandestine,1
 Clanky,1
+Clarity,1
 Clash,1
 Classic,1
 Claw,1
@@ -767,10 +803,12 @@ Climax,1
 Clip,1
 Clipper,1
 Cloak,1
+Cloakfang,1
 Clobber,1
 Close Shave,1
 Closer,1
 Cloud,1
+Cloudbreaker,1
 Cloudburst,1
 Clover,1
 Clown,1
@@ -929,6 +967,7 @@ Crow,1
 Crowbar,1
 Crown,1
 Cruise,1
+Cruiser,1
 Cruithe,1
 Crumb,1
 Crumble,1
@@ -950,6 +989,7 @@ Cujo,1
 Cupcake,1
 Cure,1
 Curly,1
+Current,1
 Curve,1
 Cushion,1
 Custard,1
@@ -959,6 +999,7 @@ Cutline,1
 Cutter,1
 Cutthroat,1
 Cuttlefish,1
+Cyan,1
 Cyber,1
 Cyborg,1
 Cyclone,1
@@ -967,6 +1008,7 @@ Cygnus,1
 Cymbals,1
 Cynic,1
 Cypher,1
+Cypress,1
 Cyrene,1
 D-Day,1
 Daedalus,1
@@ -992,6 +1034,8 @@ Daring,1
 Darius,1
 Dark,1
 Dark Angel,1
+Darken,1
+Darkfang,1
 Darklight,1
 Darkness,1
 Darkstar,1
@@ -1003,6 +1047,7 @@ Dauntless,1
 DaVinci,1
 Dawn,1
 Dawnfire,1
+Dawnveil,1
 Daylight,1
 Dazzle,1
 Deacon,1
@@ -1019,6 +1064,8 @@ Dealer,1
 Death,1
 Death Angel,1
 Deathdealer,1
+Deathspire,1
+Deathstalker,1
 Deathstroke,1
 Debonair,1
 Debug,1
@@ -1030,6 +1077,7 @@ Decoy,1
 Decryption,1
 Deep Freeze,1
 Deep Six,1
+Deepfang,1
 Deepfield,1
 Deepsea,1
 Deer Hunter,1
@@ -1048,6 +1096,7 @@ Demoman,1
 Demon,1
 Dempsey,1
 Denial,1
+Depth,1
 Depth Charge,1
 Deputy,1
 Derby,1
@@ -1142,6 +1191,7 @@ Draco,1
 Draft,1
 Drag Strip,1
 Dragnet,1
+Drago,1
 Dragon,1
 Dragonfire,1
 Dragonfly,1
@@ -1150,13 +1200,22 @@ Dragonkick,1
 Dragoon,1
 Drake,1
 Draugr,1
+Dray,1
 Dread,1
 Dreadnought,1
+Dream,1
 Dream Weaver,1
 Dreamer,1
 Dreamland,1
+Dreamstalker,1
+Dreamstrike,1
+Drencher,1
 Drift,1
+Driftcore,1
 Drifter,1
+Driftice,1
+Driftshade,1
+Driftwood,1
 Drill,1
 Drillbit,1
 Drippy,1
@@ -1183,6 +1242,7 @@ Dune Rat,1
 Dusk,1
 Dust,1
 Dust Devil,1
+Dustbunny,1
 Dustcloud,1
 Dustdevil,1
 Duster,1
@@ -1201,6 +1261,7 @@ Easy,1
 Echelon,1
 Echidna,1
 Echo,1
+Echoflare,1
 Eclipse,1
 Eden,1
 Edge,1
@@ -1217,6 +1278,9 @@ Elf,1
 Elizabeth,1
 Elvis,1
 Ember,1
+Emberfall,1
+Emberfang,1
+Emberhound,1
 Emerald,1
 Emissary,1
 Emitter,1
@@ -1225,6 +1289,7 @@ Empire,1
 Empress,1
 Emu,1
 Encantado,1
+Enchant,1
 Enchanter,1
 Encrypt,1
 Encyclopedia,1
@@ -1250,14 +1315,17 @@ Escape,1
 Escargot,1
 Escort,1
 Eskrima,1
+Espresso,1
 Essence,1
 Esteem,1
+et,1
 Eternal,1
 Eternity,1
 Ethereal,1
 Euphoria,1
 Eureka,1
 Europa,1
+Eurydice,1
 Evac,1
 Evader,1
 Eventide,1
@@ -1286,8 +1354,11 @@ Fafnir,1
 Fair Weather,1
 Faith,1
 Faker,1
+Falchion,1
 Falcon,1
 Falconer,1
+Falconheart,1
+Falconry,1
 Fallout,1
 Fame,1
 Fang,1
@@ -1301,6 +1372,7 @@ Fate,1
 Father,1
 Fathom,1
 Fauchard,1
+Fawn,1
 Fearless,1
 Feather,1
 Feedback,1
@@ -1347,6 +1419,7 @@ Firestarter,1
 Firestorm,1
 Firestrike,1
 Firewall,1
+Firewing,1
 Firewolf,1
 Firewood,1
 Fish,1
@@ -1356,6 +1429,7 @@ Fix-It,1
 Fixer,1
 Fizz,1
 Fizzle,1
+Fjord,1
 Flag,1
 Flak,1
 Flame,1
@@ -1440,11 +1514,13 @@ Freebooter,1
 Freedom,1
 Freefall,1
 Freeway,1
+Freezer,1
 Freight,1
 Freight Train,1
 Freighter,1
 Frenzy,1
 Fresca,1
+Fresco,1
 Freya,1
 Friction,1
 Friday,1
@@ -1458,6 +1534,8 @@ Frontkick,1
 Frontline,1
 Frost,1
 Frostbite,1
+Frostfang,1
+Frostfire,1
 Frosty,1
 Fudge,1
 Fumble,1
@@ -1471,6 +1549,7 @@ Furry,1
 Fury,1
 Fuschia,1
 Fuse,1
+Fuseblade,1
 Fusion,1
 Fuster,1
 Fuzz,1
@@ -1558,13 +1637,16 @@ Giraffe,1
 Girder,1
 Gizmo,1
 Glacier,1
+Gladius,1
 Glaive,1
 Glance,1
 Glare,1
 Glass,1
 Glassjaw,1
 Glasswing,1
+Gleam,1
 Glide,1
+Glider,1
 Glimmer,1
 Glint,1
 Glissade,1
@@ -1573,6 +1655,8 @@ Glitter,1
 Global,1
 Glory,1
 Gloryhog,1
+Glow,1
+Glyde,1
 Glyph,1
 Gnarly,1
 Gnaw,1
@@ -1610,6 +1694,7 @@ Grand Slam,1
 Grandeur,1
 Grandmaster,1
 Grandpa,1
+Granite,1
 Grappler,1
 Grass,1
 Grave,1
@@ -1619,6 +1704,7 @@ Graviton,1
 Gravy,1
 Gravytrain,1
 Grayscale,1
+Greaseball,1
 Greasy,1
 Green,1
 Green Light,1
@@ -1635,6 +1721,7 @@ Griffin,1
 Grill,1
 Grim,1
 Grime,1
+Grimfang,1
 Grinch,1
 Grinder,1
 Grit,1
@@ -1666,6 +1753,7 @@ Gundoll,1
 Gunfire,1
 Gung-Ho,1
 Gunhog,1
+Gunmetal,1
 Gunner,1
 Gunport,1
 Gunpowder,1
@@ -1725,6 +1813,7 @@ Hardpoint,1
 Hardshell,1
 Hardtop,1
 Hardware,1
+Hardwire,1
 Harley,1
 Harmonic,1
 Harmony,1
@@ -1738,6 +1827,7 @@ Hash,1
 Hashcode,1
 Haste,1
 Hatchet,1
+Hatchet Jim,1
 Hatter,1
 Hauler,1
 Haven,1
@@ -1762,6 +1852,7 @@ Heart Attack,1
 Heat,1
 Heat Wave,1
 Heater,1
+Heather,1
 Heatsink,1
 Heatwave,1
 Heaven,1
@@ -1773,6 +1864,7 @@ Hedge,1
 Hedgehog,1
 Hefty,1
 Heirloom,1
+Helhound,1
 Helios,1
 Helius,1
 Helix,1
@@ -1795,6 +1887,7 @@ Hero,1
 Herringbone,1
 Hex,1
 Hexbolt,1
+Hexfang,1
 Hi-Spec,1
 Hibagon,1
 Hibiscus,1
@@ -1881,6 +1974,7 @@ Huevos,1
 Huggy,1
 Hulk,1
 Hull,1
+Hum,1
 Humdrum,1
 Hunchback,1
 Hunt,1
@@ -1888,6 +1982,7 @@ Hunter,1
 Huntress,1
 Hurl,1
 Hurricane,1
+Hush,1
 Husker,1
 Husky,1
 Hustle,1
@@ -1922,6 +2017,7 @@ Icepick,1
 Icetea,1
 Icicle,1
 Icon,1
+Idea,1
 Idol,1
 Idun,1
 Ifrit,1
@@ -1944,8 +2040,10 @@ Indy,1
 Infernal,1
 Inferno,1
 Infinity,1
+Inkblot,1
 Inkwell,1
 Innovation,1
+Insight,1
 Intake,1
 Intel,1
 Intendant,1
@@ -1960,6 +2058,8 @@ Iris,1
 Irish,1
 Iron,1
 Iron Claw,1
+Iron Crane,1
+Iron Jackal,1
 Iron Lady,1
 Iron Man,1
 Iron Will,1
@@ -1971,6 +2071,7 @@ Ironheart,1
 Ironhide,1
 Ironpalm,1
 Ironrust,1
+Ironshade,1
 Ironsides,1
 Ironwood,1
 Irony,1
@@ -2010,6 +2111,7 @@ Jasper,1
 Java,1
 Javelin,1
 Jaws,1
+Jay,1
 Jayhawk,1
 Jazz,1
 Jazzman,1
@@ -2024,14 +2126,18 @@ Jet,1
 Jet Set,1
 Jethro,1
 Jetstream,1
+Jetstrike,1
 Jettison,1
 Jewel,1
 Jiangshi,1
 Jib,1
+Jibber,1
 Jiggly,1
 Jigsaw,1
 Jingle,1
 Jinx,1
+Jitter,1
+Jitters,1
 Jiu,1
 Jive,1
 Joan,1
@@ -2124,6 +2230,7 @@ Killjoy,1
 Kilo,1
 Kilroy,1
 Kindle,1
+Kindling,1
 King,1
 King Kong,1
 Kingcrab,1
@@ -2134,6 +2241,7 @@ Kingwood,1
 Kinky,1
 Kipup,1
 Kishi,1
+Kismet,1
 Kite,1
 Kitsune,1
 Kitten,1
@@ -2160,6 +2268,7 @@ Kong,1
 Koschei,1
 Kpinga,1
 Kraken,1
+Krakenborn,1
 Krampus,1
 Krav,1
 Krieger,1
@@ -2174,11 +2283,13 @@ Laceleaf,1
 Laddie,1
 Lady,1
 Lager,1
+Lagoon,1
 Lagrange,1
 Laker,1
 Lamassu,1
 Lamb,1
 Lambchop,1
+Lament,1
 Lamia,1
 Lamp,1
 Lamplight,1
@@ -2186,6 +2297,7 @@ Lamprey,1
 Lance,1
 Lancer,1
 Land Shark,1
+Lander,1
 Landshark,1
 Landslide,1
 Lanik,1
@@ -2197,6 +2309,7 @@ Lash,1
 Lasher,1
 Lasso,1
 Lastshot,1
+Latch,1
 Lathe,1
 Latte,1
 Laurel,1
@@ -2276,6 +2389,8 @@ Lockjaw,1
 Lockpick,1
 Lockup,1
 Loco,1
+Loco Pete,1
+Locust,1
 Lodestar,1
 Logarithm,1
 Logjam,1
@@ -2286,6 +2401,7 @@ Lone Wolf,1
 Loner,1
 Long Haul,1
 Longarm,1
+Longbow,1
 Longhorn,1
 Longshadow,1
 Longshot,1
@@ -2294,6 +2410,9 @@ Lookout,1
 Loom,1
 Loon,1
 Loony,1
+Loop,1
+Loophole,1
+Loopy,1
 Loot,1
 Looter,1
 Lostech,1
@@ -2311,17 +2430,21 @@ Luddite,1
 Lugnut,1
 Lullaby,1
 Lumberjack,1
+Lumina,1
 Luminous,1
 Lumpy,1
 Luna,1
 Lunar,1
 Lunchbox,1
 Lungfish,1
+Lurk,1
 Lurker,1
+Luster,1
 Lustre,1
 Luxury,1
 Lycan,1
 Lynx,1
+Lynxheart,1
 Lyra,1
 Lyre,1
 Lyric,1
@@ -2408,6 +2531,7 @@ Mastodon,1
 Matador,1
 Match,1
 Matey,1
+Matrix,1
 Maul,1
 Maverick,1
 Max,1
@@ -2428,6 +2552,7 @@ Medipack,1
 Medusa,1
 Megaflop,1
 Megasaur,1
+Megawatt,1
 Mekjock,1
 Mekrat,1
 MekWarrior,1
@@ -2443,6 +2568,7 @@ Mercury,1
 Mercy,1
 Merlin,1
 Merrow,1
+Mesa,1
 Meta,1
 Metal,1
 Metalshard,1
@@ -2477,6 +2603,7 @@ Mirror,1
 Misfit,1
 Missile,1
 Mist,1
+Mistclaw,1
 Mistral,1
 Miter,1
 Mittens,1
@@ -2511,7 +2638,9 @@ Moonflower,1
 Moonglow,1
 Moonie,1
 Moonlight,1
+Moonpie,1
 Moonrise,1
+Moonveil,1
 Moose,1
 Moosejaw,1
 Moped,1
@@ -2554,6 +2683,7 @@ Mullet,1
 Mumble,1
 Mumbles,1
 Mumbo Jumbo,1
+Munch,1
 Mural,1
 Murdock,1
 Murk,1
@@ -2582,6 +2712,7 @@ Nails,1
 Namazu,1
 Nano,1
 Nanobot,1
+Nanofang,1
 Napalm,1
 Napoleon,1
 Narcissus,1
@@ -2612,6 +2743,7 @@ Nibbles,1
 Nickel,1
 Niflheim,1
 Night,1
+Night Lynx,1
 Night Witch,1
 Nightcap,1
 Nightfall,1
@@ -2620,6 +2752,7 @@ Nightjar,1
 Nightlight,1
 Nightmare,1
 Nightshade,1
+Nightstalker,1
 Nightstick,1
 Nightwatch,1
 Nimbus,1
@@ -2656,6 +2789,7 @@ Nunchuk,1
 Nursemaid,1
 Nuts,1
 Nutty,1
+Nymph,1
 Nyx,1
 Oak,1
 Oar,1
@@ -2678,6 +2812,7 @@ Offbeat,1
 Ogre,1
 Oil Slick,1
 Oiler,1
+Ol’ Blue,1
 Old Man,1
 Old Spice,1
 Olive,1
@@ -2708,6 +2843,7 @@ Origin,1
 Oriole,1
 Orion,1
 Ornate,1
+Orpheus,1
 Orthrus,1
 Oscar,1
 Osiris,1
@@ -2720,6 +2856,7 @@ Outback,1
 Outcast,1
 Outland,1
 Outlaw,1
+Outlawed,1
 Outpost,1
 Output,1
 Outreach,1
@@ -2728,6 +2865,7 @@ Outrigger,1
 Oven,1
 Overbite,1
 Overboard,1
+Overburn,1
 Overcast,1
 Overcharge,1
 Overclock,1
@@ -2762,6 +2900,7 @@ Painter,1
 Paisley,1
 Paladin,1
 Palerider,1
+Palette,1
 Palisade,1
 Palladium,1
 Palmstrike,1
@@ -2804,6 +2943,7 @@ Peace,1
 Peacebreaker,1
 Peach,1
 Peacock,1
+Peak,1
 Peaks,1
 Peanut,1
 Peanut Butter,1
@@ -2820,9 +2960,12 @@ Penny,1
 Pepper,1
 Perfume,1
 Pericles,1
+Periwinkle,1
 Permafrost,1
+Persephone,1
 Perseus,1
 Peryton,1
+Petal,1
 Phalanx,1
 Phantom,1
 Pharaoh,1
@@ -2902,6 +3045,8 @@ Pluto,1
 Poacher,1
 Pocus,1
 Pod,1
+Poem,1
+Pogo,1
 Point Blank,1
 Pointer,1
 Pointman,1
@@ -2983,6 +3128,7 @@ Psyche,1
 Psychic,1
 Psycho,1
 Pudding,1
+Puddle Jumper,1
 Puddles,1
 Puffbird,1
 Puffin,1
@@ -2991,6 +3137,7 @@ Pugilist,1
 Pulley,1
 Pulsar,1
 Pulse,1
+Pulseblade,1
 Puma,1
 Pumpkin,1
 Punchcard,1
@@ -3009,6 +3156,7 @@ Pyre,1
 Pyro,1
 Python,1
 Qilin,1
+Quack,1
 Quackers,1
 Quagmire,1
 Quake,1
@@ -3024,6 +3172,7 @@ Queen Bee,1
 Queenie,1
 Quench,1
 Quest,1
+Question,1
 Quick,1
 Quicksand,1
 Quickshot,1
@@ -3049,6 +3198,7 @@ Raft,1
 Rafter,1
 Ragamuffin,1
 Ragnar,1
+Ragnor,1
 Ragtime,1
 Ragtop,1
 Raid,1
@@ -3058,6 +3208,7 @@ Rain,1
 Rain Bird,1
 Rainbow,1
 Rainfall,1
+Rally,1
 Rambo,1
 Ramen,1
 Ramjet,1
@@ -3071,6 +3222,7 @@ Ransack,1
 Ranseur,1
 Rapier,1
 Raptor,1
+Rapture,1
 Rascal,1
 Raspberry,1
 Rat,1
@@ -3082,7 +3234,9 @@ Rattletrap,1
 Ravage,1
 Ravager,1
 Raven,1
+Raveneye,1
 Ravenstar,1
+Ravine,1
 Rawhide,1
 Raygun,1
 Rayshine,1
@@ -3157,9 +3311,11 @@ Retriever,1
 Retro,1
 Rev,1
 Revenant,1
+Reverb,1
 Revere,1
 Revolt,1
 Revolution,1
+Revolver,1
 Rewind,1
 Rewire,1
 Rewrite,1
@@ -3172,12 +3328,14 @@ Riches,1
 Richter,1
 Rico,1
 Ricochet,1
+Riddle,1
 Riddler,1
 Ride Along,1
 Rider,1
 Ridge,1
 Ridgeback,1
 Ridgehound,1
+Riff,1
 Riffraff,1
 Rifle,1
 Rifleman,1
@@ -3201,6 +3359,7 @@ Rival,1
 River,1
 Rivet,1
 Roach,1
+Roach Hotel,1
 Road Pig,1
 Road Rage,1
 Roadblock,1
@@ -3237,6 +3396,7 @@ Root,1
 Root Beer,1
 Rose,1
 Rosebud,1
+Rosewood,1
 Rotgut,1
 Rotor,1
 Rottweiler,1
@@ -3267,6 +3427,7 @@ Ruin,1
 Rum Runner,1
 Rumble,1
 Run Around,1
+Rune,1
 Runesmith,1
 Runt,1
 Runway,1
@@ -3277,13 +3438,18 @@ Rustbucket,1
 Rustler,1
 Ruststorm,1
 Rusty,1
+Rusty Joe,1
+Rusty Nail,1
 Ruthless,1
 Rye,1
 Saber,1
 Sabertooth,1
 Sable,1
+Sabot,1
 Sabotage,1
 Sabre,1
+Sabretooth,1
+Sabrewing,1
 Sack,1
 Safeguard,1
 Safety,1
@@ -3297,6 +3463,7 @@ Salesman,1
 Salsa,1
 Salt,1
 Salt Water,1
+Saltfang,1
 Salty Dog,1
 Salvage,1
 Salvager,1
@@ -3327,6 +3494,7 @@ Satyr,1
 Sauce,1
 Sausage,1
 Savage,1
+Savannah,1
 Savate,1
 Savior,1
 Savvy,1
@@ -3352,6 +3520,7 @@ Scientist,1
 Scimitar,1
 Scissor,1
 Scofflaw,1
+Scone,1
 Scoop,1
 Scooter,1
 Scope,1
@@ -3370,6 +3539,7 @@ Scrapheap,1
 Scrapmetal,1
 Scrapper,1
 Scrappy,1
+Scrappy Jack,1
 Scratchy,1
 Screamer,1
 Screw,1
@@ -3377,6 +3547,7 @@ Screwball,1
 Screwdriver,1
 Screwloose,1
 Scribble,1
+Scroll,1
 Scruff,1
 Scruffer,1
 Scruffy,1
@@ -3407,6 +3578,8 @@ Seneschal,1
 Sensei,1
 Sentinel,1
 Sentry,1
+Sentry Crow,1
+Sepia,1
 Seraph,1
 Serenade,1
 Serenity,1
@@ -3418,10 +3591,13 @@ Sever,1
 Severe,1
 Shackle,1
 Shade,1
+Shadeborn,1
 Shades,1
 Shadow,1
 Shadowbane,1
 Shadowcat,1
+Shadowdancer,1
+Shadowfiend,1
 Shadowrun,1
 Shadowstar,1
 Shadowstrike,1
@@ -3434,6 +3610,7 @@ Shank,1
 Shaolin,1
 Shard,1
 Shark,1
+Sharkeye,1
 Sharp,1
 Sharpshooter,1
 Sharpshot,1
@@ -3450,6 +3627,7 @@ Shepherd,1
 Sherbet,1
 Sheriff,1
 Shield,1
+Shieldbreaker,1
 Shifty,1
 Shill,1
 Shinobi,1
@@ -3458,6 +3636,7 @@ Shiv,1
 Shiva,1
 Shiver,1
 Shivers,1
+Shoal,1
 Shock Jock,1
 Shocker,1
 Shockwave,1
@@ -3489,6 +3668,7 @@ Shrike,1
 Shroud,1
 Shut-In,1
 Shutter,1
+Shuttle,1
 Sicilian,1
 Sickle,1
 Sidearm,1
@@ -3501,6 +3681,7 @@ Sidewalk,1
 Sideways,1
 Sidewinder,1
 Siege,1
+Siegehound,1
 Sierra,1
 Siesta,1
 Sif,1
@@ -3510,6 +3691,7 @@ Signals,1
 Signs,1
 Sigurd,1
 Silat,1
+Silence,1
 Silencer,1
 Silent,1
 Silhouette,1
@@ -3525,6 +3707,7 @@ Sirius,1
 Sirocco,1
 Six Shooter,1
 Sixpack,1
+Sizzle,1
 Sizzler,1
 Sjambok,1
 Skadi,1
@@ -3532,6 +3715,7 @@ Skater,1
 Skedaddle,1
 Skeet,1
 Sketch,1
+Skid,1
 Skidmark,1
 Skidoo,1
 Skids,1
@@ -3543,7 +3727,10 @@ Skullcap,1
 Skulls,1
 Skunk,1
 Sky,1
+Skydancer,1
 Skyfall,1
+Skyhawk,1
+Skylark,1
 Skyline,1
 Skyscraper,1
 Skyward,1
@@ -3566,8 +3753,10 @@ Sledgehammer,1
 Sleek,1
 Sleeper,1
 Sleepy,1
+Sleet,1
 Sleipnir,1
 Slick,1
+Slick Rick,1
 Slider,1
 Sliderule,1
 Slim,1
@@ -3609,6 +3798,7 @@ Snakewood,1
 Snap,1
 Snapdragon,1
 Snapper,1
+Snappy,1
 Snapshot,1
 Snarl,1
 Sneak,1
@@ -3630,6 +3820,7 @@ Snowbird,1
 Snowbound,1
 Snowcone,1
 Snowfall,1
+Snowfang,1
 Snowflake,1
 Snowfox,1
 Snowjob,1
@@ -3645,6 +3836,7 @@ Soft Serve,1
 Softball,1
 Softpoint,1
 Soggy,1
+Soggy Dog,1
 Solar,1
 Solarflare,1
 Solitaire,1
@@ -3657,6 +3849,7 @@ Songbird,1
 Sonic,1
 Soot,1
 Sorcerer,1
+Sorrow,1
 Soul,1
 Sound,1
 Sounder,1
@@ -3673,6 +3866,7 @@ Spanner,1
 Spar,1
 Spare Parts,1
 Spark,1
+Sparkjaw,1
 Sparkle,1
 Sparkles,1
 Sparkplug,1
@@ -3681,6 +3875,7 @@ Sparrow,1
 Sparrowhawk,1
 Spartacus,1
 Spartan,1
+Spatha,1
 Spear,1
 Spearhead,1
 Spectacle,1
@@ -3729,6 +3924,7 @@ Sprite,1
 Sprocket,1
 Spruce,1
 Spud,1
+Spud Muffin,1
 Spur,1
 Spyglass,1
 Squadron,1
@@ -3760,6 +3956,7 @@ Starbreaker,1
 Starbuck,1
 Starburst,1
 Stardust,1
+Starfall,1
 Starfire,1
 Starfish,1
 Stargazer,1
@@ -3806,7 +4003,10 @@ Storm,1
 Stormbreaker,1
 Stormchaser,1
 Stormcloud,1
+Stormhammer,1
+Stormhound,1
 Stowaway,1
+Strafe,1
 Stranger,1
 Strap,1
 Stratosphere,1
@@ -3830,6 +4030,7 @@ Stuka,1
 Stumpy,1
 Stungun,1
 Sturm,1
+Styx,1
 Sublime,1
 Submerge,1
 Subnet,1
@@ -3876,6 +4077,7 @@ Swashbuckler,1
 Sweep,1
 Sweeper,1
 Sweetness,1
+Swell,1
 Swerve,1
 Swift,1
 Swindle,1
@@ -3884,6 +4086,7 @@ Swing,1
 Switch,1
 Switchback,1
 Switchblade,1
+Swoop,1
 Swordfish,1
 Swordplay,1
 Sylph,1
@@ -3908,6 +4111,8 @@ Talisman,1
 Talky,1
 Tally,1
 Talon,1
+Talonfire,1
+Talonstrike,1
 Tango,1
 Taniwha,1
 Tank,1
@@ -3928,10 +4133,13 @@ Taser,1
 Taskmaster,1
 Tasty,1
 Tater,1
+Tater Tot,1
 Taurus,1
 Taxes,1
 Teacher,1
+Teal,1
 Tech,1
+Techhound,1
 Techno,1
 Teflon,1
 Telescope,1
@@ -3939,6 +4147,7 @@ Telltale,1
 Tempest,1
 Templar,1
 Tempo,1
+Tempus,1
 Ten Pin,1
 Tengu,1
 Terminal,1
@@ -3949,19 +4158,25 @@ Tesla,1
 Tesseract,1
 Tetrad,1
 Texas,1
+Thalassa,1
 Thane,1
 Thatcher,1
 Thaumaturge,1
 Thaw,1
 The Count,1
+Theory,1
 Theropod,1
+Theseus,1
 Thief,1
 Thinker,1
 Thirteen,1
+Thistle,1
 Thor,1
 Thorax,1
 Thorn,1
+Thornback,1
 Thoth,1
+Thought,1
 Thracian,1
 Thraex,1
 Thrash,1
@@ -3969,6 +4184,7 @@ Thrasher,1
 Thread,1
 Thresher,1
 Throttle,1
+Thrust,1
 Thud,1
 Thumb,1
 Thumper,1
@@ -3976,11 +4192,13 @@ Thunder,1
 Thunderbird,1
 Thunderbolt,1
 Thunderclap,1
+Thunderclaw,1
 Thunderer,1
 Tiara,1
 Tick,1
 Tickles,1
 Ticktock,1
+Tidal,1
 Tidal Wave,1
 Tidbit,1
 Tide,1
@@ -4010,6 +4228,7 @@ Toad,1
 Toad-fox,1
 Toast,1
 Toaster,1
+Toasty,1
 Toffee,1
 Tofu,1
 Toga,1
@@ -4058,6 +4277,7 @@ Trapline,1
 Trapper,1
 Trash,1
 Trashcan,1
+Trashfire,1
 Traveller,1
 Tread,1
 Treadmark,1
@@ -4066,14 +4286,17 @@ Trebuchet,1
 Treehugger,1
 Tremor,1
 Trench,1
+Trencher,1
 Triceratops,1
 Trickshot,1
 Tricky,1
 Trident,1
+Trident Hawk,1
 Trifecta,1
 Trig,1
 Trigger,1
 Trigger Happy,1
+Trike,1
 Trilobyte,1
 Trip,1
 Tripod,1
@@ -4082,6 +4305,7 @@ Triton,1
 Triumph,1
 Trojan,1
 Troll,1
+Trolley,1
 Trooper,1
 Tropic,1
 Tropical,1
@@ -4094,10 +4318,12 @@ Trucker,1
 Truffle,1
 Trumpet,1
 Truncheon,1
+Truth,1
 Tsuchigumo,1
 Tsunami,1
 Tuba,1
 Tugboat,1
+Tulip,1
 Tulpa,1
 Tumble,1
 Tumble Weed,1
@@ -4129,6 +4355,7 @@ Typhoon,1
 Tyrant,1
 Ullr,1
 Ultimatum,1
+Umber,1
 Umbra,1
 Umbrella,1
 Umpire,1
@@ -4184,9 +4411,13 @@ Velvet,1
 Vengeance,1
 Venom,1
 Venture,1
+Vermilion,1
 Vermin,1
+Verse,1
 Vespa,1
+Vesper,1
 Vespid,1
+Vex,1
 Vice,1
 Victim,1
 Victor,1
@@ -4281,11 +4512,15 @@ Wheely,1
 Whelk,1
 Whetstone,1
 Whiplash,1
+Whirl,1
 Whirlpool,1
 Whirlwind,1
 Whisker,1
 Whiskers,1
 Whiskey,1
+Whisper,1
+Whisperblade,1
+Whisperfang,1
 Whistle,1
 Whistler,1
 White Rose,1
@@ -4297,6 +4532,8 @@ Who,1
 Wicked,1
 Wideload,1
 Widow,1
+Widowstrike,1
+Wiggle,1
 Wiggly,1
 Wight,1
 Wild,1
@@ -4308,6 +4545,7 @@ Willow,1
 Willowisp,1
 Winch,1
 Windchill,1
+Windclaw,1
 Windfall,1
 Windjammer,1
 Windmill,1
@@ -4345,8 +4583,11 @@ Wooley,1
 Workhorse,1
 Worldwide,1
 Worm,1
+Worry,1
 Worrywart,1
 Wraith,1
+Wraithborn,1
+Wraithcaller,1
 Wrangler,1
 Wrath,1
 Wreath,1
@@ -4368,6 +4609,7 @@ Yamato,1
 Yankee,1
 Yard,1
 Yardarm,1
+Yearn,1
 Yellowjacket,1
 Yeti,1
 Ymir,1

@@ -1,0 +1,28 @@
+key: ShA
+name: Shiloh Alliance
+capital: Shiloh
+yearsActive:
+  - start: 3135
+    end: 3144
+successor: RR
+tags:
+  - MINOR
+  - IS
+color:
+  red: 97
+  green: 26
+  blue: 92
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - -1
+fallBackFactions:
+  - ROS

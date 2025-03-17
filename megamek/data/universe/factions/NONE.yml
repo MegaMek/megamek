@@ -1,0 +1,13 @@
+key: NONE
+name: Unexplored
+capital: Terra
+tags:
+  - SPECIAL
+  - PERIPHERY
+  - ABANDONED
+  - INACTIVE
+  - CHAOS
+color:
+  red: 0
+  green: 0
+  blue: 0

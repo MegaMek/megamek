@@ -1,0 +1,22 @@
+key: NDC
+name: New Delphi Compact
+capital: New Delphi
+tags:
+  - DEEP_PERIPHERY
+color:
+  red: 127
+  green: 151
+  blue: 139
+logo: Periphery/New Delphi Compact.png
+eraMods:
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2

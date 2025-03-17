@@ -1,0 +1,12 @@
+key: DT
+name: Duchy of Tamarind
+capital: Tamarind
+successor: DTA
+tags:
+  - MINOR
+  - IS
+color:
+  red: 158
+  green: 60
+  blue: 147
+nameGenerator: FWL

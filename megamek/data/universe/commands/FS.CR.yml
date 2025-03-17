@@ -1,0 +1,9 @@
+key: FS.CR
+name: Chisholm's Raiders
+yearsActive:
+  - start: 2897
+    end: 3067
+ratingLevels:
+  - D
+fallBackFactions:
+  - FS

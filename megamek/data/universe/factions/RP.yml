@@ -1,0 +1,12 @@
+key: RP
+name: Regulan Principality
+capital: Regulus
+successor: FWL
+tags:
+  - MINOR
+  - IS
+color:
+  red: 255
+  green: 51
+  blue: 51
+nameGenerator: FWL

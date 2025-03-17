@@ -1,0 +1,32 @@
+key: CGB
+name: Clan Ghost Bear
+nameChanges:
+  3060: Ghost Bear Dominion
+capital: Arcadia (Clan)
+capitalChanges: 
+  3060: Alshain
+yearsActive:
+  - start: 2807
+    end: 3103
+successor: RD
+tags:
+  - PLAYABLE
+  - MAJOR
+  - CLAN
+color:
+  red: 191
+  green: 232
+  blue: 255
+logo: Clan/Clan Ghost Bear.png
+background: Clan/Clan Ghost Bear.png
+camos: Clans/Ghost Bear
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.IS
+postInvasionHonorRating: LIBERAL

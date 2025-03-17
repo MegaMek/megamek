@@ -1,0 +1,39 @@
+key: OA
+name: Outworlds Alliance
+nameChanges:
+  3083: Raven Alliance
+capital: Alpheratz
+yearsActive:
+  - start: 2413
+    end: 3082
+successor: RA
+tags:
+  - PLAYABLE
+  - LENIENT
+  - PERIPHERY
+  - STINGY
+color:
+  red: 217
+  green: 198
+  blue: 153
+logo: Periphery/Outworlds Alliance.png
+background: Periphery/Outworlds Alliance.png
+camos: Outworlds Alliance
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 2
+  - 1
+  - 0
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.OS

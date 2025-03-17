@@ -1,0 +1,12 @@
+key: AC
+name: Azami Caliphate
+capital: Algedi
+successor: DC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 66
+  green: 244
+  blue: 66
+nameGenerator: DC

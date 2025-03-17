@@ -1,0 +1,9 @@
+key: LA.YR
+name: York Regulars
+yearsActive:
+  - start: 2700
+    end: 2950
+ratingLevels:
+  - F
+fallBackFactions:
+  - LA

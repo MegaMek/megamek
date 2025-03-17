@@ -1,0 +1,26 @@
+key: CSL
+name: Clan Stone Lion
+capital: Tokasha
+yearsActive:
+  - start: 3075
+    end: 3085
+tags:
+  - MINOR
+  - CLAN
+color:
+  red: 250
+  green: 166
+  blue: 26
+logo: Clan/Clan Stone Lion.png
+background: Clan/Clan Stone Lion.png
+camos: Clans/Stone Lion
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CHH
+  - CLAN.HW

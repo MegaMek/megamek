@@ -1,0 +1,9 @@
+key: MSC.FWL
+name: Free Worlds Legionnaires
+yearsActive:
+  - start: 3082
+    end: 3138
+ratingLevels:
+  - B
+fallBackFactions:
+  - MSC

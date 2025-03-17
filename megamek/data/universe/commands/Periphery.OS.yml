@@ -1,0 +1,12 @@
+key: Periphery.OS
+name: Outer Sphere
+tags:
+  - PERIPHERY
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery

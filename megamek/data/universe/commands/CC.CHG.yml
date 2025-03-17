@@ -1,0 +1,8 @@
+key: CC.CHG
+name: Capellan Home Guard
+yearsActive:
+  - start: 2367
+ratingLevels:
+  - F
+fallBackFactions:
+  - CC

@@ -1,0 +1,9 @@
+key: FWL.FWL
+name: Free Worlds Legionnaires
+yearsActive:
+  - start: 3042
+    end: 3079
+ratingLevels:
+  - B
+fallBackFactions:
+  - FWL

@@ -1,0 +1,12 @@
+key: SIS
+name: Sian Supremacy
+capital: Terra
+successor: CCom
+tags:
+  - MINOR
+  - IS
+color:
+  red: 145
+  green: 166
+  blue: 242
+nameGenerator: CC

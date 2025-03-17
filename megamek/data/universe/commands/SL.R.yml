@@ -1,0 +1,7 @@
+key: SL.R
+name: Star League Royal
+yearsActive:
+  - start: 2571
+    end: 2780
+fallBackFactions:
+  - SL

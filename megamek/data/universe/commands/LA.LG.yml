@@ -1,0 +1,8 @@
+key: LA.LG
+name: Lyran Guards
+yearsActive:
+  - start: 2341
+ratingLevels:
+  - D
+fallBackFactions:
+  - LA

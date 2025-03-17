@@ -1,0 +1,23 @@
+key: AXP
+name: Axumite Providence
+capital: Thala
+tags:
+  - DEEP_PERIPHERY
+color:
+  red: 153
+  green: 50
+  blue: 204
+logo: Periphery/Axumite Providence.png
+background: Periphery/Axumite Providence.png
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2

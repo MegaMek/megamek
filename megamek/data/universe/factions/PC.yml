@@ -1,0 +1,28 @@
+key: PC
+name: Protectorate Coalition
+capital: Rochelle
+yearsActive:
+  - start: 3136
+    end: 3144
+successor: FWL
+tags:
+  - MINOR
+  - IS
+color:
+  red: 51
+  green: 51
+  blue: 102
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - -1
+fallBackFactions:
+  - FWL

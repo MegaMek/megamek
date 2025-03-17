@@ -1,0 +1,8 @@
+key: DC.ALAG
+name: Amphigean Light Assault Group
+yearsActive:
+  - start: 2319
+ratingLevels:
+  - B
+fallBackFactions:
+  - DC

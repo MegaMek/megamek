@@ -1,0 +1,9 @@
+key: MSC.FWG
+name: Free Worlds Guards
+yearsActive:
+  - start: 3082
+    end: 3138
+ratingLevels:
+  - A
+fallBackFactions:
+  - MSC

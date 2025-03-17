@@ -1,0 +1,13 @@
+key: RPG
+name: Rim Provisional Government
+capital: Apollo
+tags:
+  - PERIPHERY
+  - SMALL
+color:
+  red: 164
+  green: 113
+  blue: 215
+eraMods:
+  - 1
+  - 1

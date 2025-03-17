@@ -1,0 +1,12 @@
+key: TamP
+name: Tamar Pact
+capital: Terra
+successor: LA
+tags:
+  - MINOR
+  - IS
+color:
+  red: 244
+  green: 161
+  blue: 66
+nameGenerator: LA

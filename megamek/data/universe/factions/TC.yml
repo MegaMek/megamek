@@ -1,0 +1,37 @@
+key: TC
+name: Taurian Concordat
+capital: Taurus
+yearsActive:
+  - start: 2335
+tags:
+  - PLAYABLE
+  - PERIPHERY
+  - STINGY
+  - CONTROLLING
+color:
+  red: 181
+  green: 58
+  blue: 33
+logo: Periphery/Taurian Concordat.png
+background: Periphery/Taurian Concordat.png
+camos: Taurian Concordat
+eraMods:
+  - 0
+  - 0
+  - 1
+  - 1
+  - 1
+  - 2
+  - 2
+  - 1
+  - 0
+  - 1
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.HR

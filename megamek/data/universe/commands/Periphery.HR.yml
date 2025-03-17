@@ -1,0 +1,12 @@
+key: Periphery.HR
+name: Hyades Rim
+tags:
+  - PERIPHERY
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery

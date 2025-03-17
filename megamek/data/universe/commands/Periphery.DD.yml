@@ -1,0 +1,12 @@
+key: Periphery.DD
+name: Draconian Drift
+tags:
+  - PERIPHERY
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery

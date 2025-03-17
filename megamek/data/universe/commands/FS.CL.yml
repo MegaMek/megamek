@@ -1,0 +1,8 @@
+key: FS.CL
+name: Crucis Lancers
+yearsActive:
+  - start: 2780
+ratingLevels:
+  - B
+fallBackFactions:
+  - FS

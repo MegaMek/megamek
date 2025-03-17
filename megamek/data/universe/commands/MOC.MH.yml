@@ -1,0 +1,10 @@
+key: MOC.MH
+name: Magistracy Highlanders
+yearsActive:
+  - start: 2755
+tags:
+  - PERIPHERY
+ratingLevels:
+  - B
+fallBackFactions:
+  - MOC

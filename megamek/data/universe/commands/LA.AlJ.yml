@@ -1,0 +1,8 @@
+key: LA.AlJ
+name: Alliance Jaegers
+yearsActive:
+  - start: 3057
+ratingLevels:
+  - B
+fallBackFactions:
+  - LA

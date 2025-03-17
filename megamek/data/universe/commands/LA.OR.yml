@@ -1,0 +1,9 @@
+key: LA.OR
+name: Odessa Regulars
+yearsActive:
+  - start: 2755
+    end: 2950
+ratingLevels:
+  - B
+fallBackFactions:
+  - LA

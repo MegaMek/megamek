@@ -1,0 +1,9 @@
+key: CS.EC
+name: Explorer Corps
+yearsActive:
+  - start: 2959
+ratingLevels:
+  - B
+  - A
+fallBackFactions:
+  - CS

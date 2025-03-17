@@ -1,0 +1,8 @@
+key: TC.pm
+name: Planetary Militia
+yearsActive:
+  - start: 2335
+ratingLevels:
+  - F
+fallBackFactions:
+  - TC

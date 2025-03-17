@@ -1,0 +1,8 @@
+key: LA.AlG
+name: Alliance Guards
+yearsActive:
+  - start: 3058
+ratingLevels:
+  - C
+fallBackFactions:
+  - LA

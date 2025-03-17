@@ -1,0 +1,38 @@
+key: FS
+name: Federated Suns
+capital: New Avalon
+yearsActive:
+  - start: 2317
+tags:
+  - PLAYABLE
+  - MAJOR
+  - IS
+  - GENEROUS
+color:
+  red: 255
+  green: 221
+  blue: 0
+logo: Inner Sphere/Federated Suns.png
+background: Inner Sphere/Federated Suns.png
+camos: Federated Suns
+nameGenerator: FS
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
+  - 0
+  - 0
+  - 1
+  - 0
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

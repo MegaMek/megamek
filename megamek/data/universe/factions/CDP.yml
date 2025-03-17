@@ -1,0 +1,36 @@
+key: CDP
+name: Calderon Protectorate
+capital: Erod's Escape
+yearsActive:
+  - start: 3066
+tags:
+  - PLAYABLE
+  - PERIPHERY
+color:
+  red: 0
+  green: 128
+  blue: 128
+logo: Periphery/Calderon Protectorate.png
+background: Periphery/Taurian Concordat.png
+camos: Calderon Protectorate
+eraMods:
+  - 0
+  - 0
+  - 1
+  - 1
+  - 1
+  - 2
+  - 2
+  - 1
+  - 0
+  - 1
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.HR
+  - TC

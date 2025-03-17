@@ -1,0 +1,36 @@
+key: RF
+name: Regulan Fiefs
+capital: Regulus
+yearsActive:
+  - start: 3086
+successor: FWL
+tags:
+  - MINOR
+  - IS
+color:
+  red: 255
+  green: 51
+  blue: 51
+logo: Inner Sphere/Regulan Fiefs.png
+background: Inner Sphere/Free Worlds League.png
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS
+  - FWL

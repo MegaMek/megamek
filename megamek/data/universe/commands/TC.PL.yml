@@ -1,0 +1,8 @@
+key: TC.PL
+name: Pleiades Lancers
+yearsActive:
+  - start: 2335
+tags:
+  - PERIPHERY
+fallBackFactions:
+  - TC

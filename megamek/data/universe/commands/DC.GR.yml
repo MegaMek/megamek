@@ -1,0 +1,8 @@
+key: DC.GR
+name: Galedon Regulars
+yearsActive:
+  - start: 2319
+ratingLevels:
+  - B
+fallBackFactions:
+  - DC

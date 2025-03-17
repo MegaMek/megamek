@@ -1,0 +1,9 @@
+key: FWL.KIS
+name: Knights of the Inner Sphere
+yearsActive:
+  - start: 3055
+    end: 3079
+ratingLevels:
+  - A
+fallBackFactions:
+  - FWL

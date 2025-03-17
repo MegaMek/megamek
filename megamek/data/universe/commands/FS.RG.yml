@@ -1,0 +1,9 @@
+key: FS.RG
+name: Republican Guards
+yearsActive:
+  - start: 3029
+    end: 3067
+ratingLevels:
+  - C
+fallBackFactions:
+  - CC

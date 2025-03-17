@@ -1,0 +1,9 @@
+key: DC.PH
+name: Proserpina Hussars
+yearsActive:
+  - start: 2319
+    end: 3082
+ratingLevels:
+  - C
+fallBackFactions:
+  - DC

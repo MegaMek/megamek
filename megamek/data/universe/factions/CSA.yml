@@ -1,0 +1,26 @@
+key: CSA
+name: Clan Star Adder
+capital: Sheridan (Clan)
+yearsActive:
+  - start: 2807
+    end: 3085
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 218
+  green: 165
+  blue: 32
+logo: Clan/Clan Star Adder.png
+background: Clan/Clan Star Adder.png
+camos: Clans/Star Adder
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.HW

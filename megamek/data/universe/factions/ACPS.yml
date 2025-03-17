@@ -1,0 +1,12 @@
+key: ACPS
+name: Asian Co-Prosperity Sphere
+capital: Terra
+successor: WA
+tags:
+  - MINOR
+  - IS
+color:
+  red: 0
+  green: 20
+  blue: 220
+nameGenerator: CC

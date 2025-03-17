@@ -1,0 +1,36 @@
+key: TP
+name: The Protectorate
+capital: New Delos
+yearsActive:
+  - start: 3078
+    end: 3086
+successor: OP
+tags:
+  - MINOR
+  - IS
+color:
+  red: 255
+  green: 51
+  blue: 51
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - OP
+  - IS
+  - FWL

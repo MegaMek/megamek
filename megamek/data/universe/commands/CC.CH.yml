@@ -1,0 +1,8 @@
+key: CC.CH
+name: Capellan Hussars
+yearsActive:
+  - start: 2367
+ratingLevels:
+  - A
+fallBackFactions:
+  - CC

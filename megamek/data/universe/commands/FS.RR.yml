@@ -1,0 +1,8 @@
+key: FS.RR
+name: Robinson Rangers
+yearsActive:
+  - start: 2780
+ratingLevels:
+  - C
+fallBackFactions:
+  - FS

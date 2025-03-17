@@ -1,0 +1,9 @@
+key: LA.SR
+name: Skye Rangers
+yearsActive:
+  - start: 2341
+    end: 3081
+ratingLevels:
+  - C
+fallBackFactions:
+  - LA

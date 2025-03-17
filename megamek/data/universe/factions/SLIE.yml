@@ -1,0 +1,14 @@
+key: SLIE
+name: Star League-in-Exile
+capital: Strana Mechty
+yearsActive:
+  - start: 2786
+    end: 2801
+tags:
+  - IS
+color:
+  red: 176
+  green: 196
+  blue: 222
+fallBackFactions:
+  - SL

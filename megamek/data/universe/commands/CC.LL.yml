@@ -1,0 +1,9 @@
+key: CC.LL
+name: Liao Lancers
+yearsActive:
+  - start: 2529
+    end: 3000
+ratingLevels:
+  - D
+fallBackFactions:
+  - CC

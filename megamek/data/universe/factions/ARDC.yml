@@ -1,0 +1,24 @@
+key: ARDC
+name: Arc-Royal Defense Cordon
+capital: Arc-Royal
+yearsActive:
+  - start: 3058
+    end: 3067
+tags:
+  - MINOR
+  - IS
+color:
+  red: 218
+  green: 165
+  blue: 32
+nameGenerator: LA
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - MERC.KH
+  - LA
+  - MERC

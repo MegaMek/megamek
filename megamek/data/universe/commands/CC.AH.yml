@@ -1,0 +1,9 @@
+key: CC.AH
+name: Andurien Hussars
+yearsActive:
+  - start: 2556
+    end: 3000
+ratingLevels:
+  - C
+fallBackFactions:
+  - CC

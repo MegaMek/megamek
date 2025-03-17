@@ -1,0 +1,35 @@
+key: ROS
+name: Republic of the Sphere
+capital: Terra
+yearsActive:
+  - start: 3081
+    end: 3151
+tags:
+  - PLAYABLE
+  - MAJOR
+  - IS
+color:
+  red: 164
+  green: 164
+  blue: 122
+logo: Inner Sphere/Republic of the Sphere.png
+background: Inner Sphere/Republic of the Sphere.png
+camos: Republic of the Sphere
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - -1
+ratingLevels:
+  - Triarii Protectors
+  - Principes Guards
+  - Hastati Sentinels
+  - Stone's Brigade
+fallBackFactions:
+  - IS

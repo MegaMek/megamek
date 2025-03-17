@@ -1,0 +1,30 @@
+key: GV
+name: Greater Valkyrate
+capital: Gotterdammerung
+yearsActive:
+  - start: 3028
+    end: 3049
+tags:
+  - PERIPHERY
+color:
+  red: 255
+  green: 105
+  blue: 180
+logo: Periphery/Greater Valkyrate.png
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 3
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.R
+  - PIR

@@ -1,0 +1,40 @@
+key: DA
+name: Duchy of Andurien
+capital: Andurien
+yearsActive:
+  - start: 3030
+    end: 3040
+  - start: 3079
+tags:
+  - LENIENT
+  - MINOR
+  - IS
+  - STINGY
+color:
+  red: 148
+  green: 148
+  blue: 255
+logo: Inner Sphere/Duchy of Andurien.png
+background: Inner Sphere/Free Worlds League.png
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 2
+  - 0
+  - 0
+  - 1
+  - 0
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS
+  - FWL

@@ -1,0 +1,12 @@
+key: TU
+name: Tikonov Union
+capital: Terra
+successor: TGU
+tags:
+  - MINOR
+  - IS
+color:
+  red: 255
+  green: 160
+  blue: 122
+nameGenerator: CC

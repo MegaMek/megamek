@@ -1,0 +1,43 @@
+key: CEI
+name: Escorpión Imperio
+nameChanges:
+  3141: Scorpion Empire
+capital: Granada
+yearsActive:
+  - start: 3080
+    end: 3141
+tags:
+  - PLAYABLE
+  - DEEP_PERIPHERY
+  - STINGY
+  - CLAN
+  - CONTROLLING
+color:
+  red: 104
+  green: 125
+  blue: 11
+logo: Clan/Escorpion Imperio.png
+background: Clan/Escorpion Imperio.png
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+  - 2
+  - 2
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - NC
+  - Periphery.Deep
+  - CGS
+  - UC

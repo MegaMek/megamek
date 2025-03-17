@@ -1,0 +1,30 @@
+key: CNC
+name: Clan Nova Cat
+capital: Barcella
+capitalChanges: 
+  3057: Irece
+yearsActive:
+  - start: 2807
+    end: 3143
+successor: CP
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 255
+  green: 204
+  blue: 51
+logo: Clan/Clan Nova Cat.png
+background: Clan/Clan Nova Cat.png
+camos: Clans/Nova Cat
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.IS
+preInvasionHonorRating: OPPORTUNISTIC

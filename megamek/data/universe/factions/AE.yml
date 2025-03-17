@@ -1,0 +1,15 @@
+key: AE
+name: Amaris Empire
+capital: Terra
+tags:
+  - MINOR
+  - IS
+color:
+  red: 142
+  green: 74
+  blue: 123
+background: Periphery/Amaris Empire.png
+eraMods:
+  - -1
+  - -1
+  - -1

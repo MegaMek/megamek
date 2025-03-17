@@ -1,0 +1,9 @@
+key: CC.SSB
+name: Sarna Sabres Brigade
+yearsActive:
+  - start: 2367
+    end: 2529
+ratingLevels:
+  - D
+fallBackFactions:
+  - CC

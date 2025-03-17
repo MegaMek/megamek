@@ -1,0 +1,23 @@
+key: MC
+name: Malagrotta Cooperative
+capital: Malagrotta
+yearsActive:
+  - start: 3073
+    end: 3079
+successor: FS
+tags:
+  - PERIPHERY
+color:
+  red: 218
+  green: 112
+  blue: 214
+nameGenerator: FS
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - FS
+  - FS.CrMM

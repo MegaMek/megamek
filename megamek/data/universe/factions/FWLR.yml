@@ -1,0 +1,25 @@
+key: FWLR
+name: Free Worlds League Rebels
+capital: New Delos
+tags:
+  - IS
+  - REBEL
+color:
+  red: 68
+  green: 212
+  blue: 228
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
+  - 0
+  - 0
+  - 1
+  - 0
+fallBackFactions:
+  - FWL

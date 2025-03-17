@@ -1,0 +1,26 @@
+key: OP
+name: Oriente Protectorate
+capital: Oriente
+yearsActive:
+  - start: 3086
+    end: 3139
+successor: FWL
+tags:
+  - MINOR
+  - IS
+color:
+  red: 163
+  green: 112
+  blue: 120
+logo: Inner Sphere/Oriente Protectorate.png
+background: Inner Sphere/Free Worlds League.png
+nameGenerator: FWL
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS
+  - FWL

@@ -1,0 +1,12 @@
+key: MalCon
+name: Malthus Confederation
+yearsActive:
+  - start: 3151
+tags:
+  - MINOR
+ratingLevels:
+  - F
+  - D
+  - C
+fallBackFactions:
+  - MERC

@@ -1,0 +1,10 @@
+key: DTA.pm
+name: Planetary Militia
+yearsActive:
+  - start: 3071
+    end: 3139
+ratingLevels:
+  - F
+fallBackFactions:
+  - DTA
+  - IS.pm

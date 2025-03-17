@@ -1,0 +1,26 @@
+key: RA
+name: Raven Alliance
+capital: Alpheratz
+yearsActive:
+  - start: 3083
+tags:
+  - PLAYABLE
+  - PERIPHERY
+  - CLAN
+  - CONTROLLING
+  - GENEROUS
+color:
+  red: 25
+  green: 120
+  blue: 110
+logo: Clan/Raven Alliance.png
+background: Clan/Raven Alliance.png
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CSR
+  - CLAN.IS

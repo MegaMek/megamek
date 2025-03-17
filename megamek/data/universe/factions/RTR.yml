@@ -1,0 +1,20 @@
+key: RTR
+name: Republic Territories
+capital: Terra
+tags:
+  - IS
+color:
+  red: 164
+  green: 164
+  blue: 122
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - -1

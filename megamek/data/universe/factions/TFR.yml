@@ -1,0 +1,27 @@
+key: TFR
+name: Tikonov Free Republic
+capital: Tikonov
+yearsActive:
+  - start: 3029
+    end: 3031
+successor: FS
+tags:
+  - MINOR
+  - IS
+  - STINGY
+  - CONTROLLING
+color:
+  red: 255
+  green: 160
+  blue: 122
+nameGenerator: CC
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 2
+fallBackFactions:
+  - CC

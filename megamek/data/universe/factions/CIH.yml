@@ -1,0 +1,28 @@
+key: CIH
+name: Clan Ice Hellion
+capital: Hector
+yearsActive:
+  - start: 2807
+    end: 3074
+successor: CGS
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 248
+  green: 248
+  blue: 255
+logo: Clan/Clan Ice Hellion.png
+background: Clan/Clan Ice Hellion.png
+camos: Clans/Ice Hellion
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.HW
+preInvasionHonorRating: OPPORTUNISTIC

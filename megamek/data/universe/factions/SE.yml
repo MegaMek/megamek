@@ -1,0 +1,16 @@
+key: SE
+name: Scorpion Empire
+yearsActive:
+  - start: 3141
+tags:
+  - PERIPHERY
+  - CLAN
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CEI
+  - Periphery

@@ -1,0 +1,12 @@
+key: Periphery.ME
+name: Marik Expanses
+tags:
+  - PERIPHERY
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery

@@ -1,0 +1,26 @@
+key: CFM
+name: Clan Fire Mandrill
+capital: Shadow
+yearsActive:
+  - start: 2807
+    end: 3073
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 208
+  green: 82
+  blue: 23
+logo: Clan/Clan Fire Mandrill.png
+background: Clan/Clan Fire Mandrill.png
+camos: Clans/Fire Mandrill
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.HW

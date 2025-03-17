@@ -1,0 +1,27 @@
+key: CSV
+name: Clan Steel Viper
+capital: Homer
+yearsActive:
+  - start: 2807
+    end: 3075
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 59
+  green: 100
+  blue: 96
+logo: Clan/Clan Steel Viper.png
+background: Clan/Clan Steel Viper.png
+camos: Clans/Steel Viper
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.HW
+postInvasionHonorRating: STRICT

@@ -1,0 +1,23 @@
+key: CWE
+name: Wolf Empire
+capital: Gienah
+yearsActive:
+  - start: 3143
+tags:
+  - MINOR
+  - CLAN
+color:
+  red: 214
+  green: 112
+  blue: 61
+background: Clan/Wolf Empire.png
+camos: Clans/Wolf
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CW

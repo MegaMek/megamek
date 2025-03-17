@@ -1,0 +1,9 @@
+key: DC.RR
+name: Rasalhague Regulars
+yearsActive:
+  - start: 2730
+    end: 3034
+ratingLevels:
+  - D
+fallBackFactions:
+  - DC

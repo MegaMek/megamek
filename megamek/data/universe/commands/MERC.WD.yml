@@ -1,0 +1,6 @@
+key: MERC.WD
+name: Wolf's Dragoons
+yearsActive:
+  - start: 3005
+fallBackFactions:
+  - MERC

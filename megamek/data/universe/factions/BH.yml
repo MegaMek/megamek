@@ -1,0 +1,17 @@
+key: BH
+name: Butte Hold
+yearsActive:
+  - start: 3018
+    end: 3028
+tags:
+  - MINOR
+  - PERIPHERY
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.R
+  - PIR

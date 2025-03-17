@@ -1,0 +1,38 @@
+key: UC
+name: Umayyad Caliphate
+capital: Granada
+yearsActive:
+  - start: 2830
+    end: 3080
+successor: CEI
+tags:
+  - DEEP_PERIPHERY
+  - STINGY
+  - CONTROLLING
+color:
+  red: 0
+  green: 255
+  blue: 0
+logo: Periphery/Umayyad Caliphate.png
+background: Periphery/Umayyad Caliphate.png
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - NC
+  - Periphery.Deep

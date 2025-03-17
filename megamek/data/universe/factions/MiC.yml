@@ -1,0 +1,29 @@
+key: MiC
+name: Milton Combine
+capital: Milton
+yearsActive:
+  - start: 3137
+    end: 3139
+successor: CWE
+tags:
+  - MINOR
+  - IS
+color:
+  red: 255
+  green: 0
+  blue: 51
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - -1
+fallBackFactions:
+  - ROS
+  - FWL

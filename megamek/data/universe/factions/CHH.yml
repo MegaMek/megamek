@@ -1,0 +1,28 @@
+key: CHH
+name: Clan Hell's Horses
+capital: Niles (Clan)
+capitalChanges: 
+  3074: Csesztreg
+yearsActive:
+  - start: 2807
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 250
+  green: 166
+  blue: 26
+logo: Clan/Clan Hell's Horses.png
+background: Clan/Clan Hell's Horses.png
+camos: Clans/Hell's Horses
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.IS
+preInvasionHonorRating: OPPORTUNISTIC

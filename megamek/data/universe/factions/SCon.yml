@@ -1,0 +1,12 @@
+key: SCon
+name: Stewart Confederation
+capital: Stewart
+successor: FWL
+tags:
+  - MINOR
+  - IS
+color:
+  red: 76
+  green: 0
+  blue: 153
+nameGenerator: FWL

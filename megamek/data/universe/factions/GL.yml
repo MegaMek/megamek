@@ -1,0 +1,32 @@
+key: GL
+name: Galatean League
+capital: Galatea
+yearsActive:
+  - start: 3144
+tags:
+  - MINOR
+  - IS
+color:
+  red: 102
+  green: 255
+  blue: 255
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

@@ -1,0 +1,10 @@
+key: CC.CC
+name: Capellan Chargers
+yearsActive:
+  - start: 2367
+    end: 2835
+  - start: 3135
+ratingLevels:
+  - B
+fallBackFactions:
+  - CC

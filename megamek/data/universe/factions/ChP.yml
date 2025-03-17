@@ -1,0 +1,12 @@
+key: ChP
+name: Chisholm Protectorate
+capital: Elgin (Chisholm 2878-)
+successor: CC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 224
+  green: 104
+  blue: 32
+nameGenerator: CC

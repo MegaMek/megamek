@@ -1,0 +1,7 @@
+key: MERC.KH
+name: Kell Hounds
+yearsActive:
+  - start: 3010
+fallBackFactions:
+  - LA
+  - MERC

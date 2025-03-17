@@ -1,0 +1,22 @@
+key: SIMA
+name: St. Ives Mercantile Association
+capital: Terra
+successor: CC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 153
+  green: 198
+  blue: 237
+nameGenerator: CC
+eraMods:
+  - 1
+  - 0
+  - 0
+  - 1
+  - 2
+  - 3
+  - 2
+  - 1
+  - 0

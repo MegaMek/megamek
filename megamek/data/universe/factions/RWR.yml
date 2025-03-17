@@ -1,0 +1,31 @@
+key: RWR
+name: Rim Worlds Republic
+nameChanges:
+  2767: Amaris Empire
+capital: Apollo
+yearsActive:
+  - start: 2250
+    end: 2769
+tags:
+  - PLAYABLE
+  - PERIPHERY
+  - STINGY
+  - CONTROLLING
+color:
+  red: 164
+  green: 168
+  blue: 122
+logo: Periphery/Rim Worlds Republic.png
+background: Periphery/Rim Worlds Republic.png
+eraMods:
+  - 1
+  - 1
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.R

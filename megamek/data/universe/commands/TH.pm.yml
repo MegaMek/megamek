@@ -1,0 +1,10 @@
+key: TH.pm
+name: Planetary Militia
+yearsActive:
+  - start: 2315
+    end: 2767
+ratingLevels:
+  - F
+fallBackFactions:
+  - TH
+  - IS.pm

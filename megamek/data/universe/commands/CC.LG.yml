@@ -1,0 +1,10 @@
+key: CC.LG
+name: Liao Guards
+yearsActive:
+  - start: 2367
+    end: 2823
+  - start: 3113
+ratingLevels:
+  - D
+fallBackFactions:
+  - CC

@@ -1,0 +1,23 @@
+key: UHC
+name: United Hindu Collective
+capital: Basantapur
+yearsActive:
+  - start: 2240
+    end: 2540
+successor: FS
+tags:
+  - MINOR
+  - IS
+color:
+  red: 171
+  green: 148
+  blue: 118
+nameGenerator: FS
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - FS

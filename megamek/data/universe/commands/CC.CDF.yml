@@ -1,0 +1,8 @@
+key: CC.CDF
+name: Capellan Defense Force
+yearsActive:
+  - start: 3057
+ratingLevels:
+  - D
+fallBackFactions:
+  - CC

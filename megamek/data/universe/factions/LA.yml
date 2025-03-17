@@ -1,0 +1,42 @@
+key: LA
+name: Lyran Commonwealth
+nameChanges:
+  3058: Lyran Alliance
+  3085: Lyran Commonwealth
+capital: Tharkad
+yearsActive:
+  - start: 2341
+tags:
+  - PLAYABLE
+  - LENIENT
+  - MAJOR
+  - IS
+  - GENEROUS
+color:
+  red: 0
+  green: 114
+  blue: 188
+logo: Inner Sphere/Lyran Commonwealth.png
+background: Inner Sphere/Lyran Commonwealth.png
+camos: Lyran Commonwealth
+nameGenerator: LA
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
+  - 0
+  - 0
+  - 1
+  - 0
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

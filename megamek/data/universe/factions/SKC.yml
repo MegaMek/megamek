@@ -1,0 +1,17 @@
+key: SKC
+name: Styk Commonality
+capital: Styk
+yearsActive:
+  - start: 3057
+    end: 3063
+successor: SKP
+tags:
+  - MINOR
+  - IS
+color:
+  red: 0
+  green: 139
+  blue: 139
+nameGenerator: CC
+fallBackFactions:
+  - CM

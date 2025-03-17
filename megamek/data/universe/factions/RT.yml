@@ -1,0 +1,31 @@
+key: RT
+name: Rim Territories
+capital: Pain
+yearsActive:
+  - start: 3087
+tags:
+  - PERIPHERY
+color:
+  red: 175
+  green: 238
+  blue: 238
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.R

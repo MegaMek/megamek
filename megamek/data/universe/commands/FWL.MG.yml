@@ -1,0 +1,9 @@
+key: FWL.MG
+name: Marik Guard
+yearsActive:
+  - start: 2246
+    end: 3079
+ratingLevels:
+  - C
+fallBackFactions:
+  - FWL

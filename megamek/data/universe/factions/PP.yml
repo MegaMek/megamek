@@ -1,0 +1,7 @@
+key: PP
+name: Pentagon Powers
+yearsActive:
+  - start: 2801
+    end: 2822
+fallBackFactions:
+  - SL

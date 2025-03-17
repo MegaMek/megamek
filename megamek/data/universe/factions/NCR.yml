@@ -1,0 +1,32 @@
+key: NCR
+name: New Colony Region
+capital: Fronc
+yearsActive:
+  - start: 3060
+    end: 3066
+successor: FR
+tags:
+  - PERIPHERY
+color:
+  red: 32
+  green: 178
+  blue: 170
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - MOC
+  - Periphery.CM
+  - TC

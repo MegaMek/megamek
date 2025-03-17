@@ -1,0 +1,25 @@
+key: CCon
+name: Coreward Confederacy
+nameChanges:
+  2371: Autocracy of New Virginia
+  2400: Virginian Union
+  2700: "Rim Worlds Republic Outpost #27"
+  2798: Virginian Union
+  2816: Coreward Confederacy
+capital: "RWR Outpost #27"
+tags:
+  - DEEP_PERIPHERY
+color:
+  red: 255
+  green: 0
+  blue: 0
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1

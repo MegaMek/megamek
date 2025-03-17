@@ -1,0 +1,10 @@
+key: MSC.pm
+name: Planetary Militia
+yearsActive:
+  - start: 3082
+    end: 3138
+ratingLevels:
+  - F
+fallBackFactions:
+  - IS.pm
+  - MSC

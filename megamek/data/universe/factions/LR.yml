@@ -1,0 +1,10 @@
+key: LR
+name: Liao Republic
+capital: Terra
+tags:
+  - IS
+color:
+  red: 2
+  green: 166
+  blue: 79
+nameGenerator: CC

@@ -1,0 +1,29 @@
+key: RD
+name: Rasalhague Dominion
+capital: Rasalhague
+yearsActive:
+  - start: 3103
+tags:
+  - PLAYABLE
+  - MINOR
+  - IS
+  - CLAN
+  - CONTROLLING
+  - GENEROUS
+color:
+  red: 191
+  green: 232
+  blue: 255
+logo: Clan/Rasalhague Dominion.png
+background: Clan/Ghost Bear Dominion.png
+camos: Clans/Ghost Bear
+nameGenerator: FRR
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.IS
+  - CGB

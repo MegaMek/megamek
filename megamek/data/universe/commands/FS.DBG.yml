@@ -1,0 +1,8 @@
+key: FS.DBG
+name: Davion Brigade of Guards
+yearsActive:
+  - start: 2418
+ratingLevels:
+  - A
+fallBackFactions:
+  - FS

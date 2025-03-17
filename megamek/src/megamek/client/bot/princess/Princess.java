@@ -3248,7 +3248,12 @@ public class Princess extends BotClient {
         Coords pathEndpoint = path.getFinalCoords();
         Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame(), false);
 
-        // if there are no enemies on the board, then we're not launching anything.
+        // Don't launch at high velocity in atmosphere or the fighters will be destroyed!
+        if (path.getFinalVelocity() > 2 && !game.getBoard().inSpace()) {
+            return;
+        }
+
+            // if there are no enemies on the board, then we're not launching anything.
         if ((null == closestEnemy) || (closestEnemy.getTargetType() != Targetable.TYPE_ENTITY)) {
             return;
         }

@@ -24781,12 +24781,12 @@ public class TWGameManager extends AbstractGameManager {
             ship = (Aero) entity;
         }
 
-        // Regardless of what was passed in, units loaded onto ships not on the
+        // Regardless of what was passed in, units loaded onto vehicles not on the
         // ground are destroyed.
         // Units in an Aerospace unit destroyed in a crash are also destroyed.
         // Units in an Aerospace unit that is already on the ground usually survive if
         // they can evacuate the wreck.
-        if (entity.isAirborne()) {
+        if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             survivable = false;
         }
 
@@ -24856,28 +24856,33 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 // Can the other unit survive?
                 boolean survived = false;
+                // Assumes infantry; other units take no damage or are damaged via other means
                 // Riding a tank/VTOL
-                if (entity instanceof Tank) {
-                    if (entity.getMovementMode().isNaval()
-                        || entity.getMovementMode().isHydrofoil()) {
-                        if (other.getMovementMode().isUMUInfantry()) {
+                if (other.isInfantry()) {
+                    if (entity instanceof Tank) {
+                        if (entity.getMovementMode().isNaval()
+                              || entity.getMovementMode().isHydrofoil()) {
+                            if (other.getMovementMode().isUMUInfantry()) {
+                                survived = Compute.d6() <= 3;
+                            } else if (other.getMovementMode().isJumpInfantry()) {
+                                survived = Compute.d6() == 1;
+                            } else if (other.getMovementMode().isVTOL()) {
+                                survived = Compute.d6() <= 2;
+                            }
+                        } else if (entity.getMovementMode().isSubmarine()) {
+                            if (other.getMovementMode().isUMUInfantry()) {
+                                survived = Compute.d6() == 1;
+                            }
+                        } else if (entity instanceof VTOL || entity.getMovementMode().isWiGE()) {
                             survived = Compute.d6() <= 3;
-                        } else if (other.getMovementMode().isJumpInfantry()) {
-                            survived = Compute.d6() == 1;
-                        } else if (other.getMovementMode().isVTOL()) {
-                            survived = Compute.d6() <= 2;
+                        } else {
+                            survived = Compute.d6() <= 4;
                         }
-                    } else if (entity.getMovementMode().isSubmarine()) {
-                        if (other.getMovementMode().isUMUInfantry()) {
-                            survived = Compute.d6() == 1;
+                    } else if (entity instanceof Mek) {
+                        // mechanized BA can escape on a roll of 1 or 2
+                        if (externalUnits.contains(other)) {
+                            survived = Compute.d6() < 3;
                         }
-                    } else {
-                        survived = Compute.d6() <= 4;
-                    }
-                } else if (entity instanceof Mek) {
-                    // mechanized BA can escape on a roll of 1 or 2
-                    if (externalUnits.contains(other)) {
-                        survived = Compute.d6() < 3;
                     }
                 }
 

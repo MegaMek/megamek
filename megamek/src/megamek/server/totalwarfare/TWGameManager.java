@@ -24774,11 +24774,13 @@ public class TWGameManager extends AbstractGameManager {
      */
     protected void destroyTransportedUnits(Entity entity, int condition, boolean survivable, Vector<Report> vDesc) {
         Report r;
+        int messageId = 6375;
 
         // We'll need this later...
         Aero ship = null;
         if (entity.isLargeCraft()) {
             ship = (Aero) entity;
+            messageId = 6377;
         }
 
         // Regardless of what was passed in, units loaded onto vehicles not on the
@@ -24896,7 +24898,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (!survivable || !survived
                     // Don't unload from ejecting spacecraft. The crews aren't in their units...
                     || (ship != null && ship.isEjecting())) {
-                    destroyCarriedUnit(entity, other, condition, 6370, vDesc);
+                    destroyCarriedUnit(entity, other, condition, messageId, vDesc);
                 } else {
                     // Handle all _possibly_ survivable destruction:
                     // 1. BAs mounting an Omni / Mechanized mounting anything (TW pg 227):

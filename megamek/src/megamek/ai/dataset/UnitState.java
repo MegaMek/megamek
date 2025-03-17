@@ -61,7 +61,8 @@ import megamek.common.enums.GamePhase;
 public record UnitState(int id, GamePhase phase, int teamId, int round, int playerId, String chassis, String model, String type,
                         UnitRole role, int x, int y, int facing, double mp, double heat, boolean prone, boolean airborne,
                         boolean offBoard, boolean crippled, boolean destroyed, double armorP,
-                        double internalP, boolean done, int maxRange, int totalDamage, Entity entity) {
+                        double internalP, boolean done, int maxRange, int totalDamage, int armor, int internal, int bv,
+                        Entity entity) {
 
     /**
      * Creates a UnitState from an {@code entity}.
@@ -95,6 +96,9 @@ public record UnitState(int id, GamePhase phase, int teamId, int round, int play
             entity.isDone(),
             entity.getMaxWeaponRange(),
             Compute.computeTotalDamage(entity.getWeaponList()),
+            entity.getTotalArmor(),
+            entity instanceof IAero aero ? aero.getSI() : entity.getTotalInternal(),
+            entity.getInitialBV(),
             entity);
     }
 

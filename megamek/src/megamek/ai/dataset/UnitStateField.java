@@ -54,7 +54,10 @@ public enum UnitStateField{
     DONE("DONE"),
     MAX_RANGE("MAX_RANGE"),
     TOTAL_DAMAGE("TOTAL_DAMAGE"),
-    TEAM_ID("TEAM_ID");
+    TEAM_ID("TEAM_ID"),
+    ARMOR("ARMOR"),
+    INTERNAL("INTERNAL"),
+    BV("BV");
 
     private final String headerName;
 

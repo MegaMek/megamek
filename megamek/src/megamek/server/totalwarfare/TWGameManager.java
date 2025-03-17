@@ -24857,11 +24857,12 @@ public class TWGameManager extends AbstractGameManager {
                 // Can the other unit survive?
                 boolean survived = false;
                 // Assumes infantry; other units take no damage or are damaged via other means
-                // Riding a tank/VTOL
                 if (other.isInfantry()) {
+                    // Riding a tank/VTOL/other vehicle
                     if (entity instanceof Tank) {
                         if (entity.getMovementMode().isNaval()
                               || entity.getMovementMode().isHydrofoil()) {
+                            // Naval vessel
                             if (other.getMovementMode().isUMUInfantry()) {
                                 survived = Compute.d6() <= 3;
                             } else if (other.getMovementMode().isJumpInfantry()) {
@@ -24870,12 +24871,15 @@ public class TWGameManager extends AbstractGameManager {
                                 survived = Compute.d6() <= 2;
                             }
                         } else if (entity.getMovementMode().isSubmarine()) {
+                            // Submarine
                             if (other.getMovementMode().isUMUInfantry()) {
                                 survived = Compute.d6() == 1;
                             }
                         } else if (entity instanceof VTOL || entity.getMovementMode().isWiGE()) {
+                            // Non-airborne VTOL / WiGE
                             survived = Compute.d6() <= 3;
                         } else {
+                            // All others
                             survived = Compute.d6() <= 4;
                         }
                     } else if (entity instanceof Mek) {
@@ -24883,10 +24887,13 @@ public class TWGameManager extends AbstractGameManager {
                         if (externalUnits.contains(other)) {
                             survived = Compute.d6() < 3;
                         }
+                    } else if (entity.isAero()) {
+                        // Infantry in a destroyed Aerospace unit have only 1/6 chance to escape
+                        survived = Compute.d6() == 1;
                     }
                 }
 
-                if (!survivable || (externalUnits.contains(other) && !survived)
+                if (!survivable || !survived
                     // Don't unload from ejecting spacecraft. The crews aren't in their units...
                     || (ship != null && ship.isEjecting())) {
                     destroyCarriedUnit(entity, other, condition, 6370, vDesc);

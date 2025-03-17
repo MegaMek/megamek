@@ -31,6 +31,20 @@ import java.util.Map;
 
 public class CostCalculator {
 
+
+    /**
+     * Replaces all negative costs in the array with 0. Should only be used for additive costs
+     * in order to avoid them being mistaken for cost multipliers and breaking cost calculations.
+     *
+     * @param costs An array of cost values - no multiplier values!
+     */
+    static void removeNegativeAdditiveCosts(double[] costs) {
+        for (int i = 0; i < costs.length; i++) {
+            // Modifies the original array
+            costs[i] = Math.max(0, costs[i]);
+        }
+    }
+
     /**
      * Specialized method to calculate the total cost based on the given costs array. Stepping
      * through the array, positive values will be added to the previous total while a negative value
@@ -42,7 +56,11 @@ public class CostCalculator {
     static double calculateCost(double[] costs) {
         double cost = 0;
         for (double v : costs) {
-            cost += v;
+            if (v < 0) {
+                cost *= -v;
+            } else {
+                cost += v;
+            }
         }
         return cost;
     }

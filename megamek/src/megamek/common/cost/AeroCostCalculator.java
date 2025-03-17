@@ -32,7 +32,7 @@ public class AeroCostCalculator {
         costs[idx++] = 200000;
         costs[idx++] = 50000;
         costs[idx++] = 2000 * aero.getWeight();
-        costs[idx++] = 50000 * Math.max(aero.getSI(), 0);
+        costs[idx++] = 50000 * aero.getSI();
         costs[idx++] = 25000 + 10 * aero.getWeight();
 
         // Engine
@@ -58,7 +58,12 @@ public class AeroCostCalculator {
         int sinkCost = 2000 + (4000 * aero.getHeatType());
         costs[idx++] = sinkCost * aero.getHeatSinks();
 
+        // Weapons and equipment
         costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(aero, ignoreAmmo);
+
+        // For all additive costs - replace negatives with 0 to separate from multipliers
+        CostCalculator.removeNegativeAdditiveCosts(costs);
+
         costs[idx] = -aero.getPriceMultiplier();
         double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Structure", "Flight Systems", "Engine",

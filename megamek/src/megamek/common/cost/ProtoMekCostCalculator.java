@@ -84,7 +84,12 @@ public class ProtoMekCostCalculator {
         // Armor is linear on the armor value of the ProtoMek
         costs[idx++] = protoMek.getTotalArmor() * ArmorType.forEntity(protoMek).getCost();
 
+        // Weapons and equipment
         costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(protoMek, ignoreAmmo);
+
+        // For all additive costs - replace negatives with 0 to separate from multipliers
+        CostCalculator.removeNegativeAdditiveCosts(costs);
+
         costs[idx] = -protoMek.getPriceMultiplier();
         double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Musculature", "Structure", "Arm Actuators",

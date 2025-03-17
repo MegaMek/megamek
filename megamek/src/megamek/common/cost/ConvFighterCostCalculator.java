@@ -42,7 +42,7 @@ public class ConvFighterCostCalculator {
         }
 
         // Structure and Additional flight systems
-        costs[idx++] = 4000 * Math.max(fighter.getSI(), 0);
+        costs[idx++] = 4000 * fighter.getSI();
         costs[idx++] = 25000 + 10 * fighter.getWeight();
 
         // Engine
@@ -72,6 +72,9 @@ public class ConvFighterCostCalculator {
 
         // Power amplifiers
         costs[idx++] = 20000 * fighter.getPowerAmplifierWeight();
+
+        // For all additive costs - replace negatives with 0 to separate from multipliers
+        CostCalculator.removeNegativeAdditiveCosts(costs);
 
         costs[idx] = -fighter.getPriceMultiplier();
         double cost = CostCalculator.calculateCost(costs);

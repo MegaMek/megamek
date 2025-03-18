@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2807-->
-<ratgen>
+<ratgen
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
+>
 	<factions>
 		<faction key='BoS'>
 			<salvage pct='10'></salvage>
@@ -876,6 +879,35 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Clan Foot Point' unitType='Infantry'>
+            <availability>CLAN!Keshik:6!Front Line:6!Second Line:7!Solahma:7!Provisional Garrison:8</availability>
+            <model name='(Flamer Basic)'>
+                <availability>CLAN.HW:3-,CLAN.IS:3-</availability>
+            </model>
+            <model name='(Laser Basic)'>
+                <availability>CLAN!Keshik:6!Front Line:5!Second Line:4</availability>
+            </model>
+            <model name='(Mauser 960 Basic)'>
+                <availability>CHH!Keshik:5!Front Line:1</availability>
+            </model>
+            <model name='(MG Basic)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN.HW:4,CLAN.IS:4</availability>
+            </model>
+            <model name='(Rifle AA Basic)'>
+                <roles>anti_aircraft</roles>
+                <availability>CLAN!Keshik:1!Front Line:1!Second Line:1</availability>
+            </model>
+            <model name='(Rifle Basic)'>
+                <availability>CLAN!Keshik:7!Front Line:7!Second Line:7!Solahma:5!Provisional Garrison:2</availability>
+            </model>
+            <model name='(Rifle Light)'>
+                <availability>CLAN.HW!Solahma:2!Provisional Garrison:7,CLAN.HW!Solahma:2!Provisional Garrison:7</availability>
+            </model>
+            <model name='(SRM Basic)'>
+                <availability>CLAN!Keshik:5!Front Line:4!Second Line:2!Solahma:1</availability>
+            </model>
+        </chassis>
 		<chassis name='Clint' unitType='Mek'>
 			<availability>PP:3,CC:7,MOC:4,CLAN:3-,IS:5,FS:7,MERC:5,CS:3-,OA:4,FWL:5,NIOPS:3-</availability>
 			<model name='CLNT-1-2R'>

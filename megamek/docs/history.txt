@@ -114,6 +114,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6719: Corrected capitalization in surnames data
 + Fix #6365: Fortifying code for loading preference files
 + Fix #6712: Fix NPE for multiplayer hosting custom boards in game lobby
++ PR #6692: cleaned up the mp candidate evaluation on longest path finder
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

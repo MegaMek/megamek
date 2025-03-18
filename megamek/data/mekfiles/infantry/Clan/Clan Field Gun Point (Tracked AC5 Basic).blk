@@ -1,0 +1,60 @@
+#Saved from version 0.50.04-SNAPSHOT on 2025-03-04
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Clan Field Gun Point
+</Name>
+
+<Model>
+(Tracked AC5 Basic)
+</Model>
+
+<year>
+2807
+</year>
+
+<originalBuildYear>
+2807
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Generic Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+Autocannon/5
+IS Ammo AC/5
+Autocannon/5
+IS Ammo AC/5
+</Field Guns Equipment>
+
+<notes>
+Intro date based on General Clan faction intro date. Uses Generic Infantry kit due to much later intro date of standard Clan kit.
+</notes>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+

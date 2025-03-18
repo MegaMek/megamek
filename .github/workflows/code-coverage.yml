@@ -1,51 +1,58 @@
 name: MegaMek CI with Code Coverage
 
 on:
-  push:
-    branches: [master]
+    push:
+        branches: [master]
 
 env:
-  GRADLE_OPTS: "-Dscan.link.VCS=https://github.com/MegaMek/megamek/commit/${{ github.sha }}"
+    GRADLE_OPTS: "-Dscan.link.VCS=https://github.com/MegaMek/megamek/commit/${{ github.sha }}"
 
 jobs:
-  code_coverage:
-    runs-on: ${{ matrix.os }}
+    code_coverage:
+        runs-on: ${{ matrix.os }}
 
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        java-distribution: [temurin]
-        java-version: [17]
+        strategy:
+            matrix:
+                os: [ubuntu-latest]
+                java-distribution: [temurin]
+                java-version: [17]
 
-    steps:
-      - name: "Check out MegaMek"
-        uses: actions/checkout@v4
-        with:
-          path: megamek
+        steps:
+            - name: "Check out MegaMek"
+              uses: actions/checkout@v4
+              with:
+                  path: megamek
 
-      - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: ${{ matrix.java-distribution }}
-          java-version: ${{ matrix.java-version }}
+            - name: Checkout MegaMek Data
+              uses: actions/checkout@v4
+              with:
+                  repository: megamek/mm-data
+                  ref: main
+                  path: mm-data
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+            - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+              uses: actions/setup-java@v4
+              with:
+                  distribution: ${{ matrix.java-distribution }}
+                  java-version: ${{ matrix.java-version }}
 
-      - name: Build with Gradle
-        working-directory: megamek
-        run: ./gradlew test
+            - name: Setup Gradle
+              uses: gradle/actions/setup-gradle@v4
 
-      - name: Upload Test Logs on Failure
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: cd-failure-logs
-          path: ./megamek/megamek/build/reports/
+            - name: Build with Gradle
+              working-directory: megamek
+              run: ./gradlew test
 
-      - name: CodeCov.io Coverage Report
-        uses: codecov/codecov-action@v5
-        with:
-          directory: ./megamek/megamek/build/reports/jacoco/test
-          fail_ci_if_error: false
-          verbose: true
+            - name: Upload Test Logs on Failure
+              uses: actions/upload-artifact@v4
+              if: failure()
+              with:
+                  name: cd-failure-logs
+                  path: ./megamek/megamek/build/reports/
+
+            - name: CodeCov.io Coverage Report
+              uses: codecov/codecov-action@v5
+              with:
+                  directory: ./megamek/megamek/build/reports/jacoco/test
+                  fail_ci_if_error: false
+                  verbose: true

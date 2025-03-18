@@ -1,62 +1,88 @@
 name: MegaMek CI with Gradle
 
 on:
-  pull_request:
-    branches: [master]
+    pull_request:
+        branches: [master]
 
 env:
-  GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
+    GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
 
 jobs:
-  ci_cd:
-    runs-on: ${{ matrix.os }}
+    ci_cd:
+        runs-on: ${{ matrix.os }}
 
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        java-distribution: [temurin]
-        java-version: [17]
-      fail-fast: false
+        outputs:
+            mmDataRepo: ${{ steps.find_mm_data.outputs.mmRepo }}
+            mmDataBranch: ${{ steps.find_mm_data.outputs.mmBranch }}
 
-    steps:
-      - name: "Check out MegaMek"
-        uses: actions/checkout@v4
-        with:
-          path: megamek
+        strategy:
+            matrix:
+                os: [ubuntu-latest]
+                java-distribution: [temurin]
+                java-version: [17]
+            fail-fast: false
 
-      - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: ${{ matrix.java-distribution }}
-          java-version: ${{ matrix.java-version }}
+        steps:
+            - name: "Check out MegaMek"
+              uses: actions/checkout@v4
+              with:
+                  path: megamek
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          build-scan-publish: true
-          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
-          build-scan-terms-of-use-agree: "yes"
+            - name: "Find the Right MegaMek Data Branch"
+              id: "find_mm_data"
+              shell: bash {0}
+              run: |
+                  git ls-remote --exit-code --heads ${{ github.event.pull_request.head.repo.owner.html_url }}/mm-data.git ${{ github.event.pull_request.head.ref }}
+                  if [ "$?" == "0" ]
+                  then
+                      echo "mmDataRepo=${{ github.event.pull_request.head.repo.owner.login }}/mm-data" >> $GITHUB_OUTPUT
+                      echo "mmDataBranch=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+                  else
+                      echo "mmDataRepo=MegaMek/mm-data" >> $GITHUB_OUTPUT
+                      echo "mmDataBranch=main" >> $GITHUB_OUTPUT
+                  fi
+                  exit 0
 
-      - name: Build with Gradle
-        working-directory: megamek
-        run: ./gradlew build  -x checkstyleMain -x checkstyleTest --stacktrace --scan
+            - name: Checkout MegaMek Data
+              uses: actions/checkout@v4
+              with:
+                  repository: ${{ steps.find_mm_data.outputs.mmDataRepo }}
+                  ref: ${{ steps.find_mm_data.outputs.mmDataBranch }}
+                  path: mm-data
 
-      - name: Upload Test Logs on Failure
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: cd-failure-logs
-          path: ./megamek/megamek/build/reports/
+            - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+              uses: actions/setup-java@v4
+              with:
+                  distribution: ${{ matrix.java-distribution }}
+                  java-version: ${{ matrix.java-version }}
 
-      - name: CodeCov.io Coverage Report
-        uses: codecov/codecov-action@v5
-        with:
-          directory: ./megamek/megamek/build/reports/jacoco/test
-          fail_ci_if_error: false
-          verbose: true
+            - name: Setup Gradle
+              uses: gradle/actions/setup-gradle@v4
+              with:
+                  build-scan-publish: true
+                  build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+                  build-scan-terms-of-use-agree: "yes"
 
-      - name: Upload TarGZ Release
-        uses: actions/upload-artifact@v4
-        with:
-          name: mm-release-tar-gz-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-          path: ./megamek/megamek/build/distributions/*.tar.gz
+            - name: Build with Gradle
+              working-directory: megamek
+              run: ./gradlew build  -x checkstyleMain -x checkstyleTest --stacktrace --scan
+
+            - name: Upload Test Logs on Failure
+              uses: actions/upload-artifact@v4
+              if: failure()
+              with:
+                  name: cd-failure-logs
+                  path: ./megamek/megamek/build/reports/
+
+            - name: CodeCov.io Coverage Report
+              uses: codecov/codecov-action@v5
+              with:
+                  directory: ./megamek/megamek/build/reports/jacoco/test
+                  fail_ci_if_error: false
+                  verbose: true
+
+            - name: Upload TarGZ Release
+              uses: actions/upload-artifact@v4
+              with:
+                  name: mm-release-tar-gz-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+                  path: ./megamek/megamek/build/distributions/*.tar.gz

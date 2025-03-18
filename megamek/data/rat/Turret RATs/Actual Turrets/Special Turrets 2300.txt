@@ -1,3 +1,0 @@
-Special Turrets 2300
-#Command Towers
-Medium Command Tower (2300), 20

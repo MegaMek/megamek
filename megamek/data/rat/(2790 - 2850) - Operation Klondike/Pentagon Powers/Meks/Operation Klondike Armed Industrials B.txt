@@ -1,6 +1,0 @@
-2821 Operations Klondike Armed Industrials B
-Harvester Ant KIC-3M-B AgroMech MOD,2
-Powerman SC XI-M LoaderMech MOD,1
-Buster BC XV-M-B HaulerMech MOD,1
-Marco MR-8E,1
-Carbine CON-1 ConstructionMech (RL),1

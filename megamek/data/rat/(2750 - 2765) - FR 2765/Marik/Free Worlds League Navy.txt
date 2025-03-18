@@ -1,8 +1,0 @@
-Free Worlds League Navy
-Atreus Battleship (2552),53
-Aegis Heavy Cruiser (2582),13
-League Destroyer (Block I),13
-League Destroyer (Block II),13
-Baron Destroyer (2520),3
-Soyal Heavy Cruiser (Standard),3
-Vincent Corvette Mk 39,3

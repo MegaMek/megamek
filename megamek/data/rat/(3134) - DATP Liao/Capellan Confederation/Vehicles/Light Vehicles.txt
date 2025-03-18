@@ -1,7 +1,0 @@
-Capellan Confederation Light Vehicles, DATP:Liao
-Sprint Scout Helicopter (Standard), 1
-Balac Strike VTOL (Standard), 1
-Harasser Missile Platform (Standard), 1
-Cavalry Attack Helicopter (Standard), 1
-Saxon APC (Standard), 1
-Scorpion Light Tank (LAC), 1

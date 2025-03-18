@@ -1,6 +1,0 @@
-Turrets 3025 B
-@DirectFire Turrets 2300, 20
-@InDirectFire Turrets 2300, 40
-@AntiAir Turrets 3025, 20
-@Special Turrets 3025, 15
-@HeavyDuty Turrets 2300, 5

@@ -87,9 +87,6 @@ ext {
         'java.base/java.util.concurrent=ALL-UNNAMED',
         '-Dsun.awt.disablegrab=true'
     ]
-    data = 'data'
-    unitFiles = "${data}/mekfiles"
-    rats = "${data}/rat"
     docs = "docs"
     lib = "lib"
     log = "logs"
@@ -121,7 +118,16 @@ jar {
     }
 }
 
-task generateDynamicFiles() {
+tasks.register('handleDataDirectory', Sync) {
+    description = 'Update MM Data'
+    group = 'build'
+
+    from "${projectDir}/../../mm-data/data"
+    into "${buildDir}/data"
+    include '**/*'
+}
+
+tasks.register('generateDynamicFiles') {
     def jvmOptions = project.ext.mmJvmOptions.join('\n')
 
     doLast {
@@ -133,14 +139,31 @@ ${jvmOptions}
     }
 }
 
-task copyFiles(type: Copy) {
+tasks.register('copyDataFiles', Copy) {
+    description = 'Copy data files into Staging directory'
+    group = 'build'
+
+    dependsOn handleDataDirectory
+
+    from("${buildDir}/data") {
+        include '**/*'
+        exclude "mekfiles"
+        exclude "rat"
+    }
+
+    into "${fileStagingDir}/data"
+}
+
+tasks.register('copyFiles', Copy) {
     description = 'Stages files that are to be copied into the distribution.'
     group = 'build'
 
+    dependsOn copyDataFiles
     dependsOn generateDynamicFiles
+    dependsOn unitFilesZip
+    dependsOn ratZip
 
     from projectDir
-    include "${data}/**"
     include "${docs}/**"
     include "${mmconf}/**"
     include "SubmitBug.html"
@@ -148,9 +171,6 @@ task copyFiles(type: Copy) {
     include "sentry.properties"
     include "*.ini"
     exclude "**/*.psd"
-
-    // No need to copy the files that are going to be zipped
-    exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
 
     // User Config Files
     exclude "${mmconf}/clientsettings.xml"
@@ -160,14 +180,14 @@ task copyFiles(type: Copy) {
     exclude "${mmconf}/mhq.preferences"
     exclude "${mmconf}/mm.preferences"
     exclude "${mmconf}/mml.preferences"
-
-    exclude "${rats}/**"
     include "${userdata}/"
 
     into fileStagingDir
 }
 
-task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
+tasks.register('createImageAtlases', JavaExec) {
+    dependsOn copyFiles
+
     description = 'Combines individual image files into a set of image atlases.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -175,7 +195,9 @@ task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
     workingDir = file(fileStagingDir)
 }
 
-task deleteAtlasedImages(dependsOn: createImageAtlases) {
+tasks.register('deleteAtlasedImages') {
+    dependsOn createImageAtlases
+
     description = 'Removes images from the staging directory that have been incorporated into atlases.'
     doLast {
         if (file(atlasedImages).exists()) {
@@ -185,7 +207,9 @@ task deleteAtlasedImages(dependsOn: createImageAtlases) {
     }
 }
 
-task officialUnitList(type: JavaExec, dependsOn: jar) {
+tasks.register('officialUnitList', JavaExec) {
+    dependsOn jar
+
     description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -193,37 +217,37 @@ task officialUnitList(type: JavaExec, dependsOn: jar) {
     args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
 }
 
-task unitFilesZip (dependsOn: copyFiles) {
+tasks.register('unitFilesZip', Zip) {
     description = 'Creates zip archives of all the unit file folders.'
-    file(unitFiles).eachDir {subDir ->
-        dependsOn tasks.create("${name}${subDir.name}", Zip) {
-            from subDir
-            archiveFileName = "${subDir.name}.zip"
-            destinationDirectory = file("${fileStagingDir}/${unitFiles}")
-        }
-    }
-    inputs.dir "${projectDir}/${unitFiles}"
-    outputs.dir "${fileStagingDir}/${unitFiles}"
+    dependsOn handleDataDirectory
+
+    from "${buildDir}/data/mekfiles"
+    archiveFileName = "unitfiles.zip"
+    destinationDirectory = file("${fileStagingDir}/data/mekfiles")
+
+    inputs.dir "${buildDir}/data/mekfiles"
+    outputs.dir "${fileStagingDir}/data/mekfiles"
 }
 
-task ratZip (type: Zip) {
+tasks.register('ratZip', Zip) {
     description = 'Creates a zip archive of all the random assignment tables.'
-    from rats
+    dependsOn handleDataDirectory
+
+    from "${buildDir}/data/rat"
+
     archiveFileName = "rat_default.zip"
-    destinationDirectory = file("${fileStagingDir}/${rats}")
+    destinationDirectory = file("${fileStagingDir}/data/rat")
     doFirst {
-        mkdir "${fileStagingDir}/${rats}"
+        mkdir "${fileStagingDir}/data/rat"
     }
-    inputs.dir "${projectDir}/${rats}"
-    outputs.dir "${fileStagingDir}/${rats}"
+    inputs.dir "${buildDir}/data/rat"
+    outputs.dir "${fileStagingDir}/data/rat"
 }
 
 task stageFiles {
     description = 'Process data files to be included in distribution'
     group = 'distribution'
     dependsOn officialUnitList
-    dependsOn unitFilesZip
-    dependsOn ratZip
     dependsOn deleteAtlasedImages
 
     doLast {
@@ -231,7 +255,7 @@ task stageFiles {
     }
 }
 
-task createStartScripts (type: CreateStartScripts) {
+tasks.register('createStartScripts', CreateStartScripts) {
     description = 'Create shell script for generic distribution.'
     applicationName = 'MegaMek'
     mainClass = application.mainClass
@@ -270,7 +294,7 @@ launch4j {
     description = 'Create Windows executable for Megamek'
     mainClassName = application.mainClass
     outfile = 'MegaMek.exe'
-    icon = "${projectDir}/data/images/misc/megamek.ico"
+    icon = "${buildDir}/data/images/misc/megamek.ico"
     jarTask = project.tasks.jar
     windowTitle = 'MegaMek'
     internalName = 'MegaMek'
@@ -287,12 +311,10 @@ launch4j {
 
 tasks.register("packagePrepWork") {
     description = 'General Catch All for all distributions'
-    dependsOn stageFiles
     dependsOn startScripts
     dependsOn createStartScripts
     dependsOn copyFiles
     dependsOn createImageAtlases
-    dependsOn ratZip
     dependsOn createAllExecutables
 }
 
@@ -339,7 +361,7 @@ jacocoTestReport {
 }
 
 // Test task including GUI tests
-task testWithGUITests(type: Test) {
+tasks.register('testWithGUITests', Test) {
     useJUnitPlatform()
     jvmArgs = mmJvmOptions
     environment 'GUITests', "true"
@@ -349,7 +371,9 @@ task testWithGUITests(type: Test) {
 }
 
 // These are utility classes for all of the classes with the src/utilities folder.
-task equipmentList(type: JavaExec, dependsOn: jar) {
+tasks.register('equipmentList', JavaExec) {
+    dependsOn jar
+
     description = 'Generate Full Equipment Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
@@ -357,7 +381,9 @@ task equipmentList(type: JavaExec, dependsOn: jar) {
     args = [ '-eqdb', "${projectDir}/equipment.txt" ]
 }
 
-task extendedEquipmentList(type: JavaExec, dependsOn: jar) {
+tasks.register('extendedEquipmentList', JavaExec) {
+    dependsOn jar
+
     description = 'Generate Extended Equipment Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
@@ -365,7 +391,9 @@ task extendedEquipmentList(type: JavaExec, dependsOn: jar) {
     args = [ '-eqedb', "${projectDir}/extended-equipment.txt" ]
 }
 
-task weaponsList(type: JavaExec, dependsOn: jar) {
+tasks.register('weaponsList', JavaExec) {
+    dependsOn jar
+
     description = 'Generate Weapons Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
@@ -373,7 +401,9 @@ task weaponsList(type: JavaExec, dependsOn: jar) {
     args = [ '-eqwdb', "${projectDir}/weapons.txt" ]
 }
 
-task ammoList(type: JavaExec, dependsOn: jar) {
+tasks.register('ammoList', JavaExec) {
+    dependsOn jar
+
     description = 'Generate Ammo Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
@@ -381,7 +411,9 @@ task ammoList(type: JavaExec, dependsOn: jar) {
     args = [ '-eqadb', "${projectDir}/ammo.txt" ]
 }
 
-task weaponsMiscList(type: JavaExec, dependsOn: jar) {
+tasks.register('weaponsMiscList', JavaExec) {
+    dependsOn jar
+
     description = 'Generate Misc Weapons Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
@@ -389,35 +421,45 @@ task weaponsMiscList(type: JavaExec, dependsOn: jar) {
     args = [ '-eqmdb', "${projectDir}/misc-weapons.txt" ]
 }
 
-task alphaStrikeMassConvert(type: JavaExec, dependsOn: jar) {
+tasks.register('alphaStrikeMassConvert', JavaExec) {
+    dependsOn jar
+
     description = 'Outputs the Alpha Strike conversion of all units'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.AlphaStrikeMassConvert'
 }
 
-task boardsTagger(type: JavaExec, dependsOn: jar) {
+tasks.register('boardsTagger', JavaExec) {
+    dependsOn jar
+
     description = 'Tags all boards'
     group = 'boards'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.BoardsTagger'
 }
 
-task boardsValidator(type: JavaExec, dependsOn: jar) {
+tasks.register('boardsValidator', JavaExec) {
+    dependsOn jar
+
     description = 'Validates all boards'
     group = 'boards'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.BoardsValidator'
 }
 
-task filteredUnitListTool(type: JavaExec, dependsOn: jar) {
+tasks.register('filteredUnitListTool', JavaExec) {
+    dependsOn jar
+
     description = 'Filter Unit List Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.FilteredUnitListTool'
 }
 
-task gifWriter(type: JavaExec, dependsOn: jar) {
+tasks.register('gifWriter', JavaExec) {
+    dependsOn jar
+
     description = 'Generate a GIF from a game summary'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -425,56 +467,72 @@ task gifWriter(type: JavaExec, dependsOn: jar) {
     args project.hasProperty('gifGameSummary') ? project.gifGameSummary.tokenize(' ') : []
 }
 
-task entityVerifier(type: JavaExec, dependsOn: jar) {
+tasks.register('entityVerifier', JavaExec) {
+    dependsOn jar
+
     description = 'Entity Verifier'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.common.verifier.EntityVerifier'
 }
 
-task iconTest(type: JavaExec, dependsOn: jar) {
+tasks.register('iconTest', JavaExec) {
+    dependsOn jar
+
     description = 'Icon Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.IconTest'
 }
 
-task mekCacheCSVTool(type: JavaExec, dependsOn: jar) {
+tasks.register('mekCacheCSVTool', JavaExec) {
+    dependsOn jar
+
     description = 'Mek CSV Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.MekCacheCSVTool'
 }
 
-task nameChangesValidator(type: JavaExec, dependsOn: jar) {
+tasks.register('nameChangesValidator', JavaExec) {
+    dependsOn jar
+
     description = 'Checks for issues related to name changes.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.NameChangesValidator'
 }
 
-task ratGeneratorEditor(type: JavaExec, dependsOn: copyFiles) {
+tasks.register('ratGeneratorEditor', JavaExec) {
+    dependsOn copyFiles
+
     description = 'RAT Editor.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.RATGeneratorEditor'
 }
 
-task techLevelCompareTool(type: JavaExec, dependsOn: jar) {
+tasks.register('techLevelCompareTool', JavaExec) {
+    dependsOn jar
+
     description = 'Tech Level Comparison Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.TechLevelCompareTool'
 }
 
-task unitFileMigrationTool(type: JavaExec, dependsOn: jar) {
+tasks.register('unitFileMigrationTool', JavaExec) {
+    dependsOn jar
+
     description = 'Unit File Migration Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.UnitFileMigrationTool'
 }
 
-task testAi(type: JavaExec, dependsOn: jar) {
+tasks.register('testAi', JavaExec) {
+    dependsOn jar
+
     description = 'Test AI'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath

@@ -17,6 +17,13 @@ jobs:
         with:
           path: megamek
 
+      - name: Checkout MegaMek Data
+        uses: actions/checkout@v4
+        with:
+          repository: megamek/mm-data
+          ref: main
+          path: mm-data
+
       - name: Set up Temurin JDK 17
         uses: actions/setup-java@v4
         with:

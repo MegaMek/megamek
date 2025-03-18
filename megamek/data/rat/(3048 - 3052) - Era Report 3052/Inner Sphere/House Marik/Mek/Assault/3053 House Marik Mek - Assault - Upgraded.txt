@@ -1,8 +1,0 @@
-3053 House Marik Mech - Assault - Upgraded
-Goliath GOL-3M,2
-Longbow LGB-0W,2
-Thug THG-11E,3
-Stalker STK-5M,7
-Atlas AS7-D,5
-Awesome AWS-9M,11
-BattleMaster BLR-3M,6

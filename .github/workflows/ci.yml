@@ -11,6 +11,10 @@ jobs:
   ci_cd:
     runs-on: ${{ matrix.os }}
 
+    outputs:
+      mmDataRepo: ${{ steps.find_mm_data.outputs.mmRepo }}
+      mmDataBranch: ${{ steps.find_mm_data.outputs.mmBranch }}
+
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -23,6 +27,28 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: megamek
+
+      - name: "Find the Right MegaMek Data Branch"
+        id: "find_mm_data"
+        shell: bash {0}
+        run: |
+          git ls-remote --exit-code --heads ${{ github.event.pull_request.head.repo.owner.html_url }}/mm-data.git ${{ github.event.pull_request.head.ref }}
+          if [ "$?" == "0" ]
+          then
+              echo "mmDataRepo=${{ github.event.pull_request.head.repo.owner.login }}/mm-data" >> $GITHUB_OUTPUT
+              echo "mmDataBranch=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+          else
+              echo "mmDataRepo=MegaMek/mm-data" >> $GITHUB_OUTPUT
+              echo "mmDataBranch=main" >> $GITHUB_OUTPUT
+          fi
+          exit 0
+
+      - name: Checkout MegaMek Data
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.find_mm_data.outputs.mmDataRepo }}
+          ref: ${{ steps.find_mm_data.outputs.mmDataBranch }}
+          path: mm-data
 
       - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4

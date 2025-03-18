@@ -23,6 +23,13 @@ jobs:
         with:
           path: megamek
 
+      - name: Checkout MegaMek Data
+        uses: actions/checkout@v4
+        with:
+          repository: megamek/mm-data
+          ref: main
+          path: mm-data
+
       - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4
         with:

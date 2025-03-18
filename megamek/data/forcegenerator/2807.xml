@@ -2889,7 +2889,7 @@
 			</model>
 		</chassis>
 		<chassis name='Mechanized Hover Platoon' unitType='Infantry'>
-			<availability>CLAN:5,PP:4+,IS:5,Periphery:5,TC:1-,Periphery.Deep:4+</availability>
+			<availability>PP:4+,IS:5,Periphery:5,TC:1-,Periphery.Deep:4+</availability>
 			<model name='(Demolition)'>
 				<roles>recon,engineer</roles>
 				<availability>General:2,CLAN:0,CGS:3,PP:2</availability>
@@ -2937,6 +2937,26 @@
                 <availability>TC:5</availability>
 			</model>
 		</chassis>
+        <chassis name='Clan Mechanized Hover Point' unitType='Infantry'>
+            <availability>CLAN!Keshik:5!Front Line:4!Second Line:1,CIH!Keshik:7!Front Line:4!Second Line:1</availability>
+            <model name='(Flamer Basic)'>
+                <roles>urban</roles>
+                <availability>CLAN:2-</availability>
+            </model>
+            <model name='(Laser Basic)'>
+                <availability>CLAN:6+</availability>
+            </model>
+            <model name='(MG Basic)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN:4</availability>
+            </model>
+            <model name='(Rifle Basic)'>
+                <availability>CLAN:7</availability>
+            </model>
+            <model name='(SRM Basic)'>
+                <availability>CLAN:5+</availability>
+            </model>
+        </chassis>
 		<chassis name='Mechanized Tracked Platoon' unitType='Infantry'>
 			<availability>CLAN:7,PP:7,IS:7,Periphery:7,TC:3-,Periphery.Deep:6+</availability>
 			<model name='(Flamer)'>

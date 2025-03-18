@@ -882,7 +882,8 @@
         <chassis name='Clan Foot Point' unitType='Infantry'>
             <availability>CLAN!Keshik:6!Front Line:6!Second Line:7!Solahma:7!Provisional Garrison:8</availability>
             <model name='(Flamer Basic)'>
-                <availability>CLAN.HW:3-,CLAN.IS:3-</availability>
+                <roles>urban</roles>
+                <availability>CLAN:3-</availability>
             </model>
             <model name='(Laser Basic)'>
                 <availability>CLAN!Keshik:6!Front Line:5!Second Line:4</availability>
@@ -892,7 +893,7 @@
             </model>
             <model name='(MG Basic)'>
                 <roles>anti_infantry</roles>
-                <availability>CLAN.HW:4,CLAN.IS:4</availability>
+                <availability>CLAN:4</availability>
             </model>
             <model name='(Rifle AA Basic)'>
                 <roles>anti_aircraft</roles>
@@ -902,10 +903,34 @@
                 <availability>CLAN!Keshik:7!Front Line:7!Second Line:7!Solahma:5!Provisional Garrison:2</availability>
             </model>
             <model name='(Rifle Light)'>
-                <availability>CLAN.HW!Solahma:2!Provisional Garrison:7,CLAN.HW!Solahma:2!Provisional Garrison:7</availability>
+                <roles>urban</roles>
+                <availability>CLAN!Solahma:2!Provisional Garrison:7</availability>
             </model>
             <model name='(SRM Basic)'>
                 <availability>CLAN!Keshik:5!Front Line:4!Second Line:2!Solahma:1</availability>
+            </model>
+        </chassis>
+        <chassis name='Clan Jump Point' unitType='Infantry'>
+            <availability>CLAN!Keshik:8!Front Line:7!Second Line:5!Solahma:1,CGB!Keshik:5!Front Line:5!Second Line:5!Solahma:1</availability>
+            <model name='(Flamer Basic)'>
+                <roles>urban</roles>
+                <availability>CLAN:3-</availability>
+            </model>
+            <model name='(Laser Basic)'>
+                <availability>CLAN:6+</availability>
+            </model>
+            <model name='(Mauser 960 Basic)'>
+                <availability>CLAN!Keshik:3,CHH!Keshik:5!Front Line:1</availability>
+            </model>
+            <model name='(MG Basic)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN:4</availability>
+            </model>
+            <model name='(Rifle Basic)'>
+                <availability>CLAN:6</availability>
+            </model>
+            <model name='(SRM Basic)'>
+                <availability>CLAN:5+</availability>
             </model>
         </chassis>
 		<chassis name='Clint' unitType='Mek'>

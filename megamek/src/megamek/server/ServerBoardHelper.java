@@ -19,21 +19,26 @@
 package megamek.server;
 
 import megamek.MMConstants;
+import megamek.client.bot.princess.Princess;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Configuration;
+import megamek.common.Hex;
 import megamek.common.MapSettings;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 import static megamek.client.ui.swing.lobby.LobbyUtility.extractSurpriseMaps;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ServerBoardHelper {
+    private static final MMLogger logger = MMLogger.create(ServerBoardHelper.class);
 
     /**
      * Returns a list of path names of available boards of the size set in the given
@@ -43,17 +48,17 @@ public class ServerBoardHelper {
     public static List<String> scanForBoards(MapSettings mapSettings) {
         BoardDimensions boardSize = mapSettings.getBoardSize();
         List<String> result = new ArrayList<>();
-        
+
         // Scan the Megamek boards directory
         File boardDir = Configuration.boardsDir();
         scanForBoardsInDir(boardDir, "", boardSize, result);
-        
+
         // Scan the userData directory
         boardDir = new File(Configuration.userdataDir(), Configuration.boardsDir().toString());
         if (boardDir.isDirectory()) {
             scanForBoardsInDir(boardDir, "", boardSize, result);
         }
-        
+
         result.sort(String::compareTo);
         return result.stream().map(ServerBoardHelper::backToForwardSlash).collect(Collectors.toList());
     }
@@ -61,7 +66,7 @@ public class ServerBoardHelper {
     private static String backToForwardSlash(String path) {
         return path.replace("\\", "/");
     }
-    
+
     /**
      * Scans the given boardDir directory for map boards of the given size and
      * returns them by adding them to the given boards list. Removes the .board extension.
@@ -94,7 +99,7 @@ public class ServerBoardHelper {
             }
         }
     }
-    
+
     /**
      * Returns the game map as it is currently set in the map settings tab.
      * When onlyFixedBoards is true, all Generated and Surprise boards are
@@ -135,9 +140,22 @@ public class ServerBoardHelper {
             }
         }
 
-        return BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
-                mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards, rotateBoard,
-                mapSettings.getMedium());
+        Board finalBoard;
+        try {
+            finalBoard = BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
+                  mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards, rotateBoard,
+                  mapSettings.getMedium());
+        } catch (IllegalArgumentException ex) {
+            int totalWidth = mapSettings.getMapWidth() * mapSettings.getBoardWidth();
+            int totalHeight = mapSettings.getMapHeight() * mapSettings.getBoardHeight();
+            // Hit a failure while trying to read a custom map; log and return a blank map for now.
+            logger.warn("Failed to read one or map board files; using blank Board.");
+            finalBoard = new Board(totalWidth, totalHeight);
+            Hex[] resultData = new Hex[totalWidth * totalHeight];
+            Arrays.fill(resultData, new Hex());
+            finalBoard.newData(totalWidth, totalHeight, resultData, null);
+        }
+        return finalBoard;
     }
 
     private ServerBoardHelper() { }

@@ -879,6 +879,33 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Clan Field Artillery Point' unitType='Infantry'>
+            <availability>CLAN!Keshik:1!Second Line:4!Solahma:3!Provisional Garrison:2,CHH!Keshik:2!Front Line:1!Second Line:4!Solahma:3!Provisional Garrison:2,CIH!Second Line:4!Solahma:3!Provisional Garrison:2</availability>
+            <model name='(Tracked Arrow IV)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Keshik:2!Second Line:4!Solahma:1,CHH!Keshik:2!Front Line:1!Second Line:4!Solahma:1</availability>
+            </model>
+            <model name='(Tracked Sniper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Second Line:5!Solahma:6!Provisional Garrison:4</availability>
+            </model>
+            <model name='(Tracked Thumper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Second Line:6!Solahma:7!Provisional Garrison:5</availability>
+            </model>
+            <model name='(Wheeled Arrow IV)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Keshik:1!Second Line:5!Solahma:2,CHH!Keshik:1!Front Line:1!Second Line:5!Solahma:2</availability>
+            </model>
+            <model name='(Wheeled Sniper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Second Line:6!Solahma:7!Provisional Garrison:7</availability>
+            </model>
+            <model name='(Wheeled Thumper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Second Line:7!Solahma:8!Provisional Garrison:8</availability>
+            </model>
+        </chassis>
         <chassis name='Clan Foot Point' unitType='Infantry'>
             <availability>CLAN!Keshik:6!Front Line:6!Second Line:7!Solahma:7!Provisional Garrison:8</availability>
             <model name='(Flamer Basic)'>

@@ -118,6 +118,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6722: Safeties the post-destruction Squadron weapon inventory to avoid NPEs
 + PR #6724: Added 694 Brand New Callsigns
 + Fix #6403: Avoid mp null Exception, add warning logging
++ Fix #6671: Correct unit valuation with negative part costs
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

@@ -922,15 +922,15 @@
             </model>
             <model name='(Tracked AC2 Basic)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
-                <availability>CLAN!Keshik:4!Front Line:4!Second Line:3!Solahma:2,CGB:0</availability>
+                <availability>CLAN!Keshik:4!Front Line:4!Second Line:3!Solahma:2,CGB:3+,CIH!Keshik:4!Front Line:4!Second Line:3!Solahma:2</availability>
             </model>
             <model name='(Tracked AC20 Basic)'>
                 <roles>field_gun</roles>
-                <availability>CLAN!Keshik:4!Front Line:2!Second Line:1,CGB:0,CIH:0</availability>
+                <availability>CLAN!Keshik:4!Front Line:2!Second Line:1,CGB:4+,CIH:0</availability>
             </model>
             <model name='(Tracked AC5 Basic)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
-                <availability>CLAN!Keshik:8!Front Line:6!Second Line:3!Solahma:2</availability>
+                <availability>CLAN!Keshik:8!Front Line:6!Second Line:3!Solahma:2,CGB:6+,CIH!Keshik:8!Front Line:6!Second Line:3!Solahma:2</availability>
             </model>
             <model name='(Tracked LBX10 Basic)'>
                 <roles>anti_aircraft,field_gun</roles>
@@ -950,7 +950,7 @@
             </model>
             <model name='(Wheeled AC20 Basic)'>
                 <roles>field_gun,urban</roles>
-                <availability>CLAN!Second Line:1,CGB!Front Line:1!Second Line:2,CGB!Front Line:1!Second Line:2,CIH:0</availability>
+                <availability>CLAN!Second Line:1,CGB!Front Line:1!Second Line:2,CIH:0</availability>
             </model>
             <model name='(Wheeled AC5 Basic)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
@@ -990,7 +990,7 @@
             </model>
             <model name='(Rifle Light)'>
                 <roles>urban</roles>
-                <availability>CLAN!Solahma:2!Provisional Garrison:7</availability>
+                <availability>CLAN!Solahma:4!Provisional Garrison:7</availability>
             </model>
             <model name='(SRM Basic)'>
                 <availability>CLAN!Keshik:5!Front Line:4!Second Line:2!Solahma:1</availability>
@@ -1026,6 +1026,7 @@
                 <availability>CLAN:2-</availability>
             </model>
             <model name='(Laser Basic)'>
+                <roles>recon</roles>
                 <availability>CLAN:6+</availability>
             </model>
             <model name='(MG Basic)'>
@@ -1033,6 +1034,7 @@
                 <availability>CLAN:4</availability>
             </model>
             <model name='(Rifle Basic)'>
+                <roles>recon</roles>
                 <availability>CLAN:7</availability>
             </model>
             <model name='(SRM Basic)'>
@@ -1047,6 +1049,9 @@
             </model>
             <model name='(Laser Basic)'>
                 <availability>CLAN!Keshik:6!Front Line:5!Second Line:4</availability>
+            </model>
+            <model name='(Mauser 960 Basic)'>
+                <availability>CGB:2+,CHH:1+</availability>
             </model>
             <model name='(MG Basic)'>
                 <roles>anti_infantry</roles>

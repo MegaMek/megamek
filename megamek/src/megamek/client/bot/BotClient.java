@@ -565,7 +565,7 @@ public abstract class BotClient extends Client {
                 } else {
                     if (config.isForcedIndividual()) {
                         Entity mustMove = getRandomUnmovedEntity();
-                        moverId = mustMove.getId();
+                        moverId = (mustMove != null) ? mustMove.getId() : -1;
                         mp = continueMovementFor(mustMove);
                     } else {
                         mp = calculateMoveTurn();

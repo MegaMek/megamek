@@ -578,7 +578,7 @@ public abstract class BotClient extends Client {
                     // This attempt to calculate the turn failed, but we don't want to log
                     // an exception here.
                     logger.warn(
-                          "Null move path; entity was " + ((moverId != -1) ? "ID " + moverId : "Unknown")
+                          "Null move path; entity was {}", ((moverId != -1) ? "ID " + moverId : "Unknown")
                     );
                     return false;
                 }

@@ -50,6 +50,7 @@ import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
 import java.awt.*;
+import java.io.File;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10968,11 +10969,28 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
+    /**
+     * Get the source file for this unit.
+     * @return The source file for this unit, null if it does not exists.
+     */
+    public @Nullable File getSourceFile() {
+        return MekSummary.getSourceFile(getChassis() + " " + getModel());
+    }
+
+    /**
+     * Tells if this unit is canon or not.
+     * @return True if the unit is canon, false otherwise.
+     */
     public boolean isCanon() {
         return canon;
     }
 
+    /**
+     * Set the unit as canon or not.
+     * @param canon The state of the flag
+     */
     public void setCanon(boolean canon) {
+        // to set a unit as canon or not it needs to run its own signature against the public key
         this.canon = canon;
     }
 

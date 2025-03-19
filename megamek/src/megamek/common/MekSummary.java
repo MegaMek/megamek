@@ -1382,6 +1382,18 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return null;
     }
 
+    public static @Nullable File getSourceFile(String fullName) {
+        try {
+            MekSummary ms = MekSummaryCache.getInstance().getMek(fullName);
+            if (ms != null) {
+                return ms.getSourceFile();
+            }
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return getName();

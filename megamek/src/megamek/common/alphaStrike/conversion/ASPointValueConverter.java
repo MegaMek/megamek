@@ -131,27 +131,29 @@ public class ASPointValueConverter {
         }
     }
 
-    int getSkillAdjustedPointValue() {
-        int basePointValue = getBasePointValue();
+    int getSkillAdjustedPointValue(int basePointValue) {
         if (element.getSkill() == 4) {
             return basePointValue;
         }
 
         int multiplier = 1;
         int newPointValue = basePointValue;
+        String calculation = "";
         if (element.getSkill() > 4) {
             if (basePointValue > 14) {
                 multiplier += (basePointValue - 5) / 10;
             }
-            newPointValue = basePointValue - (element.getSkill() - 4) * multiplier;
+            newPointValue -= (element.getSkill() - 4) * multiplier;
+            calculation = "- (%d - 4) x (1 + %d)".formatted(element.getSkill(), multiplier - 1);
         } else if (element.getSkill() < 4) {
             if (basePointValue > 7) {
                 multiplier += (basePointValue - 3) / 5;
             }
-            newPointValue = basePointValue + (4 - element.getSkill()) * multiplier;
+            newPointValue += (4 - element.getSkill()) * multiplier;
+            calculation = "+ (4 - %d) x (1 + %d)".formatted(element.getSkill(), multiplier - 1);
         }
         newPointValue = Math.max(newPointValue, 1);
-        report.addLine("Skill-adjusted Point Value", "", "" + newPointValue);
+        report.addLine("Skill-adjusted Point Value", calculation, "" + newPointValue);
         return newPointValue;
     }
 

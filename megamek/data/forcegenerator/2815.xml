@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2815-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BoS'>
 			<salvage pct='10'></salvage>
@@ -1194,7 +1191,7 @@
             </model>
             <model name='(Wheeled CLBX20 Basic)'>
                 <roles>field_gun</roles>
-                <availability>CLAN!Keshik:1,CGB!Keshik:2,CIH:1</availability>
+                <availability>CLAN!Keshik:1,CGB!Keshik:2</availability>
             </model>
             <model name='(Wheeled CLBX5 Basic)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>

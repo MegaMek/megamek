@@ -117,6 +117,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6692: cleaned up the mp candidate evaluation on longest path finder
 + PR #6722: Safeties the post-destruction Squadron weapon inventory to avoid NPEs
 + PR #6724: Added 694 Brand New Callsigns
++ Fix #6403: Avoid mp null Exception, add warning logging
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

@@ -863,7 +863,7 @@
 		<chassis name='Chippewa' unitType='AeroSpaceFighter'>
 			<availability>MOC:3,PP:6,CC:5,OA:3,LA:8,FWL:6,MERC:5,FS:5,CIR:3,Periphery:2,TC:3,DC:3</availability>
 			<model name='CHP-W5'>
-				<availability>PP:3,:0,LA:8,IS:8,Periphery.Deep:8,MERC:8,FS:8,Periphery:8</availability>
+				<availability>PP:3,LA:8,IS:8,Periphery.Deep:8,MERC:8,FS:8,Periphery:8</availability>
 			</model>
 			<model name='CHP-W5b'>
 				<availability>PP:4</availability>
@@ -904,6 +904,65 @@
             <model name='(Wheeled Thumper)'>
                 <roles>mixed_artillery</roles>
                 <availability>CLAN!Second Line:7!Solahma:8!Provisional Garrison:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Clan Field Gun Point' unitType='Infantry'>
+            <availability>CLAN!Keshik:5!Front Line:5!Second Line:4!Solahma:1!Provisional Garrison:1,CIH!Keshik:4!Front Line:3!Second Line:2!Solahma:1!Provisional Garrison:1</availability>
+            <model name='(Motorized AC2)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Solahma:2!Provisional Garrison:8</availability>
+            </model>
+            <model name='(Motorized AC5)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Solahma:1!Provisional Garrison:6</availability>
+            </model>
+            <model name='(Tracked AC10 Basic)'>
+                <roles>field_gun</roles>
+                <availability>CLAN!Keshik:7!Front Line:5!Second Line:2,CGB:7+</availability>
+            </model>
+            <model name='(Tracked AC2 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:4!Front Line:4!Second Line:3!Solahma:2,CGB:0</availability>
+            </model>
+            <model name='(Tracked AC20 Basic)'>
+                <roles>field_gun</roles>
+                <availability>CLAN!Keshik:4!Front Line:2!Second Line:1,CGB:0</availability>
+            </model>
+            <model name='(Tracked AC5 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:8!Front Line:6!Second Line:3!Solahma:2</availability>
+            </model>
+            <model name='(Tracked LBX10 Basic)'>
+                <roles>anti_aircraft,field_gun</roles>
+                <availability>CLAN!Keshik:5!Front Line:1</availability>
+            </model>
+            <model name='(Tracked UAC5 Basic)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:4!Front Line:1</availability>
+            </model>
+            <model name='(Wheeled AC10 Basic)'>
+                <roles>field_gun,urban</roles>
+                <availability>CLAN!Second Line:6!Solahma:1,CGB!Second Line:8!Solahma:1</availability>
+            </model>
+            <model name='(Wheeled AC2 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Second Line:5!Solahma:5</availability>
+            </model>
+            <model name='(Wheeled AC20 Basic)'>
+                <roles>field_gun,urban</roles>
+                <availability>CLAN!Second Line:1,CGB!Front Line:1!Second Line:2,CIH:0</availability>
+            </model>
+            <model name='(Wheeled AC5 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Second Line:8!Solahma:6,CGB!Second Line:6!Solahma:6</availability>
+            </model>
+            <model name='(Wheeled LBX10 Basic)'>
+                <roles>anti_aircraft,field_gun,urban</roles>
+                <availability>CLAN!Front Line:3!Second Line:4</availability>
+            </model>
+            <model name='(Wheeled UAC Basic)'>
+                <roles>field_gun,fire_support,urban</roles>
+                <availability>CLAN!Front Line:2!Second Line:3</availability>
             </model>
         </chassis>
         <chassis name='Clan Foot Point' unitType='Infantry'>

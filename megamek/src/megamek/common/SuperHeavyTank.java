@@ -472,4 +472,10 @@ public class SuperHeavyTank extends Tank {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(2.681 + 0.681 * Math.log(getWeight())));
     }
+
+    @Override
+    public boolean isSideLocation(int location) {
+        return (location == LOC_FRONTLEFT) || (location == LOC_FRONTRIGHT)
+              || (location == LOC_REARLEFT) || (location == LOC_REARRIGHT);
+    }
 }

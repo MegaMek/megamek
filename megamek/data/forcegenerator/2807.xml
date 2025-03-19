@@ -908,11 +908,11 @@
         </chassis>
         <chassis name='Clan Field Gun Point' unitType='Infantry'>
             <availability>CLAN!Keshik:5!Front Line:5!Second Line:4!Solahma:1!Provisional Garrison:1,CIH!Keshik:4!Front Line:3!Second Line:2!Solahma:1!Provisional Garrison:1</availability>
-            <model name='(Motorized AC2)'>
+            <model name='(Motorized AC2 Basic)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
                 <availability>CLAN!Solahma:2!Provisional Garrison:8</availability>
             </model>
-            <model name='(Motorized AC5)'>
+            <model name='(Motorized AC5 Basic)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
                 <availability>CLAN!Solahma:1!Provisional Garrison:6</availability>
             </model>
@@ -926,7 +926,7 @@
             </model>
             <model name='(Tracked AC20 Basic)'>
                 <roles>field_gun</roles>
-                <availability>CLAN!Keshik:4!Front Line:2!Second Line:1,CGB:0</availability>
+                <availability>CLAN!Keshik:4!Front Line:2!Second Line:1,CGB:0,CIH:0</availability>
             </model>
             <model name='(Tracked AC5 Basic)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
@@ -950,7 +950,7 @@
             </model>
             <model name='(Wheeled AC20 Basic)'>
                 <roles>field_gun,urban</roles>
-                <availability>CLAN!Second Line:1,CGB!Front Line:1!Second Line:2,CIH:0</availability>
+                <availability>CLAN!Second Line:1,CGB!Front Line:1!Second Line:2,CGB!Front Line:1!Second Line:2,CIH:0</availability>
             </model>
             <model name='(Wheeled AC5 Basic)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
@@ -960,7 +960,7 @@
                 <roles>anti_aircraft,field_gun,urban</roles>
                 <availability>CLAN!Front Line:3!Second Line:4</availability>
             </model>
-            <model name='(Wheeled UAC Basic)'>
+            <model name='(Wheeled UAC5 Basic)'>
                 <roles>field_gun,fire_support,urban</roles>
                 <availability>CLAN!Front Line:2!Second Line:3</availability>
             </model>
@@ -1903,10 +1903,10 @@
 			</model>
 		</chassis>
 		<chassis name='Foot Stealth Squad' unitType='Infantry'>
-			<availability>General:1+</availability>
+			<availability>IS:1+,PP:1+,Periphery:1+</availability>
 			<model name='(Sniper Paratrooper)'>
 				<roles>recon,specops,paratrooper</roles>
-				<availability>General:8</availability>
+				<availability>IS:8,PP:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Fortress' unitType='Dropship'>

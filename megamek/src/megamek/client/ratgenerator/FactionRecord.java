@@ -13,18 +13,17 @@
  */
 package megamek.client.ratgenerator;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.StringJoiner;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.commons.text.StringEscapeUtils;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import megamek.common.universe.DateRangeDeserializer;
+import megamek.common.universe.Faction2;
+import megamek.common.universe.Factions2;
+import org.apache.commons.collections4.CollectionUtils;
 import org.w3c.dom.Node;
 
 import megamek.common.UnitType;
@@ -120,6 +119,27 @@ public class FactionRecord {
         parentFactions = new ArrayList<>();
     }
 
+    public FactionRecord(Faction2 faction2) {
+        this(faction2.getKey(), faction2.getName());
+        setMinor(faction2.isMinorPower());
+        setClan(faction2.isClan());
+        setPeriphery(faction2.isPeriphery());
+        setParentFactions(String.join(",", faction2.getFallBackFactions()));
+        setRatings(String.join(",", faction2.getRatingLevels()));
+        List<String> dateRanges = faction2.getYearsActive().stream().map(FactionRecord.DateRange::toString).toList();
+        try {
+            setYears(String.join(",", dateRanges));
+        } catch (ParseException exception) {
+            // can't help
+        }
+
+        if (!faction2.getNameChanges().isEmpty()) {
+            for (Map.Entry<Integer, String> entry : faction2.getNameChanges().entrySet()) {
+                setName(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
     @Override
     public int hashCode() {
         return key.hashCode();
@@ -157,6 +177,10 @@ public class FactionRecord {
 
     public void setPeriphery(boolean periphery) {
         this.periphery = periphery;
+    }
+
+    public TreeMap<Integer, String> getAltNames() {
+        return altNames;
     }
 
     /**
@@ -496,48 +520,6 @@ public class FactionRecord {
         Collections.addAll(parentFactions, factions.split(","));
     }
 
-    public static FactionRecord createFromXml(Node node) {
-        FactionRecord retVal = new FactionRecord();
-        retVal.key = node.getAttributes().getNamedItem("key").getTextContent();
-        retVal.name = node.getAttributes().getNamedItem("name").getTextContent();
-        if (node.getAttributes().getNamedItem("minor") != null) {
-            retVal.minor = Boolean.parseBoolean(node.getAttributes().getNamedItem("minor").getTextContent());
-        } else {
-            retVal.minor = false;
-        }
-
-        if (node.getAttributes().getNamedItem("clan") != null) {
-            retVal.clan = Boolean.parseBoolean(node.getAttributes().getNamedItem("clan").getTextContent());
-        } else {
-            retVal.clan = false;
-        }
-
-        if (node.getAttributes().getNamedItem("periphery") != null) {
-            retVal.periphery = Boolean.parseBoolean(node.getAttributes().getNamedItem("periphery").getTextContent());
-        } else {
-            retVal.periphery = false;
-        }
-
-        for (int i = 0; i < node.getChildNodes().getLength(); i++) {
-            Node wn = node.getChildNodes().item(i);
-            if (wn.getNodeName().equalsIgnoreCase("nameChange")) {
-                retVal.altNames.put(Integer.parseInt(wn.getAttributes().getNamedItem("year").getTextContent()),
-                        wn.getTextContent());
-            } else if (wn.getNodeName().equalsIgnoreCase("years")) {
-                try {
-                    retVal.setYears(wn.getTextContent());
-                } catch (ParseException ex) {
-                    logger.error(ex, "createFromXML");
-                }
-            } else if (wn.getNodeName().equalsIgnoreCase("ratingLevels")) {
-                retVal.setRatings(wn.getTextContent());
-            } else if (wn.getNodeName().equalsIgnoreCase("parentFaction")) {
-                retVal.setParentFactions(wn.getTextContent());
-            }
-        }
-        return retVal;
-    }
-
     public void loadEra(Node node, int era) {
         for (int i = 0; i < node.getChildNodes().getLength(); i++) {
             Node wn = node.getChildNodes().item(i);
@@ -612,28 +594,13 @@ public class FactionRecord {
         }
     }
 
-    public void writeToXml(PrintWriter pw) {
-        pw.println("\t<faction key='" + key + "' name='"
-                + StringEscapeUtils.escapeXml10(name) + "' minor='" + minor
-                + "' clan='" + clan
-                + "' periphery='" + periphery + "'>");
-        for (Integer year : altNames.keySet()) {
-            pw.println("\t\t<nameChange year='" + year + "'>"
-                    + altNames.get(year) + "</nameChange>");
+    public void saveIfChanged() throws IOException {
+        Optional<Faction2> original = Factions2.getInstance().getFaction(key);
+        if (original.isEmpty()) {
+            new Faction2().saveToFile(this);
+        } else if (hasDifferences(new FactionRecord(original.get()))) {
+            original.get().saveToFile(this);
         }
-        pw.print("\t\t<years>");
-        pw.print(getYearsAsString());
-        pw.println("</years>");
-        if (!ratingLevels.isEmpty()) {
-            pw.println("\t\t<ratingLevels>" + StringEscapeUtils.escapeXml10(String.join(",", ratingLevels))
-                    + "</ratingLevels>");
-        }
-
-        if ((parentFactions != null) && !parentFactions.isEmpty()) {
-            pw.println("\t\t<parentFaction>" + StringEscapeUtils.escapeXml10(String.join(",", parentFactions))
-                    + "</parentFaction>");
-        }
-        pw.println("\t</faction>");
     }
 
     public void writeToXml(PrintWriter pw, int era) {
@@ -838,12 +805,17 @@ public class FactionRecord {
         return sj.toString();
     }
 
+    public List<DateRange> getYears() {
+        return yearsActive;
+    }
+
     @Override
     public String toString() {
         return key;
     }
 
-    private static class DateRange {
+    @JsonDeserialize(using = DateRangeDeserializer.class)
+    public static class DateRange {
         public Integer start;
         public Integer end;
 
@@ -853,21 +825,42 @@ public class FactionRecord {
         }
 
         public boolean isInRange(int year) {
-            return (start == null || start <= year)
-                    && (end == null || end >= year);
+            return (start == null || start <= year) && (end == null || end >= year);
         }
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            if (start != null) {
-                sb.append(start);
-            }
-            sb.append("-");
-            if (end != null) {
-                sb.append(end);
-            }
-            return sb.toString();
+            return "%s-%s".formatted((start != null ? start : ""), (end != null ? end : ""));
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof DateRange dateRange)) {
+                return false;
+            }
+            return Objects.equals(start, dateRange.start) && Objects.equals(end, dateRange.end);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(start, end);
+        }
+    }
+
+    /**
+     * Returns true when there's a difference between this and the given other FactionRecord. This is intentionally not
+     * overriding equals() as FactionRecord equals() is based on a comparison of the key only.
+     *
+     * @param other The FactionRecord to compare this to
+     * @return True when there's a save-worthy difference, false otherwise
+     */
+    public boolean hasDifferences(FactionRecord other) {
+        return !key.equals(other.key) || !name.equals(other.name) || minor != other.minor
+              || clan != other.clan || periphery != other.periphery
+              || !CollectionUtils.isEqualCollection(yearsActive, other.yearsActive)
+              || !CollectionUtils.isEqualCollection(ratingLevels, other.ratingLevels)
+              || !CollectionUtils.isEqualCollection(parentFactions, other.parentFactions)
+              || !CollectionUtils.isEqualCollection(altNames.keySet(), other.altNames.keySet())
+              || !CollectionUtils.isEqualCollection(altNames.values(), other.altNames.values());
     }
 }

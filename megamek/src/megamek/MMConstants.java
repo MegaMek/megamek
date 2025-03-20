@@ -70,6 +70,8 @@ public final class MMConstants extends SuiteConstants {
     public static final String USER_SURNAME_FILE = Paths.get("userdata/data/names/surnames.csv").toString();
     public static final String ERAS_FILE_PATH = Paths.get("data/universe/eras.xml").toString();
     public static final String USER_LOADOUTS_DIR = Paths.get("userdata/data/").toString();
+    public static final String FACTIONS_DIR = Paths.get("data/universe/factions").toString();
+    public static final String COMMANDS_DIR = Paths.get("data/universe/commands").toString();
     // endregion File Paths
 
     // region ClientServer

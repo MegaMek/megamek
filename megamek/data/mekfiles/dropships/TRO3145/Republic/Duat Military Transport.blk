@@ -198,13 +198,7 @@ ISLaserAntiMissileSystem
 </Aft Equipment>
 
 <Hull Equipment>
-ISDroneCarrierControlSystem
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
+ISDroneCarrierControlSystem:SIZE:6
 </Hull Equipment>
 
 <structural_integrity>

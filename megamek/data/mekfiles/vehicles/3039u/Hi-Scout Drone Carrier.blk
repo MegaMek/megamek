@@ -62,12 +62,7 @@ cargobay:15.5:1
 
 <Body Equipment>
 IS Ammo SRM-2
-ISDroneCarrierControlSystem
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
+ISDroneCarrierControlSystem:SIZE:5
 </Body Equipment>
 
 <Front Equipment>

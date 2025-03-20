@@ -23,15 +23,11 @@ public enum ASArcs {
 
     @Override
     public String toString() {
-        switch (this) {
-            case LEFT:
-                return "Left Arc";
-            case RIGHT:
-                return "Right Arc";
-            case REAR:
-                return "Rear Arc";
-            default:
-                return "Front Arc";
-        }
+        return switch (this) {
+            case LEFT -> "Left Arc";
+            case RIGHT -> "Right Arc";
+            case REAR -> "Rear Arc";
+            default -> "Front Arc";
+        };
     }
 }

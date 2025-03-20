@@ -64,6 +64,7 @@ public class ASPointValueConverter {
         processSize();
         processOffensiveSUAMods();
         processOffensiveBlanketMod();
+        processUnitTypeDamageDivisors();
 
         // Defensive Value
         report.addEmptyLine();
@@ -278,6 +279,10 @@ public class ASPointValueConverter {
                 formatForReport(offensiveValue) + " x " + formatForReport(blanketMod) + modifiers,
                 "= " + formatForReport(offensiveValue * blanketMod));
         offensiveValue *= blanketMod;
+    }
+
+    protected void processUnitTypeDamageDivisors() {
+        // only on large craft, the offensive value is divided based on unit type
     }
 
     protected void processDefensiveSUAMods() {

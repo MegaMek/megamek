@@ -21,6 +21,8 @@ package megamek.common.alphaStrike.conversion;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.alphaStrike.*;
 
+import java.util.function.BiFunction;
+
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.alphaStrike.ASUnitType.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
@@ -124,15 +126,18 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
                     "= " + formatForReport(capAndScapDmg));
             offensiveValue = stdAndMslDamage + capAndScapDmg / 5;
             report.addLine("Damage Sum", formatForReport(stdAndMslDamage) + " + " + formatForReport(capAndScapDmg) + " / 5", formatForReport(offensiveValue));
+        }
+    }
 
-            if (element.isType(WS, DS, SC)) {
-                report.addLine("WS/DS/SC", formatForReport(offensiveValue) + " / 4", formatForReport(offensiveValue / 4));
-                offensiveValue /= 4;
-            }
-            if (element.isType(SS, JS, SV)) {
-                report.addLine("JS/SS/SV", formatForReport(offensiveValue) + " / 3", formatForReport(offensiveValue / 3));
-                offensiveValue /= 3;
-            }
+    @Override
+    protected void processUnitTypeDamageDivisors() {
+        if (element.isType(WS, DS, SC)) {
+            report.addLine("WS/DS/SC", formatForReport(offensiveValue) + " / 4", formatForReport(offensiveValue / 4));
+            offensiveValue /= 4;
+        }
+        if (element.isType(SS, JS, SV)) {
+            report.addLine("JS/SS/SV", formatForReport(offensiveValue) + " / 3", formatForReport(offensiveValue / 3));
+            offensiveValue /= 3;
         }
     }
 
@@ -140,14 +145,44 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
     protected void processSize() { }
 
     @Override
-    protected void processOffensiveSUAMods() { }
+    protected void processOffensiveSUAMods() {
+        // According to https://bg.battletech.com/forums/index.php?topic=84862.msg2007447#msg2007447,
+        // offensive SUA mods, blanket mods and force bonus are also used on large craft contrary to how it
+        // seems in ASC
+        super.processOffensiveSUAMods();
+        // On large craft, the only relevant offensive SUAs in arcs are artillery and Narc
+        processOffensiveSUAModsPerArc();
+    }
 
-    @Override
-    protected void processForceBonus() { }
+    protected void processOffensiveSUAModsPerArc() {
+        processOffensiveSUAModInArc(ARTAIS, (e, a) -> 12.0 * (int) e.getArc(a).getSUA(ARTAIS));
+        processOffensiveSUAModInArc(ARTAC, (e, a) -> 12.0 * (int) e.getArc(a).getSUA(ARTAC));
+        processOffensiveSUAModInArc(ARTT, (e, a) -> 6.0 * (int) e.getArc(a).getSUA(ARTT));
+        processOffensiveSUAModInArc(ARTS, (e, a) -> 12.0 * (int) e.getArc(a).getSUA(ARTS));
+        processOffensiveSUAModInArc(ARTBA, (e, a) -> 6.0 * (int) e.getArc(a).getSUA(ARTBA));
+        processOffensiveSUAModInArc(ARTLTC, (e, a) -> 12.0 * (int) e.getArc(a).getSUA(ARTLTC));
+        processOffensiveSUAModInArc(ARTSC, (e, a) -> 6.0 * (int) e.getArc(a).getSUA(ARTSC));
+        processOffensiveSUAModInArc(ARTCM5, (e, a) -> 30.0 * (int) e.getArc(a).getSUA(ARTCM5));
+        processOffensiveSUAModInArc(ARTCM7, (e, a) -> 54.0 * (int) e.getArc(a).getSUA(ARTCM7));
+        processOffensiveSUAModInArc(ARTCM9, (e, a) -> 72.0 * (int) e.getArc(a).getSUA(ARTCM9));
+        processOffensiveSUAModInArc(ARTCM12, (e, a) -> 93.0 * (int) e.getArc(a).getSUA(ARTCM12));
+        processOffensiveSUAModInArc(ARTLT, (e, a) -> 27.0 * (int) e.getArc(a).getSUA(ARTLT));
+        processOffensiveSUAModInArc(ARTTC, (e, a) -> 3.0 * (int) e.getArc(a).getSUA(ARTTC));
 
-    @Override
-    protected void processOffensiveBlanketMod() {
-        report.addLine("Offensive Value:", "", "= " + formatForReport(offensiveValue));
+        processOffensiveSUAModInArc(SNARC, (e, a) -> (double) (int) e.getArc(a).getSUA(SNARC));
+        processOffensiveSUAModInArc(INARC, (e, a) -> (double) (int) e.getArc(a).getSUA(INARC));
+        processOffensiveSUAModInArc(CNARC, (e, a) -> 0.5 * (int) e.getArc(a).getSUA(CNARC));
+    }
+
+    protected void processOffensiveSUAModInArc(BattleForceSUA sua, BiFunction<AlphaStrikeElement, ASArcs, Double> suaMod) {
+        for (ASArcs arc : ASArcs.values()) {
+            if (element.getArc(arc).hasSUA(sua)) {
+                double modifier = suaMod.apply(element, arc);
+                String suaString = AlphaStrikeHelper.formatAbility(sua, element.getArc(arc), element, ", ");
+                offensiveValue += modifier;
+                report.addLine("Offensive SUA", "+ " + formatForReport(modifier) + " (" + suaString + ")", "= " + formatForReport(offensiveValue));
+            }
+        }
     }
 
     @Override

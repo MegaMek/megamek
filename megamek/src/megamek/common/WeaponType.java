@@ -1424,7 +1424,6 @@ public class WeaponType extends EquipmentType {
 
         // VGLs
         EquipmentType.addType(new ISVehicularGrenadeLauncher());
-        // EquipmentType.addType(new CLVehicularGrenadeLauncher());
         EquipmentType.addType(new ISC3RemoteSensorLauncher());
 
         // IO Weapons

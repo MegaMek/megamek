@@ -180,6 +180,7 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
      * @return the result of showing the dialog
      */
     public DialogResult showDialog() {
+        getFrame().pack();
         setVisible(true);
         return getResult();
     }

@@ -122,6 +122,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6716: Prevent selecting the incorrect ammo index when switching between ammo-fed weapons (#6739)
 + Fix #6740: Fixed Window Resizing Error
 + PR #6729: Removed deprecated logger method.
++ PR #6745: Remove reference to frame, which was extraneous, but keep pack(), which cleans up dialog display
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

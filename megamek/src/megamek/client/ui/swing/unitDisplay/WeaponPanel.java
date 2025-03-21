@@ -2099,10 +2099,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
                     vAmmo.add(ammo);
                     m_chAmmo.addItem(formatAmmo(ammo));
-                    if (currentAmmoSelectionIndex != -1) {
-                        newSelectedIndex = currentAmmoSelectionIndex;
-                    } else if ((mounted.getLinked() != null) && mounted.getLinked().equals(ammo)) {
+                    if ((mounted.getLinked() != null) && mounted.getLinked().equals(ammo)) {
                         newSelectedIndex = i;
+                        // Prevent later overriding.
+                        currentAmmoSelectionIndex = -1;
+                    } else if (currentAmmoSelectionIndex != -1) {
+                        // This should be the fallback
+                        newSelectedIndex = currentAmmoSelectionIndex;
                     }
                     i++;
                 }

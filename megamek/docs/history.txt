@@ -119,6 +119,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6724: Added 694 Brand New Callsigns
 + Fix #6403: Avoid mp null Exception, add warning logging
 + Fix #6671: Correct unit valuation with negative part costs
++ Fix #6716: Prevent selecting the incorrect ammo index when switching between ammo-fed weapons (#6739)
 + Fix #6740: Fixed Window Resizing Error
 + PR #6729: Removed deprecated logger method.
 

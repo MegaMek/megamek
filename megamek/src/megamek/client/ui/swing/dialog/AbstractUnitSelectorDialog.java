@@ -679,9 +679,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     protected boolean matchesTextFilter(MekSummary unit) {
         if (!textFilter.getText().isBlank()) {
-            String text = Internationalization.normalizeTextToASCII(textFilter.getText()).toLowerCase();
+            String text = Internationalization.normalizeTextToASCII(textFilter.getText(), false).toLowerCase();
             String[] tokens = text.split(" ");
-            String searchText = Internationalization.normalizeTextToASCII(unit.getName() + "###" + unit.getModel()).toLowerCase();
+            String searchText = Internationalization.normalizeTextToASCII(unit.getName() + "###" + unit.getModel(), true).toLowerCase();
             for (String token : tokens) {
                 if (!searchText.contains(token)) {
                     return false;

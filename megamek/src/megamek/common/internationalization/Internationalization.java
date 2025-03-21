@@ -120,10 +120,15 @@ public class Internationalization {
      * Takes a string of Unicode text and attempts to convert it to an ASCII representation of that string.
      * Characters such as ø and ö will be converted to o.
      * @param text A String, such as <i>Gún</i> or <i>Götterdämmerung</i>
+     * @param cache Set to try to cache the result. The memoization cache can grow indefinitely,
+     *              so care should be taken to not fill the cache with strings that might never be referenced again.
+     *              For example, strings typed by the user shouldn't be cached, but unit names should be.
      * @return The normalized String, such as <i>Gun</i> or <i>Gotterdammerung</i>.<br/>
      *  The returned string is <i>not</i> guaranteed to be only ASCII. Normalization will fail if there's no direct mapping from a character to its ASCII equivalent.
      */
-    public static String normalizeTextToASCII(String text) {
-        return normalizationCache.computeIfAbsent(text, normalizer::transliterate);
+    public static String normalizeTextToASCII(String text, boolean cache) {
+        return cache
+              ? normalizationCache.computeIfAbsent(text, normalizer::transliterate)
+              : normalizer.transliterate(text);
     }
 }

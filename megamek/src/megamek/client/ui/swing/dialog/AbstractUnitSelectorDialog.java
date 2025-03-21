@@ -782,7 +782,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         validate();
         repaint();
-        frame.pack();
+        pack();
         super.setVisible(visible);
     }
 

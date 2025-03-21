@@ -18560,23 +18560,24 @@ public class TWGameManager extends AbstractGameManager {
 
         // Allocate the damage
         // Use different damageX methods to deal damage here
+        // Don't pass vDesc back and forth, that's wasteful.
         if (te instanceof ProtoMek teCast) {
-            vDesc = damageProtoMek(vDesc, teCast, hit, damage, ammoExplosion, damageType,
+            damageProtoMek(vDesc, teCast, hit, damage, ammoExplosion, damageType,
                 areaSatArty, throughFront, underWater, nukeS2S, modsMap);
         } else if (te instanceof Mek teCast) {
-            vDesc = damageMek(vDesc, teCast, hit, damage, ammoExplosion, damageType,
+            damageMek(vDesc, teCast, hit, damage, ammoExplosion, damageType,
                 areaSatArty, throughFront, underWater, nukeS2S, modsMap);
         } else if (te instanceof Aero teCast) {
-            vDesc = damageAeroSpace(vDesc, teCast, hit, damage, ammoExplosion, damageType,
+            damageAeroSpace(vDesc, teCast, hit, damage, ammoExplosion, damageType,
                 areaSatArty, throughFront, underWater, nukeS2S, modsMap);
         } else if (te instanceof Tank teCast) {
-            vDesc = damageTank(vDesc, teCast, hit, damage, ammoExplosion, damageType,
+            damageTank(vDesc, teCast, hit, damage, ammoExplosion, damageType,
                 areaSatArty, throughFront, underWater, nukeS2S, modsMap);
         } else if (te instanceof BattleArmor teCast) {
-            vDesc = damageBA(vDesc, teCast, hit, damage, ammoExplosion, damageType,
+            damageBA(vDesc, teCast, hit, damage, ammoExplosion, damageType,
                 areaSatArty, throughFront, underWater, nukeS2S, modsMap);
         } else if (te instanceof Infantry teCast && teCast.isConventionalInfantry()) {
-            vDesc = damageInfantry(vDesc, teCast, hit, damage, ammoExplosion, damageType,
+            damageInfantry(vDesc, teCast, hit, damage, ammoExplosion, damageType,
                 areaSatArty, throughFront, underWater, nukeS2S, modsMap);
         } else {
             logger.error(new UnknownEntityTypeException(te.toString()));
@@ -18669,7 +18670,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
 
-    public Vector<Report> damageProtoMek(Vector<Report> vDesc, ProtoMek te, HitData hit, int damage,
+    public void damageProtoMek(Vector<Report> vDesc, ProtoMek te, HitData hit, int damage,
                                     boolean ammoExplosion, DamageType damageType,
                                     boolean areaSatArty, boolean throughFront, boolean underWater,
                                     boolean nukeS2S, Map<String, Object> modsMap)
@@ -18860,10 +18861,9 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        return vDesc;
     }
 
-    public Vector<Report> damageMek(Vector<Report> vDesc, Mek te, HitData hit, int damage,
+    public void damageMek(Vector<Report> vDesc, Mek te, HitData hit, int damage,
                                      boolean ammoExplosion, DamageType damageType,
                                      boolean areaSatArty, boolean throughFront, boolean underWater,
                                      boolean nukeS2S, Map<String, Object> modsMap) {
@@ -19043,8 +19043,8 @@ public class TWGameManager extends AbstractGameManager {
                 // Does an exterior passenger absorb some of the damage?
                 damage = handleExternalPassengerDamage(te, hit, damage, ammoExplosion, damageType, vDesc);
                 if (damage == 0) {
-                    // Return our description.
-                    return vDesc;
+                    // Return
+                    return;
                 }
                 // is this a mech dumping ammo being hit in the rear torso?
                 if (List.of(Mek.LOC_CT, Mek.LOC_RT, Mek.LOC_LT).contains(hit.getLocation())) {
@@ -19410,10 +19410,9 @@ public class TWGameManager extends AbstractGameManager {
                 damageIS = false;
             }
         }
-        return vDesc;
     }
 
-    public Vector<Report> damageAeroSpace(Vector<Report> vDesc, Aero te, HitData hit, int damage,
+    public void damageAeroSpace(Vector<Report> vDesc, Aero te, HitData hit, int damage,
                                                 boolean ammoExplosion, DamageType damageType,
                                                 boolean areaSatArty, boolean throughFront, boolean underWater,
                                                 boolean nukeS2S, Map<String, Object> modsMap) {
@@ -19676,13 +19675,13 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
                 checkAeroCrits(vDesc, a, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
-                return vDesc;
+                return;
             }
         }
-        return vDesc;
+        return;
     }
 
-    public Vector<Report> damageTank(Vector<Report> vDesc, Tank te, HitData hit, int damage,
+    public void damageTank(Vector<Report> vDesc, Tank te, HitData hit, int damage,
                                      boolean ammoExplosion, DamageType damageType,
                                      boolean areaSatArty, boolean throughFront, boolean underWater,
                                      boolean nukeS2S, Map<String, Object> modsMap) {
@@ -19775,7 +19774,7 @@ public class TWGameManager extends AbstractGameManager {
                 damage = handleExternalPassengerDamage(te, hit, damage, ammoExplosion, damageType, vDesc);
                 if (damage == 0) {
                     // Return our description.
-                    return vDesc;
+                    return;
                 }
                 // is this a mech/tank dumping ammo being hit in the rear torso?
                 if ((te instanceof Tank) &&
@@ -19995,17 +19994,16 @@ public class TWGameManager extends AbstractGameManager {
                 damageIS = false;
             }
         }
-        return vDesc;
     }
 
-    public Vector<Report> damageSquadronFighter(Vector<Report> vDesc, Entity te, HitData hit, int damage,
+    public void damageSquadronFighter(Vector<Report> vDesc, Entity te, HitData hit, int damage,
                                                 boolean ammoExplosion, DamageType damageType, boolean damageIS,
                                                 boolean areaSatArty, boolean throughFront, boolean underWater,
                                                 boolean nukeS2S) {
         List<Entity> fighters = te.getActiveSubEntities();
 
         if (fighters.isEmpty()) {
-            return vDesc;
+            return;
         }
         Entity fighter = fighters.get(hit.getLocation());
         HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
@@ -20017,11 +20015,9 @@ public class TWGameManager extends AbstractGameManager {
         new_hit.setAttackerId(hit.getAttackerId());
         vDesc.addAll(damageEntity(fighter, new_hit, damage, ammoExplosion, damageType,
                 damageIS, areaSatArty, throughFront, underWater, nukeS2S));
-
-        return vDesc;
     }
 
-    public Vector<Report> damageMultipleBAs(Vector<Report> vDesc, Entity te, HitData hit, int damage,
+    public void damageMultipleBAs(Vector<Report> vDesc, Entity te, HitData hit, int damage,
                                               boolean ammoExplosion, DamageType damageType, boolean damageIS,
                                               boolean areaSatArty, boolean throughFront, boolean underWater,
                                               boolean nukeS2S) {
@@ -20037,11 +20033,9 @@ public class TWGameManager extends AbstractGameManager {
                         damageIS, false, throughFront, underWater, nukeS2S));
             }
         }
-
-        return vDesc;
     }
 
-    public Vector<Report> damageBA(Vector<Report> vDesc, BattleArmor te, HitData hit, int damage,
+    public void damageBA(Vector<Report> vDesc, BattleArmor te, HitData hit, int damage,
                                             boolean ammoExplosion, DamageType damageType,
                                             boolean areaSatArty, boolean throughFront, boolean underWater,
                                             boolean nukeS2S, Map<String, Object> modsMap) {
@@ -20059,7 +20053,7 @@ public class TWGameManager extends AbstractGameManager {
                 r.subject = te_n;
                 r.indent(2);
                 vDesc.addElement(r);
-                return vDesc;
+                return;
             }
             // otherwise critical hit
             r = new Report(6225);
@@ -20105,10 +20099,9 @@ public class TWGameManager extends AbstractGameManager {
 
             damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
         }
-        return vDesc;
     }
 
-    public Vector<Report> damageInfantry(Vector<Report> vDesc, Infantry te, HitData hit, int damage,
+    public void damageInfantry(Vector<Report> vDesc, Infantry te, HitData hit, int damage,
                                    boolean ammoExplosion, DamageType damageType,
                                    boolean areaSatArty, boolean throughFront, boolean underWater,
                                    boolean nukeS2S, Map<String, Object> modsMap){
@@ -20360,7 +20353,6 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
-        return vDesc;
     }
 
     public int calcCritBonus(Entity ae, Entity te, int damageOriginal, boolean areaSatArty) {

@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2830-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>0,0</pctOmni>
@@ -1280,7 +1277,7 @@
                 <availability>CLAN!Second Line:8!Solahma:6,CGB!Second Line:6!Solahma:6,BAN:3+</availability>
             </model>
             <model name='(Wheeled CLBX10 Basic)'>
-                <roles>anti_aircraft,field_gun</roles>
+                <roles>anti_aircraft,field_gun,urban</roles>
                 <availability>CLAN!Keshik:3!Front Line:1,CGB!Keshik:4!Front Line:2,CHH!Keshik:4!Front Line:2,CIH!Keshik:1,BAN:0</availability>
             </model>
             <model name='(Wheeled CLBX2 Basic)'>
@@ -1288,7 +1285,7 @@
                 <availability>CLAN!Keshik:4!Front Line:2,CGB!Keshik:1,CHH!Keshik:3!Front Line:1,BAN:0</availability>
             </model>
             <model name='(Wheeled CLBX20 Basic)'>
-                <roles>field_gun</roles>
+                <roles>field_gun,urban</roles>
                 <availability>CLAN!Keshik:1,CGB!Keshik:2!Front Line:1,CHH!Keshik:1!Front Line:1,BAN:0</availability>
             </model>
             <model name='(Wheeled CLBX5 Basic)'>
@@ -1296,7 +1293,7 @@
                 <availability>CLAN!Keshik:4!Front Line:2,CGB!Keshik:2,BAN:0</availability>
             </model>
             <model name='(Wheeled CUAC10 Basic)'>
-                <roles>field_gun</roles>
+                <roles>field_gun,urban</roles>
                 <availability>CLAN!Keshik:2!Front Line:1,CGB!Keshik:3!Front Line:1,CIH!Keshik:1,BAN:0</availability>
             </model>
             <model name='(Wheeled CUAC2 Basic)'>
@@ -1304,7 +1301,7 @@
                 <availability>CLAN!Keshik:3!Front Line:2,CGB!Keshik:1,CHH!Keshik:3!Front Line:1,CIH!Keshik:4!Front Line:2,BAN:0</availability>
             </model>
             <model name='(Wheeled CUAC20 Basic)'>
-                <roles>field_gun</roles>
+                <roles>field_gun,urban</roles>
                 <availability>CLAN!Keshik:1,CGB!Keshik:2!Front Line:1,CHH!Keshik:1!Front Line:1,BAN:0</availability>
             </model>
             <model name='(Wheeled CUAC5 Basic)'>

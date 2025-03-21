@@ -1182,7 +1182,7 @@
                 <availability>CLAN!Second Line:8!Solahma:6,CGB!Second Line:6!Solahma:6</availability>
             </model>
             <model name='(Wheeled CLBX10 Basic)'>
-                <roles>anti_aircraft,field_gun</roles>
+                <roles>anti_aircraft,field_gun,urban</roles>
                 <availability>CLAN!Keshik:3,CIH!Keshik:1</availability>
             </model>
             <model name='(Wheeled CLBX2 Basic)'>
@@ -1190,7 +1190,7 @@
                 <availability>CLAN!Keshik:2,CGB!Keshik:1</availability>
             </model>
             <model name='(Wheeled CLBX20 Basic)'>
-                <roles>field_gun</roles>
+                <roles>field_gun,urban</roles>
                 <availability>CLAN!Keshik:1,CGB!Keshik:2</availability>
             </model>
             <model name='(Wheeled CLBX5 Basic)'>
@@ -1198,7 +1198,7 @@
                 <availability>CLAN!Keshik:2,CGB!Keshik:1</availability>
             </model>
             <model name='(Wheeled CUAC10 Basic)'>
-                <roles>field_gun</roles>
+                <roles>field_gun,urban</roles>
                 <availability>CLAN!Keshik:1,CGB!Keshik:2</availability>
             </model>
             <model name='(Wheeled CUAC2 Basic)'>
@@ -1206,7 +1206,7 @@
                 <availability>CLAN!Keshik:1,CIH!Keshik:2</availability>
             </model>
             <model name='(Wheeled CUAC20 Basic)'>
-                <roles>field_gun</roles>
+                <roles>field_gun,urban</roles>
                 <availability>CLAN!Keshik:1,CGB!Keshik:2</availability>
             </model>
             <model name='(Wheeled CUAC5 Basic)'>

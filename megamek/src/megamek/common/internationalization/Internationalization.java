@@ -14,8 +14,6 @@
 package megamek.common.internationalization;
 
 import com.ibm.icu.text.Transliterator;
-import megamek.MegaMek;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +23,7 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
+import megamek.MegaMek;
 
 /**
  * Class to handle internationalization (you will find online material on that looking for i18n)
@@ -115,6 +114,8 @@ public class Internationalization {
     // The Any-Latin transliteration will attempt phonetic transliteration based on the most likely pronunciation for the given characters,
     private static final Transliterator normalizer = Transliterator.getInstance("Latin-ASCII");
 
+    private static final ConcurrentHashMap<String,String> normalizationCache = new ConcurrentHashMap<>();
+
     /**
      * Takes a string of Unicode text and attempts to convert it to an ASCII representation of that string.
      * Characters such as ø and ö will be converted to o.
@@ -123,6 +124,6 @@ public class Internationalization {
      *  The returned string is <i>not</i> guaranteed to be only ASCII. Normalization will fail if there's no direct mapping from a character to its ASCII equivalent.
      */
     public static String normalizeTextToASCII(String text) {
-        return normalizer.transliterate(text);
+        return normalizationCache.computeIfAbsent(text, normalizer::transliterate);
     }
 }

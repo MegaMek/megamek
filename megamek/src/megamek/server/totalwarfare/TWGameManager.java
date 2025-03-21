@@ -18499,14 +18499,16 @@ public class TWGameManager extends AbstractGameManager {
         // if this is a fighter squadron then pick an active fighter and pass on
         // the damage
         if (te instanceof FighterSquadron) {
-            return damageSquadronFighter(vDesc, te, hit, damage, ammoExplosion, damageType, damageIS,
+            damageSquadronFighter(vDesc, te, hit, damage, ammoExplosion, damageType, damageIS,
                     areaSatArty, throughFront, underWater, nukeS2S);
+            return vDesc;
         }
 
         // Battle Armor takes full damage to each trooper from area-effect.
         if (areaSatArty && (te instanceof BattleArmor)) {
-            return damageMultipleBAs(vDesc, te, hit, damage, ammoExplosion, damageType, damageIS,
+            damageMultipleBAs(vDesc, te, hit, damage, ammoExplosion, damageType, damageIS,
                     areaSatArty, throughFront, underWater, nukeS2S);
+            return vDesc;
         }
 
         int damage_orig = damage;
@@ -20045,6 +20047,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r;
 
         // check for critical hit/miss vs. a BA
+        // TODO: discover why BA reports are causing OOM errors.
         if ((int) modsMap.get("crits") > 0) {
             // possible critical miss if the rerolled location isn't alive
             if ((hit.getLocation() >= te.locations()) || (te.getInternal(hit.getLocation()) <= 0)) {

@@ -1,0 +1,9 @@
+key: DA.pm
+name: Planetary Militia
+yearsActive:
+  - start: 3079
+ratingLevels:
+  - F
+fallBackFactions:
+  - IS.pm
+  - DA

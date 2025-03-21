@@ -1,0 +1,15 @@
+key: RWR.HG
+name: Rim Worlds Republic - Home Guard
+yearsActive:
+  - start: 2250
+    end: 2769
+tags:
+  - PERIPHERY
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.R

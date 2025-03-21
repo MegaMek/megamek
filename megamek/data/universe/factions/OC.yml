@@ -1,0 +1,34 @@
+key: OC
+name: Oberon Confederation
+capital: Oberon VI
+yearsActive:
+  - start: 2775
+    end: 2795
+  - start: 3012
+    end: 3049
+tags:
+  - PERIPHERY
+  - STINGY
+  - CONTROLLING
+color:
+  red: 50
+  green: 205
+  blue: 50
+logo: Periphery/Oberon Confederation.png
+background: Periphery/Oberon Confederation.png
+eraMods:
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.DD

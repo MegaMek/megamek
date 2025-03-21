@@ -1,0 +1,26 @@
+key: AA
+name: Augustine Alliance
+capital: Augustine
+yearsActive:
+  - start: 3139
+tags:
+  - MINOR
+  - IS
+color:
+  red: 255
+  green: 102
+  blue: 153
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+  - 0
+fallBackFactions:
+  - ROS

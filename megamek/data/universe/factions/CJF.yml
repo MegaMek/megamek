@@ -1,0 +1,27 @@
+key: CJF
+name: Clan Jade Falcon
+capital: Ironhold
+capitalChanges: 
+  3052: Sudeten
+yearsActive:
+  - start: 2807
+tags:
+  - PLAYABLE
+  - MAJOR
+  - CLAN
+color:
+  red: 174
+  green: 214
+  blue: 112
+logo: Clan/Clan Jade Falcon.png
+background: Clan/Clan Jade Falcon.png
+camos: Clans/Jade Falcon
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.IS

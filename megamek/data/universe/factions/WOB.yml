@@ -1,0 +1,26 @@
+key: WOB
+name: Word of Blake
+capital: Terra
+yearsActive:
+  - start: 3052
+    end: 3081
+tags:
+  - PLAYABLE
+  - MINOR
+  - IS
+  - CONTROLLING
+color:
+  red: 205
+  green: 192
+  blue: 176
+logo: Inner Sphere/Word of Blake.png
+background: Inner Sphere/Word of Blake.png
+camos: Word of Blake
+ratingLevels:
+  - B
+  - A
+fallBackFactions:
+  - CS
+  - IS
+formationBaseSize: 6
+formationGrouping: 6

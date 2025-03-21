@@ -1,0 +1,38 @@
+key: MH
+name: Marian Hegemony
+capital: Alphard (MH)
+yearsActive:
+  - start: 2920
+tags:
+  - PLAYABLE
+  - PERIPHERY
+  - STINGY
+  - CONTROLLING
+color:
+  red: 246
+  green: 140
+  blue: 71
+logo: Periphery/Marian Hegemony.png
+background: Periphery/Marian Hegemony.png
+camos: Marian Hegemony
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.ME
+formationBaseSize: 5

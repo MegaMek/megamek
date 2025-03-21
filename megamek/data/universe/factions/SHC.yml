@@ -1,0 +1,28 @@
+key: SHC
+name: Silver Hawk Coalition
+capital: Amity
+yearsActive:
+  - start: 3079
+    end: 3084
+tags:
+  - MINOR
+  - IS
+color:
+  red: 255
+  green: 0
+  blue: 127
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+  - 0
+fallBackFactions:
+  - FWL

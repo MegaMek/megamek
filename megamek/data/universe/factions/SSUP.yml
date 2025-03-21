@@ -1,0 +1,12 @@
+key: SSUP
+name: Sarna Supremacy
+capital: Sarna
+successor: CC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 184
+  green: 134
+  blue: 11
+nameGenerator: CC

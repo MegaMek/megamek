@@ -1,0 +1,12 @@
+key: PD
+name: Protectorate of Donegal
+capital: Terra
+successor: LA
+tags:
+  - MINOR
+  - IS
+color:
+  red: 66
+  green: 244
+  blue: 143
+nameGenerator: LA

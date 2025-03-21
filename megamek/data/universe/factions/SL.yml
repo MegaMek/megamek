@@ -1,0 +1,27 @@
+key: SL
+name: Star League
+capital: Terra
+yearsActive:
+  - start: 2571
+    end: 2780
+tags:
+  - PLAYABLE
+  - IS
+  - SUPER
+  - CONTROLLING
+  - GENEROUS
+color:
+  red: 176
+  green: 196
+  blue: 222
+logo: Inner Sphere/Star League.png
+background: Inner Sphere/Star League.png
+camos: Star League Defense Force
+eraMods:
+  - 0
+  - -1
+  - -1
+ratingLevels:
+  - C
+  - B
+  - A

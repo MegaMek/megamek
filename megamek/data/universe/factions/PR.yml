@@ -1,0 +1,36 @@
+key: PR
+name: Principality of Regulus
+capital: Regulus
+yearsActive:
+  - start: 3079
+    end: 3086
+successor: RF
+tags:
+  - MINOR
+  - IS
+color:
+  red: 192
+  green: 143
+  blue: 189
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
+  - 0
+  - 0
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - RF
+  - IS
+  - FWL

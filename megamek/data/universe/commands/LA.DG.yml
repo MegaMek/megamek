@@ -1,0 +1,8 @@
+key: LA.DG
+name: Donegal Guards
+yearsActive:
+  - start: 2341
+ratingLevels:
+  - B
+fallBackFactions:
+  - LA

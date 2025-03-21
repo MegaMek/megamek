@@ -1,0 +1,28 @@
+key: CB
+name: Clan Burrock
+capital: Terra
+yearsActive:
+  - start: 2807
+    end: 3059
+  - start: 3072
+    end: 3074
+successor: CSA
+tags:
+  - MINOR
+  - CLAN
+color:
+  red: 122
+  green: 122
+  blue: 71
+logo: Clan/Clan Burrock.png
+background: Clan/Clan Burrock.png
+camos: Clans/Burrock
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.HW

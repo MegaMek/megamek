@@ -1,0 +1,32 @@
+key: RIM
+name: Rim Collection
+capital: Gillfillan's Gold
+yearsActive:
+  - start: 3048
+successor: TiC
+tags:
+  - PERIPHERY
+  - SMALL
+color:
+  red: 95
+  green: 158
+  blue: 160
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 3
+  - 2
+  - 1
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.R

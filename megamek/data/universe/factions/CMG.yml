@@ -1,0 +1,26 @@
+key: CMG
+name: Clan Mongoose
+capital: Terra
+yearsActive:
+  - start: 2807
+    end: 2868
+successor: CSJ
+tags:
+  - MINOR
+  - CLAN
+color:
+  red: 100
+  green: 149
+  blue: 237
+logo: Clan/Clan Mongoose.png
+background: Clan/Clan Mongoose.png
+camos: Clans/Mongoose
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN

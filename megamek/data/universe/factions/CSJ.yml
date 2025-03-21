@@ -1,0 +1,28 @@
+key: CSJ
+name: Clan Smoke Jaguar
+capital: Huntress
+capitalChanges: 
+  3052: Luzerne
+yearsActive:
+  - start: 2807
+    end: 3060
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 153
+  green: 153
+  blue: 153
+logo: Clan/Clan Smoke Jaguar.png
+background: Clan/Clan Smoke Jaguar.png
+camos: Clans/Smoke Jaguar
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.IS

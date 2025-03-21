@@ -1,0 +1,25 @@
+key: DO
+name: Duchy of Oriente
+capital: Oriente
+yearsActive:
+  - start: 3079
+    end: 3086
+successor: OP
+tags:
+  - MINOR
+  - IS
+color:
+  red: 163
+  green: 112
+  blue: 120
+nameGenerator: FWL
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - OP
+  - IS
+  - FWL

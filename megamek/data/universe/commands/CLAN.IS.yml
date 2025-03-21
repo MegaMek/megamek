@@ -1,0 +1,14 @@
+key: CLAN.IS
+name: Clan - Inner Sphere
+yearsActive:
+  - start: 3050
+tags:
+  - CLAN
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN

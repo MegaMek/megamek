@@ -1,0 +1,9 @@
+key: FS.AC
+name: Arcadian Cuirassiers
+yearsActive:
+  - start: 2317
+    end: 2830
+ratingLevels:
+  - C
+fallBackFactions:
+  - FS

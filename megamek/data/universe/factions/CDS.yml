@@ -1,0 +1,34 @@
+key: CDS
+name: Clan Sea Fox
+nameChanges:
+  2984: Clan Diamond Shark
+  3100: Clan Sea Fox
+capital: Babylon
+capitalChanges: 
+  3065: Twycross
+yearsActive:
+  - start: 2807
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 181
+  green: 191
+  blue: 209
+logo: Clan/Clan Diamond Shark.png
+background: Clan/Clan Diamond Shark.png
+camos: Clans/Diamond Shark
+camosChanges:
+  3100: Clan/Sea Fox (Dark Age)
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.IS
+preInvasionHonorRating: LIBERAL
+postInvasionHonorRating: LIBERAL

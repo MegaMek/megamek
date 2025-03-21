@@ -1,0 +1,10 @@
+key: FWL.FO
+name: Fusiliers of Oriente
+yearsActive:
+  - start: 2485
+    end: 3079
+  - start: 3139
+ratingLevels:
+  - A
+fallBackFactions:
+  - FWL

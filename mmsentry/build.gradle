@@ -1,0 +1,114 @@
+import java.time.LocalDateTime
+
+plugins {
+    id 'application'
+    id 'edu.sc.seis.launch4j' version '3.0.6'
+    id "io.sentry.jvm.gradle" version '5.2.0'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+        resources {
+            srcDirs = ['i18n', 'resources']
+        }
+    }
+}
+
+application {
+    mainClass = 'mmsentry.MMSentry'
+}
+
+jar {
+    archiveFileName = 'MMSentry.jar'
+
+    manifest {
+        attributes "Main-Class": application.mainClass
+        attributes "Class-Path": project.sourceSets.main.runtimeClasspath.files
+                .findAll { it.name.endsWith(".jar") }.collect { "lib/${it.name}" }.join(' ')
+        attributes "Build-Date": LocalDateTime.now()
+    }
+}
+
+task createStartScripts(type: CreateStartScripts) {
+    description = 'Create shell script for generic distribution.'
+    applicationName = 'MMSentry'
+    mainClass = application.mainClass
+    outputDir = startScripts.outputDir
+    classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
+            .filter { it.name.endsWith(".jar") }
+}
+
+distributions {
+    main {
+        distributionBaseName = 'MMSentry'
+        contents {
+            from("${buildDir}/launch4j") {
+                include '*.exe'
+            }
+
+            from(jar) {
+                into "lib"
+            }
+
+            from(jar)
+            from(project.sourceSets.main.runtimeClasspath.files
+                    .findAll { it.name.endsWith(".jar") }) {
+                into "lib"
+            }
+
+            duplicatesStrategy = 'exclude'
+        }
+    }
+}
+
+launch4j {
+    description = 'Create Windows executable for MMSentry'
+    mainClassName = application.mainClass
+    outfile = 'MMSentry.exe'
+    icon = "${projectDir}/data/images/misc/megamek.ico"
+    jarTask = project.tasks.jar
+    windowTitle = 'MMSentry'
+    internalName = 'MMSentry'
+    downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
+    supportUrl = 'https://megamek.org'
+    copyright = '2025 MegaMek Development Team.'
+    companyName = "MegaMek Development Team"
+    jreMinVersion = '17'
+    dontWrapJar = true
+    messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
+    messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
+}
+
+distZip {
+    description = 'Creates a Zip file for distribution'
+    enabled = false
+}
+
+distTar {
+    description = 'Creates a gzipped tar ball for distribution'
+    archiveExtension = 'tar.gz'
+    compression = Compression.GZIP
+}
+
+// The distribution plugin adds the distribution packages to the assemble task, which causes the build task
+// to run all the packaging tasks.
+task assemble(overwrite: true) {
+    dependsOn jar
+}
+
+// Replace the assembleDist task created by the distributions plugin to create the packages we want to
+task assembleDist(overwrite: true) {
+    description = 'Build unix, Windows, and source packages'
+    group = 'distribution'
+    dependsOn test
+    dependsOn distTar
+    dependsOn distZip
+}

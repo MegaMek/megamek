@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2860-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>0,0</pctOmni>
@@ -1606,7 +1603,7 @@
             </model>
             <model name='(Rifle AA Basic)'>
                 <roles>anti_aircraft</roles>
-                <availability>CLAN!Keshik:1,CHH!Keshik:2!Front Line:1,CHH:0,BAN:0</availability>
+                <availability>CLAN!Keshik:1,CHH:0,BAN:0</availability>
             </model>
             <model name='(Rifle Advanced)'>
                 <availability>CHH:7,CSA!Keshik:1</availability>

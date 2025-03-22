@@ -1627,7 +1627,7 @@
             </model>
             <model name='(Rifle AA Basic)'>
                 <roles>anti_aircraft</roles>
-                <availability>CLAN!Keshik:1,CHH!Keshik:2!Front Line:1,CHH:0,BAN:0</availability>
+                <availability>CLAN!Keshik:1,CHH:0,BAN:0</availability>
             </model>
             <model name='(Rifle Advanced)'>
                 <availability>CHH:7</availability>

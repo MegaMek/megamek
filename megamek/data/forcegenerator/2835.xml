@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2835-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>0,0</pctOmni>
@@ -1227,7 +1224,7 @@
 			</model>
 		</chassis>
         <chassis name='Clan Field Artillery Point' unitType='Infantry'>
-            <availability>CGB!Second Line:3!Solahma:2!Provisional Garrison:1,CHH!Keshik:2!Front Line:1!Second Line:4!Solahma:3!Provisional Garrison:2,CIH!Second Line:2!Solahma:1,BAN:0</availability>
+            <availability>CLAN!Second Line:3!Solahma:2!Provisional Garrison:1,CHH!Keshik:2!Front Line:1!Second Line:4!Solahma:3!Provisional Garrison:2,CIH!Second Line:2!Solahma:1,BAN:0</availability>
             <model name='(Tracked Arrow IV)'>
                 <roles>mixed_artillery</roles>
                 <availability>CGB!Second Line:3!Solahma:1,CHH!Keshik:2!Front Line:1!Second Line:4!Solahma:1,CIH!Second Line:2!Solahma:1</availability>
@@ -1495,6 +1492,9 @@
         </chassis>
         <chassis name='Clan Jump Point' unitType='Infantry'>
             <availability>CLAN!Keshik:8!Front Line:7!Second Line:5!Solahma:1,CGB!Keshik:5!Front Line:5!Second Line:5!Solahma:1,BAN:4+</availability>
+            <model name='(ER Laser Basic)'>
+                <availability>CSA!Keshik:1</availability>
+            </model>
             <model name='(Flamer Advanced)'>
                 <roles>urban</roles>
                 <availability>CHH!Second Line:1</availability>

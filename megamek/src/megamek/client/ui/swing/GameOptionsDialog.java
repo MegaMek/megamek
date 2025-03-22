@@ -232,7 +232,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         toggleOptions();
         addSearchPanel();
         validate();
-        pack();
     }
 
     /**

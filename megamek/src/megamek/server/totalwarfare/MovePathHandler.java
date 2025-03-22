@@ -684,7 +684,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 gameManager.getMainPhaseReport().addAll(gameManager.doEntityFallsInto(entity,
                         entity.getElevation(), md.getJumpPathHighestPoint(),
                         curPos, entity.getBasePilotingRoll(overallMoveType),
-                        false, entity.getJumpMP()));
+                        false, entity.getMechanicalJumpBoosterMP()));
             }
 
             // jumped into water?
@@ -1969,8 +1969,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (cachedGravityLimit < 0) {
                 cachedGravityLimit = EntityMovementType.MOVE_JUMP == moveType
-                        ? entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)
-                        : entity.getRunningGravityLimit();
+                      ? (step.isUsingMekJumpBooster()
+                      ? entity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                      : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY))
+                      : entity.getRunningGravityLimit();
             }
             // check for charge
             if (step.getType() == MovePath.MoveStepType.CHARGE) {

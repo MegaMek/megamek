@@ -853,13 +853,7 @@ public class MtfFile implements IMekLoader {
                             if (size == 0) {
                                 // legacy MTF loading: MJB gave their MP as the jump MP
                                 size = mek.getOriginalJumpMP(true);
-                                // Legacy MTF loading: If the unit has no JJ/UMU, the jump MP are mech. jump boosters and must be reset
-//                                long jjCount = mek.getMisc().stream()
-//                                      .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET) || m.getType().hasFlag(MiscType.F_UMU))
-//                                      .count();
-//                                if (jjCount == 0) {
                                 mek.setOriginalJumpMP(0);
-//                                }
                             }
 
                             m.setSize(size);

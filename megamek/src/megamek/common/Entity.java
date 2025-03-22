@@ -1901,12 +1901,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isPermanentlyImmobilized(boolean checkCrew) {
         if ((checkCrew || defaultCrewType().equals(CrewType.NONE)) && ((getCrew() == null) || getCrew().isDead())) {
             return true;
+        } else if ((this instanceof Mek mek) && (mek.getOriginalMechanicalJumpBoosterMP() > 0) &&
+              (getMechanicalJumpBoosterMP(MPCalculationSetting.PERM_IMMOBILIZED) > 0)) {
+            return false;
         } else if (((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
-                // Need to make sure here that we're ignoring heat because
-                // that's not actually "permanent":
-                && ((getWalkMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0)
-                        && (getRunMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0)
-                        && (getJumpMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0))) {
+              // Need to make sure here that we're ignoring heat because
+              // that's not actually "permanent":
+              && ((getWalkMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0)
+              && (getRunMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0)
+              && (getJumpMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0))) {
             return true;
         } else {
             return false;
@@ -3202,7 +3205,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getOriginalJumpMP(boolean ignoreModularArmor) {
-
         if (!ignoreModularArmor && hasModularArmor()) {
             return Math.max(0, jumpMP - 1);
         }

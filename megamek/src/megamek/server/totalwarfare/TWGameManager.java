@@ -17161,7 +17161,10 @@ public class TWGameManager extends AbstractGameManager {
                     if (game.getPlanetaryConditions().getGravity() < 1) {
                         int j = entity.mpUsed;
                         int damage = 0;
-                        while (j > entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)) {
+                        int noGravityJumpMP = entity.isJumpingWithMechanicalBoosters()
+                              ? entity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                              : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY);
+                        while (j > noGravityJumpMP) {
                             j--;
                             damage++;
                         }

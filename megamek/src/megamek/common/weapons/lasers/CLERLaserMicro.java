@@ -34,11 +34,12 @@ public class CLERLaserMicro extends LaserWeapon {
         shortRange = 1;
         mediumRange = 2;
         longRange = 4;
-        extremeRange = 4;
+        extremeRange = 6;
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 2;
-        waterExtremeRange = 4;
+        //ER Micro Laser has no long range underwater, therefore no extreme range (TW Pg. 109 Underwater Range Table)
+        waterExtremeRange = 2;
         tonnage = 0.25;
         criticals = 1;
         flags = flags.or(F_NO_FIRES);

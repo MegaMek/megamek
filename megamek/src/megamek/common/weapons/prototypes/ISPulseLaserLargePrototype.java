@@ -43,7 +43,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
         shortRange = 3;
         mediumRange = 7;
         longRange = 10;
-        extremeRange = 14;
+        extremeRange = 15;
         waterShortRange = 2;
         waterMediumRange = 5;
         waterLongRange = 7;
@@ -70,7 +70,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

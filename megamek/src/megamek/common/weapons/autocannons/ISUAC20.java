@@ -31,7 +31,7 @@ public class ISUAC20 extends UACWeapon {
         shortRange = 3;
         mediumRange = 7;
         longRange = 10;
-        extremeRange = 14;
+        extremeRange = 15;
         tonnage = 15.0;
         criticals = 10;
         bv = 281;

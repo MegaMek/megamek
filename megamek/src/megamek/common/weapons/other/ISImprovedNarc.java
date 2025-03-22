@@ -34,7 +34,7 @@ public class ISImprovedNarc extends NarcWeapon {
         shortRange = 4;
         mediumRange = 9;
         longRange = 15;
-        extremeRange = 18;
+        extremeRange = 22;
         tonnage = 5.0;
         criticals = 3;
         bv = 75;

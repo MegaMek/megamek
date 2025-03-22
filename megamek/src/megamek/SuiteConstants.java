@@ -29,7 +29,7 @@ public abstract class SuiteConstants {
 
     // region General Constants
     public static final String PROJECT_NAME = "MegaMek Suite";
-    public static final Version VERSION = new Version("0.50.04");
+    public static final Version VERSION = new Version("0.50.05-SNAPSHOT");
     public static final Version LAST_MILESTONE = new Version("0.49.19.1");
     public static final int MAXIMUM_D6_VALUE = 6;
 

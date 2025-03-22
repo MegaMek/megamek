@@ -2010,13 +2010,15 @@ public final class UnitToolTip {
 
             if (entity instanceof Mek mek) {
                 int mekMechanicalJumpMP = mek.getMechanicalJumpBoosterMP();
-                if (jumpMP == 0) {
-                    sMove += "/%d".formatted(mekMechanicalJumpMP);
-                } else {
-                    sMove += " (%d)".formatted(mekMechanicalJumpMP);
+                if (mekMechanicalJumpMP > 0) {
+                    if (jumpMP == 0) {
+                        sMove += "/%d".formatted(mekMechanicalJumpMP);
+                    } else {
+                        sMove += " (%d)".formatted(mekMechanicalJumpMP);
+                    }
                 }
             }
-            
+
             int walkMPModified = entity.getWalkMP();
             int runMPModified = entity.getRunMP();
             int jumpMPModified = entity.getJumpMP();

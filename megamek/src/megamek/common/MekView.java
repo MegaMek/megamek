@@ -354,10 +354,12 @@ public class MekView {
             }
             if (entity instanceof Mek mek) {
                 int mekMechanicalJumpMP = mek.getMechanicalJumpBoosterMP();
-                if (entity.getJumpMP() == 0) {
-                    moveString.append("/").append(mekMechanicalJumpMP);
-                } else {
-                    moveString.append(" (%d)".formatted(mekMechanicalJumpMP));
+                if (mekMechanicalJumpMP > 0) {
+                    if (entity.getJumpMP() == 0) {
+                        moveString.append("/").append(mekMechanicalJumpMP);
+                    } else {
+                        moveString.append(" (%d)".formatted(mekMechanicalJumpMP));
+                    }
                 }
             }
             if (entity.getAllUMUCount() > 0) {

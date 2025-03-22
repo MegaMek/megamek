@@ -37,7 +37,7 @@ jar {
     }
 }
 
-task createStartScripts(type: CreateStartScripts) {
+tasks.register('createStartScripts', CreateStartScripts) {
     description = 'Create shell script for generic distribution.'
     applicationName = 'MMSentry'
     mainClass = application.mainClass
@@ -64,7 +64,7 @@ distributions {
                 into "lib"
             }
 
-            duplicatesStrategy = 'exclude'
+            duplicatesStrategy = exclude
         }
     }
 }
@@ -100,12 +100,12 @@ distTar {
 
 // The distribution plugin adds the distribution packages to the assemble task, which causes the build task
 // to run all the packaging tasks.
-task assemble(overwrite: true) {
+tasks.register('assemble') {
     dependsOn jar
 }
 
 // Replace the assembleDist task created by the distributions plugin to create the packages we want to
-task assembleDist(overwrite: true) {
+tasks.register('assembleDist') {
     description = 'Build unix, Windows, and source packages'
     group = 'distribution'
     dependsOn test

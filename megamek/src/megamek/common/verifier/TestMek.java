@@ -50,8 +50,7 @@ public class TestMek extends TestEntity {
         JJ_IMPROVED(EquipmentTypeLookup.IMPROVED_JUMP_JET, false, Mek.JUMP_IMPROVED),
         JJ_PROTOTYPE(EquipmentTypeLookup.PROTOTYPE_JUMP_JET, true, Mek.JUMP_PROTOTYPE),
         JJ_PROTOTYPE_IMPROVED(EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ, false, Mek.JUMP_PROTOTYPE_IMPROVED),
-        JJ_UMU(EquipmentTypeLookup.MEK_UMU, false, Mek.JUMP_NONE),
-        JJ_BOOSTER(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER, true, Mek.JUMP_BOOSTER);
+        JJ_UMU(EquipmentTypeLookup.MEK_UMU, false, Mek.JUMP_NONE);
 
         private String internalName;
         private boolean industrial;
@@ -133,9 +132,7 @@ public class TestMek extends TestEntity {
         if (mek.isSuperHeavy()) {
             return 0;
         }
-        if (mek.getJumpType() == Mek.JUMP_BOOSTER) {
-            return null;
-        } else if (!mek.hasEngine()
+        if (!mek.hasEngine()
                 || (!mek.getEngine().isFusion() && (mek.getEngine().getEngineType() != Engine.FISSION))) {
             return 0;
         } else if ((mek.getJumpType() == Mek.JUMP_IMPROVED)

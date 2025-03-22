@@ -178,7 +178,7 @@ public abstract class Mek extends Entity {
     public static final int JUMP_STANDARD = 1;
     public static final int JUMP_IMPROVED = 2;
     public static final int JUMP_PROTOTYPE = 3;
-    public static final int JUMP_BOOSTER = 4;
+    public static final int JUMP_BOOSTER = 4; // do not use, boosters are separate from standard JJs
     public static final int JUMP_DISPOSABLE = 5;
     // Type for Improved Jumpjet Prototype
     public static final int JUMP_PROTOTYPE_IMPROVED = 6;
@@ -1113,6 +1113,70 @@ public abstract class Mek extends Entity {
         return Math.max(mp, 0);
     }
 
+    /**
+     * @return The jump MP for the Mek's mechanical jump boosters, unmodified by damage, other equipment (shields)
+     * or any other effects.
+     */
+    public int getOriginalMechanicalJumpBoosterMP() {
+        return (int) Math.round(getMisc().stream()
+              .filter(m -> m.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER))
+              .findFirst().map(Mounted::getSize).orElse(0d));
+    }
+
+    /**
+     * @return The jump MP for the Mek's mechanical jump boosters, modified for typical gameplay purposes by damage,
+     * other equipment (shields) and other effects.
+     */
+    public int getMechanicalJumpBoosterMP() {
+        return getMechanicalJumpBoosterMP(MPCalculationSetting.STANDARD);
+    }
+
+    /**
+     * @return The jump MP for the Mek's mechanical jump boosters, modified as given through the MPCalculationSetting.
+     */
+    public int getMechanicalJumpBoosterMP(MPCalculationSetting mpCalculationSetting) {
+        if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
+            return 0;
+        }
+
+        Optional<MiscMounted> mekMechanicalJumpBooster = getMisc().stream()
+              .filter(m -> m.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER))
+              .findFirst();
+        if (mekMechanicalJumpBooster.isEmpty()) {
+            return 0;
+        }
+
+        MiscMounted mekMechanicalJumpBoosterMounted = mekMechanicalJumpBooster.get();
+        if (mekMechanicalJumpBoosterMounted.isInoperable()) {
+            return 0;
+        }
+
+        int mp = getOriginalMechanicalJumpBoosterMP();
+
+        // apply Partial Wing bonus if we have the ability to jump
+        if (mp > 0) {
+            for (Mounted<?> mount : getMisc()) {
+                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+                    mp += getPartialWingJumpBonus(mount, mpCalculationSetting);
+                    break;
+                }
+            }
+        }
+
+        // Medium shield reduces jump mp by 1/shield
+        mp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+
+        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+            mp--;
+        }
+
+        if (!mpCalculationSetting.ignoreGravity) {
+            return Math.max(applyGravityEffectsOnMP(mp), 0);
+        }
+
+        return Math.max(mp, 0);
+    }
+
     public boolean hasChainDrape() {
         for (MiscMounted mount : getMisc()) {
             if (mount.getType().hasFlag(MiscType.F_CHAIN_DRAPE) && !mount.isDestroyed()) {
@@ -1232,7 +1296,7 @@ public abstract class Mek extends Entity {
     @Override
     public int getJumpType() {
         jumpType = JUMP_NONE;
-        for (Mounted<?> m : miscList) {
+        for (MiscMounted m : miscList) {
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
                 if (m.getType().hasSubType(MiscType.S_IMPROVED)
                         && m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
@@ -1244,9 +1308,6 @@ public abstract class Mek extends Entity {
                 } else {
                     jumpType = JUMP_STANDARD;
                 }
-                break;
-            } else if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER)) {
-                jumpType = JUMP_BOOSTER;
                 break;
             }
         }

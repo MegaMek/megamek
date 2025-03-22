@@ -74,6 +74,10 @@ final class ASMovementConverter {
         report.addLine("Base Walking MP", "", Integer.toString(entity.getOriginalWalkMP()));
 
         int jumpMove = entity.getJumpMP(MPCalculationSetting.AS_CONVERSION) * 2;
+        if (entity instanceof Mek mek) {
+            int mechanicalBoosterMP = mek.getMechanicalJumpBoosterMP(MPCalculationSetting.AS_CONVERSION) * 2;
+            jumpMove = Math.max(mechanicalBoosterMP, jumpMove);
+        }
 
         if (hasSupercharger(entity) && hasMekMASC(entity)) {
             walkMP *= 1.5;

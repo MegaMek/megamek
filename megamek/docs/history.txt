@@ -1,6 +1,6 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.04-SNAPSHOT
+0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width
 + PR #6489: PPC Capacitors must all be linked to a PPC
 + PR #6500: Issue 6499: Better nudging for aeros that fail maneuvers and scatter off board

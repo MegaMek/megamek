@@ -31,11 +31,11 @@ public class ISERPPC extends PPCWeapon {
         shortRange = 7;
         mediumRange = 14;
         longRange = 23;
-        extremeRange = 28;
+        extremeRange = 34;
         waterShortRange = 4;
         waterMediumRange = 10;
         waterLongRange = 16;
-        waterExtremeRange = 20;
+        waterExtremeRange = 24;
         tonnage = 7.0;
         criticals = 3;
         bv = 229;

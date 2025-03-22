@@ -31,11 +31,11 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         this.shortRange = 4;
         this.mediumRange = 10;
         this.longRange = 16;
-        this.extremeRange = 20;
+        this.extremeRange = 24;
         this.waterShortRange = 4;
         this.waterMediumRange = 10;
         this.waterLongRange = 16;
-        this.waterExtremeRange = 20;
+        this.waterExtremeRange = 24;
         this.tonnage = 7.0;
         this.criticals = 3;
         this.bv = 229;

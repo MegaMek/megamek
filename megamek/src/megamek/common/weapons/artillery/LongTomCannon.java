@@ -47,7 +47,7 @@ public class LongTomCannon extends ArtilleryCannonWeapon {
         shortRange = 6;
         mediumRange = 13;
         longRange = 20;
-        extremeRange = 26;
+        extremeRange = 30;
         shortAV = 20;
         medAV = 20;
         longAV = 20;

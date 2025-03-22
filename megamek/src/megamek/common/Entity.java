@@ -325,6 +325,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int[] armorType;
     protected int[] armorTechLevel;
     protected boolean isJumpingNow = false;
+    private boolean isJumpingWithMechanicalBoosters = false;
     protected boolean convertingNow = false;
     private int conversionMode = 0;
     protected EntityMovementMode previousMovementMode;
@@ -3252,6 +3253,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public int getJumpMPWithTerrain() {
         return getJumpMP(MPCalculationSetting.DEDUCT_SUBMERGED_JJ);
+    }
+
+    /**
+     * @return The jump MP for a Mek's mechanical jump boosters, modified for typical gameplay purposes by damage,
+     * other equipment (shields) and other effects. Returns 0 for non-Meks.
+     */
+    public int getMechanicalJumpBoosterMP() {
+        return getMechanicalJumpBoosterMP(MPCalculationSetting.STANDARD);
+    }
+
+    /**
+     * @return The jump MP for a Mek's mechanical jump boosters, modified as given through the MPCalculationSetting.
+     * Returns 0 for non-Meks.
+     */
+    public int getMechanicalJumpBoosterMP(MPCalculationSetting mpCalculationSetting) {
+        return 0;
     }
 
     /**
@@ -6510,6 +6527,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         mpUsedLastRound = mpUsed;
         mpUsed = 0;
         isJumpingNow = false;
+        isJumpingWithMechanicalBoosters = false;
         convertingNow = false;
         damageThisRound = 0;
         if (assaultDropInProgress == 2) {
@@ -7733,7 +7751,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int maxSafeMP;
         switch (moveType) {
             case MOVE_JUMP:
-                maxSafeMP = getJumpMP(MPCalculationSetting.NO_GRAVITY);
+                maxSafeMP = step.isUsingMekJumpBooster() ? getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                      : getJumpMP(MPCalculationSetting.NO_GRAVITY);
                 break;
             case MOVE_SPRINT:
             case MOVE_VTOL_SPRINT:
@@ -15929,10 +15948,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean canonUnitWithInvalidBuild() {
-        if (this.isCanon() && mulId > -1)
-        {
-            return !this.getInvalidSourceBuildReasons().isEmpty();
+        if (isCanon() && mulId > -1) {
+            return !getInvalidSourceBuildReasons().isEmpty();
         }
         return false;
+    }
+
+    public boolean isJumpingWithMechanicalBoosters() {
+        return isJumpingWithMechanicalBoosters;
+    }
+
+    public void setJumpingWithMechanicalBoosters(boolean jumpingWithMechanicalBoosters) {
+        isJumpingWithMechanicalBoosters = jumpingWithMechanicalBoosters;
     }
 }

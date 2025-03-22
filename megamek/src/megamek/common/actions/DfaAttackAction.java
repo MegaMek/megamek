@@ -89,7 +89,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Infantry can't D.F.A.");
         }
 
-        if (ae.getJumpType() == Mek.JUMP_BOOSTER) {
+        if (md.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Can't D.F.A. using mechanical jump boosters.");
         }

@@ -869,11 +869,9 @@ public class TestMek extends TestEntity {
         for (Mounted<?> m : getEntity().getMisc()) {
             final MiscType misc = (MiscType) m.getType();
 
-            if (misc.hasFlag(MiscType.F_UMU) && (mek.getJumpType() != Mek.JUMP_NONE)
-                    && (mek.getJumpType() != Mek.JUMP_BOOSTER)) {
+            if (misc.hasFlag(MiscType.F_UMU) && (mek.getJumpType() != Mek.JUMP_NONE)) {
                 illegal = true;
-                buff.append("UMUs cannot be mounted with jump jets "
-                        + "(jump boosters are legal)\n");
+                buff.append("UMUs cannot be mounted with jump jets\n");
             }
 
             if (misc.hasFlag(MiscType.F_MASC)
@@ -1118,8 +1116,7 @@ public class TestMek extends TestEntity {
             }
             if ((mek.getJumpType() != Mek.JUMP_STANDARD)
                     && (mek.getJumpType() != Mek.JUMP_NONE)
-                    && (mek.getJumpType() != Mek.JUMP_PROTOTYPE)
-                    && (mek.getJumpType() != Mek.JUMP_BOOSTER)) {
+                    && (mek.getJumpType() != Mek.JUMP_PROTOTYPE)) {
                 buff.append("industrial meks can only mount standard jump jets or mechanical jump boosters\n");
                 illegal = true;
             }

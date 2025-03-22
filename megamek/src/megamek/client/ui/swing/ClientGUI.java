@@ -3093,7 +3093,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      */
     public void showMovementEnvelope(Entity entity, Map<Coords, Integer> mvEnvData, int gear) {
         movementEnvelopeHandler.setMovementEnvelope(mvEnvData, entity.getWalkMP(),
-                entity.getRunMP(), entity.getJumpMP(), gear);
+              entity.getRunMP(), Math.max(entity.getMechanicalJumpBoosterMP(), entity.getJumpMP()), gear);
     }
 
     /**

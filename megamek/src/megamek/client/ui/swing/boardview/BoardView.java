@@ -755,7 +755,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 break;
 
             case GUIPreferences.UNIT_LABEL_STYLE:
-                clientgui.systemMessage("Label style changed to " + GUIP.getUnitLabelStyle().description);
+                if (clientgui != null) {
+                    clientgui.systemMessage("Label style changed to " + GUIP.getUnitLabelStyle().description);
+                }
             case GUIPreferences.UNIT_LABEL_BORDER:
             case GUIPreferences.TEAM_COLORING:
             case GUIPreferences.SHOW_DAMAGE_DECAL:

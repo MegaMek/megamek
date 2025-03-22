@@ -8191,7 +8191,7 @@ public class TWGameManager extends AbstractGameManager {
                     || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
                     || (entity.moved == EntityMovementType.MOVE_SKID)) {
                 entity.heatBuildup += entity.getRunHeat();
-            } else if (entity.moved == EntityMovementType.MOVE_JUMP) {
+            } else if (entity.moved == EntityMovementType.MOVE_JUMP && !entity.isJumpingWithMechanicalBoosters()) {
                 entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
             } else if (entity.moved == EntityMovementType.MOVE_SPRINT
                     || entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {

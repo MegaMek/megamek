@@ -178,17 +178,14 @@ public abstract class Mek extends Entity {
     public static final int JUMP_STANDARD = 1;
     public static final int JUMP_IMPROVED = 2;
     public static final int JUMP_PROTOTYPE = 3;
-    public static final int JUMP_BOOSTER = 4; // do not use, boosters are separate from standard JJs
     public static final int JUMP_DISPOSABLE = 5;
-    // Type for Improved Jumpjet Prototype
     public static final int JUMP_PROTOTYPE_IMPROVED = 6;
 
     // Some "has" items only need be determined once
     public static final int HAS_FALSE = -1;
-
     public static final int HAS_UNKNOWN = 0;
-
     public static final int HAS_TRUE = 1;
+
     // rear armor
     private int[] rearArmor;
 
@@ -1064,23 +1061,12 @@ public abstract class Mek extends Entity {
             return 0;
         }
 
-        int mp = 0;
-        boolean isJumpBooster = false;
+        int mp = (int) getMisc().stream()
+              .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+              .filter(Mounted::isOperable)
+              .count();
 
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)
-                    && !mounted.isDestroyed() && !mounted.isBreached()) {
-                mp++;
-            } else if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER)
-                    && !mounted.isDestroyed() && !mounted.isBreached()) {
-                mp = getOriginalJumpMP();
-                isJumpBooster = true;
-                break;
-            }
-        }
-
-        if (!mpCalculationSetting.ignoreSubmergedJumpJets && hasOccupiedHex()
-                && !isJumpBooster && getElevation() < 0) {
+        if (!mpCalculationSetting.ignoreSubmergedJumpJets && hasOccupiedHex() && getElevation() < 0) {
             int waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
             if (waterLevel > 1) {
                 return 0;
@@ -1123,17 +1109,7 @@ public abstract class Mek extends Entity {
               .findFirst().map(Mounted::getSize).orElse(0d));
     }
 
-    /**
-     * @return The jump MP for the Mek's mechanical jump boosters, modified for typical gameplay purposes by damage,
-     * other equipment (shields) and other effects.
-     */
-    public int getMechanicalJumpBoosterMP() {
-        return getMechanicalJumpBoosterMP(MPCalculationSetting.STANDARD);
-    }
-
-    /**
-     * @return The jump MP for the Mek's mechanical jump boosters, modified as given through the MPCalculationSetting.
-     */
+    @Override
     public int getMechanicalJumpBoosterMP(MPCalculationSetting mpCalculationSetting) {
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
             return 0;
@@ -1141,13 +1117,9 @@ public abstract class Mek extends Entity {
 
         Optional<MiscMounted> mekMechanicalJumpBooster = getMisc().stream()
               .filter(m -> m.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER))
+              .filter(Mounted::isOperable)
               .findFirst();
         if (mekMechanicalJumpBooster.isEmpty()) {
-            return 0;
-        }
-
-        MiscMounted mekMechanicalJumpBoosterMounted = mekMechanicalJumpBooster.get();
-        if (mekMechanicalJumpBoosterMounted.isInoperable()) {
             return 0;
         }
 
@@ -1314,11 +1286,6 @@ public abstract class Mek extends Entity {
         return jumpType;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getJumpHeat(int)
-     */
     @Override
     public int getJumpHeat(int movedMP) {
 
@@ -1332,20 +1299,16 @@ public abstract class Mek extends Entity {
             }
         }
 
-        switch (getJumpType()) {
-            case JUMP_IMPROVED:
-                return extra + (hasEngine() ? getEngine().getJumpHeat((movedMP / 2) + (movedMP % 2)) : 0);
-            case JUMP_PROTOTYPE_IMPROVED:
+        return switch (getJumpType()) {
+            case JUMP_IMPROVED -> extra
+                  + (hasEngine() ? getEngine().getJumpHeat((movedMP / 2) + (movedMP % 2)) : 0);
+            case JUMP_PROTOTYPE_IMPROVED ->
                 // min 6 heat, otherwise 2xJumpMp, XTRO:Succession Wars pg17
-                return extra + (hasEngine() ? Math.max(6, getEngine().getJumpHeat(movedMP * 2)) : 0);
-            case JUMP_BOOSTER:
-            case JUMP_DISPOSABLE:
-                return extra;
-            case JUMP_NONE:
-                return 0;
-            default:
-                return extra + (hasEngine() ? getEngine().getJumpHeat(movedMP) : 0);
-        }
+                  extra + (hasEngine() ? Math.max(6, getEngine().getJumpHeat(movedMP * 2)) : 0);
+            case JUMP_DISPOSABLE -> extra;
+            case JUMP_NONE -> 0;
+            default -> extra + (hasEngine() ? getEngine().getJumpHeat(movedMP) : 0);
+        };
     }
 
     /**

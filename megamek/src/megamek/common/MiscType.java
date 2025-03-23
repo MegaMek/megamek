@@ -1401,9 +1401,9 @@ public class MiscType extends EquipmentType {
         }
 
         if (linkedTo != null) {
-            return this.getBV(entity, linkedTo.getLocation());
+            return getBV(entity, linkedTo.getLocation());
         } else {
-            return this.getBV(entity);
+            return getBV(entity);
         }
     }
 
@@ -1413,6 +1413,14 @@ public class MiscType extends EquipmentType {
     }
 
     public double getBV(Entity entity, int location) {
+        // Assuming PM melee weapons add BV according to the damage they add to a frenzy attack rather than the total
+        if (is(EquipmentTypeLookup.PROTOMEK_MELEE)) {
+            // TO:AUE p. 149, p.197
+            return 1.25 * Math.ceil(0.2 * entity.getWeight());
+        } else if (is(EquipmentTypeLookup.PROTOMEK_QUAD_MELEE)) {
+            // IO:AE p.61, p.190
+            return 2.5 * Math.ceil(0.2 * entity.getWeight());
+        }
         double returnBV = 0.0;
         if ((bv != BV_VARIABLE) || (null == entity)) {
             returnBV = bv;
@@ -7465,7 +7473,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         // TODO Game Rules
         misc.name = "ProtoMech Melee Weapon";
-        misc.setInternalName("ProtoMeleeWeapon");
+        misc.setInternalName(EquipmentTypeLookup.PROTOMEK_MELEE);
         misc.shortName = "Melee Weapon";
         misc.tonnage = 0.5;
         misc.criticals = 1;
@@ -7473,8 +7481,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_PROTOMEK_MELEE).or(F_PROTOMEK_EQUIPMENT);
         misc.subType = S_PROTOMEK_WEAPON;
-        misc.bv = 1;
-        misc.rulesRefs = "337, TO";
+        misc.rulesRefs = "149, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
@@ -7487,7 +7494,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         // TODO Game Rules
         misc.name = "ProtoMech Quad Melee System";
-        misc.setInternalName("ProtoQuadMeleeSystem");
+        misc.setInternalName(EquipmentTypeLookup.PROTOMEK_QUAD_MELEE);
         misc.shortName = "Quad Melee System";
         misc.tonnage = 1;
         misc.criticals = 1;
@@ -7497,8 +7504,7 @@ public class MiscType extends EquipmentType {
                 .andNot(F_TANK_EQUIPMENT)
                 .andNot(F_FIGHTER_EQUIPMENT);
         misc.subType = S_PROTO_QMS;
-        misc.bv = 1;
-        misc.rulesRefs = "67, IO";
+        misc.rulesRefs = "61, IO:AE";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
                 .setClanAdvancement(3066, 3072, 3085, DATE_NONE, DATE_NONE)

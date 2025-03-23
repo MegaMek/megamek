@@ -178,6 +178,38 @@ public class WeaponAttackActionToHitTest {
     }
 
     @Test
+    void immobileTargetTest() {
+        Tank mockAttackingEntity = mock(Tank.class);
+        when(mockAttackingEntity.getOwner()).thenReturn(mockPlayer);
+        when(mockAttackingEntity.getPosition()).thenReturn(new Coords(0, 0));
+        when(mockAttackingEntity.getWeapon(anyInt())).thenReturn(mockWeapon);
+        when(mockAttackingEntity.getEquipment(anyInt())).thenReturn(mockWeaponEquipment);
+        when(mockAttackingEntity.getCrew()).thenReturn(mockCrew);
+        when(mockAttackingEntity.getSwarmTargetId()).thenReturn(Entity.NONE);
+
+        Tank mockTarget = mock(Tank.class);
+        when(mockTarget.getOwner()).thenReturn(mockEnemy);
+        when(mockTarget.getPosition()).thenReturn(new Coords(0, 1));
+        when(mockTarget.isIlluminated()).thenReturn(true);
+        when(mockTarget.getSwarmTargetId()).thenReturn(Entity.NONE);
+        when(mockTarget.isImmobile()).thenReturn(true);
+
+        when(mockGame.getEntity(0)).thenReturn(mockAttackingEntity);
+        when(mockGame.getEntity(1)).thenReturn(mockTarget);
+
+        when(mockTarget.getGame()).thenReturn(mockGame);
+        when(mockAttackingEntity.getGame()).thenReturn(mockGame);
+
+        try (MockedStatic<LosEffects> mockedLosEffects = mockStatic(LosEffects.class, invocationOnMock -> mockLos)) {
+            mockedLosEffects.when(() -> LosEffects.calculateLOS(any(), any(), any(), anyBoolean()))
+                  .thenReturn(mockLos);
+
+
+            ToHitData toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
+            assertEquals(-9, toHit.getValue());
+        }
+    }
+    @Test
     void doubleBlindNightTest() {
 
         mockPlanetaryConditions.setLight(Light.PITCH_BLACK);

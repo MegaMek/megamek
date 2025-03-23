@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
- * version 2 or (at your option) any later version,
+ * version 3 or (at your option) any later version,
  * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
@@ -25,7 +25,6 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  */
-
 package megamek.ai.dataset;
 
 

@@ -786,21 +786,16 @@ public class TestMek extends TestEntity {
         return "Mek: " + mek.getDisplayName();
     }
 
-    /**
-     * calculates the total weight of all armored components.
-     */
     @Override
     public double getArmoredComponentWeight() {
         double weight = 0.0;
         double cockpitWeight = 0.0;
-        for (int location = Mek.LOC_HEAD; location < mek.locations(); location++) {
+        for (int location = 0; location < mek.locations(); location++) {
             for (int slot = 0; slot < mek.getNumberOfCriticals(location); slot++) {
                 CriticalSlot cs = mek.getCritical(location, slot);
                 if ((cs != null) && cs.isArmored()) {
-                    // Armored cockpit (including command console) adds 1 ton, regardless of number
-                    // of slots
-                    if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                            && (cs.getIndex() == Mek.SYSTEM_COCKPIT)) {
+                    // Armored cockpit (including command console) adds 1 ton, regardless of number of slots
+                    if ((cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mek.SYSTEM_COCKPIT)) {
                         cockpitWeight = 1.0;
                     } else {
                         weight += 0.5;

@@ -92,6 +92,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private static final MMLogger logger = MMLogger.create(MegaMekGUI.class);
 
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek_splash_spooky_hd.png";
+    private static final List<String> FILENAME_MEGAMEK_SPLASHES = List.of(
+          "../misc/megamek_splash_fhd.png",
+          "../misc/megamek_splash_hd.png",
+          "../misc/megamek_splash_uhd.png",
+          "../misc/megamek_splash_hd.png");
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
@@ -249,7 +254,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // Use the current monitor, so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
-        Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorSize.width, scaledMonitorSize.height);
+        Image imgSplash = getSplashScreen(FILENAME_MEGAMEK_SPLASHES, scaledMonitorSize.width, scaledMonitorSize.height);
         JLabel splash = UIUtil.createSplashComponent(imgSplash, frame, scaledMonitorSize);
 
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());

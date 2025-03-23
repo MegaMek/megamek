@@ -2617,7 +2617,7 @@ public class Princess extends BotClient implements Agent {
             initialize();
             checkMorale();
             unitBehaviorTracker.clear();
-            this.swarmContext.assignClusters(getFriendEntities());
+            this.swarmContext.assignClusters(getEntitiesOwned());
             this.enemyTracker.updateThreatAssessment(swarmContext.getCurrentCenter());
             // reset strategic targets
             fireControlState.setAdditionalTargets(new ArrayList<>());
@@ -3281,7 +3281,12 @@ public class Princess extends BotClient implements Agent {
         Coords pathEndpoint = path.getFinalCoords();
         Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame(), false);
 
-        // if there are no enemies on the board, then we're not launching anything.
+        // Don't launch at high velocity in atmosphere or the fighters will be destroyed!
+        if (path.getFinalVelocity() > 2 && !game.getBoard().inSpace()) {
+            return;
+        }
+
+            // if there are no enemies on the board, then we're not launching anything.
         if ((null == closestEnemy) || (closestEnemy.getTargetType() != Targetable.TYPE_ENTITY)) {
             return;
         }

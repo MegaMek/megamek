@@ -546,7 +546,7 @@ public abstract class BotClient extends Client {
                 try {
                     Thread.sleep(Compute.randomInt(1000) + 500);
                 } catch (InterruptedException e) {
-                    logger.error(e, "calculateMyTune");
+                    logger.error(e, "calculateMyTurn");
                 }
             }
         }
@@ -563,19 +563,31 @@ public abstract class BotClient extends Client {
         try {
             if (game.getPhase().isMovement()) {
                 MovePath mp;
-                if (game.getTurn() instanceof SpecificEntityTurn) {
-                    SpecificEntityTurn turn = (SpecificEntityTurn) game.getTurn();
-                    Entity mustMove = game.getEntity(turn.getEntityNum());
+                int moverId = -1;
+                if (game.getTurn() instanceof SpecificEntityTurn turn) {
+                    moverId = turn.getEntityNum();
+                    Entity mustMove = game.getEntity(moverId);
                     mp = continueMovementFor(mustMove);
                 } else {
                     if (config.isForcedIndividual()) {
                         Entity mustMove = getRandomUnmovedEntity();
+                        moverId = (mustMove != null) ? mustMove.getId() : -1;
                         mp = continueMovementFor(mustMove);
                     } else {
                         mp = calculateMoveTurn();
                     }
                 }
-                moveEntity(mp.getEntity().getId(), mp);
+                // MP can be null due to various factors in pathing.  Avoid derailing the bot if so.
+                if (mp != null) {
+                    moveEntity(mp.getEntity().getId(), mp);
+                } else {
+                    // This attempt to calculate the turn failed, but we don't want to log
+                    // an exception here.
+                    logger.warn(
+                          "Null move path; entity was {}", ((moverId != -1) ? "ID " + moverId : "Unknown")
+                    );
+                    return false;
+                }
             } else if (game.getPhase().isFiring()) {
                 calculateFiringTurn();
             } else if (game.getPhase().isPhysical()) {

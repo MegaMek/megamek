@@ -32,6 +32,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
+import megamek.common.AmmoType.Munitions;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
@@ -1360,6 +1361,8 @@ public class TWGameManager extends AbstractGameManager {
      * round.
      */
     public void forceVictory(Player victor, boolean endImmediately, boolean ignorePlayerVotes) {
+        // endImmediately if passed true, or if game option set
+        endImmediately |= game.getOptions().booleanOption(OptionsConstants.VICTORY_SKIP_FORCED_VICTORY);
         game.setEndImmediately(endImmediately);
         game.setIgnorePlayerDefeatVotes(ignorePlayerVotes);
         game.setForceVictory(true);
@@ -2152,6 +2155,9 @@ public class TWGameManager extends AbstractGameManager {
     private void changeToNextTurn(int prevPlayerId) {
         boolean minefieldPhase = game.getPhase().isDeployMinefields();
         boolean artyPhase = game.getPhase().isSetArtilleryAutohitHexes();
+        if (isPlayerForcedVictory()) {
+            setIneligible(game.getPhase());
+        }
 
         GameTurn nextTurn = null;
         Entity nextEntity = null;
@@ -3050,6 +3056,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (isPlayerForcedVictory()) {
             assistants.addAll(game.getEntitiesVector());
+            game.setTurnVector(new ArrayList<>());
         } else {
             for (Entity entity : game.getEntitiesVector()) {
                 if (entity.isEligibleFor(phase)) {
@@ -24768,19 +24775,21 @@ public class TWGameManager extends AbstractGameManager {
      */
     protected void destroyTransportedUnits(Entity entity, int condition, boolean survivable, Vector<Report> vDesc) {
         Report r;
+        int messageId = 6375;
 
         // We'll need this later...
         Aero ship = null;
         if (entity.isLargeCraft()) {
             ship = (Aero) entity;
+            messageId = 6377;
         }
 
-        // Regardless of what was passed in, units loaded onto ships not on the
+        // Regardless of what was passed in, units loaded onto vehicles not on the
         // ground are destroyed.
         // Units in an Aerospace unit destroyed in a crash are also destroyed.
         // Units in an Aerospace unit that is already on the ground usually survive if
         // they can evacuate the wreck.
-        if (entity.isAirborne()) {
+        if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             survivable = false;
         }
 
@@ -24850,35 +24859,47 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 // Can the other unit survive?
                 boolean survived = false;
-                // Riding a tank/VTOL
-                if (entity instanceof Tank) {
-                    if (entity.getMovementMode().isNaval()
-                        || entity.getMovementMode().isHydrofoil()) {
-                        if (other.getMovementMode().isUMUInfantry()) {
+                // Assumes infantry; other units take no damage or are damaged via other means
+                if (other.isInfantry()) {
+                    // Riding a tank/VTOL/other vehicle
+                    if (entity instanceof Tank) {
+                        if (entity.getMovementMode().isNaval()
+                              || entity.getMovementMode().isHydrofoil()) {
+                            // Naval vessel
+                            if (other.getMovementMode().isUMUInfantry()) {
+                                survived = Compute.d6() <= 3;
+                            } else if (other.getMovementMode().isJumpInfantry()) {
+                                survived = Compute.d6() == 1;
+                            } else if (other.getMovementMode().isVTOL()) {
+                                survived = Compute.d6() <= 2;
+                            }
+                        } else if (entity.getMovementMode().isSubmarine()) {
+                            // Submarine
+                            if (other.getMovementMode().isUMUInfantry()) {
+                                survived = Compute.d6() == 1;
+                            }
+                        } else if (entity instanceof VTOL || entity.getMovementMode().isWiGE()) {
+                            // Non-airborne VTOL / WiGE
                             survived = Compute.d6() <= 3;
-                        } else if (other.getMovementMode().isJumpInfantry()) {
-                            survived = Compute.d6() == 1;
-                        } else if (other.getMovementMode().isVTOL()) {
-                            survived = Compute.d6() <= 2;
+                        } else {
+                            // All others
+                            survived = Compute.d6() <= 4;
                         }
-                    } else if (entity.getMovementMode().isSubmarine()) {
-                        if (other.getMovementMode().isUMUInfantry()) {
-                            survived = Compute.d6() == 1;
+                    } else if (entity instanceof Mek) {
+                        // mechanized BA can escape on a roll of 1 or 2
+                        if (externalUnits.contains(other)) {
+                            survived = Compute.d6() < 3;
                         }
-                    } else {
-                        survived = Compute.d6() <= 4;
-                    }
-                } else if (entity instanceof Mek) {
-                    // mechanized BA can escape on a roll of 1 or 2
-                    if (externalUnits.contains(other)) {
-                        survived = Compute.d6() < 3;
+                    } else if (entity.isAero()) {
+                        // Infantry in a destroyed Aerospace unit have only 1/6 chance to escape
+                        survived = Compute.d6() == 1;
                     }
                 }
 
-                if (!survivable || (externalUnits.contains(other) && !survived)
+                if (!survivable || !survived
                     // Don't unload from ejecting spacecraft. The crews aren't in their units...
                     || (ship != null && ship.isEjecting())) {
-                    destroyCarriedUnit(entity, other, condition, 6370, vDesc);
+                    destroyCarriedUnit(entity, other, condition, messageId, vDesc);
                 } else {
                     // Handle all _possibly_ survivable destruction:
                     // 1. BAs mounting an Omni / Mechanized mounting anything (TW pg 227):
@@ -31772,9 +31793,9 @@ public class TWGameManager extends AbstractGameManager {
             Vector<Integer> alreadyHit, boolean variableDamage, DamageFalloff falloff) {
 
         // Values used later
-        boolean isFuelAirBomb = ammo != null &&
-                (BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_SMALL ||
-                        BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_LARGE);
+        boolean isFuelAirBomb = ammo != null && ( ammo.getMunitionType().contains(Munitions.M_FAE)
+              || (BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_SMALL
+                      || BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_LARGE));
         Building bldg = game.getBoard().getBuildingAt(coords);
         Hex hex = game.getBoard().getHex(coords);
         int effectiveLevel = (hex != null) ? hex.getLevel() : 0;
@@ -31785,11 +31806,10 @@ public class TWGameManager extends AbstractGameManager {
         if (hex != null) {
 
             // Non-flak artillery damages terrain
-            // TODO: account for altitude vs: terrain height
             if (!flak) {
                 // Report that damage applied to terrain, if there's TF to damage
                 Hex h = game.getBoard().getHex(coords);
-                if ((h != null) && h.hasTerrainFactor()) {
+                if ((h != null) && h.hasTerrainFactor() && (altitude == h.getLevel())) {
                     r = new Report(3384);
                     r.indent(2);
                     r.subject = subjectId;
@@ -31805,7 +31825,6 @@ public class TWGameManager extends AbstractGameManager {
                 vPhaseReport.addAll(newReports);
             }
 
-            // TODO: account for altitude vs: terrain height
             // Buildings do _not_ shield housed units from artillery damage!
             if ((bldg != null)
                     && !(flak && (((altitude > hex.terrainLevel(Terrains.BLDG_ELEV))

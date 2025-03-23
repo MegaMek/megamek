@@ -33,8 +33,7 @@ public final class MMConstants extends SuiteConstants {
     public static final String MUL_URL_PREFIX = "http://www.masterunitlist.info/Unit/Details/";
     public static final String BT_URL_SHRAPNEL = "https://bg.battletech.com/shrapnel/";
     /**
-     * When this text is found in the source field, the Mek View will display a link
-     * to {@link #BT_URL_SHRAPNEL}
+     * When this text is found in the source field, the Mek View will display a link to {@link #BT_URL_SHRAPNEL}
      */
     public static final String SOURCE_TEXT_SHRAPNEL = "Shrapnel";
     // endregion General Constants
@@ -58,15 +57,20 @@ public final class MMConstants extends SuiteConstants {
     public static final String GIVEN_NAME_MALE_FILE = Paths.get("data/names/maleGivenNames.csv").toString();
     public static final String SURNAME_FILE = Paths.get("data/names/surnames.csv").toString();
     public static final String BOT_README_FILE_PATH = Paths.get("docs/Bot Stuff/Princess Notes.txt").toString();
-    public static final String BOARD_README_FILE_PATH = Paths.get("docs/Archive Stuff/maps/Map Editor-readme.txt").toString();
+    public static final String BOARD_README_FILE_PATH = Paths.get("docs/Archive Stuff/maps/Map Editor-readme.txt")
+        .toString();
     public static final String MEGAMEK_README_FILE_PATH = Paths.get("docs/1-Readme/readme.txt").toString();
     public static final String USER_DIR_README_FILE = Paths.get("docs/UserDirHelp.html").toString();
     public static final String SERIALKILLER_CONFIG_FILE = Paths.get("mmconf/serialkiller.xml").toString();
-    public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = Paths.get("userdata/data/names/factions/").toString();
+    public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = Paths.get("userdata/data/names/factions/")
+        .toString();
     public static final String USER_CALLSIGN_FILE_PATH = Paths.get("userdata/data/names/callsigns.csv").toString();
-    public static final String USER_GIVEN_NAME_FEMALE_FILE = Paths.get("userdata/data/names/femaleGivenNames.csv").toString();
-    public static final String USER_HISTORICAL_ETHNICITY_FILE = Paths.get("userdata/data/names/historicalEthnicity.csv").toString();
-    public static final String USER_GIVEN_NAME_MALE_FILE = Paths.get("userdata/data/names/maleGivenNames.csv").toString();
+    public static final String USER_GIVEN_NAME_FEMALE_FILE = Paths.get("userdata/data/names/femaleGivenNames.csv")
+        .toString();
+    public static final String USER_HISTORICAL_ETHNICITY_FILE = Paths.get("userdata/data/names/historicalEthnicity.csv")
+        .toString();
+    public static final String USER_GIVEN_NAME_MALE_FILE = Paths.get("userdata/data/names/maleGivenNames.csv")
+        .toString();
     public static final String USER_SURNAME_FILE = Paths.get("userdata/data/names/surnames.csv").toString();
     public static final String ERAS_FILE_PATH = Paths.get("data/universe/eras.xml").toString();
     public static final String USER_LOADOUTS_DIR = Paths.get("userdata/data/").toString();
@@ -74,7 +78,9 @@ public final class MMConstants extends SuiteConstants {
 
     // region ClientServer
     public static final int DEFAULT_PORT = 2346;
-    public static final int MIN_PORT = 1024;
+    public static final int MIN_PORT = 1; // Minimum port number for a player game.
+    public static final int MIN_PORT_FOR_QUICK_GAME = 1024; // Minimum port for quick games for testing or AI usage to
+    // prevent possible issues with needing root access to run.
     public static final int MAX_PORT = 65535;
     public static final String DEFAULT_PLAYERNAME = "Player";
     public static final String LOCALHOST = "localhost";

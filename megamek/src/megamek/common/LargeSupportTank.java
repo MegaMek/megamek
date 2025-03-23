@@ -425,4 +425,10 @@ public class LargeSupportTank extends SupportTank {
     public void setFuelTonnage(double fuel) {
         fuelTonnage = fuel;
     }
+
+    @Override
+    public boolean isSideLocation(int location) {
+        return (location == LOC_FRONTLEFT) || (location == LOC_FRONTRIGHT)
+              || (location == LOC_REARLEFT) || (location == LOC_REARRIGHT);
+    }
 }

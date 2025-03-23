@@ -643,6 +643,13 @@ public class AreaEffectHelper {
             radius = (int)(Math.ceil(1.0 * damage / falloff) - 1);
             // Fuel-Air munitions get special radius
             if (ammo.getMunitionType().contains(Munitions.M_FAE)) {
+                damage = switch(ammo.getAmmoType()) {
+                    case AmmoType.T_LONG_TOM, AmmoType.T_LONG_TOM_CANNON, AmmoType.T_LONG_TOM_PRIM -> 30;
+                    case AmmoType.T_SNIPER, AmmoType.T_SNIPER_CANNON -> 20;
+                    case AmmoType.T_THUMPER, AmmoType.T_THUMPER_CANNON -> 10;
+                    case AmmoType.T_ARROW_IV, AmmoType.T_ARROWIV_PROTO -> 20;
+                    default -> 0; // Should not happen...
+                };
                 radius = getFuelAirBlastRadiusIndex(ammo.getInternalName());
             }
         }

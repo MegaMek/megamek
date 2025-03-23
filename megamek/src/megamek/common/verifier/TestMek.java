@@ -681,15 +681,13 @@ public class TestMek extends TestEntity {
         // Mechanical Jump Boosts can be greater then Running as long as
         // the unit can handle the weight.
         if ((mek.getJumpMP(MPCalculationSetting.NO_GRAVITY) > mek.getOriginalRunMP())
-                && !mek.hasJumpBoosters()
                 && !mek.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             buff.append("Jump MP exceeds run MP\n");
             return false;
         }
         if ((mek.getJumpMP(MPCalculationSetting.NO_GRAVITY) > mek.getOriginalWalkMP())
                 && (((mek.getJumpType() != Mek.JUMP_IMPROVED) && (mek.getJumpType() != Mek.JUMP_PROTOTYPE_IMPROVED))
-                        && !mek.hasWorkingMisc(MiscType.F_PARTIAL_WING) && !mek
-                                .hasJumpBoosters())) {
+                        && !mek.hasWorkingMisc(MiscType.F_PARTIAL_WING))) {
             buff.append("Jump MP exceeds walk MP without IJJs\n");
             return false;
         }

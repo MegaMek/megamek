@@ -710,22 +710,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
-     * @return True when this is a Mek with Mechanical Jump Boosters and the GUI can use its MMJB MP in the place of
-     * standard jump MP, i.e. it has no jump jets. This is currently true for all canon units that have MMJB
-     * as they never have standard JJ as well (which is allowed). See TO:AUE p.105
-     */
-    private boolean useMekMechanicalJumpAsJump() {
-        return ce() instanceof Mek mek && mek.getJumpMP() == 0 && (mek.getMechanicalJumpBoosterMP() > 0)
-              && (mek.getJumpMP() == 0);
-    }
-
-    /**
      * @return True when the active unit has jump MP available, either standard jump jet MP or, in the case of Meks,
      * MP of Mechanical Jump Boosters.
      */
     private boolean hasJumpMP() {
-        return (ce() != null) &&
-              ((ce().getJumpMP() > 0) || ((ce() instanceof Mek mek) && (mek.getMechanicalJumpBoosterMP() > 0)));
+        return (ce() != null) && (ce().getAnyTypeMaxJumpMP() > 0);
     }
 
     /**
@@ -1554,13 +1543,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Should we nag about taking fall damage with mechanical jump boosters?
         if (needNagForMechanicalJumpFallDamage()) {
-            if ((ce() != null)
-                    && cmd.shouldMechanicalJumpCauseFallDamage()) {
+            if ((ce() != null) && cmd.shouldMechanicalJumpCauseFallDamage()) {
                 String title = Messages.getString("MovementDisplay.areYouSure");
                 String body = Messages.getString("MovementDisplay.ConfirmMechanicalJumpFallDamage",
                         cmd.getJumpMaxElevationChange(),
-                        ce().getJumpMP(),
-                        cmd.getJumpMaxElevationChange() - ce().getJumpMP());
+                        ce().getMechanicalJumpBoosterMP(),
+                        cmd.getJumpMaxElevationChange() - ce().getMechanicalJumpBoosterMP());
                 if (checkNagForMechanicalJumpFallDamage(title, body)) {
                     return true;
                 }

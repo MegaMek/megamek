@@ -760,7 +760,7 @@ public abstract class BotClient extends Client {
         // Calculate ideal elevation as a factor of average range of 18 being
         // highest elevation. Fast, non-jumping units should deploy towards
         // the middle elevations to avoid getting stuck up a cliff.
-        if ((deployed_ent.getJumpMP() == 0) &&
+        if ((deployed_ent.getAnyTypeMaxJumpMP() == 0) &&
                 (deployed_ent.getWalkMP() > 5)) {
             ideal_elev = lowest_elev + ((highest_elev - lowest_elev) / 3.0);
         } else {

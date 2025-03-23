@@ -3220,8 +3220,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns this entity's current jumping MP, not affected by terrain,
-     * factored for gravity.
+     * @return In most cases, the same as getJumpMP(). For Meks that have either normal jump MP or mechanical booster
+     * jump MP or both, the bigger value is returned.
+     *
+     * @see #getJumpMP()
+     * @see #getMechanicalJumpBoosterMP()
+     */
+    public int getAnyTypeMaxJumpMP() {
+        return Math.max(getJumpMP(), getMechanicalJumpBoosterMP());
+    }
+
+    /**
+     * Returns this entity's current jump jet jumping MP, not affected by terrain, factored for gravity. Note that for
+     * Meks, this does not include jumping MP due to mechanical jump boosters. When the difference between the two
+     * doesn't matter (Princess or scenario estimations or the like), use getAnyTypeMaxJumpMP() instead.
+     *
+     * @see #getAnyTypeMaxJumpMP()
      */
     public int getJumpMP() {
         return getJumpMP(MPCalculationSetting.STANDARD);
@@ -9471,7 +9485,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         str += " MP: " + getWalkMP();
         if (getOriginalJumpMP() > 0) {
-            str += " Jump: " + getJumpMP();
+            str += " Jump: " + getAnyTypeMaxJumpMP();
         }
         str += " Owner: " + getOwner().getName() + " Armor: " + getTotalArmor()
                 + "/" + getTotalOArmor() + " Internal Structure: "

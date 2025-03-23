@@ -573,7 +573,7 @@ public class HeatMap {
             bvWeight = tracked.getInitialBV();
         }
 
-        bvWeight = Math.max(bvWeight - (100 * Math.max(tracked.getJumpMP(), tracked.getWalkMP())), 1);
+        bvWeight = Math.max(bvWeight - (100 * Math.max(tracked.getAnyTypeMaxJumpMP(), tracked.getWalkMP())), 1);
         bvWeight = (int) Math.floor(weightScaling * bvWeight);
 
         return bvWeight;

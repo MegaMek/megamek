@@ -667,7 +667,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                 case COL_BV:
                     return en.calculateBattleValue();
                 case COL_MOVE:
-                    return en.getWalkMP() + "/" + en.getRunMPasString() + "/" + en.getJumpMP();
+                    return en.getWalkMP() + "/" + en.getRunMPasString() + "/" + en.getAnyTypeMaxJumpMP();
                 case COL_TECH_BASE:
                     return en.getTechBaseDescription();
                 case COL_UNIT_ROLE:

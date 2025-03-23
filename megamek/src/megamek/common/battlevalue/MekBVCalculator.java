@@ -236,12 +236,6 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     }
 
     @Override
-    protected void setJumpMP() {
-        jumpMP = Math.max(entity.getJumpMP(MPCalculationSetting.BV_CALCULATION),
-              ((Mek) entity).getMechanicalJumpBoosterMP(MPCalculationSetting.BV_CALCULATION));
-    }
-
-    @Override
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
         int targetMovementModifier = Math.max(tmmRunning, Math.max(tmmJumping, tmmUmu));
         // Try to find a Mek Stealth or similar system.

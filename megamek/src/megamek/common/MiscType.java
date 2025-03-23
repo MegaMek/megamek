@@ -1401,9 +1401,9 @@ public class MiscType extends EquipmentType {
         }
 
         if (linkedTo != null) {
-            return this.getBV(entity, linkedTo.getLocation());
+            return getBV(entity, linkedTo.getLocation());
         } else {
-            return this.getBV(entity);
+            return getBV(entity);
         }
     }
 
@@ -1413,6 +1413,14 @@ public class MiscType extends EquipmentType {
     }
 
     public double getBV(Entity entity, int location) {
+        // Assuming PM melee weapons add BV according to the damage they add to a frenzy attack rather than the total
+        if (is("ProtoMeleeWeapon")) {
+            // TO:AUE p. 149, p.197
+            return 1.25 * Math.ceil(0.2 * entity.getWeight());
+        } else if (is("ProtoQuadMeleeSystem")) {
+            // IO:AE p.61, p.190
+            return 2.5 * Math.ceil(0.2 * entity.getWeight());
+        }
         double returnBV = 0.0;
         if ((bv != BV_VARIABLE) || (null == entity)) {
             returnBV = bv;

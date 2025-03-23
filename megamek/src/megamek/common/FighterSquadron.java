@@ -357,7 +357,10 @@ public class FighterSquadron extends AeroSpaceFighter {
         // first we need to reset all the weapons in our existing mounts to zero
         // until proven otherwise
         for (Integer group : weaponGroups.values()) {
-            getEquipment(group).setNWeapons(0);
+            Mounted groupEquipment = getEquipment(group);
+            if (groupEquipment != null) {
+                groupEquipment.setNWeapons(0);
+            }
         }
         // now collect a hash of all the same weapons in each location by id
         Map<String, Integer> groups = new HashMap<>();
@@ -387,7 +390,7 @@ public class FighterSquadron extends AeroSpaceFighter {
         // equipment or add new ones if there is none
         Set<String> newSet = groups.keySet();
         for (String key : newSet) {
-            if (null != weaponGroups.get(key)) {
+            if (null != weaponGroups.get(key) && null != getEquipment(weaponGroups.get(key))) {
                 // then this equipment is already loaded, so we just need to
                 // correctly update the number of weapons
                 getEquipment(weaponGroups.get(key)).setNWeapons(groups.get(key));

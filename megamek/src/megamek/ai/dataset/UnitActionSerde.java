@@ -1,16 +1,29 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.ai.dataset;
 
@@ -64,71 +77,6 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
             .collect(Collectors.joining(" "));
 
         return String.join("\t", row);
-    }
-
-    public UnitAction fromTsv(String line, int idOffset) throws NumberFormatException {
-        String[] parts = line.split("\t", -1);
-        int entityId = Integer.parseInt(parts[UnitActionField.ENTITY_ID.ordinal()]) + idOffset;
-        int playerId = Integer.parseInt(parts[UnitActionField.PLAYER_ID.ordinal()]);
-        String chassis = parts[UnitActionField.CHASSIS.ordinal()];
-        String model = parts[UnitActionField.MODEL.ordinal()];
-        int facing = Integer.parseInt(parts[UnitActionField.FACING.ordinal()]);
-        int fromX = Integer.parseInt(parts[UnitActionField.FROM_X.ordinal()]);
-        int fromY = Integer.parseInt(parts[UnitActionField.FROM_Y.ordinal()]);
-        int toX = Integer.parseInt(parts[UnitActionField.TO_X.ordinal()]);
-        int toY = Integer.parseInt(parts[UnitActionField.TO_Y.ordinal()]);
-        int hexesMoved = Integer.parseInt(parts[UnitActionField.HEXES_MOVED.ordinal()]);
-        int distance = Integer.parseInt(parts[UnitActionField.DISTANCE.ordinal()]);
-        int mpUsed = Integer.parseInt(parts[UnitActionField.MP_USED.ordinal()]);
-        int maxMp = Integer.parseInt(parts[UnitActionField.MAX_MP.ordinal()]);
-        double mpP = Double.parseDouble(parts[UnitActionField.MP_P.ordinal()]);
-        double heatP = Double.parseDouble(parts[UnitActionField.HEAT_P.ordinal()]);
-        double armorP = Double.parseDouble(parts[UnitActionField.ARMOR_P.ordinal()]);
-        double internalP = Double.parseDouble(parts[UnitActionField.INTERNAL_P.ordinal()]);
-        boolean jumping = "1".equals(parts[UnitActionField.JUMPING.ordinal()]);
-        boolean prone = "1".equals(parts[UnitActionField.PRONE.ordinal()]);
-        boolean legal = "1".equals(parts[UnitActionField.LEGAL.ordinal()]);
-        boolean bot = false;
-        int teamId = -1;
-        double chanceOfFailure = 0.0;
-        if (parts.length >= 23) {
-            teamId = Integer.parseInt(parts[UnitActionField.TEAM_ID.ordinal()]);
-            chanceOfFailure = Double.parseDouble(parts[UnitActionField.CHANCE_OF_FAILURE.ordinal()]);
-            bot = "1".equals(parts[UnitActionField.IS_BOT.ordinal()]);
-        }
-        // Convert the steps field (a space-separated list) back to a List of MoveStepType.
-        List<MovePath.MoveStepType> steps = Arrays.stream(
-                parts[UnitActionField.STEPS.ordinal()].split(" "))
-            .filter(s -> !s.isEmpty())
-            .map(MovePath.MoveStepType::fromLabel)
-            .collect(Collectors.toList());
-
-        return new UnitAction(
-            entityId,
-            teamId,
-            playerId,
-            chassis,
-            model,
-            facing,
-            fromX,
-            fromY,
-            toX,
-            toY,
-            hexesMoved,
-            distance,
-            mpUsed,
-            maxMp,
-            mpP,
-            heatP,
-            armorP,
-            internalP,
-            jumping,
-            prone,
-            legal,
-            chanceOfFailure,
-            steps,
-            bot
-        );
     }
 
     @Override

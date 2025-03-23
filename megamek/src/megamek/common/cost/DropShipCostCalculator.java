@@ -52,6 +52,9 @@ public class DropShipCostCalculator {
         // Life Boats and Escape Pods
         costs[idx++] += 5000 * (dropShip.getLifeBoats() + dropShip.getEscapePods());
 
+        // For all additive costs - replace negatives with 0 to separate from multipliers
+        CostCalculator.removeNegativeAdditiveCosts(costs);
+
         costs[idx] = -dropShip.getPriceMultiplier();
         double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "Fire Control Computer",

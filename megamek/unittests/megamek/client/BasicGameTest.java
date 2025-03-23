@@ -15,7 +15,7 @@
 
 package megamek.client;
 
-
+import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
@@ -52,8 +52,7 @@ public class BasicGameTest {
     private GameThread gameThread;
 
     private static Map<String, File> testSaves = Map.of(
-        "one mek each", new File("testresources/data/scenarios/testbot/lounge_1x1_grasslands.sav.gz")
-    );
+        "one mek each", new File("testresources/data/scenarios/testbot/lounge_1x1_grasslands.sav.gz"));
 
     @BeforeAll
     public static void setUpClass() {
@@ -65,7 +64,8 @@ public class BasicGameTest {
     public void setUp() throws Exception {
         Compute.d6();
         gameManager = new TWGameManager();
-        server = new Server(null, random.nextInt(MIN_PORT, MAX_PORT), gameManager, false, "", null, true);
+        server = new Server(null, random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
+            gameManager, false, "", null, true);
         Thread.sleep(1000);
         client = new HeadlessClient("watcher", LOCALHOST_IP, server.getPort());
     }
@@ -88,7 +88,8 @@ public class BasicGameTest {
         gameManager = null;
     }
 
-    private CountDownLatch startGame(File saveFile, GameListenerAdapter gameListenerAdapter, int rounds) throws IOException {
+    private CountDownLatch startGame(File saveFile, GameListenerAdapter gameListenerAdapter, int rounds)
+        throws IOException {
         assert rounds > 0;
         assertTrue(saveFile.exists() && saveFile.canRead());
 

@@ -76,6 +76,9 @@ public class BattleArmorCostCalculator {
 
         costs[idx++] = (baseArmorCost * battleArmor.getOArmor(BattleArmor.LOC_TROOPER_1));
 
+        // For all additive costs - replace negatives with 0 to separate from multipliers
+        CostCalculator.removeNegativeAdditiveCosts(costs);
+
         // training cost and clan mod
         if (includeTrainingAndClan) {
             if (battleArmor.isClan()) {
@@ -89,18 +92,10 @@ public class BattleArmorCostCalculator {
 
         // TODO : we do not track the modular weapons mount for 1000 C-bills in the unit
         // files
-        costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(battleArmor, ignoreAmmo);
-        costs[idx++] = -battleArmor.getSquadSize();
+        costs[idx++] = Math.max(0, CostCalculator.getWeaponsAndEquipmentCost(battleArmor, ignoreAmmo));
+        costs[idx] = -battleArmor.getSquadSize();
 
-        double cost = 0; // calculate the total
-        for (int x = 0; x < idx; x++) {
-            if (costs[x] < 0) {
-                cost *= -costs[x];
-            } else {
-                cost += costs[x];
-            }
-        }
-
+        double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Chassis", "Jumping/VTOL/UMU", "Ground Movement", "Manipulators", "Armor",
                 "Clan Structure Multiplier", "Training", "Equipment", "Troopers" };
         CostCalculator.fillInReport(costReport, battleArmor, ignoreAmmo, systemNames, 7, cost, costs);

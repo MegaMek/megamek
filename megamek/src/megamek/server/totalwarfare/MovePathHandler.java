@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -169,6 +170,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (md.contains(MovePath.MoveStepType.CAREFUL_STAND)) {
             entity.setCarefulStand(true);
         }
+
+        entity.setJumpingWithMechanicalBoosters(md.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER));
+
         if (md.contains(MovePath.MoveStepType.BACKWARDS)) {
             entity.setMovedBackwards(true);
             if (md.getMpUsed() > entity.getWalkMP()) {
@@ -210,7 +214,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             IAero a = (IAero) entity;
             rollTarget = a.checkLanding(md.getLastStepMovementType(), md.getFinalVelocity(),
                     md.getFinalCoords(), md.getFinalFacing(), false);
-            gameManager.attemptLanding(entity, rollTarget);
+            gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
             gameManager.checkLandingTerrainEffects(a, true, md.getFinalCoords(),
                     md.getFinalCoords().translated(md.getFinalFacing(), a.getLandingLength()), md.getFinalFacing());
             a.land();
@@ -226,7 +230,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             rollTarget = a.checkLanding(md.getLastStepMovementType(),
                     md.getFinalVelocity(), md.getFinalCoords(),
                     md.getFinalFacing(), true);
-            gameManager.attemptLanding(entity, rollTarget);
+            gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
             if (entity instanceof Dropship) {
                 gameManager.applyDropShipLandingDamage(md.getFinalCoords(), (Dropship) a);
             }
@@ -680,7 +684,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 gameManager.getMainPhaseReport().addAll(gameManager.doEntityFallsInto(entity,
                         entity.getElevation(), md.getJumpPathHighestPoint(),
                         curPos, entity.getBasePilotingRoll(overallMoveType),
-                        false, entity.getJumpMP()));
+                        false, entity.getMechanicalJumpBoosterMP()));
             }
 
             // jumped into water?
@@ -1965,8 +1969,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (cachedGravityLimit < 0) {
                 cachedGravityLimit = EntityMovementType.MOVE_JUMP == moveType
-                        ? entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)
-                        : entity.getRunningGravityLimit();
+                      ? (step.isUsingMekJumpBooster()
+                      ? entity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                      : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY))
+                      : entity.getRunningGravityLimit();
             }
             // check for charge
             if (step.getType() == MovePath.MoveStepType.CHARGE) {
@@ -2263,7 +2269,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // set last step parameters
             curPos = step.getPosition();
-            if (!((entity.getJumpType() == Mek.JUMP_BOOSTER) && step.isJumping())) {
+            if (!(step.isUsingMekJumpBooster() && step.isJumping())) {
                 curFacing = step.getFacing();
             }
             // check if a building PSR will be needed later, before setting the
@@ -3121,6 +3127,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Handle unloading units.
             if (step.getType() == MovePath.MoveStepType.UNLOAD) {
                 Targetable unloaded = step.getTarget(getGame());
+                Bay currentBay = (unloaded instanceof Entity ulEntity) ? entity.getBay(ulEntity) : null;
                 Coords unloadPos = curPos;
                 int unloadFacing = curFacing;
                 if (null != step.getTargetPosition()) {
@@ -3133,12 +3140,21 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             + unloaded.getDisplayName() + " from "
                             + entity.getDisplayName() + " into "
                             + curPos.getBoardNum());
+                } else {
+                    // Report unloading; anyone who can see the carrier should see the new unit too.
+                    r = new Report(2514);
+                    r.subject = unloaded.getId();
+                    r.add(entity.getDisplayName());
+                    r.add(unloaded.generalName());
+                    r.add(unloadPos.toFriendlyString());
+                    addReport(r);
                 }
                 // some additional stuff to take care of for small
                 // craft/DropShip unloading
-                if ((entity instanceof SmallCraft) && (unloaded instanceof Entity)) {
-                    Bay currentBay = entity.getBay((Entity) unloaded);
-                    if ((null != currentBay) && (Compute.d6(2) == 2)) {
+                if ((entity instanceof SmallCraft) && (unloaded instanceof Entity) ) {
+                    if ((null != currentBay) && (!(unloaded.isInfantry()))
+                        && (Compute.d6(2) == 2)
+                    ) {
                         r = new Report(9390);
                         r.subject = entity.getId();
                         r.indent(1);
@@ -3191,8 +3207,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (((step.getType() == MovePath.MoveStepType.BACKWARDS)
                     || (step.getType() == MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS)
                     || (step.getType() == MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS))
-                    && !(md.isJumping()
-                            && (entity.getJumpType() == Mek.JUMP_BOOSTER))
+                    && !(md.isJumping() && step.isUsingMekJumpBooster())
                     && (lastHex.getLevel() + lastElevation != curHex.getLevel() + step.getElevation())
                     && !(entity instanceof VTOL)
                     && !(curClimbMode

@@ -313,9 +313,9 @@ public class AeroPathUtil {
             enemies.add(eIt.next());
         }
         if (!enemies.isEmpty()) {
-            // Calc center of allies _of the enemy_
+            // Calc center of allies _of the enemy_, if possible
             centroid = PathRanker.calcAllyCenter(enemies.get(0).getId(), enemies, game);
-            enemyDir = mover.getPosition().direction(centroid);
+            enemyDir = mover.getPosition().direction((centroid != null) ? centroid : game.getBoard().getCenter());
             logger.debug("Enemies are over in %s", ClientCommand.getDirection(enemyDir));
         }
 

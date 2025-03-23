@@ -325,6 +325,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int[] armorType;
     protected int[] armorTechLevel;
     protected boolean isJumpingNow = false;
+    private boolean isJumpingWithMechanicalBoosters = false;
     protected boolean convertingNow = false;
     private int conversionMode = 0;
     protected EntityMovementMode previousMovementMode;
@@ -1900,12 +1901,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isPermanentlyImmobilized(boolean checkCrew) {
         if ((checkCrew || defaultCrewType().equals(CrewType.NONE)) && ((getCrew() == null) || getCrew().isDead())) {
             return true;
+        } else if ((this instanceof Mek mek) && (mek.getOriginalMechanicalJumpBoosterMP() > 0) &&
+              (getMechanicalJumpBoosterMP(MPCalculationSetting.PERM_IMMOBILIZED) > 0)) {
+            return false;
         } else if (((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
-                // Need to make sure here that we're ignoring heat because
-                // that's not actually "permanent":
-                && ((getWalkMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0)
-                        && (getRunMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0)
-                        && (getJumpMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0))) {
+              // Need to make sure here that we're ignoring heat because
+              // that's not actually "permanent":
+              && ((getWalkMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0)
+              && (getRunMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0)
+              && (getJumpMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0))) {
             return true;
         } else {
             return false;
@@ -3201,7 +3205,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getOriginalJumpMP(boolean ignoreModularArmor) {
-
         if (!ignoreModularArmor && hasModularArmor()) {
             return Math.max(0, jumpMP - 1);
         }
@@ -3217,8 +3220,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns this entity's current jumping MP, not affected by terrain,
-     * factored for gravity.
+     * @return In most cases, the same as getJumpMP(). For Meks that have either normal jump MP or mechanical booster
+     * jump MP or both, the bigger value is returned.
+     *
+     * @see #getJumpMP()
+     * @see #getMechanicalJumpBoosterMP()
+     */
+    public int getAnyTypeMaxJumpMP() {
+        return Math.max(getJumpMP(), getMechanicalJumpBoosterMP());
+    }
+
+    /**
+     * Returns this entity's current jump jet jumping MP, not affected by terrain, factored for gravity. Note that for
+     * Meks, this does not include jumping MP due to mechanical jump boosters. When the difference between the two
+     * doesn't matter (Princess or scenario estimations or the like), use getAnyTypeMaxJumpMP() instead.
+     *
+     * @see #getAnyTypeMaxJumpMP()
      */
     public int getJumpMP() {
         return getJumpMP(MPCalculationSetting.STANDARD);
@@ -3252,6 +3269,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public int getJumpMPWithTerrain() {
         return getJumpMP(MPCalculationSetting.DEDUCT_SUBMERGED_JJ);
+    }
+
+    /**
+     * @return The jump MP for a Mek's mechanical jump boosters, modified for typical gameplay purposes by damage,
+     * other equipment (shields) and other effects. Returns 0 for non-Meks.
+     */
+    public int getMechanicalJumpBoosterMP() {
+        return getMechanicalJumpBoosterMP(MPCalculationSetting.STANDARD);
+    }
+
+    /**
+     * @return The jump MP for a Mek's mechanical jump boosters, modified as given through the MPCalculationSetting.
+     * Returns 0 for non-Meks.
+     */
+    public int getMechanicalJumpBoosterMP(MPCalculationSetting mpCalculationSetting) {
+        return 0;
     }
 
     /**
@@ -4947,7 +4980,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // RISC ECS
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
-                sb.append(", +MoS with RISC ECS");
+                sb.append(", ").append(capacity + 6).append("+MoS with RISC ECS");
             }
         }
 
@@ -6510,6 +6543,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         mpUsedLastRound = mpUsed;
         mpUsed = 0;
         isJumpingNow = false;
+        isJumpingWithMechanicalBoosters = false;
         convertingNow = false;
         damageThisRound = 0;
         if (assaultDropInProgress == 2) {
@@ -7733,7 +7767,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int maxSafeMP;
         switch (moveType) {
             case MOVE_JUMP:
-                maxSafeMP = getJumpMP(MPCalculationSetting.NO_GRAVITY);
+                maxSafeMP = step.isUsingMekJumpBooster() ? getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                      : getJumpMP(MPCalculationSetting.NO_GRAVITY);
                 break;
             case MOVE_SPRINT:
             case MOVE_VTOL_SPRINT:
@@ -9450,7 +9485,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         str += " MP: " + getWalkMP();
         if (getOriginalJumpMP() > 0) {
-            str += " Jump: " + getJumpMP();
+            str += " Jump: " + getAnyTypeMaxJumpMP();
         }
         str += " Owner: " + getOwner().getName() + " Armor: " + getTotalArmor()
                 + "/" + getTotalOArmor() + " Internal Structure: "
@@ -15929,10 +15964,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean canonUnitWithInvalidBuild() {
-        if (this.isCanon() && mulId > -1)
-        {
-            return !this.getInvalidSourceBuildReasons().isEmpty();
+        if (isCanon() && mulId > -1) {
+            return !getInvalidSourceBuildReasons().isEmpty();
         }
         return false;
+    }
+
+    public boolean isJumpingWithMechanicalBoosters() {
+        return isJumpingWithMechanicalBoosters;
+    }
+
+    public void setJumpingWithMechanicalBoosters(boolean jumpingWithMechanicalBoosters) {
+        isJumpingWithMechanicalBoosters = jumpingWithMechanicalBoosters;
     }
 }

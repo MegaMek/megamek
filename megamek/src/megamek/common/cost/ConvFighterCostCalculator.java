@@ -73,6 +73,9 @@ public class ConvFighterCostCalculator {
         // Power amplifiers
         costs[idx++] = 20000 * fighter.getPowerAmplifierWeight();
 
+        // For all additive costs - replace negatives with 0 to separate from multipliers
+        CostCalculator.removeNegativeAdditiveCosts(costs);
+
         costs[idx] = -fighter.getPriceMultiplier();
         double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Avionics", "VSTOL Gear", "Structure", "Flight Systems", "Engine",

@@ -54,6 +54,10 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String EXTENDED_JUMP_JET_SYSTEM = "ExtendedJumpJetSystem";
     @EquipmentName public static final String PROTOMEK_UMU = "ProtoMechUMU";
     @EquipmentName public static final String PROTOMEK_MYOMER_BOOSTER = "CLMyomerBooster";
+    @EquipmentName public static final String PROTOMEK_MELEE = "ProtoMeleeWeapon";
+    @EquipmentName public static final String PROTOMEK_QUAD_MELEE = "ProtoQuadMeleeSystem";
+
+
     @EquipmentName public static final String BA_JUMP_JET = "BAJumpJet";
     @EquipmentName public static final String BA_VTOL = "BAVTOL";
     @EquipmentName public static final String BA_UMU = "BAUMU";

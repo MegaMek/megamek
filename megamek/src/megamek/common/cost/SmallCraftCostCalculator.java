@@ -28,6 +28,10 @@ public class SmallCraftCostCalculator {
     public static double calculateCost(SmallCraft smallCraft, CalculationReport costReport, boolean ignoreAmmo) {
         double[] costs = new double[16];
         int idx = addBaseCosts(costs, smallCraft, ignoreAmmo);
+
+        // For all additive costs - replace negatives with 0 to separate from multipliers
+        CostCalculator.removeNegativeAdditiveCosts(costs);
+
         costs[idx] = -smallCraft.getPriceMultiplier();
         double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "Fire Control Computer",

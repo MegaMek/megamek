@@ -52,6 +52,7 @@ import megamek.client.ui.swing.widget.PicMap;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.*;
+import megamek.common.AmmoType.Munitions;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.AmmoMounted;
@@ -61,6 +62,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.AreaEffectHelper;
+import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -1854,22 +1856,29 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         } else if (wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
             StringBuilder damage = new StringBuilder();
             int artyDamage = wtype.getRackSize();
-            damage.append(artyDamage);
             int falloff = 10;
+            boolean fuelAirExplosive = false;
             boolean specialArrowIV = false;
             if ((mounted.getLinked() != null) && (mounted.getLinked().getType() instanceof AmmoType)) {
                 AmmoType ammoType = (AmmoType) mounted.getLinked().getType();
+                fuelAirExplosive = ammoType.getMunitionType().contains(Munitions.M_FAE);
                 specialArrowIV = (ammoType.is(AmmoType.T_ARROW_IV)
                         && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)
                                 || ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING)));
                 int attackingBA = (entity instanceof BattleArmor) ? ((BattleArmor) entity).getShootingStrength() : -1;
-                falloff = AreaEffectHelper.calculateDamageFallOff(ammoType, attackingBA, false).falloff;
+                DamageFalloff damageFalloff = AreaEffectHelper.calculateDamageFallOff(ammoType, attackingBA, false);
+                artyDamage = damageFalloff.damage;
+                falloff = damageFalloff.falloff;
             }
+            damage.append(artyDamage);
             if (!specialArrowIV) {
                 artyDamage -= falloff;
                 while ((artyDamage > 0) && (falloff > 0)) {
                     damage.append('/').append(artyDamage);
                     artyDamage -= falloff;
+                }
+                if (fuelAirExplosive) {
+                    damage.append("/5");
                 }
             }
             wDamR.setText(damage.toString());
@@ -2090,10 +2099,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
                     vAmmo.add(ammo);
                     m_chAmmo.addItem(formatAmmo(ammo));
-                    if (currentAmmoSelectionIndex != -1) {
-                        newSelectedIndex = currentAmmoSelectionIndex;
-                    } else if ((mounted.getLinked() != null) && mounted.getLinked().equals(ammo)) {
+                    if ((mounted.getLinked() != null) && mounted.getLinked().equals(ammo)) {
                         newSelectedIndex = i;
+                        // Prevent later overriding.
+                        currentAmmoSelectionIndex = -1;
+                    } else if (currentAmmoSelectionIndex != -1) {
+                        // This should be the fallback
+                        newSelectedIndex = currentAmmoSelectionIndex;
                     }
                     i++;
                 }

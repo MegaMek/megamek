@@ -406,7 +406,9 @@ public class SharedUtility {
                     } else if (moveType == EntityMovementType.MOVE_JUMP) {
                         int origWalkMP = entity.getWalkMP(MPCalculationSetting.NO_GRAVITY);
                         int gravWalkMP = entity.getWalkMP();
-                        if (step.getMpUsed() > entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)) {
+                        int availableJumpMP = step.isUsingMekJumpBooster() ? entity.getMechanicalJumpBoosterMP(
+                              MPCalculationSetting.NO_GRAVITY) : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY);
+                        if (step.getMpUsed() > availableJumpMP) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
                         } else if ((game.getPlanetaryConditions().getGravity() > 1)
@@ -502,7 +504,7 @@ public class SharedUtility {
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
-                    && !(md.isJumping() && (entity.getJumpType() == Mek.JUMP_BOOSTER))
+                    && !(md.isJumping() && md.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER))
                     && (lastHex.getLevel() + lastElevation != (curHex.getLevel() + step.getElevation()))
                     && !(entity instanceof VTOL)
                     && !(md.getFinalClimbMode()

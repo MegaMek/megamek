@@ -74,6 +74,8 @@ final class ASMovementConverter {
         report.addLine("Base Walking MP", "", Integer.toString(entity.getOriginalWalkMP()));
 
         int jumpMove = entity.getJumpMP(MPCalculationSetting.AS_CONVERSION) * 2;
+        int mechanicalBoosterMP = entity.getMechanicalJumpBoosterMP(MPCalculationSetting.AS_CONVERSION) * 2;
+        jumpMove = Math.max(mechanicalBoosterMP, jumpMove);
 
         if (hasSupercharger(entity) && hasMekMASC(entity)) {
             walkMP *= 1.5;
@@ -110,15 +112,15 @@ final class ASMovementConverter {
         String movementCode = getMovementCode(conversionData);
         element.setPrimaryMovementMode(movementCode);
 
-        if ((jumpMove == baseMove) && (jumpMove > 0) && movementCode.equals("")) {
+        if ((jumpMove == baseMove) && (jumpMove > 0) && movementCode.isEmpty()) {
             result.put("j", baseMove);
-            report.addLine("Equal to Jump Move", entity.getJumpMP() + " x 2", baseMove + "\"j");
+            report.addLine("Equal to Jump Move", entity.getAnyTypeMaxJumpMP() + " x 2", baseMove + "\"j");
         } else {
             result.put(movementCode, baseMove);
             report.addLine("Standard Movement", baseMove + "\"" + movementCode);
             if (jumpMove > 0) {
                 result.put("j", jumpMove);
-                report.addLine("Jump Movement", entity.getJumpMP() + " x 2", jumpMove + "\"j");
+                report.addLine("Jump Movement", entity.getAnyTypeMaxJumpMP() + " x 2", jumpMove + "\"j");
             }
         }
 

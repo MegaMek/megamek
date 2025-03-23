@@ -461,7 +461,7 @@ public class MekSummaryCache {
         ms.setCanon(e.isCanon());
         ms.setWalkMp(e.getWalkMP());
         ms.setRunMp(e.getRunMP(MPCalculationSetting.NO_GRAVITY));
-        ms.setJumpMp(e.getJumpMP());
+        ms.setJumpMp(e.getAnyTypeMaxJumpMP());
         ms.setMoveMode(e.getMovementMode());
         ms.setClan(e.isClan());
         if (e.isSupportVehicle()) {

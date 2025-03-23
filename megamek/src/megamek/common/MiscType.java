@@ -450,7 +450,9 @@ public class MiscType extends EquipmentType {
 
     private String sizeSuffix(double size, boolean shortName) {
         if (hasFlag(F_VARIABLE_SIZE)) {
-            if (hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)
+            if (is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER)) {
+                return " (%d MP)".formatted((int) size);
+            } else if (hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)
                     || hasFlag(MiscType.F_ATAC) || hasFlag(MiscType.F_DTAC)) {
                 return String.format(" (%d %s)", (int) size,
                         size > 1 ? Messages.getString("MiscType.drones") : Messages.getString("MiscType.drone"));
@@ -753,10 +755,9 @@ public class MiscType extends EquipmentType {
                 return 2.0 * .250;
             }
         } else if (hasFlag(F_JUMP_BOOSTER)) {
-            // This is the 'Mek mechanical jump booster. The BA jump booster has the same
-            // flag but
+            // This is the 'Mek mechanical jump booster. The BA jump booster has the same flag but
             // has a fixed weight so doesn't get to this point.
-            return defaultRounding.round((entity.getWeight() * entity.getOriginalJumpMP()) * 0.05, entity);
+            return defaultRounding.round((entity.getWeight() * size) * 0.05, entity);
         } else if ((hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) || hasFlag(F_TALON)) {
             return RoundWeight.nextTon(entity.getWeight() / 15.0);
         } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
@@ -2145,7 +2146,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.bv = 0;
-        misc.flags = misc.flags.or(F_JUMP_BOOSTER).or(F_MEK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_JUMP_BOOSTER).or(F_MEK_EQUIPMENT).or(F_VARIABLE_SIZE);
         misc.spreadable = true;
         misc.rulesRefs = "292, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS

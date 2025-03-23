@@ -80,22 +80,20 @@ public class MekCostCalculator {
             costs[i++] = 300000 * (int) Math.ceil((mek.getOriginalWalkMP() * mek.getWeight()) / 100f);
         }
         double jumpBaseCost = 200;
-        // You cannot have JJ's and UMU's on the same unit.
+        double jumpCost;
+        // Cannot have JJs and UMUs on the same unit.
         if (mek.hasUMU()) {
-            costs[i++] = Math.pow(mek.getAllUMUCount(), 2.0) * mek.getWeight() * jumpBaseCost;
-            // We could have Jump boosters
-            if (mek.getJumpType() == Mek.JUMP_BOOSTER) {
-                jumpBaseCost = 150;
-                costs[i++] = Math.pow(mek.getOriginalJumpMP(), 2.0) * mek.getWeight() * jumpBaseCost;
-            }
+            jumpCost = Math.pow(mek.getAllUMUCount(), 2.0) * mek.getWeight() * jumpBaseCost;
         } else {
-            if (mek.getJumpType() == Mek.JUMP_BOOSTER) {
-                jumpBaseCost = 150;
-            } else if (mek.getJumpType() == Mek.JUMP_IMPROVED) {
+            if (mek.getJumpType() == Mek.JUMP_IMPROVED) {
                 jumpBaseCost = 500;
             }
-            costs[i++] = Math.pow(mek.getOriginalJumpMP(), 2.0) * mek.getWeight() * jumpBaseCost;
+            jumpCost = Math.pow(mek.getOriginalJumpMP(), 2.0) * mek.getWeight() * jumpBaseCost;
         }
+        if (mek.getOriginalMechanicalJumpBoosterMP() > 0) {
+            jumpCost += Math.pow(mek.getOriginalMechanicalJumpBoosterMP(), 2.0) * mek.getWeight() * 150;
+        }
+        costs[i++] = jumpCost;
         // num of sinks we don't pay for
         int freeSinks = mek.hasDoubleHeatSinks() ? 0 : 10;
         int sinkCost = mek.hasDoubleHeatSinks() ? 6000 : 2000;

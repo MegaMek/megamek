@@ -849,6 +849,15 @@ public class MtfFile implements IMekLoader {
                                 isTurreted);
                         m.setOmniPodMounted(isOmniPod);
                         hSharedEquip.put(etype, m);
+                        if (etype.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER)) {
+                            if (size == 0) {
+                                // legacy MTF loading: MJB gave their MP as the jump MP
+                                size = mek.getOriginalJumpMP(true);
+                                mek.setOriginalJumpMP(0);
+                            }
+
+                            m.setSize(size);
+                        }
                     } else if (etype instanceof MiscType && etype.hasFlag(MiscType.F_TARGCOMP)) {
                         // Targeting computers are special, they need to be loaded like spreadable
                         // equipment, but they aren't spreadable

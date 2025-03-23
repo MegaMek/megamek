@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2870-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>0,0</pctOmni>
@@ -1831,7 +1828,7 @@
             </model>
             <model name='(MG Advanced)'>
                 <roles>anti_infantry</roles>
-                <availability>CHH!Keshik:3,CIH!Keshik:2!Front Line:1</availability>
+                <availability>CHH:3,CIH!Keshik:2!Front Line:1</availability>
             </model>
             <model name='(MG Basic)'>
                 <roles>anti_infantry</roles>

@@ -1711,7 +1711,7 @@
             </model>
             <model name='(MG Advanced)'>
                 <roles>anti_infantry</roles>
-                <availability>CHH!Keshik:3,CIH!Keshik:1</availability>
+                <availability>CHH:3,CIH!Keshik:1</availability>
             </model>
             <model name='(MG Basic)'>
                 <roles>anti_infantry</roles>

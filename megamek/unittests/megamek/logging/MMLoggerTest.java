@@ -25,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import java.awt.GraphicsEnvironment;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.message.Message;
@@ -39,14 +40,14 @@ public class MMLoggerTest {
 
     private final static MMLogger logger = MMLogger.create(MMLoggerTest.class);
 
-    private CustomLogger mockLogger;
-    private MMLogger testMMLogger;
-    private final static String LOGGER_NAME = "TestLogger";
+    private              CustomLogger mockLogger;
+    private              MMLogger     testMMLogger;
+    private final static String       LOGGER_NAME = "TestLogger";
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockLogger = spy(new CustomLogger(LOGGER_NAME));
+        mockLogger   = spy(new CustomLogger(LOGGER_NAME));
         testMMLogger = new MMLogger(mockLogger);
     }
 
@@ -115,19 +116,6 @@ public class MMLoggerTest {
 
     @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
     @Test
-    public void testDeprecatedErrorLoggingWithExceptionNoParams() {
-        if (GraphicsEnvironment.isHeadless()) {
-            // Skip this test if running in headless mode
-            return;
-        }
-        automaticallyDismissDialog();
-        Exception e = new Exception("Test exception");
-        testMMLogger.error(e, "Error message: noparameter accepted", "test");
-        verifyLog(Level.ERROR, "Error message: noparameter accepted", e);
-    }
-
-    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
-    @Test
     public void testErrorLoggingWithException() {
         if (GraphicsEnvironment.isHeadless()) {
             // Skip this test if running in headless mode
@@ -157,18 +145,6 @@ public class MMLoggerTest {
         verifyLog(Level.FATAL, "Fatal with dialog with exception");
     }
 
-    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
-    @Test
-    public void testDeprecatedFatalLoggingWithDialog() {
-        if (GraphicsEnvironment.isHeadless()) {
-            // Skip this test if running in headless mode
-            return;
-        }
-        automaticallyDismissDialog();
-        testMMLogger.fatalDialog("Fatal with dialog with exception", "Fatal dialog title");
-        verifyLog(Level.FATAL, "Fatal with dialog with exception");
-    }
-
     @Test
     public void testFatalLoggingWithException() {
         Exception e = new Exception("Test exception");
@@ -176,30 +152,23 @@ public class MMLoggerTest {
         verifyLog(Level.FATAL, "Fatal without dialog with exception", e);
     }
 
-    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
-    @Test
-    public void testDeprecatedFatalLoggingWithException() {
-        if (GraphicsEnvironment.isHeadless()) {
-            // Skip this test if running in headless mode
-            return;
-        }
-        automaticallyDismissDialog();
-        Exception e = new Exception("Test exception");
-        testMMLogger.fatalDialog(e, "Fatal without dialog with exception", "Fatal dialog title");
-        verifyLog(Level.FATAL, "Fatal without dialog with exception", e);
-    }
-
     private void verifyLog(Level level, String message) {
         ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
-        verify(mockLogger).logMessage(anyString(), eq(level), nullable(Marker.class), messageCaptor.capture(),
+        verify(mockLogger).logMessage(anyString(),
+              eq(level),
+              nullable(Marker.class),
+              messageCaptor.capture(),
               nullable(Throwable.class));
         assertEquals(message, messageCaptor.getValue().getFormattedMessage());
     }
 
     private void verifyLog(Level level, String message, Throwable e) {
-        ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
+        ArgumentCaptor<Message>   messageCaptor   = ArgumentCaptor.forClass(Message.class);
         ArgumentCaptor<Throwable> throwableCaptor = ArgumentCaptor.forClass(Throwable.class);
-        verify(mockLogger).logMessage(anyString(), eq(level), nullable(Marker.class), messageCaptor.capture(),
+        verify(mockLogger).logMessage(anyString(),
+              eq(level),
+              nullable(Marker.class),
+              messageCaptor.capture(),
               throwableCaptor.capture());
         assertEquals(message, messageCaptor.getValue().getFormattedMessage());
         assertEquals(e, throwableCaptor.getValue());
@@ -232,8 +201,7 @@ public class MMLoggerTest {
         }
 
         @Override
-        public void logMessage(String fqcn, Level level, org.apache.logging.log4j.Marker marker, String message,
-              Throwable t) {
+        public void logMessage(String fqcn, Level level, org.apache.logging.log4j.Marker marker, String message, Throwable t) {
             // Custom implementation for logging messages
         }
 
@@ -248,8 +216,7 @@ public class MMLoggerTest {
         }
 
         @Override
-        public boolean isEnabled(Level level, org.apache.logging.log4j.Marker marker, String message,
-              Object... params) {
+        public boolean isEnabled(Level level, org.apache.logging.log4j.Marker marker, String message, Object... params) {
             return true;
         }
 
@@ -269,44 +236,37 @@ public class MMLoggerTest {
         }
 
         @Override
-        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2,
-              Object p3) {
+        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3) {
             return true;
         }
 
         @Override
-        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4) {
+        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4) {
             return true;
         }
 
         @Override
-        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4, Object p5) {
+        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5) {
             return true;
         }
 
         @Override
-        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4, Object p5, Object p6) {
+        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6) {
             return true;
         }
 
         @Override
-        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4, Object p5, Object p6, Object p7) {
+        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7) {
             return true;
         }
 
         @Override
-        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4, Object p5, Object p6, Object p7, Object p8) {
+        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8) {
             return true;
         }
 
         @Override
-        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4, Object p5, Object p6, Object p7, Object p8, Object p9) {
+        public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8, Object p9) {
             return true;
         }
 
@@ -321,8 +281,7 @@ public class MMLoggerTest {
         }
 
         @Override
-        public boolean isEnabled(Level level, org.apache.logging.log4j.Marker marker,
-              org.apache.logging.log4j.message.Message message, Throwable t) {
+        public boolean isEnabled(Level level, org.apache.logging.log4j.Marker marker, org.apache.logging.log4j.message.Message message, Throwable t) {
             return true;
         }
 

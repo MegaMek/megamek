@@ -19,41 +19,49 @@ package megamek.common;
  */
 public class UnitType {
 
-    public static final int MEK = 0;
-    public static final int TANK = 1;
-    public static final int BATTLE_ARMOR = 2;
-    public static final int INFANTRY = 3;
-    public static final int PROTOMEK = 4;
-    public static final int VTOL = 5;
-    public static final int NAVAL = 6;
-    public static final int GUN_EMPLACEMENT = 7;
-    public static final int CONV_FIGHTER = 8;
+    public static final int MEK              = 0;
+    public static final int TANK             = 1;
+    public static final int BATTLE_ARMOR     = 2;
+    public static final int INFANTRY         = 3;
+    public static final int PROTOMEK         = 4;
+    public static final int VTOL             = 5;
+    public static final int NAVAL            = 6;
+    public static final int GUN_EMPLACEMENT  = 7;
+    public static final int CONV_FIGHTER     = 8;
     public static final int AEROSPACEFIGHTER = 9;
-    public static final int SMALL_CRAFT = 10;
-    public static final int DROPSHIP = 11;
-    public static final int JUMPSHIP = 12;
-    public static final int WARSHIP = 13;
-    public static final int SPACE_STATION = 14;
-    public static final int AERO = 15; // Non-differentiated Aerospace, like Escape Pods / Life Boats
-    public static final int HANDHELD_WEAPON = 16;
+    public static final int SMALL_CRAFT      = 10;
+    public static final int DROPSHIP         = 11;
+    public static final int JUMPSHIP         = 12;
+    public static final int WARSHIP          = 13;
+    public static final int SPACE_STATION    = 14;
+    public static final int AERO             = 15; // Non-differentiated Aerospace, like Escape Pods / Life Boats
+    public static final int HANDHELD_WEAPON  = 16;
 
-    private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",
-            "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter",
-            "AeroSpaceFighter", "Small Craft", "Dropship",
-            "Jumpship", "Warship", "Space Station", "Aero", "Handheld Weapon" };
+    private static String[] names = { "Mek",
+          "Tank",
+          "BattleArmor",
+          "Infantry",
+          "ProtoMek",
+          "VTOL",
+          "Naval",
+          "Gun Emplacement",
+          "Conventional Fighter",
+          "AeroSpaceFighter",
+          "Small Craft",
+          "Dropship",
+          "Jumpship",
+          "Warship",
+          "Space Station",
+          "Aero",
+          "Handheld Weapon" };
 
     public static final int SIZE = names.length;
-
-    /** @deprecated use {@code UnitType.getTypeName(e.getUnitType())} instead */
-    @Deprecated(since = "0.50.4", forRemoval = true)
-    public static String determineUnitType(Entity e) {
-        return getTypeName(e.getUnitType());
-    }
 
     /**
      * Reverse lookup for type integer constant from name
      *
      * @param name Unit type name
+     *
      * @return The unit type constant. If no match can be found, returns -1.
      */
     public static int determineUnitTypeCode(String name) {
@@ -63,12 +71,6 @@ public class UnitType {
             }
         }
         return -1;
-    }
-
-    /** @deprecated use {@link Entity#getUnitType()} instead */
-    @Deprecated(since = "0.50.4", forRemoval = true)
-    public static int determineUnitTypeCode(Entity e) {
-        return e.getUnitType();
     }
 
     public static String getTypeName(int type) {
@@ -91,6 +93,7 @@ public class UnitType {
      * Whether the given entity is a VTOL
      *
      * @param e the entity to examine
+     *
      * @return True or false
      */
     public static boolean isVTOL(Entity e) {
@@ -101,6 +104,7 @@ public class UnitType {
      * Whether the given entity is a Spheroid dropship
      *
      * @param e the entity to examine
+     *
      * @return True or false
      */
     public static boolean isSpheroidDropship(Entity e) {

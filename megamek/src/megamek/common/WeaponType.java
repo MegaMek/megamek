@@ -74,63 +74,62 @@ import megamek.logging.MMLogger;
 // TODO add XML support back in.
 
 /**
- * A type of mek or vehicle weapon. There is only one instance of this weapon
- * for all weapons of this type.
+ * A type of mek or vehicle weapon. There is only one instance of this weapon for all weapons of this type.
  */
 public class WeaponType extends EquipmentType {
 
     private static final MMLogger LOGGER = MMLogger.create(WeaponType.class);
 
     public static final int DAMAGE_BY_CLUSTERTABLE = -2;
-    public static final int DAMAGE_VARIABLE = -3;
-    public static final int DAMAGE_SPECIAL = -4;
-    public static final int DAMAGE_ARTILLERY = -5;
-    public static final int WEAPON_NA = Integer.MIN_VALUE;
+    public static final int DAMAGE_VARIABLE        = -3;
+    public static final int DAMAGE_SPECIAL         = -4;
+    public static final int DAMAGE_ARTILLERY       = -5;
+    public static final int WEAPON_NA              = Integer.MIN_VALUE;
 
     // weapon flags (note: many weapons can be identified by their ammo type)
 
     // marks any weapon affected by a targeting computer
     public static final WeaponTypeFlag F_DIRECT_FIRE = WeaponTypeFlag.F_DIRECT_FIRE;
 
-    public static final WeaponTypeFlag F_FLAMER = WeaponTypeFlag.F_FLAMER;
+    public static final WeaponTypeFlag F_FLAMER       = WeaponTypeFlag.F_FLAMER;
     // Glaze armor
-    public static final WeaponTypeFlag F_LASER = WeaponTypeFlag.F_LASER;
-    public static final WeaponTypeFlag F_PPC = WeaponTypeFlag.F_PPC;
+    public static final WeaponTypeFlag F_LASER        = WeaponTypeFlag.F_LASER;
+    public static final WeaponTypeFlag F_PPC          = WeaponTypeFlag.F_PPC;
     // for weapons that target Automatically (AMS)
-    public static final WeaponTypeFlag F_AUTO_TARGET = WeaponTypeFlag.F_AUTO_TARGET;
+    public static final WeaponTypeFlag F_AUTO_TARGET  = WeaponTypeFlag.F_AUTO_TARGET;
     // can not start fires
-    public static final WeaponTypeFlag F_NO_FIRES = WeaponTypeFlag.F_NO_FIRES;
+    public static final WeaponTypeFlag F_NO_FIRES     = WeaponTypeFlag.F_NO_FIRES;
     // must be only weapon attacking
-    public static final WeaponTypeFlag F_SOLO_ATTACK = WeaponTypeFlag.F_SOLO_ATTACK;
-    public static final WeaponTypeFlag F_VGL = WeaponTypeFlag.F_VGL;
+    public static final WeaponTypeFlag F_SOLO_ATTACK  = WeaponTypeFlag.F_SOLO_ATTACK;
+    public static final WeaponTypeFlag F_VGL          = WeaponTypeFlag.F_VGL;
     // MGL for rapid fire setup
-    public static final WeaponTypeFlag F_MG = WeaponTypeFlag.F_MG;
+    public static final WeaponTypeFlag F_MG           = WeaponTypeFlag.F_MG;
     // Inferno weapon
-    public static final WeaponTypeFlag F_INFERNO = WeaponTypeFlag.F_INFERNO;
+    public static final WeaponTypeFlag F_INFERNO      = WeaponTypeFlag.F_INFERNO;
     // Infantry caliber weapon, damage based on # of men shooting
-    public static final WeaponTypeFlag F_INFANTRY = WeaponTypeFlag.F_INFANTRY;
+    public static final WeaponTypeFlag F_INFANTRY     = WeaponTypeFlag.F_INFANTRY;
     // use missile rules for # of hits
     public static final WeaponTypeFlag F_MISSILE_HITS = WeaponTypeFlag.F_MISSILE_HITS;
-    public static final WeaponTypeFlag F_ONESHOT = WeaponTypeFlag.F_ONESHOT;
-    public static final WeaponTypeFlag F_ARTILLERY = WeaponTypeFlag.F_ARTILLERY;
+    public static final WeaponTypeFlag F_ONESHOT      = WeaponTypeFlag.F_ONESHOT;
+    public static final WeaponTypeFlag F_ARTILLERY    = WeaponTypeFlag.F_ARTILLERY;
 
     // for Gunnery/Ballistic
     public static final WeaponTypeFlag F_BALLISTIC = WeaponTypeFlag.F_BALLISTIC;
     // for Gunnery/Energy
-    public static final WeaponTypeFlag F_ENERGY = WeaponTypeFlag.F_ENERGY;
+    public static final WeaponTypeFlag F_ENERGY    = WeaponTypeFlag.F_ENERGY;
     // for Gunnery/Missile
-    public static final WeaponTypeFlag F_MISSILE = WeaponTypeFlag.F_MISSILE;
+    public static final WeaponTypeFlag F_MISSILE   = WeaponTypeFlag.F_MISSILE;
 
     // fires
-    public static final WeaponTypeFlag F_PLASMA = WeaponTypeFlag.F_PLASMA;
+    public static final WeaponTypeFlag F_PLASMA             = WeaponTypeFlag.F_PLASMA;
     public static final WeaponTypeFlag F_INCENDIARY_NEEDLES = WeaponTypeFlag.F_INCENDIARY_NEEDLES;
 
     // War of 3039 prototypes
-    public static final WeaponTypeFlag F_PROTOTYPE = WeaponTypeFlag.F_PROTOTYPE;
+    public static final WeaponTypeFlag F_PROTOTYPE  = WeaponTypeFlag.F_PROTOTYPE;
     // Variable heat, heat is listed in dice, not points
     public static final WeaponTypeFlag F_HEATASDICE = WeaponTypeFlag.F_HEATASDICE;
     // AMS
-    public static final WeaponTypeFlag F_AMS = WeaponTypeFlag.F_AMS;
+    public static final WeaponTypeFlag F_AMS        = WeaponTypeFlag.F_AMS;
 
     // may only target Infantry
     public static final WeaponTypeFlag F_INFANTRY_ONLY = WeaponTypeFlag.F_INFANTRY_ONLY;
@@ -140,41 +139,41 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_C3M = WeaponTypeFlag.F_C3M;
 
     // Plasma Rifle
-    public static final WeaponTypeFlag F_PLASMA_MFUK = WeaponTypeFlag.F_PLASMA_MFUK;
+    public static final WeaponTypeFlag F_PLASMA_MFUK    = WeaponTypeFlag.F_PLASMA_MFUK;
     // fire Extinguisher
-    public static final WeaponTypeFlag F_EXTINGUISHER = WeaponTypeFlag.F_EXTINGUISHER;
-    public static final WeaponTypeFlag F_PULSE = WeaponTypeFlag.F_PULSE;
+    public static final WeaponTypeFlag F_EXTINGUISHER   = WeaponTypeFlag.F_EXTINGUISHER;
+    public static final WeaponTypeFlag F_PULSE          = WeaponTypeFlag.F_PULSE;
     // Full Damage vs. Infantry
-    public static final WeaponTypeFlag F_BURST_FIRE = WeaponTypeFlag.F_BURST_FIRE;
+    public static final WeaponTypeFlag F_BURST_FIRE     = WeaponTypeFlag.F_BURST_FIRE;
     // Machine Gun Array
-    public static final WeaponTypeFlag F_MGA = WeaponTypeFlag.F_MGA;
-    public static final WeaponTypeFlag F_NO_AIM = WeaponTypeFlag.F_NO_AIM;
-    public static final WeaponTypeFlag F_BOMBAST_LASER = WeaponTypeFlag.F_BOMBAST_LASER;
+    public static final WeaponTypeFlag F_MGA            = WeaponTypeFlag.F_MGA;
+    public static final WeaponTypeFlag F_NO_AIM         = WeaponTypeFlag.F_NO_AIM;
+    public static final WeaponTypeFlag F_BOMBAST_LASER  = WeaponTypeFlag.F_BOMBAST_LASER;
     public static final WeaponTypeFlag F_CRUISE_MISSILE = WeaponTypeFlag.F_CRUISE_MISSILE;
-    public static final WeaponTypeFlag F_B_POD = WeaponTypeFlag.F_B_POD;
-    public static final WeaponTypeFlag F_TASER = WeaponTypeFlag.F_TASER;
+    public static final WeaponTypeFlag F_B_POD          = WeaponTypeFlag.F_B_POD;
+    public static final WeaponTypeFlag F_TASER          = WeaponTypeFlag.F_TASER;
 
     // Anti-ship missiles
-    public static final WeaponTypeFlag F_ANTI_SHIP = WeaponTypeFlag.F_ANTI_SHIP;
+    public static final WeaponTypeFlag F_ANTI_SHIP  = WeaponTypeFlag.F_ANTI_SHIP;
     public static final WeaponTypeFlag F_SPACE_BOMB = WeaponTypeFlag.F_SPACE_BOMB;
-    public static final WeaponTypeFlag F_M_POD = WeaponTypeFlag.F_M_POD;
-    public static final WeaponTypeFlag F_DIVE_BOMB = WeaponTypeFlag.F_DIVE_BOMB;
-    public static final WeaponTypeFlag F_ALT_BOMB = WeaponTypeFlag.F_ALT_BOMB;
+    public static final WeaponTypeFlag F_M_POD      = WeaponTypeFlag.F_M_POD;
+    public static final WeaponTypeFlag F_DIVE_BOMB  = WeaponTypeFlag.F_DIVE_BOMB;
+    public static final WeaponTypeFlag F_ALT_BOMB   = WeaponTypeFlag.F_ALT_BOMB;
 
-    public static final WeaponTypeFlag F_BA_WEAPON = WeaponTypeFlag.F_BA_WEAPON;
-    public static final WeaponTypeFlag F_MEK_WEAPON = WeaponTypeFlag.F_MEK_WEAPON;
-    public static final WeaponTypeFlag F_AERO_WEAPON = WeaponTypeFlag.F_AERO_WEAPON;
+    public static final WeaponTypeFlag F_BA_WEAPON    = WeaponTypeFlag.F_BA_WEAPON;
+    public static final WeaponTypeFlag F_MEK_WEAPON   = WeaponTypeFlag.F_MEK_WEAPON;
+    public static final WeaponTypeFlag F_AERO_WEAPON  = WeaponTypeFlag.F_AERO_WEAPON;
     public static final WeaponTypeFlag F_PROTO_WEAPON = WeaponTypeFlag.F_PROTO_WEAPON;
-    public static final WeaponTypeFlag F_TANK_WEAPON = WeaponTypeFlag.F_TANK_WEAPON;
+    public static final WeaponTypeFlag F_TANK_WEAPON  = WeaponTypeFlag.F_TANK_WEAPON;
 
-    public static final WeaponTypeFlag F_INFANTRY_ATTACK = WeaponTypeFlag.F_INFANTRY_ATTACK;
-    public static final WeaponTypeFlag F_INF_BURST = WeaponTypeFlag.F_INF_BURST;
-    public static final WeaponTypeFlag F_INF_AA = WeaponTypeFlag.F_INF_AA;
+    public static final WeaponTypeFlag F_INFANTRY_ATTACK    = WeaponTypeFlag.F_INFANTRY_ATTACK;
+    public static final WeaponTypeFlag F_INF_BURST          = WeaponTypeFlag.F_INF_BURST;
+    public static final WeaponTypeFlag F_INF_AA             = WeaponTypeFlag.F_INF_AA;
     public static final WeaponTypeFlag F_INF_NONPENETRATING = WeaponTypeFlag.F_INF_NONPENETRATING;
-    public static final WeaponTypeFlag F_INF_POINT_BLANK = WeaponTypeFlag.F_INF_POINT_BLANK;
-    public static final WeaponTypeFlag F_INF_SUPPORT = WeaponTypeFlag.F_INF_SUPPORT;
-    public static final WeaponTypeFlag F_INF_ENCUMBER = WeaponTypeFlag.F_INF_ENCUMBER;
-    public static final WeaponTypeFlag F_INF_ARCHAIC = WeaponTypeFlag.F_INF_ARCHAIC;
+    public static final WeaponTypeFlag F_INF_POINT_BLANK    = WeaponTypeFlag.F_INF_POINT_BLANK;
+    public static final WeaponTypeFlag F_INF_SUPPORT        = WeaponTypeFlag.F_INF_SUPPORT;
+    public static final WeaponTypeFlag F_INF_ENCUMBER       = WeaponTypeFlag.F_INF_ENCUMBER;
+    public static final WeaponTypeFlag F_INF_ARCHAIC        = WeaponTypeFlag.F_INF_ARCHAIC;
 
     // TODO Add game rules IO pg 84
     public static final WeaponTypeFlag F_INF_CLIMBINGCLAWS = WeaponTypeFlag.F_INF_CLIMBINGCLAWS;
@@ -197,7 +196,7 @@ public class WeaponType extends EquipmentType {
 
     // AMS and Point Defense Bays - Have to work differently from code using the
     // F_AMS flag
-    public static final WeaponTypeFlag F_PDBAY = WeaponTypeFlag.F_PDBAY;
+    public static final WeaponTypeFlag F_PDBAY  = WeaponTypeFlag.F_PDBAY;
     public static final WeaponTypeFlag F_AMSBAY = WeaponTypeFlag.F_AMSBAY;
 
     // Thunderbolt and similar large missiles, for use with AMS resolution
@@ -207,118 +206,116 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_HYPER = WeaponTypeFlag.F_HYPER;
 
     // Fusillade works like a one-shot weapon but has a second round.
-    public static final WeaponTypeFlag F_DOUBLE_ONESHOT = WeaponTypeFlag.F_DOUBLE_ONESHOT;
+    public static final WeaponTypeFlag F_DOUBLE_ONESHOT     = WeaponTypeFlag.F_DOUBLE_ONESHOT;
     // ER flamers do half damage in heat mode
-    public static final WeaponTypeFlag F_ER_FLAMER = WeaponTypeFlag.F_ER_FLAMER;
+    public static final WeaponTypeFlag F_ER_FLAMER          = WeaponTypeFlag.F_ER_FLAMER;
     /** Missile weapon that can be linked to an Artemis fire control system */
     public static final WeaponTypeFlag F_ARTEMIS_COMPATIBLE = WeaponTypeFlag.F_ARTEMIS_COMPATIBLE;
 
     /**
-     * This flag is used by mortar-type weapons that allow indirect fire without a
-     * spotter and/or with LOS.
+     * This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS.
      */
     public static final WeaponTypeFlag F_MORTARTYPE_INDIRECT = WeaponTypeFlag.F_MORTARTYPE_INDIRECT;
 
     // Used for TSEMP Weapons.
-    public static final WeaponTypeFlag F_TSEMP = WeaponTypeFlag.F_TSEMP;
+    public static final WeaponTypeFlag F_TSEMP     = WeaponTypeFlag.F_TSEMP;
     public static final WeaponTypeFlag F_REPEATING = WeaponTypeFlag.F_REPEATING;
 
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
-    public static final int RANGE_MED = RangeType.RANGE_MEDIUM;
-    public static final int RANGE_LONG = RangeType.RANGE_LONG;
-    public static final int RANGE_EXT = RangeType.RANGE_EXTREME;
+    public static final int RANGE_MED   = RangeType.RANGE_MEDIUM;
+    public static final int RANGE_LONG  = RangeType.RANGE_LONG;
+    public static final int RANGE_EXT   = RangeType.RANGE_EXTREME;
 
     // weapons for airborne units all have fixed weapon ranges:
     // no minimum, 6 short, 12 medium, 20 long, 25 extreme
     public static final int[] AIRBORNE_WEAPON_RANGES = { 0, 6, 12, 20, 25 };
 
     // add weapon classes for AT2
-    public static final int CLASS_NONE = 0;
-    public static final int CLASS_LASER = 1;
-    public static final int CLASS_POINT_DEFENSE = 2;
-    public static final int CLASS_PPC = 3;
-    public static final int CLASS_PULSE_LASER = 4;
-    public static final int CLASS_ARTILLERY = 5;
-    public static final int CLASS_PLASMA = 6;
-    public static final int CLASS_AC = 7;
-    public static final int CLASS_LBX_AC = 8;
-    public static final int CLASS_LRM = 9;
-    public static final int CLASS_SRM = 10;
-    public static final int CLASS_MRM = 11;
-    public static final int CLASS_MML = 12;
-    public static final int CLASS_ATM = 13;
-    public static final int CLASS_ROCKET_LAUNCHER = 14;
-    public static final int CLASS_CAPITAL_LASER = 15;
-    public static final int CLASS_CAPITAL_PPC = 16;
-    public static final int CLASS_CAPITAL_AC = 17;
-    public static final int CLASS_CAPITAL_GAUSS = 18;
-    public static final int CLASS_CAPITAL_MISSILE = 19;
-    public static final int CLASS_AR10 = 20;
-    public static final int CLASS_SCREEN = 21;
+    public static final int CLASS_NONE               = 0;
+    public static final int CLASS_LASER              = 1;
+    public static final int CLASS_POINT_DEFENSE      = 2;
+    public static final int CLASS_PPC                = 3;
+    public static final int CLASS_PULSE_LASER        = 4;
+    public static final int CLASS_ARTILLERY          = 5;
+    public static final int CLASS_PLASMA             = 6;
+    public static final int CLASS_AC                 = 7;
+    public static final int CLASS_LBX_AC             = 8;
+    public static final int CLASS_LRM                = 9;
+    public static final int CLASS_SRM                = 10;
+    public static final int CLASS_MRM                = 11;
+    public static final int CLASS_MML                = 12;
+    public static final int CLASS_ATM                = 13;
+    public static final int CLASS_ROCKET_LAUNCHER    = 14;
+    public static final int CLASS_CAPITAL_LASER      = 15;
+    public static final int CLASS_CAPITAL_PPC        = 16;
+    public static final int CLASS_CAPITAL_AC         = 17;
+    public static final int CLASS_CAPITAL_GAUSS      = 18;
+    public static final int CLASS_CAPITAL_MISSILE    = 19;
+    public static final int CLASS_AR10               = 20;
+    public static final int CLASS_SCREEN             = 21;
     public static final int CLASS_SUB_CAPITAL_CANNON = 22;
-    public static final int CLASS_CAPITAL_MD = 23;
-    public static final int CLASS_AMS = 24;
-    public static final int CLASS_TELE_MISSILE = 25;
-    public static final int CLASS_GAUSS = 26;
-    public static final int CLASS_THUNDERBOLT = 27;
-    public static final int CLASS_MORTAR = 28;
+    public static final int CLASS_CAPITAL_MD         = 23;
+    public static final int CLASS_AMS                = 24;
+    public static final int CLASS_TELE_MISSILE       = 25;
+    public static final int CLASS_GAUSS              = 26;
+    public static final int CLASS_THUNDERBOLT        = 27;
+    public static final int CLASS_MORTAR             = 28;
 
-    public static final int WEAPON_DIRECT_FIRE = 0;
-    public static final int WEAPON_CLUSTER_BALLISTIC = 1;
-    public static final int WEAPON_PULSE = 2;
-    public static final int WEAPON_CLUSTER_MISSILE = 3;
+    public static final int WEAPON_DIRECT_FIRE         = 0;
+    public static final int WEAPON_CLUSTER_BALLISTIC   = 1;
+    public static final int WEAPON_PULSE               = 2;
+    public static final int WEAPON_CLUSTER_MISSILE     = 3;
     public static final int WEAPON_CLUSTER_MISSILE_1D6 = 4;
     public static final int WEAPON_CLUSTER_MISSILE_2D6 = 5;
     public static final int WEAPON_CLUSTER_MISSILE_3D6 = 6;
-    public static final int WEAPON_BURST_HALFD6 = 7;
-    public static final int WEAPON_BURST_1D6 = 8;
-    public static final int WEAPON_BURST_2D6 = 9;
-    public static final int WEAPON_BURST_3D6 = 10;
-    public static final int WEAPON_BURST_4D6 = 11;
-    public static final int WEAPON_BURST_5D6 = 12;
-    public static final int WEAPON_BURST_6D6 = 13;
-    public static final int WEAPON_BURST_7D6 = 14;
+    public static final int WEAPON_BURST_HALFD6        = 7;
+    public static final int WEAPON_BURST_1D6           = 8;
+    public static final int WEAPON_BURST_2D6           = 9;
+    public static final int WEAPON_BURST_3D6           = 10;
+    public static final int WEAPON_BURST_4D6           = 11;
+    public static final int WEAPON_BURST_5D6           = 12;
+    public static final int WEAPON_BURST_6D6           = 13;
+    public static final int WEAPON_BURST_7D6           = 14;
     // Used for BA vs BA damage for BA Plasma Rifle
-    public static final int WEAPON_PLASMA = 15;
+    public static final int WEAPON_PLASMA              = 15;
 
-    public static String[] classNames = {
-            "Unknown",
-            "Laser",
-            "Point Defense",
-            "PPC",
-            "Pulse Laser",
-            "Artillery",
-            "Plasma",
-            "AC",
-            "LBX",
-            "LRM",
-            "SRM",
-            "MRM",
-            "ATM",
-            "Rocket Launcher",
-            "Capital Laser",
-            "Capital PPC",
-            "Capital AC",
-            "Capital Gauss",
-            "Capital Missile",
-            "AR10", "Screen",
-            "Sub Capital Cannon",
-            "Capital Mass Driver",
-            "AMS"
-    };
+    public static String[] classNames = { "Unknown",
+          "Laser",
+          "Point Defense",
+          "PPC",
+          "Pulse Laser",
+          "Artillery",
+          "Plasma",
+          "AC",
+          "LBX",
+          "LRM",
+          "SRM",
+          "MRM",
+          "ATM",
+          "Rocket Launcher",
+          "Capital Laser",
+          "Capital PPC",
+          "Capital AC",
+          "Capital Gauss",
+          "Capital Missile",
+          "AR10",
+          "Screen",
+          "Sub Capital Cannon",
+          "Capital Mass Driver",
+          "AMS" };
 
-    public static final int BFCLASS_STANDARD = 0;
-    public static final int BFCLASS_LRM = 1;
-    public static final int BFCLASS_SRM = 2;
-    public static final int BFCLASS_MML = 3; // Not a separate category, but adds to both SRM and LRM
-    public static final int BFCLASS_TORP = 4;
-    public static final int BFCLASS_AC = 5;
-    public static final int BFCLASS_FLAK = 6;
-    public static final int BFCLASS_IATM = 7;
-    public static final int BFCLASS_REL = 8;
-    public static final int BFCLASS_CAPITAL = 9;
-    public static final int BFCLASS_SUBCAPITAL = 10;
+    public static final int BFCLASS_STANDARD        = 0;
+    public static final int BFCLASS_LRM             = 1;
+    public static final int BFCLASS_SRM             = 2;
+    public static final int BFCLASS_MML             = 3; // Not a separate category, but adds to both SRM and LRM
+    public static final int BFCLASS_TORP            = 4;
+    public static final int BFCLASS_AC              = 5;
+    public static final int BFCLASS_FLAK            = 6;
+    public static final int BFCLASS_IATM            = 7;
+    public static final int BFCLASS_REL             = 8;
+    public static final int BFCLASS_CAPITAL         = 9;
+    public static final int BFCLASS_SUBCAPITAL      = 10;
     public static final int BFCLASS_CAPITAL_MISSILE = 11;
 
     // protected RangeType rangeL;
@@ -346,23 +343,22 @@ public class WeaponType extends EquipmentType {
     public int infDamageClass = WEAPON_DIRECT_FIRE;
 
     /**
-     * Used for the BA vs BA damage rules on TO pg 109. Determines how much
-     * damage a weapon will inflict on BA, where the default WEAPON_DIRECT_FIRE
-     * indicates normal weapon damage.
+     * Used for the BA vs BA damage rules on TO pg 109. Determines how much damage a weapon will inflict on BA, where
+     * the default WEAPON_DIRECT_FIRE indicates normal weapon damage.
      */
     protected int baDamageClass = WEAPON_DIRECT_FIRE;
 
     // get stuff for AT2
     // separate attack value by range. It will make weapon bays easier
-    protected double shortAV = 0.0;
-    protected double medAV = 0;
-    protected double longAV = 0;
-    protected double extAV = 0;
-    protected int missileArmor = 0;
-    protected int maxRange = RANGE_SHORT;
-    protected boolean capital = false;
-    protected boolean subCapital = false;
-    protected int atClass = CLASS_NONE;
+    protected double  shortAV      = 0.0;
+    protected double  medAV        = 0;
+    protected double  longAV       = 0;
+    protected double  extAV        = 0;
+    protected int     missileArmor = 0;
+    protected int     maxRange     = RANGE_SHORT;
+    protected boolean capital      = false;
+    protected boolean subCapital   = false;
+    protected int     atClass      = CLASS_NONE;
 
     /**
      * @return true if the weapon type is able to be fired indirectly.
@@ -385,16 +381,16 @@ public class WeaponType extends EquipmentType {
     }
 
     public void setRanges(int sho, int med, int lon, int ext) {
-        shortRange = sho;
-        mediumRange = med;
-        longRange = lon;
+        shortRange   = sho;
+        mediumRange  = med;
+        longRange    = lon;
         extremeRange = ext;
     }
 
     public void setWaterRanges(int sho, int med, int lon, int ext) {
-        waterShortRange = sho;
-        waterMediumRange = med;
-        waterLongRange = lon;
+        waterShortRange   = sho;
+        waterMediumRange  = med;
+        waterLongRange    = lon;
         waterExtremeRange = ext;
     }
 
@@ -419,7 +415,8 @@ public class WeaponType extends EquipmentType {
         if (flag instanceof WeaponTypeFlag) {
             return super.hasFlag(flag);
         } else {
-            LOGGER.warn("Incorrect flag check: make sure to test only WeaponTypeFlags on a WeaponType.");
+            LOGGER.warn("Incorrect flag check: make sure to test only WeaponTypeFlags on a WeaponType. Passed in: {}",
+                  flag);
             return false;
         }
     }
@@ -467,100 +464,100 @@ public class WeaponType extends EquipmentType {
     public int[] getRanges(Mounted<?> weapon, Mounted<?> ammo) {
         // modify the ranges for ATM missile systems based on the ammo selected
         // FIXME: this is not the right place to hardcode these
-        int minRange = getMinimumRange();
-        int sRange = getShortRange();
-        int mRange = getMediumRange();
-        int lRange = getLongRange();
-        int eRange = getExtremeRange();
+        int     minRange      = getMinimumRange();
+        int     sRange        = getShortRange();
+        int     mRange        = getMediumRange();
+        int     lRange        = getLongRange();
+        int     eRange        = getExtremeRange();
         boolean hasLoadedAmmo = (ammo != null);
         if ((getAmmoType() == AmmoType.T_ATM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_ATM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
+            if ((ammoType.getAmmoType() == AmmoType.T_ATM) &&
+                (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
-                sRange = 9;
-                mRange = 18;
-                lRange = 27;
-                eRange = 36;
-            } else if ((ammoType.getAmmoType() == AmmoType.T_ATM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
+                sRange   = 9;
+                mRange   = 18;
+                lRange   = 27;
+                eRange   = 36;
+            } else if ((ammoType.getAmmoType() == AmmoType.T_ATM) &&
+                       (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
                 minRange = 0;
-                sRange = 3;
-                mRange = 6;
-                lRange = 9;
-                eRange = 12;
+                sRange   = 3;
+                mRange   = 6;
+                lRange   = 9;
+                eRange   = 12;
             }
         }
         if ((getAmmoType() == AmmoType.T_IATM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_IATM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
+            if ((ammoType.getAmmoType() == AmmoType.T_IATM) &&
+                (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
-                sRange = 9;
-                mRange = 18;
-                lRange = 27;
-                eRange = 36;
-            } else if ((ammoType.getAmmoType() == AmmoType.T_IATM)
-                    && ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
-                            || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))) {
+                sRange   = 9;
+                mRange   = 18;
+                lRange   = 27;
+                eRange   = 36;
+            } else if ((ammoType.getAmmoType() == AmmoType.T_IATM) &&
+                       ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) ||
+                        (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))) {
                 minRange = 0;
-                sRange = 3;
-                mRange = 6;
-                lRange = 9;
-                eRange = 12;
+                sRange   = 3;
+                mRange   = 6;
+                lRange   = 9;
+                eRange   = 12;
             }
         }
         if ((getAmmoType() == AmmoType.T_MML) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
             if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                 minRange = 6;
-                sRange = 7;
-                mRange = 14;
-                lRange = 21;
-                eRange = 28;
+                sRange   = 7;
+                mRange   = 14;
+                lRange   = 21;
+                eRange   = 28;
             } else {
                 minRange = 0;
-                sRange = 3;
-                mRange = 6;
-                lRange = 9;
-                eRange = 12;
+                sRange   = 3;
+                mRange   = 6;
+                lRange   = 9;
+                eRange   = 12;
             }
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                 if (ammoType.hasFlag(AmmoType.F_MML_LRM)) {
                     minRange = 4;
-                    sRange = 5;
-                    mRange = 10;
-                    lRange = 15;
-                    eRange = 20;
+                    sRange   = 5;
+                    mRange   = 10;
+                    lRange   = 15;
+                    eRange   = 20;
                 } else {
                     minRange = 0;
-                    sRange = 2;
-                    mRange = 4;
-                    lRange = 6;
-                    eRange = 8;
+                    sRange   = 2;
+                    mRange   = 4;
+                    lRange   = 6;
+                    eRange   = 8;
                 }
             }
         }
         if ((getAmmoType() == AmmoType.T_LRM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_LRM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
+            if ((ammoType.getAmmoType() == AmmoType.T_LRM) &&
+                (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 4;
-                sRange = 5;
-                mRange = 10;
-                lRange = 15;
-                eRange = 20;
+                sRange   = 5;
+                mRange   = 10;
+                lRange   = 15;
+                eRange   = 20;
             }
         }
         if ((getAmmoType() == AmmoType.T_SRM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_SRM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
+            if ((ammoType.getAmmoType() == AmmoType.T_SRM) &&
+                (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 0;
-                sRange = 2;
-                mRange = 4;
-                lRange = 6;
-                eRange = 8;
+                sRange   = 2;
+                mRange   = 4;
+                lRange   = 6;
+                eRange   = 8;
             }
         }
         if (hasFlag(WeaponType.F_PDBAY)) {
@@ -598,13 +595,7 @@ public class WeaponType extends EquipmentType {
     }
 
     public int[] getWRanges() {
-        return new int[] {
-                minimumRange,
-                waterShortRange,
-                waterMediumRange,
-                waterLongRange,
-                waterExtremeRange
-        };
+        return new int[] { minimumRange, waterShortRange, waterMediumRange, waterLongRange, waterExtremeRange };
     }
 
     public int getWShortRange() {
@@ -727,9 +718,10 @@ public class WeaponType extends EquipmentType {
     }
 
     // Probably not the best place for this
+
     /**
-     * @param capitalOnly If true, this will return the equivalent capital bay for
-     *                    subcapital weapons.
+     * @param capitalOnly If true, this will return the equivalent capital bay for subcapital weapons.
+     *
      * @return The type of weapon bay this weapon goes in
      */
     public EquipmentType getBayType(boolean capitalOnly) {
@@ -768,20 +760,23 @@ public class WeaponType extends EquipmentType {
             case CLASS_ROCKET_LAUNCHER:
                 return EquipmentType.get(EquipmentTypeLookup.ROCKET_LAUNCHER_BAY);
             case CLASS_CAPITAL_LASER:
-                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCL_BAY)
-                        : EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
+                return (isSubCapital() && !capitalOnly) ?
+                             EquipmentType.get(EquipmentTypeLookup.SCL_BAY) :
+                             EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
             case CLASS_CAPITAL_PPC:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_PPC_BAY);
             case CLASS_CAPITAL_AC:
-                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCC_BAY)
-                        : EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
+                return (isSubCapital() && !capitalOnly) ?
+                             EquipmentType.get(EquipmentTypeLookup.SCC_BAY) :
+                             EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
             case CLASS_CAPITAL_GAUSS:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_GAUSS_BAY);
             case CLASS_CAPITAL_MD:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_MASS_DRIVER_BAY);
             case CLASS_CAPITAL_MISSILE:
-                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY)
-                        : EquipmentType.get(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
+                return (isSubCapital() && !capitalOnly) ?
+                             EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY) :
+                             EquipmentType.get(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
             case CLASS_TELE_MISSILE:
                 return EquipmentType.get(EquipmentTypeLookup.TELE_CAPITAL_MISSILE_BAY);
             case CLASS_AR10:
@@ -797,6 +792,7 @@ public class WeaponType extends EquipmentType {
      * Damage calculation for BattleForce and AlphaStrike
      *
      * @param range The range in hexes
+     *
      * @return Damage in BattleForce scale
      */
     // TODO : the calculations are superseded by the ASC table but correct most of
@@ -806,9 +802,9 @@ public class WeaponType extends EquipmentType {
         if (range <= getLongRange()) {
             // Variable damage weapons that cannot reach into the BF long range band use LR
             // damage for the MR band
-            if (getDamage() == DAMAGE_VARIABLE
-                    && range == AlphaStrikeElement.MEDIUM_RANGE
-                    && getLongRange() < AlphaStrikeElement.LONG_RANGE) {
+            if (getDamage() == DAMAGE_VARIABLE &&
+                range == AlphaStrikeElement.MEDIUM_RANGE &&
+                getLongRange() < AlphaStrikeElement.LONG_RANGE) {
                 damage = getDamage(AlphaStrikeElement.LONG_RANGE);
             } else {
                 damage = getDamage(range);
@@ -827,11 +823,11 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * Damage calculation for BattleForce and AlphaStrike for missile weapons that
-     * may have advanced fire control
+     * Damage calculation for BattleForce and AlphaStrike for missile weapons that may have advanced fire control
      *
      * @param range - the range in hexes
      * @param fcs   - linked Artemis or Apollo FCS (null for none)
+     *
      * @return - damage in BattleForce scale
      */
     public double getBattleForceDamage(int range, Mounted<?> fcs) {
@@ -843,12 +839,12 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * BattleForce-scale damage for BattleArmor, using cluster hits table based on
-     * squad size.
-     * AlphaStrike uses a different method.
+     * BattleForce-scale damage for BattleArmor, using cluster hits table based on squad size. AlphaStrike uses a
+     * different method.
      *
      * @param range       - the range in hexes
      * @param baSquadSize - the number of suits in the squad/point/level i
+     *
      * @return - damage in BattleForce scale
      */
     public double getBattleForceDamage(int range, int baSquadSize) {
@@ -856,49 +852,44 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * @return The class of weapons for those that are tracked separately from
-     *         standard damage (AlphaStrike)
+     * @return The class of weapons for those that are tracked separately from standard damage (AlphaStrike)
      */
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;
     }
 
     /**
-     * Returns the weapon's heat for AlphaStrike conversion. Overridden where it
-     * differs from TW heat.
+     * Returns the weapon's heat for AlphaStrike conversion. Overridden where it differs from TW heat.
      */
     public int getAlphaStrikeHeat() {
         return getHeat();
     }
 
     /**
-     * Returns the weapon's AlphaStrike heat damage for AlphaStrike conversion. ASC
-     * p.124.
+     * Returns the weapon's AlphaStrike heat damage for AlphaStrike conversion. ASC p.124.
      */
     public int getAlphaStrikeHeatDamage(int rangeBand) {
         return 0;
     }
 
     /**
-     * Returns true if this weapon type can be used for Total War LRM-type indirect
-     * fire.
+     * Returns true if this weapon type can be used for Total War LRM-type indirect fire.
      */
     public boolean hasIndirectFire() {
         return false;
     }
 
     /**
-     * Returns true if this weapon type contributes to the AlphaStrike IF ability.
-     * This is identical to TW indirect fire for most but not all weapons (see e.g.
-     * IATMs)
+     * Returns true if this weapon type contributes to the AlphaStrike IF ability. This is identical to TW indirect fire
+     * for most but not all weapons (see e.g. IATMs)
      */
     public boolean isAlphaStrikeIndirectFire() {
         return hasIndirectFire();
     }
 
     /**
-     * Returns true if this weapon type contributes to the AlphaStrike PNT ability.
-     * This is not identical to TW point defense, therefore implemented separately.
+     * Returns true if this weapon type contributes to the AlphaStrike PNT ability. This is not identical to TW point
+     * defense, therefore implemented separately.
      */
     public boolean isAlphaStrikePointDefense() {
         return false;
@@ -906,10 +897,9 @@ public class WeaponType extends EquipmentType {
 
     /**
      * Add all the types of weapons we can create to the list
-     *
-     * When a weapon class extends another, the subclass must be listed first to
-     * avoid clobbering the name lookup when calling the constructor of the
-     * superclass.
+     * <p>
+     * When a weapon class extends another, the subclass must be listed first to avoid clobbering the name lookup when
+     * calling the constructor of the superclass.
      */
     public static void initializeTypes() {
         // Laser types

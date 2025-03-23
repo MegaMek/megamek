@@ -35,12 +35,10 @@ import megamek.common.util.CrewSkillSummaryUtil;
 
 /**
  * Health status, skills, and miscellanea for an Entity crew.
- *
- * While vehicle and vessel crews are treated as a single collective, with one
- * set of skills, some multi-crew cockpits (Tripod, QuadVee, dual, command
- * console) require tracking the health and skills of each crew member
- * independently. These are referred to as "slots" and the slot number
- * corresponds to an array index for the appropriate field.
+ * <p>
+ * While vehicle and vessel crews are treated as a single collective, with one set of skills, some multi-crew cockpits
+ * (Tripod, QuadVee, dual, command console) require tracking the health and skills of each crew member independently.
+ * These are referred to as "slots" and the slot number corresponds to an array index for the appropriate field.
  */
 public class Crew implements Serializable {
     // region Variable Declarations
@@ -49,13 +47,13 @@ public class Crew implements Serializable {
     private Map<Integer, Map<String, String>> extraData;
 
     private final CrewType crewType;
-    private int size;
-    private int currentSize;
+    private       int      size;
+    private       int      currentSize;
 
-    private final String[] names;
-    private final String[] nicknames;
-    private final Gender[] genders;
-    private final boolean[] clanPilots;
+    private final String[]   names;
+    private final String[]   nicknames;
+    private final Gender[]   genders;
+    private final boolean[]  clanPilots;
     private final Portrait[] portraits;
 
     private final int[] gunnery;
@@ -77,7 +75,7 @@ public class Crew implements Serializable {
     private final int[] fatigue;
     // also need to track turns for fatigue by pilot because some may have later
     // deployment
-    private int fatigueTurnCount;
+    private       int   fatigueTurnCount;
 
     // region RPG Skills
     // MW3e uses 3 different gunnery skills
@@ -112,7 +110,7 @@ public class Crew implements Serializable {
     private final boolean[] actedThisTurn;
     // The crew slots in a command console can swap roles in the end phase of any
     // turn.
-    private boolean swapConsoleRoles;
+    private       boolean   swapConsoleRoles;
     // endregion RPG Skills
 
     // these are only used on the server:
@@ -123,37 +121,37 @@ public class Crew implements Serializable {
     private PilotOptions options = new PilotOptions();
 
     // SPA RangeMaster range bands
-    public static final String RANGEMASTER_NONE = "None";
-    public static final String RANGEMASTER_MEDIUM = "Medium";
-    public static final String RANGEMASTER_LONG = "Long";
+    public static final String RANGEMASTER_NONE    = "None";
+    public static final String RANGEMASTER_MEDIUM  = "Medium";
+    public static final String RANGEMASTER_LONG    = "Long";
     public static final String RANGEMASTER_EXTREME = "Extreme";
 
     // SPA Human TRO entity types
     public static final String HUMANTRO_NONE = "None";
-    public static final String HUMANTRO_MEK = "Mek";
+    public static final String HUMANTRO_MEK  = "Mek";
     public static final String HUMANTRO_AERO = "Aero";
-    public static final String HUMANTRO_VEE = "Vee";
-    public static final String HUMANTRO_BA = "BA";
+    public static final String HUMANTRO_VEE  = "Vee";
+    public static final String HUMANTRO_BA   = "BA";
 
     // SPA Environmental Specialist types
-    public static final String ENVSPC_NONE = "None";
-    public static final String ENVSPC_FOG = "Fog";
-    public static final String ENVSPC_HAIL = "Hail";
+    public static final String ENVSPC_NONE  = "None";
+    public static final String ENVSPC_FOG   = "Fog";
+    public static final String ENVSPC_HAIL  = "Hail";
     public static final String ENVSPC_LIGHT = "Light";
-    public static final String ENVSPC_RAIN = "Rain";
-    public static final String ENVSPC_SNOW = "Snow";
-    public static final String ENVSPC_WIND = "Wind";
+    public static final String ENVSPC_RAIN  = "Rain";
+    public static final String ENVSPC_SNOW  = "Snow";
+    public static final String ENVSPC_WIND  = "Wind";
 
-    public static final String SPECIAL_NONE = "None";
-    public static final String SPECIAL_ENERGY = "Energy";
+    public static final String SPECIAL_NONE      = "None";
+    public static final String SPECIAL_ENERGY    = "Energy";
     public static final String SPECIAL_BALLISTIC = "Ballistic";
-    public static final String SPECIAL_MISSILE = "Missile";
+    public static final String SPECIAL_MISSILE   = "Missile";
 
     // region extraData inner map keys
     public static final String MAP_GIVEN_NAME = "givenName";
-    public static final String MAP_SURNAME = "surname";
-    public static final String MAP_BLOODNAME = "bloodname";
-    public static final String MAP_PHENOTYPE = "phenotype";
+    public static final String MAP_SURNAME    = "surname";
+    public static final String MAP_BLOODNAME  = "bloodname";
+    public static final String MAP_PHENOTYPE  = "phenotype";
     // endregion extraData inner map keys
 
     /**
@@ -168,6 +166,7 @@ public class Crew implements Serializable {
     // endregion Variable Declarations
 
     // region Constructors
+
     /**
      * Creates a nameless P5/G4 crew of the given size.
      *
@@ -187,8 +186,7 @@ public class Crew implements Serializable {
      * @param clanPilot if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
-    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, Gender gender,
-            boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
         this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, clanPilot, extraData);
     }
 
@@ -204,11 +202,9 @@ public class Crew implements Serializable {
      * @param clanPilot if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
-    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
-            int piloting, Gender gender, boolean clanPilot,
-            Map<Integer, Map<String, String>> extraData) {
-        this.crewType = crewType;
-        this.size = Math.max(size, crewType.getCrewSlots());
+    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB, int piloting, Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+        this.crewType    = crewType;
+        this.size        = Math.max(size, crewType.getCrewSlots());
         this.currentSize = size;
 
         this.extraData = extraData;
@@ -242,26 +238,26 @@ public class Crew implements Serializable {
         this.piloting = new int[slots];
         Arrays.fill(this.piloting, piloting);
 
-        initBonus = 0;
+        initBonus    = 0;
         commandBonus = 0;
-        hits = new int[slots];
-        unconscious = new boolean[slots];
-        dead = new boolean[slots];
-        missing = new boolean[slots];
-        koThisRound = new boolean[slots];
-        toughness = new int[slots];
-        fatigue = new int[slots];
+        hits         = new int[slots];
+        unconscious  = new boolean[slots];
+        dead         = new boolean[slots];
+        missing      = new boolean[slots];
+        koThisRound  = new boolean[slots];
+        toughness    = new int[slots];
+        fatigue      = new int[slots];
 
         options.initialize();
 
-        pilotPos = crewType.getPilotPos();
+        pilotPos  = crewType.getPilotPos();
         gunnerPos = crewType.getGunnerPos();
 
         // For 2-slot crews, this will designate the other crew member as backup. For
         // superheavy tripods, this will designate the pilot and gunner as backups for
         // each other.
         if (getSlotCount() > 1) {
-            backupPilot = 1 - pilotPos;
+            backupPilot  = 1 - pilotPos;
             backupGunner = 1 - gunnerPos;
         }
         actedThisTurn = new boolean[slots];
@@ -361,8 +357,8 @@ public class Crew implements Serializable {
 
     /**
      * @param pos The slot index for multi-crewed cockpits
-     * @return For multi-slot crews, the crew member's name followed by the role.
-     *         For-slot crews, the crew name only.
+     *
+     * @return For multi-slot crews, the crew member's name followed by the role. For-slot crews, the crew name only.
      */
     public String getNameAndRole(int pos) {
         if (getSlotCount() < 2) {
@@ -449,8 +445,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * LAMs use a different skill in AirMEK mode depending on whether they are
-     * grounded or airborne.
+     * LAMs use a different skill in AirMEK mode depending on whether they are grounded or airborne.
      */
     public int getPiloting(EntityMovementType moveType) {
         return piloting[pilotPos];
@@ -464,65 +459,61 @@ public class Crew implements Serializable {
     }
 
     /**
-     * @param showPiloting if false, only the gunnery skill is shown (used for
-     *                     ProtoMeks; may be ignored for other unit types)
+     * @param showPiloting if false, only the gunnery skill is shown (used for ProtoMeks; may be ignored for other unit
+     *                     types)
+     *
      * @return a String showing the overall skills in the format gunnery/piloting
      */
     public String getSkillsAsString(boolean showPiloting, boolean rpgSkills) {
         if (showPiloting) {
-            return CrewSkillSummaryUtil.getPilotSkillSummary(
-                    getGunnery(),
-                    getGunneryL(),
-                    getGunneryM(),
-                    getGunneryB(),
-                    getPiloting(),
-                    rpgSkills);
+            return CrewSkillSummaryUtil.getPilotSkillSummary(getGunnery(),
+                  getGunneryL(),
+                  getGunneryM(),
+                  getGunneryB(),
+                  getPiloting(),
+                  rpgSkills);
         } else {
-            return CrewSkillSummaryUtil.getGunnerySkillSummary(
-                    getGunnery(),
-                    getGunneryL(),
-                    getGunneryM(),
-                    getGunneryB(),
-                    rpgSkills);
+            return CrewSkillSummaryUtil.getGunnerySkillSummary(getGunnery(),
+                  getGunneryL(),
+                  getGunneryM(),
+                  getGunneryB(),
+                  rpgSkills);
         }
     }
 
     /**
-     * @return a String showing the skills for a particular slot in the format
-     *         gunnery/piloting
+     * @return a String showing the skills for a particular slot in the format gunnery/piloting
      */
     public String getSkillsAsString(int pos, boolean rpgSkills) {
         return getSkillsAsString(pos, true, rpgSkills);
     }
 
     /**
-     * @param showPiloting if false, only the gunnery skill is shown (used for
-     *                     ProtoMeks; may be ignored for other unit types)
-     * @return a String showing the skills for a particular slot in the format
-     *         gunnery/piloting
+     * @param showPiloting if false, only the gunnery skill is shown (used for ProtoMeks; may be ignored for other unit
+     *                     types)
+     *
+     * @return a String showing the skills for a particular slot in the format gunnery/piloting
      */
     public String getSkillsAsString(int pos, boolean showPiloting, boolean rpgSkills) {
         if (showPiloting) {
-            return CrewSkillSummaryUtil.getPilotSkillSummary(
-                    getGunnery(pos),
-                    getGunneryL(pos),
-                    getGunneryM(pos),
-                    getGunneryB(pos),
-                    getPiloting(pos),
-                    rpgSkills);
+            return CrewSkillSummaryUtil.getPilotSkillSummary(getGunnery(pos),
+                  getGunneryL(pos),
+                  getGunneryM(pos),
+                  getGunneryB(pos),
+                  getPiloting(pos),
+                  rpgSkills);
         } else {
-            return CrewSkillSummaryUtil.getGunnerySkillSummary(
-                    getGunnery(pos),
-                    getGunneryL(pos),
-                    getGunneryM(pos),
-                    getGunneryB(pos),
-                    rpgSkills);
+            return CrewSkillSummaryUtil.getGunnerySkillSummary(getGunnery(pos),
+                  getGunneryL(pos),
+                  getGunneryM(pos),
+                  getGunneryB(pos),
+                  rpgSkills);
         }
     }
 
     /**
-     * Used to determine whether the death threshold has been passed. As the crew is
-     * not dead until each crew member slot is dead, we return the lowest value.
+     * Used to determine whether the death threshold has been passed. As the crew is not dead until each crew member
+     * slot is dead, we return the lowest value.
      *
      * @return The damage level of the least damaged crew member.
      */
@@ -531,8 +522,8 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Uses the table on TO p206 to calculate the number of crew hits based on
-     * percentage of total casualties. Used for ejection, boarding actions and such
+     * Uses the table on TO p206 to calculate the number of crew hits based on percentage of total casualties. Used for
+     * ejection, boarding actions and such
      *
      * @return The number of crew hits
      */
@@ -633,8 +624,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * The crew is considered unconscious as a whole if none are active and at least
-     * one is not dead.
+     * The crew is considered unconscious as a whole if none are active and at least one is not dead.
      *
      * @return Whether at least one crew member is alive but none are conscious.
      */
@@ -706,8 +696,8 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Allows a unit with a multi-crew cockpit to fielded with less than a full
-     * crew. Does not apply to collective crew (vehicles, infantry, large craft).
+     * Allows a unit with a multi-crew cockpit to fielded with less than a full crew. Does not apply to collective crew
+     * (vehicles, infantry, large craft).
      */
     public void setMissing(boolean missing, int pos) {
         this.missing[pos] = missing;
@@ -759,8 +749,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * The crew as a whole is considered ko this round if all active members are ko
-     * this round.
+     * The crew as a whole is considered ko this round if all active members are ko this round.
      *
      * @return true if all active members of the crew as knocked out this round
      */
@@ -799,14 +788,14 @@ public class Crew implements Serializable {
     }
 
     public void clearOptions(String grpKey) {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
 
             if (!group.getKey().equalsIgnoreCase(grpKey)) {
                 continue;
             }
 
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 option.clearValue();
@@ -827,7 +816,7 @@ public class Crew implements Serializable {
      * Returns the options of the given category that this pilot has
      */
     public Enumeration<IOption> getOptions(String grpKey) {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
 
             if (group.getKey().equalsIgnoreCase(grpKey)) {
@@ -840,8 +829,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Returns a string of all the option "codes" for this pilot, for a given
-     * group, using sep as the separator
+     * Returns a string of all the option "codes" for this pilot, for a given group, using sep as the separator
      */
     public String getOptionList(String sep, String grpKey) {
         return options.getOptionListString(sep, grpKey);
@@ -875,8 +863,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Overall crew description, using the name of the first crew member in the case
-     * of multi-crew cockpits.
+     * Overall crew description, using the name of the first crew member in the case of multi-crew cockpits.
      */
     public String getDesc() {
         return getDesc(0);
@@ -910,13 +897,13 @@ public class Crew implements Serializable {
      */
     public Vector<Report> getDescVector(boolean gunneryOnly) {
         Vector<Report> vDesc = new Vector<>();
-        Report r;
+        Report         r;
 
         for (int i = 0; i < getSlotCount(); i++) {
             if (missing[i]) {
                 continue;
             }
-            r = new Report();
+            r      = new Report();
             r.type = Report.PUBLIC;
             r.add(getName(i));
             if (getSlotCount() > 1) {
@@ -981,7 +968,7 @@ public class Crew implements Serializable {
      * Determine if this pilot has abandoned her vehicle.
      *
      * @return <code>true</code> if the pilot has abandoned her vehicle,
-     *         <code>false</code> if the pilot is still in the vehicle.
+     *       <code>false</code> if the pilot is still in the vehicle.
      */
     public boolean isEjected() {
         return ejected;
@@ -1009,7 +996,7 @@ public class Crew implements Serializable {
     private int getPilotingFatigueTurn() {
         // TO:AR p.166 fatigue
         int rating = tacOpsFatigueRating();
-        int turn = 20;
+        int turn   = 20;
         if (rating > 5) {
             turn = 10;
         } else if (rating > 3) {
@@ -1027,7 +1014,7 @@ public class Crew implements Serializable {
     private int getGunneryFatigueTurn() {
         // TO:AR p.166 fatigue
         int rating = tacOpsFatigueRating();
-        int turn = Integer.MAX_VALUE;
+        int turn   = Integer.MAX_VALUE;
         if (rating > 5) {
             turn = 14;
         } else if (rating > 3) {
@@ -1043,8 +1030,8 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Returns the modifier for the TO:AR p.166 fatigue turn thresholds from CamOps
-     * p.219 fatigue points. For multi-crewed Units, we average the fatigue modifier
+     * Returns the modifier for the TO:AR p.166 fatigue turn thresholds from CamOps p.219 fatigue points. For
+     * multi-crewed Units, we average the fatigue modifier
      *
      * @return The fatigue modifier for the unit.
      */
@@ -1124,28 +1111,6 @@ public class Crew implements Serializable {
         toughness[pos] = t;
     }
 
-    /**
-     * This method is showing 0 references from within MegaMek. If not needed in
-     * other projects, it should be removed.
-     *
-     * @deprecated since 0.50.04 - No references found in MegaMek
-     */
-    @Deprecated(since = "0.50.04", forRemoval = true)
-    public int getFatigue() {
-        return fatigue[0];
-    }
-
-    /**
-     * This method is showing 0 references from within MegaMek. If not needed in
-     * other projects, it should be removed.
-     *
-     * @deprecated since 0.50.04 - No references found in MegaMek
-     */
-    @Deprecated(since = "0.50.04", forRemoval = true)
-    public void setFatigue(int fatigue) {
-        this.fatigue[0] = fatigue;
-    }
-
     public int getCrewFatigue(int pos) {
         return fatigue[pos];
     }
@@ -1163,12 +1128,12 @@ public class Crew implements Serializable {
      */
     public void resetGameState() {
         fatigueTurnCount = 0;
-        doomed = false;
-        ejected = false;
+        doomed           = false;
+        ejected          = false;
         for (int i = 0; i < crewType.getCrewSlots(); i++) {
             unconscious[i] = false;
-            dead[i] = false;
-            missing[i] = false;
+            dead[i]        = false;
+            missing[i]     = false;
         }
     }
 
@@ -1213,8 +1178,8 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Set the pilot slot. If a multi-crew cockpit uses the same crew member as both
-     * pilot and gunner (i.e. cockpit command console), sets the gunner as well.
+     * Set the pilot slot. If a multi-crew cockpit uses the same crew member as both pilot and gunner (i.e. cockpit
+     * command console), sets the gunner as well.
      *
      * @param pos The slot index to set as pilot.
      */
@@ -1227,16 +1192,14 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Called when the active status of a crew slot changes in a unit with a
-     * multi-crew cockpit. If a pilot or gunner is incapacitated, someone else must
-     * take over the duties. A pilot or gunner that wakes up will resume normal
+     * Called when the active status of a crew slot changes in a unit with a multi-crew cockpit. If a pilot or gunner is
+     * incapacitated, someone else must take over the duties. A pilot or gunner that wakes up will resume normal
      * duties.
      */
     private void activeStatusChanged() {
         // Cockpit command console can be swapped deliberately by the player and should
         // not be changed automatically unless the current pilot becomes inactive.
-        if (crewType.equals(CrewType.COMMAND_CONSOLE)
-                && isActive(getCurrentPilotIndex())) {
+        if (crewType.equals(CrewType.COMMAND_CONSOLE) && isActive(getCurrentPilotIndex())) {
             return;
         }
         // Start by checking whether the default pilot is available. If not, check the
@@ -1270,9 +1233,8 @@ public class Crew implements Serializable {
     }
 
     /**
-     * When assigning skills randomly, we want to make sure the skills are assigned
-     * to the most appropriate position in crews where the pilot and gunner are
-     * separate. We're going to do it the simpler way and reassign the piloting and
+     * When assigning skills randomly, we want to make sure the skills are assigned to the most appropriate position in
+     * crews where the pilot and gunner are separate. We're going to do it the simpler way and reassign the piloting and
      * gunnery skills individually, resulting in a more specialized crew.
      */
     public void sortRandomSkills() {
@@ -1280,30 +1242,30 @@ public class Crew implements Serializable {
             return;
         }
         int lowest = MAX_SKILL;
-        int pos = -1;
+        int pos    = -1;
         if (!missing[crewType.getPilotPos()]) {
             for (int i = 0; i < getSlotCount(); i++) {
                 if (piloting[i] < lowest) {
                     lowest = piloting[i];
-                    pos = i;
+                    pos    = i;
                 }
             }
             if (pos >= 0) {
-                piloting[pos] = piloting[crewType.getPilotPos()];
+                piloting[pos]                    = piloting[crewType.getPilotPos()];
                 piloting[crewType.getPilotPos()] = lowest;
             }
         }
         lowest = MAX_SKILL;
-        pos = -1;
+        pos    = -1;
         if (!missing[crewType.getGunnerPos()]) {
             for (int i = 0; i < getSlotCount(); i++) {
                 if (gunnery[i] < lowest) {
                     lowest = gunnery[i];
-                    pos = i;
+                    pos    = i;
                 }
             }
             if (pos >= 0) {
-                gunnery[pos] = gunnery[crewType.getGunnerPos()];
+                gunnery[pos]                     = gunnery[crewType.getGunnerPos()];
                 gunnery[crewType.getGunnerPos()] = lowest;
             }
         }
@@ -1315,8 +1277,7 @@ public class Crew implements Serializable {
      * @return Whether a Mek has a separate pilot who is active.
      */
     public boolean hasDedicatedPilot() {
-        return isActive(crewType.getPilotPos())
-                && crewType.getGunnerPos() != crewType.getPilotPos();
+        return isActive(crewType.getPilotPos()) && crewType.getGunnerPos() != crewType.getPilotPos();
     }
 
     /**
@@ -1325,8 +1286,7 @@ public class Crew implements Serializable {
      * @return Whether a Mek has a separate gunner who is active.
      */
     public boolean hasDedicatedGunner() {
-        return isActive(crewType.getGunnerPos())
-                && crewType.getGunnerPos() != crewType.getPilotPos();
+        return isActive(crewType.getGunnerPos()) && crewType.getGunnerPos() != crewType.getPilotPos();
     }
 
     /**
@@ -1339,14 +1299,12 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Cockpit command console provides commander init bonus if both crew members
-     * are active (also requires advanced fire control and heavy/assault unit, which
-     * is not checked here). Though the positions are named "pilot" and "commander"
-     * they can switch positions in the end phase of any turn so we need to check
-     * whichever is not currently acting as pilot.
+     * Cockpit command console provides commander init bonus if both crew members are active (also requires advanced
+     * fire control and heavy/assault unit, which is not checked here). Though the positions are named "pilot" and
+     * "commander" they can switch positions in the end phase of any turn so we need to check whichever is not currently
+     * acting as pilot.
      *
-     * @return Whether the unit has a commander that is not also acting as pilot
-     *         currently or in the previous turn.
+     * @return Whether the unit has a commander that is not also acting as pilot currently or in the previous turn.
      */
     public boolean hasActiveCommandConsole() {
         int commandPos = 1 - getCurrentPilotIndex();
@@ -1358,33 +1316,30 @@ public class Crew implements Serializable {
      */
     public void resetActedFlag() {
         Arrays.fill(actedThisTurn, false);
-        actedThisTurn[getCurrentPilotIndex()] = true;
+        actedThisTurn[getCurrentPilotIndex()]  = true;
         actedThisTurn[getCurrentGunnerIndex()] = true;
     }
 
     /**
-     * @return Whether the crew members in a command console-equipped unit are
-     *         scheduled to swap roles at the end of the turn.
+     * @return Whether the crew members in a command console-equipped unit are scheduled to swap roles at the end of the
+     *       turn.
      */
     public boolean getSwapConsoleRoles() {
         return swapConsoleRoles;
     }
 
     /**
-     * Schedules or clears a scheduled swap of roles in a command console-equipped
-     * unit.
+     * Schedules or clears a scheduled swap of roles in a command console-equipped unit.
      *
-     * @param swap true for crew slots in a command console to swap roles at the end
-     *             of the turn, otherwise false
+     * @param swap true for crew slots in a command console to swap roles at the end of the turn, otherwise false
      */
     public void setSwapConsoleRoles(boolean swap) {
         swapConsoleRoles = swap;
     }
 
     /**
-     * Checks whether a role swap is scheduled for a command-console equipped unit
-     * and (if the new pilot is active) performs the swap. The swap flag is cleared
-     * regardless of whether a swap took place.
+     * Checks whether a role swap is scheduled for a command-console equipped unit and (if the new pilot is active)
+     * performs the swap. The swap flag is cleared regardless of whether a swap took place.
      *
      * @return True if a swap was performed, otherwise false.
      */
@@ -1465,14 +1420,7 @@ public class Crew implements Serializable {
     /*
      * Legacy methods used by MekWars
      */
-    /**
-     * @deprecated by multi-crew cockpits. Replaced by {@link #setHits(int, int)}
-     */
-    @Deprecated(since = "0.50.04", forRemoval = true)
-    public void setHits(int hits) {
-        setHits(hits, 0);
-    }
-
+    
     /**
      * Sets the piloting skill of the crew's default pilot.
      */

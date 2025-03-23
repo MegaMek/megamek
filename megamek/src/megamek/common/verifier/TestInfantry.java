@@ -35,11 +35,11 @@ import megamek.common.options.OptionsConstants;
  * @author Jay Lawson (Taharqa)
  */
 public class TestInfantry extends TestEntity {
-    private Infantry infantry;
+    private final Infantry infantry;
 
     public TestInfantry(Infantry infantry, TestEntityOption option, String fileString) {
         super(option, null, null);
-        this.infantry = infantry;
+        this.infantry   = infantry;
         this.fileString = fileString;
     }
 
@@ -140,8 +140,8 @@ public class TestInfantry extends TestEntity {
 
     @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
-        Infantry inf = (Infantry) getEntity();
-        boolean correct = true;
+        Infantry inf     = (Infantry) getEntity();
+        boolean  correct = true;
         if (skip()) {
             return true;
         }
@@ -150,7 +150,7 @@ public class TestInfantry extends TestEntity {
 
         int max = maxSecondaryWeapons(inf);
         if (inf.getSecondaryWeaponsPerSquad() > max) {
-            buff.append("Number of secondary weapons exceeds maximum of " + max).append("\n\n");
+            buff.append("Number of secondary weapons exceeds maximum of ").append(max).append("\n\n");
             correct = false;
         }
 
@@ -177,14 +177,16 @@ public class TestInfantry extends TestEntity {
 
         max = maxSquadSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1), inf.getMount());
         if (inf.getSquadSize() > max) {
-            buff.append("Maximum squad size is " + max + "\n\n");
+            buff.append("Maximum squad size is ").append(max).append("\n\n");
             correct = false;
         }
 
-        max = maxUnitSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
-                inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS), inf.getMount());
+        max = maxUnitSize(inf.getMovementMode(),
+              inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
+              inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS),
+              inf.getMount());
         if (inf.getShootingStrength() > max) {
-            buff.append("Maximum platoon size is " + max + "\n\n");
+            buff.append("Maximum platoon size is ").append(max).append("\n\n");
             correct = false;
         }
 
@@ -197,7 +199,8 @@ public class TestInfantry extends TestEntity {
             buff.append("Infantry may not have more than one armor kit!\n");
             correct = false;
         }
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) ||
+            getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -235,28 +238,22 @@ public class TestInfantry extends TestEntity {
     /**
      * Maximum squad size based on motive type
      *
-     * @param movementMode  The platoon's movement mode
-     * @param alt           True indicates that VTOL is microlite and INF_UMU is motorized.
-     * @param mount         The mount if the unit is beast-mounted, otherwise null.
-     * @return              The maximum size of a squad.
+     * @param movementMode The platoon's movement mode
+     * @param alt          True indicates that VTOL is microlite and INF_UMU is motorized.
+     * @param mount        The mount if the unit is beast-mounted, otherwise null.
+     *
+     * @return The maximum size of a squad.
      */
     public static int maxSquadSize(EntityMovementMode movementMode, boolean alt, @Nullable InfantryMount mount) {
         if (mount == null) {
-            switch (movementMode) {
-                case HOVER:
-                case SUBMARINE:
-                    return 5;
-                case WHEELED:
-                    return 6;
-                case TRACKED:
-                    return 7;
-                case INF_UMU:
-                    return alt ? 6 : 10;
-                case VTOL:
-                    return alt ? 2 : 4;
-                default:
-                    return 10;
-            }
+            return switch (movementMode) {
+                case HOVER, SUBMARINE -> 5;
+                case WHEELED -> 6;
+                case TRACKED -> 7;
+                case INF_UMU -> alt ? 6 : 10;
+                case VTOL -> alt ? 2 : 4;
+                default -> 10;
+            };
         } else if (mount.getSize().troopsPerCreature == 1) {
             return 10; // use foot infantry limit
         } else {
@@ -264,8 +261,7 @@ public class TestInfantry extends TestEntity {
         }
     }
 
-    public static int maxUnitSize(EntityMovementMode movementMode, boolean alt, boolean engOrMountain,
-                                  InfantryMount mount) {
+    public static int maxUnitSize(EntityMovementMode movementMode, boolean alt, boolean engOrMountain, InfantryMount mount) {
         int max;
         if (mount == null) {
             switch (movementMode) {
@@ -342,10 +338,11 @@ public class TestInfantry extends TestEntity {
     }
 
     /**
-     * Calculates the weight of the given Conventional Infantry unit. Infantry weight
-     * is not fixed as in Meks and Vehicles but calculated from the infantry configuration.
+     * Calculates the weight of the given Conventional Infantry unit. Infantry weight is not fixed as in Meks and
+     * Vehicles but calculated from the infantry configuration.
      *
      * @param infantry The conventional infantry
+     *
      * @return The rounded weight in tons
      */
     public static double getWeight(Infantry infantry) {
@@ -354,17 +351,17 @@ public class TestInfantry extends TestEntity {
     }
 
     /**
-     * Calculates the weight of the given Conventional Infantry unit. Infantry weight
-     * is not fixed as in Meks and Vehicles but calculated from the infantry configuration.
-     * The given CalculationReport will be filled in with the weight calculation (the
-     * report includes the final rounding step but the returned result does not).
+     * Calculates the weight of the given Conventional Infantry unit. Infantry weight is not fixed as in Meks and
+     * Vehicles but calculated from the infantry configuration. The given CalculationReport will be filled in with the
+     * weight calculation (the report includes the final rounding step but the returned result does not).
      *
      * @param infantry The conventional infantry
-     * @param report A CalculationReport to fill in
+     * @param report   A CalculationReport to fill in
+     *
      * @return The exact weight in tons
      */
     public static double getWeightExact(Infantry infantry, CalculationReport report) {
-        String header = "Weight Calculation for ";
+        String header   = "Weight Calculation for ";
         String fullName = infantry.getChassis() + " " + infantry.getModel();
         if (fullName.length() < 20) {
             report.addHeader(header + fullName);
@@ -378,20 +375,27 @@ public class TestInfantry extends TestEntity {
         }
         report.addEmptyLine();
 
-        InfantryMount mount = infantry.getMount();
-        int activeTroopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
-        double weight;
+        InfantryMount mount          = infantry.getMount();
+        int           activeTroopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
+        double        weight;
 
         if (mount != null) {
             String calculation;
-            report.addLine("Mounted: " + mount.getName() + ", "
-                    + mount.getSize().troopsPerCreature + " trooper(s) per mount", "");
+            report.addLine("Mounted: " +
+                           mount.getName() +
+                           ", " +
+                           mount.getSize().troopsPerCreature +
+                           " trooper(s) per mount", "");
             if (mount.getSize().troopsPerCreature > 1) {
-                weight = (mount.getWeight() + 0.2 * infantry.getSquadSize()) * infantry.getSquadCount();
-                calculation = "(" + formatForReport(mount.getWeight()) + " + 0.2 x "
-                        + infantry.getSquadSize() + ") x " + infantry.getSquadCount();
+                weight      = (mount.getWeight() + 0.2 * infantry.getSquadSize()) * infantry.getSquadCount();
+                calculation = "(" +
+                              formatForReport(mount.getWeight()) +
+                              " + 0.2 x " +
+                              infantry.getSquadSize() +
+                              ") x " +
+                              infantry.getSquadCount();
             } else {
-                weight = (mount.getWeight() + 0.2) * activeTroopers;
+                weight      = (mount.getWeight() + 0.2) * activeTroopers;
                 calculation = "(" + formatForReport(mount.getWeight()) + " + 0.2) x " + activeTroopers;
             }
             report.addLine("", calculation, formatForReport(weight) + " t");
@@ -451,25 +455,27 @@ public class TestInfantry extends TestEntity {
             }
 
             weight = activeTroopers * mult;
-            report.addLine("Trooper Weight:", activeTroopers + " x " + formatForReport(mult) + " t",
-                    formatForReport(weight) + " t");
+            report.addLine("Trooper Weight:",
+                  activeTroopers + " x " + formatForReport(mult) + " t",
+                  formatForReport(weight) + " t");
 
             weight += infantry.activeFieldWeapons().stream().mapToDouble(Mounted::getTonnage).sum();
             weight += infantry.getAmmo().stream().mapToDouble(Mounted::getTonnage).sum();
 
-            infantry.activeFieldWeapons().forEach(mounted ->
-                    report.addLine(mounted.getName(), "",
-                            "+ " + formatForReport(mounted.getTonnage()) + " t"));
-            infantry.getAmmo().forEach(mounted ->
-                    report.addLine(mounted.getName(), "",
-                            "+ " + formatForReport(mounted.getTonnage()) + " t"));
+            infantry.activeFieldWeapons()
+                  .forEach(mounted -> report.addLine(mounted.getName(),
+                        "",
+                        "+ " + formatForReport(mounted.getTonnage()) + " t"));
+            infantry.getAmmo()
+                  .forEach(mounted -> report.addLine(mounted.getName(),
+                        "",
+                        "+ " + formatForReport(mounted.getTonnage()) + " t"));
         }
 
         report.addEmptyLine();
         // Intentional: Add the final rounding to the report, but return the exact weight
         double roundedWeight = ceil(weight, Ceil.HALFTON);
-        report.addLine("Final Weight:", "round up to nearest half ton",
-                formatForReport(roundedWeight) + " t");
+        report.addLine("Final Weight:", "round up to nearest half ton", formatForReport(roundedWeight) + " t");
         return weight;
     }
 

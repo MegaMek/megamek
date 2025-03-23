@@ -43,110 +43,110 @@ import megamek.common.options.Quirks;
 import megamek.logging.MMLogger;
 
 /**
- * The MekSummary of a unit offers compiled information about the unit without
- * having to load the file.
+ * The MekSummary of a unit offers compiled information about the unit without having to load the file.
  */
 public class MekSummary implements Serializable, ASCardDisplayable {
     private static final MMLogger logger = MMLogger.create(MekSummary.class);
 
-    private String name;
-    private String chassis;
-    private String clanChassisName;
-    private String model;
-    private int mulId;
-    private String unitType;
-    private String unitSubType;
-    private String fullAccurateUnitType;
-    private Long entityType;
+    private String      name;
+    private String      chassis;
+    private String      clanChassisName;
+    private String      model;
+    private int         mulId;
+    private String      unitType;
+    private String      unitSubType;
+    private String      fullAccurateUnitType;
+    private Long        entityType;
     private Base64Image fluffImage = new Base64Image();
-    private boolean omni;
-    private boolean military;
-    private boolean mountedInfantry;
-    private int tankTurrets;
-    private File sourceFile;
-    private String source;
-    private boolean invalid;
-    private String techLevel;
-    private int techLevelCode;
-    private String techBase;
-    private boolean failedToLoadEquipment;
-    private String entryName; // for files in zips
-    private int year;
-    private int type;
-    private int[] altTypes = new int[] { TechConstants.T_IS_TW_NON_BOX, TechConstants.T_IS_ADVANCED,
-            TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules
-                                               // levels
-    private double tons;
-    private int bv;
+    private boolean     omni;
+    private boolean     military;
+    private boolean     mountedInfantry;
+    private int         tankTurrets;
+    private File        sourceFile;
+    private String      source;
+    private boolean     invalid;
+    private String      techLevel;
+    private int         techLevelCode;
+    private String      techBase;
+    private boolean     failedToLoadEquipment;
+    private String      entryName; // for files in zips
+    private int         year;
+    private int         type;
+    private int[]       altTypes   = new int[] { TechConstants.T_IS_TW_NON_BOX,
+          TechConstants.T_IS_ADVANCED,
+          TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules
+    // levels
+    private double      tons;
+    private int         bv;
 
     /** The full cost of the unit (including ammo). */
     private long cost;
 
     /** The dry cost of the unit (excluding ammo). */
-    private long dryCost;
-    private long altCost;
-    private long modified; // for comparison when loading
-    private String level;
-    private int advTechYear; // year after which the unit is advanced level
-    private int stdTechYear; // year after which the unit is standard level
-    private String extinctRange;
-    private boolean canon;
-    private boolean patchwork;
-    private boolean doomedOnGround;
-    private boolean doomedInAtmosphere;
-    private boolean doomedInSpace;
-    private boolean doomedInExtremeTemp;
-    private boolean doomedInVacuum;
-    private boolean clan;
-    private boolean support;
-    private int walkMp;
-    private int runMp;
-    private int jumpMp;
+    private long               dryCost;
+    private long               altCost;
+    private long               modified; // for comparison when loading
+    private String             level;
+    private int                advTechYear; // year after which the unit is advanced level
+    private int                stdTechYear; // year after which the unit is standard level
+    private String             extinctRange;
+    private boolean            canon;
+    private boolean            patchwork;
+    private boolean            doomedOnGround;
+    private boolean            doomedInAtmosphere;
+    private boolean            doomedInSpace;
+    private boolean            doomedInExtremeTemp;
+    private boolean            doomedInVacuum;
+    private boolean            clan;
+    private boolean            support;
+    private int                walkMp;
+    private int                runMp;
+    private int                jumpMp;
     private EntityMovementMode moveMode;
-    private int totalArmor;
-    private int totalInternal;
-    private int cockpitType;
-    private String engineName;
-    private int engineType;
-    private int gyroType;
-    private String myomerName;
-    private int lowerArms;
-    private int hands;
-    private double troopCarryingSpace;
-    private int aSFBays;
-    private int aSFDoors;
-    private double aSFUnits;
-    private int smallCraftBays;
-    private int smallCraftDoors;
-    private double smallCraftUnits;
-    private int dockingCollars;
-    private int mekBays;
-    private int mekDoors;
-    private double mekUnits;
-    private int heavyVehicleBays;
-    private int heavyVehicleDoors;
-    private double heavyVehicleUnits;
-    private int lightVehicleBays;
-    private int lightVehicleDoors;
-    private double lightVehicleUnits;
-    private int protoMekBays;
-    private int protoMekDoors;
-    private double protoMekUnits;
-    private int battleArmorBays;
-    private int battleArmorDoors;
-    private double battleArmorUnits;
-    private int infantryBays;
-    private int infantryDoors;
-    private double infantryUnits;
-    private int superHeavyVehicleBays;
-    private int superHeavyVehicleDoors;
-    private double superHeavyVehicleUnits;
-    private int dropshuttleBays;
-    private int dropshuttleDoors;
-    private double dropshuttelUnits;
-    private int battleArmorHandles;
-    private double cargoBayUnits;
-    private int navalRepairFacilities;
+    private int                totalArmor;
+    private int                totalInternal;
+    private int                cockpitType;
+    private String             engineName;
+    private int                engineType;
+    private int                gyroType;
+    private String             myomerName;
+    private int                lowerArms;
+    private int                hands;
+    private double             troopCarryingSpace;
+    private int                aSFBays;
+    private int                aSFDoors;
+    private double             aSFUnits;
+    private int                smallCraftBays;
+    private int                smallCraftDoors;
+    private double             smallCraftUnits;
+    private int                dockingCollars;
+    private int                mekBays;
+    private int                mekDoors;
+    private double             mekUnits;
+    private int                heavyVehicleBays;
+    private int                heavyVehicleDoors;
+    private double             heavyVehicleUnits;
+    private int                lightVehicleBays;
+    private int                lightVehicleDoors;
+    private double             lightVehicleUnits;
+    private int                protoMekBays;
+    private int                protoMekDoors;
+    private double             protoMekUnits;
+    private int                battleArmorBays;
+    private int                battleArmorDoors;
+    private double             battleArmorUnits;
+    private int                infantryBays;
+    private int                infantryDoors;
+    private double             infantryUnits;
+    private int                superHeavyVehicleBays;
+    private int                superHeavyVehicleDoors;
+    private double             superHeavyVehicleUnits;
+    private int                dropshuttleBays;
+    private int                dropshuttleDoors;
+    private double             dropshuttelUnits;
+    private int                battleArmorHandles;
+    private double             cargoBayUnits;
+    private int                navalRepairFacilities;
 
     /** For BattleArmor, we want to know the weight of an individual suit. */
     private double twSuitTons;
@@ -157,9 +157,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int internalsType;
 
     /**
-     * Each location can have a separate armor type, but this is used for search
-     * purposes. We really
-     * only care about which types are present.
+     * Each location can have a separate armor type, but this is used for search purposes. We really only care about
+     * which types are present.
      */
     private final HashSet<Integer> armorTypeSet;
 
@@ -173,8 +172,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private Vector<String> equipmentNames;
 
     /**
-     * The number of times the piece of equipment in the corresponding
-     * equipmentNames list appears.
+     * The number of times the piece of equipment in the corresponding equipmentNames list appears.
      */
     private Vector<Integer> equipmentQuantities;
 
@@ -182,24 +180,24 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private String weaponQuirkNames;
 
     // AlphaStrike values
-    private int pointValue = 0;
-    private ASUnitType asUnitType = ASUnitType.UNKNOWN;
-    private int size = 0;
-    private int tmm = 0;
-    private Map<String, Integer> movement = new LinkedHashMap<>();
-    private String primaryMovementMode = "";
-    private ASDamageVector standardDamage = ASDamageVector.ZERO;
-    private int overheat = 0;
-    private ASArcSummary frontArc = new ASArcSummary();
-    private ASArcSummary leftArc = new ASArcSummary();
-    private ASArcSummary rightArc = new ASArcSummary();
-    private ASArcSummary rearArc = new ASArcSummary();
-    private int threshold;
-    private int fullArmor;
-    private int fullStructure;
-    private int squadSize;
-    private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
-    private UnitRole role = UnitRole.UNDETERMINED;
+    private int                        pointValue          = 0;
+    private ASUnitType                 asUnitType          = ASUnitType.UNKNOWN;
+    private int                        size                = 0;
+    private int                        tmm                 = 0;
+    private Map<String, Integer>       movement            = new LinkedHashMap<>();
+    private String                     primaryMovementMode = "";
+    private ASDamageVector             standardDamage      = ASDamageVector.ZERO;
+    private int                        overheat            = 0;
+    private ASArcSummary               frontArc            = new ASArcSummary();
+    private ASArcSummary               leftArc             = new ASArcSummary();
+    private ASArcSummary               rightArc            = new ASArcSummary();
+    private ASArcSummary               rearArc             = new ASArcSummary();
+    private int                        threshold;
+    private int                        fullArmor;
+    private int                        fullStructure;
+    private int                        squadSize;
+    private ASSpecialAbilityCollection specialAbilities    = new ASSpecialAbilityCollection();
+    private UnitRole                   role                = UnitRole.UNDETERMINED;
 
     public MekSummary() {
         armorTypeSet = new HashSet<>();
@@ -310,13 +308,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         }
         return Entity.getEntityMajorTypeName(-1);
     }
-
-    // This is here for legacy purposes to not break the API
-    @Deprecated(since = "0.50.4", forRemoval = true)
-    public static String determineUnitType(Entity e) {
-        return UnitType.determineUnitType(e);
-    }
-
+    
     public File getSourceFile() {
         return sourceFile;
     }
@@ -1061,13 +1053,13 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Given the list of equipment mounted on this unit, parse it into a unique
-     * list of names and the number of times that name appears.
+     * Given the list of equipment mounted on this unit, parse it into a unique list of names and the number of times
+     * that name appears.
      *
      * @param mountedList A collection of <code>Mounted</code> equipment
      */
     public void setEquipment(List<Mounted<?>> mountedList) {
-        equipmentNames = new Vector<>(mountedList.size());
+        equipmentNames      = new Vector<>(mountedList.size());
         equipmentQuantities = new Vector<>(mountedList.size());
         for (Mounted<?> mnt : mountedList) {
             // Ignore weapon groups, as they aren't actually real equipment
@@ -1075,7 +1067,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
                 continue;
             }
             String eqName = mnt.getType().getInternalName();
-            int index = equipmentNames.indexOf(eqName);
+            int    index  = equipmentNames.indexOf(eqName);
             if (index == -1) { // We haven't seen this piece of equipment before
                 equipmentNames.add(eqName);
                 equipmentQuantities.add(1);
@@ -1094,10 +1086,11 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     public void setQuirkNames(Quirks quirks) {
-        Set<String> quirkNameList = quirks.getOptionsList().stream()
-                .filter(IOption::booleanValue)
-                .map(IOptionInfo::getDisplayableNameWithValue)
-                .collect(Collectors.toSet());
+        Set<String> quirkNameList = quirks.getOptionsList()
+                                          .stream()
+                                          .filter(IOption::booleanValue)
+                                          .map(IOptionInfo::getDisplayableNameWithValue)
+                                          .collect(Collectors.toSet());
         quirkNames = String.join(";", quirkNameList);
     }
 
@@ -1108,10 +1101,12 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     public void setWeaponQuirkNames(Entity entity) {
         Set<String> weaponQuirkNameList = new HashSet<>();
         for (Mounted<?> mounted : entity.getEquipment()) {
-            weaponQuirkNameList.addAll(mounted.getQuirks().getOptionsList().stream()
-                    .filter(IOption::booleanValue)
-                    .map(IOptionInfo::getDisplayableNameWithValue)
-                    .collect(Collectors.toSet()));
+            weaponQuirkNameList.addAll(mounted.getQuirks()
+                                             .getOptionsList()
+                                             .stream()
+                                             .filter(IOption::booleanValue)
+                                             .map(IOptionInfo::getDisplayableNameWithValue)
+                                             .collect(Collectors.toSet()));
         }
         weaponQuirkNames = String.join(";", weaponQuirkNameList);
     }
@@ -1153,8 +1148,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Takes the armor type at all locations and creates a set of the armor
-     * types.
+     * Takes the armor type at all locations and creates a set of the armor types.
      *
      * @param locsArmor An array that stores the armor type at each location.
      */
@@ -1323,8 +1317,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         }
         final MekSummary other = (MekSummary) obj;
         // we match on chassis + model + unittype + sourcefile
-        return Objects.equals(chassis, other.chassis) && Objects.equals(model, other.model)
-                && Objects.equals(unitType, other.unitType) && Objects.equals(sourceFile, other.sourceFile);
+        return Objects.equals(chassis, other.chassis) &&
+               Objects.equals(model, other.model) &&
+               Objects.equals(unitType, other.unitType) &&
+               Objects.equals(sourceFile, other.sourceFile);
     }
 
     @Override
@@ -1343,9 +1339,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Loads and returns the entity for this MekSummary. If the entity cannot be
-     * loaded, the error is logged
-     * and null is returned.
+     * Loads and returns the entity for this MekSummary. If the entity cannot be loaded, the error is logged and null is
+     * returned.
      *
      * @return The loaded entity or null in case of an error
      */
@@ -1359,10 +1354,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Loads and returns the entity for the given full name. If the entity cannot be
-     * loaded, the error is logged
-     * and null is returned. This is a shortcut for first loading the MekSummary
-     * using
+     * Loads and returns the entity for the given full name. If the entity cannot be loaded, the error is logged and
+     * null is returned. This is a shortcut for first loading the MekSummary using
      * {@link MekSummaryCache#getMek(String)} and then {@link #loadEntity()}.
      *
      * @return The loaded entity or null in case of an error

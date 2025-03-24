@@ -19,8 +19,9 @@
 
 package megamek.logging;
 
-import io.sentry.Sentry;
 import javax.swing.JOptionPane;
+
+import io.sentry.Sentry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,7 +91,8 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Returns a custom Logger using the fully qualified name of the Class as the Logger name.
      *
      * @param loggerName The Class whose name should be used as the Logger name. If null it will default to the calling
-     * class.
+     *                   class.
+     *
      * @return The custom Logger.
      */
     public static MMLogger create(final Class<?> loggerName) {
@@ -102,7 +104,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Info Level Logging.
      *
      * @param message Message to be sent to the log file.
-     * @param args Variable list of arguments for the message
+     * @param args    Variable list of arguments for the message
      */
     @Override
     public void info(String message, Object... args) {
@@ -114,7 +116,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Warning Level Logging
      *
      * @param message Message to be logged.
-     * @param args Variable list of arguments for the message
+     * @param args    Variable list of arguments for the message
      */
     @Override
     public void warn(String message, Object... args) {
@@ -126,8 +128,8 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Warning Level Logging
      *
      * @param exception Exception to be logged.
-     * @param message Message to be logged.
-     * @param args Variable list of arguments for the message
+     * @param message   Message to be logged.
+     * @param args      Variable list of arguments for the message
      */
     public void warn(Throwable exception, String message, Object... args) {
         Sentry.captureException(exception);
@@ -139,7 +141,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Debug Level Logging
      *
      * @param message Message to be logged.
-     * @param args Variable list of arguments for the message
+     * @param args    Variable list of arguments for the message
      */
     @Override
     public void debug(String message, Object... args) {
@@ -151,8 +153,8 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Debug Level Logging
      *
      * @param exception Exception to be logged.
-     * @param message Message to be logged.
-     * @param args Variable list of arguments for the message
+     * @param message   Message to be logged.
+     * @param args      Variable list of arguments for the message
      */
     public void debug(Throwable exception, String message, Object... args) {
         Sentry.captureException(exception);
@@ -164,7 +166,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Error Level Logging w/ Exception
      *
      * @param exception Exception to be logged.
-     * @param message Additional message.
+     * @param message   Additional message.
      */
     public void error(Throwable exception, String message) {
         Sentry.captureException(exception);
@@ -175,8 +177,8 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Error Level Logging w/ Exception
      *
      * @param exception Exception to be logged.
-     * @param message Additional message to be logged.
-     * @param args Variable list of arguments for the message
+     * @param message   Additional message to be logged.
+     * @param args      Variable list of arguments for the message
      */
     public void error(Throwable exception, String message, Object... args) {
         message = parametrizedStringIfEnabled(Level.ERROR, message, args);
@@ -187,7 +189,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Error Level Logging w/ Exception This one was made to make it easier to replace the Log4J Calls
      *
-     * @param message Message to be logged.
+     * @param message   Message to be logged.
      * @param exception Exception to be logged.
      */
     public void error(String message, Throwable exception) {
@@ -209,9 +211,9 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Formatted Error Level Logging w/ Exception w/ Dialog.
      *
      * @param exception Exception to be logged.
-     * @param message Message to write to the log file AND be displayed in the error pane.
-     * @param title Title of the error message box.
-     * @param args Variable list of arguments for the message.
+     * @param message   Message to write to the log file AND be displayed in the error pane.
+     * @param title     Title of the error message box.
+     * @param args      Variable list of arguments for the message.
      */
     public void errorDialog(Throwable exception, String message, String title, Object... args) {
         Sentry.captureException(exception);
@@ -224,8 +226,8 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Formatted Error Level Logging w/o Exception w/ Dialog.
      *
      * @param message Message to write to the log file AND be displayed in the error pane.
-     * @param title Title of the error message box.
-     * @param args Variable list of arguments for the message
+     * @param title   Title of the error message box.
+     * @param args    Variable list of arguments for the message
      */
     public void errorDialog(String title, String message, Object... args) {
         message = parametrizedStringAnyway(message, args);
@@ -237,8 +239,8 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Formatted Error Level Logging w/o Exception w/ Dialog.
      *
      * @param message Message to write to the log file AND be displayed in the error pane.
-     * @param title Title of the error message box.
-     * @param args Variable list of arguments for the message
+     * @param title   Title of the error message box.
+     * @param args    Variable list of arguments for the message
      */
     private void popupErrorDialog(String title, String message, Object... args) {
         message = parametrizedStringAnyway(message, args);
@@ -250,25 +252,10 @@ public class MMLogger extends ExtendedLoggerWrapper {
     }
 
     /**
-     * Error Level Logging w/o Exception w/ Dialog.
-     *
-     * @param message Message to write to the log file AND be displayed in the error pane.
-     * @param title Title of the error message box.
-     */
-    public void error(String message, String title) {
-        error(message);
-        try {
-            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
-        } catch (Exception ignored) {
-            // if the message dialog crashes, we don't really care
-        }
-    }
-
-    /**
      * Fatal Level Logging w/ Exception.
      *
      * @param exception Exception that was triggered. Probably uncaught.
-     * @param message Message to report to the log file.
+     * @param message   Message to report to the log file.
      */
     public void fatal(Throwable exception, String message) {
         Sentry.captureException(exception);
@@ -279,21 +266,8 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Fatal Level Logging w/ Exception w/ Dialog
      *
      * @param exception Exception that was triggered. Probably uncaught.
-     * @param message Message to report to the log file.
-     * @param title Title of the error message box.
-     * @deprecated (since 21 - feb - 2025) Use {@link #fatalDialog(Throwable, String, String)} instead.
-     */
-    @Deprecated(since = "0.50.04", forRemoval = true)
-    public void fatal(Throwable exception, String message, String title) {
-        fatalDialog(exception, message, title);
-    }
-
-    /**
-     * Fatal Level Logging w/ Exception w/ Dialog
-     *
-     * @param exception Exception that was triggered. Probably uncaught.
-     * @param message Message to report to the log file.
-     * @param title Title of the error message box.
+     * @param message   Message to report to the log file.
+     * @param title     Title of the error message box.
      */
     public void fatalDialog(Throwable exception, String message, String title) {
         fatal(exception, message);
@@ -304,19 +278,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Fatal Level Logging w/o Exception w/ Dialog
      *
      * @param message Message to report to the log file.
-     * @param title Title of the error message box.
-     * @deprecated (since 21 - feb - 2025) Use {@link #fatalDialog(String, String)} instead.
-     */
-    @Deprecated(since = "0.50.04", forRemoval = true)
-    public void fatal(String message, String title) {
-        fatalDialog(message, title);
-    }
-
-    /**
-     * Fatal Level Logging w/o Exception w/ Dialog
-     *
-     * @param message Message to report to the log file.
-     * @param title Title of the error message box.
+     * @param title   Title of the error message box.
      */
     public void fatalDialog(String message, String title) {
         fatal(message);
@@ -328,6 +290,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * method around the default logger's method.
      *
      * @param checkedLevel Passed in Level to compare to.
+     *
      * @return True if the current log level is more specific than the passed in
      */
     public boolean isLevelMoreSpecificThan(Level checkedLevel) {
@@ -339,6 +302,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * method around the default logger's method.
      *
      * @param checkedLevel Passed in Level to compare to.
+     *
      * @return True if the current log level is less specific than the passed in
      */
     public boolean isLevelLessSpecificThan(Level checkedLevel) {
@@ -362,5 +326,4 @@ public class MMLogger extends ExtendedLoggerWrapper {
         }
         return message;
     }
-
 }

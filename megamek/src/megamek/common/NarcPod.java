@@ -10,35 +10,21 @@
  *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
- */package megamek.common;
+ */
+package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 
-public class NarcPod implements Serializable {
-    /**
-     * 
-     */
+public record NarcPod(int team, int location) implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8883459353515484784L;
-    private int team;
-    private int location;
 
-    public NarcPod(int team, int location) {
-        this.team = team;
-        this.location = location;
-    }
-
-    public int getTeam() {
-        return team;
-    }
-
-    public int getLocation() {
-        return location;
-    }
-
-    public boolean equals(NarcPod other) {
-        if (this.location == other.location && this.team == other.team) {
-            return true;
+    public boolean equals(Object otherPod) {
+        if (otherPod instanceof NarcPod other) {
+            return this.location == other.location && this.team == other.team;
         }
+
         return false;
     }
 }

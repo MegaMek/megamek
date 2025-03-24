@@ -156,4 +156,9 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         }
         return stringBuilder.toString();
     }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
 }

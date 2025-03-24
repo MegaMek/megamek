@@ -138,4 +138,9 @@ public class EquipmentMode {
     public boolean isIndirect() {
         return name.equals(Weapon.MODE_MISSILE_INDIRECT) || name.equals(Weapon.MODE_INDIRECT_HEAT);
     }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

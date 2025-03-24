@@ -20,6 +20,14 @@ public record NarcPod(int team, int location) implements Serializable {
     @Serial
     private static final long serialVersionUID = 8883459353515484784L;
 
+    public int getLocation() {
+        return location;
+    }
+
+    public int getTeam() {
+        return team;
+    }
+
     public boolean equals(Object otherPod) {
         if (otherPod instanceof NarcPod other) {
             return this.location == other.location && this.team == other.team;

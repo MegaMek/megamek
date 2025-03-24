@@ -98,7 +98,8 @@ public class EquipmentMode {
     }
 
     /**
-     * @param objectModeName The name of the mode to compare with
+     * @param objectModeName The name of the mode to compare with. Can be a {@code String} or an {@link EquipmentMode}
+     *                       object
      *
      * @return <code>true</code> if this mode equals to the mode denoted by
      *       the given name

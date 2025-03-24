@@ -2152,8 +2152,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     }
                 }
             }
+
+            turnVector.removeAll(turnsToRemove);
         }
-        turnVector.removeAll(turnsToRemove);
+        
         return turnsToRemove.size();
     }
 

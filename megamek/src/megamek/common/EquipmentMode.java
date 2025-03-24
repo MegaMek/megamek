@@ -104,6 +104,7 @@ public class EquipmentMode {
      * @return <code>true</code> if this mode equals to the mode denoted by
      *       the given name
      */
+    @Override
     public boolean equals(Object objectModeName) {
         if (objectModeName instanceof String modeName) {
             return name.equals(modeName);

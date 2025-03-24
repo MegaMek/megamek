@@ -84,6 +84,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     /**
      * Two initiative rolls are equal if they match, roll by roll
      */
+    @Override
     public boolean equals(Object possibleOther) {
         if (possibleOther instanceof InitiativeRoll other) {
             if (size() != other.size()) {
@@ -95,7 +96,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
                     return false;
                 }
             }
-            
+
             return true;
         }
 

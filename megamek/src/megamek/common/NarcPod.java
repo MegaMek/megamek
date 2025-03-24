@@ -28,9 +28,10 @@ public record NarcPod(int team, int location) implements Serializable {
         return team;
     }
 
+    @Override
     public boolean equals(Object otherPod) {
         if (otherPod instanceof NarcPod other) {
-            return this.location == other.location && this.team == other.team;
+            return this.location == other.getLocation() && this.team == other.getTeam();
         }
 
         return false;

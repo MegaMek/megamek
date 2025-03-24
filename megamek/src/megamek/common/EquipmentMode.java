@@ -96,7 +96,21 @@ public class EquipmentMode {
     public static EquipmentMode getMode(String name) {
         return modesHash.computeIfAbsent(name, EquipmentMode::new);
     }
-    
+
+    /**
+     * @param modeName The name of the mode to compare with. Overloaded just for {@code String} classes.
+     *
+     * @return <code>true</code> if this mode equals to the mode denoted by the given name
+     */
+    @Override
+    public boolean equals(Object modeName) {
+        if (modeName instanceof EquipmentMode) {
+            return this.hashCode() == modeName.hashCode();
+        }
+
+        return false;
+    }
+
     /**
      * @param modeName The name of the mode to compare with. Overloaded just for {@code String} classes.
      *

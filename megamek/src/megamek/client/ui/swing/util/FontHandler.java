@@ -20,6 +20,7 @@ package megamek.client.ui.swing.util;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.CommonSettingsDialog;
+import megamek.common.Configuration;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
@@ -116,8 +117,9 @@ public final class FontHandler {
 
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank()) {
-            logger.info("Loading fonts from {}", userDir);
-            parseFontsInDirectory(userDir);
+            File subDir = new File(userDir, Configuration.fontsDir().toString());
+            logger.info("Loading fonts from {}", subDir);
+            parseFontsInDirectory(subDir);
         }
 
         logger.info("Loading fonts from Java's GraphicsEnvironment");

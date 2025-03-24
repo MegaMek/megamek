@@ -209,10 +209,10 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         currSkinCombo.removeAllItems();
         List<String> xmlFiles = new ArrayList<>(CommonSettingsDialog.filteredFiles(Configuration.skinsDir(), ".xml"));
 
-        String userDirName = PreferenceManager.getClientPreferences().getUserDir();
-        File userDir = new File(userDirName);
-        if (!userDirName.isBlank() && userDir.isDirectory()) {
-            xmlFiles.addAll(CommonSettingsDialog.filteredFilesWithSubDirs(userDir, ".xml"));
+        String userDir = PreferenceManager.getClientPreferences().getUserDir();
+        if (!userDir.isBlank()) {
+            File subDir = new File(userDir, Configuration.skinsDir().toString());
+            xmlFiles.addAll(CommonSettingsDialog.filteredFilesWithSubDirs(subDir, ".xml"));
         }
 
         xmlFiles.removeIf(file -> !SkinXMLHandler.validSkinSpecFile(file));
@@ -372,7 +372,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
 
     private String saveDialog() {
         String userDirName = PreferenceManager.getClientPreferences().getUserDir();
-        File userDir = new File(userDirName);
+        File userDir = new File(userDirName, Configuration.skinsDir().toString());
         String path;
         if (!userDirName.isBlank() && userDir.isDirectory()) {
             path = userDir.getPath();

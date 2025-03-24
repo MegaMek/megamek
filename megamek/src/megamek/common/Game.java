@@ -2025,19 +2025,20 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * mid-phase.
      */
     public void removeTurnFor(Entity entity) {
-        if (turnVector.isEmpty()) {
-            return;
-        }
-        // If the game option "move multiple infantry per mek" is selected, then we might not need to remove a turn
-        // at all. A turn only needs to be removed when going from 4 inf (2 turns) to 3 inf (1 turn)
-        if (getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI) &&
-                  (entity instanceof Infantry) &&
-                  getPhase().isMovement()) {
-            if ((getInfantryLeft(entity.getOwnerId()) %
-                       getOptions().intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
-                // exception, if the _next_ turn is an infantry turn, remove that contrived, but may come up e.g. one
-                // inf accidentally kills another
-                synchronized (turnVector) {
+        synchronized (turnVector) {
+            if (turnVector.isEmpty()) {
+                return;
+            }
+
+            // If the game option "move multiple infantry per mek" is selected, then we might not need to remove a turn
+            // at all. A turn only needs to be removed when going from 4 inf (2 turns) to 3 inf (1 turn)
+            if (getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI) &&
+                      (entity instanceof Infantry) &&
+                      getPhase().isMovement()) {
+                if ((getInfantryLeft(entity.getOwnerId()) %
+                           getOptions().intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
+                    // exception, if the _next_ turn is an infantry turn, remove that contrived, but may come up e.g. one
+                    // inf accidentally kills another
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                         if (nextTurn instanceof EntityClassTurn ect) {
@@ -2047,19 +2048,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                             }
                         }
                     }
+                    return;
                 }
-                return;
             }
-        }
-        // Same thing but for ProtoMeks
-        if (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI) &&
-                  (entity instanceof ProtoMek) &&
-                  getPhase().isMovement()) {
-            if ((getProtoMeksLeft(entity.getOwnerId()) %
-                       getOptions().intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
-                // exception, if the _next_ turn is an ProtoMek turn, remove that contrived, but may come up e.g. one
-                // inf accidentally kills another
-                synchronized (turnVector) {
+            // Same thing but for ProtoMeks
+            if (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI) &&
+                      (entity instanceof ProtoMek) &&
+                      getPhase().isMovement()) {
+                if ((getProtoMeksLeft(entity.getOwnerId()) %
+                           getOptions().intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
+                    // exception, if the _next_ turn is an ProtoMek turn, remove that contrived, but may come up e.g. one
+                    // inf accidentally kills another
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                         if (nextTurn instanceof EntityClassTurn ect) {
@@ -2069,20 +2068,18 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                             }
                         }
                     }
+                    return;
                 }
-                return;
             }
-        }
 
-        // Same thing but for vehicles
-        if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT) &&
-                  (entity instanceof Tank) &&
-                  getPhase().isMovement()) {
-            if ((getVehiclesLeft(entity.getOwnerId()) %
-                       getOptions().intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER)) != 1) {
-                // exception, if the _next_ turn is a tank turn, remove that contrived, but may come up e.g. one tank
-                // accidentally kills another
-                synchronized (turnVector) {
+            // Same thing but for vehicles
+            if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT) &&
+                      (entity instanceof Tank) &&
+                      getPhase().isMovement()) {
+                if ((getVehiclesLeft(entity.getOwnerId()) %
+                           getOptions().intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER)) != 1) {
+                    // exception, if the _next_ turn is a tank turn, remove that contrived, but may come up e.g. one tank
+                    // accidentally kills another
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                         if (nextTurn instanceof EntityClassTurn ect) {
@@ -2092,20 +2089,18 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                             }
                         }
                     }
+                    return;
                 }
-                return;
             }
-        }
 
-        // Same thing but for meks
-        if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT) &&
-                  (entity instanceof Mek) &&
-                  getPhase().isMovement()) {
-            if ((getMeksLeft(entity.getOwnerId()) %
-                       getOptions().intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER)) != 1) {
-                // exception, if the _next_ turn is a mek turn, remove that contrived, but may come up e.g. one mek
-                // accidentally kills another
-                synchronized (turnVector) {
+            // Same thing but for meks
+            if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT) &&
+                      (entity instanceof Mek) &&
+                      getPhase().isMovement()) {
+                if ((getMeksLeft(entity.getOwnerId()) %
+                           getOptions().intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER)) != 1) {
+                    // exception, if the _next_ turn is a mek turn, remove that contrived, but may come up e.g. one mek
+                    // accidentally kills another
                     if (hasMoreTurns()) {
                         GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                         if (nextTurn instanceof EntityClassTurn ect) {
@@ -2115,19 +2110,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                             }
                         }
                     }
+                    return;
                 }
-                return;
             }
-        }
 
-        // If we have the "infantry move later" or "ProtoMeks move later" optional rules, then we may be removing an
-        // infantry unit that would be considered invalid unless we don't consider the extra validity checks.
-        boolean useInfantryMoveLaterCheck = (!getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER) ||
-                                                   (!(entity instanceof Infantry))) &&
-                                                  (!getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER) ||
-                                                         (!(entity instanceof ProtoMek)));
+            // If we have the "infantry move later" or "ProtoMeks move later" optional rules, then we may be removing an
+            // infantry unit that would be considered invalid unless we don't consider the extra validity checks.
+            boolean useInfantryMoveLaterCheck = (!getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER) ||
+                                                       (!(entity instanceof Infantry))) &&
+                                                      (!getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER) ||
+                                                             (!(entity instanceof ProtoMek)));
 
-        synchronized (turnVector) {
             for (int i = turnVector.size() - 1; i >= turnIndex; i--) {
                 GameTurn turn = turnVector.elementAt(i);
 

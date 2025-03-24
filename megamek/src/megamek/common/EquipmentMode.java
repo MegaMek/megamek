@@ -117,6 +117,15 @@ public class EquipmentMode {
         return false;
     }
 
+    /**
+     * @param modeName The name of the mode to compare with. Overloaded just for {@code String} classes.
+     *
+     * @return <code>true</code> if this mode equals to the mode denoted by the given name
+     */
+    public boolean equals(String modeName) {
+        return name.equals(modeName);
+    }
+
     @Override
     public String toString() {
         return getName();

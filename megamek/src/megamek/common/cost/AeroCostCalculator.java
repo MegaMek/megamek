@@ -45,11 +45,11 @@ public class AeroCostCalculator {
 
         // Armor
         if (aero.hasPatchworkArmor()) {
-            int armorcost = 0;
+            double armorCost = 0;
             for (int loc = 0; loc < aero.locations(); loc++) {
-                armorcost += aero.getArmorWeight(loc) * ArmorType.forEntity(aero, loc).getCost();
+                armorCost += aero.getArmorWeight(loc) * ArmorType.forEntity(aero, loc).getCost();
             }
-            costs[idx++] = armorcost;
+            costs[idx++] = armorCost;
         } else {
             costs[idx++] = aero.getArmorWeight() * ArmorType.forEntity(aero).getCost();
         }
@@ -67,7 +67,7 @@ public class AeroCostCalculator {
         costs[idx] = -aero.getPriceMultiplier();
         double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Structure", "Flight Systems", "Engine",
-                "Fuel Tanks", "Armor", "Heat Sinks", "Equipment", "Weight Multiplier" };
+                                 "Fuel Tanks", "Armor", "Heat Sinks", "Equipment", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, aero, ignoreAmmo, systemNames, 9, cost, costs);
 
         return Math.round(cost);

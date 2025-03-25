@@ -47,7 +47,8 @@ public class ConvFighterCostCalculator {
 
         // Engine
         if (fighter.hasEngine()) {
-            costs[idx++] = (fighter.getEngine().getBaseCost() * fighter.getEngine().getRating() * fighter.getWeight()) / 75.0;
+            costs[idx++] = (fighter.getEngine().getBaseCost() * fighter.getEngine().getRating() * fighter.getWeight()) /
+                                 75.0;
         }
 
         // Fuel tanks
@@ -55,11 +56,11 @@ public class ConvFighterCostCalculator {
 
         // Armor
         if (fighter.hasPatchworkArmor()) {
-            int armorcost = 0;
+            double armorCost = 0;
             for (int loc = 0; loc < fighter.locations(); loc++) {
-                armorcost += fighter.getArmorWeight(loc) * ArmorType.forEntity(fighter, loc).getCost();
+                armorCost += fighter.getArmorWeight(loc) * ArmorType.forEntity(fighter, loc).getCost();
             }
-            costs[idx++] = armorcost;
+            costs[idx++] = armorCost;
         } else {
             costs[idx++] = fighter.getArmorWeight() * ArmorType.forEntity(fighter).getCost();
         }
@@ -78,8 +79,8 @@ public class ConvFighterCostCalculator {
 
         costs[idx] = -fighter.getPriceMultiplier();
         double cost = CostCalculator.calculateCost(costs);
-        String[] systemNames = { "Avionics", "VSTOL Gear", "Structure", "Flight Systems", "Engine",
-                "Fuel Tanks", "Armor", "Heat Sinks", "Equipment", "Power Amplifiers", "Weight Multiplier" };
+        String[] systemNames = { "Avionics", "VSTOL Gear", "Structure", "Flight Systems", "Engine", "Fuel Tanks",
+                                 "Armor", "Heat Sinks", "Equipment", "Power Amplifiers", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, fighter, ignoreAmmo, systemNames, 8, cost, costs);
 
         return Math.round(cost);

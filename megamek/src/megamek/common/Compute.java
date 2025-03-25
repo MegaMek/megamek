@@ -3878,7 +3878,7 @@ public class Compute {
                                         && (abin_type.getMunitionType().contains(AmmoType.Munitions.M_NEMESIS))
                                         && !(target instanceof Infantry)) {
                                     if (!target.isINarcedWith(INarcPod.NEMESIS)) {
-                                        ex_damage = (double) (target.getWalkMP() + target.getJumpMP()) / 2;
+                                        ex_damage = (double) (target.getWalkMP() + target.getAnyTypeMaxJumpMP()) / 2;
                                     } else {
                                         ex_damage = 0.5;
                                     }

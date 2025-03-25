@@ -344,15 +344,23 @@ public class MekView {
         if (!isGunEmplacement) {
             sBasic.add(new SingleLine());
             StringBuilder moveString = new StringBuilder();
-            moveString.append(entity.getWalkMP()).append("/")
-                    .append(entity.getRunMPasString());
+            moveString.append(entity.getWalkMP()).append("/").append(entity.getRunMPasString());
             if (entity.getJumpMP() > 0) {
-                moveString.append("/")
-                        .append(entity.getJumpMP());
+                moveString.append("/").append(entity.getJumpMP());
+                if (entity.damagedJumpJets() > 0) {
+                    moveString.append("<font color='red'> (").append(entity.damagedJumpJets())
+                          .append(" damaged jump jets)</font>");
+                }
             }
-            if (entity.damagedJumpJets() > 0) {
-                moveString.append("<font color='red'> (").append(entity.damagedJumpJets())
-                        .append(" damaged jump jets)</font>");
+            if (entity instanceof Mek mek) {
+                int mekMechanicalJumpMP = mek.getMechanicalJumpBoosterMP();
+                if (mekMechanicalJumpMP > 0) {
+                    if (entity.getJumpMP() == 0) {
+                        moveString.append("/").append(mekMechanicalJumpMP);
+                    } else {
+                        moveString.append(" (%d)".formatted(mekMechanicalJumpMP));
+                    }
+                }
             }
             if (entity.getAllUMUCount() > 0) {
                 // Add in Jump MP if it wasn't already printed

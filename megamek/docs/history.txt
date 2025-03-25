@@ -1,5 +1,12 @@
 MEGAMEK VERSION HISTORY:
 ----------------
+0.50.05-SNAPSHOT
++ Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1
++ PR #6752: Mek jump boosters and jump jets
++ PR #6758: Removed Deprecated methods from MMLogger and updated impacted calls
++ PR #6764: GitHub CodeQL Error Fixes
++ PR #6763: MM-side fix for MHQ 6373: Prevent impossible Counter-Battery Fire shots from being taken 
+
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width
 + PR #6489: PPC Capacitors must all be linked to a PPC

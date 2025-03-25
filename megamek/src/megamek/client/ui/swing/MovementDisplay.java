@@ -55,7 +55,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static megamek.common.MiscType.F_CHAFF_POD;
@@ -323,6 +322,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     // what "gear" is our mek in?
     private int gear;
+    private int jumpSubGear;
 
     // is the shift key held?
     private boolean shiftheld;
@@ -348,6 +348,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public static final int GEAR_LONGEST_WALK = 11;
     public static final int GEAR_STRAFE = 12;
     public static final String turnDetailsFormat = "%s%-3s %-14s %1s %2dMP%s";
+    public static final int GEAR_SUB_STANDARD = 0;
+    public static final int GEAR_SUB_MEKBOOSTERS = 2;
 
     /**
      * Creates and lays out a new movement phase display for the specified
@@ -399,27 +401,31 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void turnLeft() {
-        int dir = cmd.getFinalFacing();
-        dir = (dir + 5) % 6;
-        Coords curPos = cmd.getFinalCoords();
-        Coords target = curPos.translated(dir);
-        // We need to set this to get the rotate behavior
-        shiftheld = true;
-        currentMove(target);
-        shiftheld = false;
-        updateMove();
+        if (buttons.get(MoveCommand.MOVE_TURN).isEnabled()) {
+            int dir = cmd.getFinalFacing();
+            dir = (dir + 5) % 6;
+            Coords curPos = cmd.getFinalCoords();
+            Coords target = curPos.translated(dir);
+            // We need to set this to get the rotate behavior
+            shiftheld = true;
+            currentMove(target);
+            shiftheld = false;
+            updateMove();
+        }
     }
 
     private void turnRight() {
-        int dir = cmd.getFinalFacing();
-        dir = (dir + 7) % 6;
-        Coords curPos = cmd.getFinalCoords();
-        Coords target = curPos.translated(dir);
-        // We need to set this to get the rotate behavior
-        shiftheld = true;
-        currentMove(target);
-        shiftheld = false;
-        updateMove();
+        if (buttons.get(MoveCommand.MOVE_TURN).isEnabled()) {
+            int dir = cmd.getFinalFacing();
+            dir = (dir + 7) % 6;
+            Coords curPos = cmd.getFinalCoords();
+            Coords target = curPos.translated(dir);
+            // We need to set this to get the rotate behavior
+            shiftheld = true;
+            currentMove(target);
+            shiftheld = false;
+            updateMove();
+        }
     }
 
     private void undoIllegalStep() {
@@ -454,36 +460,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void performToggleMovemode() {
-        final Entity ce = ce();
-        boolean isAero = ce.isAero();
-        // first check if jumping is available at all
-        if (!isAero && !ce.isImmobileForJump() && (ce.getJumpMP() > 0)
-                && !(ce.isStuck() && !ce.canUnstickByJumping())) {
-            if (gear != MovementDisplay.GEAR_JUMP) {
-                if (!((cmd.getLastStep() != null)
-                        && cmd.getLastStep().isFirstStep()
-                        && (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
-                    clear();
-                }
-                if (!cmd.isJumping()) {
-                    addStepToMovePath(MoveStepType.START_JUMP);
-                }
-                gear = MovementDisplay.GEAR_JUMP;
-                Color jumpColor = GUIP.getMoveJumpColor();
-                clientgui.getBoardView().setHighlightColor(jumpColor);
-            } else {
-                Color walkColor = GUIP.getMoveDefaultColor();
-                clientgui.getBoardView().setHighlightColor(walkColor);
-                gear = MovementDisplay.GEAR_LAND;
-                clear();
+        if (gear != MovementDisplay.GEAR_JUMP) {
+            if (buttons.get(MoveCommand.MOVE_JUMP).isEnabled()) {
+                buttons.get(MoveCommand.MOVE_JUMP).doClick();
             }
         } else {
-            Color walkColor = GUIP.getMoveDefaultColor();
-            clientgui.getBoardView().setHighlightColor(walkColor);
-            gear = MovementDisplay.GEAR_LAND;
-            clear();
+            if (buttons.get(MoveCommand.MOVE_WALK).isEnabled()) {
+                buttons.get(MoveCommand.MOVE_WALK).doClick();
+            }
         }
-        computeMovementEnvelope(ce);
     }
 
     private void performToggleConversionMode() {
@@ -725,6 +710,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
+     * @return True when the active unit has jump MP available, either standard jump jet MP or, in the case of Meks,
+     * MP of Mechanical Jump Boosters.
+     */
+    private boolean hasJumpMP() {
+        return (ce() != null) && (ce().getAnyTypeMaxJumpMP() > 0);
+    }
+
+    /**
      * Sets the buttons to their proper states
      */
     private void updateButtons() {
@@ -746,9 +739,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setWalkEnabled(!ce.isImmobile() && ((ce.getWalkMP() > 0) || (ce.getRunMP() > 0))
                 && !ce.isStuck());
         setJumpEnabled(!isAero && !ce.isImmobileForJump() && !ce.isProne()
-        // Conventional infantry also uses jump MP for VTOL and UMU MP
-                && ((ce.getJumpMP() > 0) && (!ce.isConventionalInfantry() || ce.getMovementMode().isJumpInfantry()))
-                && !(ce.isStuck() && !ce.canUnstickByJumping()));
+              // Conventional infantry also uses jump MP for VTOL and UMU MP
+              && (hasJumpMP() && (!ce.isConventionalInfantry()
+              || ce.getMovementMode().isJumpInfantry()))
+              && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!isAero && !ce.isImmobile() && (ce.getActiveUMUCount() > 0)
                 && ce.isUnderwater());
         setBackUpEnabled(!isAero && isEnabled(MoveCommand.MOVE_WALK));
@@ -1282,6 +1276,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // set to "walk," or the equivalent
         gear = MovementDisplay.GEAR_LAND;
+        jumpSubGear = GEAR_SUB_STANDARD;
         Color walkColor = GUIP.getMoveDefaultColor();
         clientgui.getBoardView().setHighlightColor(walkColor);
 
@@ -1351,7 +1346,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (cmd.length() == 0) {
             clear();
             if ((gear == MovementDisplay.GEAR_JUMP) && !cmd.isJumping()) {
-                addStepToMovePath(MoveStepType.START_JUMP);
+                initializeJumpMovePath();
             } else if (entity.isConvertingNow()) {
                 addStepToMovePath(MoveStepType.CONVERT_MODE);
             }
@@ -1373,6 +1368,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
         updateButtons();
+    }
+
+    private void initializeJumpMovePath() {
+        addStepToMovePath(MoveStepType.START_JUMP);
+        if (jumpSubGear == GEAR_SUB_MEKBOOSTERS) {
+            addStepToMovePath(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
+        }
     }
 
     /**
@@ -1541,13 +1543,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Should we nag about taking fall damage with mechanical jump boosters?
         if (needNagForMechanicalJumpFallDamage()) {
-            if ((ce() != null)
-                    && cmd.shouldMechanicalJumpCauseFallDamage()) {
+            if ((ce() != null) && cmd.shouldMechanicalJumpCauseFallDamage()) {
                 String title = Messages.getString("MovementDisplay.areYouSure");
                 String body = Messages.getString("MovementDisplay.ConfirmMechanicalJumpFallDamage",
                         cmd.getJumpMaxElevationChange(),
-                        ce().getJumpMP(),
-                        cmd.getJumpMaxElevationChange() - ce().getJumpMP());
+                        ce().getMechanicalJumpBoosterMP(),
+                        cmd.getJumpMaxElevationChange() - ce().getMechanicalJumpBoosterMP());
                 if (checkNagForMechanicalJumpFallDamage(title, body)) {
                     return true;
                 }
@@ -1734,9 +1735,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void currentMove(Coords dest) {
         if (shiftheld || (gear == GEAR_TURN)) {
-            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false, ManeuverType.MAN_NONE);
-        } else if ((gear == GEAR_JUMP)
-                && (ce().getJumpType() == Mek.JUMP_BOOSTER)) {
+            if (buttons.get(MoveCommand.MOVE_TURN).isEnabled()) {
+                cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false, ManeuverType.MAN_NONE);
+            }
+        } else if ((gear == GEAR_JUMP) && (jumpSubGear == GEAR_SUB_MEKBOOSTERS)) {
             // Jumps with mechanical jump boosters are special
             Coords src;
             if (cmd.getLastStep() != null) {
@@ -1752,33 +1754,33 @@ public class MovementDisplay extends ActionPhaseDisplay {
             switch (dir) {
                 case 0:
                     cmd.findSimplePathTo(dest, MoveStepType.FORWARDS,
-                            src.direction(dest), ce().getFacing());
+                          src.direction(dest), ce().getFacing());
                     break;
                 case 1:
                     cmd.findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT,
-                            src.direction(dest), ce().getFacing());
+                          src.direction(dest), ce().getFacing());
                     break;
                 case 2:
                     // TODO: backwards lateral shifts are switched:
                     // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
                     cmd.findSimplePathTo(dest,
-                            MoveStepType.LATERAL_LEFT_BACKWARDS,
-                            src.direction(dest), ce().getFacing());
+                          MoveStepType.LATERAL_LEFT_BACKWARDS,
+                          src.direction(dest), ce().getFacing());
                     break;
                 case 3:
                     cmd.findSimplePathTo(dest, MoveStepType.BACKWARDS,
-                            src.direction(dest), ce().getFacing());
+                          src.direction(dest), ce().getFacing());
                     break;
                 case 4:
                     // TODO: backwards lateral shifts are switched:
                     // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
                     cmd.findSimplePathTo(dest,
-                            MoveStepType.LATERAL_RIGHT_BACKWARDS,
-                            src.direction(dest), ce().getFacing());
+                          MoveStepType.LATERAL_RIGHT_BACKWARDS,
+                          src.direction(dest), ce().getFacing());
                     break;
                 case 5:
                     cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT,
-                            src.direction(dest), ce().getFacing());
+                          src.direction(dest), ce().getFacing());
                     break;
             }
         } else if (gear == GEAR_STRAFE) {
@@ -1790,7 +1792,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // an existing strafing pattern.
             if (start > 0 && !cmd.getStep(start - 1).isStrafingStep()) {
                 while (start < cmd.length()
-                        && cmd.getStep(start).getType() != MoveStepType.FORWARDS) {
+                      && cmd.getStep(start).getType() != MoveStepType.FORWARDS) {
                     start++;
                 }
             }
@@ -1807,7 +1809,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             cmd.findPathTo(dest, MoveStepType.CHARGE);
             // The path planner shouldn't actually add the charge step
             if (cmd.getFinalCoords().equals(dest)
-                    && (cmd.getLastStep().getType() != MoveStepType.CHARGE)) {
+                  && (cmd.getLastStep().getType() != MoveStepType.CHARGE)) {
                 cmd.removeLastStep();
                 addStepToMovePath(MoveStepType.CHARGE);
             }
@@ -1815,7 +1817,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             cmd.findPathTo(dest, MoveStepType.DFA);
             // The path planner shouldn't actually add the DFA step
             if (cmd.getFinalCoords().equals(dest)
-                    && (cmd.getLastStep().getType() != MoveStepType.DFA)) {
+                  && (cmd.getLastStep().getType() != MoveStepType.DFA)) {
                 cmd.removeLastStep();
                 addStepToMovePath(MoveStepType.DFA);
             }
@@ -1825,17 +1827,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
             cmd.findPathTo(dest, MoveStepType.FORWARDS);
         } else if (gear == GEAR_IMMEL) {
             addStepsToMovePath(true, true, ManeuverType.MAN_IMMELMAN,
-                    MoveStepType.UP,
-                    MoveStepType.UP,
-                    MoveStepType.DEC,
-                    MoveStepType.DEC);
+                  MoveStepType.UP,
+                  MoveStepType.UP,
+                  MoveStepType.DEC,
+                  MoveStepType.DEC);
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true, ManeuverType.MAN_IMMELMAN);
             gear = GEAR_LAND;
         } else if (gear == GEAR_SPLIT_S) {
             addStepsToMovePath(true, true, ManeuverType.MAN_SPLIT_S,
-                    MoveStepType.DOWN,
-                    MoveStepType.DOWN,
-                    MoveStepType.ACC);
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.ACC);
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true, ManeuverType.MAN_SPLIT_S);
             gear = GEAR_LAND;
         }
@@ -4573,8 +4575,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private int maxMP(Entity en, int mvMode) {
         int maxMP;
-        if (mvMode == GEAR_JUMP || mvMode == GEAR_DFA) {
+        if (mvMode == GEAR_DFA) {
             maxMP = en.getJumpMP();
+        } else if (mvMode == GEAR_JUMP) {
+            maxMP = en.getJumpMP();
+            if ((en instanceof Mek mek) && (jumpSubGear == GEAR_SUB_MEKBOOSTERS)) {
+                maxMP = mek.getMechanicalJumpBoosterMP();
+            }
         } else if (mvMode == GEAR_BACKUP) {
             maxMP = en.getWalkMP();
         } else if ((ce() instanceof Mek) && !(ce() instanceof QuadVee)
@@ -4637,10 +4644,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Map<Coords, MovePath> mvEnvData = new HashMap<>();
         MovePath mp = new MovePath(clientgui.getClient().getGame(), en);
 
-        MoveStepType stepType = (mvMode == GEAR_BACKUP) ? MoveStepType.BACKWARDS
-                : MoveStepType.FORWARDS;
+        MoveStepType stepType = (mvMode == GEAR_BACKUP) ? MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
         if (mvMode == GEAR_JUMP || mvMode == GEAR_DFA) {
             mp.addStep(MoveStepType.START_JUMP);
+            if (jumpSubGear == GEAR_SUB_MEKBOOSTERS) {
+                mp.addStep(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
+            }
         }
 
         int maxMP = maxMP(en, mvMode);
@@ -4717,6 +4726,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MovePath mp = new MovePath(clientgui.getClient().getGame(), ce());
         if (gear == GEAR_JUMP) {
             mp.addStep(MoveStepType.START_JUMP);
+            if (jumpSubGear == GEAR_SUB_MEKBOOSTERS) {
+                mp.addStep(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
+            }
         }
         LongestPathFinder lpf = LongestPathFinder.newInstanceOfLongestPath(maxMP, stepType, ce().getGame());
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
@@ -4817,10 +4829,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
                             && (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
                 clear();
             }
-            if (!cmd.isJumping()) {
-                addStepToMovePath(MoveStepType.START_JUMP);
-            }
             gear = MovementDisplay.GEAR_JUMP;
+            jumpSubGear = GEAR_SUB_STANDARD;
+            if (mustChooseJumpType(ce)) {
+                Object jumpChoice = JOptionPane.showInputDialog(
+                      JOptionPane.getFrameForComponent(this), "Choose jump type:",
+                      "Choose Jump Type", JOptionPane.QUESTION_MESSAGE, null,
+                      new String[] {"Mechanical Jump Boosters", "Jump Jets"}, "Jump Jets");
+                if (jumpChoice instanceof String string && "Mechanical Jump Boosters".equals(string)) {
+                    jumpSubGear = GEAR_SUB_MEKBOOSTERS;
+                }
+            } else {
+                if ((ce instanceof Mek mek) && (mek.getMechanicalJumpBoosterMP() > 0) && (ce.getJumpMP() == 0)) {
+                    jumpSubGear = GEAR_SUB_MEKBOOSTERS;
+                }
+            }
+            if (!cmd.isJumping()) {
+                initializeJumpMovePath();
+            }
             Color jumpColor = GUIP.getMoveJumpColor();
             clientgui.getBoardView().setHighlightColor(jumpColor);
             computeMovementEnvelope(ce);
@@ -4957,7 +4983,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             gear = MovementDisplay.GEAR_DFA;
             computeMovementEnvelope(ce);
             if (!cmd.isJumping()) {
-                addStepToMovePath(MoveStepType.START_JUMP);
+                initializeJumpMovePath();
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_RAM.getCmd())) {
             if (gear != MovementDisplay.GEAR_LAND) {
@@ -5219,7 +5245,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 if (cmd.getLastStep() == null
                         && ce instanceof BattleArmor
                         && ce.getMovementMode().equals(EntityMovementMode.INF_JUMP)) {
-                    addStepToMovePath(MoveStepType.START_JUMP);
+                    initializeJumpMovePath();
                     gear = GEAR_JUMP;
                     Color jumpColor = GUIP.getMoveJumpColor();
                     clientgui.getBoardView().setHighlightColor(jumpColor);
@@ -5532,6 +5558,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             updateLoadButtons();
             butDone.setEnabled(true);
         }
+    }
+
+    /**
+     * @param ce The entity to test
+     * @return True when the given unit is a Mek with both jump jets and mechanical jump boosters.
+     */
+    private boolean mustChooseJumpType(Entity ce) {
+        return (ce instanceof Mek mek) && (ce.getJumpMP() > 0) && (mek.getMechanicalJumpBoosterMP() > 0);
     }
 
     /**
@@ -6094,7 +6128,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         setTurnEnabled(!ce.isImmobile() && !ce.isStuck() && ((ce.getWalkMP() > 0) || (ce.getJumpMP() > 0))
-                && !(cmd.isJumping() && (ce instanceof Mek) && (ce.getJumpType() == Mek.JUMP_BOOSTER)));
+              && !(cmd.isJumping() && (ce instanceof Mek) && (jumpSubGear == GEAR_SUB_MEKBOOSTERS)));
     }
 
     /** Shortcut to clientgui.getClient().getGame(). */

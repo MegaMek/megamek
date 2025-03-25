@@ -335,7 +335,8 @@ public abstract class BVCalculator {
      * {@link #setRunMP()}.
      */
     protected void setJumpMP() {
-        jumpMP = entity.getJumpMP(MPCalculationSetting.BV_CALCULATION);
+        jumpMP = Math.max(entity.getJumpMP(MPCalculationSetting.BV_CALCULATION),
+              entity.getMechanicalJumpBoosterMP(MPCalculationSetting.BV_CALCULATION));
     }
 
     /**

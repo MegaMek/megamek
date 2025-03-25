@@ -108,7 +108,7 @@ public class CachedEntityState {
 
     public int getJumpMP() {
         if (jumpMP == null) {
-            jumpMP = backingEntity.getJumpMP();
+            jumpMP = backingEntity.getAnyTypeMaxJumpMP();
         }
 
         return jumpMP;

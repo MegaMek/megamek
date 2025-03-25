@@ -803,7 +803,7 @@ public class Princess extends BotClient implements Agent {
                 ArrayList<Coords> candidates = rankedCoords.get(bestRank);
                 for (Coords c: candidates) {
                     mp.clear();
-                    mp.addStep((deployedUnit.getJumpMP() == 0) ? MoveStepType.NONE: MoveStepType.START_JUMP);
+                    mp.addStep((deployedUnit.getAnyTypeMaxJumpMP() == 0) ? MoveStepType.NONE: MoveStepType.START_JUMP);
                     mp.getLastStep().setPosition(c);
                     current = bestRank - rankKernelAroundCoords(
                             mp, deployedUnit, RADIUS, (BasicPathRanker) ranker);
@@ -1229,8 +1229,8 @@ public class Princess extends BotClient implements Agent {
         try {
             // Find out how fast this unit can move.
             int fastestMove = entity.getRunMP(MPCalculationSetting.STANDARD);
-            if (entity.getJumpMP() > fastestMove) {
-                fastestMove = entity.getJumpMP();
+            if (entity.getAnyTypeMaxJumpMP() > fastestMove) {
+                fastestMove = entity.getAnyTypeMaxJumpMP();
             }
             msg.append("\n\t\tFastest Move = ").append(fastestMove);
 
@@ -1878,7 +1878,7 @@ public class Princess extends BotClient implements Agent {
                 calledShotDirection = CalledShot.CALLED_HIGH;
             } else if (lowerTargets >= 1 ||
                     target.getWalkMP() >= CALLED_SHOT_MIN_MOVE ||
-                    target.getJumpMP() >= CALLED_SHOT_MIN_JUMP) {
+                    target.getAnyTypeMaxJumpMP() >= CALLED_SHOT_MIN_JUMP) {
                 calledShotDirection = CalledShot.CALLED_LOW;
             }
 

@@ -130,6 +130,7 @@ public class MoveStep implements Serializable {
      * Determines if this MoveStep is part of a MovePath that is jumping.
      */
     private boolean isJumpingPath = false;
+    private boolean isUsingMekJumpBooster = false;
 
     /**
      * Determines if this MoveStep is part of a MovePath that is moving
@@ -210,6 +211,7 @@ public class MoveStep implements Serializable {
         if (path != null) {
             entity = path.getEntity();
             isJumpingPath = path.isJumping();
+            isUsingMekJumpBooster = path.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
             isCarefulPath = path.isCareful();
         }
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
@@ -513,7 +515,7 @@ public class MoveStep implements Serializable {
             setElevation(getElevation() + 1);
         } else if (isJumping()) {
             Hex hex = game.getBoard().getHex(getPosition());
-            int maxElevation = (entity.getJumpMP() + entity.getElevation() + game
+            int maxElevation = (getAvailableJumpMP(entity) + entity.getElevation() + game
                     .getBoard().getHex(entity.getPosition()).getLevel()) - hex.getLevel();
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
             int depth = -hex.depth(true);
@@ -809,8 +811,7 @@ public class MoveStep implements Serializable {
                 } else if (entity.isUsingManAce()
                         & (entity instanceof QuadMek)) {
                     setMp(getMp());
-                } else if (isJumping() &&
-                        (entity.getJumpType() == Mek.JUMP_BOOSTER)) {
+                } else if (isJumping() && isUsingMekJumpBooster) {
                     setMp(1);
                 } else {
                     setMp(getMp() + 1); // +1 for side step
@@ -827,8 +828,7 @@ public class MoveStep implements Serializable {
                 } else if (entity.isUsingManAce()
                         & (entity instanceof QuadMek)) {
                     setMp(getMp());
-                } else if (isJumping() &&
-                        (entity.getJumpType() == Mek.JUMP_BOOSTER)) {
+                } else if (isJumping() && isUsingMekJumpBooster) {
                     setMp(1);
                 } else {
                     setMp(getMp() + 1); // +1 for side step
@@ -1429,6 +1429,10 @@ public class MoveStep implements Serializable {
      */
     public boolean isUsingSupercharger() {
         return isUsingSupercharger;
+    }
+
+    public boolean isUsingMekJumpBooster() {
+        return isUsingMekJumpBooster;
     }
 
     public boolean isEvading() {
@@ -2188,12 +2192,12 @@ public class MoveStep implements Serializable {
 
         // check for valid jump mp
         if (isJumping()
-                && (getMpUsed() <= entity.getJumpMPWithTerrain())
-                && !isProne()
-                && !isHullDown()
-                && !((entity instanceof ProtoMek) && (entity
-                        .getInternal(ProtoMek.LOC_LEG) == IArmorState.ARMOR_DESTROYED))
-                && (!entity.isStuck() || entity.canUnstickByJumping())) {
+              && (getMpUsed() <= getAvailableJumpMP(entity))
+              && !isProne()
+              && !isHullDown()
+              && !((entity instanceof ProtoMek) && (entity.getInternal(ProtoMek.LOC_LEG) == IArmorState.ARMOR_DESTROYED))
+              && (!entity.isStuck() || entity.canUnstickByJumping())) {
+
             movementType = EntityMovementType.MOVE_JUMP;
         }
 
@@ -2473,8 +2477,7 @@ public class MoveStep implements Serializable {
         }
 
         // Mechanical Jump Boosters don't allow facing changes
-        if (isJumping()
-                && (entity.getJumpType() == Mek.JUMP_BOOSTER)
+        if (isJumping() && isUsingMekJumpBooster
                 && ((stepType == MoveStepType.TURN_LEFT) || (stepType == MoveStepType.TURN_RIGHT))) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
@@ -3359,7 +3362,7 @@ public class MoveStep implements Serializable {
         // Can't back up across an elevation change.
         if (!(entity instanceof VTOL)
                 && isThisStepBackwards()
-                && !(isJumping() && (entity.getJumpType() == Mek.JUMP_BOOSTER))
+                && !(isJumping() && isUsingMekJumpBooster)
                 && (((destAlt != srcAlt) && !game.getOptions().booleanOption(
                         OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)) || (game.getOptions()
                                 .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)
@@ -3521,7 +3524,7 @@ public class MoveStep implements Serializable {
                 || (type == MoveStepType.LATERAL_LEFT_BACKWARDS) || (type == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                 && (destAlt != srcAlt)
                 && !(entity instanceof VTOL)
-                && !(isJumping() && (entity.getJumpType() == Mek.JUMP_BOOSTER))) {
+                && !(isJumping() && isUsingMekJumpBooster)) {
             // Generally forbidden without TacOps Expanded Backward Movement p.22
             if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)) {
                 return false;
@@ -3633,11 +3636,9 @@ public class MoveStep implements Serializable {
 
         // can't jump over too-high terrain
         if ((movementType == EntityMovementType.MOVE_JUMP)
-                && (destAlt > (entity.getElevation()
-                        + entity.game.getBoard().getHex(entity.getPosition())
-                                .getLevel()
-                        + entity.getJumpMPWithTerrain() + (type == MoveStepType.DFA ? 1
-                                : 0)))) {
+              && (destAlt > (entity.getElevation()
+              + entity.game.getBoard().getHex(entity.getPosition()).getLevel()
+              + getAvailableJumpMP(entity) + (type == MoveStepType.DFA ? 1 : 0)))) {
             return false;
         }
 
@@ -3788,6 +3789,10 @@ public class MoveStep implements Serializable {
         }
 
         return true;
+    }
+
+    private int getAvailableJumpMP(Entity entity) {
+        return isUsingMekJumpBooster ? entity.getMechanicalJumpBoosterMP() : entity.getJumpMPWithTerrain();
     }
 
     public int getElevation() {

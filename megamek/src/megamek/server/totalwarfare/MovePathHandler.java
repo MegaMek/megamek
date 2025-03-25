@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -169,6 +170,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (md.contains(MovePath.MoveStepType.CAREFUL_STAND)) {
             entity.setCarefulStand(true);
         }
+
+        entity.setJumpingWithMechanicalBoosters(md.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER));
+
         if (md.contains(MovePath.MoveStepType.BACKWARDS)) {
             entity.setMovedBackwards(true);
             if (md.getMpUsed() > entity.getWalkMP()) {
@@ -680,7 +684,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 gameManager.getMainPhaseReport().addAll(gameManager.doEntityFallsInto(entity,
                         entity.getElevation(), md.getJumpPathHighestPoint(),
                         curPos, entity.getBasePilotingRoll(overallMoveType),
-                        false, entity.getJumpMP()));
+                        false, entity.getMechanicalJumpBoosterMP()));
             }
 
             // jumped into water?
@@ -1965,8 +1969,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (cachedGravityLimit < 0) {
                 cachedGravityLimit = EntityMovementType.MOVE_JUMP == moveType
-                        ? entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)
-                        : entity.getRunningGravityLimit();
+                      ? (step.isUsingMekJumpBooster()
+                      ? entity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                      : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY))
+                      : entity.getRunningGravityLimit();
             }
             // check for charge
             if (step.getType() == MovePath.MoveStepType.CHARGE) {
@@ -2263,7 +2269,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // set last step parameters
             curPos = step.getPosition();
-            if (!((entity.getJumpType() == Mek.JUMP_BOOSTER) && step.isJumping())) {
+            if (!(step.isUsingMekJumpBooster() && step.isJumping())) {
                 curFacing = step.getFacing();
             }
             // check if a building PSR will be needed later, before setting the
@@ -3201,8 +3207,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (((step.getType() == MovePath.MoveStepType.BACKWARDS)
                     || (step.getType() == MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS)
                     || (step.getType() == MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS))
-                    && !(md.isJumping()
-                            && (entity.getJumpType() == Mek.JUMP_BOOSTER))
+                    && !(md.isJumping() && step.isUsingMekJumpBooster())
                     && (lastHex.getLevel() + lastElevation != curHex.getLevel() + step.getElevation())
                     && !(entity instanceof VTOL)
                     && !(curClimbMode

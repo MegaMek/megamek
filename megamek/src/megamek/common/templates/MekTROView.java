@@ -68,6 +68,7 @@ public class MekTROView extends TROView {
         setModelData("walkMP", mek.getWalkMP());
         setModelData("runMP", mek.getRunMPasString());
         setModelData("jumpMP", mek.getJumpMP());
+        setModelData("jumpBoosterMP", mek.getMechanicalJumpBoosterMP());
         setModelData("hsType", mek.getHeatSinkTypeName());
         setModelData("hsCount",
                 mek.hasDoubleHeatSinks() ? mek.heatSinks() + " [" + (mek.heatSinks() * 2) + "]" : mek.heatSinks());
@@ -143,6 +144,7 @@ public class MekTROView extends TROView {
                 formatSystemFluff(EntityFluff.System.CHASSIS, mek.getFluff(), this::formatChassisDesc));
         setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, mek.getFluff(), this::formatJJDesc));
         setModelData("jumpCapacity", mek.getJumpMP() * 30);
+        setModelData("jumpBoosterCapacity", mek.getMechanicalJumpBoosterMP() * 30);
     }
 
     private static final int[][] MEK_ARMOR_LOCS = { { Mek.LOC_HEAD }, { Mek.LOC_CT }, { Mek.LOC_RT, Mek.LOC_LT },
@@ -184,20 +186,13 @@ public class MekTROView extends TROView {
     }
 
     private String formatJJDesc() {
-        switch (mek.getJumpType()) {
-            case Mek.JUMP_STANDARD:
-                return Messages.getString("TROView.jjStandard");
-            case Mek.JUMP_IMPROVED:
-                return Messages.getString("TROView.jjImproved");
-            case Mek.JUMP_PROTOTYPE:
-                return Messages.getString("TROView.jjPrototype");
-            case Mek.JUMP_PROTOTYPE_IMPROVED:
-                return Messages.getString("TROView.jjImpPrototype");
-            case Mek.JUMP_BOOSTER:
-                return Messages.getString("TROView.jjBooster");
-            default:
-                return Messages.getString("TROView.jjNone");
-        }
+        return switch (mek.getJumpType()) {
+            case Mek.JUMP_STANDARD -> Messages.getString("TROView.jjStandard");
+            case Mek.JUMP_IMPROVED -> Messages.getString("TROView.jjImproved");
+            case Mek.JUMP_PROTOTYPE -> Messages.getString("TROView.jjPrototype");
+            case Mek.JUMP_PROTOTYPE_IMPROVED -> Messages.getString("TROView.jjImpPrototype");
+            default -> Messages.getString("TROView.jjNone");
+        };
     }
 
     @Override

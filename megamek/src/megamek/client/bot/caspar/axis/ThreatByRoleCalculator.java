@@ -37,14 +37,14 @@ import megamek.common.UnitRole;
  */
 public class ThreatByRoleCalculator extends BaseAxisCalculator {
     @Override
-    public double[] axis() {
-        return new double[UnitRole.values().length];
+    public float[] axis() {
+        return new float[UnitRole.values().length];
     }
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the threat by role
-        double[] threatByRole = axis();
+        float[] threatByRole = axis();
 
         return threatByRole;
     }

@@ -28,10 +28,10 @@
 package megamek.client.bot.caspar;
 
 
+import megamek.ai.neuralnetwork.NeuralNetwork;
 import megamek.client.bot.common.GameState;
 import megamek.ai.axis.InputAxisCalculator;
 import megamek.client.bot.common.PathfindingEngine;
-import megamek.client.bot.neuralnetwork.NeuralNetwork;
 import megamek.client.bot.princess.RankedPath;
 import megamek.common.Entity;
 import megamek.common.MovePath;
@@ -40,12 +40,13 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+
 /**
  * Handles movement decisions for CASPAR AI units.
  * Generates, evaluates, and selects movement paths based on tactical objectives and neural network evaluation.
  */
 public class MovementHandler {
-    private final NeuralNetwork neuralNetwork;
+    private final NeuralNetwork     neuralNetwork;
     private final DifficultyManager difficultyManager;
     private final PathfindingEngine pathfinder;
     private final InputAxisCalculator inputCalculator;
@@ -95,10 +96,10 @@ public class MovementHandler {
      */
     public double evaluateMovePath(MovePath path, GameState gameState) {
         // Calculate input features for neural network
-        double[] inputVector = inputCalculator.calculateInputVector(path, gameState);
+        float[] inputVector = inputCalculator.calculateInputVector(path, gameState);
 
         // Get raw prediction from neural network
-        double prediction = neuralNetwork.predict(inputVector);
+        float prediction = neuralNetwork.predict(inputVector);
 
         // Allow difficulty manager to adjust prediction quality
         return difficultyManager.adjustDecisionQuality(prediction);

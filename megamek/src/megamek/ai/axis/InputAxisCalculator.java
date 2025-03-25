@@ -41,7 +41,7 @@ public interface InputAxisCalculator {
      * @param movePath The movement path to evaluate
      * @return A normalized input vector
      */
-    double[] calculateInputVector(Pathing movePath, GameState gameState);
+    float[] calculateInputVector(Pathing movePath, GameState gameState);
 
     /**
      * Returns the size of the input vector.

@@ -30,8 +30,6 @@ package megamek.client.bot.caspar.axis;
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
 
-import java.util.Arrays;
-
 import static megamek.client.bot.common.BoardQuickRepresentation.NORMALIZED_THREAT_HEATMAP;
 
 /**
@@ -41,12 +39,12 @@ import static megamek.client.bot.common.BoardQuickRepresentation.NORMALIZED_THRE
 public class EnemyThreatHeatmapCalculator extends BaseAxisCalculator {
 
     @Override
-    public double[] axis() {
-        return new double[NORMALIZED_THREAT_HEATMAP];
+    public float[] axis() {
+        return new float[NORMALIZED_THREAT_HEATMAP];
     }
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         return gameState.getBoardQuickRepresentation().getNormalizedThreatLevelHeatmap();
     }
 }

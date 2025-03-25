@@ -33,10 +33,6 @@ import megamek.client.bot.common.StructOfUnitArrays;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.equipment.WeaponMounted;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Calculates the best expected damage ratio for the current turn
@@ -44,9 +40,9 @@ import java.util.List;
  */
 public class DamageRatioCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the best expected damage ratio for the current attack
-        double[] damageRatio = axis();
+        float[] damageRatio = axis();
 
         var unit = pathing.getEntity();
         var maxWeaponRange = unit.getMaxWeaponRange();
@@ -62,7 +58,7 @@ public class DamageRatioCalculator extends BaseAxisCalculator {
         return Compute.computeTotalDamage(weapons);
     }
 
-    private double calculateDamageRatio(Coords coords, StructOfUnitArrays enemies, int maxRange, int damage) {
+    private float calculateDamageRatio(Coords coords, StructOfUnitArrays enemies, int maxRange, int damage) {
         int xd;
         int yd;
         int x = coords.getX();
@@ -71,7 +67,7 @@ public class DamageRatioCalculator extends BaseAxisCalculator {
         int length = enemies.size();
 
         double dist;
-        double ratio = 0d;
+        float ratio = 0f;
 
         for (int i = 0; i < length; i++) {
             xd = enemies.getX(i);
@@ -80,7 +76,7 @@ public class DamageRatioCalculator extends BaseAxisCalculator {
             dist = Coords.distance(x, y, xd, yd);
 
             if (dist <= maxRange) {
-                ratio = Math.max(ratio, damage / (double) (enemies.getArmor(i) + enemies.getInternal(i)));
+                ratio = Math.max(ratio, damage / (float) (enemies.getArmor(i) + enemies.getInternal(i)));
             }
         }
 

@@ -43,9 +43,9 @@ public class DecoyPotentialCalculator extends BaseAxisCalculator {
     private final static int DIVISOR_FAST_UNITS = 4;
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the potential of the unit to act as a decoy
-        double[] decoyPotential = axis();
+        float[] decoyPotential = axis();
         var unit = pathing.getEntity();
         decoyPotential[0] = normalize(unit.getDamageLevel(), 0, getDivisor(unit));
         return decoyPotential;

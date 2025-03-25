@@ -36,9 +36,9 @@ import megamek.client.bot.common.Pathing;
  */
 public class StandingStillCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the standing still
-        double[] standingStill = axis();
+        float[] standingStill = axis();
 
         return standingStill;
     }

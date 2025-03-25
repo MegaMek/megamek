@@ -42,7 +42,7 @@ import megamek.client.bot.common.Pathing;
 public class DefaultInputAxisCalculator implements InputAxisCalculator {
     // Registry of axis calculators
     private final AxisCalculator[] axisCalculators = AxisType.axisCalculators();
-    private final double[] inputVector = new double[AxisType.totalAxisLength()];
+    private final float[] inputVector = new float[AxisType.totalAxisLength()];
 
     /**
      * Creates an input axis calculator with all required axis calculators.
@@ -52,14 +52,14 @@ public class DefaultInputAxisCalculator implements InputAxisCalculator {
 
 
     @Override
-    public double[] calculateInputVector(Pathing movePath, GameState gameState) {
+    public float[] calculateInputVector(Pathing movePath, GameState gameState) {
         // Start index for writing values
         int index = 0;
 
         // Calculate and insert each axis group
         for (AxisType axisType : AxisType.values()) {
             AxisCalculator calculator = axisCalculators[axisType.ordinal()];
-            double[] axisValues = calculator.calculateAxis(movePath, gameState);
+            float[] axisValues = calculator.calculateAxis(movePath, gameState);
 
             // Copy values to the input vector
             System.arraycopy(axisValues, 0, inputVector, index, axisValues.length);

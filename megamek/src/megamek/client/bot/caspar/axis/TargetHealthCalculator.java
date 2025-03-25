@@ -36,9 +36,9 @@ import megamek.client.bot.common.Pathing;
  */
 public class TargetHealthCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the target health
-        double[] targetHealth = axis();
+        float[] targetHealth = axis();
 
         return targetHealth;
     }

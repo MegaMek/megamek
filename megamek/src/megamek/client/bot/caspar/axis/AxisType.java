@@ -56,7 +56,6 @@ public enum AxisType {
     HEAT_MANAGEMENT(new HeatManagementCalculator()),
     ENEMY_VIP_DISTANCE(new EnemyVipDistanceCalculator()),
     NEARBY_ENEMY_COUNT(new NearbyEnemyCountCalculator()),
-    ORIGINAL_BOT_SETTINGS(new OriginalBotSettingsCalculator()),
     IS_CRIPPLED(new IsCrippledCalculator()),
     MOVING_TOWARD_WAYPOINT(new MovingTowardWaypointCalculator()),
     UNIT_MOVEMENT(new UnitMovementCalculator()),

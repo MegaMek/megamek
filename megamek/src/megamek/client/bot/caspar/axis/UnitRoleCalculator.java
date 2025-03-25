@@ -38,16 +38,16 @@ import megamek.common.UnitRole;
  */
 public class UnitRoleCalculator extends BaseAxisCalculator {
     @Override
-    public double[] axis() {
-        return new double[UnitRole.values().length];
+    public float[] axis() {
+        return new float[UnitRole.values().length];
     }
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the unit role
-        double[] unitRole = axis();
+        float[] unitRole = axis();
         Entity unit = pathing.getEntity();
-        unitRole[unit.getRole().ordinal()] = 1.0d;
+        unitRole[unit.getRole().ordinal()] = 1.0f;
         return unitRole;
     }
 }

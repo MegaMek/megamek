@@ -36,9 +36,9 @@ import megamek.client.bot.common.Pathing;
  */
 public class UnderEnemyEcmCoverageCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the potential of the unit to act as a decoy
-        double[] ecmCoverage = axis();
+        float[] ecmCoverage = axis();
 
         // Implementation goes here
 

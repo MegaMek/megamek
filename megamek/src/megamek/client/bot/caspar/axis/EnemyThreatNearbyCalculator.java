@@ -42,13 +42,13 @@ public class EnemyThreatNearbyCalculator extends BaseAxisCalculator {
     private static final int NUMBER_OF_HEXES_ON_3_DIST_RADIUS = 37; // 6 * 3 + 6 * 2 + 6 + 1;
 
     @Override
-    public double[] axis() {
-        return new double[NUMBER_OF_HEXES_ON_3_DIST_RADIUS];
+    public float[] axis() {
+        return new float[NUMBER_OF_HEXES_ON_3_DIST_RADIUS];
     }
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
-        double[] threats = axis();
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
+        float[] threats = axis();
         List<Coords> nearbyHexes = pathing.getFinalCoords().allAtDistanceOrLess(3);
 
         var quickBoardRepresentation = gameState.getBoardQuickRepresentation();

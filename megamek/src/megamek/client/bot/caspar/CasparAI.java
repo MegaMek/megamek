@@ -27,13 +27,13 @@
  */
 package megamek.client.bot.caspar;
 
+import megamek.ai.neuralnetwork.NeuralNetwork;
 import megamek.client.bot.common.AdvancedAgent;
 import megamek.client.bot.common.DifficultyLevel;
 import megamek.client.bot.common.ScoutingPlanner;
 import megamek.client.bot.common.formation.FormationManager;
 import megamek.client.bot.common.GameState;
 import megamek.ai.axis.InputAxisCalculator;
-import megamek.client.bot.neuralnetwork.NeuralNetwork;
 import megamek.client.bot.princess.RankedPath;
 import megamek.common.MovePath;
 
@@ -41,8 +41,9 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * The main AI controller for CASPAR (Combat Algorithmic System for Predictive Analysis and Response).
- * This class coordinates the decision-making process using neural networks for both movement and firing solutions.
+ * The main AI controller for CASPAR (Combat Algorithmic System for Predictive Analysis and Response). This class
+ * coordinates the decision-making process using neural networks for both movement and firing solutions.
+ *
  * @author Luana Coppio
  */
 public class CasparAI {
@@ -72,10 +73,11 @@ public class CasparAI {
      * Evaluates a movement path and returns a score based on the neural network output.
      *
      * @param movePath The movement path to evaluate
+     *
      * @return A score between 0 and 1
      */
     public double evaluateMovePath(MovePath movePath) {
-        double[] inputVector = inputCalculator.calculateInputVector(movePath, getGameState());
+        float[] inputVector = inputCalculator.calculateInputVector(movePath, getGameState());
         return neuralNetwork.predict(inputVector);
     }
 
@@ -96,6 +98,7 @@ public class CasparAI {
      * Selects the best movement path for a unit from a set of possible paths.
      *
      * @param possiblePaths List of possible movement paths
+     *
      * @return The selected movement path
      */
     public MovePath selectMovePath(List<MovePath> possiblePaths) {
@@ -147,6 +150,8 @@ public class CasparAI {
      * Builder pattern for creating CasparAI instances.
      */
     public static class Builder {
+        private final AdvancedAgent agent;
+        private final String modelName;
         private NeuralNetwork neuralNetwork;
         private InputAxisCalculator inputCalculator;
         private MovementHandler movementHandler;
@@ -155,8 +160,6 @@ public class CasparAI {
         private TacticalPlanner tacticalPlanner;
         private DifficultyManager difficultyManager;
         private ScoutingPlanner scoutingPlanner;
-        private final AdvancedAgent agent;
-        private final String modelName;
 
         public Builder(AdvancedAgent agent, String modelName) {
             this.agent = agent;
@@ -218,8 +221,10 @@ public class CasparAI {
             }
 
             if (movementHandler == null) {
-                this.movementHandler = new MovementHandler(
-                      neuralNetwork, difficultyManager, new DefaultPathfindingEngine(agent), inputCalculator);
+                this.movementHandler = new MovementHandler(neuralNetwork,
+                      difficultyManager,
+                      new DefaultPathfindingEngine(agent),
+                      inputCalculator);
             }
 
             if (fireControlHandler == null) {

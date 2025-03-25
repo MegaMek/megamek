@@ -27,17 +27,17 @@
  */
 package megamek.client.bot.caspar.axis;
 
+import static megamek.codeUtilities.MathUtility.clamp01;
+
+import java.util.Optional;
+import java.util.Set;
+
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
 import megamek.client.bot.common.formation.Formation;
 import megamek.common.Coords;
 import megamek.common.CubeCoords;
 import megamek.common.Entity;
-
-import java.util.Optional;
-import java.util.Set;
-
-import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
  * Calculates the formation alignment of the unit
@@ -50,16 +50,16 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
     //  intended
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
 
-        double[] formationAlignment = axis();
+        float[] formationAlignment = axis();
         Entity unit = pathing.getEntity();
 
         Optional<Formation> formationOpt = gameState.getFormationFor(unit);
         if (formationOpt.isPresent()) {
             Formation formation = formationOpt.get();
 
-            double alignment = switch (formation.getFormationType()) {
+            float alignment = switch (formation.getFormationType()) {
                 case BOX -> calculateBoxAlignment(formation, pathing);
                 case LINE -> calculateLineAlignment(formation, pathing);
                 case WEDGE -> calculateWedgeAlignment(formation, pathing);
@@ -82,17 +82,17 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param pathing The unit's pathing
      * @return Alignment score between 0.0 and 1.0
      */
-    private double calculateBoxAlignment(Formation formation, Pathing pathing) {
+    private float calculateBoxAlignment(Formation formation, Pathing pathing) {
         Entity unit = pathing.getEntity();
         Entity leader = formation.getLeader();
         Coords finalPosition = pathing.getFinalCoords();
         int unitFinalFacing = pathing.getFinalFacing();
         int leaderFacing = leader.getFacing();
-        double facingAlignment = getFacingAlignment(unitFinalFacing, leaderFacing);
-        double positionAlignment = calculateBoxPositionAlignment(formation, unit, finalPosition, leader);
+        float facingAlignment = getFacingAlignment(unitFinalFacing, leaderFacing);
+        float positionAlignment = calculateBoxPositionAlignment(formation, unit, finalPosition, leader);
 
         // Combine facing and position alignment
-        return (0.4 * facingAlignment) + (0.6 * positionAlignment);
+        return (0.4f * facingAlignment) + (0.6f * positionAlignment);
     }
 
     /**
@@ -101,12 +101,12 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param leaderFacing The leader's facing
      * @return Facing alignment score between 0.0 and 1.0, where 1.0 is perfect alignment and 0.0 is opposite
      */
-    private static double getFacingAlignment(int unitFinalFacing, int leaderFacing) {
+    private static float getFacingAlignment(int unitFinalFacing, int leaderFacing) {
         int facingDiff = Math.min(
               Math.abs(unitFinalFacing - leaderFacing),
               6 - Math.abs(unitFinalFacing - leaderFacing)
         );
-        return 1.0 - (facingDiff / 3.0);
+        return 1.0f - (facingDiff / 3.0f);
     }
 
     /**
@@ -122,7 +122,7 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param leader The formation leader
      * @return Position alignment score between 0.0 and 1.0
      */
-    private double calculateBoxPositionAlignment(Formation formation, Entity unit,
+    private float calculateBoxPositionAlignment(Formation formation, Entity unit,
                                                  Coords unitPos, Entity leader) {
         Coords formationCenter = formation.getFormationCenter();
         Coords leaderPos = leader.getPosition();
@@ -131,7 +131,7 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
         if (unit.getId() == leader.getId()) {
             // Leader should be close to formation center
             int distanceToCenter = leaderPos.distance(formationCenter);
-            return Math.max(0.3, 1.0 - (distanceToCenter / 4.0));
+            return Math.max(0.3f, 1.0f - (distanceToCenter / 4.0f));
         }
 
         // 1. Calculate ideal distribution for a box formation
@@ -154,24 +154,25 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
         // 4. Compute how well the unit fits in a box grid
         // In a perfect grid, one of the components would be close to the sum of the other two
         // (This is due to the constraint that q + r + s = 0 in cube coordinates)
-        double boxGridAlignment;
+        float boxGridAlignment;
 
-        double offGridDistance = Math.min(Math.abs(q - (r + s)), Math.min(Math.abs(r - (q + s)), Math.abs(s - (q + r))));
+        float offGridDistance = (float) Math.min(Math.abs(q - (r + s)), Math.min(Math.abs(r - (q + s)),
+              Math.abs(s - (q + r))));
         if (offGridDistance < 0.5) {
             // Unit is well-aligned with the grid
-            boxGridAlignment = 1.0;
+            boxGridAlignment = 1.0f;
         } else {
             // Unit is off-grid, calculate how far off
-            boxGridAlignment = clamp01(1.0 - (offGridDistance / 3.0));
+            boxGridAlignment = (float) clamp01(1.0 - (offGridDistance / 3.0));
         }
 
         int distanceToLeader = unitPos.distance(leaderPos);
-        double spacingFactor = getBoxSpacingFactor(distanceToLeader);
+        float spacingFactor = getBoxSpacingFactor(distanceToLeader);
 
-        double symmetryFactor = calculateBoxSymmetryFactor(formation, unit, unitPos);
+        float symmetryFactor = calculateBoxSymmetryFactor(formation, unit, unitPos);
 
         // 7. Combine all factors
-        return (0.4 * boxGridAlignment) + (0.3 * spacingFactor) + (0.3 * symmetryFactor);
+        return (0.4f * boxGridAlignment) + (0.3f * spacingFactor) + (0.3f * symmetryFactor);
     }
     /**
      * Calculates a true symmetry factor for box formations by evaluating how well
@@ -182,7 +183,7 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param unitPos The unit's position
      * @return Symmetry factor between 0.0 and 1.0
      */
-    private double calculateBoxSymmetryFactor(Formation formation, Entity unit, Coords unitPos) {
+    private float calculateBoxSymmetryFactor(Formation formation, Entity unit, Coords unitPos) {
         Set<Entity> members = formation.getMembers();
         Coords formationCenter = formation.getFormationCenter();
 
@@ -206,12 +207,12 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
         double oppositeDistance = oppositeVector.magnitude();
 
         // If unit is at center, no opposite needed
-        if (oppositeDistance < 0.1) {
-            return 1.0;
+        if (oppositeDistance < 0.1f) {
+            return 1.0f;
         }
 
         // 3. Find the closest unit to the ideal opposite position
-        double bestOppositeMatch = Double.MAX_VALUE;
+        float bestOppositeMatch = Float.MAX_VALUE;
         Coords oppositeIdealPos = centerCube.add(oppositeVector).toOffset();
 
         for (Entity otherUnit : members) {
@@ -226,16 +227,16 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
         }
 
         // Calculate symmetry score based on how well the opposite position is covered
-        double oppositeMatchScore;
+        float oppositeMatchScore;
         if (bestOppositeMatch <= 1) {
             // Perfect or near-perfect opposite match
-            oppositeMatchScore = 1.0;
+            oppositeMatchScore = 1.0f;
         } else if (bestOppositeMatch > 5) {
             // No good opposite match
-            oppositeMatchScore = 0.0;
+            oppositeMatchScore = 0.0f;
         } else {
             // Partial match
-            oppositeMatchScore = 1.0 - ((bestOppositeMatch - 1) / 4.0);
+            oppositeMatchScore = 1f - ((bestOppositeMatch - 1f) / 4f);
         }
 
         // 4. Check quadrant balance (are units evenly distributed in all directions?)
@@ -267,19 +268,19 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
         }
 
         // Calculate evenness of distribution
-        double idealQuadrantCount = members.size() / 4.0;
-        double quadrantImbalance = 0;
+        float idealQuadrantCount = members.size() / 4.0f;
+        float quadrantImbalance = 0;
 
         for (int count : quadrantCounts) {
             quadrantImbalance += Math.abs(count - idealQuadrantCount);
         }
 
         // Normalize imbalance score (1 = perfectly balanced, 0 = completely imbalanced)
-        double maxImbalance = members.size(); // Worst case: all units in one quadrant
-        double balanceScore = quadrantImbalance / maxImbalance;
+        float maxImbalance = members.size(); // Worst case: all units in one quadrant
+        float balanceScore = quadrantImbalance / maxImbalance;
 
         // 5. Combine opposite matching and quadrant balance
-        return (0.6 * oppositeMatchScore) + (0.4 * balanceScore);
+        return (0.6f * oppositeMatchScore) + (0.4f * balanceScore);
     }
 
     /**
@@ -287,13 +288,13 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param distanceToCenter The distance to the formation center
      * @return Symmetry factor between 0.0 and 1.0
      */
-    private double getSimpleDistanceSymmetryFactor(int distanceToCenter) {
+    private float getSimpleDistanceSymmetryFactor(int distanceToCenter) {
         if (distanceToCenter > Formation.FormationType.BOX.getMaxDistance()) {
             // Unit is too far from formation center
-            return 1.0 - clamp01((distanceToCenter - Formation.FormationType.BOX.getMaxDistance()) / 3.0);
+            return 1.0f - clamp01((distanceToCenter - Formation.FormationType.BOX.getMaxDistance()) / 3.0f);
         } else {
             // Unit is within expected distance
-            return 1.0;
+            return 1.0f;
         }
     }
 
@@ -302,19 +303,19 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param distanceToLeader The distance to the leader
      * @return Spacing factor between 0.0 and 1.0
      */
-    private static double getBoxSpacingFactor(int distanceToLeader) {
-        double spacingFactor;
+    private static float getBoxSpacingFactor(int distanceToLeader) {
+        float spacingFactor;
         int maxDistanceToLeader = (int) Math.round(Math.sqrt(2 * Math.pow(Formation.FormationType.BOX.getMaxDistance(), 2)));
         // Ideal spacing for box formation - adjust these values based on preferences
         if (distanceToLeader < Formation.FormationType.BOX.getIdealDistance()) {
             // Too close to leader
-            spacingFactor = distanceToLeader / (double) Formation.FormationType.BOX.getIdealDistance();
+            spacingFactor = distanceToLeader / (float) Formation.FormationType.BOX.getIdealDistance();
         } else if (distanceToLeader > maxDistanceToLeader) {
             // Too far from leader
-            spacingFactor = clamp01(1 - ((distanceToLeader - maxDistanceToLeader) / (double) maxDistanceToLeader));
+            spacingFactor = clamp01(1 - ((distanceToLeader - maxDistanceToLeader) / (float) maxDistanceToLeader));
         } else {
             // Good spacing range
-            spacingFactor = 1.0;
+            spacingFactor = 1.0f;
         }
         return spacingFactor;
     }
@@ -328,19 +329,19 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param pathing The unit's pathing
      * @return Alignment score between 0.0 and 1.0
      */
-    private double calculateLineAlignment(Formation formation, Pathing pathing) {
+    private float calculateLineAlignment(Formation formation, Pathing pathing) {
         Entity leader = formation.getLeader();
         Entity unit = pathing.getEntity();
         Coords finalPosition = pathing.getFinalCoords();
         int unitFinalFacing = pathing.getFinalFacing();
         int leaderFacing = leader.getFacing();
 
-        double facingAlignmentScore = clamp01(getFacingAlignment(unitFinalFacing, leaderFacing));
+        float facingAlignmentScore = clamp01(getFacingAlignment(unitFinalFacing, leaderFacing));
 
-        double positionAlignmentScore = clamp01(calculateLinePositionAlignment(formation, unit, finalPosition, leader,
-              leaderFacing));
+        float positionAlignmentScore = (float) calculateLinePositionAlignment(formation, unit, finalPosition, leader,
+              leaderFacing);
 
-        return (0.4 * facingAlignmentScore) + (0.6 * positionAlignmentScore);
+        return (0.4f * facingAlignmentScore) + (0.6f * positionAlignmentScore);
     }
 
     /**
@@ -506,7 +507,7 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param pathing The unit's pathing
      * @return Alignment score between 0.0 and 1.0
      */
-    private double calculateWedgeAlignment(Formation formation, Pathing pathing) {
+    private float calculateWedgeAlignment(Formation formation, Pathing pathing) {
         Entity unit = pathing.getEntity();
         Entity leader = formation.getLeader();
 
@@ -522,13 +523,13 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
         );
 
         // Less strict on facing for wedge formations
-        double facingAlignment = 1.0 - (facingDiff / 4.0);
+        float facingAlignment = 1.0f - (facingDiff / 4.0f);
 
         // Calculate position alignment based on wedge formation principles
-        double positionAlignment = calculateWedgePositionAlignment(unit, finalPosition, leader, leaderFacing);
+        float positionAlignment = calculateWedgePositionAlignment(unit, finalPosition, leader, leaderFacing);
 
         // Combine facing and position alignment
-        return (0.5 * facingAlignment) + (0.5 * positionAlignment);
+        return (0.5f * facingAlignment) + (0.5f * positionAlignment);
     }
 
     /**
@@ -543,13 +544,13 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param leaderFacing The leader's facing
      * @return Position alignment score between 0.0 and 1.0
      */
-    private double calculateWedgePositionAlignment(Entity unit,
+    private float calculateWedgePositionAlignment(Entity unit,
                                                    Coords unitPos, Entity leader, int leaderFacing) {
         Coords leaderPos = leader.getPosition();
 
         // If this is the leader, they're perfectly positioned by definition
         if (unit.getId() == leader.getId()) {
-            return 1.0;
+            return 1.0f;
         }
 
         // Calculate the reverse direction (180° from leader's facing)
@@ -588,49 +589,49 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
 
         // Unit should be behind leader (negative dot product with heading)
         if (headingDot >= 0) {
-            return 0.2; // Severe penalty for being in front of leader
+            return 0.2f; // Severe penalty for being in front of leader
         }
 
         // 2. Calculate alignment with wing vectors
         // Normalize vectors for dot product
-        double unitMagnitude = unitVector.distanceTo(new CubeCoords(0,0,0));
-        double leftWingMagnitude = leftWingVector.distanceTo(new CubeCoords(0,0,0));
-        double rightWingMagnitude = rightWingVector.distanceTo(new CubeCoords(0,0,0));
+        float unitMagnitude = unitVector.distanceTo(new CubeCoords(0,0,0));
+        float leftWingMagnitude = leftWingVector.distanceTo(new CubeCoords(0,0,0));
+        float rightWingMagnitude = rightWingVector.distanceTo(new CubeCoords(0,0,0));
 
         // Calculate normalized dot products (cosine similarity)
-        double leftWingAlignment = ((unitVector.q * leftWingVector.q) +
-              (unitVector.r * leftWingVector.r) +
-              (unitVector.s * leftWingVector.s)) /
-              (unitMagnitude * leftWingMagnitude);
+        float leftWingAlignment = (float) (((unitVector.q * leftWingVector.q) +
+                      (unitVector.r * leftWingVector.r) +
+                      (unitVector.s * leftWingVector.s)) /
+                      (unitMagnitude * leftWingMagnitude));
 
-        double rightWingAlignment = ((unitVector.q * rightWingVector.q) +
+        float rightWingAlignment = (float) ((unitVector.q * rightWingVector.q) +
               (unitVector.r * rightWingVector.r) +
               (unitVector.s * rightWingVector.s)) /
               (unitMagnitude * rightWingMagnitude);
 
         // Take the maximum alignment (unit should align with one of the wings)
-        double wingAlignment = Math.max(leftWingAlignment, rightWingAlignment);
+        float wingAlignment = Math.max(leftWingAlignment, rightWingAlignment);
 
         // Convert to a score (1.0 = perfect alignment)
-        double wingAlignmentScore = Math.max(0.0, wingAlignment);
+        float wingAlignmentScore = Math.max(0.0f, wingAlignment);
 
         // 3. Check distance from leader (not too close, not too far)
         int distanceToLeader = unitPos.distance(leaderPos);
-        double distanceFactor;
+        float distanceFactor;
 
         if (distanceToLeader < 2) {
             // Too close to leader
-            distanceFactor = 0.5 * (distanceToLeader / 2.0);
+            distanceFactor = 0.5f * (distanceToLeader / 2.0f);
         } else if (distanceToLeader > 8) {
             // Too far from leader
-            distanceFactor = Math.max(0.0, 1.0 - ((distanceToLeader - 8.0) / 4.0));
+            distanceFactor = Math.max(0.0f, 1.0f - ((distanceToLeader - 8.0f) / 4.0f));
         } else {
             // Good distance range
-            distanceFactor = 1.0;
+            distanceFactor = 1.0f;
         }
 
         // Combine scores with emphasis on wing alignment
-        return (0.7 * wingAlignmentScore) + (0.3 * distanceFactor);
+        return (0.7f * wingAlignmentScore) + (0.3f * distanceFactor);
     }
 
     /**
@@ -641,7 +642,7 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param pathing The unit's pathing
      * @return Alignment score between 0.0 and 1.0
      */
-    private double calculateColumnAlignment(Formation formation, Pathing pathing) {
+    private float calculateColumnAlignment(Formation formation, Pathing pathing) {
         Entity unit = pathing.getEntity();
         Entity leader = formation.getLeader();
 
@@ -651,13 +652,13 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
         int leaderFacing = leader.getFacing();
 
         // For column, facing should be the same as the leader
-        double facingAlignment = getFacingAlignment(unitFinalFacing, leaderFacing);
+        float facingAlignment = getFacingAlignment(unitFinalFacing, leaderFacing);
 
         // Calculate position alignment based on how well the unit is positioned in the column
-        double positionAlignment = calculateColumnPositionAlignment(formation, unit, finalPosition, leader, leaderFacing);
+        float positionAlignment = calculateColumnPositionAlignment(formation, unit, finalPosition, leader, leaderFacing);
 
         // Combine facing and position alignment with emphasis on facing
-        return (0.7 * facingAlignment) + (0.3 * positionAlignment);
+        return (0.7f * facingAlignment) + (0.3f * positionAlignment);
     }
 
     /**
@@ -670,7 +671,7 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param leaderFacing The leader's facing
      * @return Position alignment score between 0.0 and 1.0
      */
-    private double calculateColumnPositionAlignment(Formation formation, Entity unit,
+    private float calculateColumnPositionAlignment(Formation formation, Entity unit,
                                                     Coords unitPos, Entity leader, int leaderFacing) {
         Coords leaderPos = leader.getPosition();
 
@@ -683,7 +684,7 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
             Coords reversePos = leaderPos.translated((leaderFacing + 3) % 6);
             boolean leaderInFront = formationCenter.distance(reversePos) < formationCenter.distance(leaderPos);
 
-            return leaderInFront ? 1.0 : 0.7;
+            return leaderInFront ? 1.0f : 0.7f;
         }
 
         // 1. Check if unit is behind leader along the leader's facing direction
@@ -715,37 +716,35 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
         // Column extends behind leader, so alignment should be positive
         if (columnAlignment <= 0) {
             // Unit is in front of or beside the leader, not behind
-            return 0.3; // Poor alignment
+            return 0.3f; // Poor alignment
         }
 
         // 3. Calculate cross product magnitude to determine distance from column line
-        double crossMagnitude = unitVector.getCrossMagnitude(columnVector);
+        float crossMagnitude = (float) unitVector.getCrossMagnitude(columnVector);
 
         // Normalize by the magnitudes to get the sine of the angle
-        double normalizedCross = crossMagnitude / (unitMagnitude * columnMagnitude);
+        float lineAlignment = crossMagnitude / (float) (unitMagnitude * columnMagnitude);
 
-        double lineAlignment = clamp01(normalizedCross);
         int distanceToLeader = unitPos.distance(leaderPos);
-        double distanceFactor;
 
         // Check if the unit is at a good distance
         int formationSize = formation.getMembers().size();
         int idealSpacing = Formation.FormationType.COLUMN.getIdealDistance();
         int maxSpacing = formationSize * idealSpacing;
-
+        float distanceFactor;
         if (distanceToLeader < idealSpacing) {
             // Too close to leader
-            distanceFactor = 0.3;
+            distanceFactor = 0.3f;
         } else if (distanceToLeader > maxSpacing) {
             // Too far from leader
-            distanceFactor = clamp01(1.0 - ((distanceToLeader - maxSpacing) / (double) maxSpacing));
+            distanceFactor = 1.0f - ((distanceToLeader - maxSpacing) / (float) maxSpacing);
         } else {
             // Good distance
-            distanceFactor = 1.0;
+            distanceFactor = 1.0f;
         }
 
         // Combine scores with emphasis on line alignment
-        return (0.7 * lineAlignment) + (0.3 * distanceFactor);
+        return (0.7f * lineAlignment) + (0.3f * distanceFactor);
     }
 
     /**
@@ -757,7 +756,7 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param pathing The unit's pathing
      * @return Alignment score between 0.0 and 1.0
      */
-    private double calculateScatteredAlignment(Formation formation, Pathing pathing) {
+    private float calculateScatteredAlignment(Formation formation, Pathing pathing) {
         Entity unit = pathing.getEntity();
         Entity leader = formation.getLeader();
 
@@ -773,13 +772,13 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
         );
 
         // More lenient alignment for scattered formation
-        double facingAlignment = Math.max(0.5, 1.0 - (facingDiff / 6.0));
+        float facingAlignment = Math.max(0.5f, 1.0f - (facingDiff / 6.0f));
 
         // Calculate position score based on scattered formation principles
-        double positionAlignment = calculateScatteredPositionAlignment(formation, unit, finalPosition);
+        float positionAlignment = calculateScatteredPositionAlignment(formation, unit, finalPosition);
 
         // Combine facing and position alignment with emphasis on position for scattered formations
-        return (0.3 * facingAlignment) + (0.7 * positionAlignment);
+        return (0.3f * facingAlignment) + (0.7f * positionAlignment);
     }
 
     /**
@@ -794,12 +793,12 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
      * @param unitPos The unit's position
      * @return Position alignment score between 0.0 and 1.0
      */
-    private double calculateScatteredPositionAlignment(Formation formation, Entity unit, Coords unitPos) {
+    private float calculateScatteredPositionAlignment(Formation formation, Entity unit, Coords unitPos) {
         Set<Entity> members = formation.getMembers();
         Coords formationCenter = formation.getFormationCenter();
 
         // 1. Check distance to other units (should be scattered)
-        double minDistanceToOther = Double.MAX_VALUE;
+        float minDistanceToOther = Float.MAX_VALUE;
         for (Entity other : members) {
             if (other.getId() == unit.getId()) {
                 continue;
@@ -810,18 +809,18 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
         }
 
         // Units should maintain some minimum distance in a scattered formation
-        double separationFactor;
+        float separationFactor;
         if (minDistanceToOther < 3) {
             // Too close to another unit
-            separationFactor = Math.max(0.0, minDistanceToOther / 3.0);
+            separationFactor = Math.max(0.0f, minDistanceToOther / 3.0f);
         } else {
             // Good separation
-            separationFactor = 1.0;
+            separationFactor = 1.0f;
         }
 
         // 2. Check coverage (distance from formation center)
         int distanceToCenter = unitPos.distance(formationCenter);
-        double coverageFactor = getCoverageFactor(distanceToCenter);
+        float coverageFactor = getCoverageFactor(distanceToCenter);
 
         // 3. Check distribution (evaluate sector coverage)
         // For scattered formations, units should be distributed in different directions
@@ -851,34 +850,34 @@ public class FormationAlignmentCalculator extends BaseAxisCalculator {
         }
 
         // Calculate distribution factor
-        double distributionFactor;
+        float distributionFactor;
         if (unitSector >= 0) {
             // Prefer sectors with fewer units
-            distributionFactor = 1.0 - (Math.min(sectorCounts[unitSector], 3) / 3.0) * 0.5;
+            distributionFactor = 1.0f - (Math.min(sectorCounts[unitSector], 3) / 3.0f) * 0.5f;
         } else {
             // Unit is at center
-            distributionFactor = 0.5;
+            distributionFactor = 0.5f;
         }
 
         // Combine scores for scattered formation
-        return (0.4 * separationFactor) + (0.3 * coverageFactor) + (0.3 * distributionFactor);
+        return (0.4f * separationFactor) + (0.3f * coverageFactor) + (0.3f * distributionFactor);
     }
 
-    private static double getCoverageFactor(int distanceToCenter) {
-        double coverageFactor;
+    private static float getCoverageFactor(int distanceToCenter) {
+        float coverageFactor;
 
         // Calculate ideal scattered radius based on formation size
-        double idealRadius = Formation.FormationType.SCATTERED.getIdealDistance();
+        float idealRadius = Formation.FormationType.SCATTERED.getIdealDistance();
         int minDistance = Formation.FormationType.SCATTERED.getMinDistance();
         if (distanceToCenter > idealRadius) {
             // Too far from formation center
             coverageFactor = 1 - clamp01((distanceToCenter - idealRadius) / idealRadius);
         } else if (distanceToCenter < minDistance) {
             // Too close to formation center
-            coverageFactor = distanceToCenter / (double) minDistance;
+            coverageFactor = distanceToCenter / (float) minDistance;
         } else {
             // Good coverage
-            coverageFactor = 1.0;
+            coverageFactor = 1.0f;
         }
         return coverageFactor;
     }

@@ -36,9 +36,9 @@ import megamek.client.bot.common.Pathing;
  */
 public class StrategicGoalCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the strategic goal
-        double[] strategicGoal = axis();
+        float[] strategicGoal = axis();
 
         return strategicGoal;
     }

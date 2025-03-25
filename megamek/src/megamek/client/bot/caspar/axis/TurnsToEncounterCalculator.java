@@ -36,9 +36,9 @@ import megamek.client.bot.common.Pathing;
  */
 public class TurnsToEncounterCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the turns to encounter
-        double[] turnsToEncounter = axis();
+        float[] turnsToEncounter = axis();
 
         return turnsToEncounter;
     }

@@ -39,17 +39,17 @@ import megamek.common.Coords;
  */
 public class EcmCoverageCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the potential of the unit to act as a decoy
-        double[] ecmCoverage = axis();
+        float[] ecmCoverage = axis();
 
         var unit = pathing.getEntity();
         if (!unit.hasECM()) {
-            ecmCoverage[0] = 0.0d;
+            ecmCoverage[0] = 0.0f;
         } else {
             int overlappingECM = unitsUnderECMRange(pathing, gameState.getFriendlyUnitsSOU());
             overlappingECM += unitsUnderECMRange(pathing, gameState.getOwnUnitsSOU());
-            ecmCoverage[0] = 1.0 / (overlappingECM + 1.0);
+            ecmCoverage[0] = 1.0f / (overlappingECM + 1.0f);
         }
 
         return ecmCoverage;

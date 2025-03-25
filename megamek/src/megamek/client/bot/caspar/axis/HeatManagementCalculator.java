@@ -38,11 +38,11 @@ import static megamek.codeUtilities.MathUtility.clamp01;
  */
 public class HeatManagementCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the heat management of the unit
-        double[] heatManagement = axis();
+        float[] heatManagement = axis();
         Entity unit = pathing.getEntity();
-        heatManagement[0] = clamp01(unit.getHeat() / (double) unit.getHeatCapacity());
+        heatManagement[0] = clamp01(unit.getHeat() / (float) unit.getHeatCapacity());
         return heatManagement;
     }
 }

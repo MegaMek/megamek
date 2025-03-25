@@ -33,7 +33,6 @@ import megamek.client.bot.common.StructOfUnitArrays;
 import megamek.common.Coords;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -42,9 +41,9 @@ import java.util.Set;
  */
 public class FacingEnemyCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates if the unit is facing the enemy
-        double[] facing = axis();
+        float[] facing = axis();
         int finalFacing = pathing.getFinalFacing();
         var coordsToFace = unitsThreatening(pathing, gameState.getEnemyUnitsSOU());
         if (coordsToFace.isEmpty()) {
@@ -52,14 +51,14 @@ public class FacingEnemyCalculator extends BaseAxisCalculator {
 
             int direction = pathing.getStartCoords().direction(pathing.getFinalCoords());
             int deltaFacing = direction - pathing.getFinalFacing();
-            facing[0] = 1.0 - normalize(deltaFacing, 0, 3);
+            facing[0] = 1.0f - normalize(deltaFacing, 0, 3);
         } else {
             Coords toFace = Coords.median(coordsToFace);
 
             // its never null, but the check is important, who knows what could happen?
             int desiredFacing = toFace != null ? (toFace.direction(pathing.getFinalCoords()) + 3) % 6 : 0;
             int facingDiff = getFacingDiff(finalFacing, desiredFacing);
-            facing[0] = 1.0 - normalize(facingDiff, 0d, 3d);
+            facing[0] = 1f - normalize(facingDiff, 0f, 3f);
         }
         return facing;
     }

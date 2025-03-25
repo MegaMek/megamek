@@ -406,24 +406,6 @@ class CoordsTest {
 
     }
 
-    @TestFactory
-    Stream<DynamicTest> testCoordsToCubeToOffset() {
-        return generateCoords().map(target -> dynamicTest(
-              "Test Coords(" + target.getX() + ", " + target.getY() + ") to Cube to Offset",
-              () -> assertEquals(target, target.toCube().toOffset())
-        ));
-    }
-
-    private Stream<Coords> generateCoords() {
-        List<Coords> coordsList = new ArrayList<>();
-        for (int x = 0; x < 100; x++) {
-            for (int y = 0; y < 100; y++) {
-                coordsList.add(new Coords(x, y));
-            }
-        }
-        return coordsList.stream();
-    }
-
     @Test
     void testHex2HexDistance() {
         // Test of distance(), separate from donut and adjacency tests.

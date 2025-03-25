@@ -36,10 +36,10 @@ import megamek.client.bot.common.Pathing;
  */
 public class PilotingCautionCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the piloting caution
-        double[] pilotingCaution = axis();
-
+        float[] pilotingCaution = axis();
+//        gameState.getPilotingCaution();
         return pilotingCaution;
     }
 }

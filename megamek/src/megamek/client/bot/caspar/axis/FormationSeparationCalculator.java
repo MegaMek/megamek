@@ -45,9 +45,9 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class FormationSeparationCalculator extends BaseAxisCalculator {
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the formation separation of the unit
-        double[] formationSeparation = axis();
+        float[] formationSeparation = axis();
         Entity unit = pathing.getEntity();
 
         // Get the future position of the unit being evaluated
@@ -59,7 +59,7 @@ public class FormationSeparationCalculator extends BaseAxisCalculator {
             Set<Entity> formationMembers = formation.getMembers();
 
             // Calculate separation factor - how well the unit avoids being too close to others
-            double separationFactor = calculateSeparationFactor(
+            float separationFactor = calculateSeparationFactor(
                   formation.getFormationType(),
                   futurePosition,
                   formationMembers,
@@ -81,14 +81,14 @@ public class FormationSeparationCalculator extends BaseAxisCalculator {
      * @param currentUnit The unit being evaluated
      * @return Separation factor between 0.0 (poor) and 1.0 (excellent)
      */
-    private double calculateSeparationFactor(
+    private float calculateSeparationFactor(
           Formation.FormationType formationType,
           Coords futurePosition,
           Set<Entity> formationMembers,
           Entity currentUnit) {
 
         int minDistance = formationType.getMinDistance();
-        double closestDistance = Double.MAX_VALUE;
+        float closestDistance = Float.MAX_VALUE;
 
         // Check distance to each other unit in the formation
         for (Entity otherUnit : formationMembers) {
@@ -108,17 +108,17 @@ public class FormationSeparationCalculator extends BaseAxisCalculator {
         }
 
         // If there are no other units in the formation
-        if (closestDistance == Double.MAX_VALUE) {
-            return 1.0;
+        if (closestDistance == Float.MAX_VALUE) {
+            return 1.0f;
         }
 
         // Calculate separation factor based on minimum distance
         if (closestDistance < minDistance) {
             // Too close - apply penalty based on how close
-            return clamp01(closestDistance / (double) minDistance);
+            return closestDistance / (float) minDistance;
         } else {
             // Sufficient separation
-            return 1.0;
+            return 1.0f;
         }
     }
 

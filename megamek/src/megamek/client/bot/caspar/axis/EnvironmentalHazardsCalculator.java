@@ -41,13 +41,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class EnvironmentalHazardsCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the potential of the unit to act as a decoy
-        double[] hazards = axis();
+        float[] hazards = axis();
         Entity unit = pathing.getEntity();
         var boardQuickRepresentation = gameState.getBoardQuickRepresentation();
         if (!boardQuickRepresentation.onGround() || unit.isAirborneAeroOnGroundMap()) {
-            hazards[0] = 0.0d;
+            hazards[0] = 0.0f;
             return hazards;
         }
 
@@ -65,7 +65,7 @@ public class EnvironmentalHazardsCalculator extends BaseAxisCalculator {
             hazardCounter.getAndIncrement();
         }
 
-        hazards[0] = normalize(1.0 - (hazardCounter.get() / (pathing.getHexesMoved() + 1.0d)), 0, 1);
+        hazards[0] = normalize(1.0f - (hazardCounter.get() / (pathing.getHexesMoved() + 1.0f)), 0, 1);
 
         return hazards;
     }

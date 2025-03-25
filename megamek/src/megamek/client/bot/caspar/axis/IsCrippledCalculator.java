@@ -36,9 +36,9 @@ import megamek.client.bot.common.Pathing;
  */
 public class IsCrippledCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates if the unit is crippled
-        double[] isCrippled = axis();
+        float[] isCrippled = axis();
         isCrippled[0] = pathing.getEntity().isCrippled() ? 1 : 0;
         return isCrippled;
     }

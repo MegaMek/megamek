@@ -27,8 +27,8 @@
  */
 package megamek.client.bot.caspar;
 
+import megamek.ai.neuralnetwork.NeuralNetwork;
 import megamek.client.bot.common.DifficultyLevel;
-import megamek.client.bot.neuralnetwork.NeuralNetwork;
 import megamek.client.bot.princess.RankedPath;
 import megamek.common.MovePath;
 
@@ -121,7 +121,8 @@ public class DifficultyManager {
      * @return A neural network instance
      */
     public NeuralNetwork createNeuralNetwork() {
-        return NeuralNetwork.loadModel(modelName, difficultyLevel);
+//        return NeuralNetwork.loadModel(modelName, difficultyLevel);
+        return null;
     }
 
     /**

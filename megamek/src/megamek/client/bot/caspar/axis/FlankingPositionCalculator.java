@@ -33,11 +33,9 @@ import megamek.client.bot.common.Pathing;
 import megamek.common.Coords;
 import megamek.common.CubeCoords;
 import megamek.common.Entity;
-import megamek.common.Targetable;
 
 
 import java.util.List;
-import java.util.Optional;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
@@ -51,9 +49,9 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class FlankingPositionCalculator extends BaseAxisCalculator {
 
     // Constants for scoring
-    private static final double SIDE_ATTACK_SCORE = 0.75;
-    private static final double REAR_ATTACK_SCORE = 1.0;
-    private static final double FRONT_ATTACK_SCORE = 0.2;
+    private static final float SIDE_ATTACK_SCORE = 0.75f;
+    private static final float REAR_ATTACK_SCORE = 1.0f;
+    private static final float FRONT_ATTACK_SCORE = 0.2f;
 
     // Distance thresholds
     private static final int MAX_FLANKING_DISTANCE = 12; // Max distance to consider for flanking
@@ -61,9 +59,9 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
     private static final int TOO_CLOSE_TO_FLANK = 3; // Optimal distance for flanking
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates if the unit is in a flanking position
-        double[] flanking = axis();
+        float[] flanking = axis();
         Entity unit = pathing.getEntity();
 
         // Get the unit's planned final position and facing
@@ -74,7 +72,7 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
         List<Entity> visibleEnemies = gameState.getEnemyUnits();
 
         // Calculate the best flanking score based on position relative to enemies
-        double bestFlankingScore = calculateBestFlankingScore(unit, finalPosition, finalFacing, visibleEnemies, gameState);
+        float bestFlankingScore = calculateBestFlankingScore(unit, finalPosition, finalFacing, visibleEnemies, gameState);
 
         flanking[0] = bestFlankingScore;
         return flanking;
@@ -90,19 +88,19 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
      * @param gameState The current game state
      * @return Flanking score between 0.0 and 1.0
      */
-    private double calculateBestFlankingScore(Entity unit, Coords unitPosition, int unitFacing,
-                                              List<Entity> visibleEnemies, GameState gameState) {
+    private float calculateBestFlankingScore(Entity unit, Coords unitPosition, int unitFacing,
+                                             List<Entity> visibleEnemies, GameState gameState) {
 
         // If no visible enemies, no flanking possible
         if (visibleEnemies.isEmpty()) {
-            return 0.0;
+            return 0.0f;
         }
 
         // Check each visible enemy for best flanking opportunity
-        double bestScore = 0.0;
+        float bestScore = 0.0f;
         int maxRange = unit.getMaxWeaponRange();
         for (Entity enemy : visibleEnemies) {
-            double flankingScore = calculateFlankingScore(unit, unitPosition, unitFacing, enemy, gameState);
+            float flankingScore = calculateFlankingScore(unit, unitPosition, unitFacing, enemy, gameState);
 
             // Keep track of the best flanking score
             bestScore = Math.max(bestScore, flankingScore);
@@ -121,7 +119,7 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
      * @param gameState The current game state
      * @return Flanking score between 0.0 and 1.0
      */
-    private double calculateFlankingScore(Entity unit, Coords unitPosition, int unitFacing,
+    private float calculateFlankingScore(Entity unit, Coords unitPosition, int unitFacing,
                                           Entity enemy, GameState gameState) {
 
         Coords enemyPosition = enemy.getPosition();
@@ -130,27 +128,27 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
         // Skip if enemy is too far away to consider for flanking
         int distance = unitPosition.distance(enemyPosition);
         if (distance > MAX_FLANKING_DISTANCE) {
-            return 0.0;
+            return 0f;
         }
 
         // 1. Calculate distance factor - optimal flanking distance is about 5 hexes
-        double distanceFactor = calculateDistanceFactor(distance);
+        float distanceFactor = calculateDistanceFactor(distance);
 
         // 2. Calculate flank angle - determines if attacking from side, rear, or front
-        double angleScore = calculateAngleScore(unitPosition, enemyPosition, enemyFacing);
+        float angleScore = calculateAngleScore(unitPosition, enemyPosition, enemyFacing);
 
         // 3. Calculate line of fire - check there is no full cover blocking the line of fire
-        double lineOfFireFactor = calculateLineOfFireFactor(unitPosition, enemyPosition, gameState);
+        float lineOfFireFactor = calculateLineOfFireFactor(unitPosition, enemyPosition, gameState);
 
         // 4. Calculate support - check if other friendly units are also flanking
-        double supportFactor = calculateSupportFactor(unit, enemy, gameState);
+        float supportFactor = calculateSupportFactor(unit, enemy, gameState);
 
         // 5. Calculate exposure - check if the flanking position exposes the unit to other enemies
-        double exposureFactor = calculateExposureFactor(unitPosition, unitFacing, enemy, gameState);
+        float exposureFactor = calculateExposureFactor(unitPosition, unitFacing, enemy, gameState);
 
         // Combine factors with weights
-        return (0.3 * angleScore) + (0.25 * distanceFactor) + (0.2 * lineOfFireFactor) +
-              (0.15 * supportFactor) + (0.1 * exposureFactor);
+        return (0.3f * angleScore) + (0.25f * distanceFactor) + (0.2f * lineOfFireFactor) +
+              (0.15f * supportFactor) + (0.1f * exposureFactor);
     }
 
     /**
@@ -159,18 +157,18 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
      * @param distance Distance to the enemy
      * @return Distance factor between 0.0 and 1.0
      */
-    private double calculateDistanceFactor(int distance) {
+    private float calculateDistanceFactor(int distance) {
         // Too close is dangerous, too far is ineffective
         if (distance < TOO_CLOSE_TO_FLANK) {
-            return 0.3; // Too close to maneuver effectively
+            return 0.3f; // Too close to maneuver effectively
         } else if (distance <= OPTIMAL_FLANKING_DISTANCE) {
             // Scale from 0.5 at TOO_CLOSE_TO_FLANK to 1.0 at optimal distance
-            return 0.5 + (0.5 * (distance - TOO_CLOSE_TO_FLANK) / (double)(OPTIMAL_FLANKING_DISTANCE - TOO_CLOSE_TO_FLANK));
+            return 0.5f + (0.5f * (distance - TOO_CLOSE_TO_FLANK) / (float)( OPTIMAL_FLANKING_DISTANCE - TOO_CLOSE_TO_FLANK));
         } else if (distance <= MAX_FLANKING_DISTANCE) {
             // Scale from 1.0 at optimal distance to 0.0 at max distance
-            return 1.0 - ((distance - OPTIMAL_FLANKING_DISTANCE) / (double) (MAX_FLANKING_DISTANCE - OPTIMAL_FLANKING_DISTANCE));
+            return 1.0f - ((distance - OPTIMAL_FLANKING_DISTANCE) / (float) (MAX_FLANKING_DISTANCE - OPTIMAL_FLANKING_DISTANCE));
         } else {
-            return 0.0; // Too far to be effective
+            return 0.0f; // Too far to be effective
         }
     }
 
@@ -183,7 +181,7 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
      * @param enemyFacing The enemy's facing
      * @return Angle score between 0.0 and 1.0
      */
-    private double calculateAngleScore(Coords unitPosition, Coords enemyPosition, int enemyFacing) {
+    private float calculateAngleScore(Coords unitPosition, Coords enemyPosition, int enemyFacing) {
         // Calculate the direction from enemy to unit
         int directionToUnit = enemyPosition.direction(unitPosition);
 
@@ -214,7 +212,7 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
      * @param gameState The current game state
      * @return Line of fire factor between 0.0 and 1.0
      */
-    private double calculateLineOfFireFactor(Coords unitPosition, Coords enemyPosition, GameState gameState) {
+    private float calculateLineOfFireFactor(Coords unitPosition, Coords enemyPosition, GameState gameState) {
         // Get all hexes between unit and enemy
         List<Coords> intervening = unitPosition.toCube().lineTo(enemyPosition.toCube()).stream().map(CubeCoords::toOffset).toList();
         // List<Coords> intervening = Coords.intervening(unitPosition, enemyPosition);
@@ -236,7 +234,7 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
             }
         }
 
-        return 1.0;
+        return 1.0f;
     }
 
     /**
@@ -248,7 +246,7 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
      * @param gameState The current game state
      * @return Support factor between 0.0 and 1.0
      */
-    private double calculateSupportFactor(Entity unit, Entity enemy, GameState gameState) {
+    private float calculateSupportFactor(Entity unit, Entity enemy, GameState gameState) {
         Coords enemyPosition = enemy.getPosition();
         int enemyFacing = enemy.getFacing();
 
@@ -279,7 +277,7 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
         }
 
         // Calculate support factor (cap at 3 supporting units)
-        return clamp01(flankingSupportCount / 3.0);
+        return flankingSupportCount / 3.0f;
     }
 
     /**
@@ -291,7 +289,7 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
      * @param gameState The current game state
      * @return Exposure factor between 0.0 and 1.0
      */
-    private double calculateExposureFactor(Coords unitPosition, int unitFacing,
+    private float calculateExposureFactor(Coords unitPosition, int unitFacing,
                                            Entity targetEnemy, GameState gameState) {
         List<Entity> visibleEnemies = gameState.getEnemyUnits();
 
@@ -327,20 +325,20 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
         }
 
         // Calculate exposure factor
-        double exposureFactor;
+        float exposureFactor;
 
         if (dangerousExposureCount > 0) {
             // Severe penalty for exposing rear to enemies
-            exposureFactor = 0.1;
+            exposureFactor = 0.1f;
         } else if (exposedToCount > 3) {
             // Exposed to too many enemies
-            exposureFactor = 0.3;
+            exposureFactor = 0.3f;
         } else if (exposedToCount > 0) {
             // Some exposure, but manageable
-            exposureFactor = 0.7;
+            exposureFactor = 0.7f;
         } else {
             // No additional exposure
-            exposureFactor = 1.0;
+            exposureFactor = 1.0f;
         }
 
         return exposureFactor;

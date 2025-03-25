@@ -37,12 +37,12 @@ import megamek.client.bot.common.Pathing;
 public class FriendlyThreatHeatmapCalculator extends BaseAxisCalculator {
 
     @Override
-    public double[] axis() {
-        return new double[100];
+    public float[] axis() {
+        return new float[100];
     }
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This would calculate the 10x10 heatmap for friendly threats
         return gameState.getBoardQuickRepresentation().getNormalizedAlliedThreatLevel();
     }

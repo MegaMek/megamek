@@ -43,14 +43,14 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class FavoriteTargetInRangeCalculator extends BaseAxisCalculator {
 
     @Override
-    public double[] axis() {
-        return new double[UnitRole.values().length];
+    public float[] axis() {
+        return new float[UnitRole.values().length];
     }
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // calculate if the favorite target role type is in range
-        double[] favoriteTarget = axis();
+        float[] favoriteTarget = axis();
         // 0 - SNIPER
         // 1 - MISSILE BOAT
         // 2 - JUGGERNAUT
@@ -69,15 +69,15 @@ public class FavoriteTargetInRangeCalculator extends BaseAxisCalculator {
      * @param structOfUnitArrays The struct of unit arrays to evaluate
      * @return The number of units covering the current unit
      */
-    private double getDistanceToClosestEnemyWithRole(Pathing pathing, StructOfUnitArrays structOfUnitArrays, int distance, UnitRole role) {
+    private float getDistanceToClosestEnemyWithRole(Pathing pathing, StructOfUnitArrays structOfUnitArrays, int distance, UnitRole role) {
         int xd;
         int yd;
         int x = pathing.getFinalCoords().getX();
         int y = pathing.getFinalCoords().getY();
         int length = structOfUnitArrays.size();
 
-        double dist;
-        double closedDist = Integer.MAX_VALUE;
+        float dist;
+        float closedDist = Integer.MAX_VALUE;
         for (int i = 0; i < length; i++) {
             int id = structOfUnitArrays.getId(i);
 
@@ -88,6 +88,6 @@ public class FavoriteTargetInRangeCalculator extends BaseAxisCalculator {
                 closedDist = Math.min(closedDist, dist);
             }
         }
-        return 1 - clamp01(closedDist / (distance + 1d));
+        return 1 - clamp01(closedDist / (distance + 1f));
     }
 }

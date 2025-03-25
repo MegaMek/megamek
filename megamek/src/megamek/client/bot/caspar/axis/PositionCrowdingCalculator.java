@@ -37,7 +37,7 @@ import megamek.client.bot.common.Pathing;
 public class PositionCrowdingCalculator extends BaseAxisCalculator {
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This would calculate the health of the unit as a percentage for
         // 0 - average
         // 1 - front
@@ -45,7 +45,7 @@ public class PositionCrowdingCalculator extends BaseAxisCalculator {
         // 3 - right
         // 4 - rear
 
-        double[] health = axis();
+        float[] health = axis();
 
         // Implementation goes here
 

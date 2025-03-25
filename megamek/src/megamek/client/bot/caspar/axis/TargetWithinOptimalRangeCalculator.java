@@ -36,9 +36,9 @@ import megamek.client.bot.common.Pathing;
  */
 public class TargetWithinOptimalRangeCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the target within optimal range
-        double[] targetWithinOptimalRange = axis();
+        float[] targetWithinOptimalRange = axis();
 
         return targetWithinOptimalRange;
     }

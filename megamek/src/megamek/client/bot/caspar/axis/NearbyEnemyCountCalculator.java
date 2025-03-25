@@ -41,17 +41,12 @@ public class NearbyEnemyCountCalculator extends BaseAxisCalculator {
     private static final int MIN_DISTANCE = 7;
     private static final double OPTIMAL_RANGE_RATIO = 0.6d;
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the number of nearby enemy units
-        double[] nearbyEnemies = axis();
+        float[] nearbyEnemies = axis();
 
         int distanceToKeepEnemiesAt = Math.min(MIN_DISTANCE, (int) (pathing.getEntity().getMaxWeaponRange() * OPTIMAL_RANGE_RATIO));
-
-        nearbyEnemies[0] = normalize(
-              countNearbyEnemies(pathing, gameState.getEnemyUnitsSOU(), distanceToKeepEnemiesAt),
-              0,
-              1);
-
+        nearbyEnemies[0] = countNearbyEnemies(pathing, gameState.getEnemyUnitsSOU(), distanceToKeepEnemiesAt);
         return nearbyEnemies;
     }
 

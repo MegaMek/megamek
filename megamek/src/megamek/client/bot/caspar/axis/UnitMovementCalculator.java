@@ -39,13 +39,13 @@ import static megamek.codeUtilities.MathUtility.clamp01;
  */
 public class UnitMovementCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the unit movement
-        double[] unitMovement = axis();
+        float[] unitMovement = axis();
 
         Entity unit = pathing.getEntity();
-        double move = pathing.getDistanceTravelled() / (double) unit.getRunMP();
-        unitMovement[0] = clamp01(move);
+        float move = pathing.getDistanceTravelled() / (float) unit.getRunMP();
+        unitMovement[0] = move;
         return unitMovement;
     }
 }

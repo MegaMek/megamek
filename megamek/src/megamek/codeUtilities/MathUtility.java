@@ -150,5 +150,19 @@ public class MathUtility {
     public static double clamp01(double value) {
         return clamp(value, 0, 1);
     }
+
+    /**
+     * Clamps a value between 0.0 and 1.0.
+     * @param value the float value to clamp
+     * @return The value if it is inside the range given by the limits (inclusive);
+     *         the min value if value is below that range and the max value if value
+     *         is above that range.
+     *         clamp01(2) returns 1.0d,
+     *         clamp01(-1) returns 0.0d,
+     *         clamp01(0.3) returns 0.3d.
+     */
+    public static float clamp01(float value) {
+        return clamp(value, 0f, 1f);
+    }
     // endregion Clamp
 }

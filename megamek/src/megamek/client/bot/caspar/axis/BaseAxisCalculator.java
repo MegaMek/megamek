@@ -44,11 +44,11 @@ public abstract class BaseAxisCalculator implements AxisCalculator {
      * @param max   The maximum expected value
      * @return A normalized value between 0 and 1
      */
-    protected double normalize(double value, double min, double max) {
+    protected float normalize(float value, float min, float max) {
         if (max == min) {
-            return 0.5d; // Avoid division by zero
+            return 0.5f; // Avoid division by zero
         }
-        double normalized = (value - min) / (max - min);
-        return Math.max(0d, Math.min(1d, normalized));
+        float normalized = (value - min) / (max - min);
+        return Math.max(0f, Math.min(1f, normalized));
     }
 }

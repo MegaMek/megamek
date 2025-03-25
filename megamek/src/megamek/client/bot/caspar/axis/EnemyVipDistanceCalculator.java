@@ -30,11 +30,7 @@ package megamek.client.bot.caspar.axis;
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
 import megamek.client.bot.common.StructOfUnitArrays;
-import megamek.client.ratgenerator.MissionRole;
 import megamek.common.Coords;
-import megamek.common.Entity;
-
-import java.util.Optional;
 
 /**
  * Calculates the distance to the closest enemy VIP
@@ -44,9 +40,9 @@ public class EnemyVipDistanceCalculator extends BaseAxisCalculator {
     private static final int MAX_DISTANCE = 34; // approximately 2 boards
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the distance to the closest enemy VIP
-        double[] vipDistance = axis();
+        float[] vipDistance = axis();
         int dist = getDistanceToClosestVIP(pathing, gameState.getEnemyUnitsSOU());
 
         vipDistance[0] = normalize(MAX_DISTANCE - dist, 0, MAX_DISTANCE);

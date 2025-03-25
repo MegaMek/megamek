@@ -31,9 +31,7 @@ import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
 import megamek.common.actions.ArtilleryAttackAction;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 /**
  * Calculates the friendly artillery fire potential
@@ -41,11 +39,11 @@ import java.util.List;
  */
 public class FriendlyArtilleryFireCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the friendly artillery fire potential
-        double[] artilleryFire = axis();
+        float[] artilleryFire = axis();
         Enumeration<ArtilleryAttackAction> artilleryAttacks = gameState.getArtilleryAttacks();
-
+        artilleryFire[0] = artilleryAttacks.hasMoreElements() ? 1.0f : 0.0f;
         return artilleryFire;
     }
 }

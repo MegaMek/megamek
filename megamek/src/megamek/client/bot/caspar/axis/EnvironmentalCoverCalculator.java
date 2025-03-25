@@ -46,19 +46,19 @@ import java.util.Set;
 public class EnvironmentalCoverCalculator extends BaseAxisCalculator {
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the potential of the unit to act as a decoy
-        double[] cover = axis();
+        float[] cover = axis();
         Entity unit = pathing.getEntity();
         if (unit.isAirborneAeroOnGroundMap()) {
-            cover[0] = 1.0d;
+            cover[0] = 1.0f;
             return cover;
         }
 
         int unitHeight = unit.isMek() ? 2 : 1;
 
         Set<Coords> enemyPositions = unitsThreateningMe(pathing, gameState.getEnemyUnitsSOU());
-        double bonusCover = calculateBonusCover(
+        float bonusCover = calculateBonusCover(
               pathing.getFinalCoords(),
               unitHeight,
               enemyPositions,
@@ -104,20 +104,20 @@ public class EnvironmentalCoverCalculator extends BaseAxisCalculator {
         return enemyPositions;
     }
 
-    private double calculateBonusCover(Coords coverPosition, int unitHeight, Set<Coords> enemyPositions,
+    private float calculateBonusCover(Coords coverPosition, int unitHeight, Set<Coords> enemyPositions,
                                        BoardQuickRepresentation boardQuickRepresentation) {
         // Check the surrounding hexes for an elevation advantage.
         int baseLevel = boardQuickRepresentation.levelAt(coverPosition);
-        double bonus = getStartingCoverBonus(coverPosition, unitHeight, baseLevel, boardQuickRepresentation);
+        float bonus = getStartingCoverBonus(coverPosition, unitHeight, baseLevel, boardQuickRepresentation);
         bonus += getCoverBonusTowardsEnemies(coverPosition, unitHeight, enemyPositions, baseLevel, boardQuickRepresentation);
         return bonus;
     }
 
-    private double getCoverBonusTowardsEnemies(Coords coverPosition, int unitHeight, Set<Coords> enemyPositions,
+    private float getCoverBonusTowardsEnemies(Coords coverPosition, int unitHeight, Set<Coords> enemyPositions,
                                                int baseLevel, BoardQuickRepresentation boardQuickRepresentation) {
 
-        double bonus = 0.0;
-        double maxBonusPerEnemy = 1.0 / (enemyPositions.size() + 1.0d);
+        float bonus = 0.0f;
+        float maxBonusPerEnemy = 1.0f / (enemyPositions.size() + 1.0f);
         for (Coords targetPosition : enemyPositions) {
             List<Coords> between = coverPosition.toCube().lineTo(targetPosition.toCube()).stream().map(CubeCoords::toOffset).toList();
             int woodCount = 0;
@@ -146,15 +146,15 @@ public class EnvironmentalCoverCalculator extends BaseAxisCalculator {
         return bonus;
     }
 
-    private static double getStartingCoverBonus(Coords coverPosition, int unitHeight, int baseLevel, BoardQuickRepresentation boardQuickRepresentation) {
-        double bonus = 0.0;
+    private static float getStartingCoverBonus(Coords coverPosition, int unitHeight, int baseLevel, BoardQuickRepresentation boardQuickRepresentation) {
+        float bonus = 0.0f;
 
         for (Coords coords : coverPosition.allAdjacent()) {
             if (boardQuickRepresentation.hasFullCover(coords, baseLevel, unitHeight)) {
-                bonus += 0.01;
+                bonus += 0.01f;
             } else if (boardQuickRepresentation.hasPartialCover(coords, baseLevel, unitHeight)
                   || boardQuickRepresentation.hasWoods(coords)) {
-                bonus += 0.005;
+                bonus += 0.005f;
             }
         }
         return bonus;

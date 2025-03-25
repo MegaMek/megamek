@@ -12,8 +12,8 @@ public interface AxisCalculator {
      *
      * @return The number of values
      */
-    default double[] axis() {
-        return new double[1];
+    default float[] axis() {
+        return new float[1];
     }
 
     /**
@@ -22,5 +22,5 @@ public interface AxisCalculator {
      * @param pathing The movement path to evaluate
      * @return An array of normalized values (0-1)
      */
-    double[] calculateAxis(Pathing pathing, GameState gameState);
+    float[] calculateAxis(Pathing pathing, GameState gameState);
 }

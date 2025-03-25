@@ -52,9 +52,9 @@ public class FormationCohesionCalculator extends BaseAxisCalculator {
     private static final double SPEED_WEIGHT = 0.4;
 
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the formation cohesion of the unit
-        double[] formationCohesion = axis();
+        float[] formationCohesion = axis();
         Entity unit = pathing.getEntity();
 
         // Get the future position of the unit being evaluated
@@ -65,7 +65,7 @@ public class FormationCohesionCalculator extends BaseAxisCalculator {
             Formation formation = formationOpt.get();
             double distanceFactor = calculateDistanceFactor(formation, futurePosition);
             double speedFactor = calculateSpeedFactor(formation, pathing);
-            formationCohesion[0] = clamp01((DISTANCE_WEIGHT * distanceFactor) + (SPEED_WEIGHT * speedFactor));
+            formationCohesion[0] = (float) ((DISTANCE_WEIGHT * distanceFactor) + (SPEED_WEIGHT * speedFactor));
         }
 
         return formationCohesion;
@@ -79,7 +79,7 @@ public class FormationCohesionCalculator extends BaseAxisCalculator {
      * @param futurePosition The future position of the unit
      * @return Distance factor between 0.0 (poor) and 1.0 (excellent)
      */
-    private double calculateDistanceFactor(Formation formation, Coords futurePosition) {
+    private float calculateDistanceFactor(Formation formation, Coords futurePosition) {
         Coords formationCenter = formation.getFormationCenter();
         int distance = formationCenter.distance(futurePosition);
 
@@ -87,7 +87,7 @@ public class FormationCohesionCalculator extends BaseAxisCalculator {
         int maxDistance = formation.getFormationType().getMaxDistance();
 
         // Calculate normalized distance factor (1.0 when at center, decreasing as it moves away)
-        return Math.max(0.0, 1.0 - ((double) distance / maxDistance));
+        return Math.max(0.0f, 1.0f - ((float) distance / maxDistance));
     }
 
     /**
@@ -97,7 +97,7 @@ public class FormationCohesionCalculator extends BaseAxisCalculator {
      * @param pathing The pathing information for the unit
      * @return Speed factor between 0.0 (poor) and 1.0 (excellent)
      */
-    private double calculateSpeedFactor(Formation formation, Pathing pathing) {
+    private float calculateSpeedFactor(Formation formation, Pathing pathing) {
         Entity unit = pathing.getEntity();
         int formationSpeed = formation.getFormationSpeed();
 
@@ -109,16 +109,16 @@ public class FormationCohesionCalculator extends BaseAxisCalculator {
         // If unit is not moving when formation is, or vice versa, reduce factor
         if ((distanceCovered == 0 && formationSpeed > 0) ||
               (distanceCovered > 0 && formationSpeed == 0)) {
-            return 0.2; // Significant penalty for not matching formation movement state
+            return 0.2f; // Significant penalty for not matching formation movement state
         }
 
         // If both are stationary, that's fine
         if (distanceCovered == 0 && formationSpeed == 0) {
-            return 1.0;
+            return 1.0f;
         }
 
         // Calculate how close the unit's movement is to the formation's speed
         return Math.min(distanceCovered, formationSpeed) /
-              (double) Math.max(distanceCovered, formationSpeed);
+              (float) Math.max(distanceCovered, formationSpeed);
     }
 }

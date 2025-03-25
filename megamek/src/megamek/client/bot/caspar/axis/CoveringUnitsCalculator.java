@@ -38,8 +38,8 @@ import megamek.common.Coords;
  */
 public class CoveringUnitsCalculator extends BaseAxisCalculator {
     @Override
-    public double[] calculateAxis(Pathing pathing, GameState gameState) {
-        double[] coveringUnits = axis();
+    public float[] calculateAxis(Pathing pathing, GameState gameState) {
+        float[] coveringUnits = axis();
         int covering = unitsCovering(pathing, gameState.getFriendlyUnitsSOU());
         covering += unitsCovering(pathing, gameState.getOwnUnitsSOU());
         coveringUnits[0] = this.normalize(covering, 0, 5);
@@ -60,7 +60,7 @@ public class CoveringUnitsCalculator extends BaseAxisCalculator {
         int originId = pathing.getEntity().getId();
         int length = structOfUnitArrays.size();
 
-        double dist;
+        float dist;
         int units = 0;
 
         for (int i = 0; i < length; i++) {

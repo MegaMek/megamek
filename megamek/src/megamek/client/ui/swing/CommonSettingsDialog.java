@@ -2111,10 +2111,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             skinFiles.removeAllItems();
             ArrayList<String> xmlFiles = new ArrayList<>(filteredFiles(Configuration.skinsDir(), ".xml"));
 
-            String userDirName = PreferenceManager.getClientPreferences().getUserDir();
-            File userDir = new File(userDirName);
-            if (!userDirName.isBlank() && userDir.isDirectory()) {
-                xmlFiles.addAll(filteredFilesWithSubDirs(userDir, ".xml"));
+            String userDir = PreferenceManager.getClientPreferences().getUserDir();
+            if (!userDir.isBlank()) {
+                File subDir = new File(userDir, Configuration.skinsDir().toString());
+                xmlFiles.addAll(filteredFilesWithSubDirs(subDir, ".xml"));
             }
 
             File internalUserDataDir = new File(Configuration.userdataDir(), Configuration.skinsDir().toString());

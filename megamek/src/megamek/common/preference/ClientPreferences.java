@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ClientPreferences extends PreferenceStoreProxy {
     private static final MMLogger logger = MMLogger.create(ClientPreferences.class);
@@ -464,6 +465,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     public void setUserDir(String userDir) {
+        userDir = Objects.requireNonNullElse(userDir, "");
         // remove directory separators at the end
         while (!userDir.isBlank() && (userDir.endsWith("/") || userDir.endsWith("\\"))) {
             userDir = userDir.substring(0, userDir.length() - 1);

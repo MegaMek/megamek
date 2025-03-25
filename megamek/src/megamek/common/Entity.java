@@ -261,7 +261,7 @@ public abstract class Entity extends TurnOrdered
     private int duplicateMarker = 1;
 
     protected transient Player owner;
-    protected int ownerId = -1;
+    protected int ownerId = Player.PLAYER_NONE;
     protected int traitorId = -1;
 
     protected int targetBay = -1;

@@ -99,143 +99,73 @@ public class MapMenu extends JPopupMenu {
 
     private boolean createMenu() {
         removeAll();
-        int itemCount = 0;
-        JMenu menu = createSelectMenu();
-        if (menu.getItemCount() > 0) {
-            add(menu);
-            itemCount++;
-        }
 
-        menu = createViewMenu();
-        if (menu.getItemCount() > 0) {
-            add(menu);
-            itemCount++;
-        }
+        addIfNotEmpty(createSelectMenu());
+        addIfNotEmpty(createViewMenu());
 
         if (client.isMyTurn() && (myEntity != null)) {
-            selectTarget();
+            // Don't show the menus for a unit that is not on this board
+            if (boardLocation.isOn(myEntity.getBoardId())) {
+                selectTarget();
+                addIfNotEmpty(createTargetMenu());
 
-            menu = createTargetMenu();
-            if (menu.getItemCount() > 0) {
-                this.add(menu);
-                itemCount++;
-            }
-
-            if (currentPanel instanceof MovementDisplay) {
-                if (boardLocation.isOn(myEntity.getBoardId())) {
-                    // Don't show the movement menus for a unit that is not on this board
-                    menu = createMovementMenu(myEntity.getPosition().equals(coords));
-
-
-                    if (itemCount > 0) {
+                if (currentPanel instanceof MovementDisplay) {
+                    if (getComponentCount() > 0) {
                         addSeparator();
-                        itemCount++;
                     }
+                    addIfNotEmpty(createMovementMenu(myEntity.getPosition().equals(coords)));
+                    addIfNotEmpty(createTurnMenu());
+                    addIfNotEmpty(createStandMenu());
+                    addIfNotEmpty(createConvertMenu());
+                    addIfNotEmpty(createPhysicalMenu(true));
+                    removeSeparatorIfLast();
 
-                    if (menu.getItemCount() > 0) {
-                        add(menu);
-                        itemCount++;
-                    }
-
-                    menu = createTurnMenu();
-
-                    if (menu.getItemCount() > 0) {
-                        add(menu);
-                        itemCount++;
-                    }
-
-                    menu = createStandMenu();
-
-                    if (menu.getItemCount() > 0) {
-                        add(menu);
-                        itemCount++;
-                    }
-
-                    menu = createConvertMenu();
-
-                    if (menu.getItemCount() > 0) {
-                        add(menu);
-                        itemCount++;
-                    }
-
-                    menu = createPhysicalMenu(true);
-
-                    if (menu.getItemCount() > 0) {
+                } else if ((currentPanel instanceof FiringDisplay)) {
+                    if (getComponentCount() > 0) {
                         addSeparator();
-                        add(menu);
-                        itemCount++;
                     }
+                    addIfNotEmpty(createWeaponsFireMenu());
+                    addIfNotEmpty(createModeMenu());
+                    addIfNotEmpty(createTorsoTwistMenu());
+                    addIfNotEmpty(createRotateTurretMenu());
+                    removeSeparatorIfLast();
+
+                } else if ((currentPanel instanceof PhysicalDisplay)) {
+                    addIfNotEmptyWithSeparator(createPhysicalMenu(false));
                 }
-
-            } else if ((currentPanel instanceof FiringDisplay)) {
-
-                if (itemCount > 0) {
-                    addSeparator();
-                    itemCount++;
-                }
-
-                menu = createWeaponsFireMenu();
-                if (menu.getItemCount() > 0) {
-                    add(menu);
-                    itemCount++;
-                }
-
-                menu = createModeMenu();
-                if (menu.getItemCount() > 0) {
-                    add(menu);
-                    itemCount++;
-                }
-
-                menu = createTorsoTwistMenu();
-                if (menu.getItemCount() > 0) {
-                    add(menu);
-                    itemCount++;
-                }
-
-                menu = createRotateTurretMenu();
-                if (menu.getItemCount() > 0) {
-                    add(menu);
-                    itemCount++;
-                }
-
-            } else if ((currentPanel instanceof PhysicalDisplay)) {
-                menu = createPhysicalMenu(false);
-
-                if (menu.getItemCount() > 0) {
-                    addSeparator();
-                    this.add(menu);
-                    itemCount++;
-                }
-
             }
         }
 
-        menu = touchOffExplosivesMenu();
-        if (menu.getItemCount() > 0) {
-            this.add(menu);
-            itemCount++;
-        }
+        addIfNotEmpty(touchOffExplosivesMenu());
+        addIfNotEmptyWithSeparator(createSpecialHexDisplayMenu());
+        addIfNotEmptyWithSeparator(createPleaToRoyaltyMenu());
+        addIfNotEmptyWithSeparator(createGamemasterMenu());
+        return getComponentCount() > 0;
+    }
 
-        menu = createSpecialHexDisplayMenu();
-        if (menu.getItemCount() > 0) {
-            this.add(menu);
-            itemCount++;
+    private void addIfNotEmpty(JMenu subMenu) {
+        if (subMenu.getItemCount() > 0) {
+            add(subMenu);
         }
-        menu = createPleaToRoyaltyMenu();
-        if (menu.getItemCount() > 0) {
-            this.addSeparator();
-            this.add(menu);
-            itemCount++;
-        }
+    }
 
-        this.addSeparator();
-        menu = createGamemasterMenu();
-        if (menu.getItemCount() > 0) {
-            this.add(menu);
-            itemCount++;
+    private void addIfNotEmptyWithSeparator(JMenu subMenu) {
+        if (subMenu.getItemCount() > 0) {
+            if (getComponentCount() > 0) {
+                addSeparator();
+            }
+            add(subMenu);
         }
+    }
 
-        return itemCount > 0;
+    private void removeSeparatorIfLast() {
+        try {
+            if (getComponent(getComponentCount() - 1) instanceof JSeparator) {
+                remove(getComponentCount() - 1);
+            }
+        } catch (Exception e) {
+            // This is only for GUI beauty, it should not ever fail
+        }
     }
 
     private JMenuItem TargetMenuItem(Targetable t) {
@@ -370,29 +300,22 @@ public class MapMenu extends JPopupMenu {
     }
 
     /**
-     * Create various menus related to <code>SpecialHexDisplay</code>.
-     *
-     * @return
+     * @return A submenu for SpecialHexDisplays
      */
     private JMenu createSpecialHexDisplayMenu() {
         JMenu menu = new JMenu("Special Hex Display");
 
-        final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(coords);
-
-        SpecialHexDisplay note = null;
-        if (shdList != null) {
-            for (SpecialHexDisplay shd : shdList) {
-                if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE
-                        && shd.getOwner().equals(client.getLocalPlayer())) {
-                    note = shd;
-                    break;
-                }
-            }
-        }
+        SpecialHexDisplay note = game.getBoard(boardLocation.boardId())
+               .getSpecialHexDisplay(coords)
+               .stream()
+               .filter(shd -> shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE)
+               .filter(shd -> shd.getOwner().equals(client.getLocalPlayer()))
+               .findFirst().orElse(null);
 
         final SpecialHexDisplay finalNote = Objects.requireNonNullElseGet(note,
                 () -> new SpecialHexDisplay(SpecialHexDisplay.Type.PLAYER_NOTE,
                         SpecialHexDisplay.NO_ROUND, client.getLocalPlayer(), ""));
+
         JMenuItem item = new JMenuItem(Messages.getString("NoteDialog.action"));
         item.addActionListener(evt -> {
             NoteDialog nd = new NoteDialog(gui.frame, finalNote);
@@ -678,7 +601,7 @@ public class MapMenu extends JPopupMenu {
      */
     private JMenu createGamemasterMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.Gamemaster"));
-        if (client.getLocalPlayer().getGameMaster()) {
+        if (client.getLocalPlayer().isGameMaster()) {
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
             JMenu cfgMenu = new JMenu(Messages.getString("Gamemaster.Configure"));
             JMenu traitorMenu = new JMenu(Messages.getString("Gamemaster.Traitor"));
@@ -879,7 +802,7 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("Select");
         // add select options
         if (canSelectEntities()) {
-            for (Entity entity : client.getGame().getEntitiesVector(coords, canTargetEntities())) {
+            for (Entity entity : client.getGame().getEntitiesVector(boardLocation, canTargetEntities())) {
                 if (client.getMyTurn().isValidEntity(entity, client.getGame())) {
                     menu.add(selectJMenuItem(entity));
                 }
@@ -891,10 +814,9 @@ public class MapMenu extends JPopupMenu {
     private JMenu createViewMenu() {
         JMenu menu = new JMenu("View");
         Game game = client.getGame();
-
         Player localPlayer = client.getLocalPlayer();
 
-        for (Entity entity : game.getEntitiesVector(coords, true)) {
+        for (Entity entity : game.getEntitiesVector(boardLocation, true)) {
             // Only add the unit if it's actually visible
             // With double blind on, the game may unseen units
             if (!entity.isSensorReturn(localPlayer) && entity.hasSeenEntity(localPlayer)) {

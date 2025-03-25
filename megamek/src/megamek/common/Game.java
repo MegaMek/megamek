@@ -1469,6 +1469,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return Collections.unmodifiableList(vector);
     }
 
+    public List<Entity> getEntitiesVector(BoardLocation location, boolean ignoreTargetable) {
+        return getEntitiesVector(location.coords(), ignoreTargetable).stream()
+              .filter(entity -> location.isOn(entity.getBoardId()))
+              .toList();
+    }
+
     /**
      * @param player {@link Player} Object
      *

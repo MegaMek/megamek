@@ -1674,11 +1674,11 @@ public class Board implements Serializable {
     }
 
     /**
-     * This returns special events that should be marked on hexes, such as artillery
-     * fire.
+     * @return Special events that should be marked on hexes, such as artillery fire as well as notes players can
+     * leave manually on hexes. Always returns at least an empty list, never null.
      */
     public Collection<SpecialHexDisplay> getSpecialHexDisplay(Coords coords) {
-        return specialHexes.get(coords);
+        return specialHexes.getOrDefault(coords, Collections.emptyList());
     }
 
     public void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd) {

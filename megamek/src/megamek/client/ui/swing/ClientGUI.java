@@ -727,10 +727,10 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     public void resetWindowPositions() {
-        if (getMiniMapDialog() != null) {
-            getMiniMapDialog().setBounds(0, 0, getMiniMapDialog().getWidth(), getMiniMapDialog().getHeight());
-            resetMiniMapZoom(getMiniMapDialog());
-        }
+        miniMaps.values().forEach(miniMap->{
+            miniMap.setBounds(0, 0, miniMap.getWidth(), miniMap.getHeight());
+            resetMiniMapZoom(miniMap);
+        });
         if (getUnitDisplayDialog() != null) {
             getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
         }

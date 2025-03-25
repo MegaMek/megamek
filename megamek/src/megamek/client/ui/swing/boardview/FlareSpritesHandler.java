@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.common.Flare;
 import megamek.common.Game;
 import megamek.common.event.GameBoardChangeEvent;
@@ -28,15 +29,18 @@ public class FlareSpritesHandler extends BoardViewSpriteHandler {
 
     private final Game game;
 
-    public FlareSpritesHandler(BoardView boardView, Game game) {
-        super(boardView);
+    public FlareSpritesHandler(AbstractClientGUI clientGUI, Game game) {
+        super(clientGUI);
         this.game = game;
     }
 
     public void renewSprites(Collection<Flare> flares) {
         clear();
-        flares.stream().map(flare -> new FlareSprite(boardView, flare)).forEach(currentSprites::add);
-        boardView.addSprites(currentSprites);
+        if (clientGUI.boardViews().isEmpty()) {
+            return;
+        }
+        flares.stream().map(flare -> new FlareSprite((BoardView) clientGUI.boardViews().get(0), flare)).forEach(currentSprites::add);
+        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 
     @Override

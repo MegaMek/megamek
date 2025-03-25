@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.SBFClient;
+import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;
@@ -29,8 +30,8 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
 
     private final SBFGame game;
 
-    public SBFFormationSpriteHandler(BoardView boardView, SBFClient client) {
-        super(boardView);
+    public SBFFormationSpriteHandler(AbstractClientGUI clientGUI, SBFClient client) {
+        super(clientGUI);
         game = client.getGame();
     }
 
@@ -42,16 +43,16 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
         game.getInGameObjects().stream()
                 .filter(SBFFormation.class::isInstance)
                 .filter(f -> ((SBFFormation) f).getPosition() != null)
-                .map(f -> new SBFFormationSprite(boardView, (SBFFormation) f, game.getPlayer(f.getOwnerId()), game))
+                .map(f -> new SBFFormationSprite((BoardView) clientGUI.boardViews().get(0), (SBFFormation) f, game.getPlayer(f.getOwnerId()), game))
                 .forEach(currentSprites::add);
 
         game.getInGameObjects().stream()
                 .filter(SBFUnitPlaceHolder.class::isInstance)
                 .filter(f -> ((SBFUnitPlaceHolder) f).getPosition() != null)
-                .map(f -> new SBFPlaceHolderSprite(boardView, (SBFUnitPlaceHolder) f, game.getPlayer(f.getOwnerId()), game))
+                .map(f -> new SBFPlaceHolderSprite((BoardView) clientGUI.boardViews().get(0), (SBFUnitPlaceHolder) f, game.getPlayer(f.getOwnerId()), game))
                 .forEach(currentSprites::add);
 
-        boardView.addSprites(currentSprites);
+        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 
     /**
@@ -67,7 +68,7 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
                 formationSprite.setSelected(formationSprite.getFormation().equals(formation));
             }
         }
-        boardView.repaint();
+        clientGUI.boardViews().get(0).repaint();
     }
 
     @Override

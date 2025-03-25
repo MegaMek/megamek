@@ -21,6 +21,7 @@ package megamek.client.ui.swing.boardview;
 import java.util.List;
 import java.util.Map;
 
+import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.ICarryable;
@@ -32,24 +33,27 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
     private Map<Coords, List<ICarryable>> currentGroundObjectList;
     private final Game game;
 
-    public GroundObjectSpriteHandler(BoardView boardView, Game game) {
-        super(boardView);
+    public GroundObjectSpriteHandler(AbstractClientGUI clientGUI, Game game) {
+        super(clientGUI);
         this.game = game;
     }
 
     public void setGroundObjectSprites(Map<Coords, List<ICarryable>> objectCoordList) {
         clear();
+        if (clientGUI.boardViews().isEmpty()) {
+            return;
+        }
         currentGroundObjectList = objectCoordList;
         if (currentGroundObjectList != null) {
         	for (Coords coords : currentGroundObjectList.keySet()) {
         		for (ICarryable groundObject : currentGroundObjectList.get(coords)) {
-	        		GroundObjectSprite gos = new GroundObjectSprite(boardView, coords);
+	        		GroundObjectSprite gos = new GroundObjectSprite((BoardView) clientGUI.boardViews().get(0), coords);
 	        		currentSprites.add(gos);
         		}
         	}
         }
 
-        boardView.addSprites(currentSprites);
+        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 
     @Override

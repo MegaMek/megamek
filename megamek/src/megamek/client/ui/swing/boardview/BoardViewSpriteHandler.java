@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.event.*;
 
@@ -35,11 +36,11 @@ public abstract class BoardViewSpriteHandler implements GameListener {
 
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    protected final BoardView boardView;
+    protected final AbstractClientGUI clientGUI;
     protected final List<Sprite> currentSprites = new ArrayList<>();
 
-    public BoardViewSpriteHandler(BoardView boardView) {
-        this.boardView = boardView;
+    public BoardViewSpriteHandler(AbstractClientGUI clientGUI) {
+        this.clientGUI = clientGUI;
     }
 
     /**
@@ -49,7 +50,7 @@ public abstract class BoardViewSpriteHandler implements GameListener {
      * When overriding this, call super.clear() or remember to perform clean up in the overriding method.
      */
     public void clear() {
-        boardView.removeSprites(currentSprites);
+        clientGUI.boardViews().forEach(boardView -> boardView.removeSprites(currentSprites));
         currentSprites.clear();
     }
 

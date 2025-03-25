@@ -75,6 +75,8 @@ import megamek.client.ui.swing.forceDisplay.ForceDisplayPanel;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.minimap.Minimap;
+import megamek.client.ui.swing.tileset.EntityImage;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -89,7 +91,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
-import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
@@ -97,10 +98,6 @@ import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
-
-import static megamek.common.Configuration.gameSummaryImagesMMDir;
 
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots, IDisconnectSilently, IHasUnitDisplay, IHasBoardView, IHasMenuBar, IHasCurrentPanel {
@@ -252,7 +249,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public MegaMekController controller;
     private ChatterBox cb;
     public ChatterBox2 cb2;
-    private BoardView bv;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
     private FleeZoneSpriteHandler fleeZoneSpriteHandler;
@@ -275,7 +271,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public ForceDisplayPanel forceDisplayPanel;
     private ForceDisplayDialog forceDisplayDialog;
 
-    public JDialog minimapW;
     private MapMenu popup;
     private Ruler ruler;
     protected JComponent curPanel;
@@ -287,7 +282,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private MegaMekUnitSelectorDialog mekSelectorDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
-    private PlanetaryConditionsDialog conditionsDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
      */
@@ -380,6 +374,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         super(client);
         this.client = client;
         controller = c;
+        initializeSpriteHandlers();
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
 
@@ -415,7 +410,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     @Override
     public BoardView getBoardView() {
-        return bv;
+        return (BoardView) boardViews.get(0);
     }
 
     @Override
@@ -448,11 +443,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     public JDialog getMiniMapDialog() {
-        return minimapW;
-    }
-
-    public void setMiniMapDialog(final JDialog miniMapDialog) {
-        minimapW = miniMapDialog;
+        return miniMaps.get(0);
     }
 
     public JDialog getBotCommandsDialog() {
@@ -524,15 +515,15 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     private void initializeSpriteHandlers() {
-        movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv, client.getGame());
-        movementModifierSpriteHandler = new MovementModifierSpriteHandler(bv, client.getGame());
-        FlareSpritesHandler flareSpritesHandler = new FlareSpritesHandler(bv, client.getGame());
-        sensorRangeSpriteHandler = new SensorRangeSpriteHandler(bv, client.getGame());
-        collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(bv);
-        groundObjectSpriteHandler = new GroundObjectSpriteHandler(bv, client.getGame());
-        firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
-        firingArcSpriteHandler = new FiringArcSpriteHandler(bv, this);
-        fleeZoneSpriteHandler = new FleeZoneSpriteHandler(bv);
+        movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(this, client.getGame());
+        movementModifierSpriteHandler = new MovementModifierSpriteHandler(this, client.getGame());
+        FlareSpritesHandler flareSpritesHandler = new FlareSpritesHandler(this, client.getGame());
+        sensorRangeSpriteHandler = new SensorRangeSpriteHandler(this, client.getGame());
+        collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(this);
+        groundObjectSpriteHandler = new GroundObjectSpriteHandler(this, client.getGame());
+        firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(this, client);
+        firingArcSpriteHandler = new FiringArcSpriteHandler(this);
+        fleeZoneSpriteHandler = new FleeZoneSpriteHandler(this);
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler, sensorRangeSpriteHandler,
             flareSpritesHandler, collapseWarningSpriteHandler, groundObjectSpriteHandler, firingSolutionSpriteHandler,
@@ -546,26 +537,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         frame.setJMenuBar(menuBar);
         initializeFrame();
         super.initialize();
+        boardViewsContainer.setName(CG_BOARDVIEW);
         try {
             client.getGame().addGameListener(gameListener);
-
-            bv = new BoardView(client.getGame(), controller, this);
-            boardViews.put(0, bv);
-            bv.addOverlay(new KeyBindingsOverlay(bv));
-            bv.addOverlay(new PlanetaryConditionsOverlay(bv));
-            bv.addOverlay(new TurnDetailsOverlay(bv));
-            bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
-            bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
-            cb2 = new ChatterBox2(this, bv, controller);
-            bv.addOverlay(cb2);
-            bv.getPanel().addKeyListener(cb2);
-            bv.addOverlay(new UnitOverview(this));
-            offBoardOverlay = new OffBoardTargetOverlay(this);
-            bv.addOverlay(offBoardOverlay);
-
-            boardViewsContainer.setName(CG_BOARDVIEW);
-            boardViewsContainer.updateMapTabs();
-            initializeSpriteHandlers();
 
             panTop = new JPanel(new BorderLayout());
             panA1 = new JPanel();
@@ -582,8 +556,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             splitPaneA.setRightComponent(panA2);
 
             panTop.add(splitPaneA, BorderLayout.CENTER);
-
-            bv.addBoardViewListener(this);
         } catch (Exception ex) {
             logger.fatal(ex, "initialize");
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
@@ -616,16 +588,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         Ruler.color1 = GUIP.getRulerColor1();
         Ruler.color2 = GUIP.getRulerColor2();
-        ruler = new Ruler(frame, client, bv, client.getGame());
-        ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
-        ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
-        UIUtil.updateWindowBounds(ruler);
 
         setBotCommandsDialog(BotCommandsPanel.createBotCommandDialog(frame, this.getClient(), this.audioService, null));
-        setMiniMapDialog(Minimap.createMinimap(frame, getBoardView(), getClient().getGame(), this));
         cb = new ChatterBox(this);
-        cb.setChatterBox2(cb2);
-        cb2.setChatterBox(cb);
         client.changePhase(GamePhase.UNKNOWN);
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
         if (!MekSummaryCache.getInstance().isInitialized()) {
@@ -709,7 +674,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     public void customizePlayer() {
-        PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client, bv);
+        PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client, (BoardView) boardViews.get(0));
         psd.setVisible(true);
     }
 
@@ -933,24 +898,24 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 showLOSSettingDialog();
                 break;
             case VIEW_ZOOM_IN:
-                bv.zoomIn();
+                boardViews.get(0).zoomIn();
                 break;
             case VIEW_ZOOM_OUT:
-                bv.zoomOut();
+                boardViews.get(0).zoomOut();
                 break;
             case VIEW_TOGGLE_ISOMETRIC:
-                GUIP.setIsometricEnabled(bv.toggleIsometric());
+                GUIP.setIsometricEnabled(((BoardView)boardViews.get(0)).toggleIsometric());
                 break;
             case VIEW_TOGGLE_FOV_HIGHLIGHT:
                 GUIP.setFovHighlight(!GUIP.getFovHighlight());
-                bv.refreshDisplayables();
+                boardViews.get(0).refreshDisplayables();
                 if (client.getGame().getPhase().isMovement()) {
-                    bv.clearHexImageCache();
+                    ((BoardView) boardViews.get(0)).clearHexImageCache();
                 }
                 break;
             case VIEW_TOGGLE_FIELD_OF_FIRE:
                 GUIP.setShowFieldOfFire(!GUIP.getShowFieldOfFire());
-                bv.getPanel().repaint();
+                boardViews.get(0).getPanel().repaint();
                 break;
             case VIEW_TOGGLE_FLEE_ZONE:
                 toggleFleeZone();
@@ -960,9 +925,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 break;
             case VIEW_TOGGLE_FOV_DARKEN:
                 GUIP.setFovDarken(!GUIP.getFovDarken());
-                bv.refreshDisplayables();
+                boardViews.get(0).refreshDisplayables();
                 if (client.getGame().getPhase().isMovement()) {
-                    bv.clearHexImageCache();
+                    ((BoardView) boardViews.get(0)).clearHexImageCache();
                 }
                 break;
             case VIEW_TOGGLE_FIRING_SOLUTIONS:
@@ -988,7 +953,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 }
                 break;
             case VIEW_CHANGE_THEME:
-                bv.changeTheme();
+                ((BoardView) boardViews.get(0)).changeTheme();
                 break;
             case FIRE_SAVE_WEAPON_ORDER:
                 Entity ent = getUnitDisplay().getCurrentEntity();
@@ -1099,17 +1064,13 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             GUIP.setBotCommandsPosX(getBotCommandsDialog().getLocation().x);
             GUIP.setBotCommandsPosY(getBotCommandsDialog().getLocation().y);
         }
-
     }
 
     @Override
     public void die() {
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
-        if (bv != null) {
-            // cleanup our timers first
-            bv.dispose();
-        }
+        boardViews().forEach(IBoardView::dispose);
 
         for (String s : phaseComponents.keySet()) {
             JComponent component = phaseComponents.get(s);
@@ -1158,17 +1119,10 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return mekSelectorDialog;
     }
 
-    public PlanetaryConditionsDialog getPlanetaryConditionsDialog() {
-        if (conditionsDialog == null) {
-            conditionsDialog = new PlanetaryConditionsDialog(this);
-        }
-        return conditionsDialog;
-    }
-
     void switchPanel(GamePhase phase) {
         // Clear the old panel's listeners.
         if (curPanel instanceof BoardViewListener) {
-            bv.removeBoardViewListener((BoardViewListener) curPanel);
+            boardViews().forEach(b -> b.removeBoardViewListener((BoardViewListener) curPanel));
         }
 
         if (curPanel instanceof ActionListener) {
@@ -1193,7 +1147,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(GamePhase.LOUNGE));
                 cb.setDoneButton(cl.butDone);
                 cl.setBottom(cb.getComponent());
-                getBoardView().getTilesetManager().reset();
+                boardViews().forEach(bv -> ((BoardView) bv).getTilesetManager().reset());
                 break;
             case POINTBLANK_SHOT:
             case SET_ARTILLERY_AUTOHIT_HEXES:
@@ -1238,7 +1192,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         // Set the new panel's listeners
         if (curPanel instanceof BoardViewListener) {
-            bv.addBoardViewListener((BoardViewListener) curPanel);
+            boardViews().forEach(b -> b.addBoardViewListener((BoardViewListener) curPanel));
         }
 
         if (curPanel instanceof ActionListener) {
@@ -1456,7 +1410,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     protected void showBoardPopup(Coords c) {
         if (fillPopup(c)) {
-            bv.showPopup(popup, c);
+            ((BoardView) boardViews.get(0)).showPopup(popup, c);
         }
     }
 
@@ -2325,13 +2279,12 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * @param entity The unit
      */
     public void loadPreviewImage(JLabel bp, Entity entity) {
-        Player player = client.getGame().getPlayer(entity.getOwnerId());
-        loadPreviewImage(bp, entity, player);
-    }
-
-    public void loadPreviewImage(JLabel bp, Entity entity, Player player) {
-        final Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
-        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camouflage);
+        Camouflage camouflage = client.getLocalPlayer().getCamouflage();
+        if (entity.hasOwner()) {
+            camouflage = entity.getCamouflageOrElseOwners();
+        }
+        final Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
+        final Image icon = new EntityImage(base, camouflage, frame, entity).loadPreviewImage(true);
         bp.setIcon((icon == null) ? null : new ImageIcon(icon));
     }
 
@@ -2362,6 +2315,56 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     }
 
     private final GameListener gameListener = new GameListenerAdapter() {
+
+        @Override
+        public void gameBoardNew(GameBoardNewEvent e) {
+            Board newBoard = e.getNewBoard();
+            final int boardId = e.getBoardId();
+
+            if (newBoard != null) {
+                try {
+                    if (boardViews.containsKey(boardId)) {
+                        boardViews.get(boardId).removeBoardViewListener(ClientGUI.this);
+                        boardViews.get(boardId).dispose();
+                    }
+                    if (miniMaps.containsKey(boardId)) {
+                        miniMaps.get(boardId).setVisible(false);
+                        miniMaps.get(boardId).dispose();
+                    }
+                    BoardView boardView = new BoardView(client.getGame(), controller, ClientGUI.this, boardId);
+                    JDialog newMinimap = Minimap.createMinimap(frame, boardView, getClient().getGame(),
+                          ClientGUI.this, boardId);
+                    newMinimap.setVisible(true);
+                    miniMaps.put(boardId, newMinimap);
+                    boardViews.put(boardId, boardView);
+                    boardView.getPanel().setPreferredSize(clientGuiPanel.getSize());
+                    boardView.addBoardViewListener(ClientGUI.this);
+                    cb2 = new ChatterBox2(ClientGUI.this, boardView, controller);
+                    cb.setChatterBox2(cb2);
+                    cb2.setChatterBox(cb);
+                    offBoardOverlay = new OffBoardTargetOverlay(ClientGUI.this);
+                    boardView.getPanel().addKeyListener(cb2);
+                    boardView.addOverlay(cb2);
+                    boardView.addOverlay(new UnitOverview(ClientGUI.this));
+                    boardView.addOverlay(offBoardOverlay);
+                    boardView.addOverlay(new KeyBindingsOverlay(boardView));
+                    boardView.addOverlay(new PlanetaryConditionsOverlay(boardView));
+                    boardView.addOverlay(new TurnDetailsOverlay(boardView));
+                    boardView.setTooltipProvider(
+                          new TWBoardViewTooltip(client.getGame(), ClientGUI.this, boardView));
+                    boardViewsContainer.updateMapTabs();
+                    ruler = new Ruler(frame, client, boardView, client.getGame());
+                    ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
+                    ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
+                    UIUtil.updateWindowBounds(ruler);
+                    boardView.addBoardViewListener(ClientGUI.this);
+                } catch (IOException ex) {
+                    // this is likely fatal anyway
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+
         @Override
         public void gamePlayerChange(GamePlayerChangeEvent evt) {
             if (playerListDialog != null) {
@@ -2390,17 +2393,21 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
-            // This is a really lame place for this, but I couldn't find a
-            // better one without making massive changes (which didn't seem
-            // worth it for one little feature).
-            if (bv.getLocalPlayer() != client.getLocalPlayer()) {
-                // The adress based comparison is somewhat important.
-                // Use of the /reset command can cause the player to get reset,
-                // and the equals function of Player isn't powerful enough.
-                bv.setLocalPlayer(client.getLocalPlayer());
+            for (IBoardView bv : boardViews()) {
+                // This is a really lame place for this, but I couldn't find a
+                // better one without making massive changes (which didn't seem
+                // worth it for one little feature).
+                if (boardViews.get(0).getLocalPlayer() != client.getLocalPlayer()) {
+                    // The adress based comparison is somewhat important.
+                    // Use of the /reset command can cause the player to get reset,
+                    // and the equals function of Player isn't powerful enough.
+                    boardViews.get(0).setLocalPlayer(client.getLocalPlayer().getId());
+                }
+                if (bv instanceof BoardView boardView) {
+                    // Make sure the ChatterBox starts out deactived.
+                    boardView.setChatterBoxActive(false);
+                }
             }
-            // Make sure the ChatterBox starts out deactived.
-            bv.setChatterBoxActive(false);
 
             // Swap to this phase's panel.
             GamePhase phase = getClient().getGame().getPhase();
@@ -2455,7 +2462,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         @Override
         public void gameEnd(GameEndEvent e) {
-            bv.clearMovementData();
+            getBoardView().clearMovementData();
             clearFieldOfFire();
             clearTemporarySprites();
             getLocalBots().values().forEach(AbstractClient::die);
@@ -2670,10 +2677,10 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                         return;
                     }
                     // If this is the client to handle the PBS, take care of it
-                    bv.centerOnHex(attacker.getPosition());
-                    bv.highlight(attacker.getPosition());
-                    bv.select(target.getPosition());
-                    bv.cursor(target.getPosition());
+                    getBoardView().centerOnHex(attacker.getPosition());
+                    getBoardView().highlight(attacker.getPosition());
+                    getBoardView().select(target.getPosition());
+                    getBoardView().cursor(target.getPosition());
 
                     // Ask whether the player wants to take a PBS or not
                     int pbsChoice = JOptionPane.showConfirmDialog(frame,
@@ -2696,7 +2703,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                         curDisp.beginMyTurn();
                         curDisp.selectEntity(evt.getEntityId());
                         curDisp.target(target);
-                        bv.select(target.getPosition());
+                        getBoardView().select(target.getPosition());
                     } else { // PBS declined
                         client.sendHiddenPBSCFRResponse(null);
                     }
@@ -2783,7 +2790,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     @Override
     public void setChatBoxActive(boolean active) {
-        bv.setChatterBoxActive(active);
+        getBoardView().setChatterBoxActive(active);
     }
 
     @Override
@@ -2796,7 +2803,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     @Override
     public boolean isChatBoxActive() {
-        return bv.getChatterBoxActive();
+        return getBoardView().getChatterBoxActive();
     }
 
     @Override
@@ -2808,7 +2815,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * @param selectedEntityNum The selectedEntityNum to set.
      */
     public void setSelectedEntityNum(int selectedEntityNum) {
-        bv.selectEntity(client.getGame().getEntity(selectedEntityNum));
+        getBoardView().selectEntity(client.getGame().getEntity(selectedEntityNum));
     }
 
     public RandomArmyDialog getRandomArmyDialog() {
@@ -2858,7 +2865,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), CG_FILEFORMATNAMEPNG, curfileBoardImage);
+            ImageIO.write(boardViews.get(0).getEntireBoardImage(ignoreUnits, false), CG_FILEFORMATNAMEPNG, curfileBoardImage);
         } catch (IOException e) {
             logger.error(e, "boardSaveImage");
         }
@@ -3100,7 +3107,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      * Removes visibility to the Movement Envelope.
      */
     public void clearMovementEnvelope() {
-        this.movementEnvelopeHandler.clear();
+        movementEnvelopeHandler.clear();
     }
 
     /**
@@ -3310,6 +3317,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     public void hideFleeZone() {
         showFleeZone = false;
-        fleeZoneSpriteHandler.clear();
+        if (fleeZoneSpriteHandler != null) {
+            fleeZoneSpriteHandler.clear();
+        }
     }
 }

@@ -18,13 +18,13 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.enums.GamePhase;
-import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -42,8 +42,8 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
     private Entity currentEntity;
     private Coords currentPosition;
 
-    public SensorRangeSpriteHandler(BoardView boardView, Game game) {
-        super(boardView);
+    public SensorRangeSpriteHandler(AbstractClientGUI clientGUI, Game game) {
+        super(clientGUI);
         this.game = game;
     }
 
@@ -74,6 +74,9 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
 
     public void setSensorRange(Entity entity, Coords assumedPosition) {
         clear();
+        if (clientGUI.boardViews().isEmpty()) {
+            return;
+        }
         currentEntity = entity;
         currentPosition = assumedPosition;
 
@@ -170,11 +173,11 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
 
                 // create sprite if there's a border to paint
                 if (edgesToPaint > 0) {
-                    currentSprites.add(new SensorRangeSprite(boardView, b, loc, edgesToPaint));
+                    currentSprites.add(new SensorRangeSprite((BoardView) clientGUI.boardViews().get(0), b, loc, edgesToPaint));
                 }
             }
         }
-        boardView.addSprites(currentSprites);
+        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 
     @Override

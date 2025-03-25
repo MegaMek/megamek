@@ -142,6 +142,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private final BoardView bv;
     private final Game game;
     private Board board;
+    private final int boardId;
     private final JDialog dialog;
     private Client client;
     private final IClientGUI clientGui;
@@ -192,7 +193,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      *               anything else
      * @param cg     Optional: A ClientGUI object housing this minimap
      */
-    public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable IClientGUI cg) {
+    public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable IClientGUI cg,
+          int boardId) {
         var result = new JDialog(parent, Messages.getString("ClientGUI.Minimap"), false);
 
         result.setLocation(GUIP.getMinimapPosX(), GUIP.getMinimapPosY());
@@ -204,7 +206,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
         });
 
-        result.add(new Minimap(result, game, bv, cg, null));
+        result.add(new Minimap(result, game, bv, cg, null, boardId));
         result.pack();
         return result;
     }
@@ -223,35 +225,36 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     public static BufferedImage getMinimapImage(Board board, int zoom) {
         Game game = new Game();
         game.setBoard(board);
-        return getMinimapImage(game, null, zoom, null);
+        return getMinimapImage(game, null, zoom, null, 0);
     }
 
     /** Returns a minimap image of the given board at the given zoom index. */
     public static BufferedImage getMinimapImage(Board board, int zoom, @Nullable File minimapTheme) {
         Game game = new Game();
         game.setBoard(board);
-        return getMinimapImage(game, null, zoom, minimapTheme);
+        return getMinimapImage(game, null, zoom, minimapTheme, 0);
     }
 
     /**
      * Returns a minimap image of the given board at the given zoom index. The
      * game and boardview object will be used to display additional information.
      */
-    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, @Nullable File minimapTheme) {
-       return getMinimapImage(game, bv, zoom, null, minimapTheme, Collections.emptyList());
+    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, @Nullable File minimapTheme, int boardId) {
+       return getMinimapImage(game, bv, zoom, null, minimapTheme, Collections.emptyList(), boardId);
     }
 
     /**
      * Returns a minimap image of the given board at the given zoom index. The
      * game and boardview object will be used to display additional information.
      */
-    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, IClientGUI clientGui, @Nullable File minimapTheme, List<Line> movePathLines) {
+    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, IClientGUI clientGui,
+          @Nullable File minimapTheme, List<Line> movePathLines, int boardId) {
         try {
             // Send the fail image when the zoom index is wrong to make this noticeable
             if ((zoom < MIM_ZOOM) || (zoom > MAX_ZOOM)) {
                 throw new Exception("The given zoom index is out of bounds.");
             }
-            Minimap tempMM = new Minimap(null, game, bv, clientGui, minimapTheme);
+            Minimap tempMM = new Minimap(null, game, bv, clientGui, minimapTheme, boardId);
             tempMM.zoom = zoom;
             tempMM.movePathLines.clear();
             tempMM.movePathLines.addAll(movePathLines);
@@ -274,9 +277,11 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      * used to create a snapshot image. When a boardview is given, the visible area
      * is shown.
      */
-    private Minimap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable IClientGUI cg, @Nullable File minimapTheme) {
+    private Minimap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable IClientGUI cg,
+          @Nullable File minimapTheme, int boardId) {
         game = Objects.requireNonNull(g);
-        board = Objects.requireNonNull(game.getBoard());
+        board = Objects.requireNonNull(game.getBoard(boardId));
+        this.boardId = boardId;
         bv = bview;
         dialog = dlg;
         clientGui = cg;
@@ -316,7 +321,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                           + e.getOldPhase() + ".png");
 
                     try {
-                        BufferedImage image = getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null, movePathLines);
+                        BufferedImage image = getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null,
+                              movePathLines, boardId);
                         if (GUIP.getGameSummaryMinimap()) {
                             ImageIO.write(image, "png", imgFile);
                         }

@@ -201,7 +201,7 @@ public abstract class AbstractGame implements IGame {
     public void receiveBoard(int boardId, Board board) {
         Board oldBoard = getBoard(boardId);
         setBoard(boardId, board);
-        fireGameEvent(new GameBoardNewEvent(this, oldBoard, board));
+        fireGameEvent(new GameBoardNewEvent(this, oldBoard, board, boardId));
     }
 
     @Override

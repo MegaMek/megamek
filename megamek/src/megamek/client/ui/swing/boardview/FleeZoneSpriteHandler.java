@@ -18,14 +18,15 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.common.Coords;
 
 import java.util.Collection;
 
 public class FleeZoneSpriteHandler extends BoardViewSpriteHandler {
 
-    public FleeZoneSpriteHandler(BoardView boardView) {
-        super(boardView);
+    public FleeZoneSpriteHandler(AbstractClientGUI clientGUI) {
+        super(clientGUI);
     }
 
     @Override
@@ -38,7 +39,12 @@ public class FleeZoneSpriteHandler extends BoardViewSpriteHandler {
 
     public void renewSprites(Collection<Coords> coords) {
         clear();
-        coords.stream().map(c -> new FieldofFireSprite(boardView, 1, c, 63)).forEach(currentSprites::add);
-        boardView.addSprites(currentSprites);
+        if (clientGUI.boardViews().isEmpty()) {
+            return;
+        }
+        coords.stream()
+              .map(c -> new FieldofFireSprite((BoardView) clientGUI.boardViews().get(0), 1, c, 63))
+              .forEach(currentSprites::add);
+        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 }

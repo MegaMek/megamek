@@ -58,8 +58,8 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     private boolean isUnderWater = false;
     private final int[][] ranges = new int[2][5];
 
-    public FiringArcSpriteHandler(BoardView boardView, ClientGUI clientGUI) {
-        super(boardView);
+    public FiringArcSpriteHandler(ClientGUI clientGUI) {
+        super(clientGUI);
         this.clientGUI = clientGUI;
         game = clientGUI.getClient().getGame();
     }
@@ -147,6 +147,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
      */
     public void renewSprites() {
         clear();
+        if (clientGUI.boardViews().isEmpty()) {
+            return;
+        }
         if (!GUIP.getShowFieldOfFire() || (firingEntity == null) || (firingPosition == null)
                 || firingEntity.isOffBoard() || clientGUI.getDisplayedWeapon().isEmpty()) {
             return;
@@ -212,7 +215,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 }
                 // create sprite if there's a border to paint
                 if (edgesToPaint > 0) {
-                    FieldofFireSprite ffSprite = new FieldofFireSprite(boardView, bracket, loc, edgesToPaint);
+                    FieldofFireSprite ffSprite = new FieldofFireSprite((BoardView) clientGUI.boardViews().get(0), bracket, loc, edgesToPaint);
                     currentSprites.add(ffSprite);
                 }
             }
@@ -249,7 +252,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 // add a text range marker if the found position is good
                 if (game.getBoard().contains(mark) && fieldFire.get(bracket).contains(mark)
                         && ((bracket > 0) || (numMinMarkers < 2))) {
-                    TextMarkerSprite tS = new TextMarkerSprite(boardView, mark,
+                    TextMarkerSprite tS = new TextMarkerSprite((BoardView) clientGUI.boardViews().get(0), mark,
                             rangeTexts[bracket], FieldofFireSprite.getFieldOfFireColor(bracket));
                     currentSprites.add(tS);
                     if (bracket == 0) {
@@ -259,7 +262,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             }
         }
 
-        boardView.addSprites(currentSprites);
+        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 
     @Override

@@ -326,7 +326,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
         MekSummaryCache.getInstance().addListener(mekSummaryCacheListener);
         clientgui.getClient().getGame().addGameListener(this);
-        clientgui.getBoardView().addBoardViewListener(this);
+        clientgui.boardViews().forEach(bv -> bv.addBoardViewListener(this));
 
         loader = new ImageLoader();
         loader.execute();
@@ -843,7 +843,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         try {
             boardPreviewGame.setPhase(GamePhase.LOUNGE);
-            previewBV = new BoardView(boardPreviewGame, null, null);
+            previewBV = new BoardView(boardPreviewGame, null, null, 0);
             previewBV.setDisplayInvalidFields(false);
             previewBV.setUseLosTool(false);
             previewBV.setTooltipProvider(new TWBoardViewTooltip(boardPreviewGame, clientgui, previewBV));
@@ -1870,7 +1870,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 doBotSettings();
             } else if (ev.getSource().equals(butOptions)) {
                 clientgui.getGameOptionsDialog().setEditable(true);
-                clientgui.getGameOptionsDialog().update((GameOptions) clientgui.getClient().getGame().getOptions());
+                clientgui.getGameOptionsDialog().update(clientgui.getClient().getGame().getOptions());
                 clientgui.getGameOptionsDialog().setVisible(true);
             } else if (ev.getSource().equals(butCompact)) {
                 toggleCompact();
@@ -2454,7 +2454,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
-        clientgui.getBoardView().removeBoardViewListener(this);
+        clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
         GUIP.removePreferenceChangeListener(this);
         PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);
         MekSummaryCache.getInstance().removeListener(mekSummaryCacheListener);

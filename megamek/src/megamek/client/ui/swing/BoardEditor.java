@@ -365,7 +365,7 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
     public BoardEditor(MegaMekController c) {
         controller = c;
         try {
-            bv = new BoardView(game, controller, null);
+            bv = new BoardView(game, controller, null, 0);
             bv.addOverlay(new KeyBindingsOverlay(bv));
             bv.setUseLosTool(false);
             bv.setDisplayInvalidFields(true);
@@ -1098,7 +1098,7 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
         scrCenterPanel.getVerticalScrollBar().setUnitIncrement(16);
         add(scrCenterPanel, BorderLayout.CENTER);
         add(panButtons, BorderLayout.PAGE_END);
-        minimapW = Minimap.createMinimap(frame, bv, game, null);
+        minimapW = Minimap.createMinimap(frame, bv, game, null, 0);
         minimapW.setVisible(guip.getMinimapEnabled());
     }
 

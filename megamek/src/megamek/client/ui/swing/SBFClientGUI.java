@@ -170,7 +170,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             client.getGame().addGameListener(gameListener);
             bvGame.setBoard(bvGame.getBoard(0));
 
-            bv = new BoardView(bvGame, MegaMekGUI.getKeyDispatcher(), null);
+            bv = new BoardView(bvGame, MegaMekGUI.getKeyDispatcher(), null, 0);
             bv.setTooltipProvider(new SBFBoardViewTooltip(client.getGame(), bv));
             boardViews.put(0, bv);
             bv.addOverlay(new KeyBindingsOverlay(bv));
@@ -208,9 +208,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     }
 
     private void initializeSpriteHandlers() {
-        movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(bv, client.getGame());
-        formationSpriteHandler = new SBFFormationSpriteHandler(bv, client);
-        movePathSpriteHandler = new MovePathSpriteHandler(bv);
+        movementEnvelopeHandler = new MovementEnvelopeSpriteHandler(this, client.getGame());
+        formationSpriteHandler = new SBFFormationSpriteHandler(this, client);
+        movePathSpriteHandler = new MovePathSpriteHandler(this);
         spriteHandlers.addAll(List.of(formationSpriteHandler, movementEnvelopeHandler, movePathSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }

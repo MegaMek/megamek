@@ -21,6 +21,7 @@ package megamek.client.ui.swing.boardview;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
+import megamek.common.Player;
 
 import java.util.*;
 
@@ -29,6 +30,9 @@ public abstract class AbstractBoardView implements IBoardView {
     protected final List<BoardViewListener> boardViewListeners = new ArrayList<>();
     protected final LinkedHashSet<IDisplayable> overlays = new LinkedHashSet<>();
     protected final TreeSet<Sprite> allSprites = new TreeSet<>();
+
+    // the player who owns this BoardView's client
+    private Player localPlayer = null;
 
     /**
      * Notifies attached BoardViewListeners of the event.
@@ -123,5 +127,13 @@ public abstract class AbstractBoardView implements IBoardView {
      */
     public Set<Sprite> getAllSprites() {
         return Collections.unmodifiableSet(allSprites);
+    }
+
+    public Player getLocalPlayer() {
+        return localPlayer;
+    }
+
+    public void setLocalPlayer(Player p) {
+        localPlayer = p;
     }
 }

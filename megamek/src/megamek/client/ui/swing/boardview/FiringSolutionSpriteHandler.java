@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.Client;
+import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
@@ -40,14 +41,17 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
     // Cache the entity; thus, when firing solutions are turned on the sprites can easily be created
     private Entity currentEntity;
 
-    public FiringSolutionSpriteHandler(BoardView boardView, Client client) {
-        super(boardView);
+    public FiringSolutionSpriteHandler(AbstractClientGUI clientGUI, Client client) {
+        super(clientGUI);
         this.client = client;
         this.game = client.getGame();
     }
 
     public void showFiringSolutions(Entity entity) {
         clear();
+        if (clientGUI.boardViews().isEmpty()) {
+            return;
+        }
         currentEntity = entity;
         if ((entity == null) || (entity.getId() == Entity.NONE) || !GUIP.getShowFiringSolutions()) {
             return;
@@ -72,8 +76,8 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
             }
         }
 
-        solutions.values().stream().map(sln -> new FiringSolutionSprite(boardView, sln)).forEach(currentSprites::add);
-        boardView.addSprites(currentSprites);
+        solutions.values().stream().map(sln -> new FiringSolutionSprite((BoardView) clientGUI.boardViews().get(0), sln)).forEach(currentSprites::add);
+        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 
     protected boolean shouldShowTarget(Entity target, Entity ce) {

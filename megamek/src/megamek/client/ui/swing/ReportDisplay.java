@@ -151,7 +151,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     @Override
     public void ready() {
         if (!clientgui.getBoardView().isTileImagesLoaded()) {
-            return;
+//            return;
         }
 
         butDone.setEnabled(false);

@@ -158,6 +158,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     public final Game game;
     ClientGUI clientgui;
+    private final int boardId;
+    private final int boardViewId;
 
     private Dimension boardSize;
 
@@ -409,10 +411,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView(final Game game, final MegaMekController controller, @Nullable ClientGUI clientgui)
+    public BoardView(final Game game, final MegaMekController controller, @Nullable ClientGUI clientgui, int boardId)
             throws java.io.IOException {
         this.game = game;
         this.clientgui = clientgui;
+        this.boardId = boardId;
+        boardViewId = hashCode();
+
+        logger.warn("Created BoardView, boardId " + boardId + "; BV ID " + boardViewId);
 
         if (GUIP == null) {
             GUIP = GUIPreferences.getInstance();
@@ -424,7 +430,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         ToolTipManager.sharedInstance().registerComponent(boardPanel);
 
         game.addGameListener(gameListener);
-        game.getBoard().addBoardListener(this);
+        game.getBoard(boardId).addBoardListener(this);
 
         redrawTimerTask = scheduleRedrawTimer(); // call only once
         clearSprites();
@@ -516,10 +522,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 wantsPopup = false;
 
                 final Coords mcoords = getCoordsAt(point);
-                if (!mcoords.equals(lastCoords) && game.getBoard().contains(mcoords)) {
+                if (!mcoords.equals(lastCoords) && game.getBoard(boardId).contains(mcoords)) {
                     lastCoords = mcoords;
                     boardPanel.setToolTipText(boardViewToolTip.getTooltip(e, movementTarget));
-                } else if (!game.getBoard().contains(mcoords)) {
+                } else if (!game.getBoard(boardId).contains(mcoords)) {
                     boardPanel.setToolTipText(null);
                 } else {
                     if (prevTipX > 0 && prevTipY > 0) {
@@ -794,7 +800,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 break;
 
             case GUIPreferences.INCLINES:
-                game.getBoard().initializeAllAutomaticTerrain();
+                game.getBoard(boardId).initializeAllAutomaticTerrain();
                 clearHexImageCache();
                 boardPanel.repaint();
                 break;
@@ -940,7 +946,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         drawSprites(g, c3Sprites);
 
         // draw flyover routes
-        if (game.getBoard().onGround()) {
+        if (game.getBoard(boardId).onGround()) {
             drawSprites(g, vtolAttackSprites);
             drawSprites(g, flyOverSprites);
         }
@@ -1065,13 +1071,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private void renderMovementBoundingBox(Graphics2D g) {
         if (getSelectedEntity() != null) {
             Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
-            princess.getGame().setBoard(this.game.getBoard());
+            princess.getGame().setBoard(this.game.getBoard(boardId));
             PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
             pathEnum.recalculateMovesFor(this.getSelectedEntity());
 
             ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(this.getSelectedEntity().getId());
-            for (int x = 0; x < game.getBoard().getWidth(); x++) {
-                for (int y = 0; y < game.getBoard().getHeight(); y++) {
+            for (int x = 0; x < game.getBoard(boardId).getWidth(); x++) {
+                for (int y = 0; y < game.getBoard(boardId).getHeight(); y++) {
                     Point p = getCentreHexLocation(x, y, true);
                     p.translate(HEX_W / 2, HEX_H / 2);
                     Coords c = new Coords(x, y);
@@ -1143,9 +1149,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * Updates the boardSize variable with the proper values for this board.
      */
     void updateBoardSize() {
-        int width = (game.getBoard().getWidth() * (int) (HEX_WC * scale))
+        int width = (game.getBoard(boardId).getWidth() * (int) (HEX_WC * scale))
                 + (int) ((HEX_W / 4) * scale);
-        int height = (game.getBoard().getHeight() * (int) (HEX_H * scale))
+        int height = (game.getBoard(boardId).getHeight() * (int) (HEX_H * scale))
                 + (int) ((HEX_H / 2) * scale);
         boardSize = new Dimension(width, height);
     }
@@ -1286,7 +1292,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
-        Board board = game.getBoard();
+        Board board = game.getBoard(boardId);
         boolean isAirDeployGround = en_Deployer.getMovementMode().isHover() || en_Deployer.getMovementMode().isVTOL();
         boolean isWiGE = en_Deployer.getMovementMode().isWiGE();
         // loop through the hexes
@@ -1365,7 +1371,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     players.stream().filter(p -> !p.isEnemyOf(localPlayer)).collect(Collectors.toList()));
         }
 
-        Board board = game.getBoard();
+        Board board = game.getBoard(boardId);
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
@@ -1617,7 +1623,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         int maxX = drawX + drawWidth;
         int maxY = drawY + drawHeight;
 
-        Board board = game.getBoard();
+        Board board = game.getBoard(boardId);
         for (Enumeration<Coords> minedCoords = game.getMinedCoords(); minedCoords.hasMoreElements();) {
             Coords c = minedCoords.nextElement();
             // If the coords aren't visible, skip
@@ -1738,7 +1744,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawSprites(boardGraph, c3Sprites);
 
             // draw flyover routes
-            if (game.getBoard().onGround()) {
+            if (game.getBoard(boardId).onGround()) {
                 drawSprites(boardGraph, vtolAttackSprites);
                 drawSprites(boardGraph, flyOverSprites);
             }
@@ -1808,7 +1814,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // draw some hexes.
         if (useIsometric()) {
-            Board board = game.getBoard();
+            Board board = game.getBoard(boardId);
             for (int y = 0; y < drawHeight; y++) {
                 // Half of each row is one-half hex
                 // farther back (above) the other; draw those first
@@ -1868,11 +1874,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * if the hex is visible.
      */
     private void drawHex(Coords c, Graphics boardGraph, boolean saveBoardImage) {
-        if (!game.getBoard().contains(c)) {
+        if (!game.getBoard(boardId).contains(c)) {
             return;
         }
 
-        final Hex hex = game.getBoard().getHex(c);
+        final Hex hex = game.getBoard(boardId).getHex(c);
         if (hex == null) {
             return;
         }
@@ -1921,7 +1927,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         if (useIsometric()) {
             int largestLevelDiff = 0;
             for (int dir : allDirections) {
-                Hex adjHex = game.getBoard().getHexInDir(c, dir);
+                Hex adjHex = game.getBoard(boardId).getHexInDir(c, dir);
                 if (adjHex == null) {
                     continue;
                 }
@@ -2147,12 +2153,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // Set the text color according to Preferences or Light Gray in space
         g.setColor(GUIP.getBoardTextColor());
-        if (game.getBoard().inSpace()) {
+        if (game.getBoard(boardId).inSpace()) {
             g.setColor(GUIP.getBoardSpaceTextColor());
         }
 
         // draw special stuff for the hex
-        final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(c);
+        final Collection<SpecialHexDisplay> shdList = game.getBoard(boardId).getSpecialHexDisplay(c);
         try {
             if (shdList != null) {
                 for (SpecialHexDisplay shd : shdList) {
@@ -2331,11 +2337,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * does not check if the hex is visible.
      */
     private void drawOrthograph(Coords c, Graphics boardGraph) {
-        if (!game.getBoard().contains(c)) {
+        if (!game.getBoard(boardId).contains(c)) {
             return;
         }
 
-        final Hex oHex = game.getBoard().getHex(c);
+        final Hex oHex = game.getBoard(boardId).getHex(c);
         final Point oHexLoc = getHexLocation(c);
         // Adjust the draw height for bridges according to their elevation
         int elevOffset = oHex.terrainLevel(Terrains.BRIDGE_ELEV);
@@ -2396,8 +2402,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * @param g
      */
     private final void drawIsometricElevation(Coords c, Color color, Point p1, Point p2, int dir, Graphics g) {
-        final Hex dest = game.getBoard().getHexInDir(c, dir);
-        final Hex src = game.getBoard().getHex(c);
+        final Hex dest = game.getBoard(boardId).getHexInDir(c, dir);
+        final Hex src = game.getBoard(boardId).getHex(c);
 
         if (!useIsometric() || GUIP.getFloatingIso()) {
             return;
@@ -2416,7 +2422,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
             // Determine the depth of the edge that needs to be drawn.
             int height = elev;
-            Hex southHex = game.getBoard().getHexInDir(c, 3);
+            Hex southHex = game.getBoard(boardId).getHexInDir(c, 3);
             if ((dir != 3) && (southHex != null) && (elev > southHex.getLevel())) {
                 height = elev - southHex.getLevel();
             }
@@ -2491,8 +2497,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * opposite direction as well.
      */
     private boolean drawElevationLine(Coords src, int direction) {
-        final Hex srcHex = game.getBoard().getHex(src);
-        final Hex destHex = game.getBoard().getHexInDir(src, direction);
+        final Hex srcHex = game.getBoard(boardId).getHex(src);
+        final Hex destHex = game.getBoard(boardId).getHexInDir(src, direction);
         if ((destHex == null) && (srcHex.getLevel() != 0)) {
             return true;
         } else if (destHex == null) {
@@ -2552,8 +2558,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * when a higher hex is found in direction.
      */
     private @Nullable Shape getElevationShadowArea(Coords src, int direction) {
-        final Hex srcHex = game.getBoard().getHex(src);
-        final Hex destHex = game.getBoard().getHexInDir(src, direction);
+        final Hex srcHex = game.getBoard(boardId).getHex(src);
+        final Hex destHex = game.getBoard(boardId).getHexInDir(src, direction);
 
         // When at the board edge, create a shadow in hexes of level < 0
         if (destHex == null) {
@@ -2582,8 +2588,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * hex shadow effect in a lower hex.
      */
     private GradientPaint getElevationShadowGP(Coords src, int direction) {
-        final Hex srcHex = game.getBoard().getHex(src);
-        final Hex destHex = game.getBoard().getHexInDir(src, direction);
+        final Hex srcHex = game.getBoard(boardId).getHex(src);
+        final Hex destHex = game.getBoard(boardId).getHexInDir(src, direction);
 
         if (destHex == null) {
             return null;
@@ -2616,7 +2622,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private Point getHexLocation(int x, int y, boolean ignoreElevation) {
         float elevationAdjust = 0.0f;
 
-        Hex hex = game.getBoard().getHex(x, y);
+        Hex hex = game.getBoard(boardId).getHex(x, y);
         if ((hex != null) && useIsometric() && !ignoreElevation) {
             elevationAdjust = hex.getLevel() * HEX_ELEV * scale * -1.0f;
         }
@@ -2714,16 +2720,16 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             // When using isometric rendering, a lower hex can obscure the
             // normal hex. Iterate over all hexes from highest to lowest,
             // looking for a hex that contains the selected mouse click point.
-            final int minElev = Math.min(0, game.getBoard().getMinElevation());
-            final int maxElev = Math.max(0, game.getBoard().getMaxElevation());
+            final int minElev = Math.min(0, game.getBoard(boardId).getMinElevation());
+            final int maxElev = Math.max(0, game.getBoard(boardId).getMaxElevation());
             final int delta = (int) Math.ceil(((double) maxElev - minElev) / 3.0f);
             final int minHexSpan = Math.max(y - delta, 0);
-            final int maxHexSpan = Math.min(y + delta, game.getBoard().getHeight());
+            final int maxHexSpan = Math.min(y + delta, game.getBoard(boardId).getHeight());
             for (int elev = maxElev; elev >= minElev; elev--) {
                 for (int i = minHexSpan; i <= maxHexSpan; i++) {
                     for (int dx = -1; dx < 2; dx++) {
                         Coords c1 = new Coords(x + dx, i);
-                        Hex hexAlt = game.getBoard().getHex(c1);
+                        Hex hexAlt = game.getBoard(boardId).getHex(c1);
                         if (HexDrawUtilities.getHexFull(getHexLocation(c1), scale).contains(p)
                                 && (hexAlt != null) && (hexAlt.getLevel() == elev)) {
                             // Return immediately with highest hex found.
@@ -3016,7 +3022,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         ArrayList<WreckSprite> newWrecks = new ArrayList<>();
         ArrayList<IsometricWreckSprite> newIsometricWrecks = new ArrayList<>();
 
-        Board board = game.getBoard();
+        Board board = game.getBoard(boardId);
         Enumeration<Entity> e = game.getWreckedEntities();
         while (e.hasMoreElements()) {
             Entity entity = e.nextElement();
@@ -3463,10 +3469,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     public void clearStrafingCoords() {
         strafingCoords.clear();
-    }
-
-    public void setLocalPlayer(Player p) {
-        localPlayer = p;
     }
 
     public Player getLocalPlayer() {
@@ -4121,7 +4123,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * @param coords the Coords.
      */
     public void select(Coords coords) {
-        if ((coords == null) || game.getBoard().contains(coords)) {
+        if ((coords == null) || game.getBoard(boardId).contains(coords)) {
             setSelected(coords);
             moveCursor(selectedSprite, coords);
             moveCursor(firstLOSSprite, null);
@@ -4148,7 +4150,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * @param coords the Coords.
      */
     public void highlight(Coords coords) {
-        if ((coords == null) || game.getBoard().contains(coords)) {
+        if ((coords == null) || game.getBoard(boardId).contains(coords)) {
             setHighlighted(coords);
             moveCursor(highlightSprite, coords);
             moveCursor(firstLOSSprite, null);
@@ -4190,7 +4192,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * @param coords the Coords.
      */
     public void cursor(Coords coords) {
-        if ((coords == null) || game.getBoard().contains(coords)) {
+        if ((coords == null) || game.getBoard(boardId).contains(coords)) {
             if ((getLastCursor() == null) || (coords == null) || !coords.equals(getLastCursor())) {
                 setLastCursor(coords);
                 moveCursor(cursorSprite, coords);
@@ -4215,7 +4217,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     public void checkLOS(Coords c) {
-        if ((c == null) || game.getBoard().contains(c)) {
+        if ((c == null) || game.getBoard(boardId).contains(c)) {
             if (getFirstLOS() == null) {
                 setFirstLOS(c);
                 firstLOSHex(c);
@@ -4235,7 +4237,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * listeners about the specified mouse action.
      */
     public void mouseAction(int x, int y, int mtype, int modifiers, int mouseButton) {
-        if (game.getBoard().contains(x, y)) {
+        if (game.getBoard(boardId).contains(x, y)) {
             Coords c = new Coords(x, y);
             switch (mtype) {
                 case BOARD_HEX_CLICK:
@@ -4280,7 +4282,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     @Override
     public void boardNewBoard(BoardEvent b) {
         updateBoard();
-        game.getBoard().initializeAllAutomaticTerrain();
+        game.getBoard(boardId).initializeAllAutomaticTerrain();
         clearHexImageCache();
         clearShadowMap();
         boardPanel.repaint();
@@ -4379,7 +4381,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (b != null) {
                 b.addBoardListener(BoardView.this);
             }
-            game.getBoard().initializeAllAutomaticTerrain();
+            game.getBoard(boardId).initializeAllAutomaticTerrain();
             clearHexImageCache();
             updateBoard();
             clearShadowMap();
@@ -4804,6 +4806,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     bgGraph.dispose();
                 }
                 g.drawImage(scrollPaneBgBuffer, 0, 0, null);
+                new StringDrawer("BV " + boardViewId).fontSize(24).at(80, 20).color(Color.GREEN).outline(Color.BLACK,
+                      1).draw(g);
             }
         };
         scrollpane.setBorder(new MegaMekBorder(bvSkinSpec));
@@ -4836,10 +4840,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         }
     };
-
-    public void refreshDisplayables() {
-        boardPanel.repaint();
-    }
 
     private void pingMinimap() {
         // send the minimap a hex moused event to make it
@@ -5136,7 +5136,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         if (game == null) {
             return null;
         }
-        Board board = game.getBoard();
+        Board board = game.getBoard(boardId);
         if (board.inSpace()) {
             return null;
         }

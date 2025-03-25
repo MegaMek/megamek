@@ -186,7 +186,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     protected Entity refreshUnitView() {
         Entity selectedEntity = super.refreshUnitView(); //we first want it to run through the same code as its parent
         if (selectedEntity != null) {
-            clientGUI.loadPreviewImage(labelImage, selectedEntity, clientGUI.getClient().getLocalPlayer());
+            clientGUI.loadPreviewImage(labelImage, selectedEntity);
         }
         return selectedEntity;
     }

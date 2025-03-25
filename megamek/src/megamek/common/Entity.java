@@ -21,6 +21,7 @@ import megamek.client.ui.Base64Image;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
@@ -242,7 +243,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int duplicateMarker = 1;
 
     protected transient Player owner;
-    protected int ownerId;
+    protected int ownerId = -1;
     protected int traitorId = -1;
 
     protected int targetBay = -1;
@@ -14018,7 +14019,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public Camouflage getCamouflageOrElseOwners() {
-        return getCamouflageOrElse(getOwner().getCamouflage());
+        return getCamouflageOrElse(hasOwner() ? getOwner().getCamouflage() : Camouflage.of(PlayerColour.GRAY));
     }
 
     public Camouflage getCamouflageOrElse(final Camouflage camouflage) {

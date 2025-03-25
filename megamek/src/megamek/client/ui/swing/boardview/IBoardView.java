@@ -21,6 +21,7 @@ package megamek.client.ui.swing.boardview;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.common.Coords;
+import megamek.common.Player;
 
 import java.util.List;
 import javax.swing.*;
@@ -84,6 +85,8 @@ public interface IBoardView {
      */
     void setLocalPlayer(int playerId);
 
+    Player getLocalPlayer();
+
     /**
      * Frees the resources this boardview uses and removes listeners. Call when this boardview is not
      * used anymore. The boardview will no longer be functional after calling this method. When overriding
@@ -128,6 +131,10 @@ public interface IBoardView {
      * @see #addOverlay(IDisplayable)
      */
     void removeOverlay(IDisplayable overlay);
+
+    default void refreshDisplayables() {
+        getPanel().repaint();
+    }
 
     /**
      * Placeholder: this is only an idea; can we make draw modifications modular? Like field of fire,

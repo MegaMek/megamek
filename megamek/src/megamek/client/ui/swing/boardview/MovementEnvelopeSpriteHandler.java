@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.client.ui.swing.MovementDisplay;
 import megamek.common.*;
 import megamek.common.event.*;
@@ -33,8 +34,8 @@ public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
 
     private final IGame game;
 
-    public MovementEnvelopeSpriteHandler(BoardView boardView, IGame game) {
-        super(boardView);
+    public MovementEnvelopeSpriteHandler(AbstractClientGUI clientGUI, IGame game) {
+        super(clientGUI);
         this.game = game;
     }
 
@@ -110,11 +111,12 @@ public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
             }
 
             if (spriteColor != null) {
-                currentSprites.add(new MovementEnvelopeSprite(boardView, spriteColor, loc, edgesToPaint));
+                currentSprites.add(new MovementEnvelopeSprite((BoardView) clientGUI.boardViews().get(0), spriteColor, loc,
+                      edgesToPaint));
             }
         }
 
-        boardView.addSprites(currentSprites);
+        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 
     @Override

@@ -19,6 +19,8 @@
 package megamek.client.ui.swing.lobby;
 
 import megamek.MMConstants;
+import megamek.client.ui.swing.tileset.EntityImage;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
@@ -89,8 +91,9 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             if (showAsUnknown) {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {
-                Camouflage camo = entity.getCamouflageOrElseOwners();
-                Image image = lobby.getClientgui().getBoardView().getTilesetManager().loadPreviewImage(entity, camo);
+                final Camouflage camouflage = entity.getCamouflageOrElseOwners();
+                final Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
+                final Image image = new EntityImage(base, camouflage, this, entity).loadPreviewImage(true);
                 setIconTextGap(UIUtil.scaleForGUI(10));
                 setIcon(image, size);
             }

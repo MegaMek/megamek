@@ -4617,18 +4617,26 @@ public final class BoardView extends AbstractBoardView
     }
 
     private void processAffectedCoords(Coords c, @Nullable ECMEffects ecm, @Nullable ECMEffects eccm, Map<Coords, Color> newECMHexes, Map<Coords, Color> newECCMHexes) {
+        if (ecm == null && eccm == null) {
+            return;
+        }
+
         Color hexColorECM = null;
         if (ecm != null) {
             hexColorECM = ecm.getHexColor();
         }
+
         Color hexColorECCM = null;
         if (eccm != null) {
             hexColorECCM = eccm.getHexColor();
         }
+
         // Hex color is null if all effects cancel out
         if ((hexColorECM == null) && (hexColorECCM == null)) {
             return;
-        } else if ((hexColorECM != null) && (hexColorECCM == null)) {
+        }
+
+        if ((hexColorECM != null) && (hexColorECCM == null)) {
             if (ecm.isECCM()) {
                 newECCMHexes.put(c, hexColorECM);
             } else {
@@ -4640,7 +4648,8 @@ public final class BoardView extends AbstractBoardView
             } else {
                 newECMHexes.put(c, hexColorECCM);
             }
-        } else { // Both are non-null
+        } else {
+            // Both are non-null
             newECMHexes.put(c, hexColorECM);
             newECCMHexes.put(c, hexColorECCM);
         }

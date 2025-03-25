@@ -74,7 +74,6 @@ import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
-import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
@@ -2275,7 +2274,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         }
 
-        boolean hasLoS = fovHighlightingAndDarkening.draw(g, c, 0, 0, saveBoardImage);
+        // When the board image is saved, it shouldn't be spoiled by drawing LOS effects
+        boolean hasLoS = saveBoardImage || fovHighlightingAndDarkening.draw(g, c);
 
         // draw mapsheet borders
         if (GUIP.getShowMapsheets()) {
@@ -5230,6 +5230,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 .findFirst().orElse(null);
     }
 
+    /**
+     * @return The unit currently shown in the Unit Display. Note: This can be a another unit than the one that is
+     * selected to move or fire.
+     */
     @Nullable
     Entity getSelectedEntity() {
         return clientgui != null ? clientgui.getDisplayedUnit() : null;
@@ -5278,5 +5282,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     Board getBoard() {
         return game.getBoard(boardId);
+    }
+
+    int getBoardId() {
+        return boardId;
     }
 }

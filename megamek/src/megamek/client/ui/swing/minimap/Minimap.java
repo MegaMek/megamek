@@ -372,16 +372,18 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
             @Override
             public void gameBoardNew(GameBoardNewEvent e) {
-                Board b = e.getOldBoard();
-                if (b != null) {
-                    b.removeBoardListener(boardListener);
+                if (e.getBoardId() == boardId) {
+                    Board b = e.getOldBoard();
+                    if (b != null) {
+                        b.removeBoardListener(boardListener);
+                    }
+                    b = e.getNewBoard();
+                    if (b != null) {
+                        b.addBoardListener(boardListener);
+                    }
+                    board = b;
+                    initializeMap();
                 }
-                b = e.getNewBoard();
-                if (b != null) {
-                    b.addBoardListener(boardListener);
-                }
-                board = b;
-                initializeMap();
             }
 
             @Override
@@ -749,7 +751,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     // draw dead units
                     multiUnits.clear();
                     for (Entity e : game.getOutOfGameEntitiesVector()) {
-                        if (e.getPosition() != null && removalReasons.contains(e.getRemovalCondition())) {
+                        if (e.getBoardLocation().isPresent() && e.getBoardLocation().get().isOn(boardId) &&
+                                  removalReasons.contains(e.getRemovalCondition())) {
                             paintUnit(g, e, true);
                         }
                     }
@@ -767,14 +770,14 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
                     // draw living units
                     for (Entity e : game.getEntitiesVector()) {
-                        if (e.getPosition() != null) {
+                        if (e.getBoardLocation().isPresent() && e.getBoardLocation().get().isOn(boardId)) {
                             paintUnit(g, e, false);
                         }
                     }
 
                     if (drawSensorRangeOnMiniMap) {
                         for (Entity e : game.getEntitiesVector()) {
-                            if (e.getPosition() != null) {
+                            if (e.getBoardLocation().isPresent() && e.getBoardLocation().get().isOn(boardId)) {
                                 paintSensor(g, e);
                             }
                         }

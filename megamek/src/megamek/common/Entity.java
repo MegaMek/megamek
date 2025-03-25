@@ -299,6 +299,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean destroyed = false;
 
     private Coords position = null;
+    private int boardID = 0;
 
     /**
      * Used for Entities that are bigger than a single hex. This contains the central hex plus all of the other hexes
@@ -15541,5 +15542,23 @@ public abstract class Entity extends TurnOrdered
 
     public void setJumpingWithMechanicalBoosters(boolean jumpingWithMechanicalBoosters) {
         isJumpingWithMechanicalBoosters = jumpingWithMechanicalBoosters;
+    }
+
+    /**
+     * Returns this unit's position as a board location with board ID. If it's coords is null (not deployed, fled the
+     * map or other circumstances), the returned Optional is empty.
+     *
+     * @return This unit's position
+     */
+    public Optional<BoardLocation> getBoardLocation() {
+        if (position == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(new BoardLocation(position, boardID));
+        }
+    }
+
+    public boolean isOnBoard(int boardID) {
+        return this.boardID == boardID;
     }
 }

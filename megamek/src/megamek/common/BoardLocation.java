@@ -21,24 +21,45 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import megamek.common.annotations.Nullable;
 
 /**
- * Represents a location (i.e. Coords) on the game board of a specific ID. With
- * a game having multiple maps, this class needs to replace Coords in many
- * methods to identify a specific position of an Entity or event.
- *
+ * Represents a location (i.e. Coords) on the game board of a specific ID. With a game having multiple maps, this class
+ * needs to replace Coords in many methods to identify a specific position of an Entity or event. The coords cannot
+ * be null.
+ * <p>
  * BoardLocation is immutable.
  */
 public record BoardLocation(Coords coords, int boardId) implements Serializable {
 
-    public boolean isOnBoard(int boardId) {
+    /**
+     * Create a BoardLocation on the board of the given ID and at the given coords.
+     *
+     * @param coords The hex on the board
+     * @param boardId The board
+     * @throws NullPointerException when coords are null
+     */
+    public BoardLocation(Coords coords, int boardId) {
+        this.coords = Objects.requireNonNull(coords);
+        this.boardId = boardId;
+    }
+
+    /**
+     * @param boardId The board ID to test
+     * @return True when this location's board ID is equal to the given board ID.
+     */
+    public boolean isOn(int boardId) {
         return this.boardId == boardId;
     }
 
-    public boolean isAtCoords(Coords coords) {
+    /**
+     * @param coords The coords to test
+     * @return True when this location's coords are equal to the given coords.
+     */
+    public boolean isAt(@Nullable Coords coords) {
         return this.coords.equals(coords);
     }
 

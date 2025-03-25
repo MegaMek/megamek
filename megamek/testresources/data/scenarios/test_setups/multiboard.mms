@@ -4,10 +4,10 @@ planet: None
 description: uses two boards
 map:
   - file: Beginner Box/16x17 Grassland 1.board
-  - file: AGoAC Maps/16x17 Grassland 2.board
+  - file: Battle of Tukayyid Pack/32x17 Pozoristu Mountains (CW).board
 
 factions:
-- name: Test Player
+- name: P1
 
   units:
   - fullname: Cyclops CP-10-Z

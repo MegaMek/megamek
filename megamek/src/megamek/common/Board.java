@@ -622,6 +622,17 @@ public class Board implements Serializable {
     }
 
     /**
+     * Determines whether this Board "contains" the specified location. True only when the board IDs match and the
+     * coords of the location are within the borders of the board.
+     *
+     * @param location the location to test
+     * @return true if the board contains the specified location
+     */
+    public boolean contains(@Nullable BoardLocation location) {
+        return (location != null) && location.isOn(boardId) && contains(location.coords());
+    }
+
+    /**
      * Returns the Hex at the given Coords, both of which may be null.
      *
      * @param coords the Coords to look for the Hex

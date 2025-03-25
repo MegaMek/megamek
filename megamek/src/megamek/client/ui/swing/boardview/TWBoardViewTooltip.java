@@ -18,8 +18,6 @@
  */
 package megamek.client.ui.swing.boardview;
 
-import static megamek.client.ui.swing.util.UIUtil.uiWhite;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,15 +26,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.HexTooltip;
-import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -54,20 +49,20 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
     public TWBoardViewTooltip(Game game, @Nullable ClientGUI clientGui, BoardView boardView) {
         this.clientGui = clientGui;
         this.game = game;
-        this.bv = boardView;
+        bv = boardView;
     }
 
     @Override
     public String getTooltip(Point point, Coords movementTarget) {
         final Coords coords = bv.getCoordsAt(point);
-        if (!game.getBoard().contains(coords)) {
+        if (!bv.getBoard().contains(coords)) {
             return null;
         }
 
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         Entity selectedEntity = (clientGui != null) ? clientGui.getDisplayedUnit() : null;
         Player localPlayer = localPlayer();
-        Hex mhex = game.getBoard().getHex(coords);
+        Hex mhex = bv.getBoard().getHex(coords);
 
         String result = "";
 
@@ -277,7 +272,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             result += UIUtil.tag("TABLE", attr,  row);
         }
 
-        final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(coords);
+        final Collection<SpecialHexDisplay> shdList = bv.getBoard().getSpecialHexDisplay(coords);
         int round = game.getRoundCount();
         if (shdList != null) {
             String sSpecialHex = "";

@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3055-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>5,5</pctOmni>
@@ -2562,7 +2559,7 @@
             </model>
             <model name='(Tracked CUAC10 Advanced)'>
                 <roles>field_gun</roles>
-                <availability>CLAN!Keshik:5!Front Line:2,CIH:0,CSJ!Keshik:5,BAN:0</availability>
+                <availability>CLAN!Keshik:5!Front Line:2,CIH:0,CSJ!Keshik:5,CWIE:0,BAN:0</availability>
             </model>
             <model name='(Tracked CUAC2 Advanced)'>
                 <roles>field_gun,fire_support</roles>
@@ -2598,7 +2595,7 @@
             </model>
             <model name='(Wheeled AC5 Advanced)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
-                <availability>CLAN!Second Line:1,CGB!Second Line:4,CHH!Second Line:6!Solahma:4,CIH:0,CSJ:0,BAN:3+</availability>
+                <availability>CLAN!Second Line:1,CGB!Second Line:4,CHH!Second Line:6!Solahma:4,CIH:0,CSJ:0,CWIE:0,BAN:3+</availability>
             </model>
             <model name='(Wheeled AC5 Basic)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
@@ -2732,7 +2729,7 @@
             <availability>CLAN!Keshik:4!Front Line:2!Second Line:1,CBS!Keshik:4!Front Line:4!Second Line:1,CHH!Keshik:5!Front Line:4!Second Line:1,CIH!Keshik:7!Front Line:4!Second Line:1,CSA!Keshik:4!Front Line:4!Second Line:1,CSJ!Keshik:4!Front Line:1,CSV!Keshik:4!Front Line:4!Second Line:1,CWIE:3+,BAN:3+</availability>
             <model name='(ER Laser Advanced)'>
                 <roles>recon</roles>
-                <availability>CLAN!Keshik:1,CIH:2+,CSA!Keshik:4!Front Line:1,CWIE:0,BAN:0</availability>
+                <availability>CLAN!Keshik:1,CIH:2+,CSA!Keshik:4!Front Line:1,CSJ:0,CWIE:0,BAN:0</availability>
             </model>
             <model name='(Flamer Advanced)'>
                 <roles>urban</roles>
@@ -2780,7 +2777,7 @@
         <chassis name='Clan Mechanized Tracked Point' unitType='Infantry'>
             <availability>CLAN:3+,CGB!Keshik:5!Front Line:4!Second Line:3!Solahma:1,CHH!Keshik:5!Front Line:5!Second Line:3!Solahma:1,CIH!Keshik:2!Front Line:2!Second Line:1,CSJ!Keshik:3!Front Line:2,CWIE:2+,BAN!Keshik:2!Front Line:2!Second Line:1</availability>
             <model name='(ER Laser Advanced)'>
-                <availability>CLAN!Keshik:1,CGB!Keshik:4!Front Line:1,CSA!Keshik:4!Front Line:1,CWIE:0,BAN:0</availability>
+                <availability>CLAN!Keshik:1,CGB!Keshik:4!Front Line:1,CSA!Keshik:4!Front Line:1,CSJ:0,CWIE:0,BAN:0</availability>
             </model>
             <model name='(Flamer Advanced)'>
                 <roles>urban</roles>
@@ -2860,7 +2857,7 @@
             </model>
             <model name='(Rifle Advanced)'>
                 <roles>urban</roles>
-                <availability>CLAN:7,CSJ!Keshik:7!Front Line:8!Second Line:8,BAN:7</availability>
+                <availability>CLAN:7,CSJ!Keshik:7!Front Line:8!Second Line:8,CWIE:0,BAN:7</availability>
             </model>
             <model name='(Rifle Basic)'>
                 <roles>urban</roles>
@@ -2900,7 +2897,7 @@
                 <availability>CWIE:4</availability>
             </model>
             <model name='(Rifle Advanced)'>
-                <availability>CLAN!Keshik:5!Front Line:3!Second Line:1,CBS!Keshik:5!Front Line:4!Second Line:4!Solahma:3!Provisional Garrison:1,CGB:5,CHH!Keshik:8!Front Line:8!Second Line:8!Solahma:6!Provisional Garrison:1,CIH!Keshik:8!Front Line:8!Second Line:8!Solahma:6!Provisional Garrison:1,CJF:5+,CSA:5,CSJ!Keshik:5!Front Line:2!Second Line:1,CSV!Keshik:5!Front Line:4!Second Line:4!Solahma:3!Provisional Garrison:1,CW:5+,CWIE:0,BAN:7+</availability>
+                <availability>CLAN!Keshik:5!Front Line:3!Second Line:1,CBS!Keshik:5!Front Line:4!Second Line:4!Solahma:3!Provisional Garrison:1,CGB:5,CHH!Keshik:8!Front Line:8!Second Line:8!Solahma:6!Provisional Garrison:1,CIH!Keshik:8!Front Line:8!Second Line:8!Solahma:6!Provisional Garrison:1,CJF:5+,CSA:5+,CSJ!Keshik:5!Front Line:2!Second Line:1,CSV!Keshik:5!Front Line:4!Second Line:4!Solahma:3!Provisional Garrison:1,CW:5+,CWIE:0,BAN:7+</availability>
             </model>
             <model name='(Rifle Basic)'>
                 <availability>CWIE:7</availability>

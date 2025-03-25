@@ -47,7 +47,8 @@ public class ProtoMek extends Entity {
 
     public static final int NUM_PROTOMEK_LOCATIONS = 7;
 
-    private static final String[] LOCATION_NAMES = { "Body", "Head", "Torso", "Right Arm", "Left Arm", "Legs", "Main Gun" };
+    private static final String[] LOCATION_NAMES = { "Body", "Head", "Torso", "Right Arm", "Left Arm", "Legs",
+                                                     "Main Gun" };
     private static final String[] LOCATION_ABBRS = { "BD", "HD", "T", "RA", "LA", "L", "MG" };
 
     // Crew damage caused so far by crits to this location.
@@ -55,8 +56,9 @@ public class ProtoMek extends Entity {
     private final int[] pilotDamageTaken = { 0, 0, 0, 0, 0, 0, 0 };
 
     /**
-     * Not every ProtoMek has a main gun. N.B. Regardless of the value set here, the variable is initialized to false until after the Entity
-     * is initialized, which is too late to allow main gun armor, hence the convoluted reverse logic.
+     * Not every ProtoMek has a main gun. N.B. Regardless of the value set here, the variable is initialized to false
+     * until after the Entity is initialized, which is too late to allow main gun armor, hence the convoluted reverse
+     * logic.
      */
     private boolean hasNoMainGun;
 
@@ -71,9 +73,9 @@ public class ProtoMek extends Entity {
     // Near miss reprs.
     public static final int LOC_NMISS = 7;
 
-    // "Systems". These represent protoMek critical hits; which remain constant regardless of proto.
-    // doesn't matter what gets hit in a proto section, just the number of times it's been critted
-    // so just have the right number of these systems and it works.
+    // "Systems". These represent protoMek critical hits; which remain constant regardless of proto. doesn't matter
+    // what gets hit in a proto section, just the number of times it's been critted so just have the right number of
+    // these systems and it works.
     public static final int SYSTEM_ARMCRIT = 0;
     public static final int SYSTEM_LEGCRIT = 1;
     public static final int SYSTEM_HEADCRIT = 2;
@@ -92,8 +94,7 @@ public class ProtoMek extends Entity {
     public static final String[] SYSTEM_NAMES = { "Arm", "Leg", "Head", "Torso" };
 
     /**
-     * Contains a mapping of locations which are blocked when carrying cargo in the
-     * "key" location
+     * Contains a mapping of locations which are blocked when carrying cargo in the "key" location
      */
     public static final Map<Integer, List<Integer>> BLOCKED_FIRING_LOCATIONS;
 
@@ -173,14 +174,16 @@ public class ProtoMek extends Entity {
      * Get the weapon in the given torso location (if any).
      *
      * @param torsoNum - a <code>int</code> that corresponds to SYSTEM_TORSO_WEAPON_A through SYSTEM_TORSO_WEAPON_F
-     * @return the <code>Mounted</code> weapon at the needed location. This value will be <code>null</code> if no weapon is in the indicated
-     * location.
+     *
+     * @return the <code>Mounted</code> weapon at the needed location. This value will be <code>null</code> if no weapon
+     *       is in the indicated location.
      */
     public Mounted<?> getTorsoWeapon(int torsoNum) {
         int index = torsoNum - SYSTEM_TORSO_WEAPON_A;
         // There are some non-weapons that take up weapon critical slots
         List<Mounted<?>> torsoEquipment = getEquipment().stream()
-            .filter(m -> (m.getLocation() == LOC_TORSO) && m.getType().isHittable()).toList();
+                                                .filter(m -> (m.getLocation() == LOC_TORSO) && m.getType().isHittable())
+                                                .toList();
         if (index < torsoEquipment.size()) {
             return torsoEquipment.get(index);
         } else {
@@ -196,13 +199,13 @@ public class ProtoMek extends Entity {
     }
 
     /**
-     * Protos don't take piloting skill rolls.
+     * ProtoMeks don't take piloting skill rolls.
      */
-    // TODO: this is no longer true in TacOps. Protos sometimes make PSRs using
+    // TODO: this is no longer true in TacOps. ProtoMeks sometimes make PSRs using
     // their gunnery skill
     @Override
     public PilotingRollData getBasePilotingRoll() {
-        return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE, "Protomeks never take PSRs.");
+        return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE, "ProtoMeks never take PSRs.");
     }
 
     /**
@@ -228,7 +231,8 @@ public class ProtoMek extends Entity {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
         }
-        // Gravity, Protos can't get faster
+
+        // Gravity, ProtoMeks can't get faster
         if (!mpCalculationSetting.ignoreGravity) {
             mp = Math.min(mp, applyGravityEffectsOnMP(mp));
         }
@@ -293,40 +297,63 @@ public class ProtoMek extends Entity {
             case LOC_LEG, LOC_TORSO -> 3;
             case LOC_BODY ->
                 // This is needed to keep everything ordered in the unit display system tab
-                1;
+                  1;
             default -> 0;
         };
     }
 
-    public static final TechAdvancement TA_STANDARD_PROTOMEK = new TechAdvancement(TECH_BASE_CLAN)
-            .setClanAdvancement(3055, 3059, 3060).setClanApproximate(true, false, false)
-            .setPrototypeFactions(F_CSJ).setProductionFactions(F_CSJ)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    public static final TechAdvancement TA_QUAD = new TechAdvancement(TECH_BASE_CLAN)
-            .setClanAdvancement(3075, 3083, 3100).setClanApproximate(false, true, false)
-            .setPrototypeFactions(F_CLAN).setProductionFactions(F_CCC)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    public static final TechAdvancement TA_ULTRA = new TechAdvancement(TECH_BASE_CLAN)
-            .setClanAdvancement(3075, 3083, 3100).setClanApproximate(false, true, false)
-            .setPrototypeFactions(F_CLAN).setProductionFactions(F_CCY)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    public static final TechAdvancement TA_GLIDER = new TechAdvancement(TECH_BASE_CLAN)
-            .setClanAdvancement(3075, 3084, 3100).setClanApproximate(false, true, false)
-            .setPrototypeFactions(F_CLAN).setProductionFactions(F_CSR)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    public static final TechAdvancement TA_INTERFACE_COCKPIT = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(3071, DATE_NONE, DATE_NONE, 3085).setISApproximate(true).setPrototypeFactions(F_WB)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    public static final TechAdvancement TA_STANDARD_PROTOMEK = new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(
+                3055,
+                3059,
+                3060)
+                                                                     .setClanApproximate(true, false, false)
+                                                                     .setPrototypeFactions(F_CSJ)
+                                                                     .setProductionFactions(F_CSJ)
+                                                                     .setTechRating(RATING_F)
+                                                                     .setAvailability(RATING_X,
+                                                                           RATING_X,
+                                                                           RATING_E,
+                                                                           RATING_D)
+                                                                     .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    public static final TechAdvancement TA_QUAD = new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3075,
+                3083,
+                3100)
+                                                        .setClanApproximate(false, true, false)
+                                                        .setPrototypeFactions(F_CLAN)
+                                                        .setProductionFactions(F_CCC)
+                                                        .setTechRating(RATING_F)
+                                                        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                                                        .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    public static final TechAdvancement TA_ULTRA = new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3075,
+                3083,
+                3100)
+                                                         .setClanApproximate(false, true, false)
+                                                         .setPrototypeFactions(F_CLAN)
+                                                         .setProductionFactions(F_CCY)
+                                                         .setTechRating(RATING_F)
+                                                         .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                                                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    public static final TechAdvancement TA_GLIDER = new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3075,
+                3084,
+                3100)
+                                                          .setClanApproximate(false, true, false)
+                                                          .setPrototypeFactions(F_CLAN)
+                                                          .setProductionFactions(F_CSR)
+                                                          .setTechRating(RATING_F)
+                                                          .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                                                          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    public static final TechAdvancement TA_INTERFACE_COCKPIT = new TechAdvancement(TECH_BASE_IS).setISAdvancement(3071,
+                DATE_NONE,
+                DATE_NONE,
+                3085)
+                                                                     .setISApproximate(true)
+                                                                     .setPrototypeFactions(F_WB)
+                                                                     .setTechRating(RATING_E)
+                                                                     .setAvailability(RATING_X,
+                                                                           RATING_X,
+                                                                           RATING_F,
+                                                                           RATING_X)
+                                                                     .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -352,8 +379,7 @@ public class ProtoMek extends Entity {
     public void newRound(int roundNumber) {
         if (hasWorkingMisc(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && !edpCharged) {
             for (Mounted<?> misc : getMisc()) {
-                if (misc.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR)
-                        && misc.curMode().equals("charging")) {
+                if (misc.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && misc.curMode().equals("charging")) {
                     if (edpChargeTurns == 6) {
                         setEDPCharged(true);
                         misc.setMode("not charging");
@@ -418,8 +444,8 @@ public class ProtoMek extends Entity {
     }
 
     /**
-     * Returns the amount of heat that the entity can sink each turn. PMeks have no heat. //FIXME However, the number of heat sinks they
-     * have IS important... For cost and validation purposes.
+     * Returns the amount of heat that the entity can sink each turn. PMeks have no heat.
+     * FIXME However, the number of heat sinks they have IS important... For cost and validation purposes.
      */
     @Override
     public int getHeatCapacity(boolean radicalHeatSinks) {
@@ -498,7 +524,7 @@ public class ProtoMek extends Entity {
     @Override
     public boolean canPickupGroundObject() {
         return !isLocationBad(ProtoMek.LOC_LARM) && (getCarriedObject(ProtoMek.LOC_LARM) == null) ||
-                !isLocationBad(ProtoMek.LOC_RARM) && (getCarriedObject(ProtoMek.LOC_RARM) == null);
+                     !isLocationBad(ProtoMek.LOC_RARM) && (getCarriedObject(ProtoMek.LOC_RARM) == null);
     }
 
     @Override
@@ -560,6 +586,7 @@ public class ProtoMek extends Entity {
 
     /**
      * @return True if this ProtoMek mounts an operable Myomer Booster.
+     *
      * @see Mounted#isOperable()
      */
     public boolean hasMyomerBooster() {
@@ -598,8 +625,7 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-            int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover) {
         int roll;
 
         if ((aimedLocation != LOC_NONE) && aimingMode.isImmobile()) {
@@ -689,9 +715,15 @@ public class ProtoMek extends Entity {
     public HitData getTransferLocation(HitData hit) {
         return switch (hit.getLocation()) {
             case LOC_NMISS -> new HitData(LOC_NONE);
-            case LOC_LARM, LOC_LEG, LOC_RARM, LOC_HEAD, LOC_MAINGUN ->
-                new HitData(LOC_TORSO, hit.isRear(), hit.getEffect(), hit.hitAimedLocation(), hit.getSpecCritMod(),
-                hit.getSpecCrit(), hit.isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
+            case LOC_LARM, LOC_LEG, LOC_RARM, LOC_HEAD, LOC_MAINGUN -> new HitData(LOC_TORSO,
+                  hit.isRear(),
+                  hit.getEffect(),
+                  hit.hitAimedLocation(),
+                  hit.getSpecCritMod(),
+                  hit.getSpecCrit(),
+                  hit.isFromFront(),
+                  hit.getGeneralDamageType(),
+                  hit.glancingMod());
             default -> new HitData(LOC_DESTROYED);
         };
     }
@@ -767,19 +799,21 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public Mounted<?> addEquipment(EquipmentType etype, int loc) throws LocationFullException {
-        return addEquipment(etype, loc, false, -1);
+    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc) throws LocationFullException {
+        return addEquipment(equipmentType, loc, false, -1);
     }
 
     @Override
-    public Mounted<?> addEquipment(EquipmentType etype, int loc, boolean rearMounted) throws LocationFullException {
-        Mounted<?> mounted = Mounted.createMounted(this, etype);
+    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc, boolean rearMounted)
+          throws LocationFullException {
+        Mounted<?> mounted = Mounted.createMounted(this, equipmentType);
         addEquipment(mounted, loc, rearMounted, -1);
         return mounted;
     }
 
     @Override
-    public Mounted<?> addEquipment(EquipmentType etype, int loc, boolean rearMounted, int shots) throws LocationFullException {
+    public Mounted<?> addEquipment(EquipmentType etype, int loc, boolean rearMounted, int shots)
+          throws LocationFullException {
         Mounted<?> mounted = Mounted.createMounted(this, etype);
         addEquipment(mounted, loc, rearMounted, shots);
         return mounted;
@@ -787,13 +821,15 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    protected void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted, int shots) throws LocationFullException {
+    protected void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted, int shots)
+          throws LocationFullException {
         if (mounted instanceof AmmoMounted) {
             // Damn protoMek ammo; nasty hack, should be cleaner
             if (-1 != shots) {
                 mounted.setShotsLeft(shots);
                 mounted.setOriginalShots(shots);
-                ((AmmoMounted) mounted) .setAmmoCapacity(shots * ((AmmoMounted) mounted).getType().getKgPerShot() / 1000);
+                ((AmmoMounted) mounted).setAmmoCapacity(shots * ((AmmoMounted) mounted).getType().getKgPerShot() /
+                                                              1000);
                 super.addEquipment(mounted, loc, rearMounted);
                 return;
             }
@@ -802,16 +838,23 @@ public class ProtoMek extends Entity {
         if (mounted.getType().isHittable() && (loc != LOC_BODY)) {
             int max = maxWeapons(loc);
             if (max == 0) {
-                throw new LocationFullException("Weapon " + mounted.getName() + " can't be mounted in " + getLocationAbbr(loc));
+                throw new LocationFullException("Weapon " +
+                                                      mounted.getName() +
+                                                      " can't be mounted in " +
+                                                      getLocationAbbr(loc));
             }
             // EDP armor reduces the number of torso slots by one.
             if ((loc == LOC_TORSO) && (getArmorType(loc) == EquipmentType.T_ARMOR_EDP)) {
                 max--;
             }
             long current = getEquipment().stream()
-                .filter(m -> (m.getLocation() == loc) && m.getType().isHittable()).count();
+                                 .filter(m -> (m.getLocation() == loc) && m.getType().isHittable())
+                                 .count();
             if (current >= max) {
-                throw new LocationFullException("Weapon " + mounted.getName() + " exceeds maximum for " + getLocationAbbr(loc));
+                throw new LocationFullException("Weapon " +
+                                                      mounted.getName() +
+                                                      " exceeds maximum for " +
+                                                      getLocationAbbr(loc));
             }
         }
         super.addEquipment(mounted, loc, rearMounted);
@@ -1018,8 +1061,8 @@ public class ProtoMek extends Entity {
         // Additional restrictions for hidden units
         if (isHidden()) {
             // Can't deploy in paved hexes
-            if ((hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD))
-                    && (!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.RUBBLE))) {
+            if ((hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD)) &&
+                      (!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             // Can't deploy on a bridge
@@ -1032,8 +1075,7 @@ public class ProtoMek extends Entity {
             }
         }
 
-        return (hex.terrainLevel(Terrains.WOODS) > 2)
-                || (hex.terrainLevel(Terrains.JUNGLE) > 2);
+        return (hex.terrainLevel(Terrains.WOODS) > 2) || (hex.terrainLevel(Terrains.JUNGLE) > 2);
     }
 
     @Override
@@ -1083,9 +1125,7 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
-                                      MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos,
-                                      Coords curPos, boolean isInfantry, int distance) {
+    public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE, "ProtoMeks can't skid");
     }
 
@@ -1126,8 +1166,8 @@ public class ProtoMek extends Entity {
 
     public boolean isEDPCharging() {
         return getMisc().stream()
-            .filter(m -> m.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR))
-            .anyMatch(m -> m.curMode().equals("charging"));
+                     .filter(m -> m.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR))
+                     .anyMatch(m -> m.curMode().equals("charging"));
     }
 
     public boolean isQuad() {
@@ -1147,7 +1187,8 @@ public class ProtoMek extends Entity {
     }
 
     /**
-     * WoB protoMek interface allows it to be piloted by a quadruple amputee with a VDNI implant. No effect on game play.
+     * WoB protoMek interface allows it to be piloted by a quadruple amputee with a VDNI implant. No effect on game
+     * play.
      *
      * @return Whether the protoMek is equipped with an Inner Sphere ProtoMek Interface.
      */
@@ -1156,7 +1197,8 @@ public class ProtoMek extends Entity {
     }
 
     /**
-     * Sets whether the protoMek has an Inner Sphere ProtoMek Interface. This will also determine whether it is a mixed tech unit.
+     * Sets whether the protoMek has an Inner Sphere ProtoMek Interface. This will also determine whether it is a mixed
+     * tech unit.
      *
      * @param interfaceCockpit Whether the protoMek has an IS interface
      */
@@ -1169,19 +1211,19 @@ public class ProtoMek extends Entity {
     public boolean isCrippled() {
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                LOGGER.debug(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
+                LOGGER.debug("{} CRIPPLED: Pilot has taken 4+ damage.", getDisplayName());
             }
             return true;
         }
 
-        for (Mounted<?> weap : getWeaponList()) {
-            if (!weap.isCrippled()) {
+        for (Mounted<?> mountedWeapon : getWeaponList()) {
+            if (!mountedWeapon.isCrippled()) {
                 return false;
             }
         }
 
         if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-            LOGGER.debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            LOGGER.debug("{} CRIPPLED: has no more viable weapons.", getDisplayName());
         }
         return true;
     }
@@ -1203,8 +1245,8 @@ public class ProtoMek extends Entity {
 
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
-        for (Mounted<?> weap : getTotalWeaponList()) {
-            if (weap.isCrippled()) {
+        for (Mounted<?> mountedWeapon : getTotalWeaponList()) {
+            if (mountedWeapon.isCrippled()) {
                 totalInoperable++;
             }
         }

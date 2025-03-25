@@ -1,0 +1,18 @@
+key: AML
+name: Alyina Mercantile League
+capital: Alyina
+yearsActive:
+  - start: 3151
+tags:
+  - MINOR
+  - CLAN
+color:
+  red: 47
+  green: 124
+  blue: 50
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Front Line
+fallBackFactions:
+  - CJF

@@ -1,0 +1,24 @@
+key: CP
+name: Clan Protectorate
+capital: Marik
+yearsActive:
+  - start: 3138
+tags:
+  - MINOR
+  - CLAN
+color:
+  red: 153
+  green: 255
+  blue: 51
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CDS
+  - CNC
+  - FWL
+  - CLAN.IS

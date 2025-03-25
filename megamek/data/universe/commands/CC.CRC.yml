@@ -1,0 +1,8 @@
+key: CC.CRC
+name: Confederation Reserve Cavalry
+yearsActive:
+  - start: 2650
+ratingLevels:
+  - F
+fallBackFactions:
+  - CC

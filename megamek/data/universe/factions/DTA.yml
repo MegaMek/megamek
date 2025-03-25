@@ -1,0 +1,37 @@
+key: DTA
+name: Duchy of Tamarind-Abbey
+capital: Tamarind
+yearsActive:
+  - start: 3071
+    end: 3139
+successor: FWL
+tags:
+  - MINOR
+  - IS
+color:
+  red: 99
+  green: 94
+  blue: 165
+logo: Inner Sphere/Duchy of Tamarind-Abbey.png
+background: Inner Sphere/Free Worlds League.png
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS
+  - FWL

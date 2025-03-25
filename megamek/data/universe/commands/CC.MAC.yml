@@ -1,0 +1,8 @@
+key: CC.MAC
+name: McCarron's Armored Cavalry
+yearsActive:
+  - start: 3060
+ratingLevels:
+  - A
+fallBackFactions:
+  - CC

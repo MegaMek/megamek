@@ -1,0 +1,29 @@
+key: CS
+name: ComStar
+capital: Terra
+capitalChanges: 
+  3059: Tukayyid
+yearsActive:
+  - start: 2788
+    end: 3081
+tags:
+  - PLAYABLE
+  - MAJOR
+  - IS
+  - INACTIVE
+  - CONTROLLING
+  - GENEROUS
+color:
+  red: 255
+  green: 250
+  blue: 240
+logo: Inner Sphere/ComStar.png
+background: Inner Sphere/ComStar.png
+camos: ComStar
+ratingLevels:
+  - B
+  - A
+fallBackFactions:
+  - IS
+formationBaseSize: 6
+formationGrouping: 6

@@ -1,0 +1,19 @@
+key: CLAN
+name: All Clans
+capital: Strana Mechty
+yearsActive:
+  - start: 2807
+tags:
+  - SPECIAL
+  - CLAN
+color:
+  red: 139
+  green: 69
+  blue: 19
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik

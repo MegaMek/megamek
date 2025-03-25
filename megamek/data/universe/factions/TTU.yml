@@ -1,0 +1,28 @@
+key: TTU
+name: Tall Trees Union
+capital: Tall Trees
+yearsActive:
+  - start: 3136
+    end: 3144
+successor: CC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 153
+  green: 153
+  blue: 51
+nameGenerator: CC
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - -1
+fallBackFactions:
+  - ROS

@@ -1,0 +1,12 @@
+key: FoS
+name: Federation of Skye
+capital: Terra
+successor: LA
+tags:
+  - MINOR
+  - IS
+color:
+  red: 66
+  green: 217
+  blue: 244
+nameGenerator: LA

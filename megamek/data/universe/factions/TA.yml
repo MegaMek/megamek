@@ -1,0 +1,22 @@
+key: TA
+name: Terran Alliance
+capital: Terra
+yearsActive:
+  - start: 2086
+    end: 2315
+successor: TH
+tags:
+  - MAJOR
+  - IS
+color:
+  red: 164
+  green: 164
+  blue: 122
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

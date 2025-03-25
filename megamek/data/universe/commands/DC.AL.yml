@@ -1,0 +1,8 @@
+key: DC.AL
+name: Arkab Legions
+yearsActive:
+  - start: 2479
+ratingLevels:
+  - D
+fallBackFactions:
+  - DC

@@ -1,0 +1,26 @@
+key: CWI
+name: Clan Widowmaker
+capital: Terra
+yearsActive:
+  - start: 2807
+    end: 2834
+successor: CW
+tags:
+  - MINOR
+  - CLAN
+color:
+  red: 222
+  green: 184
+  blue: 135
+logo: Clan/Clan Widowmaker.png
+background: Clan/Clan Widowmaker.png
+camos: Clans/Widowmaker
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN

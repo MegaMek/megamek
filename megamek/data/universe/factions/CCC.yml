@@ -1,0 +1,27 @@
+key: CCC
+name: Clan Cloud Cobra
+capital: Homer
+yearsActive:
+  - start: 2807
+    end: 3085
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 147
+  green: 112
+  blue: 219
+logo: Clan/Clan Cloud Cobra.png
+background: Clan/Clan Cloud Cobra.png
+camos: Clans/Cloud Cobra
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.HW
+preInvasionHonorRating: OPPORTUNISTIC

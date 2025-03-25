@@ -1,0 +1,26 @@
+key: CBS
+name: Clan Blood Spirit
+capital: York (Clan)
+yearsActive:
+  - start: 2807
+    end: 3082
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 255
+  green: 99
+  blue: 71
+logo: Clan/Clan Blood Spirit.png
+background: Clan/Clan Blood Spirit.png
+camos: Clans/Blood Spirit
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.HW

@@ -1,0 +1,9 @@
+key: FS.DL
+name: Dragonlords
+yearsActive:
+  - start: 2572
+    end: 2870
+ratingLevels:
+  - B
+fallBackFactions:
+  - FS

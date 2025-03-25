@@ -1,0 +1,9 @@
+key: FWL.RH
+name: Regulan Hussars
+yearsActive:
+  - start: 2478
+    end: 3079
+ratingLevels:
+  - D
+fallBackFactions:
+  - FWL

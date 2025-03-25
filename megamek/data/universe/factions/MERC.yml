@@ -1,0 +1,36 @@
+key: MERC
+name: Mercenary
+capital: Solaris
+capitalChanges: 
+  2789: Galatea
+  3052: Outreach
+  3067: Galatea
+tags:
+  - MERC
+  - PLAYABLE
+color:
+  red: 169
+  green: 169
+  blue: 169
+background: Mercenary.png
+camos: Mercs
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 2
+  - 1
+  - 0
+  - 1
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

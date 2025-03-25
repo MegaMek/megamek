@@ -1,0 +1,20 @@
+key: ARD
+name: Aurigan Directorate
+capital: Coromodir
+tags:
+  - MINOR
+  - PERIPHERY
+color:
+  red: 103
+  green: 140
+  blue: 73
+logo: Periphery/Aurigan Directorate.png
+background: Periphery/Aurigan Directorate.png
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 3
+  - 3

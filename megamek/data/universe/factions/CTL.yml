@@ -1,0 +1,12 @@
+key: CTL
+name: Chesterton Trade Federation
+capital: Terra
+successor: CC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 184
+  green: 134
+  blue: 22
+nameGenerator: CC

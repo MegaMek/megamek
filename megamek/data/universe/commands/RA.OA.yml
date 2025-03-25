@@ -1,0 +1,14 @@
+key: RA.OA
+name: Alliance Military Corps
+yearsActive:
+  - start: 3083
+tags:
+  - PERIPHERY
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - OA

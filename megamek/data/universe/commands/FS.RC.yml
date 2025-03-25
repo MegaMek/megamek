@@ -1,0 +1,9 @@
+key: FS.RC
+name: Robinson Chevaliers
+yearsActive:
+  - start: 2540
+    end: 2950
+ratingLevels:
+  - C
+fallBackFactions:
+  - FS

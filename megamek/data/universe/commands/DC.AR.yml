@@ -1,0 +1,9 @@
+key: DC.AR
+name: Alshain Regulars
+yearsActive:
+  - start: 3034
+    end: 3064
+ratingLevels:
+  - D
+fallBackFactions:
+  - DC

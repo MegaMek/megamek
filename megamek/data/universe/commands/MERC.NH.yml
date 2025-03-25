@@ -1,0 +1,6 @@
+key: MERC.NH
+name: Northwind Highlanders
+yearsActive:
+  - end: 3081
+fallBackFactions:
+  - MERC

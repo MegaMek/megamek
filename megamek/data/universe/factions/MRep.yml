@@ -1,0 +1,12 @@
+key: MRep
+name: Marik Republic
+capital: Marik
+successor: FWL
+tags:
+  - MINOR
+  - IS
+color:
+  red: 143
+  green: 190
+  blue: 192
+nameGenerator: FWL

@@ -1,0 +1,21 @@
+key: NOC
+name: New Oberon Confederation
+capital: Oberon VI
+tags:
+  - PERIPHERY
+color:
+  red: 231
+  green: 178
+  blue: 50
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 2
+  - 2

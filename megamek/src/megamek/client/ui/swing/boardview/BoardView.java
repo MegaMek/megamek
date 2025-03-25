@@ -842,13 +842,13 @@ public final class BoardView extends AbstractBoardView
             int y = 0;
             int w = bvBgImage.getWidth();
             int h = bvBgImage.getHeight();
-            while (y < clipping.getHeight()) {
+            while (y < (int) clipping.getHeight()) {
                 int yRem = 0;
                 if (y == 0) {
                     yRem = clipping.y % h;
                 }
                 x = 0;
-                while (x < clipping.getWidth()) {
+                while (x < (int) clipping.getWidth()) {
                     int xRem = 0;
                     if (x == 0) {
                         xRem = clipping.x % w;

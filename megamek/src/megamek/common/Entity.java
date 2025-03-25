@@ -4259,10 +4259,7 @@ public abstract class Entity extends TurnOrdered
             }
 
             // No linked MGs...
-            if (mounted.getType().hasFlag(WeaponType.F_MG) && hasLinkedMGA(mounted)) {
-                return false;
-            }
-            return true;
+            return !mounted.getType().hasFlag(WeaponType.F_MG) || !hasLinkedMGA(mounted);
         } else {
             return false;
         }
@@ -6349,7 +6346,7 @@ public abstract class Entity extends TurnOrdered
     public boolean locationHasCase(int loc) {
         for (MiscMounted mounted : getMisc()) {
             if ((mounted.getLocation() == loc) &&
-                      mounted.getType().hasFlag(MiscType.F_CASE) | (mounted.getType().hasFlag(MiscType.F_CASEP))) {
+                      (mounted.getType().hasFlag(MiscType.F_CASE) || mounted.getType().hasFlag(MiscType.F_CASEP))) {
                 return true;
             }
         }

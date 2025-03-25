@@ -1730,7 +1730,7 @@
             </model>
         </chassis>
         <chassis name='Clan Mechanized Wheeled Point' unitType='Infantry'>
-            <availability>Clan:3+,CBS!Keshik:4!Front Line:4!Second Line:2!Solahma:1,CGB!Keshik:6!Front Line:5!Second Line:3!Solahma:1,CHH:6+,CSA!Keshik:4!Front Line:4!Second Line:2!Solahma:1,CSJ!Keshik:4!Front Line:2!Second Line:1,CSV!Keshik:4!Front Line:4!Second Line:2!Solahma:1,BAN!Keshik:3!Front Line:3!Second Line:2</availability>
+            <availability>CLAN:3+,CBS!Keshik:4!Front Line:4!Second Line:2!Solahma:1,CGB!Keshik:6!Front Line:5!Second Line:3!Solahma:1,CHH:6+,CSA!Keshik:4!Front Line:4!Second Line:2!Solahma:1,CSJ!Keshik:4!Front Line:2!Second Line:1,CSV!Keshik:4!Front Line:4!Second Line:2!Solahma:1,BAN!Keshik:3!Front Line:3!Second Line:2</availability>
             <model name='(Flamer Advanced)'>
                 <roles>urban</roles>
                 <availability>CLAN:3-,CSJ:5-,BAN:5-</availability>

@@ -27,8 +27,6 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.stream.IntStream;
 
-import org.apache.commons.collections4.IteratorUtils;
-
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.common.*;
@@ -38,12 +36,10 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+import org.apache.commons.collections4.IteratorUtils;
 
 /**
- * Notes: check out
- * - RATGenerator.java
- * - ForceDescriptor.java
- * for era-based search examples
+ * Notes: check out - RATGenerator.java - ForceDescriptor.java for era-based search examples
  */
 
 public class TeamLoadOutGenerator {
@@ -54,236 +50,273 @@ public class TeamLoadOutGenerator {
     // found, defaults overridden.
     public static final String LOAD_OUT_SETTINGS_PATH = "mmconf" + File.separator + "munitionLoadOutSettings.xml";
     public static Properties weightProperties = new Properties();
+
     static {
         try (InputStream is = new FileInputStream(LOAD_OUT_SETTINGS_PATH)) {
             weightProperties.loadFromXML(is);
         } catch (Exception e) {
             logger.warn(e, "Munition weight properties could not be loaded!  Using defaults...");
-            logger.debug(e, LOAD_OUT_SETTINGS_PATH + " was not loaded: ");
+            logger.debug(e, "{} was not loaded: ", LOAD_OUT_SETTINGS_PATH);
         }
     }
 
     public static float UNSET_FILL_RATIO = Float.NEGATIVE_INFINITY;
 
-    public static final ArrayList<String> AP_MUNITIONS = new ArrayList<>(List.of(
-            "Armor-Piercing", "Tandem-Charge"));
+    public static final ArrayList<String> AP_MUNITIONS = new ArrayList<>(List.of("Armor-Piercing", "Tandem-Charge"));
 
-    public static final ArrayList<String> FLAK_MUNITIONS = new ArrayList<>(List.of(
-            "ADA", "Cluster", "Flak", "AAAMissile Ammo", "LAAMissile Ammo"));
+    public static final ArrayList<String> FLAK_MUNITIONS = new ArrayList<>(List.of("ADA",
+          "Cluster",
+          "Flak",
+          "AAAMissile Ammo",
+          "LAAMissile Ammo"));
 
-    public static final ArrayList<String> ACCURATE_MUNITIONS = new ArrayList<>(List.of(
-            "Precision"));
+    public static final ArrayList<String> ACCURATE_MUNITIONS = new ArrayList<>(List.of("Precision"));
 
-    public static final ArrayList<String> HIGH_POWER_MUNITIONS = new ArrayList<>(List.of(
-            "Tandem-Charge", "Fuel-Air", "HE", "Dead-Fire", "Davy Crockett-M",
-            "ASMissile Ammo", "FABombLarge Ammo", "FABombSmall Ammo", "AlamoMissile Ammo"));
+    public static final ArrayList<String> HIGH_POWER_MUNITIONS = new ArrayList<>(List.of("Tandem-Charge",
+          "Fuel-Air",
+          "HE",
+          "Dead-Fire",
+          "Davy Crockett-M",
+          "ASMissile Ammo",
+          "FABombLarge Ammo",
+          "FABombSmall Ammo",
+          "AlamoMissile Ammo"));
 
-    public static final ArrayList<String> ANTI_INF_MUNITIONS = new ArrayList<>(List.of(
-            "Inferno", "Fragmentation", "Flechette", "Fuel-Air", "Anti-personnel", "Acid",
-            "FABombSmall Ammo", "ClusterBomb", "HEBomb"));
+    public static final ArrayList<String> ANTI_INF_MUNITIONS = new ArrayList<>(List.of("Inferno",
+          "Fragmentation",
+          "Flechette",
+          "Fuel-Air",
+          "Anti-personnel",
+          "Acid",
+          "FABombSmall Ammo",
+          "ClusterBomb",
+          "HEBomb"));
 
-    public static final ArrayList<String> ANTI_BA_MUNITIONS = new ArrayList<>(List.of(
-            "Inferno", "Fuel-Air", "Tandem-Charge", "Acid", "FABombSmall Ammo", "HEBomb"));
+    public static final ArrayList<String> ANTI_BA_MUNITIONS = new ArrayList<>(List.of("Inferno",
+          "Fuel-Air",
+          "Tandem-Charge",
+          "Acid",
+          "FABombSmall Ammo",
+          "HEBomb"));
 
-    public static final ArrayList<String> HEAT_MUNITIONS = new ArrayList<>(List.of(
-            "Inferno", "Incendiary", "InfernoBomb"));
+    public static final ArrayList<String> HEAT_MUNITIONS = new ArrayList<>(List.of("Inferno",
+          "Incendiary",
+          "InfernoBomb"));
 
-    public static final ArrayList<String> ILLUMINATION_MUNITIONS = new ArrayList<>(List.of(
-            "Illumination", "Tracer", "Inferno", "Incendiary", "Flare", "InfernoBomb"));
+    public static final ArrayList<String> ILLUMINATION_MUNITIONS = new ArrayList<>(List.of("Illumination",
+          "Tracer",
+          "Inferno",
+          "Incendiary",
+          "Flare",
+          "InfernoBomb"));
 
-    public static final ArrayList<String> UTILITY_MUNITIONS = new ArrayList<>(List.of(
-            "Illumination", "Smoke", "Mine Clearance", "Anti-TSM", "Laser Inhibiting",
-            "Thunder", "FASCAM", "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb",
-            "Thunder-Inferno", "Flare", "ThunderBomb", "TAGBomb", "TorpedoBomb", "ASEWMissile Ammo"));
+    public static final ArrayList<String> UTILITY_MUNITIONS = new ArrayList<>(List.of("Illumination",
+          "Smoke",
+          "Mine Clearance",
+          "Anti-TSM",
+          "Laser Inhibiting",
+          "Thunder",
+          "FASCAM",
+          "Thunder-Active",
+          "Thunder-Augmented",
+          "Thunder-Vibrabomb",
+          "Thunder-Inferno",
+          "Flare",
+          "ThunderBomb",
+          "TAGBomb",
+          "TorpedoBomb",
+          "ASEWMissile Ammo"));
 
     // Guided munitions come in two main flavors
-    public static final ArrayList<String> GUIDED_MUNITIONS = new ArrayList<>(List.of(
-            "Semi-Guided", "Narc-capable", "Homing", "Copperhead", "LGBomb", "ArrowIVHomingMissile Ammo"));
-    public static final ArrayList<String> TAG_GUIDED_MUNITIONS = new ArrayList<>(List.of(
-            "Semi-Guided", "Homing", "Copperhead", "LGBomb", "ArrowIVHomingMissile Ammo"));
+    public static final ArrayList<String> GUIDED_MUNITIONS = new ArrayList<>(List.of("Semi-Guided",
+          "Narc-capable",
+          "Homing",
+          "Copperhead",
+          "LGBomb",
+          "ArrowIVHomingMissile Ammo"));
+    public static final ArrayList<String> TAG_GUIDED_MUNITIONS = new ArrayList<>(List.of("Semi-Guided",
+          "Homing",
+          "Copperhead",
+          "LGBomb",
+          "ArrowIVHomingMissile Ammo"));
     public static final ArrayList<String> NARC_GUIDED_MUNITIONS = new ArrayList<>(List.of("Narc-capable"));
 
     // TODO Anti-Radiation Missiles See IO pg 62 (TO 368)
-    public static final ArrayList<String> SEEKING_MUNITIONS = new ArrayList<>(List.of(
-            "Heat-Seeking", "Listen-Kill", "Swarm", "Swarm-I"));
+    public static final ArrayList<String> SEEKING_MUNITIONS = new ArrayList<>(List.of("Heat-Seeking",
+          "Listen-Kill",
+          "Swarm",
+          "Swarm-I"));
 
-    public static final ArrayList<String> AMMO_REDUCING_MUNITIONS = new ArrayList<>(List.of(
-            "Acid", "Laser Inhibiting", "Follow The Leader", "Heat-Seeking", "Tandem-Charge",
-            "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb", "Thunder-Inferno",
-            "AAAMissile Ammo", "ASMissile Ammo", "ASWEMissile Ammo", "ArrowIVMissile Ammo",
-            "AlamoMissile Ammo", "Precision", "Armor-Piercing"));
+    public static final ArrayList<String> AMMO_REDUCING_MUNITIONS = new ArrayList<>(List.of("Acid",
+          "Laser Inhibiting",
+          "Follow The Leader",
+          "Heat-Seeking",
+          "Tandem-Charge",
+          "Thunder-Active",
+          "Thunder-Augmented",
+          "Thunder-Vibrabomb",
+          "Thunder-Inferno",
+          "AAAMissile Ammo",
+          "ASMissile Ammo",
+          "ASWEMissile Ammo",
+          "ArrowIVMissile Ammo",
+          "AlamoMissile Ammo",
+          "Precision",
+          "Armor-Piercing"));
 
-    public static final ArrayList<String> TYPE_LIST = new ArrayList<String>(List.of(
-            "LRM", "SRM", "AC", "ATM", "Arrow IV", "Artillery", "Artillery Cannon",
-            "Mek Mortar", "Narc", "Bomb"));
+    public static final ArrayList<String> TYPE_LIST = new ArrayList<>(List.of("LRM",
+          "SRM",
+          "AC",
+          "ATM",
+          "Arrow IV",
+          "Artillery",
+          "Artillery Cannon",
+          "Mek Mortar",
+          "Narc",
+          "Bomb"));
 
-    public static final Map<String, List<String>> TYPE_MAP = Map.ofEntries(
-            entry("LRM", MunitionTree.LRM_MUNITION_NAMES),
-            entry("SRM", MunitionTree.SRM_MUNITION_NAMES),
-            entry("AC", MunitionTree.AC_MUNITION_NAMES),
-            entry("ATM", MunitionTree.ATM_MUNITION_NAMES),
-            entry("Arrow IV", MunitionTree.ARROW_MUNITION_NAMES),
-            entry("Artillery", MunitionTree.ARTILLERY_MUNITION_NAMES),
-            entry("Artillery Cannon", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
-            entry("Mek Mortar", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
-            entry("Narc", MunitionTree.NARC_MUNITION_NAMES),
-            entry("Bomb", MunitionTree.BOMB_MUNITION_NAMES));
+    public static final Map<String, List<String>> TYPE_MAP = Map.ofEntries(entry("LRM",
+                MunitionTree.LRM_MUNITION_NAMES),
+          entry("SRM", MunitionTree.SRM_MUNITION_NAMES),
+          entry("AC", MunitionTree.AC_MUNITION_NAMES),
+          entry("ATM", MunitionTree.ATM_MUNITION_NAMES),
+          entry("Arrow IV", MunitionTree.ARROW_MUNITION_NAMES),
+          entry("Artillery", MunitionTree.ARTILLERY_MUNITION_NAMES),
+          entry("Artillery Cannon", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
+          entry("Mek Mortar", MunitionTree.MEK_MORTAR_MUNITION_NAMES),
+          entry("Narc", MunitionTree.NARC_MUNITION_NAMES),
+          entry("Bomb", MunitionTree.BOMB_MUNITION_NAMES));
 
     // subregion Bombs
     // bomb types assignable to aerospace units on ground maps
-    private static final int[] validBotBombs = {
-            BombType.B_HE,
-            BombType.B_CLUSTER,
-            BombType.B_RL,
-            BombType.B_INFERNO,
-            BombType.B_THUNDER,
-            BombType.B_FAE_SMALL,
-            BombType.B_FAE_LARGE,
-            BombType.B_LG,
-            BombType.B_ARROW,
-            BombType.B_HOMING,
-            BombType.B_TAG
-    };
+    private static final int[] validBotBombs = { BombType.B_HE, BombType.B_CLUSTER, BombType.B_RL, BombType.B_INFERNO,
+                                                 BombType.B_THUNDER, BombType.B_FAE_SMALL, BombType.B_FAE_LARGE,
+                                                 BombType.B_LG, BombType.B_ARROW, BombType.B_HOMING, BombType.B_TAG };
 
-    private static final int[] validBotAABombs = {
-            BombType.B_RL,
-            BombType.B_LAA,
-            BombType.B_AAA
-    };
+    private static final int[] validBotAABombs = { BombType.B_RL, BombType.B_LAA, BombType.B_AAA };
 
     /**
      * External ordnance types that rely on TAG
      */
-    private static final Collection<Integer> GUIDED_ORDNANCE = new HashSet<>(
-            Arrays.asList(BombType.B_LG, BombType.B_HOMING));
+    private static final Collection<Integer> GUIDED_ORDNANCE = new HashSet<>(Arrays.asList(BombType.B_LG,
+          BombType.B_HOMING));
 
     /**
-     * Relative weight distribution of various external ordnance choices for
-     * non-pirate forces
+     * Relative weight distribution of various external ordnance choices for non-pirate forces
      */
-    private static final Map<String, Integer> bombMapGroundSpread = Map.ofEntries(
-            Map.entry("Normal", castPropertyInt("bombMapGroundSpreadNormal", 6)),
-            Map.entry("Anti-Mek", castPropertyInt("bombMapGroundSpreadAnti-Mek", 3)),
-            Map.entry("Anti-conventional", castPropertyInt("bombMapGroundSpreadAnti-conventional", 2)),
-            Map.entry("Standoff", castPropertyInt("bombMapGroundSpreadStandoff", 1)),
-            Map.entry("Strike", castPropertyInt("bombMapGroundSpreadStrike", 2)));
+    private static final Map<String, Integer> bombMapGroundSpread = Map.ofEntries(Map.entry("Normal",
+                castPropertyInt("bombMapGroundSpreadNormal", 6)),
+          Map.entry("Anti-Mek", castPropertyInt("bombMapGroundSpreadAnti-Mek", 3)),
+          Map.entry("Anti-conventional", castPropertyInt("bombMapGroundSpreadAnti-conventional", 2)),
+          Map.entry("Standoff", castPropertyInt("bombMapGroundSpreadStandoff", 1)),
+          Map.entry("Strike", castPropertyInt("bombMapGroundSpreadStrike", 2)));
 
     /**
-     * Relative weight distribution of various external ordnance choices for pirate
-     * forces
+     * Relative weight distribution of various external ordnance choices for pirate forces
      */
-    private static final Map<String, Integer> bombMapPirateGroundSpread = Map.ofEntries(
-            Map.entry("Normal", castPropertyInt("bombMapPirateGroundSpreadNormal", 7)),
-            Map.entry("Firestorm", castPropertyInt("bombMapPirateGroundSpreadFirestorm", 3)));
+    private static final Map<String, Integer> bombMapPirateGroundSpread = Map.ofEntries(Map.entry("Normal",
+                castPropertyInt("bombMapPirateGroundSpreadNormal", 7)),
+          Map.entry("Firestorm", castPropertyInt("bombMapPirateGroundSpreadFirestorm", 3)));
 
     /**
      * Relative weight distribution of general purpose external ordnance choices
      */
-    private static final Map<Integer, Integer> normalBombLoad = Map.ofEntries(
-            Map.entry(BombType.B_HE, castPropertyInt("normalBombLoad_HE", 40)),
-            Map.entry(BombType.B_LG, castPropertyInt("normalBombLoad_LG", 5)),
-            Map.entry(BombType.B_CLUSTER, castPropertyInt("normalBombLoad_CLUSTER", 30)),
-            Map.entry(BombType.B_INFERNO, castPropertyInt("normalBombLoad_INFERNO", 15)),
-            Map.entry(BombType.B_THUNDER, castPropertyInt("normalBombLoad_THUNDER", 10)));
+    private static final Map<Integer, Integer> normalBombLoad = Map.ofEntries(Map.entry(BombType.B_HE,
+                castPropertyInt("normalBombLoad_HE", 40)),
+          Map.entry(BombType.B_LG, castPropertyInt("normalBombLoad_LG", 5)),
+          Map.entry(BombType.B_CLUSTER, castPropertyInt("normalBombLoad_CLUSTER", 30)),
+          Map.entry(BombType.B_INFERNO, castPropertyInt("normalBombLoad_INFERNO", 15)),
+          Map.entry(BombType.B_THUNDER, castPropertyInt("normalBombLoad_THUNDER", 10)));
 
     /**
-     * Relative weight distribution of external ordnance choices for use against
-     * Meks
+     * Relative weight distribution of external ordnance choices for use against Meks
      */
-    private static final Map<Integer, Integer> antiMekBombLoad = Map.ofEntries(
-            Map.entry(BombType.B_HE, castPropertyInt("antiMekBombLoad_HE", 55)),
-            Map.entry(BombType.B_LG, castPropertyInt("antiMekBombLoad_LG", 15)),
-            Map.entry(BombType.B_INFERNO, castPropertyInt("antiMekBombLoad_INFERNO", 10)),
-            Map.entry(BombType.B_THUNDER, castPropertyInt("antiMekBombLoad_THUNDER", 10)),
-            Map.entry(BombType.B_HOMING, castPropertyInt("antiMekBombLoad_HOMING", 10)));
+    private static final Map<Integer, Integer> antiMekBombLoad = Map.ofEntries(Map.entry(BombType.B_HE,
+                castPropertyInt("antiMekBombLoad_HE", 55)),
+          Map.entry(BombType.B_LG, castPropertyInt("antiMekBombLoad_LG", 15)),
+          Map.entry(BombType.B_INFERNO, castPropertyInt("antiMekBombLoad_INFERNO", 10)),
+          Map.entry(BombType.B_THUNDER, castPropertyInt("antiMekBombLoad_THUNDER", 10)),
+          Map.entry(BombType.B_HOMING, castPropertyInt("antiMekBombLoad_HOMING", 10)));
 
     /**
-     * Relative weight distribution of external ordnance choices for use against
-     * ground vehicles
-     * and infantry
+     * Relative weight distribution of external ordnance choices for use against ground vehicles and infantry
      */
-    private static final Map<Integer, Integer> antiConvBombLoad = Map.ofEntries(
-            Map.entry(BombType.B_CLUSTER, castPropertyInt("antiConvBombLoad_CLUSTER", 50)),
-            Map.entry(BombType.B_INFERNO, castPropertyInt("antiConvBombLoad_INFERNO", 40)),
-            Map.entry(BombType.B_THUNDER, castPropertyInt("antiConvBombLoad_THUNDER", 8)),
-            Map.entry(BombType.B_FAE_SMALL, castPropertyInt("antiConvBombLoad_FAE_SMALL", 2)));
+    private static final Map<Integer, Integer> antiConvBombLoad = Map.ofEntries(Map.entry(BombType.B_CLUSTER,
+                castPropertyInt("antiConvBombLoad_CLUSTER", 50)),
+          Map.entry(BombType.B_INFERNO, castPropertyInt("antiConvBombLoad_INFERNO", 40)),
+          Map.entry(BombType.B_THUNDER, castPropertyInt("antiConvBombLoad_THUNDER", 8)),
+          Map.entry(BombType.B_FAE_SMALL, castPropertyInt("antiConvBombLoad_FAE_SMALL", 2)));
 
     /**
-     * Relative weight distribution of external ordnance choices for providing
-     * artillery support
+     * Relative weight distribution of external ordnance choices for providing artillery support
      */
-    private static final Map<Integer, Integer> standoffBombLoad = Map.ofEntries(
-            Map.entry(BombType.B_ARROW, castPropertyInt("standoffBombLoad_ARROW", 40)),
-            Map.entry(BombType.B_HOMING, castPropertyInt("standoffBombLoad_HOMING", 60)));
+    private static final Map<Integer, Integer> standoffBombLoad = Map.ofEntries(Map.entry(BombType.B_ARROW,
+                castPropertyInt("standoffBombLoad_ARROW", 40)),
+          Map.entry(BombType.B_HOMING, castPropertyInt("standoffBombLoad_HOMING", 60)));
 
     /**
-     * Relative weight distribution of external ordnance choices for attacking
-     * static targets
+     * Relative weight distribution of external ordnance choices for attacking static targets
      */
-    private static final Map<Integer, Integer> strikeBombLoad = Map.ofEntries(
-            Map.entry(BombType.B_LG, castPropertyInt("strikeBombLoad_LG", 45)),
-            Map.entry(BombType.B_HOMING, castPropertyInt("strikeBombLoad_HOMING", 25)),
-            Map.entry(BombType.B_HE, castPropertyInt("strikeBombLoad_HE", 30)));
+    private static final Map<Integer, Integer> strikeBombLoad = Map.ofEntries(Map.entry(BombType.B_LG,
+                castPropertyInt("strikeBombLoad_LG", 45)),
+          Map.entry(BombType.B_HOMING, castPropertyInt("strikeBombLoad_HOMING", 25)),
+          Map.entry(BombType.B_HE, castPropertyInt("strikeBombLoad_HE", 30)));
 
     /**
-     * Relative weight distribution of external ordnance choices for low tech
-     * forces. Also used as
-     * a default/fall-back selection.
+     * Relative weight distribution of external ordnance choices for low tech forces. Also used as a default/fall-back
+     * selection.
      */
-    private static final Map<Integer, Integer> lowTechBombLoad = Map.ofEntries(
-            Map.entry(BombType.B_HE, castPropertyInt("lowTechBombLoad_HE", 35)),
-            Map.entry(BombType.B_RL, castPropertyInt("lowTechBombLoad_RL", 65)));
+    private static final Map<Integer, Integer> lowTechBombLoad = Map.ofEntries(Map.entry(BombType.B_HE,
+                castPropertyInt("lowTechBombLoad_HE", 35)),
+          Map.entry(BombType.B_RL, castPropertyInt("lowTechBombLoad_RL", 65)));
 
     /**
-     * Relative weight distribution of external ordnance choices for pirates. Low
-     * tech, high chaos
-     * factor.
+     * Relative weight distribution of external ordnance choices for pirates. Low tech, high chaos factor.
      */
-    private static final Map<Integer, Integer> pirateBombLoad = Map.ofEntries(
-            Map.entry(BombType.B_HE, castPropertyInt("pirateBombLoad_HE", 7)),
-            Map.entry(BombType.B_RL, castPropertyInt("pirateBombLoad_RL", 45)),
-            Map.entry(BombType.B_INFERNO, castPropertyInt("pirateBombLoad_INFERNO", 35)),
-            Map.entry(BombType.B_CLUSTER, castPropertyInt("pirateBombLoad_CLUSTER", 5)),
-            Map.entry(BombType.B_FAE_SMALL, castPropertyInt("pirateBombLoad_FAE_SMALL", 6)),
-            Map.entry(BombType.B_FAE_LARGE, castPropertyInt("pirateBombLoad_FAE_LARGE", 2)));
+    private static final Map<Integer, Integer> pirateBombLoad = Map.ofEntries(Map.entry(BombType.B_HE,
+                castPropertyInt("pirateBombLoad_HE", 7)),
+          Map.entry(BombType.B_RL, castPropertyInt("pirateBombLoad_RL", 45)),
+          Map.entry(BombType.B_INFERNO, castPropertyInt("pirateBombLoad_INFERNO", 35)),
+          Map.entry(BombType.B_CLUSTER, castPropertyInt("pirateBombLoad_CLUSTER", 5)),
+          Map.entry(BombType.B_FAE_SMALL, castPropertyInt("pirateBombLoad_FAE_SMALL", 6)),
+          Map.entry(BombType.B_FAE_LARGE, castPropertyInt("pirateBombLoad_FAE_LARGE", 2)));
 
     /**
      * External ordnance choices for pirates to set things on fire
      */
-    private static final Map<Integer, Integer> pirateFirestormBombLoad = Map.ofEntries(
-            Map.entry(BombType.B_INFERNO, castPropertyInt("pirateFirestormBombLoad_INFERNO", 60)),
-            Map.entry(BombType.B_FAE_SMALL, castPropertyInt("pirateFirestormBombLoad_FAE_SMALL", 30)),
-            Map.entry(BombType.B_FAE_LARGE, castPropertyInt("pirateFirestormBombLoad_FAE_LARGE", 10)));
+    private static final Map<Integer, Integer> pirateFirestormBombLoad = Map.ofEntries(Map.entry(BombType.B_INFERNO,
+                castPropertyInt("pirateFirestormBombLoad_INFERNO", 60)),
+          Map.entry(BombType.B_FAE_SMALL, castPropertyInt("pirateFirestormBombLoad_FAE_SMALL", 30)),
+          Map.entry(BombType.B_FAE_LARGE, castPropertyInt("pirateFirestormBombLoad_FAE_LARGE", 10)));
 
     /**
      * External ordnance choices for air-to-air combat
      */
-    private static final Map<Integer, Integer> antiAirBombLoad = Map.ofEntries(
-            Map.entry(BombType.B_RL, castPropertyInt("antiAirBombLoad_RL", 40)),
-            Map.entry(BombType.B_LAA, castPropertyInt("antiAirBombLoad_LAA", 40)),
-            Map.entry(BombType.B_AAA, castPropertyInt("antiAirBombLoad_AAA", 15)),
-            Map.entry(BombType.B_AS, castPropertyInt("antiAirBombLoad_AS", 4)),
-            Map.entry(BombType.B_ASEW, castPropertyInt("antiAirBombLoad_ASEW", 1)));
+    private static final Map<Integer, Integer> antiAirBombLoad = Map.ofEntries(Map.entry(BombType.B_RL,
+                castPropertyInt("antiAirBombLoad_RL", 40)),
+          Map.entry(BombType.B_LAA, castPropertyInt("antiAirBombLoad_LAA", 40)),
+          Map.entry(BombType.B_AAA, castPropertyInt("antiAirBombLoad_AAA", 15)),
+          Map.entry(BombType.B_AS, castPropertyInt("antiAirBombLoad_AS", 4)),
+          Map.entry(BombType.B_ASEW, castPropertyInt("antiAirBombLoad_ASEW", 1)));
 
     /**
      * External ordnance choices for attacking DropShips and other large craft
      */
-    private static final Map<Integer, Integer> antiShipBombLoad = Map.ofEntries(
-            Map.entry(BombType.B_AAA, castPropertyInt("antiShipBombLoad_AAA", 50)),
-            Map.entry(BombType.B_AS, castPropertyInt("antiShipBombLoad_AS", 35)),
-            Map.entry(BombType.B_ASEW, castPropertyInt("antiShipBombLoad_ASEW", 15)));
+    private static final Map<Integer, Integer> antiShipBombLoad = Map.ofEntries(Map.entry(BombType.B_AAA,
+                castPropertyInt("antiShipBombLoad_AAA", 50)),
+          Map.entry(BombType.B_AS, castPropertyInt("antiShipBombLoad_AS", 35)),
+          Map.entry(BombType.B_ASEW, castPropertyInt("antiShipBombLoad_ASEW", 15)));
 
     /**
-     * External ordnance choices for pirate air-to-air combat. Selects fewer high
-     * tech choices than
-     * the standard load out.
+     * External ordnance choices for pirate air-to-air combat. Selects fewer high-tech choices than the standard load
+     * out.
      */
-    private static final Map<Integer, Integer> pirateAirBombLoad = Map.ofEntries(
-            Map.entry(BombType.B_RL, castPropertyInt("pirateAntiBombLoad_RL", 60)),
-            Map.entry(BombType.B_LAA, castPropertyInt("pirateAntiBombLoad_LAA", 30)),
-            Map.entry(BombType.B_AAA, castPropertyInt("pirateAntiBombLoad_AAA", 10)));
+    private static final Map<Integer, Integer> pirateAirBombLoad = Map.ofEntries(Map.entry(BombType.B_RL,
+                castPropertyInt("pirateAntiBombLoad_RL", 60)),
+          Map.entry(BombType.B_LAA, castPropertyInt("pirateAntiBombLoad_LAA", 30)),
+          Map.entry(BombType.B_AAA, castPropertyInt("pirateAntiBombLoad_AAA", 10)));
 
-    // endsubregion Bombs
+    // end subregion Bombs
     // endregion Constants
 
     private static Game game;
@@ -303,6 +336,11 @@ public class TeamLoadOutGenerator {
         updateOptionValues(game.getOptions());
     }
 
+    /**
+     * @since 0.50.05
+     * @deprecated No indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public TeamLoadOutGenerator(Game ownerGame, String defaultSettings) {
         this(ownerGame);
         this.defaultBotMunitionsFile = defaultSettings;
@@ -323,21 +361,17 @@ public class TeamLoadOutGenerator {
     }
 
     /**
-     * Calculates legality of ammo types given a faction, tech base (IS/CL), mixed
-     * tech, and the instance's
-     * already-set year, tech level, and option for showing extinct equipment.
+     * Calculates legality of ammo types given a faction, tech base (IS/CL), mixed tech, and the instance's already-set
+     * year, tech level, and option for showing extinct equipment.
      *
      * @param aType     the AmmoType of the munition under consideration. q.v.
-     * @param faction   MM-style faction code, per factions.xml and FactionRecord
-     *                  keys
+     * @param faction   MM-style faction code, per factions.xml and FactionRecord keys
      * @param techBase  either 'IS' or 'CL', used for clan boolean check.
-     * @param mixedTech makes munitions checks more lenient by allowing faction to
-     *                  access both IS and CL tech bases.
-     * @return boolean true if legal for combination of inputs, false otherwise.
-     *         Determines if an AmmoType is loaded.
+     * @param mixedTech makes munitions checks more lenient by allowing faction to access both IS and CL tech bases.
+     *
+     * @return boolean true if legal for combination of inputs, false otherwise. Determines if an AmmoType is loaded.
      */
     public boolean checkLegality(AmmoType aType, String faction, String techBase, boolean mixedTech) {
-        boolean legal = false;
         boolean clan = techBase.equals("CL");
 
         // Null-type is illegal!
@@ -345,14 +379,13 @@ public class TeamLoadOutGenerator {
             return false;
         }
 
-        // Check if tech exists at all (or is explicitly allowed despite being extinct)
-        // and whether it is available at the current tech level.
-        legal = aType.isAvailableIn(allowedYear, showExtinct)
-                && aType.isLegal(allowedYear, legalLevel, clan, mixedTech, showExtinct);
+        // Check if tech exists at all (or is explicitly allowed despite being extinct) and whether it is available
+        // at the current tech level.
+        boolean legal = aType.isAvailableIn(allowedYear, showExtinct) &&
+                              aType.isLegal(allowedYear, legalLevel, clan, mixedTech, showExtinct);
 
         if (eraBasedTechLevel) {
-            // Check if tech is available to this specific faction with the current year and
-            // tech base.
+            // Check if tech is available to this specific faction with the current year and tech base.
             boolean eraBasedLegal = aType.isAvailableIn(allowedYear, clan, ITechnology.getCodeFromMMAbbr(faction));
             if (mixedTech) {
                 eraBasedLegal |= aType.isAvailableIn(allowedYear, !clan, ITechnology.getCodeFromMMAbbr(faction));
@@ -361,18 +394,19 @@ public class TeamLoadOutGenerator {
         }
 
         // Nukes are not allowed... unless they are!
-        legal &= (!aType.hasFlag(AmmoType.F_NUCLEAR)
-                || gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES));
+        legal &= (!aType.hasFlag(AmmoType.F_NUCLEAR) ||
+                        gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES));
 
         return legal;
     }
 
     /**
-     * Use values from the Properties file defined in TeamLoadOutGenerator class if
-     * available; else use provided default
+     * Use values from the Properties file defined in TeamLoadOutGenerator class if available; else use provided
+     * default
      *
      * @param field    Field name in property file
      * @param defValue Default value to use
+     *
      * @return Double read value or default
      */
     public static Double castPropertyDouble(String field, Double defValue) {
@@ -425,84 +459,81 @@ public class TeamLoadOutGenerator {
     }
 
     /**
-     * Quick and dirty energy boat calc; useful for selecting Laser-Inhibiting Arrow
-     * and heat-based weapons
+     * Quick and dirty energy boat calc; useful for selecting Laser-Inhibiting Arrow and heat-based weapons
      *
-     * @param el
-     * @return
+     * @param el {@link Entity} List
+     *
+     * @return Number of Energy Boats
      */
     private static long checkForEnergyBoats(ArrayList<Entity> el) {
         return el.stream().filter(e -> e.tracksHeat() && e.getAmmo().isEmpty()).count();
     }
 
     /**
-     * "Missile Boat" defined here as any unit with half or more weapons dedicated
-     * to missiles
-     * (This could probably be traded for a weight- or role-based check)
+     * "Missile Boat" defined here as any unit with half or more weapons dedicated to missiles (This could probably be
+     * traded for a weight- or role-based check)
      *
-     * @param el
-     * @return
+     * @param el {@link Entity} List
+     *
+     * @return Number of Missile Boats
      */
     private static long checkForMissileBoats(ArrayList<Entity> el) {
-        return el.stream().filter(
-                e -> e.getRole().isAnyOf(UnitRole.MISSILE_BOAT) || e.getWeaponList().stream().filter(
-                        w -> w.getName().toLowerCase().contains("lrm") ||
-                                w.getName().toLowerCase().contains("srm") ||
-                                w.getName().toLowerCase().contains("atm") ||
-                                w.getName().toLowerCase().contains("mml") ||
-                                w.getName().toLowerCase().contains("arrow") ||
-                                w.getName().toLowerCase().contains("thunder"))
-                        .count() >= e.getWeaponList().size())
-                .count();
+        return el.stream()
+                     .filter(e -> e.getRole().isAnyOf(UnitRole.MISSILE_BOAT) ||
+                                        e.getWeaponList()
+                                              .stream()
+                                              .filter(w -> w.getName().toLowerCase().contains("lrm") ||
+                                                                 w.getName().toLowerCase().contains("srm") ||
+                                                                 w.getName().toLowerCase().contains("atm") ||
+                                                                 w.getName().toLowerCase().contains("mml") ||
+                                                                 w.getName().toLowerCase().contains("arrow") ||
+                                                                 w.getName().toLowerCase().contains("thunder"))
+                                              .count() >= e.getWeaponList().size())
+                     .count();
     }
 
     private static long checkForTAG(ArrayList<Entity> el) {
-        return el.stream().filter(e -> e.hasTAG()).count();
+        return el.stream().filter(Entity::hasTAG).count();
     }
 
     private static long checkForNARC(ArrayList<Entity> el) {
-        return el.stream().filter(
-                e -> e.getAmmo().stream().anyMatch(
-                        a -> ((AmmoType) a.getType()).getAmmoType() == AmmoType.T_NARC))
-                .count();
+        return el.stream()
+                     .filter(e -> e.getAmmo().stream().anyMatch(a -> a.getType().getAmmoType() == AmmoType.T_NARC))
+                     .count();
     }
 
     private static long checkForAdvancedArmor(ArrayList<Entity> el) {
         // Most units have a location 0
-        return el.stream().filter(
-                e -> e.getArmorType(0) == ArmorType.T_ARMOR_HARDENED ||
-                        e.getArmorType(0) == ArmorType.T_ARMOR_BALLISTIC_REINFORCED ||
-                        e.getArmorType(0) == ArmorType.T_ARMOR_REACTIVE ||
-                        e.getArmorType(0) == ArmorType.T_ARMOR_BA_REACTIVE ||
-                        e.getArmorType(0) == ArmorType.T_ARMOR_FERRO_LAMELLOR)
-                .count();
+        return el.stream()
+                     .filter(e -> e.getArmorType(0) == ArmorType.T_ARMOR_HARDENED ||
+                                        e.getArmorType(0) == ArmorType.T_ARMOR_BALLISTIC_REINFORCED ||
+                                        e.getArmorType(0) == ArmorType.T_ARMOR_REACTIVE ||
+                                        e.getArmorType(0) == ArmorType.T_ARMOR_BA_REACTIVE ||
+                                        e.getArmorType(0) == ArmorType.T_ARMOR_FERRO_LAMELLOR)
+                     .count();
     }
 
     private static long checkForReflectiveArmor(ArrayList<Entity> el) {
-        return el.stream().filter(
-                e -> e.getArmorType(0) == ArmorType.T_ARMOR_REFLECTIVE ||
-                        e.getArmorType(0) == ArmorType.T_ARMOR_BA_REFLECTIVE)
-                .count();
+        return el.stream()
+                     .filter(e -> e.getArmorType(0) == ArmorType.T_ARMOR_REFLECTIVE ||
+                                        e.getArmorType(0) == ArmorType.T_ARMOR_BA_REFLECTIVE)
+                     .count();
     }
 
     private static long checkForFireproofArmor(ArrayList<Entity> el) {
-        return el.stream().filter(
-                e -> e.getArmorType(0) == ArmorType.T_ARMOR_BA_FIRE_RESIST).count();
+        return el.stream().filter(e -> e.getArmorType(0) == ArmorType.T_ARMOR_BA_FIRE_RESIST).count();
     }
 
     private static long checkForFastMovers(ArrayList<Entity> el) {
-        return el.stream().filter(
-                e -> e.getOriginalWalkMP() > 5).count();
+        return el.stream().filter(e -> e.getOriginalWalkMP() > 5).count();
     }
 
     private static long checkForOffBoard(ArrayList<Entity> el) {
-        return el.stream().filter(
-                e -> e.shouldOffBoardDeploy(e.getDeployRound())).count();
+        return el.stream().filter(e -> e.shouldOffBoardDeploy(e.getDeployRound())).count();
     }
 
     private static long checkForECM(ArrayList<Entity> el) {
-        return el.stream().filter(
-                Entity::hasECM).count();
+        return el.stream().filter(Entity::hasECM).count();
     }
 
     private static long checkForTSM(ArrayList<Entity> el) {
@@ -521,53 +552,45 @@ public class TeamLoadOutGenerator {
     }
 
     /**
-     * Create the parameters that will determine how to configure ammo loadouts for
-     * this team
+     * Create the parameters that will determine how to configure ammo loadouts for this team
      *
-     * @param g
-     * @param gOpts
-     * @param ownEntities
-     * @param friendlyFaction
-     * @param team
-     * @return ReconfigurationParameters with information about enemy and friendly
-     *         forces
+     * @param g               {@link Game} Object
+     * @param gOpts           {@link GameOptions} Object
+     * @param ownEntities     {@link Entity} List of own entities
+     * @param friendlyFaction Friendly Faction Name
+     * @param team            {@link Team} Object
+     *
+     * @return ReconfigurationParameters with information about enemy and friendly forces
      */
-    public static ReconfigurationParameters generateParameters(
-            Game g,
-            GameOptions gOpts,
-            ArrayList<Entity> ownEntities,
-            String friendlyFaction,
-            Team team) {
+    public static ReconfigurationParameters generateParameters(Game g, GameOptions gOpts, ArrayList<Entity> ownEntities, String friendlyFaction, Team team) {
         if (ownEntities.isEmpty()) {
             // Nothing to generate
             return new ReconfigurationParameters();
         }
-        ArrayList<Entity> etEntities = new ArrayList<Entity>();
+        ArrayList<Entity> etEntities = new ArrayList<>();
         ArrayList<String> enemyFactions = new ArrayList<>();
         for (Team et : g.getTeams()) {
             if (!et.isEnemyOf(team)) {
                 continue;
             }
             enemyFactions.add(et.getFaction());
-            etEntities.addAll((ArrayList<Entity>) IteratorUtils.toList(g.getTeamEntities(et)));
+            etEntities.addAll(IteratorUtils.toList(g.getTeamEntities(et)));
         }
 
-        return generateParameters(
-                g, gOpts, ownEntities, friendlyFaction, etEntities, enemyFactions, ForceDescriptor.RATING_5, 1.0f);
+        return generateParameters(g,
+              gOpts,
+              ownEntities,
+              friendlyFaction,
+              etEntities,
+              enemyFactions,
+              ForceDescriptor.RATING_5,
+              1.0f);
     }
 
-    public static ReconfigurationParameters generateParameters(
-            Game g,
-            GameOptions gOpts,
-            ArrayList<Entity> ownEntities,
-            String friendlyFaction,
-            ArrayList<Entity> enemyEntities,
-            ArrayList<String> enemyFactions,
-            int rating,
-            float fillRatio) {
+    public static ReconfigurationParameters generateParameters(Game g, GameOptions gOpts, ArrayList<Entity> ownEntities, String friendlyFaction, ArrayList<Entity> enemyEntities, ArrayList<String> enemyFactions, int rating, float fillRatio) {
 
-        boolean blind = gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
-                || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
+        boolean blind = gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP) ||
+                              gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
         boolean darkEnvironment = g.getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack();
         boolean groundMap = (g.getMapSettings().getMedium() == MapSettings.MEDIUM_GROUND);
         boolean spaceEnvironment = (g.getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE);
@@ -576,30 +599,19 @@ public class TeamLoadOutGenerator {
             enemyEntities.clear();
         }
 
-        return generateParameters(
-                ownEntities,
-                enemyEntities,
-                friendlyFaction,
-                enemyFactions,
-                blind,
-                darkEnvironment,
-                groundMap,
-                spaceEnvironment,
-                rating,
-                fillRatio);
+        return generateParameters(ownEntities,
+              enemyEntities,
+              friendlyFaction,
+              enemyFactions,
+              blind,
+              darkEnvironment,
+              groundMap,
+              spaceEnvironment,
+              rating,
+              fillRatio);
     }
 
-    public static ReconfigurationParameters generateParameters(
-            ArrayList<Entity> ownTeamEntities,
-            ArrayList<Entity> etEntities,
-            String friendlyFaction,
-            ArrayList<String> enemyFactions,
-            boolean blind,
-            boolean darkEnvironment,
-            boolean groundMap,
-            boolean spaceEnvironment,
-            int rating,
-            float fillRatio) {
+    public static ReconfigurationParameters generateParameters(ArrayList<Entity> ownTeamEntities, ArrayList<Entity> etEntities, String friendlyFaction, ArrayList<String> enemyFactions, boolean blind, boolean darkEnvironment, boolean groundMap, boolean spaceEnvironment, int rating, float fillRatio) {
         ReconfigurationParameters reconfigurationParameters = new ReconfigurationParameters();
 
         // Set own faction and quality rating (default to generic IS if faction is not
@@ -665,35 +677,28 @@ public class TeamLoadOutGenerator {
     // endregion generateParameters
 
     // region Imperative mutators
-    private static void setACImperatives(Entity e, MunitionTree mt,
-            ReconfigurationParameters reconfigurationParameters) {
+    private static void setACImperatives(Entity e, MunitionTree mt, ReconfigurationParameters reconfigurationParameters) {
         applyACCaselessImperative(e, mt, reconfigurationParameters);
     }
 
     private static int getACWeaponCount(Entity e, String size) {
         // Only applies to non-LB-X AC weapons
-        return (int) e.getWeaponList().stream()
-                .filter(
-                        w -> w.getName().toLowerCase()
-                                .contains("ac")
-                                && !w.getName().toLowerCase()
-                                        .contains("lb")
-                                && w.getName()
-                                        .contains(size))
-                .count();
+        return (int) e.getWeaponList()
+                           .stream()
+                           .filter(w -> w.getName().toLowerCase().contains("ac") &&
+                                              !w.getName().toLowerCase().contains("lb") &&
+                                              w.getName().contains(size))
+                           .count();
     }
 
     private static int getACAmmoCount(Entity e, String size) {
         // Only applies to non-LB-X AC weapons
-        return (int) e.getAmmo().stream()
-                .filter(
-                        w -> w.getName().toLowerCase()
-                                .contains("ac")
-                                && !w.getName().toLowerCase()
-                                        .contains("lb")
-                                && w.getName()
-                                        .contains(size))
-                .count();
+        return (int) e.getAmmo()
+                           .stream()
+                           .filter(w -> w.getName().toLowerCase().contains("ac") &&
+                                              !w.getName().toLowerCase().contains("lb") &&
+                                              w.getName().contains(size))
+                           .count();
     }
 
     private static boolean applyACCaselessImperative(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
@@ -704,14 +709,13 @@ public class TeamLoadOutGenerator {
         }
 
         boolean swapped = false;
-        Map<String, Double> caliberToRatioMap = Map.of(
-                "2", 0.25, // if 1 ton or less per 4 AC/2 barrels,
-                "5", 0.5, // if 1 ton or less per 2 AC/5 barrels,
-                "10", 1.0, // if 1 ton or less per AC/10 or AC/20 barrel
-                "20", 1.0 // Replace existing imperatives with Caseless only.
+        Map<String, Double> caliberToRatioMap = Map.of("2", 0.25, // if 1 ton or fewer per 4 AC/2 barrels,
+              "5", 0.5, // if 1 ton or fewer per 2 AC/5 barrels,
+              "10", 1.0, // if 1 ton or fewer per AC/10 or AC/20 barrel
+              "20", 1.0 // Replace existing imperatives with Caseless only.
         );
 
-        // Iterate over any possible Autocannons and update their ammo imperatives if
+        // Iterate over any possible AutoCannons and update their ammo imperatives if
         // count of bins/barrel
         // is at or below the relevant ratio.
         for (String caliber : caliberToRatioMap.keySet()) {
@@ -723,12 +727,7 @@ public class TeamLoadOutGenerator {
                 continue;
             } else if (((double) binCount) / barrelCount <= caliberToRatioMap.get(caliber)) {
                 // Replace any existing imperatives with Caseless as default
-                mt.insertImperative(
-                        e.getFullChassis(),
-                        e.getModel(),
-                        "any",
-                        "AC/" + caliber,
-                        "Caseless");
+                mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/" + caliber, "Caseless");
                 swapped = true;
             }
         }
@@ -736,34 +735,31 @@ public class TeamLoadOutGenerator {
         return swapped;
     }
 
-    private static boolean insertArtemisImperatives(Entity e, MunitionTree mt, String ammoClass) {
-        boolean artemis = !(e.getMiscEquipment(MiscType.F_ARTEMIS).isEmpty()
-                && e.getMiscEquipment(MiscType.F_ARTEMIS_V).isEmpty());
+    private static void insertArtemisImperatives(Entity e, MunitionTree mt, String ammoClass) {
+        boolean artemis = !(e.getMiscEquipment(MiscType.F_ARTEMIS).isEmpty() &&
+                                  e.getMiscEquipment(MiscType.F_ARTEMIS_V).isEmpty());
 
         if (artemis) {
             for (AmmoMounted bin : e.getAmmo()) {
                 if (bin.getName().toUpperCase().contains(ammoClass)) {
                     String binType = bin.getType().getBaseName();
-                    mt.insertImperative(e.getFullChassis(), e.getModel(), "any", binType,
-                            "Artemis-capable");
+                    mt.insertImperative(e.getFullChassis(), e.getModel(), "any", binType, "Artemis-capable");
                 }
             }
-            return true;
         }
-        return false;
     }
 
     // Set Artemis LRM carriers to use Artemis LRMs
-    private static boolean setLRMImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
-        return insertArtemisImperatives(e, mt, "LRM");
+    private static void setLRMImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        insertArtemisImperatives(e, mt, "LRM");
     }
 
-    private static boolean setSRMImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
-        return insertArtemisImperatives(e, mt, "SRM");
+    private static void setSRMImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        insertArtemisImperatives(e, mt, "SRM");
     }
 
-    private static boolean setMMLImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
-        return insertArtemisImperatives(e, mt, "MML");
+    private static void setMMLImperatives(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+        insertArtemisImperatives(e, mt, "MML");
     }
     // region Imperative mutators
 
@@ -773,8 +769,7 @@ public class TeamLoadOutGenerator {
         return generateMunitionTree(rp, ownTeamEntities, "");
     }
 
-    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, ArrayList<Entity> entities,
-            String defaultSettingsFile) {
+    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, ArrayList<Entity> entities, String defaultSettingsFile) {
         // Based on various requirements from rp, set weights for some ammo types over
         // others
         MunitionWeightCollection mwc = new MunitionWeightCollection();
@@ -783,23 +778,21 @@ public class TeamLoadOutGenerator {
 
     /**
      * Generate the list of desired ammo load-outs for this team.
-     * TODO: implement generateDetailedMunitionTree with more complex breakdowns per
-     * unit type
+     * TODO: implement generateDetailedMunitionTree with more complex breakdowns per unit type
      * NOTE: if sub-classing this generator, should only need to override this
      * method.
      *
-     * @param reconfigurationParameters
-     * @param defaultSettingsFile
+     * @param reconfigurationParameters {@link ReconfigurationParameters} Object
+     * @param defaultSettingsFile       File name to settings file.
+     *
      * @return generated MunitionTree with imperatives for each weapon type
      */
-    public static MunitionTree generateMunitionTree(ReconfigurationParameters reconfigurationParameters,
-            ArrayList<Entity> ownTeamEntities,
-            String defaultSettingsFile, MunitionWeightCollection mwc) {
+    public static MunitionTree generateMunitionTree(ReconfigurationParameters reconfigurationParameters, ArrayList<Entity> ownTeamEntities, String defaultSettingsFile, MunitionWeightCollection mwc) {
 
-        // Either create a new tree or, if a defaults file is provided, load that as a
-        // base config
-        MunitionTree mt = (defaultSettingsFile == null | defaultSettingsFile.isBlank()) ? new MunitionTree()
-                : new MunitionTree(defaultSettingsFile);
+        // Either create a new tree or, if a defaults file is provided, load that as a base config
+        MunitionTree mt = (defaultSettingsFile == null || defaultSettingsFile.isBlank()) ?
+                                new MunitionTree() :
+                                new MunitionTree(defaultSettingsFile);
 
         // Modify weights for parameters
         if (reconfigurationParameters.darkEnvironment) {
@@ -812,15 +805,15 @@ public class TeamLoadOutGenerator {
 
         // Adjust weights for enemy force composition
         if (reconfigurationParameters.enemiesVisible) {
-            // Drop weight of shot-reducing ammo unless this team significantly outnumbers
-            // the enemy
-            if (!(reconfigurationParameters.friendlyCount >= reconfigurationParameters.enemyCount
-                    * castPropertyDouble("mtReducingAmmoReduceIfUnderFactor", 2.0))) {
-                // Skip munitions that reduce the number of rounds because we need to shoot a
-                // lot!
+            // Drop weight of shot-reducing ammo unless this team significantly outnumbers the enemy
+            if (!(reconfigurationParameters.friendlyCount >=
+                        reconfigurationParameters.enemyCount *
+                              castPropertyDouble("mtReducingAmmoReduceIfUnderFactor", 2.0))) {
+                // Skip munitions that reduce the number of rounds because we need to shoot a lot!
                 mwc.decreaseAmmoReducingMunitions();
-            } else if (reconfigurationParameters.friendlyCount >= reconfigurationParameters.enemyCount
-                    * castPropertyDouble("mtReducingAmmoIncreaseIfOverFactor", 3.0)) {
+            } else if (reconfigurationParameters.friendlyCount >=
+                             reconfigurationParameters.enemyCount *
+                                   castPropertyDouble("mtReducingAmmoIncreaseIfOverFactor", 3.0)) {
                 mwc.increaseAmmoReducingMunitions();
             }
 
@@ -828,8 +821,9 @@ public class TeamLoadOutGenerator {
             if (reconfigurationParameters.enemyBombers > castPropertyDouble("mtFlakMinBombersExceedThreshold", 0.0)) {
                 mwc.increaseFlakMunitions();
             }
-            if (reconfigurationParameters.enemyFliers >= reconfigurationParameters.enemyCount
-                    / castPropertyDouble("mtFlakEnemyFliersFractionDivisor", 4.0)) {
+            if (reconfigurationParameters.enemyFliers >=
+                      reconfigurationParameters.enemyCount /
+                            castPropertyDouble("mtFlakEnemyFliersFractionDivisor", 4.0)) {
                 mwc.increaseFlakMunitions();
             }
             // Decrease if no bombers or fliers at all
@@ -838,78 +832,89 @@ public class TeamLoadOutGenerator {
             }
 
             // Enemy fast movers make more precise ammo attractive
-            if (reconfigurationParameters.enemyFastMovers >= reconfigurationParameters.enemyCount
-                    / castPropertyDouble("mtPrecisionAmmoFastEnemyFractionDivisor", 4.0)) {
+            if (reconfigurationParameters.enemyFastMovers >=
+                      reconfigurationParameters.enemyCount /
+                            castPropertyDouble("mtPrecisionAmmoFastEnemyFractionDivisor", 4.0)) {
                 mwc.increaseAccurateMunitions();
             }
 
             // AP munitions are hard-countered by hardened, reactive, etc. armor
-            if (reconfigurationParameters.enemyAdvancedArmorCount > castPropertyDouble(
-                    "mtHPAmmoAdvArmorEnemiesExceedThreshold", 0.0)
-                    && reconfigurationParameters.enemyAdvancedArmorCount > reconfigurationParameters.enemyReflectiveArmorCount) {
+            if (reconfigurationParameters.enemyAdvancedArmorCount >
+                      castPropertyDouble("mtHPAmmoAdvArmorEnemiesExceedThreshold", 0.0) &&
+                      reconfigurationParameters.enemyAdvancedArmorCount >
+                            reconfigurationParameters.enemyReflectiveArmorCount) {
                 mwc.decreaseAPMunitions();
                 mwc.increaseHighPowerMunitions();
-            } else if (reconfigurationParameters.enemyReflectiveArmorCount > reconfigurationParameters.enemyAdvancedArmorCount) {
+            } else if (reconfigurationParameters.enemyReflectiveArmorCount >
+                             reconfigurationParameters.enemyAdvancedArmorCount) {
                 // But AP munitions really hurt Reflective!
                 mwc.increaseAPMunitions();
             }
 
-            // Heat-based weapons kill infantry dead, also vehicles
-            // But anti-infantry weapons are generally inferior without infantry targets
-            if (reconfigurationParameters.enemyFireproofArmorCount < reconfigurationParameters.enemyCount
-                    / castPropertyDouble("mtFireproofMaxEnemyFractionDivisor", 4.0)) {
-                if (reconfigurationParameters.enemyInfantry >= reconfigurationParameters.enemyCount
-                        / castPropertyDouble("mtInfantryEnemyExceedsFractionDivisor", 4.0)) {
+            // Heat-based weapons kill infantry dead, also vehicles but anti-infantry weapons are generally inferior
+            // without infantry targets
+            if (reconfigurationParameters.enemyFireproofArmorCount <
+                      reconfigurationParameters.enemyCount /
+                            castPropertyDouble("mtFireproofMaxEnemyFractionDivisor", 4.0)) {
+                if (reconfigurationParameters.enemyInfantry >=
+                          reconfigurationParameters.enemyCount /
+                                castPropertyDouble("mtInfantryEnemyExceedsFractionDivisor", 4.0)) {
                     mwc.increaseHeatMunitions();
                     mwc.increaseAntiInfMunitions();
                 } else {
                     mwc.decreaseAntiInfMunitions();
                 }
-                if (reconfigurationParameters.enemyVehicles >= reconfigurationParameters.enemyCount
-                        / castPropertyDouble("mtVeeEnemyExceedsFractionDivisor", 4.0)) {
+                if (reconfigurationParameters.enemyVehicles >=
+                          reconfigurationParameters.enemyCount /
+                                castPropertyDouble("mtVeeEnemyExceedsFractionDivisor", 4.0)) {
                     mwc.increaseHeatMunitions();
                 }
-                // BAs are proof against some dedicated Anti-Infantry weapons but not
-                // heat-generating rounds
-                if (reconfigurationParameters.enemyBattleArmor > reconfigurationParameters.enemyCount
-                        / castPropertyDouble("mtBAEnemyExceedsFractionDivisor", 4.0)) {
+                // BAs are proof against some dedicated Anti-Infantry weapons but not heat-generating rounds
+                if (reconfigurationParameters.enemyBattleArmor >
+                          reconfigurationParameters.enemyCount /
+                                castPropertyDouble("mtBAEnemyExceedsFractionDivisor", 4.0)) {
                     mwc.increaseHeatMunitions();
                     mwc.increaseAntiBAMunitions();
                 }
-            } else if (reconfigurationParameters.enemyFireproofArmorCount >= reconfigurationParameters.enemyCount
-                    / castPropertyDouble("mtFireproofMaxEnemyFractionDivisor", 4.0)) {
-                if (reconfigurationParameters.enemyInfantry >= reconfigurationParameters.enemyCount
-                        / castPropertyDouble("mtInfantryEnemyExceedsFractionDivisor", 4.0)) {
+            } else if (reconfigurationParameters.enemyFireproofArmorCount >=
+                             reconfigurationParameters.enemyCount /
+                                   castPropertyDouble("mtFireproofMaxEnemyFractionDivisor", 4.0)) {
+                if (reconfigurationParameters.enemyInfantry >=
+                          reconfigurationParameters.enemyCount /
+                                castPropertyDouble("mtInfantryEnemyExceedsFractionDivisor", 4.0)) {
                     mwc.increaseAntiInfMunitions();
                 }
-                if (reconfigurationParameters.enemyBattleArmor > reconfigurationParameters.enemyCount
-                        / castPropertyDouble("mtBAEnemyExceedsFractionDivisor", 4.0)) {
+                if (reconfigurationParameters.enemyBattleArmor >
+                          reconfigurationParameters.enemyCount /
+                                castPropertyDouble("mtBAEnemyExceedsFractionDivisor", 4.0)) {
                     mwc.increaseAntiBAMunitions();
                 }
                 mwc.decreaseHeatMunitions();
             }
 
             // Energy boats run hot; increase heat munitions and heat-seeking specifically
-            if (reconfigurationParameters.enemyEnergyBoats > reconfigurationParameters.enemyCount
-                    / castPropertyDouble("mtEnergyBoatEnemyFractionDivisor", 4.0)) {
+            if (reconfigurationParameters.enemyEnergyBoats >
+                      reconfigurationParameters.enemyCount /
+                            castPropertyDouble("mtEnergyBoatEnemyFractionDivisor", 4.0)) {
                 mwc.increaseHeatMunitions();
                 mwc.increaseHeatMunitions();
                 mwc.increaseMunitions(new ArrayList<>(List.of("Heat-Seeking")));
             }
 
             // Counter EMC by swapping Seeking in for Guided
-            if (reconfigurationParameters.enemyECMCount > castPropertyDouble("mtSeekingAmmoEnemyECMExceedThreshold",
-                    1.0)) {
+            if (reconfigurationParameters.enemyECMCount >
+                      castPropertyDouble("mtSeekingAmmoEnemyECMExceedThreshold", 1.0)) {
                 mwc.decreaseGuidedMunitions();
                 mwc.increaseSeekingMunitions();
             }
-            if (reconfigurationParameters.enemyTSMCount > castPropertyDouble("mtSeekingAmmoEnemyTSMExceedThreshold",
-                    1.0)) {
+            if (reconfigurationParameters.enemyTSMCount >
+                      castPropertyDouble("mtSeekingAmmoEnemyTSMExceedThreshold", 1.0)) {
                 // Seeking
                 mwc.increaseSeekingMunitions();
             }
-            if (reconfigurationParameters.enemyECMCount == 0.0 && reconfigurationParameters.enemyTSMCount == 0.0
-                    && reconfigurationParameters.enemyEnergyBoats == 0.0) {
+            if (reconfigurationParameters.enemyECMCount == 0.0 &&
+                      reconfigurationParameters.enemyTSMCount == 0.0 &&
+                      reconfigurationParameters.enemyEnergyBoats == 0.0) {
                 // Seeking munitions are generally situational
                 mwc.decreaseSeekingMunitions();
             }
@@ -917,31 +922,29 @@ public class TeamLoadOutGenerator {
 
         // Section: Friendly capabilities
 
-        // Guided munitions are worth exponentially more with guidance and supporting
-        // missile units
-        if (reconfigurationParameters.friendlyTAGs >= castPropertyDouble("mtGuidedAmmoFriendlyTAGThreshold", 1.0)
-                || reconfigurationParameters.friendlyNARCs >= castPropertyDouble("mtGuidedAmmoFriendlyNARCThreshold",
-                        1.0)) {
+        // Guided munitions are worth exponentially more with guidance and supporting missile units
+        if (reconfigurationParameters.friendlyTAGs >= castPropertyDouble("mtGuidedAmmoFriendlyTAGThreshold", 1.0) ||
+                  reconfigurationParameters.friendlyNARCs >=
+                        castPropertyDouble("mtGuidedAmmoFriendlyNARCThreshold", 1.0)) {
 
             // And worth even more with more guidance around
-            if (reconfigurationParameters.friendlyMissileBoats >= reconfigurationParameters.friendlyCount /
-                    castPropertyDouble("mtGuidedAmmoFriendlyMissileBoatFractionDivisor", 3.0)) {
-                for (int i = 0; i < reconfigurationParameters.friendlyMissileBoats; i++) {
+            if (reconfigurationParameters.friendlyMissileBoats >=
+                      reconfigurationParameters.friendlyCount /
+                            castPropertyDouble("mtGuidedAmmoFriendlyMissileBoatFractionDivisor", 3.0)) {
+                for (long i = 0; i < reconfigurationParameters.friendlyMissileBoats; i++) {
                     mwc.increaseGuidedMunitions();
                 }
             }
 
-            // Increase the relevant types depending on the present guidance systems and
-            // their counts
-            for (int i = 0; i < reconfigurationParameters.friendlyTAGs; i++) {
+            // Increase the relevant types depending on the present guidance systems and their counts
+            for (long i = 0; i < reconfigurationParameters.friendlyTAGs; i++) {
                 mwc.increaseTagGuidedMunitions();
             }
-            for (int i = 0; i < reconfigurationParameters.friendlyNARCs; i++) {
+            for (long i = 0; i < reconfigurationParameters.friendlyNARCs; i++) {
                 mwc.increaseNARCGuidedMunitions();
             }
 
-            // TAG-guided rounds may have _some_ use, but not as much as base rounds,
-            // without TAG support
+            // TAG-guided rounds may have _some_ use, but not as much as base rounds, without TAG support
             if (reconfigurationParameters.friendlyTAGs == 0) {
                 mwc.decreaseTagGuidedMunitions();
             }
@@ -954,15 +957,13 @@ public class TeamLoadOutGenerator {
             mwc.zeroMunitionsWeight(GUIDED_MUNITIONS);
         }
 
-        // Downgrade utility munitions unless there are multiple units that could use
-        // them; off-board arty
-        // in particular
-        if (reconfigurationParameters.friendlyOffBoard > castPropertyDouble("mtUtilityAmmoOffBoardUnitsThreshold",
-                2.0)) {
-            // Only increase utility rounds if we have more off-board units that the other
-            // guys
-            if (reconfigurationParameters.enemyOffBoard < reconfigurationParameters.friendlyOffBoard /
-                    castPropertyDouble("mtUtilityAmmoFriendlyVsEnemyFractionDivisor", 1.0)) {
+        // Downgrade utility munitions unless there are multiple units that could use them; off-board arty in particular
+        if (reconfigurationParameters.friendlyOffBoard >
+                  castPropertyDouble("mtUtilityAmmoOffBoardUnitsThreshold", 2.0)) {
+            // Only increase utility rounds if we have more off-board units that the other guys
+            if (reconfigurationParameters.enemyOffBoard <
+                      reconfigurationParameters.friendlyOffBoard /
+                            castPropertyDouble("mtUtilityAmmoFriendlyVsEnemyFractionDivisor", 1.0)) {
                 mwc.increaseArtilleryUtilityMunitions();
             }
         } else {
@@ -971,27 +972,24 @@ public class TeamLoadOutGenerator {
         }
 
         // Just for LOLs: when FS fights CC in 3028 ~ 3050, set Anti-TSM weight to 15.0
-        if ((reconfigurationParameters.friendlyFaction != null && reconfigurationParameters.enemyFactions != null)
-                && reconfigurationParameters.friendlyFaction.equals("FS")
-                && reconfigurationParameters.enemyFactions.contains("CC")
-                && (3028 <= reconfigurationParameters.allowedYear && reconfigurationParameters.allowedYear <= 3050)) {
-            ArrayList<String> tsmOnly = new ArrayList<String>(List.of("Anti-TSM"));
+        if ((reconfigurationParameters.friendlyFaction != null && reconfigurationParameters.enemyFactions != null) &&
+                  reconfigurationParameters.friendlyFaction.equals("FS") &&
+                  reconfigurationParameters.enemyFactions.contains("CC") &&
+                  (3028 <= reconfigurationParameters.allowedYear && reconfigurationParameters.allowedYear <= 3050)) {
+            ArrayList<String> tsmOnly = new ArrayList<>(List.of("Anti-TSM"));
             mwc.increaseMunitions(tsmOnly);
             mwc.increaseMunitions(tsmOnly);
             mwc.increaseMunitions(tsmOnly);
         }
 
-        // Set nukes to lowest possible weight if user has set the to unusable /for
-        // this team/
-        // This is a separate mechanism from the legality check.
+        // Set nukes to the lowest possible weight if user has set them to unusable /for this team/ This is a separate
+        // mechanism from the legality check.
         if (reconfigurationParameters.nukesBannedForMe) {
             mwc.zeroMunitionsWeight(new ArrayList<>(List.of("Davy Crockett-M", "AlamoMissile Ammo")));
         }
 
         // L-K Missiles are essentially useless after 3042
-        // TODO: add more precise faction and year checks here so Wolf's Dragoons can
-        // have them before everybody
-        // else.
+        // TODO: add more precise faction and year checks here so Wolf's Dragoons can have them before everybody else.
         if (reconfigurationParameters.allowedYear < 3028 || reconfigurationParameters.allowedYear > 3042) {
             mwc.zeroMunitionsWeight(new ArrayList<>(List.of("Listen-Kill")));
         }
@@ -1002,8 +1000,7 @@ public class TeamLoadOutGenerator {
 
         // Handle individual cases like Artemis LRMs, AC/20s with limited ammo, etc.
         for (Entity e : ownTeamEntities) {
-            // Set certain imperatives based on weapon types, due to low ammo count / low
-            // utility
+            // Set certain imperatives based on weapon types, due to low ammo count / low utility
             setACImperatives(e, mt, reconfigurationParameters);
             setLRMImperatives(e, mt, reconfigurationParameters);
             setSRMImperatives(e, mt, reconfigurationParameters);
@@ -1014,18 +1011,16 @@ public class TeamLoadOutGenerator {
     }
 
     /**
-     * Turn a selection of the computed munition weights into imperatives to load in
-     * the MunitionTree
+     * Turn a selection of the computed munition weights into imperatives to load in the MunitionTree
      *
-     * @param mt
-     * @param mwc
-     * @return
+     * @param mt  {@link MunitionTree} Object
+     * @param mwc {@link MunitionWeightCollection} Object
+     *
+     * @return computed munition weights into imperatives
      */
     public static MunitionTree applyWeightsToMunitionTree(MunitionWeightCollection mwc, MunitionTree mt) {
-        // Iterate over every entry in the set of top-weighted munitions for each
-        // category
-        HashMap<String, List<String>> topWeights = mwc.getTopN(
-                castPropertyInt("mtTopMunitionsSubsetCount", 8));
+        // Iterate over every entry in the set of top-weighted munitions for each category
+        HashMap<String, List<String>> topWeights = mwc.getTopN(castPropertyInt("mtTopMunitionsSubsetCount", 8));
 
         for (Map.Entry<String, List<String>> e : topWeights.entrySet()) {
             StringBuilder sb = new StringBuilder();
@@ -1046,6 +1041,7 @@ public class TeamLoadOutGenerator {
     // endregion generateMunitionTree
 
     // region reconfigureEntities
+
     /**
      * Wrapper to streamline bot team configuration using standardized defaults
      */
@@ -1057,16 +1053,15 @@ public class TeamLoadOutGenerator {
     /**
      * Wrapper to load a file of preset munition imperatives
      *
-     * @param team
-     * @param faction
-     * @param adfFile
+     * @param team    {@link Team} Object
+     * @param faction Related Faction
+     * @param adfFile Munitions File.
      */
     public void reconfigureTeam(Team team, String faction, String adfFile) {
         ReconfigurationParameters reconfigurationParameters = generateParameters(team);
         reconfigurationParameters.allowedYear = allowedYear;
 
-        ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(
-                game.getTeamEntities(team));
+        ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(team));
 
         MunitionTree mt = generateMunitionTree(reconfigurationParameters, updateEntities, adfFile);
         reconfigureEntities(updateEntities, faction, mt, reconfigurationParameters);
@@ -1079,58 +1074,53 @@ public class TeamLoadOutGenerator {
      * @param faction  String code for entities' main faction
      * @param mt       MunitionTree defining all applicable load out imperatives
      */
-    public void reconfigureEntities(ArrayList<Entity> entities, String faction, MunitionTree mt,
-            ReconfigurationParameters reconfigurationParameters) {
-        // For Pirate forces, assume fewer rounds per bin at lower quality levels,
-        // minimum 20%
-        // If fill ratio is already set, leave it.
+    public void reconfigureEntities(ArrayList<Entity> entities, String faction, MunitionTree mt, ReconfigurationParameters reconfigurationParameters) {
+        // For Pirate forces, assume fewer rounds per bin at lower quality levels, minimum 20%. If fill ratio is
+        // already set, leave it.
         if (reconfigurationParameters.binFillPercent == UNSET_FILL_RATIO) {
             if (reconfigurationParameters.isPirate) {
-                reconfigurationParameters.binFillPercent = (float) (Math.min(
-                        castPropertyDouble("pirateMaxAllowedBinFillRatio", 1.0),
-                        Math.max(
-                                castPropertyDouble("pirateMinAllowedBinFillRatio", 0.2),
-                                Math.random() / castPropertyDouble("pirateRandomRangeDivisor", 4.0)
-                                        + (reconfigurationParameters.friendlyQuality
-                                                / castPropertyDouble("pirateQualityDivisor", 8.0)))));
+                reconfigurationParameters.binFillPercent = (float) (Math.min(castPropertyDouble(
+                            "pirateMaxAllowedBinFillRatio",
+                            1.0),
+                      Math.max(castPropertyDouble("pirateMinAllowedBinFillRatio", 0.2),
+                            Math.random() / castPropertyDouble("pirateRandomRangeDivisor", 4.0) +
+                                  (reconfigurationParameters.friendlyQuality /
+                                         castPropertyDouble("pirateQualityDivisor", 8.0)))));
             } else {
-                // If we get this far without setting the ratio, but are not pirates, reset to
-                // fill
+                // If we get this far without setting the ratio, but are not pirates, reset to fill
                 reconfigurationParameters.binFillPercent = 1.0f;
             }
         }
 
-        ArrayList<Entity> aeroSpaceUnits = new ArrayList<>();
+        // Commented out until A2G Attack Errata are implemented. No need to allocate memory for something not in use.
+        // ArrayList<Entity> aeroSpaceUnits = new ArrayList<>();
         for (Entity entity : entities) {
-            if (entity.isAero()) {
+            if (!entity.isAero()) {
                 // TODO: Will be used when A2G attack errata are implemented
-                aeroSpaceUnits.add(entity);
-            } else {
+                //                aeroSpaceUnits.add(entity);
+                //           } else {
                 reconfigureEntity(entity, mt, faction, reconfigurationParameters.binFillPercent);
             }
         }
 
-        populateAeroBombs(
-                entities,
-                this.allowedYear,
-                reconfigurationParameters.groundMap
-                        || reconfigurationParameters.enemyCount > reconfigurationParameters.enemyFliers,
-                reconfigurationParameters.friendlyQuality,
-                reconfigurationParameters.isPirate,
-                faction
-            );
+        populateAeroBombs(entities,
+              this.allowedYear,
+              reconfigurationParameters.groundMap ||
+                    reconfigurationParameters.enemyCount > reconfigurationParameters.enemyFliers,
+              reconfigurationParameters.friendlyQuality,
+              reconfigurationParameters.isPirate,
+              faction);
     }
 
     /**
      * Configure Bot Team with all munitions randomized
      *
-     * @param team
-     * @param faction
+     * @param team    {@link Team} Object
+     * @param faction Related Faction to team
      */
     public void randomizeBotTeamConfiguration(Team team, String faction) {
         ReconfigurationParameters rp = generateParameters(team);
-        ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(
-                game.getTeamEntities(team));
+        ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(team));
         reconfigureEntities(updateEntities, faction, generateRandomizedMT(), rp);
     }
 
@@ -1148,23 +1138,21 @@ public class TeamLoadOutGenerator {
     /**
      * Wrapper that assumes full bins, mostly for testing
      *
-     * @param e
-     * @param mt
-     * @param faction
+     * @param e       {@link Entity} with Ammo Bins
+     * @param mt      {@link MunitionTree} Ammo used
+     * @param faction Related Faction
      */
     public void reconfigureEntity(Entity e, MunitionTree mt, String faction) {
         reconfigureEntity(e, mt, faction, 1.0f);
     }
 
     /**
-     * Method to apply a MunitionTree to a specific unit.
-     * Main application logic
+     * Method to apply a MunitionTree to a specific unit. Main application logic
      *
-     * @param entity
-     * @param mt
-     * @param faction
-     * @param binFillRatio float setting the max fill rate for all bins in this
-     *                     entity (mostly for Pirates)
+     * @param entity       {@link Entity} with Ammo Bins
+     * @param mt           {@link MunitionTree} Ammo used
+     * @param faction      Related Faction
+     * @param binFillRatio float setting the max fill rate for all bins in this entity (mostly for Pirates)
      */
     public void reconfigureEntity(Entity entity, MunitionTree mt, String faction, float binFillRatio) {
         // Create map of bin counts in unit by type
@@ -1182,8 +1170,7 @@ public class TeamLoadOutGenerator {
             binLists.get(sName).add(ammoBin);
         }
 
-        // Iterate over each type and fill it with the requested ammos (as much as
-        // possible)
+        // Iterate over each type and fill it with the requested ammo (as much as possible)
         for (String binName : binLists.keySet()) {
             iterativelyLoadAmmo(entity, mt, binLists.get(binName), binName, faction);
         }
@@ -1195,8 +1182,8 @@ public class TeamLoadOutGenerator {
     /**
      * Applies specified ammo fill ratio to all bins
      *
-     * @param entity
-     * @param binFillRatio
+     * @param entity       {@link Entity} Unit tow work with.
+     * @param binFillRatio How full to make bins.
      */
     protected void clampAmmoShots(Entity entity, float binFillRatio) {
         if (binFillRatio < 1.0f) {
@@ -1212,13 +1199,12 @@ public class TeamLoadOutGenerator {
 
     /**
      * TODO: implement in 0.50.1 with other new errata changes
-     * This method should mirror reconfigureEntity but with more restrictions based
-     * on the types of alternate
+     * This method should mirror reconfigureEntity but with more restrictions based on the types of alternate
      * munitions allowed by Aerospace rules.
      *
-     * @param e
-     * @param mt
-     * @param faction
+     * @param e       {@link Entity} Unit to work with.
+     * @param mt      {@link MunitionTree} Ammo Tree
+     * @param faction Related Faction
      */
     public void reconfigureAero(Entity e, MunitionTree mt, String faction) {
 
@@ -1226,46 +1212,37 @@ public class TeamLoadOutGenerator {
     // endregion reconfigureAero
 
     // region iterativelyLoadAmmo
-    private void iterativelyLoadAmmo(
-            Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName, String faction) {
+    private void iterativelyLoadAmmo(Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName, String faction) {
         String techBase = (e.isClan()) ? "CL" : "IS";
         iterativelyLoadAmmo(e, mt, binList, binName, techBase, faction);
     }
 
     /**
-     * Manage loading ammo bins for a given type.
-     * Type can be designated by size (LRM-5) or generic (AC)
-     * Logic:
-     * Iterate over list of priorities and fill the first as many times as
-     * requested.
-     * Repeat for 2nd..Nth ammo types
-     * If more bins remain than desired types are specified, fill the remainder with
-     * the top priority type
-     * If more desired types remain than there are bins, oh well.
-     * If a requested ammo type is not available in the specified time frame or
+     * Manage loading ammo bins for a given type. Type can be designated by size (LRM-5) or generic (AC) Logic: Iterate
+     * over list of priorities and fill the first as many times as requested. Repeat for 2nd...Nth ammo types If more
+     * bins remain than desired types are specified, fill the remainder with the top priority type If more desired types
+     * remain than there are bins, oh well. If a requested ammo type is not available in the specified time frame or
      * faction, skip it.
      *
      * @param e        Entity to load
-     * @param mt       MunitionTree, stores required munitions in desired loading
-     *                 order
+     * @param mt       MunitionTree, stores required munitions in desired loading order
      * @param binList  List of actual mounted ammo bins matching this type
      * @param binName  String bin type we are loading now
      * @param techBase "CL" or "IS"
-     * @param faction  Faction to outfit for, used in ammo validity checks (uses MM,
-     *                 not IO, faction codes)
+     * @param faction  Faction to outfit for, used in ammo validity checks (uses MM, not IO, faction codes)
      */
-    private void iterativelyLoadAmmo(
-            Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName, String techBase, String faction) {
+    private void iterativelyLoadAmmo(Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName, String techBase, String faction) {
         // Copy counts that we will update, otherwise mt entry gets edited permanently.
-        HashMap<String, Integer> counts = new HashMap<String, Integer>(
-                mt.getCountsOfAmmosForKey(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName));
+        HashMap<String, Integer> counts = new HashMap<>(mt.getCountsOfAmmosForKey(e.getFullChassis(),
+              e.getModel(),
+              e.getCrew().getName(0),
+              binName));
         List<String> priorities = mt.getPriorityList(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName);
         // Track default type for filling in unfilled bins
         AmmoType defaultType = null;
         int defaultIdx = 0;
 
-        // If the imperative is to use Random for every bin, we need a different Random
-        // for each bin
+        // If the imperative is to use Random for every bin, we need a different Random for each bin
         if (priorities.size() == 1 && priorities.get(0).contains("Random")) {
             priorities = new ArrayList<>(Collections.nCopies(binList.size(), "Random"));
         }
@@ -1280,7 +1257,7 @@ public class TeamLoadOutGenerator {
             boolean random = priorities.get(i).contains("Random");
             String binType = (random) ? getRandomBin(binName, trueRandom) : priorities.get(i);
             Mounted<AmmoType> bin = binList.get(0);
-            AmmoType desired = null;
+            AmmoType desired;
 
             // Load matching AmmoType
             if (binType.toLowerCase().contains("standard")) {
@@ -1291,17 +1268,19 @@ public class TeamLoadOutGenerator {
                 }
             } else {
                 // Get available munitions
-                Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(((AmmoType) bin.getType()).getAmmoType());
+                Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(bin.getType().getAmmoType());
                 if (vAllTypes == null) {
                     continue;
                 }
 
                 // Make sure the desired munition type is available and valid
                 desired = vAllTypes.stream()
-                        .filter(m -> m.getInternalName().startsWith(techBase) && m.getBaseName().contains(binName)
-                                && m.getName().contains(binType))
-                        .filter(d -> checkLegality(d, faction, techBase, e.isMixedTech()))
-                        .findFirst().orElse(null);
+                                .filter(m -> m.getInternalName().startsWith(techBase) &&
+                                                   m.getBaseName().contains(binName) &&
+                                                   m.getName().contains(binType))
+                                .filter(d -> checkLegality(d, faction, techBase, e.isMixedTech()))
+                                .findFirst()
+                                .orElse(null);
             }
 
             if (desired == null) {
@@ -1311,8 +1290,7 @@ public class TeamLoadOutGenerator {
                 continue;
             }
 
-            // Add one of the current binType to counts so we get a new random type every
-            // bin
+            // Add one of the current binType to counts so we get a new random type every bin
             if (random) {
                 counts.put(binType, 1);
             }
@@ -1322,16 +1300,14 @@ public class TeamLoadOutGenerator {
                 defaultType = desired;
             }
 
-            // Continue filling with this munition type until count is fulfilled or there
-            // are no more bins
-            while (counts.getOrDefault(binType, 0) > 0
-                    && !binList.isEmpty()) {
+            // Continue filling with this munition type until count is fulfilled or there are no more bins
+            while (counts.getOrDefault(binType, 0) > 0 && !binList.isEmpty()) {
                 try {
                     // fill one ammo bin with the requested ammo type
 
-                    if (!((AmmoType) bin.getType()).equalsAmmoTypeOnly(desired)) {
+                    if (!bin.getType().equalsAmmoTypeOnly(desired)) {
                         // can't use this ammo if not
-                        logger.debug("Unable to load bin " + bin.getName() + " with " + desired.getName());
+                        logger.debug("Unable to load bin {} with {}", bin.getName(), desired.getName());
                         // Unset default bin if ammo was not loadable
                         if (i == defaultIdx) {
                             defaultType = null;
@@ -1361,20 +1337,20 @@ public class TeamLoadOutGenerator {
     }
 
     /**
-     * Select a random munition type that is a valid damaging ammo (for "random") or
-     * truly random valid ammo
-     * (for true random) for the bin type. IE "flechette" is
+     * Select a random munition type that is a valid damaging ammo (for "random") or truly random valid ammo (for true
+     * random) for the bin type. IE "fléchette" is
      *
-     * @param binName
-     * @param trueRandom
-     * @return
+     * @param binName    Name of the Bin
+     * @param trueRandom If it needs to be a random type of ammo.
+     *
+     * @return A random munition type.
      */
     private static String getRandomBin(String binName, boolean trueRandom) {
         String result = "";
         for (String typeName : TYPE_LIST) {
             if ((trueRandom || !UTILITY_MUNITIONS.contains(typeName)) &&
-                    (binName.toLowerCase().contains(typeName.toLowerCase())
-                            || typeName.toLowerCase().contains(binName.toLowerCase()))) {
+                      (binName.toLowerCase().contains(typeName.toLowerCase()) ||
+                             typeName.toLowerCase().contains(binName.toLowerCase()))) {
                 List<String> tList = TYPE_MAP.get(typeName);
                 result = tList.get(new Random().nextInt(tList.size()));
                 break;
@@ -1385,28 +1361,19 @@ public class TeamLoadOutGenerator {
     // endregion iterativelyLoadAmmo
 
     // region aero / bombs
+
     /**
-     * Helper function to load bombs onto a random portion of units that can carry
-     * them
+     * Helper function to load bombs onto a random portion of units that can carry them
      *
      * @param entityList       The list of entities to process
-     * @param hasGroundTargets true to select air-to-ground ordnance, false for
-     *                         air-to-air only
+     * @param hasGroundTargets true to select air-to-ground ordnance, false for air-to-air only
      * @param quality          IUnitRating enum for force quality (A/A* through F)
      * @param isPirate         true to use specific pirate ordnance loadouts
      */
-    public void populateAeroBombs(
-        List<Entity> entityList,
-        int year,
-        boolean hasGroundTargets,
-        int quality,
-        boolean isPirate,
-        String faction
-        ) {
+    public void populateAeroBombs(List<Entity> entityList, int year, boolean hasGroundTargets, int quality, boolean isPirate, String faction) {
 
-        // Get all valid bombers, and sort unarmed ones to the front
-        // Ignore VTOLs for now, as they suffer extra penalties for mounting bomb
-        // munitions
+        // Get all valid bombers, and sort unarmed ones to the front. Ignore VTOLs for now, as they suffer extra
+        // penalties for mounting bomb munitions
         List<Entity> bomberList = new ArrayList<>();
         for (Entity curEntity : entityList) {
             if (curEntity.isBomber() && !curEntity.isVehicle()) {
@@ -1423,11 +1390,9 @@ public class TeamLoadOutGenerator {
         }
 
         // Some bombers may not be loaded; calculate percentage of total to equip
-        int maxBombers = Math.min(
-                (int) Math.ceil(((castPropertyInt("percentBombersToEquipMin", 40)
-                        + Compute.randomInt(castPropertyInt("percentBombersToEquipRange", 60))) / 100.0)
-                        * bomberList.size()),
-                bomberList.size());
+        int maxBombers = Math.min((int) Math.ceil(((castPropertyInt("percentBombersToEquipMin", 40) +
+                                                          Compute.randomInt(castPropertyInt("percentBombersToEquipRange",
+                                                                60))) / 100.0) * bomberList.size()), bomberList.size());
         int numBombers = 0;
 
         Map<Integer, int[]> bombsByCarrier = new HashMap<>();
@@ -1440,8 +1405,7 @@ public class TeamLoadOutGenerator {
             int[] generatedBombs;
             bombsByCarrier.put(i, new int[BombType.B_NUM]);
 
-            // Only generate loadouts up to the maximum number, use empty load out for the
-            // rest
+            // Only generate loadouts up to the maximum number, use empty load out for the rest
             if (numBombers >= maxBombers) {
                 continue;
             }
@@ -1451,32 +1415,33 @@ public class TeamLoadOutGenerator {
             String techBase = (curBomber.isClan()) ? "CL" : "IS";
             boolean mixedTech = curBomber.isMixedTech();
 
-            // Some fighters on ground attack may be flying air cover rather than strictly
-            // air-to-ground
+            // Some fighters on ground attack may be flying air cover rather than strictly air-to-ground
             boolean isCAP = !hasGroundTargets ||
-                    (Compute.d6() <= castPropertyInt("fightersLoadForCAPRollTargetThreshold", 1));
+                                  (Compute.d6() <= castPropertyInt("fightersLoadForCAPRollTargetThreshold", 1));
 
-            // Set minimum thrust values, with lower minimums for unarmed and ground attack,
-            // and use remaining thrust to limit hard points
+            // Set minimum thrust values, with lower minimums for unarmed and ground attack, and use remaining thrust
+            // to limit hard points
             if (isCAP) {
-                minThrust = isUnarmed ? castPropertyInt("fighterCAPMinUnarmedSafeThrustValue", 2)
-                        : ((int) Math.ceil(curBomber.getWalkMP() /
-                                castPropertyDouble("fighterCAPMinArmedSafeThrustFractionDivisor", 2.0)));
+                minThrust = isUnarmed ?
+                                  castPropertyInt("fighterCAPMinUnarmedSafeThrustValue", 2) :
+                                  ((int) Math.ceil(curBomber.getWalkMP() /
+                                                         castPropertyDouble(
+                                                               "fighterCAPMinArmedSafeThrustFractionDivisor",
+                                                               2.0)));
             } else {
-                minThrust = isUnarmed ? castPropertyInt("bomberMinUnarmedSafeThrustValue", 2)
-                        : castPropertyInt("bomberMinArmedSafeThrustValue", 3);
+                minThrust = isUnarmed ?
+                                  castPropertyInt("bomberMinUnarmedSafeThrustValue", 2) :
+                                  castPropertyInt("bomberMinArmedSafeThrustValue", 3);
             }
-            maxLoad = Math.min((int) Math.floor(
-                    curBomber.getWeight() / castPropertyDouble("maxBomberLoadFactorDivisor", 5.0)),
-                    (curBomber.getWalkMP() - minThrust) * castPropertyInt("maxBomberLoadThrustDiffFactor", 5));
+            maxLoad = Math.min((int) Math.floor(curBomber.getWeight() /
+                                                      castPropertyDouble("maxBomberLoadFactorDivisor", 5.0)),
+                  (curBomber.getWalkMP() - minThrust) * castPropertyInt("maxBomberLoadThrustDiffFactor", 5));
 
-            // Get a random percentage (default 40 ~ 90) of the maximum bomb load for armed
-            // entities
+            // Get a random percentage (default 40 ~ 90) of the maximum bomb load for armed entities
             if (!isUnarmed) {
-                maxLoad = (int) Math.ceil(
-                        (castPropertyInt("maxPercentBomberLoadToEquipMin", 50) +
-                                Compute.randomInt(castPropertyInt("maxPercentBomberLoadToEquipRange", 40))) * maxLoad
-                                / 100.0);
+                maxLoad = (int) Math.ceil((castPropertyInt("maxPercentBomberLoadToEquipMin", 50) +
+                                                 Compute.randomInt(castPropertyInt("maxPercentBomberLoadToEquipRange",
+                                                       40))) * maxLoad / 100.0);
             }
 
             if (maxLoad == 0) {
@@ -1484,23 +1449,20 @@ public class TeamLoadOutGenerator {
             }
 
             // Generate bomb load
-            generatedBombs = generateExternalOrdnance(
-                    maxLoad,
-                    isCAP,
-                    isPirate,
-                    quality,
-                    year,
-                    faction,
-                    techBase,
-                    mixedTech
-            );
+            generatedBombs = generateExternalOrdnance(maxLoad,
+                  isCAP,
+                  isPirate,
+                  quality,
+                  year,
+                  faction,
+                  techBase,
+                  mixedTech);
             // Whoops, go yell at the ordnance technician
             if (Arrays.stream(generatedBombs).sum() == 0) {
                 continue;
             }
 
-            // Set a flag to indicate at least one of the bombers is carrying guided
-            // ordnance
+            // Set a flag to indicate at least one of the bombers is carrying guided ordnance
             forceHasGuided = forceHasGuided || hasGuidedOrdnance(generatedBombs);
 
             // Store the bomb selections as we might need to add in TAG later
@@ -1516,13 +1478,10 @@ public class TeamLoadOutGenerator {
         loadBombsOntoBombers(bomberList, bombsByCarrier, forceHasGuided);
     }
 
-    private static void loadBombsOntoBombers(List<Entity> bomberList, Map<Integer, int[]> bombsByCarrier,
-            boolean forceHasGuided) {
-        // Load ordnance onto units. If there is guided ordnance present then randomly
-        // add some TAG
-        // pods to those without the guided ordnance.
-        int tagCount = Math.min(bomberList.size(), Compute.randomInt(
-                castPropertyInt("bombersToAddTagMaxCount", 3)));
+    private static void loadBombsOntoBombers(List<Entity> bomberList, Map<Integer, int[]> bombsByCarrier, boolean forceHasGuided) {
+        // Load ordnance onto units. If there is guided ordnance present then randomly add some TAG pods to those
+        // without the guided ordnance.
+        int tagCount = Math.min(bomberList.size(), Compute.randomInt(castPropertyInt("bombersToAddTagMaxCount", 3)));
         for (int i = 0; i < bomberList.size(); i++) {
             Entity curBomber = bomberList.get(i);
 
@@ -1530,9 +1489,10 @@ public class TeamLoadOutGenerator {
 
             // Don't combine guided ordnance with external TAG
             if (forceHasGuided && tagCount > 0) {
-                int maxLoadForTagger = Math.min((int) Math.floor(
-                        curBomber.getWeight() / castPropertyDouble("maxBomberLoadFactorDivisor", 5.0)),
-                        (curBomber.getWalkMP() - 2) * castPropertyInt("maxBomberLoadThrustDiffFactor", 5));
+                int maxLoadForTagger = Math.min((int) Math.floor(curBomber.getWeight() /
+                                                                       castPropertyDouble("maxBomberLoadFactorDivisor",
+                                                                             5.0)),
+                      (curBomber.getWalkMP() - 2) * castPropertyInt("maxBomberLoadThrustDiffFactor", 5));
                 if (addExternalTAG(generatedBombs, true, maxLoadForTagger)) {
                     tagCount--;
                 }
@@ -1546,35 +1506,21 @@ public class TeamLoadOutGenerator {
     }
 
     /**
-     * Randomly generate a set of external ordnance up to the number of indicated
-     * bomb units. Lower
-     * rated forces are more likely to get simpler types (HE and rockets).
-     * Because TAG is only useful as one-per-fighter, it should be handled
-     * elsewhere.
+     * Randomly generate a set of external ordnance up to the number of indicated bomb units. Lower rated forces are
+     * more likely to get simpler types (HE and rockets). Because TAG is only useful as one-per-fighter, it should be
+     * handled elsewhere.
      *
-     * @param bombUnits how many bomb units to generate, some types count as more
-     *                  than one unit so
-     *                  returned counts may be lower than this but never higher
+     * @param bombUnits how many bomb units to generate, some types count as more than one unit so returned counts may
+     *                  be lower than this but never higher
      * @param airOnly   true to only select air-to-air ordnance
-     * @param isPirate  true if force is pirate, specific low-tech/high chaos
-     *                  selections
+     * @param isPirate  true if force is pirate, specific low-tech/high chaos selections
      * @param quality   force rating to work with
      * @param year      current year, for tech filter
-     * @return array of integers, with each element being a bomb count using
-     *         BombUnit
-     *         enums as the lookup e.g. [BombUnit.HE] will get the number of HE
-     *         bombs.
+     *
+     * @return array of integers, with each element being a bomb count using BombUnit enums as the lookup e.g.
+     *       [BombUnit.HE] will get the number of HE bombs.
      */
-     public int[] generateExternalOrdnance(
-        int bombUnits,
-        boolean airOnly,
-        boolean isPirate,
-        int quality,
-        int year,
-        String faction,
-        String techBase,
-        boolean mixedTech
-    ) {
+    public int[] generateExternalOrdnance(int bombUnits, boolean airOnly, boolean isPirate, int quality, int year, String faction, String techBase, boolean mixedTech) {
 
         int[] bombLoad = new int[BombType.B_NUM];
 
@@ -1584,19 +1530,16 @@ public class TeamLoadOutGenerator {
 
         // Get a random predefined load out
         double countWeight = 0.0;
-        double completeWeight = 0.0;
-        double randomThreshold = 0.0;
+        double completeWeight;
+        double randomThreshold;
 
-        // Use weighted random generation for air-to-ground loadouts. Use simple random
-        // selection
-        // for air-to-air.
+        // Use weighted random generation for air-to-ground loadouts. Use simple random selection for air-to-air.
         Map<Integer, Integer> bombMap;
         if (!airOnly) {
             bombMap = lowTechBombLoad;
 
-            // Randomly select a load out using the weighted map of names. Pirates use a
-            // separate
-            // map with different loadouts.
+            // Randomly select a load out using the weighted map of names. Pirates use a separate map with different
+            // loadouts.
             Map<String, Integer> loadOutMap;
             List<String> mapNames = new ArrayList<>();
             List<Integer> mapWeights = new ArrayList<>();
@@ -1612,8 +1555,8 @@ public class TeamLoadOutGenerator {
 
             // Weighted random selection
             completeWeight = mapWeights.stream().mapToInt(curWeight -> curWeight).asDoubleStream().sum();
-            randomThreshold = (Compute.randomInt(castPropertyInt("bomberRandomThresholdMaxPercent", 100))
-                    / 100.0) * completeWeight;
+            randomThreshold = (Compute.randomInt(castPropertyInt("bomberRandomThresholdMaxPercent", 100)) / 100.0) *
+                                    completeWeight;
             for (int i = 0; i < mapNames.size(); i++) {
                 countWeight += Math.max(mapWeights.get(i), 1.0);
                 if (countWeight >= randomThreshold) {
@@ -1659,8 +1602,8 @@ public class TeamLoadOutGenerator {
 
             // Air-to-air loadouts are more limited, just use explicit random selection
             if (!isPirate) {
-                if (Compute.randomInt(castPropertyInt("fighterCAPRandomPercentageRange", 100)) > castPropertyInt(
-                        "fighterCAPAntiShipLoadOutRandomPercentageMax", 20)) {
+                if (Compute.randomInt(castPropertyInt("fighterCAPRandomPercentageRange", 100)) >
+                          castPropertyInt("fighterCAPAntiShipLoadOutRandomPercentageMax", 20)) {
                     bombMap = antiAirBombLoad;
                 } else {
                     bombMap = antiShipBombLoad;
@@ -1671,55 +1614,43 @@ public class TeamLoadOutGenerator {
 
         }
 
-        // Slight hack to account for difficulties with isAvailableIn() with certain
-        // bombs
+        // Slight hack to account for difficulties with isAvailableIn() with certain bombs
         boolean guidedAndArrowAvailable = ((year >= 2600) && (year <= 2835)) || (year > 3044);
 
-        // Generate a working map with all the unavailable ordnance replaced with
-        // rockets or HE
+        // Generate a working map with all the unavailable ordnance replaced with rockets or HE
         Map<Integer, Integer> workingBombMap = new HashMap<>();
         for (int curBombType : bombMap.keySet()) {
             // Make sure the bomb type is even legal for the current scenario
-            if (
-                !checkLegality(
-                    BombType.createBombByType(curBombType),
-                    faction,
-                    techBase,
-                    mixedTech
-                )
-            ) {
+            if (!checkLegality(BombType.createBombByType(curBombType), faction, techBase, mixedTech)) {
                 continue;
             }
 
             String typeName = BombType.getBombInternalName(curBombType);
             if (curBombType == BombType.B_RL ||
-                    curBombType == BombType.B_HE ||
-                    (curBombType != BombType.B_LG &&
-                            curBombType != BombType.B_ARROW &&
-                            curBombType != BombType.B_HOMING &&
-                            BombType.get(typeName).isAvailableIn(year, false))
-                    ||
-                    ((curBombType == BombType.B_LG ||
-                            curBombType == BombType.B_ARROW ||
-                            curBombType == BombType.B_HOMING) &&
-                            guidedAndArrowAvailable)) {
+                      curBombType == BombType.B_HE ||
+                      (curBombType != BombType.B_LG &&
+                             curBombType != BombType.B_ARROW &&
+                             curBombType != BombType.B_HOMING &&
+                             BombType.get(typeName).isAvailableIn(year, false)) ||
+                      ((curBombType == BombType.B_LG ||
+                              curBombType == BombType.B_ARROW ||
+                              curBombType == BombType.B_HOMING) && guidedAndArrowAvailable)) {
 
                 if (workingBombMap.containsKey(curBombType)) {
-                    workingBombMap.put(curBombType, bombMap.get(curBombType) +
-                            workingBombMap.get(curBombType));
+                    workingBombMap.put(curBombType, bombMap.get(curBombType) + workingBombMap.get(curBombType));
                 } else {
                     workingBombMap.put(curBombType, bombMap.get(curBombType));
                 }
 
             } else {
-                int replacementBomb = airOnly ? BombType.B_RL
-                        : Compute.randomInt(castPropertyInt("bombReplacementIntRange", 2)) <= castPropertyInt(
-                                "bombReplacementRLThreshold", 0)
-                                        ? BombType.B_RL
-                                        : BombType.B_HE;
+                int replacementBomb = airOnly ?
+                                            BombType.B_RL :
+                                            Compute.randomInt(castPropertyInt("bombReplacementIntRange", 2)) <=
+                                                  castPropertyInt("bombReplacementRLThreshold", 0) ?
+                                                  BombType.B_RL :
+                                                  BombType.B_HE;
                 if (workingBombMap.containsKey(replacementBomb)) {
-                    workingBombMap.put(replacementBomb, bombMap.get(curBombType) +
-                            workingBombMap.get(replacementBomb));
+                    workingBombMap.put(replacementBomb, bombMap.get(curBombType) + workingBombMap.get(replacementBomb));
                 } else {
                     workingBombMap.put(replacementBomb, bombMap.get(curBombType));
                 }
@@ -1738,15 +1669,18 @@ public class TeamLoadOutGenerator {
             ordnanceIDs.add(curID);
             ordnanceRandomWeights.add(workingBombMap.get(curID));
         }
-        completeWeight = ordnanceRandomWeights.stream().mapToInt(curWeight -> Math.max(curWeight, 1)).asDoubleStream()
-                .sum();
+        completeWeight = ordnanceRandomWeights.stream()
+                               .mapToInt(curWeight -> Math.max(curWeight, 1))
+                               .asDoubleStream()
+                               .sum();
 
         if (!ordnanceIDs.isEmpty() && !ordnanceRandomWeights.isEmpty() && completeWeight != 0) {
-            for (int curLoad = 0; curLoad < bombUnits && loopSafety < castPropertyInt("maxBombApplicationLoopCount", 10); ) {
+            for (int curLoad = 0;
+                  curLoad < bombUnits && loopSafety < castPropertyInt("maxBombApplicationLoopCount", 10); ) {
 
                 // Randomly get the ordnance type
-                randomThreshold = (Compute.randomInt(
-                    castPropertyInt("maxBombOrdnanceWeightPercentThreshold", 100)) / 100.0) * completeWeight;
+                randomThreshold = (Compute.randomInt(castPropertyInt("maxBombOrdnanceWeightPercentThreshold", 100)) /
+                                         100.0) * completeWeight;
                 countWeight = 0.0;
                 for (int i = 0; i < ordnanceIDs.size(); i++) {
                     countWeight += Math.max(ordnanceRandomWeights.get(i), 1.0);
@@ -1756,12 +1690,9 @@ public class TeamLoadOutGenerator {
                     }
                 }
 
-                // If the selected ordnance doesn't exceed the provided limit increment the
-                // counter,
-                // otherwise skip it and keep trying with some safeties to prevent infinite
-                // loops.
-                if (selectedBombType >= 0 &&
-                    curLoad + BombType.getBombCost(selectedBombType) <= bombUnits) {
+                // If the selected ordnance doesn't exceed the provided limit increment the counter, otherwise skip
+                // it and keep trying with some safeties to prevent infinite loops.
+                if (selectedBombType >= 0 && curLoad + BombType.getBombCost(selectedBombType) <= bombUnits) {
                     bombLoad[selectedBombType]++;
                     curLoad += BombType.getBombCost(selectedBombType);
                 } else {
@@ -1773,67 +1704,40 @@ public class TeamLoadOutGenerator {
         // Oops, nothing left - rocket launchers are always popular
         if (Arrays.stream(bombLoad).sum() == 0) {
             // Rocket Launchers are a good option after CI era
-            if (
-                checkLegality(
-                    BombType.createBombByType(BombType.B_RL),
-                    faction,
-                    techBase,
-                    mixedTech
-                )
-            ) {
+            if (checkLegality(BombType.createBombByType(BombType.B_RL), faction, techBase, mixedTech)) {
                 bombLoad[BombType.B_RL] = bombUnits;
                 return bombLoad;
             }
             // Otherwise, Prototype Rocket Launchers are almost always in style.
-            if (
-                checkLegality(
-                    BombType.createBombByType(BombType.B_RLP),
-                    faction,
-                    techBase,
-                    mixedTech
-                )
-            ){
+            if (checkLegality(BombType.createBombByType(BombType.B_RLP), faction, techBase, mixedTech)) {
                 bombLoad[BombType.B_RLP] = bombUnits;
                 return bombLoad;
             }
         }
 
-        // Randomly replace advanced ordnance with rockets or HE, depending on force
-        // rating and
-        // air-air/ground preference
+        // Randomly replace advanced ordnance with rockets or HE, depending on force rating and air-air/ground
+        // preference
 
-        List<Integer> advancedOrdnance = Arrays.asList(
-                BombType.B_LG,
-                BombType.B_ARROW,
-                BombType.B_HOMING,
-                BombType.B_LAA,
-                BombType.B_AAA,
-                BombType.B_THUNDER,
-                BombType.B_FAE_SMALL,
-                BombType.B_FAE_LARGE,
-                BombType.B_AS,
-                BombType.B_ASEW);
+        List<Integer> advancedOrdnance = Arrays.asList(BombType.B_LG,
+              BombType.B_ARROW,
+              BombType.B_HOMING,
+              BombType.B_LAA,
+              BombType.B_AAA,
+              BombType.B_THUNDER,
+              BombType.B_FAE_SMALL,
+              BombType.B_FAE_LARGE,
+              BombType.B_AS,
+              BombType.B_ASEW);
 
-        switch (quality) {
-            case ForceDescriptor.RATING_5:
-            case ForceDescriptor.RATING_4:
-                randomThreshold = castPropertyInt("bombRandomReplaceRating4PlusThreshold", 5);
-                break;
-            case ForceDescriptor.RATING_3:
-                randomThreshold = castPropertyInt("bombRandomReplaceRating3PlusThreshold", 10);
-                break;
-            case ForceDescriptor.RATING_2:
-                randomThreshold = castPropertyInt("bombRandomReplaceRating2PlusThreshold", 25);
-                break;
-            case ForceDescriptor.RATING_1:
-                randomThreshold = castPropertyInt("bombRandomReplaceRating1PlusThreshold", 40);
-                break;
-            case ForceDescriptor.RATING_0:
-                randomThreshold = castPropertyInt("bombRandomReplaceRating0PlusThreshold", 80);
-                break;
-            default:
-                throw new IllegalArgumentException("Unrecognized rating value: " + quality);
-        }
+        randomThreshold = switch (quality) {
+            case ForceDescriptor.RATING_5, ForceDescriptor.RATING_4 ->
+                  castPropertyInt("bombRandomReplaceRating4PlusThreshold", 5);
+            case ForceDescriptor.RATING_3 -> castPropertyInt("bombRandomReplaceRating3PlusThreshold", 10);
+            case ForceDescriptor.RATING_2 -> castPropertyInt("bombRandomReplaceRating2PlusThreshold", 25);
+            case ForceDescriptor.RATING_1 -> castPropertyInt("bombRandomReplaceRating1PlusThreshold", 40);
+            case ForceDescriptor.RATING_0 -> castPropertyInt("bombRandomReplaceRating0PlusThreshold", 80);
+            default -> throw new IllegalArgumentException("Unrecognized rating value: " + quality);
+        };
 
         for (int curBomb : advancedOrdnance) {
             int loadCount = bombLoad[curBomb];
@@ -1843,11 +1747,10 @@ public class TeamLoadOutGenerator {
                     if (airOnly) {
                         bombLoad[BombType.B_RL]++;
                     } else {
-                        bombLoad[Compute.randomInt(
-                                castPropertyInt("bombReplacementIntRange", 2)) <= castPropertyInt(
-                                        "bombReplacementRLThreshold", 0)
-                                                ? BombType.B_RL
-                                                : BombType.B_HE]++;
+                        bombLoad[Compute.randomInt(castPropertyInt("bombReplacementIntRange", 2)) <=
+                                       castPropertyInt("bombReplacementRLThreshold", 0) ?
+                                       BombType.B_RL :
+                                       BombType.B_HE]++;
                     }
                     bombLoad[curBomb]--;
                 }
@@ -1857,12 +1760,11 @@ public class TeamLoadOutGenerator {
     }
 
     /**
-     * Checks to see if a bomb load contains ordnance that relies on TAG guidance,
-     * such as laser/TAG
-     * guided bombs and homing Arrow IV
+     * Checks to see if a bomb load contains ordnance that relies on TAG guidance, such as laser/TAG guided bombs and
+     * homing Arrow IV
      *
-     * @param bombLoad array of size BombType.B_NUM, suitable for setting bombs on
-     *                 IBomber entities
+     * @param bombLoad array of size BombType.B_NUM, suitable for setting bombs on IBomber entities
+     *
      * @return true if guided ordnance is carried
      */
     private static boolean hasGuidedOrdnance(int[] bombLoad) {
@@ -1880,19 +1782,14 @@ public class TeamLoadOutGenerator {
     }
 
     /**
-     * Updates a bomb load to include an external TAG system. If this exceeds the
-     * provided
-     * maximum load (in bomb units i.e. Arrow IV counts as multiple units), then one
-     * of the basic
-     * one-slot types is removed and the TAG system is added in its place.
+     * Updates a bomb load to include an external TAG system. If this exceeds the provided maximum load (in bomb units
+     * i.e. Arrow IV counts as multiple units), then one of the basic one-slot types is removed and the TAG system is
+     * added in its place.
      *
-     * @param bombLoad   array of size BombType.B_NUM, suitable for setting bombs on
-     *                   IBomber
-     *                   entities
-     * @param skipGuided true to only select external TAG for units without guided
-     *                   ordnance
-     * @param maxLoad    Maximum external ordnance load in total bomb units (NOT
-     *                   bomb count)
+     * @param bombLoad   array of size BombType.B_NUM, suitable for setting bombs on IBomber entities
+     * @param skipGuided true to only select external TAG for units without guided ordnance
+     * @param maxLoad    Maximum external ordnance load in total bomb units (NOT bomb count)
+     *
      * @return true, if TAG was added, false otherwise
      */
     private static boolean addExternalTAG(int[] bombLoad, boolean skipGuided, int maxLoad) {
@@ -1904,17 +1801,17 @@ public class TeamLoadOutGenerator {
 
             // If there's enough room, add it
             int totalLoad = IntStream.range(0, bombLoad.length)
-                    .map(i -> BombType.getBombCost(i) * Math.max(bombLoad[i], 0)).sum();
+                                  .map(i -> BombType.getBombCost(i) * Math.max(bombLoad[i], 0))
+                                  .sum();
             if (totalLoad < maxLoad) {
                 bombLoad[BombType.B_TAG]++;
                 return true;
             } else if (totalLoad == maxLoad) {
 
-                List<Integer> replaceableTypes = Arrays.asList(
-                        BombType.B_RL,
-                        BombType.B_HE,
-                        BombType.B_INFERNO,
-                        BombType.B_CLUSTER);
+                List<Integer> replaceableTypes = Arrays.asList(BombType.B_RL,
+                      BombType.B_HE,
+                      BombType.B_INFERNO,
+                      BombType.B_CLUSTER);
                 for (int i = 0; i < replaceableTypes.size(); i++) {
                     if (bombLoad[i] > 0) {
                         bombLoad[i]--;
@@ -1970,25 +1867,25 @@ class MunitionWeightCollection {
         narcWeights = initializeWeaponWeights(MunitionTree.NARC_MUNITION_NAMES);
         bombWeights = initializeWeaponWeights(MunitionTree.BOMB_MUNITION_NAMES);
 
-        mapTypeToWeights = new HashMap<>(Map.ofEntries(
-                entry("LRM", lrmWeights),
-                entry("SRM", srmWeights),
-                entry("AC", acWeights),
-                entry("ATM", atmWeights),
-                entry("Arrow IV", arrowWeights),
-                entry("Artillery", artyWeights),
-                entry("Artillery Cannon", artyCannonWeights),
-                entry("Mek Mortar", mekMortarWeights),
-                entry("Narc", narcWeights),
-                entry("Bomb", bombWeights)));
+        mapTypeToWeights = new HashMap<>(Map.ofEntries(entry("LRM", lrmWeights),
+              entry("SRM", srmWeights),
+              entry("AC", acWeights),
+              entry("ATM", atmWeights),
+              entry("Arrow IV", arrowWeights),
+              entry("Artillery", artyWeights),
+              entry("Artillery Cannon", artyCannonWeights),
+              entry("Mek Mortar", mekMortarWeights),
+              entry("Narc", narcWeights),
+              entry("Bomb", bombWeights)));
     }
 
     /**
-     * Use values from the Properties file defined in TeamLoadOutGenerator class if
-     * available; else use provided default
+     * Use values from the Properties file defined in TeamLoadOutGenerator class if available; else use provided
+     * default
      *
      * @param field    Field name in property file
      * @param defValue Default value to use
+     *
      * @return Double read value or default
      */
     private static Double getPropDouble(String field, Double defValue) {
@@ -1997,7 +1894,7 @@ class MunitionWeightCollection {
 
     // Section: initializing weights
     private static HashMap<String, Double> initializeWeaponWeights(List<String> wepAL) {
-        HashMap<String, Double> weights = new HashMap<String, Double>();
+        HashMap<String, Double> weights = new HashMap<>();
         for (String name : wepAL) {
             weights.put(name, getPropDouble("defaultWeaponWeight", 1.0));
         }
@@ -2007,7 +1904,7 @@ class MunitionWeightCollection {
     }
 
     private static HashMap<String, Double> initializeMissileWeaponWeights(List<String> wepAL) {
-        HashMap<String, Double> weights = new HashMap<String, Double>();
+        HashMap<String, Double> weights = new HashMap<>();
         for (String name : wepAL) {
             weights.put(name, getPropDouble("defaultWeaponWeight", 1.0));
         }
@@ -2022,7 +1919,7 @@ class MunitionWeightCollection {
     }
 
     private static HashMap<String, Double> initializeATMWeights(List<String> wepAL) {
-        HashMap<String, Double> weights = new HashMap<String, Double>();
+        HashMap<String, Double> weights = new HashMap<>();
         for (String name : wepAL) {
             weights.put(name, getPropDouble("defaultATMMunitionWeight", 2.0));
         }
@@ -2031,31 +1928,24 @@ class MunitionWeightCollection {
         return weights;
     }
 
-    // Increase/Decrease functions. Increase is 2x + 1, decrease is 0.5x, so items
-    // voted up and down multiple times should still exceed items never voted up
-    // _or_ down.
+    // Increase/Decrease functions. Increase is 2x + 1, decrease is 0.5x, so items voted up and down multiple times
+    // should still exceed items never voted up _or_ down.
     public void increaseMunitions(List<String> munitions) {
-        mapTypeToWeights.entrySet().forEach(
-                e -> modifyMatchingWeights(
-                        e.getValue(),
-                        munitions,
-                        getPropDouble("increaseWeightFactor", 2.0),
-                        getPropDouble("increaseWeightIncrement", 1.0)));
+        mapTypeToWeights.forEach((key, value) -> modifyMatchingWeights(value,
+              munitions,
+              getPropDouble("increaseWeightFactor", 2.0),
+              getPropDouble("increaseWeightIncrement", 1.0)));
     }
 
     public void decreaseMunitions(List<String> munitions) {
-        mapTypeToWeights.entrySet().forEach(
-                e -> modifyMatchingWeights(
-                        e.getValue(),
-                        munitions,
-                        getPropDouble("decreaseWeightFactor", 0.5),
-                        getPropDouble("decreaseWeightDecrement", 0.0)));
+        mapTypeToWeights.forEach((key, value) -> modifyMatchingWeights(value,
+              munitions,
+              getPropDouble("decreaseWeightFactor", 0.5),
+              getPropDouble("decreaseWeightDecrement", 0.0)));
     }
 
     public void zeroMunitionsWeight(List<String> munitions) {
-        mapTypeToWeights.entrySet().forEach(
-                e -> modifyMatchingWeights(
-                        e.getValue(), munitions, 0.0, 0.0));
+        mapTypeToWeights.forEach((key, value) -> modifyMatchingWeights(value, munitions, 0.0, 0.0));
     }
 
     public void increaseAPMunitions() {
@@ -2123,19 +2013,17 @@ class MunitionWeightCollection {
     }
 
     public void increaseArtilleryUtilityMunitions() {
-        modifyMatchingWeights(
-                mapTypeToWeights.get("Artillery"),
-                TeamLoadOutGenerator.UTILITY_MUNITIONS,
-                getPropDouble("increaseWeightFactor", 2.0),
-                getPropDouble("increaseWeightDecrement", 1.0));
+        modifyMatchingWeights(mapTypeToWeights.get("Artillery"),
+              TeamLoadOutGenerator.UTILITY_MUNITIONS,
+              getPropDouble("increaseWeightFactor", 2.0),
+              getPropDouble("increaseWeightDecrement", 1.0));
     }
 
     public void decreaseArtilleryUtilityMunitions() {
-        modifyMatchingWeights(
-                mapTypeToWeights.get("Artillery"),
-                TeamLoadOutGenerator.UTILITY_MUNITIONS,
-                getPropDouble("decreaseWeightFactor", 0.5),
-                getPropDouble("decreaseWeightDecrement", 0.0));
+        modifyMatchingWeights(mapTypeToWeights.get("Artillery"),
+              TeamLoadOutGenerator.UTILITY_MUNITIONS,
+              getPropDouble("decreaseWeightFactor", 0.5),
+              getPropDouble("decreaseWeightDecrement", 0.0));
     }
 
     public void increaseGuidedMunitions() {
@@ -2187,19 +2075,15 @@ class MunitionWeightCollection {
     }
 
     /**
-     * Update all matching types in a category by multiplying by a factor and adding
-     * an increment
-     * (1.0, 0.0) = no change; (2.0, 0.0) = double, (0.5, 0.0) = halve,
-     * (1.0, 1.0) = increment by 1, (1.0, -1.0) = decrement by 1, etc.
+     * Update all matching types in a category by multiplying by a factor and adding an increment (1.0, 0.0) = no
+     * change; (2.0, 0.0) = double, (0.5, 0.0) = halve, (1.0, 1.0) = increment by 1, (1.0, -1.0) = decrement by 1, etc.
      *
      * @param current
      * @param types
      * @param factor
      * @param increment
      */
-    private static void modifyMatchingWeights(HashMap<String, Double> current,
-            List<String> types, double factor,
-            double increment) {
+    private static void modifyMatchingWeights(HashMap<String, Double> current, List<String> types, double factor, double increment) {
         for (String key : types) {
             if (current.containsKey(key)) {
                 current.put(key, current.get(key) * factor + increment);
@@ -2209,9 +2093,10 @@ class MunitionWeightCollection {
 
     public List<String> getMunitionTypesInWeightOrder(Map<String, Double> weightMap) {
         ArrayList<String> orderedTypes = new ArrayList<>();
-        weightMap.entrySet().stream()
-                .sorted((E1, E2) -> E2.getValue().compareTo(E1.getValue()))
-                .forEach(k -> orderedTypes.add(String.valueOf(k)));
+        weightMap.entrySet()
+              .stream()
+              .sorted((E1, E2) -> E2.getValue().compareTo(E1.getValue()))
+              .forEach(k -> orderedTypes.add(String.valueOf(k)));
         // Make Standard the first entry if tied with other highest-weight munitions
         for (String munitionString : orderedTypes) {
             if (munitionString.contains("Standard") && !orderedTypes.get(0).contains("Standard")) {

@@ -818,7 +818,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             UnitLocation loc = movePath.get(0);
 
             if (GUIP.getAutoCenter()) {
-                centerOnHex(loc.getCoords());
+                centerOnHex(loc.coords());
             }
         }
     }
@@ -3900,7 +3900,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                         UnitLocation loc = move.path.get(0);
 
                         if (ge != null) {
-                            redrawMovingEntity(move.entity, loc.getCoords(), loc.getFacing(), loc.getElevation());
+                            redrawMovingEntity(move.entity, loc.coords(), loc.facing(), loc.elevation());
                         }
                         move.path.remove(0);
                     } else {
@@ -3921,8 +3921,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     movingEntitySpriteIds.clear();
                     movingEntitySprites.clear();
                     ghostEntitySprites.clear();
-                    processBoardViewEvent(new BoardViewEvent(this,
-                            BoardViewEvent.FINISHED_MOVING_UNITS));
+                    processBoardViewEvent(new BoardViewEvent(this, BoardViewEvent.FINISHED_MOVING_UNITS));
                 }
             }
         }
@@ -4128,8 +4127,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             moveCursor(selectedSprite, coords);
             moveCursor(firstLOSSprite, null);
             moveCursor(secondLOSSprite, null);
-            processBoardViewEvent(new BoardViewEvent(this, coords, null,
-                    BoardViewEvent.BOARD_HEX_SELECTED, 0));
+            processBoardViewEvent(new BoardViewEvent(this, coords, BoardViewEvent.BOARD_HEX_SELECTED, 0));
         }
     }
 
@@ -4155,8 +4153,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             moveCursor(highlightSprite, coords);
             moveCursor(firstLOSSprite, null);
             moveCursor(secondLOSSprite, null);
-            processBoardViewEvent(new BoardViewEvent(this, coords, null,
-                    BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
+            processBoardViewEvent(new BoardViewEvent(this, coords, BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
         }
     }
 
@@ -4198,8 +4195,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 moveCursor(cursorSprite, coords);
                 moveCursor(firstLOSSprite, null);
                 moveCursor(secondLOSSprite, null);
-                processBoardViewEvent(new BoardViewEvent(this, coords, null,
-                        BoardViewEvent.BOARD_HEX_CURSOR, 0));
+                processBoardViewEvent(new BoardViewEvent(this, coords, BoardViewEvent.BOARD_HEX_CURSOR, 0));
             } else {
                 setLastCursor(coords);
             }
@@ -4221,12 +4217,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (getFirstLOS() == null) {
                 setFirstLOS(c);
                 firstLOSHex(c);
-                processBoardViewEvent(new BoardViewEvent(this, c, null,
-                        BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
+                processBoardViewEvent(new BoardViewEvent(this, c, BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
             } else {
                 secondLOSHex(c, getFirstLOS());
-                processBoardViewEvent(new BoardViewEvent(this, c, null,
-                        BoardViewEvent.BOARD_SECOND_LOS_HEX, 0));
+                processBoardViewEvent(new BoardViewEvent(this, c, BoardViewEvent.BOARD_SECOND_LOS_HEX, 0));
                 setFirstLOS(null);
             }
         }
@@ -4244,21 +4238,21 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     if ((modifiers & java.awt.event.InputEvent.CTRL_DOWN_MASK) != 0) {
                         checkLOS(c);
                     } else {
-                        processBoardViewEvent(new BoardViewEvent(this, c, null,
-                                BoardViewEvent.BOARD_HEX_CLICKED, modifiers, mouseButton));
+                        processBoardViewEvent(new BoardViewEvent(this, c,
+                              BoardViewEvent.BOARD_HEX_CLICKED, modifiers, mouseButton));
                     }
                     break;
                 case BOARD_HEX_DOUBLECLICK:
-                    processBoardViewEvent(new BoardViewEvent(this, c, null,
-                            BoardViewEvent.BOARD_HEX_DOUBLE_CLICKED, modifiers, mouseButton));
+                    processBoardViewEvent(new BoardViewEvent(this, c,
+                          BoardViewEvent.BOARD_HEX_DOUBLE_CLICKED, modifiers, mouseButton));
                     break;
                 case BOARD_HEX_DRAG:
-                    processBoardViewEvent(new BoardViewEvent(this, c, null,
-                            BoardViewEvent.BOARD_HEX_DRAGGED, modifiers, mouseButton));
+                    processBoardViewEvent(new BoardViewEvent(this, c,
+                          BoardViewEvent.BOARD_HEX_DRAGGED, modifiers, mouseButton));
                     break;
                 case BOARD_HEX_POPUP:
-                    processBoardViewEvent(new BoardViewEvent(this, c, null,
-                            BoardViewEvent.BOARD_HEX_POPUP, modifiers, mouseButton));
+                    processBoardViewEvent(new BoardViewEvent(this, c,
+                          BoardViewEvent.BOARD_HEX_POPUP, modifiers, mouseButton));
                     break;
             }
         }
@@ -5280,11 +5274,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         behindTerrainHexSprites.removeAll(sprites);
     }
 
-    Board getBoard() {
+    public Board getBoard() {
         return game.getBoard(boardId);
     }
 
-    int getBoardId() {
+    public int getBoardId() {
         return boardId;
     }
 }

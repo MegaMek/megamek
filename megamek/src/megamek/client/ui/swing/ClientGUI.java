@@ -1418,9 +1418,9 @@ public class ClientGUI extends AbstractClientGUI
         return component;
     }
 
-    protected void showBoardPopup(Coords c) {
-        if (fillPopup(c)) {
-            ((BoardView) boardViews.get(0)).showPopup(popup, c);
+    protected void showBoardPopup(BoardViewEvent event) {
+        if (fillPopup(event)) {
+            event.getBoardView().showPopup(popup, event.getCoords());
         }
     }
 
@@ -1791,8 +1791,8 @@ public class ClientGUI extends AbstractClientGUI
         setsetDividerLocations();
     }
 
-    private boolean fillPopup(Coords coords) {
-        popup = new MapMenu(coords, client, curPanel, this);
+    private boolean fillPopup(BoardViewEvent event) {
+        popup = new MapMenu(event.getCoords(), event.getBoardView().getBoardId(), client, curPanel, this);
         return popup.getHasMenu();
     }
 
@@ -2953,9 +2953,9 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     @Override
-    public void hexMoused(BoardViewEvent b) {
-        if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP) {
-            showBoardPopup(b.getCoords());
+    public void hexMoused(BoardViewEvent event) {
+        if (event.getType() == BoardViewEvent.BOARD_HEX_POPUP) {
+            showBoardPopup(event);
         }
     }
 

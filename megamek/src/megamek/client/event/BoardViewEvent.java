@@ -17,11 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.event;
 
+import megamek.client.ui.swing.boardview.BoardView;
+import megamek.common.BoardLocation;
 import megamek.common.Coords;
 import megamek.common.Entity;
+
+import java.io.Serial;
+import java.util.Optional;
 
 /**
  * Instances of this class are sent as a result of changes in BoardView
@@ -29,10 +33,9 @@ import megamek.common.Entity;
  * @see BoardViewListener
  */
 public class BoardViewEvent extends java.util.EventObject {
-    /**
-     *
-     */
+    @Serial
     private static final long serialVersionUID = -4823618884833399318L;
+
     public static final int BOARD_HEX_CLICKED = 0;
     public static final int BOARD_HEX_DOUBLE_CLICKED = 1;
     public static final int BOARD_HEX_DRAGGED = 2;
@@ -48,36 +51,31 @@ public class BoardViewEvent extends java.util.EventObject {
     public static final int SELECT_UNIT = 9;
     public static final int BOARD_HEX_POPUP = 10;
 
-    private Coords c;
-    private Entity entity;
-    private int type;
+    private Coords coords;
+    private final int type;
     private int modifiers;
     private int entityId;
     private int mouseButton = 0;
 
-    public BoardViewEvent(Object source, Coords c, Entity entity, int type,
-            int modifiers) {
+    public BoardViewEvent(BoardView source, Coords coords, int type, int modifiers) {
         super(source);
-        this.c = c;
-        this.entity = entity;
+        this.coords = coords;
         this.type = type;
         this.modifiers = modifiers;
     }
 
-    public BoardViewEvent(Object source, int type) {
-        super(source);
-        this.type = type;
-        entityId = Entity.NONE;
+    public BoardViewEvent(BoardView source, int type) {
+        this(source, type, Entity.NONE);
     }
 
-    public BoardViewEvent(Object source, int type, int entityId) {
+    public BoardViewEvent(BoardView source, int type, int entityId) {
         super(source);
         this.type = type;
         this.entityId = entityId;
     }
 
-    public BoardViewEvent(Object source, Coords c, Entity entity, int type, int modifiers, int mouseButton) {
-        this(source, c, entity, type, modifiers);
+    public BoardViewEvent(BoardView source, Coords coords, int type, int modifiers, int mouseButton) {
+        this(source, coords, type, modifiers);
         this.mouseButton = mouseButton;
     }
 
@@ -96,24 +94,14 @@ public class BoardViewEvent extends java.util.EventObject {
     }
 
     /**
-     * @return the coordinate where this event occurred, if applicable;
-     *         <code>null</code> otherwise.
+     * @return the coordinate where this event occurred, if applicable; null otherwise.
      */
     public Coords getCoords() {
-        return c;
+        return coords;
     }
 
     /**
-     * @return the entity associated with this event, if applicable;
-     *         <code>null</code> otherwise.
-     */
-    public Entity getEntity() {
-        return entity;
-    }
-
-    /**
-     * @return the entity ID associated with this event, if applicable; 0
-     *         otherwise.
+     * @return the entity ID associated with this event, if applicable; 0 otherwise.
      */
     public int getEntityId() {
         return entityId;
@@ -121,18 +109,35 @@ public class BoardViewEvent extends java.util.EventObject {
 
     /**
      * @return the id of the mouse button associated with this event if any.
-     * <ul>
-     * <li> 0 no button
-     * <li> 1 Button 1
-     * <li> 2 Button 2
-     * <li> 3 Button 3
-     * <li> 4 Button greater than 3
-     * <li> 5 Button greater than 3
-     * </ul>
-     * <p>
-     *
+     *       <ul>
+     *       <li> 0 no button
+     *       <li> 1 Button 1
+     *       <li> 2 Button 2
+     *       <li> 3 Button 3
+     *       <li> 4 Button greater than 3
+     *       <li> 5 Button greater than 3
+     *       </ul>
+     *       <p>
      */
     public int getButton() {
-        return mouseButton ;
+        return mouseButton;
+    }
+
+    /**
+     * Returns this event's position as a board location with board ID. If this event has no coords (depending on its
+     * type or the coords are null for some other reason, the returned Optional is empty.
+     *
+     * @return This event's location
+     */
+    public Optional<BoardLocation> getBoardLocation() {
+        if (coords == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(new BoardLocation(coords, getBoardView().getBoardId()));
+        }
+    }
+
+    public BoardView getBoardView() {
+        return (BoardView) getSource();
     }
 }

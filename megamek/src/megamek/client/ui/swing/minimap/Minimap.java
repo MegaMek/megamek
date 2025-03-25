@@ -651,12 +651,14 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         }
         Coords previousCoords = entity.getPosition();
         for (var unitLocation : unitLocations) {
-            var coords = unitLocation.getCoords();
-            if (previousCoords != null) {
-                movePathLines.add(new Line(previousCoords.getX(), previousCoords.getY(),
-                    coords.getX(), coords.getY(),
-                    MOVE_PATH_COLOR,
-                    game.getCurrentRound()));
+            var coords = unitLocation.coords();
+            if (previousCoords != null && unitLocation.boardId() == boardId) {
+                movePathLines.add(new Line(previousCoords.getX(),
+                      previousCoords.getY(),
+                      coords.getX(),
+                      coords.getY(),
+                      MOVE_PATH_COLOR,
+                      game.getCurrentRound()));
             }
             previousCoords = coords;
         }

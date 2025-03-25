@@ -614,7 +614,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
     public void addMovePath(List<UnitLocation> unitLocations, Entity entity) {
         Coords previousCoords = entity.getPosition();
         for (var unitLocation : unitLocations) {
-            var coords = unitLocation.getCoords();
+            var coords = unitLocation.coords();
             lines.add(new Line(previousCoords.getX(), previousCoords.getY(),
                 coords.getX(), coords.getY(),
                 Color.GREEN,

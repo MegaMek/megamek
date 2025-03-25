@@ -299,7 +299,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean destroyed = false;
 
     private Coords position = null;
-    private int boardID = 0;
+    private int boardId = 0;
 
     /**
      * Used for Entities that are bigger than a single hex. This contains the central hex plus all of the other hexes
@@ -15554,11 +15554,15 @@ public abstract class Entity extends TurnOrdered
         if (position == null) {
             return Optional.empty();
         } else {
-            return Optional.of(new BoardLocation(position, boardID));
+            return Optional.of(new BoardLocation(position, boardId));
         }
     }
 
     public boolean isOnBoard(int boardID) {
-        return this.boardID == boardID;
+        return this.boardId == boardID;
+    }
+
+    public int getBoardId() {
+        return boardId;
     }
 }

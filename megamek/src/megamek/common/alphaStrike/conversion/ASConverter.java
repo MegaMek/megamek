@@ -94,6 +94,7 @@ public final class ASConverter {
             return null;
         }
         if (entity.getGame() != null) {
+            undamagedEntity.setOwner(entity.getOwner());
             undamagedEntity.setGame(entity.getGame());
         }
         if (keepRefs) {

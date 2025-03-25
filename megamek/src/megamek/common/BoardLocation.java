@@ -132,4 +132,17 @@ public record BoardLocation(Coords coords, int boardId) implements Serializable 
     public boolean isSameBoardAs(@Nullable BoardLocation other) {
         return (other != null) && boardId == other.boardId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof BoardLocation that)) {
+            return false;
+        }
+        return (boardId == that.boardId) && Objects.equals(coords, that.coords);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(coords, boardId);
+    }
 }

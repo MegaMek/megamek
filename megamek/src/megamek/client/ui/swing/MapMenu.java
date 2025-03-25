@@ -64,8 +64,9 @@ public class MapMenu extends JPopupMenu {
     Entity myEntity;
     Targetable myTarget = null;
     private boolean hasMenu;
+    private BoardLocation boardLocation;
 
-    public MapMenu(Coords coords, Client client, Component panel, ClientGUI gui) {
+    public MapMenu(Coords coords, int boardId, Client client, Component panel, ClientGUI gui) {
         this.coords = coords;
         game = client.getGame();
         currentPanel = panel;
@@ -73,6 +74,7 @@ public class MapMenu extends JPopupMenu {
         this.client = client;
         this.gui = gui;
         selectedEntity = myEntity = gui.getDisplayedUnit();
+        boardLocation = new BoardLocation(coords, boardId);
 
         hasMenu = createMenu();
         // make popups not consume mouse events outside them
@@ -100,13 +102,13 @@ public class MapMenu extends JPopupMenu {
         int itemCount = 0;
         JMenu menu = createSelectMenu();
         if (menu.getItemCount() > 0) {
-            this.add(menu);
+            add(menu);
             itemCount++;
         }
 
         menu = createViewMenu();
         if (menu.getItemCount() > 0) {
-            this.add(menu);
+            add(menu);
             itemCount++;
         }
 
@@ -120,45 +122,49 @@ public class MapMenu extends JPopupMenu {
             }
 
             if (currentPanel instanceof MovementDisplay) {
-                menu = createMovementMenu(myEntity.getPosition().equals(coords));
+                if (boardLocation.isOn(myEntity.getBoardId())) {
+                    // Don't show the movement menus for a unit that is not on this board
+                    menu = createMovementMenu(myEntity.getPosition().equals(coords));
 
-                if (itemCount > 0) {
-                    addSeparator();
-                    itemCount++;
-                }
 
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
+                    if (itemCount > 0) {
+                        addSeparator();
+                        itemCount++;
+                    }
 
-                menu = createTurnMenu();
+                    if (menu.getItemCount() > 0) {
+                        add(menu);
+                        itemCount++;
+                    }
 
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
+                    menu = createTurnMenu();
 
-                menu = createStandMenu();
+                    if (menu.getItemCount() > 0) {
+                        add(menu);
+                        itemCount++;
+                    }
 
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
+                    menu = createStandMenu();
 
-                menu = createConvertMenu();
+                    if (menu.getItemCount() > 0) {
+                        add(menu);
+                        itemCount++;
+                    }
 
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
+                    menu = createConvertMenu();
 
-                menu = createPhysicalMenu(true);
+                    if (menu.getItemCount() > 0) {
+                        add(menu);
+                        itemCount++;
+                    }
 
-                if (menu.getItemCount() > 0) {
-                    addSeparator();
-                    this.add(menu);
-                    itemCount++;
+                    menu = createPhysicalMenu(true);
+
+                    if (menu.getItemCount() > 0) {
+                        addSeparator();
+                        add(menu);
+                        itemCount++;
+                    }
                 }
 
             } else if ((currentPanel instanceof FiringDisplay)) {
@@ -170,25 +176,25 @@ public class MapMenu extends JPopupMenu {
 
                 menu = createWeaponsFireMenu();
                 if (menu.getItemCount() > 0) {
-                    this.add(menu);
+                    add(menu);
                     itemCount++;
                 }
 
                 menu = createModeMenu();
                 if (menu.getItemCount() > 0) {
-                    this.add(menu);
+                    add(menu);
                     itemCount++;
                 }
 
                 menu = createTorsoTwistMenu();
                 if (menu.getItemCount() > 0) {
-                    this.add(menu);
+                    add(menu);
                     itemCount++;
                 }
 
                 menu = createRotateTurretMenu();
                 if (menu.getItemCount() > 0) {
-                    this.add(menu);
+                    add(menu);
                     itemCount++;
                 }
 

@@ -145,7 +145,12 @@ public class ScenarioV2 implements Scenario {
 
         game.setupTeams();
 
-        game.setBoard(0, createBoard());
+        int id = 0;
+        for (Board board : createBoard()) {
+            board.setBoardId(id);
+            game.setBoard(id++, board);
+        }
+
         int zone = 1000;
         for (HexArea hexArea : deploymentAreas) {
             game.getBoard().addDeploymentZone(zone++, hexArea);
@@ -449,7 +454,7 @@ public class ScenarioV2 implements Scenario {
         return units.stream().mapToInt(InGameObject::getId).max().orElse(0) + 1;
     }
 
-    private Board createBoard() throws ScenarioLoaderException {
+    private List<Board> createBoard() throws ScenarioLoaderException {
         if (!node.has(MAP) && !node.has(MAPS)) {
             throw new ScenarioLoaderException("ScenarioLoaderException.missingMap");
         }
@@ -459,7 +464,7 @@ public class ScenarioV2 implements Scenario {
         }
 
         // TODO: currently, the first parsed board is used
-        return BoardDeserializer.parse(mapNode, scenarioDirectory()).get(0);
+        return BoardDeserializer.parse(mapNode, scenarioDirectory());
     }
 
     private File scenarioDirectory() {

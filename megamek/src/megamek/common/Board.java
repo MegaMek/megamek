@@ -96,7 +96,7 @@ public class Board implements Serializable {
     /**
      * Building data structures.
      */
-    private Vector<Building> buildings = new Vector<>();
+    private final Vector<Building> buildings = new Vector<>();
     private transient Hashtable<Coords, Building> bldgByCoords = new Hashtable<>();
 
     protected transient Vector<BoardListener> boardListeners = new Vector<>();
@@ -104,7 +104,7 @@ public class Board implements Serializable {
     /**
      * Record the infernos placed on the board.
      */
-    private Hashtable<Coords, InfernoTracker> infernos = new Hashtable<>();
+    private final Hashtable<Coords, InfernoTracker> infernos = new Hashtable<>();
 
     private Hashtable<Coords, Collection<SpecialHexDisplay>> specialHexes = new Hashtable<>();
 
@@ -121,12 +121,12 @@ public class Board implements Serializable {
     /**
      * Per-hex annotations on the map.
      */
-    private Map<Coords, Collection<String>> annotations = new HashMap<>();
+    private final Map<Coords, Collection<String>> annotations = new HashMap<>();
 
     /** Tags associated with this board to facilitate searching for it. */
-    private Set<String> tags = new HashSet<>();
+    private final Set<String> tags = new HashSet<>();
 
-    private final int boardId = 0;
+    private int boardId = 0;
 
     /**
      * The board's deployment zones. These may come as terrains from the board file or they may be set by code. The field is
@@ -165,64 +165,25 @@ public class Board implements Serializable {
     }
 
     /**
-     * Creates a new board of the specified dimensions and specified hex data.
+     * Creates a new board of the specified dimensions and specified hex data. Note that the number of Hexes given
+     * should be equal to width * height to avoid null Hexes in the board.
      *
-     * @param width
-     *               the width dimension.
-     * @param height
-     *               the height dimension.
-     * @param data
+     * @param width  the width dimension
+     * @param height the height dimension
+     * @param data   the Hexes of the new board
      */
     public Board(int width, int height, Hex... data) {
         this.width = width;
         this.height = height;
-        this.data = new Hex[width * height];
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                this.data[(y * width) + x] = data[(y * width) + x];
-            }
-        }
+        this.data = Arrays.copyOf(data, data.length);
     }
 
     /**
-     * Creates a new board of the specified dimensions, hexes, buildings, and
-     * inferno trackers. Do *not* use this method unless you have carefully
-     * examined this class.
-     *
-     * @param width
-     *               The <code>int</code> width dimension in hexes.
-     * @param height
-     *               The <code>int</code> height dimension in hexes.
-     * @param hexes
-     *               The array of <code>Hex</code>es for this board. This object is
-     *               used directly without being copied. This value should only be
-     *               <code>null</code> if either <code>width</code> or
-     *               <code>height</code> is zero.
-     * @param bldgs
-     *               The <code>Vector</code> of <code>Building</code>s for this
-     *               board. This object is used directly without being copied.
-     * @param infMap
-     *               The <code>Hashtable</code> that map <code>Coords</code> to
-     *               <code>InfernoTracker</code>s for this board. This object is
-     *               used directly without being copied.
-     */
-    public Board(int width, int height, Hex[] hexes, Vector<Building> bldgs,
-            Hashtable<Coords, InfernoTracker> infMap) {
-        this.width = width;
-        this.height = height;
-        data = hexes;
-        buildings = bldgs;
-        infernos = infMap;
-        createBldgByCoords();
-    }
-
-    /**
-     * Returns a new atmospheric (low altitude) board with no terrain (sky map) of
-     * the given
-     * size.
+     * Returns a new atmospheric (low altitude) board with no terrain (sky map) of the given size.
      *
      * @param width  the width of the board
      * @param height the height of the board
+     *
      * @return the new board, ready to be used
      */
     public static Board getSkyBoard(int width, int height) {
@@ -260,14 +221,14 @@ public class Board implements Serializable {
     // endregion Constructors
 
     /**
-     * @return Map width in hexes
+     * @return Map height in hexes
      */
     public int getHeight() {
         return height;
     }
 
     /**
-     * @return Map height in hexes
+     * @return Map width in hexes
      */
     public int getWidth() {
         return width;
@@ -2084,4 +2045,10 @@ public class Board implements Serializable {
         return zoneID + NUM_ZONES_X2;
     }
 
+    /**
+     * Sets the board's ID. Within an MM game, the ID must be unique. For now (March 25), only the ID = 0 is used.
+     */
+    public void setBoardId(int boardId) {
+        this.boardId = boardId;
+    }
 }

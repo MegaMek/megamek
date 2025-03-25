@@ -1071,8 +1071,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private void renderMovementBoundingBox(Graphics2D g) {
         if (getSelectedEntity() != null) {
             Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
-            princess.getGame().setBoard(this.game.getBoard(boardId));
-            PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
+            princess.getGame().setBoard(game.getBoard(boardId));
+            PathEnumerator pathEnum = new PathEnumerator(princess, game);
             pathEnum.recalculateMovesFor(this.getSelectedEntity());
 
             ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(this.getSelectedEntity().getId());
@@ -5274,5 +5274,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         super.removeSprites(sprites);
         overTerrainSprites.removeAll(sprites);
         behindTerrainHexSprites.removeAll(sprites);
+    }
+
+    Board getBoard() {
+        return game.getBoard(boardId);
     }
 }

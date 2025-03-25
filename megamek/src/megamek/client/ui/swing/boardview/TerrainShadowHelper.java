@@ -78,12 +78,9 @@ class TerrainShadowHelper {
     }
 
     /**
-     * Draws and returns the shadow map image for the board, containing shadows for
-     * hills/trees/buildings.
-     * The shadow map is an overlay image that is mostly transparent but darker
-     * where shadows lie. It's
-     * size is equal to the size of the entire board image at zoom 1 (i.e., it may
-     * be big).
+     * Draws and returns the shadow map image for the board, containing shadows for hills/trees/buildings. The shadow
+     * map is an overlay image that is mostly transparent but darker where shadows lie. It's size is equal to the size
+     * of the entire board image at zoom 1 (i.e., it may be big).
      *
      * @return The shadow map image for the board
      */
@@ -91,22 +88,19 @@ class TerrainShadowHelper {
     BufferedImage updateShadowMap() {
         // Issues:
         // Bridge shadows show a gap towards connected hexes. I don't know why.
-        // More than one super image on a hex (building + road) doesn't work. how do I
-        // get
+        // More than one super image on a hex (building + road) doesn't work. how do I get
         // the super for a hex for a specific terrain? This would also help
         // with building shadowing other buildings.
         // AO shadows might be handled by this too. But:
         // this seems to need a lot of additional copying (paint shadow on a clean map
         // for this level alone; soften up;
-        // copy to real shadow
-        // map with clipping area active; get new clean shadow map for next shadowed
-        // level;
+        // copy to real shadow map with clipping area active; get new clean shadow map for next shadowed level;
         // too much hassle currently; it works so beautifully
         if (!GUIP.getShadowMap()) {
             return null;
         }
 
-        Board board = boardView.game.getBoard();
+        Board board = boardView.getBoard();
         if ((board == null) || board.inSpace()) {
             return null;
         }

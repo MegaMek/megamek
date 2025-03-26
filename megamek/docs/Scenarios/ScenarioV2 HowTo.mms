@@ -102,6 +102,24 @@ maps:                                        # map and maps are 100% synonymous
     width: 20
     height: 20
 
+# Multiple connected maps
+map:
+  - file: Beginner Box/16x17 Grassland 1.board
+    # the name of this map, used in the map tab display
+    name: Grassland
+  - file: Battle of Tukayyid Pack/32x17 Pozoristu Mountains (CW).board
+    name: Pozoristu Mountains
+  - type: sky
+    width: 65
+    height: 35
+    embed:
+      # embed map id 0 (Grassland) at 5,5 in the sky map
+      - at: [ 5, 5 ]
+        id: 0
+      # embed map id 1 (Pozoristu) at 8, 9 in the sky map
+      - at: [ 8, 9 ]
+        id: 1
+
 # Post Processing:
 map:
   file: AGoAC Maps/16x17 Grassland 2.board

@@ -69,6 +69,11 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         // Hex Terrain
         if (GUIP.getShowMapHexPopup() && (mhex != null)) {
             StringBuffer sbTerrain = new StringBuffer();
+            // Embedded Board
+            if (bv.getBoard().embeddedBoardCoords().contains(coords)) {
+                Board embeddedBoard = game.getBoard(bv.getBoard().getEmbeddedBoardAt(coords));
+                sbTerrain.append("Embedded Map: ").append(embeddedBoard.getMapName()).append("<BR>");
+            }
             appendTerrainTooltip(sbTerrain, mhex, GUIP);
             String sTerrain = sbTerrain.toString();
 

@@ -942,6 +942,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawAllDeployment(g);
         }
 
+        drawEmbeddedBoards(g);
+
         // draw C3 links
         drawSprites(g, c3Sprites);
 
@@ -5287,5 +5289,35 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      */
     private boolean isOnThisBord(Entity entity) {
         return entity.getBoardId() == boardId;
+    }
+
+    /**
+     * Draw an outline around legal deployment hexes
+     */
+    private void drawEmbeddedBoards(Graphics g) {
+        Rectangle view = g.getClipBounds();
+        // only update visible hexes
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
+
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
+
+        for (Coords coords : getBoard().embeddedBoardCoords()) {
+            if ((coords.getX() >= drawX) && (coords.getX() <= drawX + drawWidth)
+                      && (coords.getY() >= drawY) && (coords.getY() <= drawY + drawHeight)) {
+                Point p = getHexLocation(coords);
+                AffineTransform oldTransform = ((Graphics2D) g).getTransform();
+                ((Graphics2D) g).transform(AffineTransform.getTranslateInstance(p.x, p.y));
+                ((Graphics2D) g).transform(AffineTransform.getScaleInstance(scale, scale));
+                ((Graphics2D) g).transform(AffineTransform.getTranslateInstance(-p.x, -p.y));
+                g.setColor(new Color(0, 140, 0, 120));
+                g.fillRect(p.x + HEX_W / 4 + 1, p.y + 2, HEX_W / 2 - 2, HEX_H - 4);
+                g.setColor(new Color(0, 140, 0));
+                ((Graphics2D) g).setStroke(new BasicStroke(1.5f));
+                g.drawRect(p.x + HEX_W / 4 + 1, p.y + 2, HEX_W / 2 - 2, HEX_H - 4);
+                ((Graphics2D) g).setTransform(oldTransform);
+            }
+        }
     }
 }

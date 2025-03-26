@@ -56,7 +56,7 @@ public class MapMenu extends JPopupMenu {
 
     private Coords coords;
     Game game;
-    Component currentPanel;
+    JComponent currentPanel;
     private Board board;
     Client client;
     ClientGUI gui;
@@ -66,13 +66,13 @@ public class MapMenu extends JPopupMenu {
     private boolean hasMenu;
     private BoardLocation boardLocation;
 
-    public MapMenu(Coords coords, int boardId, Client client, Component panel, ClientGUI gui) {
+    public MapMenu(Coords coords, int boardId, JComponent panel, ClientGUI gui) {
         this.coords = coords;
-        game = client.getGame();
         currentPanel = panel;
-        board = client.getBoard();
-        this.client = client;
         this.gui = gui;
+        client = gui.getClient();
+        game = client.getGame();
+        board = game.getBoard(boardId);
         selectedEntity = myEntity = gui.getDisplayedUnit();
         boardLocation = new BoardLocation(coords, boardId);
 
@@ -104,10 +104,10 @@ public class MapMenu extends JPopupMenu {
         addIfNotEmpty(createViewMenu());
 
         if (client.isMyTurn() && (myEntity != null)) {
-            // Don't show the menus for a unit that is not on this board
+            selectTarget();
+            addIfNotEmpty(createTargetMenu());
+            // Don't show some menus for a unit that is not on this board
             if (boardLocation.isOn(myEntity.getBoardId())) {
-                selectTarget();
-                addIfNotEmpty(createTargetMenu());
 
                 if (currentPanel instanceof MovementDisplay) {
                     if (getComponentCount() > 0) {
@@ -804,7 +804,6 @@ public class MapMenu extends JPopupMenu {
 
     private JMenu createSelectMenu() {
         JMenu menu = new JMenu("Select");
-        // add select options
         if (canSelectEntities()) {
             for (Entity entity : client.getGame().getEntitiesVector(boardLocation, canTargetEntities())) {
                 if (client.getMyTurn().isValidEntity(entity, client.getGame())) {
@@ -1397,41 +1396,33 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("Target");
 
         // If we can't target entities, nothing to do
-        if (!canTargetEntities()) {
+        if (!canTargetEntities() || (board.getHex(coords) == null)) {
             return menu;
         }
 
-        // VTOLs/AirMeks making strafing or bombing attacks already declared the target
-        // hex(es)
-        // in the movement phase and cannot change them.
+        // VTOLs/AirMeks making strafing or bombing attacks already declared the target hex(es) in the movement phase
+        // and cannot change them.
         if (myEntity.isMakingVTOLGroundAttack()) {
-            menu.setEnabled(false);
             return menu;
         }
 
         final boolean isFiringDisplay = (currentPanel instanceof FiringDisplay);
         final boolean isTargetingDisplay = (currentPanel instanceof TargetingPhaseDisplay);
         final boolean canStartFires = client.getGame().getOptions()
-                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE);
+                                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE);
 
         Player localPlayer = client.getLocalPlayer();
 
         // Add menu item to target each entity in the coords
-        for (Entity entity : client.getGame().getEntitiesVector(coords)) {
-            // Only add the unit if it's actually visible
-            // With double blind on, the game may have unseen units
-            if (!entity.isSensorReturn(localPlayer)
-                    && entity.hasSeenEntity(localPlayer)
+        for (Entity entity : client.getGame().getEntitiesVector(coords, board.getBoardId(), false)) {
+            // Only add the unit if it's actually visible; with double blind on, the game may have unseen units
+            if (!entity.isSensorReturn(localPlayer) && entity.hasSeenEntity(localPlayer)
                     && !entity.isHidden()) {
                 menu.add(TargetMenuItem(entity));
             }
         }
 
         Hex h = board.getHex(coords);
-        // If the hex is null, we're done here
-        if (h == null) {
-            return menu;
-        }
 
         // Clearing hexes and igniting hexes
         if (isFiringDisplay && !board.inSpace() && !board.inAtmosphere()) {
@@ -1734,9 +1725,9 @@ public class MapMenu extends JPopupMenu {
         Vector<Entity> list = new Vector<>();
 
         Player localPlayer = client.getLocalPlayer();
-        boolean friendlyFire = (game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE));
+        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
-        for (Entity en : game.getEntitiesVector(coords)) {
+        for (Entity en : game.getEntitiesVector(boardLocation, false)) {
             // Only add the unit if it's actually visible
             // With double blind on, the game may have unseen units
             if ((en.isEnemyOf(myEntity) || friendlyFire) && !en.equals(myEntity)

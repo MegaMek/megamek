@@ -1790,7 +1790,7 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     private boolean fillPopup(BoardViewEvent event) {
-        popup = new MapMenu(event.getCoords(), event.getBoardView().getBoardId(), client, curPanel, this);
+        popup = new MapMenu(event.getCoords(), event.getBoardView().getBoardId(), curPanel, this);
         return popup.getHasMenu();
     }
 

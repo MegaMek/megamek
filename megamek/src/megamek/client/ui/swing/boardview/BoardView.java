@@ -2799,7 +2799,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             newMovingSprites.remove(mSprite);
         }
         // Create new movement sprite
-        if (entity.getPosition() != null) {
+        if (isOnThisBord(entity)) {
             mSprite = new MovingEntitySprite(this, entity, position, facing, elevation);
             newMovingSprites.add(mSprite);
             newMovingSpriteIds.put(entityId, mSprite);
@@ -4028,20 +4028,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     @Override
-    public void mouseClicked(MouseEvent me) {
+    public void mouseClicked(MouseEvent me) { }
 
-    }
-
-    private static class MovingUnit {
-        public Entity entity;
-
-        public ArrayList<UnitLocation> path;
-
-        MovingUnit(Entity entity, Vector<UnitLocation> path) {
-            this.entity = entity;
-            this.path = new ArrayList<>(path);
-        }
-    }
+    private record MovingUnit(Entity entity, Vector<UnitLocation> path) { }
 
     /**
      * Determine if the tile manager's images have been loaded.
@@ -5285,10 +5274,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * @return True when the given entity is on this board.
+     * @return True when the given entity is on this board and has a non-null position.
      */
     private boolean isOnThisBord(Entity entity) {
-        return entity.getBoardId() == boardId;
+        return entity.getPosition() != null && entity.getBoardId() == boardId;
     }
 
     /**

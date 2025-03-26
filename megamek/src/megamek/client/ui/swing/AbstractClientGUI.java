@@ -214,4 +214,8 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
             }
         }
     }
+
+    public void showBoardView(int boardId) {
+        boardViewsContainer.showBoardView(boardId);
+    }
 }

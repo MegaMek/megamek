@@ -52,6 +52,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.IClientGUI;
@@ -1817,10 +1818,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     }
 
     /**
-     * Centers the BoardView connected to the Minimap on x, y in the Minimap's pixel
-     * coordinates.
+     * Centers the BoardView connected to the Minimap on x, y in the Minimap's pixel coordinates.
      */
     private void centerOnPos(double x, double y) {
+        if (clientGui instanceof AbstractClientGUI abstractClientGUI) {
+            abstractClientGUI.showBoardView(boardId);
+        }
         bv.centerOnPointRel(
                 ((x - leftMargin)) / ((HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom]) * board.getWidth()),
                 ((y - topMargin)) / (2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight()));

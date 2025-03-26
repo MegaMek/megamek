@@ -727,7 +727,7 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     public void resetWindowPositions() {
-        miniMaps.values().forEach(miniMap->{
+        miniMaps.values().forEach(miniMap -> {
             miniMap.setBounds(0, 0, miniMap.getWidth(), miniMap.getHeight());
             resetMiniMapZoom(miniMap);
         });
@@ -1537,9 +1537,7 @@ public class ClientGUI extends AbstractClientGUI
      * it in the lobby or a report phase. Does not change the menu setting.
      */
     void setMapVisible(boolean visible) {
-        if (getMiniMapDialog() != null) {
-            getMiniMapDialog().setVisible(visible);
-        }
+        miniMaps.values().forEach(miniMap -> miniMap.setVisible(visible));
     }
 
     void setMiniReportVisible(boolean visible) {

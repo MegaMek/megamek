@@ -80,7 +80,9 @@ public class BoardViewsContainer {
     private void arrangeMultipleBoardViews() {
         mapTabPane.removeAll();
         for (int boardId : clientGUI.boardViews.keySet()) {
-            mapTabPane.add(board(boardId).getMapName(), boardView(boardId).getComponent());
+            Component boardComponent = boardView(boardId).getComponent();
+            boardComponent.setName(String.valueOf(boardId));
+            mapTabPane.add(board(boardId).getMapName(), boardComponent);
             mapTabPane.setToolTipTextAt(mapTabPane.getTabCount() - 1, getBoardViewTabTooltip(boardId));
         }
         boardViewsContainer.add(mapTabPane);
@@ -113,5 +115,17 @@ public class BoardViewsContainer {
 
     public void setName(String name) {
         boardViewsContainer.setName(name);
+    }
+
+    public void showBoardView(int boardId) {
+        if (mapTabPane.getTabCount() > 1) {
+            String componentName = String.valueOf(boardId);
+            for (int i = 0; i < mapTabPane.getTabCount(); i++) {
+                if (componentName.equals(mapTabPane.getComponentAt(i).getName())) {
+                    mapTabPane.setSelectedIndex(i);
+                    return;
+                }
+            }
+        }
     }
 }

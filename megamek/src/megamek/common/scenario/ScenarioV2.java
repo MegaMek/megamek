@@ -150,6 +150,13 @@ public class ScenarioV2 implements Scenario {
             board.setBoardId(id);
             game.setBoard(id++, board);
         }
+        // post-process embedded boards
+        for (Board board : game.getBoards().values()) {
+            for (Coords coord : board.getEmbeddedBoardHexes()) {
+                Board embeddedBoard = game.getBoard(board.getEmbeddedBoardAt(coord));
+                embeddedBoard.setEnclosingBoard(board.getBoardId());
+            }
+        }
 
         int zone = 1000;
         for (HexArea hexArea : deploymentAreas) {

@@ -24,6 +24,7 @@ import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 import megamek.common.options.IGameOptions;
+import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.TriggeredEvent;
 
 import java.util.*;
@@ -34,6 +35,8 @@ import java.util.stream.Collectors;
  * BattleForce, or Alpha Strike.
  */
 public interface IGame {
+
+    MMLogger LOGGER = MMLogger.create(IGame.class);
 
     // region Player turns
 
@@ -413,6 +416,50 @@ public interface IGame {
      * @param boards The new boards
      */
     void receiveBoards(Map<Integer, Board> boards);
+
+    default boolean boardExists(int boardId) {
+        return getBoards().containsKey(boardId);
+    }
+
+    default void connectBoards(int lowerBoardId, int higherBoardId, Coords coords) {
+        if (!boardExists(lowerBoardId) || !boardExists(higherBoardId)) {
+            LOGGER.error("Can't set an enclosing board for non-existent boards.");
+            return;
+        }
+        Board lowerBoard = getBoard(lowerBoardId);
+        Board higherBoard = getBoard(higherBoardId);
+        if ((lowerBoard.isLowAtmosphereMap() && !higherBoard.isSpaceMap()) || (lowerBoard.isGroundMap() && !higherBoard.isLowAtmosphereMap())
+                  || lowerBoard.isSpaceMap() || higherBoard.isGroundMap()) {
+            LOGGER.error("Can only enclose a ground map in an atmo map or an atmo map in a space map.");
+            return;
+        }
+        if (!higherBoard.contains(coords)) {
+            LOGGER.error("Higher map doesn't contain the given coords.");
+            return;
+        }
+        lowerBoard.setEnclosingBoard(higherBoardId);
+        higherBoard.setEmbeddedBoard(lowerBoardId, coords);
+    }
+
+    /**
+     * Returns true when the given Board has an (existing) enclosing Board, i.e. when the given Board occupies one or
+     * more hexes of another board of a larger scale. E.g., this is true when there's an atmospheric map for a ground
+     * map or a space map for an atmospheric map.
+     *
+     * @param boardId The board's ID
+     * @return True when the board is enclosed within another board
+     */
+    default boolean hasEnclosingBoard(int boardId) {
+        return boardExists(getBoard(boardId).getEnclosingBoardId());
+    }
+
+    default Optional<Board> getEnclosingBoard(int boardId) {
+        if (boardExists(boardId) && hasEnclosingBoard(boardId)) {
+            return Optional.of(getBoard(getBoard(boardId).getEnclosingBoardId()));
+        } else {
+            return Optional.empty();
+        }
+    }
 
     // endregion
 

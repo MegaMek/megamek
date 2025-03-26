@@ -90,6 +90,7 @@ public class Board implements Serializable {
     private int maxElevation = UNDEFINED_MAX_ELEV;
 
     private int mapType = T_GROUND;
+    private BoardType boardType;
 
     private Hex[] data;
 
@@ -138,6 +139,23 @@ public class Board implements Serializable {
      * HexAreas that are set by code to be deployment zones.
      */
     private final Map<Integer, HexArea> areas = new HashMap<>();
+
+    /**
+     * At each Coords, one other, lower type board can be located, e.g. a ground board can be embedded in a
+     * low atmosphere map hex or a low atmosphere board can be embedded in a ground row hex of a high
+     * atmosphere map. The map gives the board ID for each affected Coords. This and
+     * {@link #enclosingBoard} should correspond to each other across the boards of a game.
+     */
+    private final Map<Coords, Integer> embeddedBoards = new HashMap<>();
+
+    /**
+     * This board may be embedded in (= enclosed by) a higher type board, e.g. if this is a ground map,
+     * it may be embedded in one or more hexes of a low atmosphere map. This and
+     * {@link #embeddedBoards} should correspond to each other across the boards of a game.
+     */
+    private int enclosingBoard = -1;
+
+    private String mapName = "Unnamed";
 
     // endregion Variable Declarations
 
@@ -1951,7 +1969,11 @@ public class Board implements Serializable {
 
     /** @return The name of this map; this is meant to be displayed in the GUI. */
     public String getMapName() {
-        return "Board #" + boardId;
+        return mapName;
+    }
+
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
     }
 
     /**
@@ -2079,5 +2101,62 @@ public class Board implements Serializable {
 
     public int getBoardId() {
         return boardId;
+    }
+
+    public void setEnclosingBoard(int enclosingBoardId) {
+        enclosingBoard = enclosingBoardId;
+    }
+
+    /** @return The ID of the enclosing board of this board, or -1 if it has no enclosing board. */
+    public int getEnclosingBoardId() {
+        return enclosingBoard;
+    }
+
+    public void setEmbeddedBoard(int boardId, Coords coords) {
+        if (contains(coords)) {
+            embeddedBoards.put(coords, boardId);
+        }
+    }
+
+    public Set<Coords> embeddedBoardCoords() {
+        return embeddedBoards.keySet();
+    }
+
+    public @Nullable Coords embeddedBoardPosition(int boardId) {
+        for (Map.Entry<Coords, Integer> entry : embeddedBoards.entrySet()) {
+            if (entry.getValue() == boardId) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public @Nullable BoardLocation embeddedBoardLocation(int boardId) {
+        for (Map.Entry<Coords, Integer> entry : embeddedBoards.entrySet()) {
+            if (entry.getValue() == boardId) {
+                return new BoardLocation(entry.getKey(), boardId);
+            }
+        }
+        return null;
+    }
+
+    public int getEmbeddedBoardAt(Coords coords) {
+        return embeddedBoards.getOrDefault(coords, -1);
+    }
+
+    public Set<Coords> getEmbeddedBoardHexes() {
+        return embeddedBoards.keySet();
+    }
+
+    public boolean isGroundMap() {
+        return (boardType.isGround());
+    }
+
+    public boolean isLowAtmosphereMap() {
+        return (boardType.isLowAtmo());
+    }
+
+    public boolean isSpaceMap() {
+        return (boardType.isSpace());
     }
 }

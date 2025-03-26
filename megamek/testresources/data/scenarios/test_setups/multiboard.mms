@@ -4,7 +4,18 @@ planet: None
 description: uses two boards
 map:
   - file: Beginner Box/16x17 Grassland 1.board
+    name: Grassland
   - file: Battle of Tukayyid Pack/32x17 Pozoristu Mountains (CW).board
+    name: Wilderness
+  - type: sky
+    width: 65
+    height: 35
+    embed:
+      - id: 0
+        at: [ 5, 5 ]
+      - at: [ 8, 9 ]
+        id: 1
+
 
 options:
   off:

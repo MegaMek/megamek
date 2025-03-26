@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -32,6 +33,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Configuration;
+import megamek.common.Coords;
 import megamek.common.board.postprocess.BoardProcessor;
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
@@ -59,6 +61,9 @@ public class BoardDeserializer extends StdDeserializer<Board> {
     private static final String CAP_RADAR = "capitalradar";
     private static final String ID = "id";
     private static final String PROCESS = "postprocess";
+    private static final String AT = "at";
+    private static final String NAME = "name";
+    private static final String EMBED = "embed";
 
     protected BoardDeserializer(Class<?> vc) {
         super(vc);
@@ -118,7 +123,10 @@ public class BoardDeserializer extends StdDeserializer<Board> {
 
         if (mapNode.has(FILE)) {
             // map: as node with file: and optional modify:
-            return parseBoardFileNode(mapNode, basePath, mapNode.get(FILE).textValue());
+            String fileName = mapNode.get(FILE).textValue();
+            Board board = parseBoardFileNode(mapNode, basePath, fileName);
+            board.setMapName(processName(mapNode).orElse(fileName));
+            return board;
 
         } else if (mapNode.has(SURPRISE)) {
             // map: as node with surprise: filelist and optional modify:
@@ -129,6 +137,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             Board board = Compute.randomListElement(surpriseBoardsList);
             parseBoardModifiers(board, mapNode);
             parseBoardProcessors(board, mapNode);
+            board.setMapName(processName(mapNode).orElse("Surprise Map"));
             return board;
         }
 
@@ -142,17 +151,28 @@ public class BoardDeserializer extends StdDeserializer<Board> {
         if (mapNode.has(TYPE)) {
             String type = mapNode.get(TYPE).asText();
             board = new Board(mapWidth, mapHeight);
+            parseEmbeddedBoards(board, mapNode);
             switch (type) {
                 case SKY:
-                    return Board.getSkyBoard(mapWidth, mapHeight);
+                    board = Board.getSkyBoard(mapWidth, mapHeight);
+                    board.setMapName(processName(mapNode).orElse("Atmospheric Map"));
+                    parseEmbeddedBoards(board, mapNode);
+                    return board;
                 case ATMOSPHERIC:
                 case LOW_ALTITUDE:
-                    return Board.getSkyBoard(mapWidth, mapHeight);
+                    board = Board.getSkyBoard(mapWidth, mapHeight);
+                    board.setMapName(processName(mapNode).orElse("Atmospheric Map"));
+                    parseEmbeddedBoards(board, mapNode);
+                    return board;
                 case SPACE:
-                    return Board.getSpaceBoard(mapWidth, mapHeight);
+                    board = Board.getSpaceBoard(mapWidth, mapHeight);
+                    board.setMapName(processName(mapNode).orElse("Space Map"));
+                    parseEmbeddedBoards(board, mapNode);
+                    return board;
                 case HIGH_ALTITUDE:
                     // TODO: dont have that type yet
                     board.setType(Board.T_SPACE);
+                    board.setMapName(processName(mapNode).orElse("High-Atmosphere Map"));
                     break;
             }
         } else {
@@ -176,7 +196,25 @@ public class BoardDeserializer extends StdDeserializer<Board> {
                     Board.T_GROUND);
         }
         parseBoardProcessors(board, mapNode);
+        parseEmbeddedBoards(board, mapNode);
+        board.setMapName(processName(mapNode).orElse("Ground Map"));
         return board;
+    }
+
+    private static Optional<String> processName(JsonNode boardNode) {
+        return Optional.ofNullable(boardNode.has(NAME) ? boardNode.get(NAME).asText() : null);
+    }
+
+    private static void parseEmbeddedBoards(Board board, JsonNode boardNode) {
+        if (boardNode.has(EMBED) && boardNode.get(EMBED).isArray()) {
+            boardNode.get(EMBED).iterator().forEachRemaining(n -> parseSingleEmbeddedBoard(board, n));
+        }
+    }
+
+    private static void parseSingleEmbeddedBoard(Board board, JsonNode embedNode) {
+        MMUReader.requireFields("Board", embedNode, AT, ID);
+        Coords coords = CoordsDeserializer.parseNode(embedNode.get(AT));
+        board.setEmbeddedBoard(embedNode.get(ID).intValue(), coords);
     }
 
     private static Board parseBoardFileNode(JsonNode boardNode, File basePath, String fileName) {

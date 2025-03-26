@@ -19,12 +19,14 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.boardview.IBoardView;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Board;
+import megamek.common.Game;
+import megamek.common.IGame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The BoardViewsContainer manages the JPanel that contains the BoardView(s) of a ClientGUI. When only
@@ -95,14 +97,15 @@ public class BoardViewsContainer {
     }
 
     private String getBoardViewTabTooltip(int boardId) {
-        //TODO Add embedded and enclosing boards
-//        Game game = getIClient().getGame();
-//        if (game.hasEnclosingBoard(boardId)) {
-//            Board enclosingBoard = game.getEnclosingBoard(boardView.getBoard());
-//            tooltip += "<BR>Located at " + enclosingBoard.embeddedBoardPosition(boardId).getBoardNum() +
-//                    " in " + enclosingBoard;
-//        }
-        return board(boardId).getMapName();
+        IGame game = clientGUI.getClient().getGame();
+        String tooltip = String.format("<HTML>%s (Board #%d)", game.getBoard(boardId).getMapName(), boardId);
+        Optional<Board> enclosingBoard = game.getEnclosingBoard(boardId);
+        if (enclosingBoard.isPresent()) {
+            tooltip += "<BR>Located at %s in %s".formatted(
+                  enclosingBoard.get().embeddedBoardPosition(boardId).getBoardNum(),
+                  enclosingBoard.get().getMapName());
+        }
+        return tooltip;
     }
 
     private Board board(int id) {

@@ -106,7 +106,7 @@ public class Board implements Serializable {
      */
     private final Hashtable<Coords, InfernoTracker> infernos = new Hashtable<>();
 
-    private Hashtable<Coords, Collection<SpecialHexDisplay>> specialHexes = new Hashtable<>();
+    private Map<Coords, Collection<SpecialHexDisplay>> specialHexes = new Hashtable<>();
 
     /**
      * Option to turn have roads auto-exiting to pavement.
@@ -1681,6 +1681,13 @@ public class Board implements Serializable {
         return specialHexes.getOrDefault(coords, Collections.emptyList());
     }
 
+    /**
+     * Adds the given SHD at the given coords to this board. This method should be used only by the server (including
+     * weaponhandlers).
+     *
+     * @param coords The position of the SHD on this board
+     * @param shd The SpecialHexDisplay to add
+     */
     public void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd) {
         Collection<SpecialHexDisplay> col;
         if (!specialHexes.containsKey(coords)) {
@@ -1690,12 +1697,20 @@ public class Board implements Serializable {
             col = specialHexes.get(coords);
             // It's possible we are updating a SHD that is already entered.
             // If that is the case, we want to remove the original entry.
+            // FIXME: An updated shd will likely not get removed because of SpecialHexDisplay.equals. Why not use a Set?
             col.remove(shd);
         }
 
         col.add(shd);
     }
 
+    /**
+     * Removes the given SHD from the given coords. This method should be used only by the server (including
+     * weaponhandlers).
+     *
+     * @param coords The position of the SHD on this board
+     * @param shd    The SpecialHexDisplay to remove
+     */
     public void removeSpecialHexDisplay(Coords coords, SpecialHexDisplay shd) {
         Collection<SpecialHexDisplay> col = specialHexes.get(coords);
         if (col != null) {
@@ -1703,46 +1718,45 @@ public class Board implements Serializable {
         }
     }
 
-    public Hashtable<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable() {
+    public Map<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable() {
         return specialHexes;
     }
 
     /**
-     * Sets the current board's specialHexes hashtable to a new set.
-     * To avoid opponent updates wiping local copies of SHDs, specifically Artillery
-     * Miss and
-     * Drift markers, back up the local copies. Add them back if the remote table
-     * doesn't
-     * contain them.
+     * Sets this board's specialHexes to a new set. This method should be used by the client when receiving an update
+     * from the server.
      *
-     * @param shd
+     * @param shd The new map of SpecialHexDisplays
      */
-    public void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {
-        Hashtable<Coords, Collection<SpecialHexDisplay>> temp = new Hashtable<>();
+    public void setSpecialHexDisplayTable(Map<Coords, Collection<SpecialHexDisplay>> shd) {
+        //TODO: TEST: There was a mistake in TWGameManager that sent filtered SHDs for all players to all players,
+        // meaning that each player would see what the last player (highest id) should see. This is fixed and the
+        // saving of ARTY MISS and DRIFT should not be necessary. The server has the master list.
+//        Hashtable<Coords, Collection<SpecialHexDisplay>> temp = new Hashtable<>();
 
         // Grab all current ARTILLERY_MISS and ARTILLERY_DRIFT instances
-        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e : specialHexes.entrySet()) {
-            for (SpecialHexDisplay special : e.getValue()) {
-                if (Set.of(ARTILLERY_MISS, ARTILLERY_DRIFT).contains(special.getType())) {
-                    temp.computeIfAbsent(e.getKey(), k -> new LinkedList<>()).add(special);
-                }
-            }
-        }
+//        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e : specialHexes.entrySet()) {
+//            for (SpecialHexDisplay special : e.getValue()) {
+//                if (Set.of(ARTILLERY_MISS, ARTILLERY_DRIFT).contains(special.getType())) {
+//                    temp.computeIfAbsent(e.getKey(), k -> new LinkedList<>()).add(special);
+//                }
+//            }
+//        }
 
         // Swap new Hashtable in for old
         specialHexes = shd;
 
         // Add miss instances back
-        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e : temp.entrySet()) {
-            for (SpecialHexDisplay miss : e.getValue()) {
-                if (!specialHexes.containsKey(e.getKey())) {
-                    specialHexes.put(e.getKey(), new LinkedList<>());
-                }
-                if (!specialHexes.get(e.getKey()).contains(miss)) {
-                    specialHexes.get(e.getKey()).add(miss);
-                }
-            }
-        }
+//        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e : temp.entrySet()) {
+//            for (SpecialHexDisplay miss : e.getValue()) {
+//                if (!specialHexes.containsKey(e.getKey())) {
+//                    specialHexes.put(e.getKey(), new LinkedList<>());
+//                }
+//                if (!specialHexes.get(e.getKey()).contains(miss)) {
+//                    specialHexes.get(e.getKey()).add(miss);
+//                }
+//            }
+//        }
     }
 
     public void setType(int t) {
@@ -2061,5 +2075,9 @@ public class Board implements Serializable {
      */
     public void setBoardId(int boardId) {
         this.boardId = boardId;
+    }
+
+    public int getBoardId() {
+        return boardId;
     }
 }

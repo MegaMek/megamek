@@ -242,7 +242,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
                                     SpecialHexDisplay.NO_ROUND, p,
                                     "Artilery autohit, for player "
                                             + p.getName(),
-                                    SpecialHexDisplay.SHD_OBSCURED_TEAM));
+                                    SpecialHexDisplay.SHD_VISIBLETO_TEAM));
             clientgui.getBoardView().refreshDisplayables();
         }
     }

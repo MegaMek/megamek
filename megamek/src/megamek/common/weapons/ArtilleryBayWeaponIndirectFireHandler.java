@@ -133,7 +133,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                                 SpecialHexDisplay.Type.ARTILLERY_INCOMING, game
                                         .getRoundCount() + aaa.getTurnsTilHit(),
                                 game.getPlayer(aaa.getPlayerId()), artyMsg,
-                                SpecialHexDisplay.SHD_OBSCURED_TEAM));
+                                SpecialHexDisplay.SHD_VISIBLETO_TEAM));
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the

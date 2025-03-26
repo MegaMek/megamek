@@ -87,7 +87,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                     Type.ARTILLERY_INCOMING, game
                                             .getRoundCount() + aaa.getTurnsTilHit(),
                                     game.getPlayer(aaa.getPlayerId()), artyMsg,
-                                    SpecialHexDisplay.SHD_OBSCURED_TEAM));
+                                    SpecialHexDisplay.SHD_VISIBLETO_TEAM));
                 }
             }
             // if this is the last targeting phase before we hit,

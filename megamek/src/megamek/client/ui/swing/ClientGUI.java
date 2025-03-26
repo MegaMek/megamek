@@ -2389,11 +2389,11 @@ public class ClientGUI extends AbstractClientGUI
                 // This is a really lame place for this, but I couldn't find a
                 // better one without making massive changes (which didn't seem
                 // worth it for one little feature).
-                if (boardViews.get(0).getLocalPlayer() != client.getLocalPlayer()) {
+                if (bv.getLocalPlayer() != client.getLocalPlayer()) {
                     // The adress based comparison is somewhat important.
                     // Use of the /reset command can cause the player to get reset,
                     // and the equals function of Player isn't powerful enough.
-                    boardViews.get(0).setLocalPlayer(client.getLocalPlayer().getId());
+                    bv.setLocalPlayer(client.getLocalPlayer().getId());
                 }
                 if (bv instanceof BoardView boardView) {
                     // Make sure the ChatterBox starts out deactived.

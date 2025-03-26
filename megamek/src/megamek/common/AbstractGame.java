@@ -24,6 +24,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -210,6 +211,10 @@ public abstract class AbstractGame implements IGame {
     @Override
     public Map<Integer, Board> getBoards() {
         return Collections.unmodifiableMap(gameBoards);
+    }
+
+    public Set<Integer> getBoardIds() {
+        return gameBoards.keySet();
     }
 
     @Override

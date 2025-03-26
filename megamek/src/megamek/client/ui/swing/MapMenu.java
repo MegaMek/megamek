@@ -326,14 +326,15 @@ public class MapMenu extends JPopupMenu {
             nd.setVisible(true);
             gui.getBoardView().setShouldIgnoreKeys(false);
             if (nd.isAccepted()) {
-                client.sendSpecialHexDisplayAppend(coords, finalNote);
+                client.sendSpecialHexDisplayAppend(coords, boardLocation.boardId(), finalNote);
             }
         });
         menu.add(item);
 
         if (note != null) {
             item = new JMenuItem(Messages.getString("NoteDialog.delete"));
-            item.addActionListener(e -> client.sendSpecialHexDisplayDelete(coords, finalNote));
+            item.addActionListener(e ->
+                                         client.sendSpecialHexDisplayDelete(coords, boardLocation.boardId(), finalNote));
         }
         menu.add(item);
 

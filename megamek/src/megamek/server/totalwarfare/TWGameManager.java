@@ -651,7 +651,9 @@ public class TWGameManager extends AbstractGameManager {
 
             send(connId, createArtilleryPacket(player));
             send(connId, createFlarePacket());
-            send(connId, createSpecialHexDisplayPacket(connId));
+            for (int boardId : game.getBoardIds()) {
+                send(createSpecialHexDisplayPacket(connId, boardId));
+            }
             send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings()));
             send(connId, new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
         }
@@ -891,13 +893,15 @@ public class TWGameManager extends AbstractGameManager {
                 game.setupDeployment();
                 break;
             case SPECIAL_HEX_DISPLAY_DELETE:
-                game.getBoard().removeSpecialHexDisplay((Coords) packet.getObject(0),
-                        (SpecialHexDisplay) packet.getObject(1));
+                game.getBoard((Integer) packet.getObject(1)).removeSpecialHexDisplay(
+                      (Coords) packet.getObject(0),
+                      (SpecialHexDisplay) packet.getObject(2));
                 sendSpecialHexDisplayPackets();
                 break;
             case SPECIAL_HEX_DISPLAY_APPEND:
-                game.getBoard().addSpecialHexDisplay((Coords) packet.getObject(0),
-                        (SpecialHexDisplay) packet.getObject(1));
+                game.getBoard((Integer) packet.getObject(1)).addSpecialHexDisplay(
+                      (Coords) packet.getObject(0),
+                      (SpecialHexDisplay) packet.getObject(2));
                 sendSpecialHexDisplayPackets();
                 break;
             case PLAYER_TEAM_CHANGE:
@@ -2032,7 +2036,9 @@ public class TWGameManager extends AbstractGameManager {
 
     void sendSpecialHexDisplayPackets() {
         for (Player player : game.getPlayersList()) {
-            send(createSpecialHexDisplayPacket(player.getId()));
+            for (int boardId : game.getBoardIds()) {
+                send(player.getId(), createSpecialHexDisplayPacket(player.getId(), boardId));
+            }
         }
     }
 
@@ -9663,7 +9669,7 @@ public class TWGameManager extends AbstractGameManager {
                             SpecialHexDisplay.NO_ROUND, game.getPlayer(playerId),
                             "Artillery auto hit hex, for "
                                     + game.getPlayer(playerId).getName(),
-                            SpecialHexDisplay.SHD_OBSCURED_TEAM));
+                            SpecialHexDisplay.SHD_VISIBLETO_TEAM));
         }
         endCurrentTurn(null);
     }
@@ -20882,7 +20888,7 @@ public class TWGameManager extends AbstractGameManager {
                                 getGame().getPlayersList().get(0), // The player should not matter, I just dont want to
                                                                    // cause a nullpointererror
                                 message,
-                                SpecialHexDisplay.SHD_OBSCURED_ALL,
+                                SpecialHexDisplay.SHD_VISIBLETO_ALL,
                                 imageSignature));
             } else {
                 getGame().getBoard().addSpecialHexDisplay(
@@ -20893,7 +20899,7 @@ public class TWGameManager extends AbstractGameManager {
                                 getGame().getPlayersList().get(0), // The player should not matter, I just dont want to
                                                                    // cause a nullpointererror
                                 message,
-                                SpecialHexDisplay.SHD_OBSCURED_ALL));
+                                SpecialHexDisplay.SHD_VISIBLETO_ALL));
             }
             sendChangedHex(coord);
         }
@@ -20920,7 +20926,7 @@ public class TWGameManager extends AbstractGameManager {
                             getGame().getPlayersList().get(0), // The player should not matter, I just dont want to
                                                                // cause a nullpointererror
                             Messages.getString("OrbitalBombardment.hitOnRound", getGame().getRoundCount()),
-                            SpecialHexDisplay.SHD_OBSCURED_ALL));
+                            SpecialHexDisplay.SHD_VISIBLETO_ALL));
             sendChangedHex(coord);
         }
     }
@@ -21004,7 +21010,7 @@ public class TWGameManager extends AbstractGameManager {
                             getGame().getPlayersList().get(0), // The player should not matter, I just dont want to
                                                                // cause a nullpointererror
                             Messages.getString("Nuke.exploded"),
-                            SpecialHexDisplay.SHD_OBSCURED_ALL,
+                            SpecialHexDisplay.SHD_VISIBLETO_ALL,
                             imageSignature));
             sendChangedHex(coord);
         }
@@ -21026,7 +21032,7 @@ public class TWGameManager extends AbstractGameManager {
                             getGame().getPlayersList().get(0), // The player should not matter, I just dont want to
                                                                // cause a nullpointererror
                             Messages.getString("Nuke.hitOnRound", getGame().getRoundCount()),
-                            SpecialHexDisplay.SHD_OBSCURED_ALL));
+                            SpecialHexDisplay.SHD_VISIBLETO_ALL));
             sendChangedHex(coord);
         }
     }
@@ -28049,26 +28055,23 @@ public class TWGameManager extends AbstractGameManager {
                 e.isVisibleToEnemy(), e.isDetectedByEnemy(), e.getWhoCanSee(), e.getWhoCanDetect()));
     }
 
-    private Packet createSpecialHexDisplayPacket(int toPlayer) {
-        Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable = game
-                .getBoard().getSpecialHexDisplayTable();
-        Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable2 = new Hashtable<>();
-        LinkedList<SpecialHexDisplay> tempList;
-        Player player = game.getPlayer(toPlayer);
-        if (player != null) {
-            for (Coords coord : shdTable.keySet()) {
-                tempList = new LinkedList<>();
-                for (SpecialHexDisplay shd : shdTable.get(coord)) {
-                    if (!shd.isObscured(player)) {
-                        tempList.add(0, shd);
-                    }
-                }
-                if (!tempList.isEmpty()) {
-                    shdTable2.put(coord, tempList);
+    private Packet createSpecialHexDisplayPacket(int toPlayer, int boardId) {
+        Map<Coords, Collection<SpecialHexDisplay>> filteredSHDs = new HashMap<>();
+        List<SpecialHexDisplay> filteredSHDsForLocation;
+        Player receiver = game.getPlayer(toPlayer);
+        var shdTable = game.getBoard(boardId).getSpecialHexDisplayTable();
+        for (Coords coord : shdTable.keySet()) {
+            filteredSHDsForLocation = new ArrayList<>();
+            for (SpecialHexDisplay shd : shdTable.get(coord)) {
+                if (!shd.isObscured(receiver)) {
+                    filteredSHDsForLocation.add(shd);
                 }
             }
+            if (!filteredSHDsForLocation.isEmpty()) {
+                filteredSHDs.put(coord, filteredSHDsForLocation);
+            }
         }
-        return new Packet(PacketCommand.SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
+        return new Packet(PacketCommand.SENDING_SPECIAL_HEX_DISPLAY, filteredSHDs, boardId);
     }
 
     /**

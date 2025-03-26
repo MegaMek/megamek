@@ -250,9 +250,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     // Image to hold the complete board shadow map
     BufferedImage shadowMap;
 
-    // the player who owns this BoardView's client
-    private Player localPlayer = null;
-
     /**
      * Stores the currently deploying entity, used for highlighting deployment
      * hexes.
@@ -1363,11 +1360,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     players.stream().filter(p -> p.isBot() || p.getId() == 0).collect(Collectors.toList()));
         }
 
-        if (game.getPhase().isLounge() && !localPlayer.isGameMaster()
+        if (game.getPhase().isLounge() && !getLocalPlayer().isGameMaster()
                 && (gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
                         || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP))) {
             players = new ArrayList<>(
-                    players.stream().filter(p -> !p.isEnemyOf(localPlayer)).collect(Collectors.toList()));
+                    players.stream().filter(p -> !p.isEnemyOf(getLocalPlayer())).collect(Collectors.toList()));
         }
 
         Board board = game.getBoard(boardId);
@@ -1472,7 +1469,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             return null;
         }
 
-        if (!getSelectedEntity().getOwner().equals(localPlayer)) {
+        if (!getSelectedEntity().getOwner().equals(getLocalPlayer())) {
             return null; // Not my business to see this
         }
 
@@ -1568,8 +1565,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         // Draw pre-designated auto-hit hexes
-        if (localPlayer != null) { // Could be null, like in map-editor
-            for (Coords c : localPlayer.getArtyAutoHitHexes()) {
+        if (getLocalPlayer() != null) { // Could be null, like in map-editor
+            for (Coords c : getLocalPlayer().getArtyAutoHitHexes()) {
                 // Is the Coord within the viewing area?
                 if ((c.getX() >= drawX) && (c.getX() <= (drawX + drawWidth))
                         && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight))) {
@@ -1665,7 +1662,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     case Minefield.TYPE_VIBRABOMB:
                         drawCenteredString(Messages.getString("BoardView1.Vibrabomb"),
                                 p.x, p.y + (int) (51 * scale), font_minefield, g);
-                        if (mf.getPlayerId() == localPlayer.getId()) {
+                        if (mf.getPlayerId() == getLocalPlayer().getId()) {
                             drawCenteredString("(" + mf.getSetting() + ")",
                                     p.x, p.y + (int) (60 * scale), font_minefield, g);
                         }
@@ -2161,7 +2158,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         try {
             if (shdList != null) {
                 for (SpecialHexDisplay shd : shdList) {
-                    if (shd.drawNow(game.getPhase(), game.getRoundCount(), localPlayer, GUIP)) {
+                    if (shd.drawNow(game.getPhase(), game.getRoundCount(), getLocalPlayer(), GUIP)) {
                         scaledImage = getScaledImage(shd.getDefaultImage(), true);
                         g.drawImage(scaledImage, 0, 0, boardPanel);
                     }
@@ -2922,7 +2919,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // Create the new sprites
         Coords position = entity.getPosition();
-        boolean canSee = EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity);
+        boolean canSee = EntityVisibilityUtils.detectedOrHasVisual(getLocalPlayer(), game, entity);
 
         if ((position != null) && canSee) {
             // Add new EntitySprite
@@ -3052,6 +3049,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (entity.getPosition() == null) {
                 continue;
             }
+            Player localPlayer = getLocalPlayer();
             if ((localPlayer != null)
                     && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && entity.getOwner().isEnemyOf(localPlayer)
@@ -3471,10 +3469,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         strafingCoords.clear();
     }
 
-    public Player getLocalPlayer() {
-        return localPlayer;
-    }
-
     /**
      * Specifies that this should mark the deployment hexes for a player. If the
      * player is set to null, no hexes will be marked.
@@ -3623,7 +3617,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
             if (aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
                 attackSprites.add(new AttackSprite(this, aa));
-            } else if (ownerId == localPlayer.getId() || teamId == localPlayer.getTeam()) {
+            } else if (ownerId == getLocalPlayer().getId() || teamId == getLocalPlayer().getTeam()) {
                 attackSprites.add(new AttackSprite(this, aa));
             }
         } else {
@@ -4348,6 +4342,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             }
             if ((mp != null) && !mp.isEmpty() && GUIP.getShowMoveStep()
                     && !gopts.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)) {
+                Player localPlayer = getLocalPlayer();
                 if ((localPlayer == null)
                         || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                         || !en.getOwner().isEnemyOf(localPlayer)
@@ -4531,6 +4526,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 continue;
             }
 
+            Player localPlayer = getLocalPlayer();
             boolean entityIsEnemy = e.getOwner().isEnemyOf(localPlayer);
 
             // If this unit isn't spotted somehow, it's ECM doesn't show up
@@ -4574,6 +4570,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         Map<Coords, ECMEffects> eccmAffectedCoords = new HashMap<>();
         for (ECMInfo ecmInfo : allEcmInfo) {
             // Can't see ECM field of unspotted unit
+            Player localPlayer = getLocalPlayer();
             if ((ecmInfo.getEntity() != null) && (localPlayer != null)
                     && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && ecmInfo.getEntity().getOwner().isEnemyOf(localPlayer)

@@ -847,12 +847,12 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));
     }
 
-    public void sendSpecialHexDisplayAppend(Coords c, SpecialHexDisplay shd) {
-        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, shd));
+    public void sendSpecialHexDisplayAppend(Coords c, int boardId, SpecialHexDisplay shd) {
+        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, boardId, shd));
     }
 
-    public void sendSpecialHexDisplayDelete(Coords c, SpecialHexDisplay shd) {
-        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_DELETE, c, shd));
+    public void sendSpecialHexDisplayDelete(Coords c, int boardId, SpecialHexDisplay shd) {
+        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_DELETE, c, boardId, shd));
     }
 
     @SuppressWarnings("unchecked")
@@ -1053,8 +1053,9 @@ public class Client extends AbstractClient {
                 }
                 break;
             case SENDING_SPECIAL_HEX_DISPLAY:
-                game.getBoard().setSpecialHexDisplayTable(
-                        (Hashtable<Coords, Collection<SpecialHexDisplay>>) packet.getObject(0));
+                var shdTable = (Map<Coords, Collection<SpecialHexDisplay>>) packet.getObject(0);
+                var boardId = (int) packet.getObject(1);
+                game.getBoard(boardId).setSpecialHexDisplayTable(shdTable);
                 game.processGameEvent(new GameBoardChangeEvent(this));
                 break;
             case SENDING_AVAILABLE_MAP_SIZES:

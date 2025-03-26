@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ClientPreferences extends PreferenceStoreProxy {
     private static final MMLogger logger = MMLogger.create(ClientPreferences.class);
@@ -72,6 +73,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
     public static final String NAG_ASK_FOR_VICTORY_LIST = "AskForVictoryList";
     public static final String SHOW_AUTO_RESOLVE_PANEL = "ShowAutoResolvePanel";
+    public static final String LAST_SCENARIO = "LastScenario";
 
     /**
      * A user-specified directory, typically outside the MM directory, where content
@@ -123,6 +125,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(DATA_LOGGING, false);
         store.setDefault(SHOW_AUTO_RESOLVE_PANEL, true);
         store.setDefault(STAMP_FILENAMES, false);
+        store.setDefault(LAST_SCENARIO, "");
 
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
@@ -493,5 +496,13 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public boolean getShowAutoResolvePanel() {
         return store.getBoolean(SHOW_AUTO_RESOLVE_PANEL);
+    }
+
+    public void setLastScenario(String scenario) {
+        store.setValue(LAST_SCENARIO, scenario);
+    }
+
+    public String getLastScenario() {
+        return Objects.requireNonNullElse(store.getString(LAST_SCENARIO), "");
     }
 }

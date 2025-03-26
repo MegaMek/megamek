@@ -151,7 +151,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         int maxShown = 4;
         boolean hidden = false;
 
-        Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(coords, true));
+        Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(coords, bv.getBoardId(), true));
         for (Entity entity : coordEnts) {
             entityCount++;
 

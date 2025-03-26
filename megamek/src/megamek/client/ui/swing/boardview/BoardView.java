@@ -158,6 +158,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     public final Game game;
     ClientGUI clientgui;
     private final int boardId;
+
+    // Only for debugging: a unique ID number for each boardview that can be shown on screen
     private final int boardViewId;
 
     private Dimension boardSize;
@@ -777,6 +779,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 getTilesetManager().reloadUnitIcons();
                 break;
 
+            case GUIPreferences.USE_ISOMETRIC:
+                drawIsometric = GUIP.getIsometricEnabled(); // intentional fallthrough
             case GUIPreferences.AOHEXSHADOWS:
             case GUIPreferences.FLOATINGISO:
             case GUIPreferences.LEVELHIGHLIGHT:
@@ -1156,8 +1160,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * Looks through a vector of buffered images and draws them if they're
      * onscreen.
      */
-    private synchronized void drawSprites(Graphics g,
-            Collection<? extends Sprite> spriteArrayList) {
+    private synchronized void drawSprites(Graphics g, Collection<? extends Sprite> spriteArrayList) {
         for (Sprite sprite : spriteArrayList) {
             drawSprite(g, sprite);
         }
@@ -2847,7 +2850,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // If the entity we are updating doesn't have a position, ensure we
         // remove all of its old sprites
-        if (entity.getPosition() == null) {
+        if (entity.getPosition() == null || !isOnThisBord(entity)) {
             Iterator<EntitySprite> spriteIter;
 
             // Remove Entity Sprites
@@ -2921,7 +2924,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         Coords position = entity.getPosition();
         boolean canSee = EntityVisibilityUtils.detectedOrHasVisual(getLocalPlayer(), game, entity);
 
-        if ((position != null) && canSee) {
+        if ((position != null) && canSee && isOnThisBord(entity)) {
             // Add new EntitySprite
             // If no secondary positions, add a sprite for the central position
             if (entity.getSecondaryPositions().isEmpty()) {
@@ -3046,7 +3049,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         clearC3Networks();
         clearFlyOverPaths();
         for (Entity entity : game.getEntitiesVector()) {
-            if (entity.getPosition() == null) {
+            if (entity.getPosition() == null || !isOnThisBord(entity)) {
                 continue;
             }
             Player localPlayer = getLocalPlayer();
@@ -4797,8 +4800,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     bgGraph.dispose();
                 }
                 g.drawImage(scrollPaneBgBuffer, 0, 0, null);
-                new StringDrawer("BV " + boardViewId).fontSize(24).at(80, 20).color(Color.GREEN).outline(Color.BLACK,
-                      1).draw(g);
+//                new StringDrawer("BV " + boardViewId).fontSize(24).at(80, 20).color(Color.GREEN).outline(Color.BLACK,
+//                      1).draw(g);
             }
         };
         scrollpane.setBorder(new MegaMekBorder(bvSkinSpec));
@@ -5277,5 +5280,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     public int getBoardId() {
         return boardId;
+    }
+
+    /**
+     * @return True when the given entity is on this board.
+     */
+    private boolean isOnThisBord(Entity entity) {
+        return entity.getBoardId() == boardId;
     }
 }

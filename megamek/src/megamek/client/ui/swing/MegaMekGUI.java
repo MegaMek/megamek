@@ -772,17 +772,24 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     /**
      * Host a game constructed from a scenario file
      */
-    void scenario() {
-        ScenarioChooser scenarioChooser = new ScenarioChooser(frame);
-        scenarioChooser.setVisible(true);
-        if (scenarioChooser.getSelectedScenarioFilename() == null) {
-            return;
+    void scenario(String fileName) {
+        String chosenFileName;
+        if (fileName.isBlank()) {
+            ScenarioChooser scenarioChooser = new ScenarioChooser(frame);
+            scenarioChooser.setVisible(true);
+            chosenFileName = scenarioChooser.getSelectedScenarioFilename();
+            if (chosenFileName == null) {
+                return;
+            }
+            PreferenceManager.getClientPreferences().setLastScenario(chosenFileName);
+        } else {
+            chosenFileName = fileName;
         }
 
         Scenario scenario;
         IGame game;
         try {
-            ScenarioLoader sl = new ScenarioLoader(new File(scenarioChooser.getSelectedScenarioFilename()));
+            ScenarioLoader sl = new ScenarioLoader(new File(chosenFileName));
             scenario = sl.load();
             game = scenario.createGame();
         } catch (Exception e) {
@@ -1060,7 +1067,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 host();
                 break;
             case ClientGUI.FILE_GAME_SCENARIO:
-                scenario();
+                if ((ev.getModifiers() & Event.CTRL_MASK) != 0) {
+                    // As a dev convenience, start the last scenario again when clicked with CTRL
+                    scenario(PreferenceManager.getClientPreferences().getLastScenario());
+                } else {
+                    scenario("");
+                }
                 break;
             case ClientGUI.FILE_GAME_CONNECT:
                 connect();

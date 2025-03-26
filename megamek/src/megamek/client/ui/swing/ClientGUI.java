@@ -913,7 +913,7 @@ public class ClientGUI extends AbstractClientGUI
                 boardViews.get(0).zoomOut();
                 break;
             case VIEW_TOGGLE_ISOMETRIC:
-                GUIP.setIsometricEnabled(((BoardView)boardViews.get(0)).toggleIsometric());
+                GUIP.setIsometricEnabled(!GUIP.getIsometricEnabled());
                 break;
             case VIEW_TOGGLE_FOV_HIGHLIGHT:
                 GUIP.setFovHighlight(!GUIP.getFovHighlight());

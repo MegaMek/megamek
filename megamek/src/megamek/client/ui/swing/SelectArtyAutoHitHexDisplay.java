@@ -94,8 +94,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     protected Map<ArtyAutoHitCommand,MegaMekButton> buttons;
 
     private Player player;
-    private final PlayerIDandList<BoardLocation> artyAutoHitHexes = new PlayerIDandList<>();
-
+    private final Map<BoardLocation, SpecialHexDisplay> plannedAutoHits = new HashMap<>();
     private int startingHexes;
 
     protected final ClientGUI clientgui;
@@ -108,7 +107,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         super(clientgui);
         this.clientgui = clientgui;
         player = clientgui.getClient().getLocalPlayer();
-        artyAutoHitHexes.setPlayerID(player.getId());
         game().addGameListener(this);
 
         setupStatusBar(Messages.getString("SelectArtyAutoHitHexDisplay.waitingArtillery"));
@@ -182,7 +180,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         int hexesPer = game.getOptions().intOption(OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE);
         double mapArea = board.getWidth() * board.getHeight();
         startingHexes = (int) Math.ceil(mapArea / preDesignateArea) * hexesPer;
-        artyAutoHitHexes.clear();
+        plannedAutoHits.clear();
         setArtyEnabled(startingHexes);
         butDone.setEnabled(true);
         startTimer();
@@ -207,17 +205,17 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     private void addArtyAutoHitHex(BoardLocation location) {
         if (game().hasBoardLocation(location) &&
-                  !artyAutoHitHexes.contains(location) &&
-                  (artyAutoHitHexes.size() < startingHexes) &&
+                  !plannedAutoHits.containsKey(location) &&
+                  (plannedAutoHits.size() < startingHexes) &&
                   clientgui.doYesNoDialog(
                         Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"),
                         Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message",
                               location.getBoardNum()))) {
-            artyAutoHitHexes.addElement(location);
             player.addArtyAutoHitHex(location);
             var autoHitIcon = SpecialHexDisplay.createArtyAutoHit(player);
             game().getBoard(location).addSpecialHexDisplay(location.coords(), autoHitIcon, true);
-            setArtyEnabled(startingHexes - artyAutoHitHexes.size());
+            plannedAutoHits.put(location, autoHitIcon);
+            setArtyEnabled(startingHexes - plannedAutoHits.size());
             clientgui.boardViews().forEach(IBoardView::refreshDisplayables);
         }
     }
@@ -290,7 +288,9 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void clear() {
-        artyAutoHitHexes.clear();
+        plannedAutoHits.forEach((location, shd) ->
+                  game().getBoard(location).removeSpecialHexDisplay(location.coords(), shd));
+        plannedAutoHits.clear();
         player.removeArtyAutoHitHexes();
         setArtyEnabled(startingHexes);
     }
@@ -298,7 +298,10 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     @Override
     public void ready() {
         endMyTurn();
-        clientgui.getClient().sendArtyAutoHitHexes(artyAutoHitHexes);
+        PlayerIDandList<BoardLocation> finalAutoHits = new PlayerIDandList<>();
+        finalAutoHits.setPlayerID(player.getId());
+        finalAutoHits.addAll(plannedAutoHits.keySet());
+        clientgui.getClient().sendArtyAutoHitHexes(finalAutoHits);
         clientgui.getClient().sendPlayerInfo();
     }
 

@@ -1771,6 +1771,7 @@ public class Board implements Serializable {
      * @param shd The new map of SpecialHexDisplays
      */
     public void setSpecialHexDisplayTable(Map<Coords, Collection<SpecialHexDisplay>> shd) {
+        Set<Coords> toRedraw = specialHexes.keySet();
         //TODO: TEST: There was a mistake in TWGameManager that sent filtered SHDs for all players to all players,
         // meaning that each player would see what the last player (highest id) should see. This is fixed and the
         // saving of ARTY MISS and DRIFT should not be necessary. The server has the master list.
@@ -1799,6 +1800,10 @@ public class Board implements Serializable {
 //                }
 //            }
 //        }
+        toRedraw.addAll(shd.keySet());
+        //TODO: Add a BoardEvent for a set of coords
+        toRedraw.forEach(coords ->
+               processBoardEvent(new BoardEvent(this, coords, BoardEvent.BOARD_CHANGED_HEX)));
     }
 
     public void setType(int t) {

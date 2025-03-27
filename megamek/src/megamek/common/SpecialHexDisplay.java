@@ -360,11 +360,10 @@ public class SpecialHexDisplay implements Serializable {
 
         // Arty icons for the owner are drawn in BoardView1.drawArtillery
         // and shouldn't be drawn twice
-        if (isOwner(playerChecking)
-                && (type == Type.ARTILLERY_AUTOHIT
-                        || type == Type.ARTILLERY_ADJUSTED
-                        || type == Type.ARTILLERY_INCOMING
-                        || type == Type.ARTILLERY_TARGET)) {
+        if (isOwner(playerChecking) &&
+                  (type == Type.ARTILLERY_ADJUSTED ||
+                         type == Type.ARTILLERY_INCOMING ||
+                         type == Type.ARTILLERY_TARGET)) {
             return false;
         }
 

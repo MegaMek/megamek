@@ -1570,18 +1570,19 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         // Draw pre-designated auto-hit hexes
-        if (getLocalPlayer() != null) { // Could be null, like in map-editor
-            for (BoardLocation c : getLocalPlayer().getArtyAutoHitHexes()) {
-                // Is the Coord within the viewing area?
-                if (isOnThisBord(c) && (c.getX() >= drawX) && (c.getX() <= (drawX + drawWidth))
-                        && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight))) {
-
-                    Point p = getHexLocation(c.coords());
-                    artyIconImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
-                    g.drawImage(getScaledImage(artyIconImage, true), p.x, p.y, boardPanel);
-                }
-            }
-        }
+        // Baked into the hex cache!
+//        if (getLocalPlayer() != null) { // Could be null, like in map-editor
+//            for (BoardLocation c : getLocalPlayer().getArtyAutoHitHexes()) {
+//                // Is the Coord within the viewing area?
+//                if (isOnThisBord(c) && (c.getX() >= drawX) && (c.getX() <= (drawX + drawWidth))
+//                        && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight))) {
+//
+//                    Point p = getHexLocation(c.coords());
+//                    artyIconImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
+//                    g.drawImage(getScaledImage(artyIconImage, true), p.x, p.y, boardPanel);
+//                }
+//            }
+//        }
 
         // Draw modifiers for selected entity and weapon
         if (weapon != null) {

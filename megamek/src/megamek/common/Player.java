@@ -52,6 +52,7 @@ public final class Player extends TurnOrdered {
     private String email;
     private final int id;
     private int elo;
+    private double score;
 
     private int team = TEAM_NONE;
 
@@ -156,9 +157,32 @@ public final class Player extends TurnOrdered {
     {
         return this.elo;
     }
-    public void setPlayerElo(int score)
+
+    public void setPlayerElo(int elo)
     {
-        this.elo+=score;
+        this.elo = elo;
+    }
+
+    /**
+     * Peut être revu pour gérer la gesion des points de ratings
+     */
+    public void updateElo(boolean isWinner) {
+        if(isWinner)
+        {
+            this.elo += 1;
+        }
+        else
+        {
+            this.elo -= 1;
+        }
+    }
+
+    public double getScore() {
+        return this.score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
     }
 
     public void setNbrMFConventional(int nbrMF) {

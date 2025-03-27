@@ -187,6 +187,21 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return (mfs == null) ? 0 : mfs.size();
     }
 
+
+
+    /**
+     * update le rating des joueurs de la partie
+     * selon s'ils ont gagner ou non
+     */
+    private void updateEloRatings() {
+        List<Player> players = getPlayersList();
+        for (Player player : players) {
+            boolean isWinner = (player.getTeam() == this.victoryTeam);
+            player.updateElo(isWinner);
+        }
+    }
+
+
     /**
      * Get the coordinates of all mined hexes in the game.
      *
@@ -2655,10 +2670,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void end(int winner, int winnerTeam) {
         setVictoryPlayerId(winner);
         setVictoryTeam(winnerTeam);
+        updateEloRatings();
         processGameEvent(new GameEndEvent(this));
 
     }
-
     /**
      * Getter for property victoryPlayerId.
      *

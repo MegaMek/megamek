@@ -14,15 +14,16 @@
 
 package megamek.common.verifier;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.HandheldWeapon;
 import megamek.common.MiscType;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class TestHandheldWeapon extends TestEntity {
     private final HandheldWeapon hhw;
@@ -115,7 +116,9 @@ public class TestHandheldWeapon extends TestEntity {
         }
         if (hhw.getMiscEquipment(MiscType.F_CLUB).isEmpty()) {
             var items = hhw.getEquipment().stream()
-                .filter(m -> !(m.getType() instanceof AmmoType) && !m.getType().hasFlag(MiscType.F_WEAPON_ENHANCEMENT))
+                              // Ammo and weapon enhancements (artemis, ppc capacitors, etc) don't count towards the
+                              // item limit
+                .filter(m -> !(m.getType() instanceof AmmoType) && !(m instanceof MiscMounted && m.getType().hasFlag(MiscType.F_WEAPON_ENHANCEMENT)))
                 .count();
             if (items > 6) {
                 buff.append("Handheld Weapon can only mount up to 6 items!\n");

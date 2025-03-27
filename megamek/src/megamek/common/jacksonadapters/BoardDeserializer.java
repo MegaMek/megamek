@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import megamek.common.Board;
+import megamek.common.BoardType;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -125,6 +126,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             // map: as node with file: and optional modify:
             String fileName = mapNode.get(FILE).textValue();
             Board board = parseBoardFileNode(mapNode, basePath, fileName);
+            board.setBoardType(BoardType.GROUND);
             board.setMapName(processName(mapNode).orElse(fileName));
             return board;
 
@@ -137,6 +139,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             Board board = Compute.randomListElement(surpriseBoardsList);
             parseBoardModifiers(board, mapNode);
             parseBoardProcessors(board, mapNode);
+            board.setBoardType(BoardType.GROUND);
             board.setMapName(processName(mapNode).orElse("Surprise Map"));
             return board;
         }
@@ -155,23 +158,26 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             switch (type) {
                 case SKY:
                     board = Board.getSkyBoard(mapWidth, mapHeight);
+                    board.setBoardType(BoardType.SKY);
                     board.setMapName(processName(mapNode).orElse("Atmospheric Map"));
                     parseEmbeddedBoards(board, mapNode);
                     return board;
                 case ATMOSPHERIC:
                 case LOW_ALTITUDE:
                     board = Board.getSkyBoard(mapWidth, mapHeight);
+                    board.setBoardType(BoardType.SKY_WITH_TERRAIN);
                     board.setMapName(processName(mapNode).orElse("Atmospheric Map"));
                     parseEmbeddedBoards(board, mapNode);
                     return board;
                 case SPACE:
                     board = Board.getSpaceBoard(mapWidth, mapHeight);
+                    board.setBoardType(BoardType.FAR_SPACE);
                     board.setMapName(processName(mapNode).orElse("Space Map"));
                     parseEmbeddedBoards(board, mapNode);
                     return board;
                 case HIGH_ALTITUDE:
                     // TODO: dont have that type yet
-                    board.setType(Board.T_SPACE);
+                    board.setBoardType(BoardType.NEAR_SPACE);
                     board.setMapName(processName(mapNode).orElse("High-Atmosphere Map"));
                     break;
             }
@@ -197,6 +203,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
         }
         parseBoardProcessors(board, mapNode);
         parseEmbeddedBoards(board, mapNode);
+        board.setBoardType(BoardType.GROUND);
         board.setMapName(processName(mapNode).orElse("Ground Map"));
         return board;
     }

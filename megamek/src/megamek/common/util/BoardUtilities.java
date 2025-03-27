@@ -147,6 +147,7 @@ public class BoardUtilities {
 
         if (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
             result.setType(Board.T_SPACE);
+            result.setBoardType(BoardType.FAR_SPACE);
             return result;
         }
 

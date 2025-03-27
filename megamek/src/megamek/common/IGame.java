@@ -461,6 +461,42 @@ public interface IGame {
         }
     }
 
+    /** @return True when both given units are not null and reside on the same board. */
+    default boolean onTheSameBoard(@Nullable Targetable entity1, @Nullable Targetable entity2) {
+        return (entity1 != null) && (entity2 != null) && (entity1.getBoardId() == entity2.getBoardId());
+    }
+
+    /**
+     * Returns true when both given units or objects are on directly connected, "adjacent" boards, such as a ground map
+     * and its enclosing atmospheric map. Returns false if they are on connected maps that are one or more other maps
+     * "apart", such as a ground map and a connected high-altitude map or two ground maps enclosed within a single
+     * atmospheric map. Also returns false when the two are on unconnected maps.
+     *
+     * @param entity1 The first unit or object to test
+     * @param entity2 The second unit or object to test
+     *
+     * @return True when both units or objects are on directly connected boards
+     */
+    default boolean onDirectlyConnectedBoards(@Nullable Targetable entity1, @Nullable Targetable entity2) {
+        if ((entity1 != null) && (entity2 != null)) {
+            Board board1 = getBoard(entity1);
+            Board board2 = getBoard(entity2);
+            return (board1.getBoardId() != -1) && (board2.getBoardId() != -1) &&
+                         ((board1.getEnclosingBoardId() == board2.getBoardId()) ||
+                                (board2.getEnclosingBoardId() == board1.getBoardId()));
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param targetable The targetable to check
+     * @return The board ID of the board that the given Targetable is on.
+     */
+    default Board getBoard(Targetable targetable) {
+        return getBoard(targetable.getBoardId());
+    }
+
     // endregion
 
     /**

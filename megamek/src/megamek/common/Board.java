@@ -214,6 +214,7 @@ public class Board implements Serializable {
         }
         Board result = new Board(width, height, data);
         result.setType(Board.T_ATMOSPHERE);
+        result.setBoardType(BoardType.SKY);
         return result;
     }
 
@@ -234,6 +235,7 @@ public class Board implements Serializable {
         }
         Board result = new Board(width, height, data);
         result.setType(Board.T_SPACE);
+        result.setBoardType(BoardType.FAR_SPACE);
         return result;
     }
     // endregion Constructors
@@ -2158,5 +2160,9 @@ public class Board implements Serializable {
 
     public boolean isSpaceMap() {
         return (boardType.isSpace());
+    }
+
+    public void setBoardType(BoardType boardType) {
+        this.boardType = boardType;
     }
 }

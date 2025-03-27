@@ -15562,6 +15562,7 @@ public abstract class Entity extends TurnOrdered
         return this.boardId == boardID;
     }
 
+    @Override
     public int getBoardId() {
         return boardId;
     }

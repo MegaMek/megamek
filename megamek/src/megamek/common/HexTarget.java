@@ -19,15 +19,30 @@ import java.util.Map;
 public class HexTarget implements Targetable {
     private static final long serialVersionUID = -5742445409423125942L;
     private Coords m_coords;
+    private final int boardId;
     private boolean m_bIgnite;
     private int m_type;
     private HexTarget originalTarget = null;
     private int targetLevel = 0;
 
+    // Legacy: Needs to be replaced with the other constructor
     public HexTarget(Coords c, int nType) {
         m_coords = c;
         m_type = nType;
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
+        boardId = 0;
+    }
+
+    public HexTarget(Coords c, int boardId, int nType) {
+        m_coords = c;
+        this.boardId = boardId;
+        m_type = nType;
+        m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
+    }
+
+    @Override
+    public int getBoardId() {
+        return boardId;
     }
 
     @Override

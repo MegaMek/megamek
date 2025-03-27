@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Represents the type of a game map. Note that low atmosphere (aka atmospheric) maps may come with or without
@@ -28,10 +29,17 @@ import java.io.Serializable;
  */
 public enum BoardType implements Serializable {
     GROUND("G"),
-    ATMOSPHERIC("A"), // aka "low atmosphere"
-    SPACE("S"), // includes "high atmosphere"
+    
+    // The following are intentionally not named as in the rules so the temptation to compare directly with them is 
+    // low. Compare using the is... methods
+    FAR_SPACE("FS"), // space without planetary surface
+    NEAR_SPACE("NS"), // space with planetary surface, aka high atmospheric
+    SKY("SA"), // low atmosphere without ground terrain
+    SKY_WITH_TERRAIN("GA"), // low atmosphere with ground terrain
+    
     RADAR("R"),
     CAPITAL_RADAR("C");
+
 
     private final String code;
 
@@ -40,11 +48,11 @@ public enum BoardType implements Serializable {
     }
 
     public boolean isSpace() {
-        return this == SPACE;
+        return this == FAR_SPACE || this == NEAR_SPACE;
     }
 
     public boolean isLowAtmo() {
-        return this == ATMOSPHERIC;
+        return this == SKY_WITH_TERRAIN || this == SKY;
     }
 
     public boolean isGround() {
@@ -65,7 +73,7 @@ public enum BoardType implements Serializable {
 
     /**
      * Returns a single character code identifying the this MapType (e.g. "G" for GROUND). Can be used e.g. in context
-     * menus. Use {@link #mapTypeForCode(String)} to reconstruct the MapType.
+     * menus. Use {@link #boardTypeForCode(String)} to reconstruct the MapType.
      *
      * @return the code character for this MapType
      */
@@ -80,23 +88,20 @@ public enum BoardType implements Serializable {
      *
      * @throws IllegalArgumentException When the given code has no corresponding MapType
      */
-    public static BoardType mapTypeForCode(String code) {
-        for (BoardType mapType : values()) {
-            if (mapType.code.equals(code)) {
-                return mapType;
-            }
-        }
-        throw new IllegalArgumentException("No MapType exists for the code " + code);
+    public static Optional<BoardType> boardTypeForCode(final String code) {
+        return Arrays.stream(values()).filter(t -> t.code.equals(code)).findAny();
     }
 
     @Override
     public String toString() {
         return switch (this) {
-            case CAPITAL_RADAR -> "Map Type: Capital Radar";
-            case ATMOSPHERIC -> "Map Type: Low Atmosphere";
-            case SPACE -> "Map Type: Space";
-            case RADAR -> "Map Type: Radar";
-            case GROUND -> "Map Type: Ground";
+            case CAPITAL_RADAR -> "Board Type: Capital Radar";
+            case SKY -> "Board Type: Low Atmosphere (Sky)";
+            case SKY_WITH_TERRAIN -> "Board Type: Low Atmosphere (Terrain)";
+            case FAR_SPACE -> "Board Type: Space";
+            case NEAR_SPACE -> "Board Type: High Atmosphere";
+            case RADAR -> "Board Type: Radar";
+            case GROUND -> "Board Type: Ground";
         };
     }
 }

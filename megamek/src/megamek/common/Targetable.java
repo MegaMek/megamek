@@ -44,6 +44,14 @@ public interface Targetable extends InGameObject, Serializable {
     /** @return the coordinates of the hex containing the target */
     Coords getPosition();
 
+    /**
+     * @return The board ID of the board this targetable is on. This defaults to 0 so that any code that doesn't
+     * support multiple boards yet safely points to the first (and only) board
+     */
+    default int getBoardId() {
+        return 0;
+    }
+
     Map<Integer, Coords> getSecondaryPositions();
 
     /**

@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3060-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='ARDC'>
 			<pctOmni>0,0,2,5,10</pctOmni>
@@ -3466,7 +3463,7 @@
             </model>
             <model name='(Laser Advanced)'>
                 <roles>urban</roles>
-                <availability>CLAN!Keshik:5!Front Line:3!Second Line:1,CLAN.IS!Keshik:5!Front Line:3!Second Line:1,CBS!Keshik:5!Front Line:4!Second Line:3,CGB!Keshik:5!Front Line:4!Second Line:1,CHH:5+,CIH!Keshik:5!Front Line:4!Second Line:1,CSA!Keshik:5!Front Line:4!Second Line:1,CSJ!Keshik:3,CSV!Keshik:5!Front Line:4!Second Line:3,CWIE!Keshik:5!Front Line:3!Second Line:1,BAN!Keshik:5!Front Line:4!Second Line:3</availability>
+                <availability>CLAN!Keshik:5!Front Line:3!Second Line:1,CLAN.IS!Keshik:5!Front Line:3!Second Line:1,CBS!Keshik:5!Front Line:4!Second Line:3,CGB!Keshik:5!Front Line:4!Second Line:1,CHH:5+,CIH!Keshik:5!Front Line:4!Second Line:1,CNC!Keshik:3,CSA!Keshik:5!Front Line:4!Second Line:1,CSJ!Keshik:3,CSV!Keshik:5!Front Line:4!Second Line:3,CWIE!Keshik:3,BAN!Keshik:5!Front Line:4!Second Line:3</availability>
             </model>
             <model name='(LRM Advanced)'>
                 <roles>fire_support</roles>

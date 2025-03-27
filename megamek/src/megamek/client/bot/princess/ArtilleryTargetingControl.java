@@ -711,7 +711,7 @@ public class ArtilleryTargetingControl {
                 double hitOdds;
 
                 Player localPlayer = operator.getLocalPlayer();
-                if (localPlayer != null && localPlayer.getArtyAutoHitHexes().contains(coords)) {
+                if (localPlayer != null && localPlayer.getArtyAutoHitHexes().contains(BoardLocation.of(coords, 0))) {
                     hitOdds = 1.0;
                 } else {
                     hitOdds = Compute.oddsAbove(artySkill + ARTILLERY_ATTACK_MODIFIER);

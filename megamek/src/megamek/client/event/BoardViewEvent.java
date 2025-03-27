@@ -129,12 +129,8 @@ public class BoardViewEvent extends java.util.EventObject {
      *
      * @return This event's location
      */
-    public Optional<BoardLocation> getBoardLocation() {
-        if (coords == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(new BoardLocation(coords, getBoardView().getBoardId()));
-        }
+    public BoardLocation getBoardLocation() {
+        return BoardLocation.of(coords, getBoardView().getBoardId());
     }
 
     public BoardView getBoardView() {

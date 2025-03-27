@@ -9650,9 +9650,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     @SuppressWarnings("unchecked")
     private void receiveArtyAutoHitHexes(Packet packet, int connId) {
-        PlayerIDandList<Coords> artyAutoHitHexes = (PlayerIDandList<Coords>) packet
-                .getObject(0);
-
+        var artyAutoHitHexes = (PlayerIDandList<BoardLocation>) packet.getObject(0);
         int playerId = artyAutoHitHexes.getPlayerID();
 
         // is this the right phase?
@@ -9662,8 +9660,8 @@ public class TWGameManager extends AbstractGameManager {
         }
         game.getPlayer(playerId).setArtyAutoHitHexes(artyAutoHitHexes);
 
-        for (Coords coord : artyAutoHitHexes) {
-            game.getBoard().addSpecialHexDisplay(coord,
+        for (BoardLocation location : artyAutoHitHexes) {
+            game.getBoard(location).addSpecialHexDisplay(location.coords(),
                     new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
                             SpecialHexDisplay.NO_ROUND, game.getPlayer(playerId),

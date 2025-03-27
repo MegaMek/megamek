@@ -62,9 +62,8 @@ public class Client extends AbstractClient {
     private final static MMLogger logger = MMLogger.create(Client.class);
 
     /**
-     * The game state object: this object is not ever replaced during a game, only
-     * updated. A
-     * reference can therefore be cached by other objects.
+     * The game state object: this object is not ever replaced during a game, only updated. A reference can therefore be
+     * cached by other objects.
      */
     protected final Game game = new Game();
 
@@ -387,7 +386,7 @@ public class Client extends AbstractClient {
     /**
      * Sends a "set Artillery Autohit Hexes" packet
      */
-    public void sendArtyAutoHitHexes(Vector<Coords> hexes) {
+    public void sendArtyAutoHitHexes(List<BoardLocation> hexes) {
         send(new Packet(PacketCommand.SET_ARTILLERY_AUTOHIT_HEXES, hexes));
     }
 

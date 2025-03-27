@@ -253,7 +253,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             // process targeted hexes
             int amod = 0;
             // Check the predesignated hexes
-            if (selectedEntity.getOwner().getArtyAutoHitHexes().contains(coords)) {
+            if (selectedEntity.getOwner().getArtyAutoHitHexes().contains(BoardLocation.of(coords, bv.getBoardId()))) {
                 amod = TargetRoll.AUTOMATIC_SUCCESS;
             } else {
                 amod = selectedEntity.aTracker.getModifier(curWeapon, coords);
@@ -281,7 +281,8 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         int round = game.getRoundCount();
         if (shdList != null) {
             String sSpecialHex = "";
-            boolean isHexAutoHit = (localPlayer != null) && localPlayer.getArtyAutoHitHexes().contains(coords);
+            boolean isHexAutoHit = (localPlayer != null) &&
+                         localPlayer.getArtyAutoHitHexes().contains(BoardLocation.of(coords, bv.getBoardId()));
             for (SpecialHexDisplay shd : shdList) {
                 boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
                 // Don't draw if this SHD is obscured from this player

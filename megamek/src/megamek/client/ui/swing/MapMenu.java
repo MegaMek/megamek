@@ -64,7 +64,7 @@ public class MapMenu extends JPopupMenu {
     Entity myEntity;
     Targetable myTarget = null;
     private boolean hasMenu;
-    private BoardLocation boardLocation;
+    private final BoardLocation boardLocation;
 
     public MapMenu(Coords coords, int boardId, JComponent panel, ClientGUI gui) {
         this.coords = coords;
@@ -74,7 +74,7 @@ public class MapMenu extends JPopupMenu {
         game = client.getGame();
         board = game.getBoard(boardId);
         selectedEntity = myEntity = gui.getDisplayedUnit();
-        boardLocation = new BoardLocation(coords, boardId);
+        boardLocation = BoardLocation.of(coords, boardId);
 
         hasMenu = createMenu();
         // make popups not consume mouse events outside them

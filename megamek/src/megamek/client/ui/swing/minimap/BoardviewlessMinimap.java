@@ -314,8 +314,8 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         // 8) Draw artillery autohit hexes
         Player localPlayer = client.getLocalPlayer();
         if (localPlayer != null) {
-            for (Coords autoHitHex : localPlayer.getArtyAutoHitHexes()) {
-                drawAutoHit(g, autoHitHex);
+            for (BoardLocation autoHitHex : localPlayer.getArtyAutoHitHexes()) {
+                drawAutoHit(g, autoHitHex.coords());
             }
         }
 

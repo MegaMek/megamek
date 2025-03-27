@@ -254,7 +254,8 @@ factions:
 #    - include: Annihilator ANH-13.mmu
       - fullname: Atlas AS7-D
         # pre-deployed:
-        offboard: N                             # default: not offboard; values: N, E, S, W (TODO)
+        # default: not offboard; values: NORTH, EAST, SOUTH, WEST
+        offboard: NORTH
         # Optional: when pre-deployed, set the facing. 5 = NW
         facing: 5
         at: [7, 4]                            # position 0704 (pre-deployed)

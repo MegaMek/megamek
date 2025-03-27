@@ -1571,12 +1571,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // Draw pre-designated auto-hit hexes
         if (getLocalPlayer() != null) { // Could be null, like in map-editor
-            for (Coords c : getLocalPlayer().getArtyAutoHitHexes()) {
+            for (BoardLocation c : getLocalPlayer().getArtyAutoHitHexes()) {
                 // Is the Coord within the viewing area?
-                if ((c.getX() >= drawX) && (c.getX() <= (drawX + drawWidth))
+                if (isOnThisBord(c) && (c.getX() >= drawX) && (c.getX() <= (drawX + drawWidth))
                         && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight))) {
 
-                    Point p = getHexLocation(c);
+                    Point p = getHexLocation(c.coords());
                     artyIconImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
                     g.drawImage(getScaledImage(artyIconImage, true), p.x, p.y, boardPanel);
                 }
@@ -5277,7 +5277,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * @return True when the given entity is on this board and has a non-null position.
      */
     private boolean isOnThisBord(Entity entity) {
-        return entity.getPosition() != null && entity.getBoardId() == boardId;
+        return entity.getBoardLocation().isOn(boardId);
+    }
+
+    /**
+     * @return True when the given boardLocation is on this board and has a non-null position.
+     */
+    private boolean isOnThisBord(BoardLocation boardLocation) {
+        return boardLocation.isOn(boardId);
     }
 
     /**

@@ -754,7 +754,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     // draw dead units
                     multiUnits.clear();
                     for (Entity e : game.getOutOfGameEntitiesVector()) {
-                        if (e.getBoardLocation().isPresent() && e.getBoardLocation().get().isOn(boardId) &&
+                        if (e.getBoardLocation().isOn(boardId) &&
                                   removalReasons.contains(e.getRemovalCondition())) {
                             paintUnit(g, e, true);
                         }
@@ -773,14 +773,14 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
                     // draw living units
                     for (Entity e : game.getEntitiesVector()) {
-                        if (e.getBoardLocation().isPresent() && e.getBoardLocation().get().isOn(boardId)) {
+                        if (e.getBoardLocation().isOn(boardId)) {
                             paintUnit(g, e, false);
                         }
                     }
 
                     if (drawSensorRangeOnMiniMap) {
                         for (Entity e : game.getEntitiesVector()) {
-                            if (e.getBoardLocation().isPresent() && e.getBoardLocation().get().isOn(boardId)) {
+                            if (e.getBoardLocation().isOn(boardId)) {
                                 paintSensor(g, e);
                             }
                         }
@@ -789,8 +789,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
                 Player localPlayer = getLocalPlayer();
                 if (localPlayer != null) {
-                    for (Coords autoHitHex : localPlayer.getArtyAutoHitHexes()) {
-                        drawAutoHit(g, autoHitHex);
+                    for (BoardLocation autoHitHex : localPlayer.getArtyAutoHitHexes()) {
+                        if (autoHitHex.isOn(boardId)) {
+                            drawAutoHit(g, autoHitHex.coords());
+                        }
                     }
                 }
 

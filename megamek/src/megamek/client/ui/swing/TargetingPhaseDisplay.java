@@ -1083,9 +1083,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             } else if (phase.isTargeting()) {
-                target(new HexTarget(b.getCoords(), Targetable.TYPE_HEX_ARTILLERY));
+                target(new HexTarget(b.getCoords(), b.getBoardView().getBoardId(), Targetable.TYPE_HEX_ARTILLERY));
             } else {
-                target(chooseTarget(b.getCoords()));
+                target(chooseTarget(b.getBoardLocation()));
             }
         }
     }
@@ -1093,22 +1093,20 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     /**
      * Have the player select a target from the entities at the given coords.
      *
-     * @param pos - the <code>Coords</code> containing targets.
+     * @param location - the <code>location</code> containing targets.
      */
-    private Targetable chooseTarget(Coords pos) {
-
-        boolean friendlyFire = clientgui.getClient().getGame().getOptions()
-                .booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
+    private Targetable chooseTarget(BoardLocation location) {
+        Game game = clientgui.getClient().getGame();
+        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
         // Assume that we have *no* choice.
         Targetable choice = null;
         Iterator<Entity> choices;
 
         // Get the available choices, depending on friendly fire
         if (friendlyFire) {
-            choices = clientgui.getClient().getGame().getEntities(pos);
+            choices = game.getEntities(location.coords());
         } else {
-            choices = clientgui.getClient().getGame()
-                    .getEnemyEntities(pos, ce());
+            choices = game.getEnemyEntities(location.coords(), ce());
         }
 
         // Convert the choices into a List of targets.
@@ -1129,24 +1127,23 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         // Is there a building in the hex?
         Building bldg = clientgui.getClient().getGame().getBoard()
-                .getBuildingAt(pos);
+                .getBuildingAt(location.coords());
         if (bldg != null) {
-            targets.add(new BuildingTarget(pos, clientgui.getClient().getGame()
+            targets.add(new BuildingTarget(location.coords(), clientgui.getClient().getGame()
                     .getBoard(), Targetable.TYPE_BLDG_TAG));
         }
 
-        targets.add(new HexTarget(pos, Targetable.TYPE_HEX_TAG));
+        targets.add(new HexTarget(location.coords(), location.boardId(), Targetable.TYPE_HEX_TAG));
 
         // Do we have a single choice?
         if (targets.size() == 1) {
             // Return that choice.
             choice = targets.get(0);
         } else if (targets.size() > 1) {
-            ;
             // If we have multiple choices, display a selection dialog.
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                     "FiringDisplay.ChooseTargetDialog.title",
-                    Messages.getString("FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }),
+                    Messages.getString("FiringDisplay.ChooseTargetDialog.message", location.getBoardNum()),
                     targets, clientgui, ce());
         }
 

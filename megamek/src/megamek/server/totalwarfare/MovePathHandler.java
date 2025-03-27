@@ -3461,7 +3461,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Track this step's location.
             movePath.addElement(new UnitLocation(entity.getId(), curPos,
-                    curFacing, step.getElevation(), entity.getBoardLocation().map(BoardLocation::boardId).orElse(0)));
+                    curFacing, step.getElevation(), entity.getBoardLocation().boardId()));
 
             // if the lastpos is not the same as the current position
             // then add the current position to the list of places passed

@@ -25,9 +25,9 @@ factions:
 - name: P1
 
   units:
-  - fullname: Cyclops CP-10-Z
-    at: [ 9, 12 ]
-    facing: 0
-    crew:
-      gunnery: 0
+  - fullname: Mobile Long Tom Artillery LT-MOB-25
+    offboard: NORTH
+
+  - fullname: Locust LCT-1V
+    at: [8, 9]
 

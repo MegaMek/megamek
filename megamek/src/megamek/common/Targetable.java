@@ -15,6 +15,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Optional;
 
 import megamek.common.annotations.Nullable;
 
@@ -46,10 +47,21 @@ public interface Targetable extends InGameObject, Serializable {
 
     /**
      * @return The board ID of the board this targetable is on. This defaults to 0 so that any code that doesn't
-     * support multiple boards yet safely points to the first (and only) board
+     * support multiple boards yet safely points to the first (and only) board; should eventually default to -1
      */
     default int getBoardId() {
         return 0;
+    }
+
+    /**
+     * @see BoardLocation#of(Coords, int)
+     */
+    default BoardLocation getBoardLocation() {
+        return BoardLocation.of(getPosition(), getBoardId());
+    }
+
+    default boolean isOnBoard(int boardID) {
+        return getBoardLocation().isOn(boardID);
     }
 
     Map<Integer, Coords> getSecondaryPositions();

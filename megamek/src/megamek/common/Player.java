@@ -80,7 +80,7 @@ public final class Player extends TurnOrdered {
     private int numMfInferno = 0;
 
     // hexes that are automatically hit by artillery
-    private Vector<Coords> artyAutoHitHexes = new Vector<>();
+    private List<BoardLocation> artyAutoHitHexes = new ArrayList<>();
 
     private int initialEntityCount;
     private int initialBV;
@@ -137,7 +137,7 @@ public final class Player extends TurnOrdered {
     }
 
     public void removeArtyAutoHitHexes() {
-        artyAutoHitHexes.removeAllElements();
+        artyAutoHitHexes.clear();
     }
 
     public boolean containsMinefield(Minefield mf) {
@@ -507,16 +507,19 @@ public final class Player extends TurnOrdered {
         return votedToAllowGameMaster;
     }
 
-    public void setArtyAutoHitHexes(Vector<Coords> artyAutoHitHexes) {
-        this.artyAutoHitHexes = artyAutoHitHexes;
+    public void setArtyAutoHitHexes(List<BoardLocation> newArtyAutoHitHexes) {
+        artyAutoHitHexes.clear();
+        artyAutoHitHexes.addAll(newArtyAutoHitHexes);
+        artyAutoHitHexes.removeIf(BoardLocation::isNoLocation);
     }
 
-    public Vector<Coords> getArtyAutoHitHexes() {
+    public List<BoardLocation> getArtyAutoHitHexes() {
         return artyAutoHitHexes;
     }
 
-    public void addArtyAutoHitHex(Coords c) {
-        artyAutoHitHexes.add(c);
+    public void addArtyAutoHitHex(BoardLocation boardLocation) {
+        artyAutoHitHexes.add(boardLocation);
+        artyAutoHitHexes.removeIf(BoardLocation::isNoLocation);
     }
 
     public int getInitialEntityCount() {

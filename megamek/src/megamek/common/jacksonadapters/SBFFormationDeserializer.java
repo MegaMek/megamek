@@ -102,7 +102,7 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
     private void setDeployedPosition(SBFFormation formation, Coords coords) {
         formation.setDeployed(true);
         // translate the position so "at: 2, 3" will place a unit on 0203 (instead of 0102)
-        formation.setPosition(new BoardLocation(new Coords(coords.getX() - 1, coords.getY() - 1), 0));
+        formation.setPosition(BoardLocation.of(new Coords(coords.getX() - 1, coords.getY() - 1), 0));
     }
 
     private void assignDeploymentRound(SBFFormation formation, JsonNode node) {

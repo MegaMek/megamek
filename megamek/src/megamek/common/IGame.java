@@ -363,15 +363,27 @@ public interface IGame {
     void setBoard(int boardId, Board board);
 
     /**
-     * Returns the board with the given boardId or null if the game does not have a
-     * board of that boardId.
+     * Returns the board with the given boardId or null if the game does not have a board of that boardId.
      *
      * @param boardId The board's ID
+     *
      * @return The board with the given ID
      */
     @Nullable
     default Board getBoard(int boardId) {
         return getBoards().get(boardId);
+    }
+
+    /**
+     * Returns the board of the given location or null if the game does not have a board of that location's boardId.
+     *
+     * @param boardLocation The location
+     *
+     * @return The board with the given ID
+     */
+    @Nullable
+    default Board getBoard(BoardLocation boardLocation) {
+        return getBoards().get(boardLocation.boardId());
     }
 
     /**
@@ -495,6 +507,24 @@ public interface IGame {
      */
     default Board getBoard(Targetable targetable) {
         return getBoard(targetable.getBoardId());
+    }
+
+    default boolean hasBoardLocation(@Nullable BoardLocation boardLocation) {
+        return boardLocation != null &&
+                     !boardLocation.isNoLocation() &&
+                     hasBoardLocation(boardLocation.coords(), boardLocation.boardId());
+    }
+
+    default boolean hasBoardLocation(Coords coords, int boardId) {
+        return hasBoard(boardId) && getBoard(boardId).contains(coords);
+    }
+
+    default boolean hasBoard(@Nullable BoardLocation boardLocation) {
+        return (boardLocation != null) && !boardLocation.isNoLocation() && hasBoard(boardLocation.boardId());
+    }
+
+    default boolean hasBoard(int boardId) {
+        return getBoards().containsKey(boardId);
     }
 
     // endregion

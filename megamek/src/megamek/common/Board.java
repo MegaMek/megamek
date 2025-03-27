@@ -43,6 +43,7 @@ public class Board implements Serializable {
     // region Variable Declarations
 
     public static final String BOARD_REQUEST_ROTATION = "rotate:";
+    public static final int BOARD_NONE = -1;
 
     // starting positions
     public static final int START_NONE = -1;
@@ -2136,7 +2137,7 @@ public class Board implements Serializable {
     public @Nullable BoardLocation embeddedBoardLocation(int boardId) {
         for (Map.Entry<Coords, Integer> entry : embeddedBoards.entrySet()) {
             if (entry.getValue() == boardId) {
-                return new BoardLocation(entry.getKey(), boardId);
+                return BoardLocation.of(entry.getKey(), boardId);
             }
         }
         return null;

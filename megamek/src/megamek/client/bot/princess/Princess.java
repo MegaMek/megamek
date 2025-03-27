@@ -465,11 +465,11 @@ public class Princess extends BotClient {
     }
 
     @Override
-    protected Vector<Coords> calculateArtyAutoHitHexes() {
+    protected Vector<BoardLocation> calculateArtyAutoHitHexes() {
         try {
             // currently returns no artillery hit spots
             // make an empty list
-            final PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<>();
+            final PlayerIDandList<BoardLocation> artyAutoHitHexes = new PlayerIDandList<>();
             // attach my player id to it
             artyAutoHitHexes.setPlayerID(getLocalPlayer().getId());
             return artyAutoHitHexes;

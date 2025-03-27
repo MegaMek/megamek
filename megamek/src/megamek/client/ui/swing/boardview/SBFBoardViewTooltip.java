@@ -45,7 +45,7 @@ public class SBFBoardViewTooltip implements BoardViewTooltipProvider {
         if (!game.getBoard().contains(coords)) {
             return null;
         }
-        var location = new BoardLocation(coords, 0); //TODO should not be fixed to board 0
+        var location = BoardLocation.of(coords, 0); //TODO should not be fixed to board 0
 
         StringBuilder tooltip = new StringBuilder("<HTML>");
         // HEAD - styles for all content must go here

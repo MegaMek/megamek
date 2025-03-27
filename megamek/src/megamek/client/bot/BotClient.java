@@ -278,7 +278,7 @@ public abstract class BotClient extends Client {
 
     protected abstract Vector<Minefield> calculateMinefieldDeployment();
 
-    protected abstract Vector<Coords> calculateArtyAutoHitHexes();
+    protected abstract Vector<BoardLocation> calculateArtyAutoHitHexes();
 
     protected abstract void checkMorale();
 
@@ -604,7 +604,7 @@ public abstract class BotClient extends Client {
                 sendPlayerInfo();
             } else if (game.getPhase().isSetArtilleryAutohitHexes()) {
                 // For now, declare no auto hit hexes.
-                Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
+                Vector<BoardLocation> autoHitHexes = calculateArtyAutoHitHexes();
                 sendArtyAutoHitHexes(autoHitHexes);
             } else if (game.getPhase().isTargeting() || game.getPhase().isOffboard()) {
                 // Princess implements arty targeting

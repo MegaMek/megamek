@@ -383,7 +383,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
      * Returns new MovePath for the currently selected movement type
      */
     private void currentMove(Coords dest) {
-        findPathTo(new BoardLocation(dest, 0), plannedMovement);
+        findPathTo(BoardLocation.of(dest, 0), plannedMovement);
     }
 
     /**

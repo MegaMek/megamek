@@ -15544,24 +15544,6 @@ public abstract class Entity extends TurnOrdered
         isJumpingWithMechanicalBoosters = jumpingWithMechanicalBoosters;
     }
 
-    /**
-     * Returns this unit's position as a board location with board ID. If it's coords is null (not deployed, fled the
-     * map or other circumstances), the returned Optional is empty.
-     *
-     * @return This unit's position
-     */
-    public Optional<BoardLocation> getBoardLocation() {
-        if (position == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(new BoardLocation(position, boardId));
-        }
-    }
-
-    public boolean isOnBoard(int boardID) {
-        return this.boardId == boardID;
-    }
-
     @Override
     public int getBoardId() {
         return boardId;

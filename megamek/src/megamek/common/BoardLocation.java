@@ -20,9 +20,9 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import megamek.common.annotations.Nullable;
 
@@ -33,26 +33,60 @@ import megamek.common.annotations.Nullable;
  * <p>
  * BoardLocation is immutable.
  */
-public record BoardLocation(Coords coords, int boardId) implements Serializable {
+public class BoardLocation implements Serializable {
 
     /**
-     * Create a BoardLocation on the board of the given ID and at the given coords.
-     *
-     * @param coords The hex on the board
-     * @param boardId The board
-     * @throws NullPointerException when coords are null
+     * This location represents a location that has null coords or a negative board ID, i.e. is obviously invalid.
+     * This location, when checked, will return false for comparisons and empty results for adjacent hexes and the
+     * like. Note that a BoardLocation that is not a NO_LOCATION does not necessarily exist either, its board ID may
+     * still be invalid or its coords outside of any board.
+     * <p>
+     * The coords or board ID of NO_LOCATION should not be used directly but if used the coords are at Integer
+     * .MIN_VALUE and the board ID is Board.BOARD_NONE.
      */
-    public BoardLocation(Coords coords, int boardId) {
-        this.coords = Objects.requireNonNull(coords);
+    public static final BoardLocation NO_LOCATION =
+          new BoardLocation(new Coords(Integer.MIN_VALUE, Integer.MIN_VALUE), Board.BOARD_NONE);
+
+    private final Coords coords;
+    private final int boardId;
+    private final boolean isNoLocation;
+
+    private BoardLocation(Coords coords, int boardId) {
+        this(coords, boardId, false);
+    }
+
+    private BoardLocation(Coords coords, int boardId, boolean isNoLocation) {
+        this.coords = coords;
         this.boardId = boardId;
+        this.isNoLocation = isNoLocation;
+    }
+
+    /**
+     * Returns a BoardLocation with the given data. When coords are null or the boardId negative, NO_LOCATION is
+     * returned. This means that the created BoardLocation never has null coords. Still, the returned
+     * BoardLocation may not represent a valid location, as the board ID and coords are not checked against existing
+     * boards.
+     *
+     * @param coords The coords
+     * @param boardId The board ID
+     * @return A BoardLocation representing the given position or NO_LOCATION
+     */
+    public static BoardLocation of(Coords coords, int boardId) {
+        if ((coords == null) || (boardId < 0)) {
+            return BoardLocation.NO_LOCATION;
+        } else {
+            return new BoardLocation(coords, boardId);
+        }
     }
 
     /**
      * @param boardId The board ID to test
-     * @return True when this location's board ID is equal to the given board ID.
+     * @return True when this location's board ID is equal to the given board ID, i.e. when this location is on the
+     * given board. If this location is a non-location, this will always return false.
+     * @see #NO_LOCATION
      */
     public boolean isOn(int boardId) {
-        return this.boardId == boardId;
+        return !isNoLocation && this.boardId == boardId;
     }
 
     /**
@@ -60,7 +94,7 @@ public record BoardLocation(Coords coords, int boardId) implements Serializable 
      * @return True when this location's coords are equal to the given coords.
      */
     public boolean isAt(@Nullable Coords coords) {
-        return this.coords.equals(coords);
+        return !isNoLocation && this.coords.equals(coords);
     }
 
     /**
@@ -86,7 +120,11 @@ public record BoardLocation(Coords coords, int boardId) implements Serializable 
      *         given distance
      */
     public List<BoardLocation> allAtDistance(final int dist) {
-        return coords.allAtDistance(dist).stream().map(c -> new BoardLocation(c, boardId)).collect(Collectors.toList());
+        if (isNoLocation) {
+            return Collections.emptyList();
+        } else {
+            return coords.allAtDistance(dist).stream().map(c -> new BoardLocation(c, boardId)).toList();
+        }
     }
 
     /**
@@ -102,18 +140,26 @@ public record BoardLocation(Coords coords, int boardId) implements Serializable 
      * and anything less than dist as well.
      */
     public List<BoardLocation> allAtDistances(int minimumDistance, int maximumDistance) {
-        List<BoardLocation> result = new ArrayList<>();
-        for (int radius = minimumDistance; radius <= maximumDistance; radius++) {
-            result.addAll(allAtDistance(radius));
+        if (isNoLocation) {
+            return Collections.emptyList();
+        } else {
+            List<BoardLocation> result = new ArrayList<>();
+            for (int radius = minimumDistance; radius <= maximumDistance; radius++) {
+                result.addAll(allAtDistance(radius));
+            }
+            return result;
         }
-        return result;
     }
 
     /**
      * Returns the coordinate 1 unit in the specified direction dir.
      */
     public BoardLocation translated(int dir) {
-        return new BoardLocation(coords.translated(dir, 1), boardId);
+        if (isNoLocation) {
+            return NO_LOCATION;
+        } else {
+            return BoardLocation.of(coords.translated(dir, 1), boardId);
+        }
     }
 
     @Override
@@ -122,17 +168,31 @@ public record BoardLocation(Coords coords, int boardId) implements Serializable 
     }
 
     public String getBoardNum() {
-        return coords.getBoardNum() + " (Map Id: " + boardId + ")";
+        if (isNoLocation) {
+            return "No Location";
+        } else {
+            return coords.getBoardNum() + " (Map Id: " + boardId + ")";
+        }
     }
 
     public String toFriendlyString() {
-        return coords.toFriendlyString() + " (Map Id: " + boardId + ")";
+        if (isNoLocation) {
+            return "No Location";
+        } else {
+            return coords.toFriendlyString() + " (Map Id: " + boardId + ")";
+        }
     }
 
     public boolean isSameBoardAs(@Nullable BoardLocation other) {
-        return (other != null) && boardId == other.boardId;
+        return !isNoLocation && (other != null) && !other.isNoLocation && boardId == other.boardId;
     }
 
+    /**
+     * Two BoardLocations are equal when their board ID and coords are equal. Two NO_LOCATIONs are equal.
+     *
+     * @param o The object to compare
+     * @return True when the two are equal
+     */
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof BoardLocation that)) {
@@ -144,5 +204,25 @@ public record BoardLocation(Coords coords, int boardId) implements Serializable 
     @Override
     public int hashCode() {
         return Objects.hash(coords, boardId);
+    }
+
+    public int getX() {
+        return coords.getX();
+    }
+
+    public int getY() {
+        return coords.getY();
+    }
+
+    public boolean isNoLocation() {
+        return isNoLocation;
+    }
+
+    public Coords coords() {
+        return coords;
+    }
+
+    public int boardId() {
+        return boardId;
     }
 }

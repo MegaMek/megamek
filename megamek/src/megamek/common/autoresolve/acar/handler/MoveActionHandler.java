@@ -43,7 +43,7 @@ public class MoveActionHandler extends AbstractActionHandler {
         var moveX = moveAction.getDestination().getX();
 
         var targetFormationOpt = game().getFormation(moveAction.getTargetFormationId());
-        var boardLocation = game().clamp(new BoardLocation(moveAction.getDestination(), 0));
+        var boardLocation = game().clamp(BoardLocation.of(moveAction.getDestination(), 0));
 
         if (targetFormationOpt.isPresent()) {
             var targetX = targetFormationOpt.get().getPosition().coords().getX();

@@ -5369,7 +5369,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // Don't bother adding up modifiers if the target hex has been hit before
-        if (game.getEntity(ae.getId()).getOwner().getArtyAutoHitHexes().contains(target.getPosition())
+        if (game.getEntity(ae.getId()).getOwner().getArtyAutoHitHexes().contains(target.getBoardLocation())
                 && !isArtilleryFLAK) {
             srt.setSpecialResolution(true);
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.ArtyDesTarget"));

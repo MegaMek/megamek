@@ -29,6 +29,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Board;
+import megamek.common.BoardLocation;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Player;
@@ -92,7 +93,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     protected Map<ArtyAutoHitCommand,MegaMekButton> buttons;
 
     private Player p;
-    private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<>();
+    private final PlayerIDandList<BoardLocation> artyAutoHitHexes = new PlayerIDandList<>();
 
     private int startingHexes;
 
@@ -218,25 +219,25 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         butDone.setEnabled(false);
     }
 
-    private void addArtyAutoHitHex(Coords coords) {
-        if (!clientgui.getClient().getGame().getBoard().contains(coords)) {
+    private void addArtyAutoHitHex(BoardLocation boardLocation) {
+        if (!clientgui.getClient().getGame().hasBoardLocation(boardLocation)) {
             return;
         }
-        if (!artyAutoHitHexes.contains(coords)
+        if (!artyAutoHitHexes.contains(boardLocation)
                 && (artyAutoHitHexes.size() < startingHexes)
                 && clientgui.doYesNoDialog(
                         Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"),
                         Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message",
-                                coords.getBoardNum()))) {
-            artyAutoHitHexes.addElement(coords);
+                              boardLocation.getBoardNum()))) {
+            artyAutoHitHexes.addElement(boardLocation);
             setArtyEnabled(startingHexes - artyAutoHitHexes.size());
-            p.addArtyAutoHitHex(coords);
+            p.addArtyAutoHitHex(boardLocation);
             clientgui
                     .getClient()
                     .getGame()
-                    .getBoard()
+                    .getBoard(boardLocation)
                     .addSpecialHexDisplay(
-                            coords,
+                            boardLocation.coords(),
                             new SpecialHexDisplay(
                                     SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
                                     SpecialHexDisplay.NO_ROUND, p,
@@ -270,7 +271,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
         // check for a deployment
         clientgui.getBoardView().select(b.getCoords());
-        addArtyAutoHitHex(b.getCoords());
+        addArtyAutoHitHex(b.getBoardLocation());
     }
 
     //

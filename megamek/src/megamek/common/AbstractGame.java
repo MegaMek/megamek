@@ -352,22 +352,6 @@ public abstract class AbstractGame implements IGame {
         this.turnIndex = turnIndex;
     }
 
-    public boolean hasBoardLocation(@Nullable BoardLocation boardLocation) {
-        return hasBoardLocation(boardLocation.coords(), boardLocation.boardId());
-    }
-
-    public boolean hasBoardLocation(Coords coords, int boardId) {
-        return hasBoard(boardId) && getBoard(boardId).contains(coords);
-    }
-
-    public boolean hasBoard(@Nullable BoardLocation boardLocation) {
-        return (boardLocation != null) && hasBoard(boardLocation.boardId());
-    }
-
-    public boolean hasBoard(int boardId) {
-        return gameBoards.containsKey(boardId);
-    }
-
     /**
      * Place a carryable object on the ground at the given coordinates
      */

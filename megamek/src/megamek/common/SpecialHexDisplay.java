@@ -225,6 +225,18 @@ public class SpecialHexDisplay implements Serializable {
         this.imageSignature = imageSignature;
     }
 
+    /**
+     * Creates an Artillery Autohit marker for the given player. It has no round limitation and is visible to team
+     * members of the owner.
+     *
+     * @param owner The owner of this autohit hex
+     * @return A SpecialHexDisplay autohit marker
+     */
+    public static SpecialHexDisplay createArtyAutoHit(Player owner) {
+        return new SpecialHexDisplay(Type.ARTILLERY_AUTOHIT, NO_ROUND, owner,
+              "Artilery autohit for player " + owner.getName(), SHD_VISIBLETO_TEAM);
+    }
+
     public boolean thisRound(int testRound) {
         if (NO_ROUND == round) {
             return true;

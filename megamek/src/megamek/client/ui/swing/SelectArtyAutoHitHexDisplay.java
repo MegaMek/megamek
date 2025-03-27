@@ -17,6 +17,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,13 +25,13 @@ import java.util.Map;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Board;
 import megamek.common.BoardLocation;
-import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
@@ -40,7 +41,7 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
-
+    @Serial
     private static final long serialVersionUID = -4948184589134809323L;
 
     /**
@@ -53,7 +54,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     public enum ArtyAutoHitCommand implements PhaseCommand {
         SET_HIT_HEX("setAutoHitHex");
 
-        String cmd;
+        final String cmd;
 
         /**
         * Priority that determines this buttons order
@@ -92,7 +93,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     // buttons
     protected Map<ArtyAutoHitCommand,MegaMekButton> buttons;
 
-    private Player p;
+    private Player player;
     private final PlayerIDandList<BoardLocation> artyAutoHitHexes = new PlayerIDandList<>();
 
     private int startingHexes;
@@ -106,24 +107,18 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
         super(clientgui);
         this.clientgui = clientgui;
-        clientgui.getClient().getGame().addGameListener(this);
-
-        clientgui.getBoardView().addBoardViewListener(this);
+        player = clientgui.getClient().getLocalPlayer();
+        artyAutoHitHexes.setPlayerID(player.getId());
+        game().addGameListener(this);
+//        clientgui.getBoardView().addBoardViewListener(this);
 
         setupStatusBar(Messages.getString("SelectArtyAutoHitHexDisplay.waitingArtillery"));
 
-        p = clientgui.getClient().getLocalPlayer();
-
-        artyAutoHitHexes.setPlayerID(p.getId());
-
         setButtons();
         setButtonsTooltips();
-
         butDone.setText(Messages.getString("SelectArtyAutoHitHexDisplay.Done"));
         butDone.setEnabled(false);
-
         setupButtonPanel();
-
         registerKeyCommands();
     }
 
@@ -181,7 +176,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
      */
     private void beginMyTurn() {
         // Make sure we've got the correct local player
-        p = clientgui.getClient().getLocalPlayer();
+        player = clientgui.getClient().getLocalPlayer();
         // By default, we should get 5 hexes per 4 mapsheets (4 mapsheets is
         // 16*17*4 hexes, so 1088)
         Game game = clientgui.getClient().getGame();
@@ -202,12 +197,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
      */
     private void endMyTurn() {
         stopTimer();
-
-        // end my turn, then.
         disableButtons();
-        clientgui.getBoardView().select(null);
-        clientgui.getBoardView().highlight(null);
-        clientgui.getBoardView().cursor(null);
+        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
     }
 
     /**
@@ -215,35 +206,21 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
      */
     private void disableButtons() {
         setArtyEnabled(0);
-
         butDone.setEnabled(false);
     }
 
-    private void addArtyAutoHitHex(BoardLocation boardLocation) {
-        if (!clientgui.getClient().getGame().hasBoardLocation(boardLocation)) {
-            return;
-        }
-        if (!artyAutoHitHexes.contains(boardLocation)
-                && (artyAutoHitHexes.size() < startingHexes)
-                && clientgui.doYesNoDialog(
+    private void addArtyAutoHitHex(BoardLocation location) {
+        if (game().hasBoardLocation(location) &&
+                  !artyAutoHitHexes.contains(location) &&
+                  (artyAutoHitHexes.size() < startingHexes) &&
+                  clientgui.doYesNoDialog(
                         Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"),
                         Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message",
-                              boardLocation.getBoardNum()))) {
-            artyAutoHitHexes.addElement(boardLocation);
+                              location.getBoardNum()))) {
+            artyAutoHitHexes.addElement(location);
             setArtyEnabled(startingHexes - artyAutoHitHexes.size());
-            p.addArtyAutoHitHex(boardLocation);
-            clientgui
-                    .getClient()
-                    .getGame()
-                    .getBoard(boardLocation)
-                    .addSpecialHexDisplay(
-                            boardLocation.coords(),
-                            new SpecialHexDisplay(
-                                    SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
-                                    SpecialHexDisplay.NO_ROUND, p,
-                                    "Artilery autohit, for player "
-                                            + p.getName(),
-                                    SpecialHexDisplay.SHD_VISIBLETO_TEAM));
+            player.addArtyAutoHitHex(location);
+            game().getBoard(location).addSpecialHexDisplay(location.coords(), SpecialHexDisplay.createArtyAutoHit(player));
             clientgui.getBoardView().refreshDisplayables();
         }
     }
@@ -252,26 +229,16 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     // BoardListener
     //
     @Override
-    public void hexMoused(BoardViewEvent b) {
-
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
+    public void hexMoused(BoardViewEvent event) {
+        if (isIgnoringEvents() ||
+                  (event.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) ||
+                  !clientgui.getClient().isMyTurn() ||
+                  (event.getButton() != MouseEvent.BUTTON1)) {
             return;
         }
-
-        if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
-            return;
-        }
-
-        // ignore buttons other than 1
-        if (!clientgui.getClient().isMyTurn()
-                || (b.getButton() != MouseEvent.BUTTON1)) {
-            return;
-        }
-
         // check for a deployment
-        clientgui.getBoardView().select(b.getCoords());
-        addArtyAutoHitHex(b.getBoardLocation());
+        event.getBoardView().select(event.getCoords());
+        addArtyAutoHitHex(event.getBoardLocation());
     }
 
     //
@@ -279,7 +246,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-        // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
@@ -302,25 +268,17 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         }
     }
 
-    /**
-     * called when the game changes phase.
-     *
-     * @param e
-     *            ignored parameter
-     */
     @Override
     public void gamePhaseChange(final GamePhaseChangeEvent e) {
-        // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
 
-        if (clientgui.getClient().isMyTurn()
-                && !clientgui.getClient().getGame().getPhase().isSetArtilleryAutohitHexes()) {
+        if (clientgui.getClient().isMyTurn() && !game().getPhase().isSetArtilleryAutohitHexes()) {
             endMyTurn();
         }
 
-        if (clientgui.getClient().getGame().getPhase().isSetArtilleryAutohitHexes()) {
+        if (game().getPhase().isSetArtilleryAutohitHexes()) {
             setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase"));
         }
     }
@@ -330,21 +288,13 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public void actionPerformed(ActionEvent ev) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (!clientgui.getClient().isMyTurn()) {
-            // odd...
-            return;
-        }
+        // Nothing here
     }
 
     @Override
     public void clear() {
         artyAutoHitHexes.clear();
-        p.removeArtyAutoHitHexes();
+        player.removeArtyAutoHitHexes();
         setArtyEnabled(startingHexes);
     }
 
@@ -375,5 +325,9 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     private void registerKeyCommands() {
         clientgui.controller.registerCommandAction(KeyCommandBind.AUTO_ARTY_DEPLOYMENT_ZONE,
                 this, this::toggleShowDeployment);
+    }
+
+    private Game game() {
+        return clientgui.getClient().getGame();
     }
 }

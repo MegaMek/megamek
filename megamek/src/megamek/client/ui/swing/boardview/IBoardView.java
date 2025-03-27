@@ -232,4 +232,38 @@ public interface IBoardView {
      * @param sprites the Sprites to remove
      */
     void removeSprites(Collection<? extends Sprite> sprites);
+
+    /**
+     * Highlights the given coords, if they are on the board. When coords is null, remove the highlight. Note that a
+     * BoardView implementation may choose to do nothing.
+     *
+     * @param coords the Coords to highlight
+     */
+    void highlight(Coords coords);
+
+    /**
+     * Selects the given coords, if they are on the board. When coords is null, remove the selection. Note that a
+     * BoardView implementation may choose to do nothing.
+     *
+     * @param coords the Coords to select
+     */
+    void select(Coords coords);
+
+    /**
+     * Places a cursor on the given coords, if they are on the board. When coords is null, remove the cursor. Note
+     * that a BoardView implementation may choose to do nothing.
+     *
+     * @param coords the Coords to cursor
+     */
+    void cursor(Coords coords);
+
+    /**
+     * Removes the markers set by the select(), cursor() and highlight() methods.
+     */
+    default void clearMarkedHexes() {
+        select(null);
+        highlight(null);
+        cursor(null);
+    }
+
 }

@@ -47,17 +47,17 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
     private int twist;
     private boolean flipArms;
 
-    FiringPlan() {
+    public FiringPlan() {
         setTwist(0);
         setUtility(0);
     }
 
-    FiringPlan(Targetable target) {
+    public FiringPlan(Targetable target) {
         this();
         this.target = target;
     }
 
-    FiringPlan(Targetable target, boolean flipArms) {
+    public FiringPlan(Targetable target, boolean flipArms) {
         this(target);
         this.flipArms = flipArms;
     }

@@ -178,13 +178,14 @@ public class Terrains implements Serializable {
 
     // Set of all hazardous terrain types
     public static final Set<Integer> HAZARDS = Set.of(
-        Terrains.FIRE, Terrains.MAGMA, Terrains.ICE, Terrains.WATER, Terrains.BUILDING, Terrains.BRIDGE, Terrains.BLACK_ICE, Terrains.SNOW,
-        Terrains.SWAMP, Terrains.MUD, Terrains.TUNDRA, Terrains.HAZARDOUS_LIQUID, Terrains.ULTRA_SUBLEVEL);
+          Terrains.FIRE, Terrains.MAGMA, Terrains.ICE, Terrains.WATER, Terrains.BUILDING, Terrains.BRIDGE,
+          Terrains.BLACK_ICE, Terrains.SNOW, Terrains.SWAMP, Terrains.MUD, Terrains.TUNDRA, Terrains.HAZARDOUS_LIQUID,
+          Terrains.ULTRA_SUBLEVEL, Terrains.FUEL_TANK);
 
     // Set of all hazardous terrain types + black ice
     public static final Set<Integer> HAZARDS_WITH_BLACK_ICE = Set.of(Terrains.PAVEMENT, Terrains.FIRE, Terrains.MAGMA, Terrains.ICE,
         Terrains.WATER, Terrains.BUILDING, Terrains.BRIDGE, Terrains.BLACK_ICE, Terrains.SNOW, Terrains.SWAMP, Terrains.MUD,
-        Terrains.TUNDRA, Terrains.HAZARDOUS_LIQUID, Terrains.ULTRA_SUBLEVEL);
+        Terrains.TUNDRA, Terrains.HAZARDOUS_LIQUID, Terrains.ULTRA_SUBLEVEL, Terrains.FUEL_TANK);
 
     /**
      * Checks to see if the given terrain type can have exits.

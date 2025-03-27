@@ -69,7 +69,6 @@ public class Client extends AbstractClient {
     protected final Game game = new Game();
 
     private Set<BoardDimensions> availableSizes = new TreeSet<>();
-    private Vector<Coords> artilleryAutoHitHexes = null;
     private AbstractSkillGenerator skillGenerator;
 
     // FIXME: Should ideally be located elsewhere; the client should handle data,
@@ -88,13 +87,6 @@ public class Client extends AbstractClient {
 
     public Game getGame() {
         return game;
-    }
-
-    /**
-     * Get hexes designated for automatic artillery hits.
-     */
-    public Vector<Coords> getArtilleryAutoHit() {
-        return artilleryAutoHitHexes;
     }
 
     public Entity getEntity(int id) {
@@ -396,7 +388,6 @@ public class Client extends AbstractClient {
      * Sends a "set Artillery Autohit Hexes" packet
      */
     public void sendArtyAutoHitHexes(Vector<Coords> hexes) {
-        artilleryAutoHitHexes = hexes; // save for minimap use
         send(new Packet(PacketCommand.SET_ARTILLERY_AUTOHIT_HEXES, hexes));
     }
 

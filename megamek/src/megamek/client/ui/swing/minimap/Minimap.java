@@ -787,11 +787,13 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     }
                 }
 
-                if ((client != null) && (client.getArtilleryAutoHit() != null)) {
-                    for (int i = 0; i < client.getArtilleryAutoHit().size(); i++) {
-                        drawAutoHit(g, client.getArtilleryAutoHit().get(i));
+                Player localPlayer = getLocalPlayer();
+                if (localPlayer != null) {
+                    for (Coords autoHitHex : localPlayer.getArtyAutoHitHexes()) {
+                        drawAutoHit(g, autoHitHex);
                     }
                 }
+
             }
         }
 

@@ -51,6 +51,7 @@ public final class Player extends TurnOrdered {
     private String name;
     private String email;
     private final int id;
+    private int elo;
 
     private int team = TEAM_NONE;
 
@@ -111,6 +112,8 @@ public final class Player extends TurnOrdered {
     public Player(int id, String name) {
         this.name = name;
         this.id = id;
+        //initialisation à 0 lors que le joueurs est créer
+        this.elo = 0;
     }
     //endregion Constructors
 
@@ -147,6 +150,15 @@ public final class Player extends TurnOrdered {
     public boolean hasMinefields() {
         return (numMfCmd > 0) || (numMfConv > 0) || (numMfVibra > 0) || (numMfActive > 0) || (numMfInferno > 0)
               || getGroundObjectsToPlace().size() > 0;
+    }
+
+    public int getPlayerElo()
+    {
+        return this.elo;
+    }
+    public void setPlayerElo(int score)
+    {
+        this.elo+=score;
     }
 
     public void setNbrMFConventional(int nbrMF) {

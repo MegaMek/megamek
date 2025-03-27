@@ -335,16 +335,15 @@ public class SpecialHexDisplay implements Serializable {
     }
 
     /**
-     * Determine whether the current SpecialHexDisplay should be displayed
-     * Note Artillery Hits and Bomb Hits (direct hits on their targets) will always
-     * display
-     * in the appropriate phase. Other bomb- or artillery-related graphics are
-     * optional.
+     * Determine whether the current SpecialHexDisplay should be displayed Note Artillery Hits and Bomb Hits (direct
+     * hits on their targets) will always display in the appropriate phase. Other bomb- or artillery-related graphics
+     * are optional.
      *
-     * @param phase             The current phase of the game
-     * @param curRound          The current round
-     * @param playerChecking    The player checking the display
-     * @param guiPref           The GUI preferences
+     * @param phase          The current phase of the game
+     * @param curRound       The current round
+     * @param playerChecking The player checking the display
+     * @param guiPref        The GUI preferences
+     *
      * @return True if the image should be displayed
      */
     public boolean drawNow(GamePhase phase, int curRound, Player playerChecking, GUIPreferences guiPref) {

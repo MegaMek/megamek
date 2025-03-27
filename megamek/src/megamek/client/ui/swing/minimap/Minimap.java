@@ -713,7 +713,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                         if (h.containsTerrain(SPACE)) {
                             paintSpaceCoord(gg, j, k);
                         } else if (h.containsTerrain(SKY)) {
-                            paintLowAtmoSkyCoord(gg, j, k);
+                            paintLowAtmoSkyCoord(gg, j, k, paintBorders && zoom > 1);
                         } else {
                             paintCoord(gg, j, k, paintBorders && zoom > 1);
                         }
@@ -1071,13 +1071,16 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         g.drawPolygon(xPoints, yPoints, 6);
     }
 
-    private void paintLowAtmoSkyCoord(Graphics g, int x, int y) {
+    private void paintLowAtmoSkyCoord(Graphics g, int x, int y, boolean paintBorder) {
         int[] xPoints = xPoints(x);
         int[] yPoints = yPoints(x, y);
-        int c = 160 + (int) (Math.random() * 80);
+        int c = 190;
         g.setColor(new Color(c / 2, c, c));
         g.fillPolygon(xPoints, yPoints, 6);
-        g.setColor(Color.LIGHT_GRAY);
+        if (paintBorder) {
+            c = 170;
+            g.setColor(new Color(c / 2, c, c));
+        }
         g.drawPolygon(xPoints, yPoints, 6);
     }
 
@@ -1843,8 +1846,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
         @Override
         public void boardChangedHex(BoardEvent b) {
-            // This must be tolerant since it might be called without notifying us of the
-            // boardsize first
+            // This must be tolerant since it might be called without notifying us of the boardsize first
             int x = b.getCoords().getX();
             int y = b.getCoords().getY();
             if ((x >= dirty.length) || (y >= dirty[x].length)) {
@@ -1852,6 +1854,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             } else {
                 dirty[x / 10][y / 10] = true;
             }
+            refreshMap();
         }
     };
 

@@ -729,7 +729,7 @@ public final class Player extends TurnOrdered {
         copy.numMfActive = numMfActive;
         copy.numMfInferno = numMfInferno;
 
-        copy.artyAutoHitHexes = new Vector<>(artyAutoHitHexes);
+        copy.artyAutoHitHexes = new ArrayList<>(artyAutoHitHexes);
 
         copy.initialEntityCount = initialEntityCount;
         copy.initialBV = initialBV;

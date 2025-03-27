@@ -110,10 +110,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         player = clientgui.getClient().getLocalPlayer();
         artyAutoHitHexes.setPlayerID(player.getId());
         game().addGameListener(this);
-//        clientgui.getBoardView().addBoardViewListener(this);
 
         setupStatusBar(Messages.getString("SelectArtyAutoHitHexDisplay.waitingArtillery"));
-
         setButtons();
         setButtonsTooltips();
         butDone.setText(Messages.getString("SelectArtyAutoHitHexDisplay.Done"));
@@ -177,18 +175,16 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     private void beginMyTurn() {
         // Make sure we've got the correct local player
         player = clientgui.getClient().getLocalPlayer();
-        // By default, we should get 5 hexes per 4 mapsheets (4 mapsheets is
-        // 16*17*4 hexes, so 1088)
+        // By default, we should get 5 hexes per 4 mapsheets (4 mapsheets is 16*17*4 = 1088 hexes)
         Game game = clientgui.getClient().getGame();
         Board board = game.getBoard();
         int preDesignateArea = game.getOptions().intOption(OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE);
         int hexesPer = game.getOptions().intOption(OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE);
         double mapArea = board.getWidth() * board.getHeight();
-        startingHexes = (int) Math.ceil((mapArea) / preDesignateArea) * hexesPer;
+        startingHexes = (int) Math.ceil(mapArea / preDesignateArea) * hexesPer;
         artyAutoHitHexes.clear();
         setArtyEnabled(startingHexes);
         butDone.setEnabled(true);
-
         startTimer();
     }
 
@@ -218,15 +214,16 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
                         Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message",
                               location.getBoardNum()))) {
             artyAutoHitHexes.addElement(location);
-            setArtyEnabled(startingHexes - artyAutoHitHexes.size());
             player.addArtyAutoHitHex(location);
-            game().getBoard(location).addSpecialHexDisplay(location.coords(), SpecialHexDisplay.createArtyAutoHit(player));
-            clientgui.getBoardView().refreshDisplayables();
+            var autoHitIcon = SpecialHexDisplay.createArtyAutoHit(player);
+            game().getBoard(location).addSpecialHexDisplay(location.coords(), autoHitIcon, true);
+            setArtyEnabled(startingHexes - artyAutoHitHexes.size());
+            clientgui.boardViews().forEach(IBoardView::refreshDisplayables);
         }
     }
 
     //
-    // BoardListener
+    // BoardViewListener
     //
     @Override
     public void hexMoused(BoardViewEvent event) {
@@ -236,7 +233,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
                   (event.getButton() != MouseEvent.BUTTON1)) {
             return;
         }
-        // check for a deployment
+
         event.getBoardView().select(event.getCoords());
         addArtyAutoHitHex(event.getBoardLocation());
     }

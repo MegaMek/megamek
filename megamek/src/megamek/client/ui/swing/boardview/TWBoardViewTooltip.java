@@ -281,18 +281,13 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         int round = game.getRoundCount();
         if (shdList != null) {
             String sSpecialHex = "";
-            boolean isHexAutoHit = (localPlayer != null) &&
-                         localPlayer.getArtyAutoHitHexes().contains(BoardLocation.of(coords, bv.getBoardId()));
             for (SpecialHexDisplay shd : shdList) {
                 boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
-                // Don't draw if this SHD is obscured from this player
-                // The SHD list may also contain stale SHDs, so don't show
-                // tooltips for SHDs that aren't drawn.
-                // The exception is auto hits.  There will be an icon for auto
-                // hits, so we need to draw a tooltip
+                // Don't draw if this SHD is obscured from this player The SHD list may also contain stale SHDs, so
+                // don't show tooltips for SHDs that aren't drawn. The exception is auto hits.  There will be an icon
+                // for auto hits, so we need to draw a tooltip
                 if (!shd.isObscured(localPlayer)
-                        && (shd.drawNow(game.getPhase(), round, localPlayer, GUIP)
-                        || (isHexAutoHit && isTypeAutoHit))) {
+                        && (shd.drawNow(game.getPhase(), round, localPlayer, GUIP) && isTypeAutoHit)) {
                     if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
                         if (Objects.equals(localPlayer, shd.getOwner())) {
                             sSpecialHex += "Note: ";

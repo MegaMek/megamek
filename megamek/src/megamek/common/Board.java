@@ -1638,7 +1638,13 @@ public class Board implements Serializable {
         }
     }
 
-    protected void processBoardEvent(BoardEvent event) {
+    /**
+     * Fires a board event which typically leads to the boardview and minimap being redrawn. This is public as the
+     * boards and minimaps show some data that is not part of the Board class and Board has no way of knowing when a
+     * change happens. An example of this is arty auto hexes which are stored in the player class
+     * @param event
+     */
+    public void processBoardEvent(BoardEvent event) {
         if (boardListeners == null) {
             return;
         }
@@ -1703,13 +1709,14 @@ public class Board implements Serializable {
     }
 
     /**
-     * Adds the given SHD at the given coords to this board. This method should be used only by the server (including
-     * weaponhandlers).
+     * Adds the given SHD at the given coords to this board. An event can be fired for this board change (this should
+     * not be done on the Server).
      *
      * @param coords The position of the SHD on this board
      * @param shd The SpecialHexDisplay to add
+     * @param fireEvent When true, a BoardEvent is fired for the affected coords
      */
-    public void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd) {
+    public void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd, boolean fireEvent) {
         Collection<SpecialHexDisplay> col;
         if (!specialHexes.containsKey(coords)) {
             col = new LinkedList<>();
@@ -1723,6 +1730,20 @@ public class Board implements Serializable {
         }
 
         col.add(shd);
+
+        if (fireEvent) {
+            processBoardEvent(new BoardEvent(this, coords, BoardEvent.BOARD_CHANGED_HEX));
+        }
+    }
+
+    /**
+     * Adds the given SHD at the given coords to this board. This method does not fire an event for the change.
+     *
+     * @param coords The position of the SHD on this board
+     * @param shd The SpecialHexDisplay to add
+     */
+    public void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd) {
+        addSpecialHexDisplay(coords, shd, false);
     }
 
     /**

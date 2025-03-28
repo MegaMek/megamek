@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.List;
 
 import megamek.common.Aero;
@@ -32,19 +33,21 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 23, 2004
  */
 public class SpaceBombAttackHandler extends WeaponHandler {
-    private static final MMLogger logger = MMLogger.create(SpaceBombAttackHandler.class);
+    private static final MMLogger LOGGER = MMLogger.create(SpaceBombAttackHandler.class);
 
+    @Serial
     private static final long serialVersionUID = -2439937071168853215L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     * @param toHit              {@link ToHitData} Object
+     * @param weaponAttackAction {@link WeaponAttackAction} Object
+     * @param game               {@link Game} Object
+     * @param twGameManager      {@link TWGameManager} Object
      */
-    public SpaceBombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
-        super(toHit, waa, g, m);
+    public SpaceBombAttackHandler(ToHitData toHit, WeaponAttackAction weaponAttackAction, Game game,
+                                  TWGameManager twGameManager) {
+        super(toHit, weaponAttackAction, game, twGameManager);
         generalDamageType = HitData.DAMAGE_NONE;
-        // payload = waa.getBombPayload();
     }
 
     /**
@@ -58,22 +61,23 @@ public class SpaceBombAttackHandler extends WeaponHandler {
         if (null == payload) {
             return 0;
         }
-        int nbombs = 0;
-        for (int i = 0; i < payload.length; i++) {
-            nbombs += payload[i];
+        int numberOfBombs = 0;
+
+        for (int j : payload) {
+            numberOfBombs += j;
         }
+
         if (bDirect) {
-            nbombs = Math.min(nbombs + (toHit.getMoS() / 3), nbombs * 2);
+            numberOfBombs = Math.min(numberOfBombs + (toHit.getMoS() / 3), numberOfBombs * 2);
         }
 
-        nbombs = applyGlancingBlowModifier(nbombs, false);
+        numberOfBombs = applyGlancingBlowModifier(numberOfBombs, false);
 
-        return nbombs;
+        return numberOfBombs;
     }
 
     /**
-     * Does this attack use the cluster hit table? necessary to determine how
-     * Aero damage should be applied
+     * Does this attack use the cluster hit table? necessary to determine how Aero damage should be applied
      */
     @Override
     protected boolean usesClusterTable() {
@@ -89,14 +93,15 @@ public class SpaceBombAttackHandler extends WeaponHandler {
 
         // Need to remove ammo from fighters within a squadron
         if (ae instanceof FighterSquadron) {
-            // In a fighter squadron, we will haved dropped a salvo of bombs.
-            // The salvo consists of one bomb from each fighter equipped with
-            // a bomb of the proper type.
+            // In a fighter squadron, we will have had dropped a salvo of bombs. The salvo consists of one bomb from
+            // each fighter equipped with a bomb of the proper type.
             for (int type = 0; type < payload.length; type++) {
                 List<Entity> activeFighters = ae.getActiveSubEntities();
+
                 if (activeFighters.isEmpty()) {
                     break;
                 }
+
                 int fighterIndex = 0;
                 for (int i = 0; i < payload[type]; i++) {
                     boolean bombRemoved = false;
@@ -106,8 +111,8 @@ public class SpaceBombAttackHandler extends WeaponHandler {
                         // find the first mounted bomb of this type and drop it
                         for (Mounted<?> bomb : fighter.getBombs()) {
                             if (((BombType) bomb.getType()).getBombType() == type &&
-                                    !bomb.isDestroyed()
-                                    && bomb.getUsableShotsLeft() > 0) {
+                                      !bomb.isDestroyed() &&
+                                      bomb.getUsableShotsLeft() > 0) {
                                 bomb.setShotsLeft(0);
                                 bombRemoved = true;
                                 break;
@@ -118,17 +123,18 @@ public class SpaceBombAttackHandler extends WeaponHandler {
                     }
 
                     if (iterations > activeFighters.size()) {
-                        logger.error("Couldn't find ammo for a dropped bomb");
+                        LOGGER.error("Couldn't find ammo for a dropped bomb");
                     }
                 }
                 // Now remove a bomb from the squadron
                 if (payload[type] > 0) {
-                    double numSalvos = Math.ceil((payload[type] + 0.0) / activeFighters.size());
+                    int numSalvos = (int) Math.ceil((payload[type] + 0.0) / activeFighters.size());
+
                     for (int salvo = 0; salvo < numSalvos; salvo++) {
                         for (Mounted<?> bomb : ae.getBombs()) {
-                            if (((BombType) bomb.getType()).getBombType() == type
-                                    && !bomb.isDestroyed()
-                                    && bomb.getUsableShotsLeft() > 0) {
+                            if (((BombType) bomb.getType()).getBombType() == type &&
+                                      !bomb.isDestroyed() &&
+                                      bomb.getUsableShotsLeft() > 0) {
                                 bomb.setShotsLeft(0);
                                 break;
                             }
@@ -142,8 +148,8 @@ public class SpaceBombAttackHandler extends WeaponHandler {
                     // find the first mounted bomb of this type and drop it
                     for (Mounted<?> bomb : ae.getBombs()) {
                         if (((BombType) bomb.getType()).getBombType() == type &&
-                                !bomb.isDestroyed()
-                                && bomb.getUsableShotsLeft() > 0) {
+                                  !bomb.isDestroyed() &&
+                                  bomb.getUsableShotsLeft() > 0) {
                             bomb.setShotsLeft(0);
                             break;
                         }

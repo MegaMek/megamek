@@ -318,16 +318,19 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     private void toggleShowDeployment() {
-        clientgui.getBoardView().showAllDeployment = !clientgui.getBoardView().showAllDeployment;
-        clientgui.getBoardView().getPanel().repaint();
+        GUIP.setShowDeploymentZonesInArtyAuto(!GUIP.showDeploymentZonesInArtyAuto());
     }
 
     private void registerKeyCommands() {
         clientgui.controller.registerCommandAction(KeyCommandBind.AUTO_ARTY_DEPLOYMENT_ZONE,
-                this, this::toggleShowDeployment);
+              this::shouldReceiveShowDeployment, this::toggleShowDeployment, () -> {});
     }
 
     private Game game() {
         return clientgui.getClient().getGame();
+    }
+
+    public boolean shouldReceiveShowDeployment() {
+        return !clientgui.isChatBoxActive() && !isIgnoringEvents() && isVisible();
     }
 }

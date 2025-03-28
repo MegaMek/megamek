@@ -339,12 +339,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      */
     ImageCache<Coords, HexImageCacheEntry> hexImageCache;
 
-    /**
-     * Keeps track of whether all deployment zones should
-     * be shown in the Arty Auto Hit Designation phase
-     */
-    public boolean showAllDeployment = false;
-
     private boolean showLobbyPlayerDeployment = false;
 
     private long paintCompsStartTime;
@@ -392,6 +386,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private final TerrainShadowHelper shadowHelper = new TerrainShadowHelper(this);
+
+    /**
+     * Keeps track of whether all deployment zones should be shown in the Arty Auto Hit Designation phase
+     */
+    public boolean showAllDeployment = GUIP.showDeploymentZonesInArtyAuto();
 
     private final StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
             .color(GUIP.getWarningColor()).font(FontHandler.notoFont().deriveFont(Font.BOLD)).center();
@@ -753,6 +752,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         switch (e.getName()) {
+            case GUIPreferences.SHOW_DEPLOY_ZONES_ARTY_AUTO:
+                showAllDeployment = (boolean) e.getNewValue();
+                repaint();
+                break;
+
             case ClientPreferences.MAP_TILESET:
                 clearHexImageCache();
                 updateBoard();

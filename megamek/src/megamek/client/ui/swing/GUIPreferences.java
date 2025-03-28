@@ -94,6 +94,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_ARTILLERY_DRIFTS = "ShowArtilleryHits";
     public static final String SHOW_BOMB_MISSES = "ShowBombMisses";
     public static final String SHOW_BOMB_DRIFTS = "ShowBombDrifts";
+    public static final String SHOW_DEPLOY_ZONES_ARTY_AUTO = "ShowDeployZonesArtyAuto";
 
     public static final String UNIT_OVERVIEW_TEXT_SHADOW_COLOR = "UnitOverviewTextShadowColor";
     public static final String UNIT_OVERVIEW_CONDITION_SHADOW_COLOR = "UnitOverviewConditionShadowColor";
@@ -546,6 +547,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_ARTILLERY_DRIFTS, true);
         store.setDefault(SHOW_BOMB_MISSES, true);
         store.setDefault(SHOW_BOMB_DRIFTS, false);
+        store.setDefault(SHOW_DEPLOY_ZONES_ARTY_AUTO, false);
 
         setDefault(UNIT_OVERVIEW_TEXT_SHADOW_COLOR, Color.black);
         setDefault(UNIT_OVERVIEW_CONDITION_SHADOW_COLOR, Color.darkGray);
@@ -3498,5 +3500,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMovePathPersistenceOnMiniMap(int rounds) {
         store.setValue(MINI_MAP_MOVE_PATH_PERSISTENCE, rounds);
+    }
+
+    public boolean showDeploymentZonesInArtyAuto() {
+        return store.getBoolean(SHOW_DEPLOY_ZONES_ARTY_AUTO);
+    }
+
+    public void setShowDeploymentZonesInArtyAuto(boolean state) {
+        store.setValue(SHOW_DEPLOY_ZONES_ARTY_AUTO, state);
     }
 }

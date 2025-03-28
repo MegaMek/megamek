@@ -26,6 +26,7 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.FiringDisplay.FiringCommand;
+import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegaMekButton;
@@ -1059,11 +1060,11 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                     torsoTwist(b.getCoords());
                 }
             }
-            clientgui.getBoardView().cursor(b.getCoords());
+            b.getBoardView().cursor(b.getCoords());
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
             if (!shiftheld) {
-                clientgui.getBoardView().select(b.getCoords());
+                b.getBoardView().select(b.getCoords());
             }
         }
     }
@@ -1368,8 +1369,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     @Override
     public void clear() {
         clearAttacks();
-        clientgui.getBoardView().select(null);
-        clientgui.getBoardView().cursor(null);
+        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         refreshAll();
     }
 
@@ -1383,7 +1383,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         if (clientgui.getClient().isMyTurn() && (ce() != null)) {
             clientgui.maybeShowUnitDisplay();
-            clientgui.getBoardView().centerOnHex(ce().getPosition());
+            IBoardView bv = clientgui.getBoardView(ce());
+            if (bv != null) {
+                bv.centerOnHex(ce().getPosition());
+            }
         }
     }
 

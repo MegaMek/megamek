@@ -89,8 +89,14 @@ import megamek.utilities.xml.MMXMLUtility;
  * Entity is a master class for basically anything on the board except terrain.
  */
 @JsonDeserialize(using = EntityDeserializer.class)
-public abstract class Entity extends TurnOrdered
-      implements Transporter, Targetable, RoundUpdated, PhaseUpdated, ITechnology, ForceAssignable, CombatRole, Deployable {
+public abstract class Entity extends TurnOrdered implements Transporter,
+                                                                  Targetable,
+                                                                  RoundUpdated,
+                                                                  PhaseUpdated,
+                                                                  ITechnology,
+                                                                  ForceAssignable,
+                                                                  CombatRole,
+                                                                  Deployable {
 
     private static final MMLogger logger = MMLogger.create(Entity.class);
 
@@ -3858,12 +3864,13 @@ public abstract class Entity extends TurnOrdered
     /**
      * Creates a new mount for this equipment and adds it in.
      */
-    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc, boolean rearMounted, int baMountLoc, boolean isArmored, boolean isTurreted)
-          throws LocationFullException {
+    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc, boolean rearMounted, int baMountLoc,
+                                   boolean isArmored, boolean isTurreted) throws LocationFullException {
         return addEquipment(equipmentType, loc, rearMounted, baMountLoc, isArmored, isTurreted, false, false, false);
     }
 
-    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc, boolean rearMounted, int baMountLoc, boolean isArmored, boolean isTurreted, boolean isSponsonTurreted)
+    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc, boolean rearMounted, int baMountLoc,
+                                   boolean isArmored, boolean isTurreted, boolean isSponsonTurreted)
           throws LocationFullException {
         return addEquipment(equipmentType,
               loc,
@@ -3876,8 +3883,9 @@ public abstract class Entity extends TurnOrdered
               false);
     }
 
-    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc, boolean rearMounted, int baMountLoc, boolean isArmored, boolean isTurreted, boolean isSponsonTurreted, boolean isPintleTurreted)
-          throws LocationFullException {
+    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc, boolean rearMounted, int baMountLoc,
+                                   boolean isArmored, boolean isTurreted, boolean isSponsonTurreted,
+                                   boolean isPintleTurreted) throws LocationFullException {
         return addEquipment(equipmentType,
               loc,
               rearMounted,
@@ -3889,8 +3897,9 @@ public abstract class Entity extends TurnOrdered
               false);
     }
 
-    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc, boolean rearMounted, int baMountLoc, boolean isArmored, boolean isTurreted, boolean isSponsonTurreted, boolean isPintleTurreted, boolean isOmniPodded)
-          throws LocationFullException {
+    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc, boolean rearMounted, int baMountLoc,
+                                   boolean isArmored, boolean isTurreted, boolean isSponsonTurreted,
+                                   boolean isPintleTurreted, boolean isOmniPodded) throws LocationFullException {
         Mounted<?> mounted = Mounted.createMounted(this, equipmentType);
         mounted.setArmored(isArmored);
         mounted.setBaMountLoc(baMountLoc);
@@ -3945,8 +3954,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * indicate whether this is body mounted for BAs
      */
-    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc, boolean rearMounted, int baMountLoc, boolean dwpMounted)
-          throws LocationFullException {
+    public Mounted<?> addEquipment(EquipmentType equipmentType, int loc, boolean rearMounted, int baMountLoc,
+                                   boolean dwpMounted) throws LocationFullException {
         Mounted<?> mounted = Mounted.createMounted(this, equipmentType);
         mounted.setBaMountLoc(baMountLoc);
         mounted.setDWPMounted(dwpMounted);
@@ -7394,7 +7403,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * Checks if an entity is passing through certain terrain while not moving carefully
      */
-    public PilotingRollData checkRecklessMove(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos, Coords curPos, Hex prevHex) {
+    public PilotingRollData checkRecklessMove(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos,
+                                              Coords curPos, Hex prevHex) {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         PilotingRollData roll = getBasePilotingRoll(moveType);
         // no need to go further if movement is careful
@@ -7579,7 +7589,9 @@ public abstract class Entity extends TurnOrdered
     /**
      * Checks if the entity might skid. If so, returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
+    public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
+                                      MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing,
+                                      Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
 
         if (isAirborne() || isAirborneVTOLorWIGE()) {
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "flying units don't skid");
@@ -7645,7 +7657,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * Checks if the entity is moving into rubble. If so, returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkRubbleMove(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos, Coords curPos, boolean isLastStep, boolean isPavementStep) {
+    public PilotingRollData checkRubbleMove(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos,
+                                            Coords curPos, boolean isLastStep, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         addPilotingModifierForTerrain(roll, curPos, true);
 
@@ -7670,7 +7683,8 @@ public abstract class Entity extends TurnOrdered
      * Checks if the entity is moving into a hex that might cause it to bog down. If so, returns the target roll for the
      * piloting skill check.
      */
-    public PilotingRollData checkBogDown(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos, Coords curPos, int lastElev, boolean isPavementStep) {
+    public PilotingRollData checkBogDown(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos,
+                                         Coords curPos, int lastElev, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         int bgMod = curHex.getBogDownModifier(getMovementMode(), this instanceof LargeSupportTank);
 
@@ -7705,7 +7719,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * Checks if the entity is moving into depth 1+ water. If so, returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkWaterMove(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos, Coords curPos, boolean isPavementStep) {
+    public PilotingRollData checkWaterMove(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos,
+                                           Coords curPos, boolean isPavementStep) {
         if ((curHex.terrainLevel(Terrains.WATER) > 0) &&
                   (step.getElevation() < 0) &&
                   !lastPos.equals(curPos) &&
@@ -7865,7 +7880,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * Calculates and returns the roll for an entity moving in buildings.
      */
-    public PilotingRollData rollMovementInBuilding(Building bldg, int distance, String why, EntityMovementType overallMoveType) {
+    public PilotingRollData rollMovementInBuilding(Building bldg, int distance, String why,
+                                                   EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if ((this instanceof Mek) && isSuperHeavy()) {
@@ -7975,7 +7991,8 @@ public abstract class Entity extends TurnOrdered
      *
      * @return True if the entity failed a driving check due to turning too sharply.
      */
-    public PilotingRollData checkTurnModeFailure(EntityMovementType overallMoveType, int straightLineHexes, int mpUsed, Coords currPos) {
+    public PilotingRollData checkTurnModeFailure(EntityMovementType overallMoveType, int straightLineHexes, int mpUsed,
+                                                 Coords currPos) {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
@@ -11231,7 +11248,9 @@ public abstract class Entity extends TurnOrdered
         iNarcPods.clear();
     }
 
-    public PilotingRollData checkSideSlip(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, int distance, boolean speedBooster) {
+    public PilotingRollData checkSideSlip(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
+                                          MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
+                                          Coords curPos, int distance, boolean speedBooster) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if ((moveType != EntityMovementType.MOVE_JUMP) &&
@@ -13145,7 +13164,8 @@ public abstract class Entity extends TurnOrdered
      *
      * @return true if there was a masc failure.
      */
-    public boolean checkForMASCFailure(MovePath md, Vector<Report> vDesc, HashMap<Integer, List<CriticalSlot>> vCriticals) {
+    public boolean checkForMASCFailure(MovePath md, Vector<Report> vDesc,
+                                       HashMap<Integer, List<CriticalSlot>> vCriticals) {
         if (md.hasActiveMASC()) {
             boolean bFailure;
 
@@ -13171,7 +13191,8 @@ public abstract class Entity extends TurnOrdered
      *
      * @return true if there was a Supercharger failure.
      */
-    public boolean checkForSuperchargerFailure(MovePath md, Vector<Report> vDesc, HashMap<Integer, List<CriticalSlot>> vCriticals) {
+    public boolean checkForSuperchargerFailure(MovePath md, Vector<Report> vDesc,
+                                               HashMap<Integer, List<CriticalSlot>> vCriticals) {
         if (md.hasActiveSupercharger()) {
             boolean bFailure;
 
@@ -13197,7 +13218,8 @@ public abstract class Entity extends TurnOrdered
      *
      * @return True if there is a MASC failure, false otherwise
      */
-    private boolean doMASCOrSuperchargerFailureCheckFor(MiscMounted masc, Vector<Report> vDesc, HashMap<Integer, List<CriticalSlot>> vCriticals) {
+    private boolean doMASCOrSuperchargerFailureCheckFor(MiscMounted masc, Vector<Report> vDesc,
+                                                        HashMap<Integer, List<CriticalSlot>> vCriticals) {
         if ((masc != null) && masc.curMode().equals("Armed")) {
             boolean bFailure = false;
             Roll diceRoll = Compute.rollD6(2);
@@ -13979,7 +14001,7 @@ public abstract class Entity extends TurnOrdered
      */
     public static String getEntityTypeName(long typeId) {
         if ((typeId & ETYPE_LAND_AIR_MEK) == ETYPE_LAND_AIR_MEK) {
-            return "Landair Mek";
+            return "Land Air Mek";
         } else if ((typeId & ETYPE_BIPED_MEK) == ETYPE_BIPED_MEK) {
             return "Biped Mek";
         } else if ((typeId & ETYPE_QUAD_MEK) == ETYPE_QUAD_MEK) {

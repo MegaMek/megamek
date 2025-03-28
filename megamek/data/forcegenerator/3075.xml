@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3075-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='AB'>
 			<omniMargin>1</omniMargin>
@@ -4187,11 +4184,11 @@
             </model>
             <model name='(Tracked Sniper)'>
                 <roles>mixed_artillery</roles>
-                <availability>CLAN.IS!Second Line:5!Solahma:5,CBS!Second Line:5!Solahma:6,CHH!Second Line:5!Solahma:6!Provisional Garrison:4,CSL!Second Line:5!Solahma:6!Provisional Garrison:4</availability>
+                <availability>CLAN.IS!Second Line:5!Solahma:5,CBS!Second Line:5!Solahma:6,CHH!Second Line:5!Solahma:6!Provisional Garrison:4,CSL!Second Line:5!Solahma:6!Provisional Garrison:4,CWIE:5</availability>
             </model>
             <model name='(Tracked Thumper)'>
                 <roles>mixed_artillery</roles>
-                <availability>CLAN.IS!Second Line:6!Solahma:6,CBS!Second Line:6!Solahma:7,CHH!Second Line:6!Solahma:7!Provisional Garrison:5,CSL!Second Line:6!Solahma:7!Provisional Garrison:5</availability>
+                <availability>CLAN.IS!Second Line:6!Solahma:6,CBS!Second Line:6!Solahma:7,CHH!Second Line:6!Solahma:7!Provisional Garrison:5,CSL!Second Line:6!Solahma:7!Provisional Garrison:5,CWIE:6</availability>
             </model>
             <model name='(Wheeled Arrow IV)'>
                 <roles>mixed_artillery</roles>
@@ -4199,11 +4196,11 @@
             </model>
             <model name='(Wheeled Sniper)'>
                 <roles>mixed_artillery</roles>
-                <availability>CLAN.IS!Second Line:6!Solahma:6,CBS!Second Line:6!Solahma:7,CHH!Second Line:6!Solahma:7!Provisional Garrison:7,CSL!Second Line:6!Solahma:7!Provisional Garrison:7</availability>
+                <availability>CLAN.IS!Second Line:6!Solahma:6,CBS!Second Line:6!Solahma:7,CHH!Second Line:6!Solahma:7!Provisional Garrison:7,CSL!Second Line:6!Solahma:7!Provisional Garrison:7,CWIE:6</availability>
             </model>
             <model name='(Wheeled Thumper)'>
                 <roles>mixed_artillery</roles>
-                <availability>CLAN.IS!Second Line:7!Solahma:7,CBS!Second Line:7!Solahma:8,CHH!Second Line:7!Solahma:8!Provisional Garrison:8,CSL!Second Line:7!Solahma:8!Provisional Garrison:8</availability>
+                <availability>CLAN.IS!Second Line:7!Solahma:7,CBS!Second Line:7!Solahma:8,CHH!Second Line:7!Solahma:8!Provisional Garrison:8,CSL!Second Line:7!Solahma:8!Provisional Garrison:8,CWIE:8</availability>
             </model>
         </chassis>
         <chassis name='Clan Field Gun Point' unitType='Infantry'>
@@ -4302,7 +4299,7 @@
             </model>
             <model name='(Wheeled AC2 Advanced)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
-                <availability>CBS!Second Line:1,CHH!Second Line:1!Solahma:1,CNC!Front Line:4!Second Line:4,CSV!Second Line:1,CWIE!Front Line:6!Second Line:6,BAN:2+</availability>
+                <availability>CBS!Second Line:1,CHH!Second Line:1!Solahma:1,CNC!Front Line:4!Second Line:4,CWIE!Front Line:6!Second Line:6,BAN:2+</availability>
             </model>
             <model name='(Wheeled AC20 Advanced)'>
                 <roles>field_gun,urban</roles>
@@ -4457,7 +4454,7 @@
             </model>
         </chassis>
         <chassis name='Clan Mechanized Tracked Point' unitType='Infantry'>
-            <availability>CLAN.HW:3+,CLAN.IS:3+,CGB!Keshik:5!Front Line:4!Second Line:3!Solahma:1,CHH!Keshik:5!Front Line:5!Second Line:3!Solahma:1,CIH!Keshik:2!Front Line:2!Second Line:1,CNC:3+,CWIE:3+,BAN!Keshik:2!Front Line:2!Second Line:1,SOC:3+</availability>
+            <availability>CLAN.HW:3+,CLAN.IS:3+,CGB!Keshik:5!Front Line:4!Second Line:3!Solahma:1,CHH!Keshik:5!Front Line:5!Second Line:3!Solahma:1,CSL!Keshik:5!Front Line:5!Second Line:3!Solahma:1,CIH!Keshik:2!Front Line:2!Second Line:1,CNC:3+,CWIE:3+,BAN!Keshik:2!Front Line:2!Second Line:1,SOC:3+</availability>
             <model name='(ER Laser Advanced)'>
                 <availability>CLAN.HW!Keshik:1,CLAN.IS!Keshik:1,CGB!Keshik:4!Front Line:1,CNC:0,CSA!Keshik:4!Front Line:1,CWIE:0,BAN:0</availability>
             </model>

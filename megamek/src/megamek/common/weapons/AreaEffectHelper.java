@@ -370,6 +370,8 @@ public class AreaEffectHelper {
             toHit.setHitTable(ToHitData.HIT_SPECIAL_PROTO);
         }
         int cluster = 5;
+        int effectiveLevel = (hex != null) ? hex.getLevel() : 0;
+        int entityLevel = (entity.isAirborne()) ? entity.getAltitude() : entity.getElevation() + effectiveLevel;
 
         // Check: is entity inside building?
         if ((bldg != null) && (bldgAbsorbs > 0) && hex != null
@@ -402,6 +404,7 @@ public class AreaEffectHelper {
         }
 
         // Flak should only hit VTOLs or similar craft.
+        // Correct elevation/altitude checks should happen elsewhere
         if (flak) {
             // Check: is entity not a VTOL in flight or an ASF
             if (!((entity instanceof VTOL)
@@ -409,11 +412,11 @@ public class AreaEffectHelper {
                 || entity.isAero())) {
                 return;
             }
-            // Check: is entity at correct elevation?
-            if (entity.getElevation() != altitude) {
+            // "Altitude" here is either true Altitude (Aerospace) or objective levels from 0;
+            // entityLevel will then either be Altitude or hex level + elevation
+            if (entityLevel != altitude) {
                 return;
             }
-            // But VTOLs can also be hit by AE blasts while flying!
         }
 
         // Work out hit table to use

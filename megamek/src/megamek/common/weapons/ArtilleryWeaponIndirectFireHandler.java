@@ -303,8 +303,17 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
 
         int altitude = 0;
-        if (isFlak) {
-            altitude = target.getElevation();
+        Hex finalHex = game.getBoard().getHex(finalPos);
+        if (finalHex != null) {
+            if (targetIsEntity) {
+                if (!isFlak && !bMissed) {
+                    altitude = target.getElevation();
+                } else if (isFlak) {
+                    altitude = (asfFlak) ? target.getAltitude() : target.getElevation();
+                }
+            } else {
+                altitude = finalHex.getLevel();
+            }
         }
 
         // if attacker is an off-board artillery piece, check to see if we need to set
@@ -322,8 +331,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
 
         if (atype.getMunitionType().contains(Munitions.M_FAE)) {
-            Hex finalHex = game.getBoard().getHex(finalPos);
-            altitude = (finalHex != null) ? finalHex.getLevel() : altitude;
             handleArtilleryDriftMarker(targetPos, finalPos, aaa,
                     AreaEffectHelper.processFuelAirDamage(
                             finalPos, altitude, atype, aaa.getEntity(game), vPhaseReport, gameManager));

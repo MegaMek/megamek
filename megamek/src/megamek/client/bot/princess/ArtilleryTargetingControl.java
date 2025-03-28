@@ -428,8 +428,12 @@ public class ArtilleryTargetingControl {
         // by the end of this loop, we either have 0 max damage/0 top valued
         // coordinates, which indicates there's nothing worth shooting at
         // or we have a 1+ top valued coordinates.
-        // Track ADA WFIs separately.
+        // Track ADA and Flak WFIs separately.
+        EnumSet<AmmoType.Munitions> aaMunitions = EnumSet.of(
+              AmmoType.Munitions.M_CLUSTER,
+              AmmoType.Munitions.M_FLAK);
         List<WeaponFireInfo> topValuedADAInfos = new ArrayList<>();
+        List<WeaponFireInfo> topValuedFlakInfos = new ArrayList<>();
         for (WeaponMounted currentWeapon : shooter.getWeaponList()) {
             List<WeaponFireInfo> topValuedFireInfos = new ArrayList<>();
             double maxDamage = 0;
@@ -466,13 +470,14 @@ public class ArtilleryTargetingControl {
                                 }
                             }
                         } else {
+                            // Flak Artillery need to be made during direct fire, not as Indirect
                             if (target.getTargetType() == Targetable.TYPE_ENTITY) {
                                 damageValue = damage;
                             } else {
                                 if (!isADA) {
                                     damageValue = calculateDamageValue(damage, (HexTarget) target, shooter, game, owner);
                                 } else {
-                                    // No ADA attacks except at Entities.
+                                    // No ADA attacks except at Entities; no Flak attacks except direct fire
                                     continue;
                                 }
                             }
@@ -500,6 +505,12 @@ public class ArtilleryTargetingControl {
                                     topValuedADAInfos.clear();
                                     maxDamage = damage; // Actual expected damage will be higher
                                     topValuedADAInfos.add(wfi);
+                                } else if (wfi.getAmmo().getType().getMunitionType().stream().anyMatch(aaMunitions::contains)
+                                              || wfi.getAmmo().getType().countsAsFlak()) {
+                                    // Handle Flak attacks during Direct Fire
+                                    topValuedFlakInfos.clear();
+                                    maxDamage = damage;
+                                    topValuedFlakInfos.add(wfi);
                                 } else {
                                     topValuedFireInfos.clear();
                                     maxDamage = damageValue;
@@ -568,10 +579,11 @@ public class ArtilleryTargetingControl {
             }
         }
 
-        // Clear all artillery attacks if we have valid ADA attacks that do damage, but
+        // Clear all artillery attacks if we have valid ADA or Flak attacks that do damage, but
         // keep any TAG attacks.
         if (!topValuedADAInfos.isEmpty()) {
-            if (topValuedADAInfos.get(0).getExpectedDamage() > 0) {
+            if ((topValuedADAInfos.get(0).getExpectedDamage() > 0)
+                || (topValuedFlakInfos.get(0).getExpectedDamage() > 0)) {
                 returnValue = TAGPlan;
             }
         } else {

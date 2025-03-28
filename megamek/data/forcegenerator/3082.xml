@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3082-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>10</pctOmni>
@@ -4315,7 +4312,7 @@
             <availability>CLAN.HW!Keshik:4!Front Line:2!Second Line:1,CLAN.IS!Keshik:4!Front Line:2!Second Line:1,CHH!Keshik:5!Front Line:4!Second Line:1,CSL!Keshik:5!Front Line:4!Second Line:1,CNC:3+,CWIE:3+,CEI:2+,BAN:3+</availability>
             <model name='(ER Laser Advanced)'>
                 <roles>recon</roles>
-                <availability>CLAN.HW!Keshik:1,CSA!Keshik:4!Front Line:1,CNC:0,CWIE:0,CEI!Keshik:1,BAN:0</availability>
+                <availability>CLAN.HW!Keshik:1,CSA!Keshik:4!Front Line:1,CEI!Keshik:1,BAN:0</availability>
             </model>
             <model name='(Flamer Advanced)'>
                 <roles>urban</roles>
@@ -4465,7 +4462,7 @@
                 <availability>CLAN.HW!Keshik:2!Front Line:2!Second Line:3!Solahma:4!Provisional Garrison:8,CLAN.IS!Keshik:2!Front Line:2!Second Line:3!Solahma:4!Provisional Garrison:8,CGB:3-,CHH!Solahma:1!Provisional Garrison:8,CSL!Solahma:1!Provisional Garrison:8,CNC:2-,CWIE:2-,CEI:5,BAN:8-</availability>
             </model>
             <model name='(SRM Advanced)'>
-                <availability>CLAN.HW!Keshik:4!Front Line:2!Second Line:1,CLAN.IS:4+,CBS:4+,CHH:4+,CNC:4+,CWIE:4+,BAN!Keshik:4!Front Line:3!Second Line:2!Solahma:1</availability>
+                <availability>CLAN.HW!Keshik:4!Front Line:2!Second Line:1,CLAN.IS:4+,CBS:4+,CHH:4+,CNC:4+,CWIE:4+,CEI!Keshik:3!Front Line:2,BAN!Keshik:4!Front Line:3!Second Line:2!Solahma:1</availability>
             </model>
         </chassis>
 		<chassis name='Claymore' unitType='Dropship'>

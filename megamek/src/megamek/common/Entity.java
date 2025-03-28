@@ -15548,4 +15548,8 @@ public abstract class Entity extends TurnOrdered
     public int getBoardId() {
         return boardId;
     }
+
+    public void setBoardId(int boardId) {
+        this.boardId = boardId;
+    }
 }

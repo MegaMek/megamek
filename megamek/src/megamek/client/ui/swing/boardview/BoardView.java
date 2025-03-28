@@ -157,7 +157,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     public final Game game;
     ClientGUI clientgui;
-    private final int boardId;
 
     // Only for debugging: a unique ID number for each boardview that can be shown on screen
     private final int boardViewId;
@@ -410,9 +409,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      */
     public BoardView(final Game game, final MegaMekController controller, @Nullable ClientGUI clientgui, int boardId)
             throws java.io.IOException {
+        super(boardId);
         this.game = game;
         this.clientgui = clientgui;
-        this.boardId = boardId;
         boardViewId = hashCode();
 
         logger.warn("Created BoardView, boardId " + boardId + "; BV ID " + boardViewId);
@@ -3485,7 +3484,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      */
     public void markDeploymentHexesFor(Entity ce) {
         en_Deployer = ce;
-        boardPanel.repaint(100);
+        repaint();
     }
 
     /**
@@ -5272,10 +5271,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     public Board getBoard() {
         return game.getBoard(boardId);
-    }
-
-    public int getBoardId() {
-        return boardId;
     }
 
     /**

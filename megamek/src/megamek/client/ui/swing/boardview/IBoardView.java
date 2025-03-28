@@ -266,4 +266,11 @@ public interface IBoardView {
         cursor(null);
     }
 
+    /**
+     * @return This BoardView's board ID. Defaults to 0 for all implementations that don't support multiple boards.
+     */
+    default int getBoardId() {
+        return 0;
+    }
+
 }

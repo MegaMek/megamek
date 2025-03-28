@@ -256,9 +256,13 @@ factions:
         # pre-deployed:
         # default: not offboard; values: NORTH, EAST, SOUTH, WEST
         offboard: NORTH
+        # the offboard distance in hexes; defaults to 17
+        distance: 200
         # Optional: when pre-deployed, set the facing. 5 = NW
         facing: 5
         at: [7, 4]                            # position 0704 (pre-deployed)
+        # The board to be in; defaults to 0; this can also be used without a position (deploy to this board)
+        board: 0
   #      x: 7                                 # alternative way to give position
   #      y: 4                                    # must have both x and y or neither
         # NOT pre-deployed:

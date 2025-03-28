@@ -136,4 +136,8 @@ public class BoardViewEvent extends java.util.EventObject {
     public BoardView getBoardView() {
         return (BoardView) getSource();
     }
+
+    public int getBoardId() {
+        return getBoardView().getBoardId();
+    }
 }

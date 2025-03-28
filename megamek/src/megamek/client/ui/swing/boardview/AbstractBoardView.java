@@ -30,9 +30,14 @@ public abstract class AbstractBoardView implements IBoardView {
     protected final List<BoardViewListener> boardViewListeners = new ArrayList<>();
     protected final LinkedHashSet<IDisplayable> overlays = new LinkedHashSet<>();
     protected final TreeSet<Sprite> allSprites = new TreeSet<>();
+    protected final int boardId;
 
     // the player who owns this BoardView's client
     private Player localPlayer = null;
+
+    AbstractBoardView(int boardId) {
+        this.boardId = boardId;
+    }
 
     /**
      * Notifies attached BoardViewListeners of the event.
@@ -135,5 +140,10 @@ public abstract class AbstractBoardView implements IBoardView {
 
     public void setLocalPlayer(Player p) {
         localPlayer = p;
+    }
+
+    @Override
+    public int getBoardId() {
+        return boardId;
     }
 }

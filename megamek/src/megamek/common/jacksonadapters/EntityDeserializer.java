@@ -39,9 +39,11 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
 
     private static final String ID = "id";
     private static final String AT = "at";
+    private static final String BOARD = "board";
     private static final String X = "x";
     private static final String Y = "y";
     private static final String OFFBOARD = "offboard";
+    private static final String DISTANCE = "distance";
     private static final String STATUS = "status";
     private static final String PRONE = "prone";
     private static final String SHUTDOWN = "shutdown";
@@ -118,8 +120,12 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
             } else if (node.has(X) || node.has(Y)) {
                 setDeployedPosition(entity, CoordsDeserializer.parseNode(node));
             }
+            if (node.has(BOARD)) {
+                entity.setBoardId(node.get(BOARD).intValue());
+            }
             if (node.has(OFFBOARD)) {
-                entity.setOffBoard(17, OffBoardDirection.valueOf(node.get(OFFBOARD).textValue()));
+                int distance = node.has(DISTANCE) ? node.get(DISTANCE).intValue() : 17;
+                entity.setOffBoard(distance, OffBoardDirection.valueOf(node.get(OFFBOARD).textValue()));
             }
         } catch (Exception e) {
             throw new IllegalArgumentException("Illegal position information for entity " + entity, e);

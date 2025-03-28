@@ -8,8 +8,8 @@ map:
   - file: Battle of Tukayyid Pack/32x17 Pozoristu Mountains (CW).board
     name: Pozoristu Mountains
   - type: sky
-    width: 65
-    height: 35
+    width: 35
+    height: 20
     embed:
       - at: [ 5, 5 ]
         id: 0
@@ -23,11 +23,19 @@ options:
 
 factions:
 - name: P1
+  deploy:
+    # see also area definitions
+    area:
+      circle:
+        center: [ 5, 5 ]
+        radius: 3
 
   units:
   - fullname: Mobile Long Tom Artillery LT-MOB-25
     offboard: NORTH
+    distance: 200
 
   - fullname: Locust LCT-1V
-    at: [8, 9]
+    board: 1
+#    at: [8, 9]
 

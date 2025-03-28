@@ -1201,8 +1201,8 @@ public class ClientGUI extends AbstractClientGUI
         }
 
         // Set the new panel's listeners
-        if (curPanel instanceof BoardViewListener) {
-            boardViews().forEach(b -> b.addBoardViewListener((BoardViewListener) curPanel));
+        if (curPanel instanceof BoardViewListener listener) {
+            boardViews().forEach(b -> b.addBoardViewListener(listener));
         }
 
         if (curPanel instanceof ActionListener) {

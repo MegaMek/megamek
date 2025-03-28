@@ -27,15 +27,13 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
 /**
- * Class for testing and validating instantiations for Small Craft and
- * Dropships.
+ * Class for testing and validating instantiations for Small Craft and Drop-ships.
  *
  * @author Neoancient
- *
  */
 public class TestSmallCraft extends TestAero {
 
-    // Indices used to specify firing arcs with aliases for aerodyne and spheroid
+    // Indices used to specify firing arcs with aliases for AeroDyne and spheroid
     public static final int ARC_NOSE = SmallCraft.LOC_NOSE;
     public static final int ARC_LWING = SmallCraft.LOC_LWING;
     public static final int ARC_RWING = SmallCraft.LOC_RWING;
@@ -49,26 +47,27 @@ public class TestSmallCraft extends TestAero {
     private final SmallCraft smallCraft;
 
     /**
-     * Filters all small craft/dropship armor according to given tech constraints
+     * Filters all small craft/drop-ship armor according to given tech constraints
      *
      * @param techManager Used to check the tech constraints
+     *
      * @return A list of all armors that meet the tech constraints
      */
     public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
-        return ArmorType.allArmorTypes().stream()
-                .filter(at -> at.hasFlag(MiscType.F_SC_EQUIPMENT) && techManager.isLegal(at))
-                .collect(Collectors.toList());
+        return ArmorType.allArmorTypes()
+                     .stream()
+                     .filter(at -> at.hasFlag(MiscType.F_SC_EQUIPMENT) && techManager.isLegal(at))
+                     .collect(Collectors.toList());
     }
 
     public static int maxArmorPoints(SmallCraft sc) {
         ArmorType a = ArmorType.forEntity(sc);
-        return (int) Math.floor(a.getPointsPerTon(sc) * maxArmorWeight(sc)
-                + sc.get0SI() * (sc.isPrimitive() ? 2.64 : 4));
+        return (int) Math.floor(a.getPointsPerTon(sc) * maxArmorWeight(sc) +
+                                      sc.get0SI() * (sc.isPrimitive() ? 2.64 : 4));
     }
 
     /**
      * Computes the maximum number armor level in tons
-     *
      */
     public static double maxArmorWeight(SmallCraft smallCraft) {
         if (smallCraft.isSpheroid()) {
@@ -79,25 +78,20 @@ public class TestSmallCraft extends TestAero {
     }
 
     /**
-     * Computes the amount of weight required for fire control systems and power
-     * distribution
-     * systems for exceeding the base limit of weapons per firing arc.
+     * Computes the amount of weight required for fire control systems and power distribution systems for exceeding the
+     * base limit of weapons per firing arc.
+     * <p>
+     * Spheroid aft side arcs are implemented as rear-mounted; the return value uses the index of forward side + 3 for
+     * the aft side arcs.
      *
-     * Spheroid aft side arcs are implemented as rear-mounted; the return value uses
-     * the index
-     * of forward side + 3 for the aft side arcs.
+     * @param sc The small craft/drop-ship in question
      *
-     * @param sc The small craft/dropship in question
-     * @return Returns a <code>double</code> array, where each element corresponds
-     *         to a
-     *         location and the value is the extra tonnage required by exceeding the
-     *         base
-     *         allotment
+     * @return Returns a <code>double</code> array, where each element corresponds to a location and the value is the
+     *       extra tonnage required by exceeding the base allotment
      */
     public static double[] extraSlotCost(SmallCraft sc) {
-        // Arcs/locations include the hull. Spheroids have two arcs in each side
-        // location;
-        // the indices for the side aft arcs are after the virtual wings location.
+        // Arcs/locations include the hull. Spheroids have two arcs in each side location; the indices for the side
+        // aft arcs are after the virtual wings' location.
         final int arcs = sc.isSpheroid() ? 8 : 5;
         int[] weaponsPerArc = new int[arcs];
         double[] weaponTonnage = new double[arcs];
@@ -135,14 +129,12 @@ public class TestSmallCraft extends TestAero {
      * @param clan              Whether the unit is a Clan design
      * @param tonnage           The weight of the unit
      * @param desiredSafeThrust The safe thrust value
-     * @param dropship          Whether the unit is a dropship (only relevant for
-     *                          primitives)
-     * @param year              The original construction year (only relevant for
-     *                          primitives)
+     * @param dropship          Whether the unit is a drop-ship (only relevant for primitives)
+     * @param year              The original construction year (only relevant for primitives)
+     *
      * @return The weight of the engine in tons
      */
-    public static double calculateEngineTonnage(boolean clan, double tonnage,
-            int desiredSafeThrust, boolean dropship, int year) {
+    public static double calculateEngineTonnage(boolean clan, double tonnage, int desiredSafeThrust, boolean dropship, int year) {
         double multiplier;
         if (clan) {
             multiplier = 0.061;
@@ -155,13 +147,15 @@ public class TestSmallCraft extends TestAero {
     }
 
     public static int weightFreeHeatSinks(SmallCraft sc) {
-        double engineTonnage = calculateEngineTonnage(sc.isClan(), sc.getWeight(), sc.getOriginalWalkMP(),
-                sc.hasETypeFlag(Entity.ETYPE_DROPSHIP), sc.getOriginalBuildYear());
+        double engineTonnage = calculateEngineTonnage(sc.isClan(),
+              sc.getWeight(),
+              sc.getOriginalWalkMP(),
+              sc.hasETypeFlag(Entity.ETYPE_DROPSHIP),
+              sc.getOriginalBuildYear());
         if (sc.isSpheroid()) {
             if (sc.isPrimitive()) {
                 return (int) Math.floor(Math.sqrt(engineTonnage * 1.3));
-            } else if ((sc.getDesignType() == SmallCraft.MILITARY)
-                    && sc.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
+            } else if ((sc.getDesignType() == SmallCraft.MILITARY) && sc.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 return (int) Math.floor(Math.sqrt(engineTonnage * 6.8));
             } else {
                 return (int) Math.floor(Math.sqrt(engineTonnage * 1.6));
@@ -169,8 +163,7 @@ public class TestSmallCraft extends TestAero {
         } else {
             if (sc.isPrimitive()) {
                 return (int) Math.floor(engineTonnage / 75.0);
-            } else if ((sc.getDesignType() == SmallCraft.MILITARY)
-                    && sc.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
+            } else if ((sc.getDesignType() == SmallCraft.MILITARY) && sc.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 return (int) Math.floor(engineTonnage / 20.0);
             } else {
                 return (int) Math.floor(engineTonnage / 60.0);
@@ -251,8 +244,7 @@ public class TestSmallCraft extends TestAero {
     }
 
     /**
-     * @return Minimum crew requirements based on unit type and equipment crew
-     *         requirements.
+     * @return Minimum crew requirements based on unit type and equipment crew requirements.
      */
     public static int minimumBaseCrew(SmallCraft sc) {
         int crew = 3;
@@ -280,51 +272,36 @@ public class TestSmallCraft extends TestAero {
     }
 
     @Override
-    public boolean isTank() {
-        return false;
-    }
-
-    @Override
-    public boolean isMek() {
-        return false;
-    }
-
-    @Override
-    public boolean isAero() {
-        return true;
-    }
-
-    @Override
     public boolean isSmallCraft() {
         return true;
     }
 
     @Override
     public double getWeightControls() {
-        // Non primitives use the multiplier for 2500+ even if they were built before
-        // that date
+        // Non primitives use the multiplier for 2500+ even if they were built before that date
         int year = smallCraft.isPrimitive() ? smallCraft.getOriginalBuildYear() : 2500;
-        // Small craft round up to the half ton and dropships to the full ton
+        // Small craft round up to the half ton and drop-ships to the full ton
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-            return ceil(smallCraft.getWeight()
-                    * dropshipControlMultiplier(year), Ceil.TON);
+            return ceil(smallCraft.getWeight() * dropshipControlMultiplier(year), Ceil.TON);
         } else {
-            return ceil(smallCraft.getWeight()
-                    * smallCraftControlMultiplier(year), Ceil.HALFTON);
+            return ceil(smallCraft.getWeight() * smallCraftControlMultiplier(year), Ceil.HALFTON);
         }
     }
 
     @Override
     public double getWeightEngine() {
-        return calculateEngineTonnage(smallCraft.isClan(), smallCraft.getWeight(),
-                smallCraft.getOriginalWalkMP(), smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP),
-                smallCraft.getOriginalBuildYear());
+        return calculateEngineTonnage(smallCraft.isClan(),
+              smallCraft.getWeight(),
+              smallCraft.getOriginalWalkMP(),
+              smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP),
+              smallCraft.getOriginalBuildYear());
     }
 
     @Override
     public String printWeightEngine() {
-        return StringUtil.makeLength("Engine: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightEngine()) + "\n";
+        return StringUtil.makeLength("Engine: ", getPrintSize() - 5) +
+                     TestEntity.makeWeightString(getWeightEngine()) +
+                     "\n";
     }
 
     @Override
@@ -368,9 +345,7 @@ public class TestSmallCraft extends TestAero {
         for (double extra : extraSlotCost(smallCraft)) {
             weight += extra;
         }
-        // 7 tons each for life boats and escape pods, which includes the 5-ton vehicle
-        // and a
-        // 2-ton launch mechanism
+        // 7 tons each for lifeboats and escape pods, which includes the 5-ton vehicle and a 2-ton launch mechanism
         weight += (smallCraft.getLifeBoats() + smallCraft.getEscapePods()) * 7;
         return weight;
     }
@@ -379,8 +354,7 @@ public class TestSmallCraft extends TestAero {
     public String printWeightMisc() {
         double weight = getWeightMisc();
         if (weight > 0) {
-            return StringUtil.makeLength(
-                    "Escape pods/Life boats: ", getPrintSize() - 5) + weight + "\n";
+            return StringUtil.makeLength("Escape pods/Life boats: ", getPrintSize() - 5) + weight + "\n";
         }
         return "";
     }
@@ -392,21 +366,23 @@ public class TestSmallCraft extends TestAero {
         }
         StringBuffer buffer = new StringBuffer();
         for (WeaponMounted m : getEntity().getWeaponBayList()) {
-            buffer.append(m.getName()).append(" ")
-                    .append(getLocationAbbr(m.getLocation()));
+            buffer.append(m.getName()).append(" ").append(getLocationAbbr(m.getLocation()));
             if (m.isRearMounted()) {
                 buffer.append(" (R)");
             }
             buffer.append("\n");
             for (WeaponMounted w : m.getBayWeapons()) {
-                buffer.append("   ").append(StringUtil.makeLength(w.getName(),
-                        getPrintSize() - 25)).append(w.getTonnage())
-                        .append("\n");
+                buffer.append("   ")
+                      .append(StringUtil.makeLength(w.getName(), getPrintSize() - 25))
+                      .append(w.getTonnage())
+                      .append("\n");
             }
             for (AmmoMounted a : m.getBayAmmo()) {
-                double weight = a.getTonnage() * a.getBaseShotsLeft() / ((AmmoType) a.getType()).getShots();
-                buffer.append("   ").append(StringUtil.makeLength(a.getName(),
-                        getPrintSize() - 25)).append(weight).append("\n");
+                double weight = a.getTonnage() * a.getBaseShotsLeft() / a.getType().getShots();
+                buffer.append("   ")
+                      .append(StringUtil.makeLength(a.getName(), getPrintSize() - 25))
+                      .append(weight)
+                      .append("\n");
             }
         }
         return buffer;
@@ -427,16 +403,14 @@ public class TestSmallCraft extends TestAero {
 
     @Override
     public String printWeightControls() {
-        return StringUtil.makeLength(
-                "Control Systems:", getPrintSize() - 5) + makeWeightString(getWeightControls()) +
-                "\n";
+        return StringUtil.makeLength("Control Systems:", getPrintSize() - 5) +
+                     makeWeightString(getWeightControls()) +
+                     "\n";
     }
 
     @Override
     public String printWeightFuel() {
-        return StringUtil.makeLength(
-                "Fuel: ", getPrintSize() - 5) + makeWeightString(getWeightFuel()) +
-                "\n";
+        return StringUtil.makeLength("Fuel: ", getPrintSize() - 5) + makeWeightString(getWeightFuel()) + "\n";
     }
 
     @Override
@@ -448,15 +422,11 @@ public class TestSmallCraft extends TestAero {
         return smallCraft;
     }
 
-    @Override
-    public String printArmorLocProp(int loc, int wert) {
-        return " is greater than " + wert + "!";
-    }
-
     /**
      * Checks to see if this unit has valid armor assignment.
      *
      * @param buff A buffer that collects messages about validation failures
+     *
      * @return Whether the unit's armor is valid
      */
     @Override
@@ -464,8 +434,11 @@ public class TestSmallCraft extends TestAero {
         boolean correct = true;
         double maxArmor = maxArmorWeight(smallCraft);
         if (smallCraft.getLabArmorTonnage() > maxArmor) {
-            buff.append("Total armor,").append(smallCraft.getLabArmorTonnage())
-                    .append(" tons, is greater than the maximum: ").append(maxArmor).append("\n");
+            buff.append("Total armor,")
+                  .append(smallCraft.getLabArmorTonnage())
+                  .append(" tons, is greater than the maximum: ")
+                  .append(maxArmor)
+                  .append("\n");
             correct = false;
         }
 
@@ -478,15 +451,19 @@ public class TestSmallCraft extends TestAero {
      * Checks that the heatsink type is a legal value.
      *
      * @param buff A buffer that collects messages about validation failures
+     *
      * @return Whether the unit's heat sinks are valid.
      */
     @Override
     public boolean correctHeatSinks(StringBuffer buff) {
-        if ((smallCraft.getHeatType() != Aero.HEAT_SINGLE)
-                && (smallCraft.getHeatType() != Aero.HEAT_DOUBLE)) {
-            buff.append("Invalid heatsink type!  Valid types are ").append(Aero.HEAT_SINGLE)
-                    .append(" and ").append(Aero.HEAT_DOUBLE).append(".  Found ")
-                    .append(smallCraft.getHeatType()).append(".");
+        if ((smallCraft.getHeatType() != Aero.HEAT_SINGLE) && (smallCraft.getHeatType() != Aero.HEAT_DOUBLE)) {
+            buff.append("Invalid heatsink type!  Valid types are ")
+                  .append(Aero.HEAT_SINGLE)
+                  .append(" and ")
+                  .append(Aero.HEAT_DOUBLE)
+                  .append(".  Found ")
+                  .append(smallCraft.getHeatType())
+                  .append(".");
             return false;
         }
         return true;
@@ -523,7 +500,8 @@ public class TestSmallCraft extends TestAero {
         correct &= correctHeatSinks(buff);
         correct &= correctCrew(buff);
         correct &= correctCriticals(buff);
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) ||
+                  getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -533,9 +511,8 @@ public class TestSmallCraft extends TestAero {
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
         boolean illegal = false;
 
-        // For DropShips, make sure all bays have at least one weapon and that there are
-        // at least
-        // ten shots of ammo for each ammo-using weapon in the bay.
+        // For DropShips, make sure all bays have at least one weapon and that there are at least ten shots of ammo
+        // for each ammo-using weapon in the bay.
         for (WeaponMounted bay : smallCraft.getWeaponBayList()) {
             if (bay.getBayWeapons().isEmpty()) {
                 buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
@@ -564,8 +541,9 @@ public class TestSmallCraft extends TestAero {
                     }
 
                     if (!ammoTypeCount.containsKey(at) || ammoTypeCount.get(at) < needed) {
-                        buff.append("Bay ").append(bay.getName())
-                                .append(" does not have the minimum 10 shots of ammo for each weapon\n");
+                        buff.append("Bay ")
+                              .append(bay.getName())
+                              .append(" does not have the minimum 10 shots of ammo for each weapon\n");
                         illegal = true;
                         break;
                     }
@@ -586,18 +564,18 @@ public class TestSmallCraft extends TestAero {
         Map<EquipmentType, Integer> leftAft = new HashMap<>();
         Map<EquipmentType, Integer> rightFwd = new HashMap<>();
         Map<EquipmentType, Integer> rightAft = new HashMap<>();
-        MiscTypeFlag typeFlag = smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)
-                ? MiscType.F_DS_EQUIPMENT
-                : MiscType.F_SC_EQUIPMENT;
+        MiscTypeFlag typeFlag = smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP) ?
+                                      MiscType.F_DS_EQUIPMENT :
+                                      MiscType.F_SC_EQUIPMENT;
         for (Mounted<?> m : smallCraft.getEquipment()) {
             if (m.getType() instanceof MiscType) {
                 if (!m.getType().hasFlag(typeFlag) && !m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
                     buff.append("Cannot mount ").append(m.getType().getName()).append("\n");
                     illegal = true;
                 }
-            } else if ((m.getType() instanceof AmmoType)
-                    && (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP))
-                    && (((AmmoType) m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD)) {
+            } else if ((m.getType() instanceof AmmoType) &&
+                             (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) &&
+                             (((AmmoType) m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD)) {
                 buff.append("Cannot mount ").append(m.getType().getName()).append("\n");
                 illegal = true;
             } else if (m.getType() instanceof WeaponType) {
@@ -629,9 +607,8 @@ public class TestSmallCraft extends TestAero {
         }
 
         if (lateralMatch) {
-            // We've already checked counts, so in the reverse direction we only need to see
-            // if there's
-            // anything not found on the other side.
+            // We've already checked counts, so in the reverse direction we only need to see if there's anything not
+            // found on the other side.
             for (EquipmentType eq : rightFwd.keySet()) {
                 if (!leftFwd.containsKey(eq)) {
                     lateralMatch = false;
@@ -687,6 +664,7 @@ public class TestSmallCraft extends TestAero {
      * Checks that the unit meets minimum crew and quarters requirements.
      *
      * @param buffer Where to write messages explaining failures.
+     *
      * @return true if the crew data is valid.
      */
     public boolean correctCrew(StringBuffer buffer) {
@@ -709,13 +687,16 @@ public class TestSmallCraft extends TestAero {
         for (Bay bay : getSmallCraft().getTransportBays()) {
             Quarters q = Quarters.getQuartersForBay(bay);
             if (null != q) {
-                quarters += bay.getCapacity();
+                quarters += (int) bay.getCapacity();
             }
         }
 
         if (quarters < crewSize) {
-            buffer.append("Requires quarters for ").append(crewSize).append(" crew but only has ").append(quarters)
-                    .append("\n");
+            buffer.append("Requires quarters for ")
+                  .append(crewSize)
+                  .append(" crew but only has ")
+                  .append(quarters)
+                  .append("\n");
             illegal = true;
         }
         return !illegal;
@@ -765,14 +746,18 @@ public class TestSmallCraft extends TestAero {
 
     @Override
     public String printWeightCalculation() {
-        return printWeightEngine()
-                + printWeightControls() + printWeightFuel()
-                + printWeightHeatSinks()
-                + printWeightArmor() + printWeightMisc()
-                + printWeightCarryingSpace()
-                + printWeightQuarters()
-                + "Equipment:\n"
-                + printMiscEquip() + printWeapon() + printAmmo();
+        return printWeightEngine() +
+                     printWeightControls() +
+                     printWeightFuel() +
+                     printWeightHeatSinks() +
+                     printWeightArmor() +
+                     printWeightMisc() +
+                     printWeightCarryingSpace() +
+                     printWeightQuarters() +
+                     "Equipment:\n" +
+                     printMiscEquip() +
+                     printWeapon() +
+                     printAmmo();
     }
 
     @Override

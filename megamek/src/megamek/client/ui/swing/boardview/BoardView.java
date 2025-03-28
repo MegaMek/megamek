@@ -3757,7 +3757,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 boolean mekInSecond = GUIP.getMekInSecond();
 
                 LosEffects.AttackInfo ai = LosEffects.prepLosAttackInfo(
-                        game, ae, te, c1, c2, mekInFirst, mekInSecond);
+                        game, ae, te, c1, c2, boardId, mekInFirst, mekInSecond);
 
                 le = LosEffects.calculateLos(game, ai);
                 message.append(Messages.getString("BoardView1.Attacker",

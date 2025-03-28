@@ -46,8 +46,8 @@ public class FovHighlightingAndDarkening {
     private static final MMLogger logger = MMLogger.create(FovHighlightingAndDarkening.class);
 
     private final BoardView boardView;
-    private java.util.List<Color> ringsColors = new ArrayList<>();
-    private java.util.List<Integer> ringsRadii = new ArrayList<>();
+    private List<Color> ringsColors = new ArrayList<>();
+    private List<Integer> ringsRadii = new ArrayList<>();
     GUIPreferences gs = GUIPreferences.getInstance();
     private final IPreferenceChangeListener ringsChangeListner;
 
@@ -158,7 +158,7 @@ public class FovHighlightingAndDarkening {
             if (dist == 0) {
                 boardView.drawHexBorder(boardGraph, p, selected_color, pad, lw);
             } else if (dist < max_dist) {
-                LosEffects los = getCachedLosEffects(viewerPosition, c);
+                LosEffects los = getCachedLosEffects(viewerPosition, c, boardView.getBoardId());
                 if (null != boardView.getSelectedEntity()) {
                     if (los == null) {
                         los = LosEffects.calculateLOS(boardView.game, boardView.getSelectedEntity(), null);
@@ -230,6 +230,7 @@ public class FovHighlightingAndDarkening {
     StepSprite cachedStepSprite = null;
     Coords cachedSrc = null;
     boolean cacheGameChanged = true;
+    int cacheBoardId = -1;
     Map<Coords, LosEffects> losCache = new HashMap<>();
 
     private void clearCache() {
@@ -252,24 +253,27 @@ public class FovHighlightingAndDarkening {
      * If environment has changed between calls to this method the cache is
      * cleared.
      */
-    public @Nullable LosEffects getCachedLosEffects(Coords src, Coords dest) {
+    public @Nullable LosEffects getCachedLosEffects(Coords src, Coords dest, int boardId) {
         ArrayList<StepSprite> pathSprites = boardView.pathSprites;
         StepSprite lastStepSprite = pathSprites.isEmpty() ? null : pathSprites.get(pathSprites.size() - 1);
         // lets check if cache should be cleared
-        if ((cachedSelectedEntity != boardView.getSelectedEntity())
-                || (cachedStepSprite != lastStepSprite)
-                || (!src.equals(cachedSrc)) || (cacheGameChanged)) {
+        if ((cachedSelectedEntity != boardView.getSelectedEntity()) ||
+                  (cachedStepSprite != lastStepSprite) ||
+                  (!src.equals(cachedSrc)) ||
+                  (cacheGameChanged) ||
+                  (cacheBoardId != boardId)) {
             clearCache();
             cachedSelectedEntity = boardView.getSelectedEntity();
             cachedStepSprite = lastStepSprite;
             cachedSrc = src;
+            cacheBoardId = boardId;
             cacheGameChanged = false;
             cachedAllECMInfo = ComputeECM.computeAllEntitiesECMInfo(boardView.game.getEntitiesVector());
         }
 
         LosEffects los = losCache.get(dest);
         if (los == null) {
-            los = getLosEffects(src, dest);
+            los = getLosEffects(src, dest, boardId);
             if (los == null) {
                 return null;
             }
@@ -329,7 +333,7 @@ public class FovHighlightingAndDarkening {
      * present in that hex. If no units are present, the GUIPreference
      * 'mekInSecond' is used.
      */
-    private @Nullable LosEffects getLosEffects(final Coords src, final Coords dest) {
+    private @Nullable LosEffects getLosEffects(final Coords src, final Coords dest, int boardId) {
         /*
          * The getCachedLos method depends that this method uses only
          * information from src, dest, game, selectedEntity and the last
@@ -352,7 +356,7 @@ public class FovHighlightingAndDarkening {
         // Need to re-write this to work with Low Alt maps
         // LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         LosEffects.AttackInfo ai = LosEffects.prepLosAttackInfo(
-                boardView.game, boardView.getSelectedEntity(), null, src, dest,
+                boardView.game, boardView.getSelectedEntity(), null, src, dest, boardId,
                 guip.getMekInFirst(), guip.getMekInSecond());
         // ai.attackPos = src;
         // ai.targetPos = dest;
@@ -381,7 +385,7 @@ public class FovHighlightingAndDarkening {
         // present we use
         // the mekInSecond GUIPref.
         ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
-        for (Entity ent : boardView.game.getEntitiesVector(dest)) {
+        for (Entity ent : boardView.game.getEntitiesVector(dest, boardId)) {
             int trAbsheight = (ai.lowAltitude) ? ent.getAltitude() : dstHex.getLevel() + ent.relHeight();
             if (trAbsheight > ai.targetAbsHeight) {
                 ai.targetHeight = ent.getHeight();

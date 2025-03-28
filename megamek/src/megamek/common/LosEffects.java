@@ -46,7 +46,9 @@ public class LosEffects {
         public boolean attackerIsMek;
         public boolean attOffBoard;
         public Coords attackPos;
+        public int attackerBoardId = 0; // default to the standard single board unless specifically set
         public Coords targetPos;
+        public int targetBoardId = 0; // default to the standard single board unless specifically set
 
         /**
          * The absolute elevation of the attacker, i.e. the number of levels
@@ -346,13 +348,15 @@ public class LosEffects {
     }
 
     public static AttackInfo prepLosAttackInfo(Game game, @Nullable Entity ae, @Nullable Entity te,
-            Coords c1, Coords c2, boolean mekInFirst, boolean mekInSecond) {
+            Coords c1, Coords c2, int boardId, boolean mekInFirst, boolean mekInSecond) {
         AttackInfo ai = new AttackInfo();
 
         ai.attackPos = c1;
+        ai.attackerBoardId = boardId;
         ai.targetPos = c2;
+        ai.targetBoardId = boardId;
         ai.targetEntity = (te != null);
-        if (game.getBoard().inAtmosphere()) {
+        if (game.getBoard(boardId).inAtmosphere()) {
             // Assume LOS is from Alt 1 above c1 to Alt 1 above c2, due to Low Altitude LOS
             // calc differences from ground.
             ai.attackHeight = (ae == null) ? 1 : ae.getAltitude();
@@ -362,15 +366,15 @@ public class LosEffects {
             ai.attLowAlt = true;
             ai.targetLowAlt = true;
             ai.lowAltitude = true;
-            ai.attackAbsHeight = (ae == null) ? game.getBoard().getHex(c1).floor() + ai.attackHeight : ai.attackHeight;
-            ai.targetAbsHeight = (te == null) ? game.getBoard().getHex(c2).floor() + ai.targetHeight : ai.targetHeight;
-        } else if (game.getBoard().onGround()) {
+            ai.attackAbsHeight = (ae == null) ? game.getBoard(boardId).getHex(c1).floor() + ai.attackHeight : ai.attackHeight;
+            ai.targetAbsHeight = (te == null) ? game.getBoard(boardId).getHex(c2).floor() + ai.targetHeight : ai.targetHeight;
+        } else if (game.getBoard(boardId).onGround()) {
             ai.attackHeight = mekInFirst ? 1 : 0;
             ai.targetHeight = mekInSecond ? 1 : 0;
             ai.attackerIsMek = mekInFirst;
             ai.targetIsMek = mekInSecond;
-            ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + ai.attackHeight;
-            ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
+            ai.attackAbsHeight = game.getBoard(boardId).getHex(c1).floor() + ai.attackHeight;
+            ai.targetAbsHeight = game.getBoard(boardId).getHex(c2).floor() + ai.targetHeight;
         }
 
         return ai;

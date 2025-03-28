@@ -491,8 +491,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             boolean shiftHeld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
             Board board = game.getBoard(b.getBoardId());
-            // When the unit is not already on the board, ignore turn mode and place the unit instead
-            if ((entity.getPosition() != null) && (shiftHeld || turnMode)) {
+            int previousBoardId = entity.getBoardId();
+            // use turn mode only when the unit is already on that same board
+            if ((entity.getPosition() != null) && (b.getBoardId() == previousBoardId) && (shiftHeld || turnMode)) {
                 processTurn(entity, coords);
                 return;
             } else if (entity.isBoardProhibited(board.getType())) {
@@ -547,13 +548,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
             entity.setPosition(coords);
             entity.setBoardId(b.getBoardId());
-            clientgui.getBoardView().redrawAllEntities();
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawAllEntities());
             clientgui.updateFiringArc(entity);
             clientgui.showSensorRanges(entity);
-            clientgui.getBoardView().getPanel().repaint();
+            clientgui.boardViews().forEach(IBoardView::repaint);
             butDone.setEnabled(true);
             if (!shiftHeld) {
-                clientgui.getBoardView().select(coords);
+                clientgui.boardViews().forEach(bv -> bv.select(null));
+                clientgui.getBoardView(entity).select(coords);
             }
         } finally {
             ToolTipManager.sharedInstance().setEnabled(true);

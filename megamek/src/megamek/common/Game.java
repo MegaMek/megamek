@@ -1479,6 +1479,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                      .toList();
     }
 
+    public List<Entity> getEntitiesVector(Coords coord, int boardId) {
+        return getEntitiesVector(coord, boardId, false);
+    }
+
     /**
      * @param player {@link Player} Object
      *

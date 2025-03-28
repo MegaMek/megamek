@@ -87,7 +87,8 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 int minSensorRange = 0;
 
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
-                    LosEffects los = bv.getFovHighlighting().getCachedLosEffects(selectedEntity.getPosition(), coords);
+                    LosEffects los = bv.getFovHighlighting().getCachedLosEffects(selectedEntity.getPosition(),
+                          coords, bv.getBoardId());
                     int bracket = Compute.getSensorRangeBracket(selectedEntity, null,
                         bv.getFovHighlighting().cachedAllECMInfo);
                     int range = Compute.getSensorRangeByBracket(game, selectedEntity, null, los);

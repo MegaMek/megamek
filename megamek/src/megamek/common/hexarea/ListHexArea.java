@@ -57,7 +57,7 @@ public class ListHexArea extends AbstractHexArea {
 
     @Override
     public boolean containsCoords(Coords coords, Board board) {
-        return coordList.contains(coords);
+        return matchesBoardId(board) && coordList.contains(coords);
     }
 
     @Override

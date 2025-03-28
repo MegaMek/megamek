@@ -24,7 +24,12 @@ import megamek.common.Coords;
 import java.util.Set;
 
 /**
- * This class represents the subtraction (difference) of two HexAreaShapes. The order of the two given shapes is relevant.
+ * This class represents the subtraction (difference) of two HexAreaShapes. The order of the two given shapes is
+ * relevant. A coord is contained in the resulting area when it is present in the first but not present in the second.
+ * This means that the second area only has an effect on the first area where it is present on the same boards.
+ * <p>
+ * Note that this HexArea itself has no board IDs. The result of this hex area is defined only by the two subtracted
+ * areas.
  */
 public class HexAreaDifference extends AbstractHexArea {
 

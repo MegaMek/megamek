@@ -28,6 +28,6 @@ public class AllHexArea extends AbstractHexArea {
 
     @Override
     public boolean containsCoords(Coords coords, Board board) {
-        return true;
+        return matchesBoardId(board);
     }
 }

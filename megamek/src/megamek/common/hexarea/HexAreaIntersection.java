@@ -24,7 +24,12 @@ import megamek.common.Coords;
 import java.util.Set;
 
 /**
- * This class represents the intersection of two HexAreaShapes.
+ * This class represents the intersection of two HexAreaShapes. A coord is only part of the resulting area if it is
+ * part of both areas. This means that the board IDs of both areas must have some overlap for the resulting area to
+ * not be empty.
+ * <p>
+ * Note that this HexArea itself has no board IDs. The result of this hex area is defined only by the two intersecting
+ * areas.
  */
 public class HexAreaIntersection extends AbstractHexArea {
 

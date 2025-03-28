@@ -52,6 +52,6 @@ public class HexLevelArea extends AbstractHexArea {
 
     @Override
     public boolean containsCoords(Coords coords, Board board) {
-        return board.contains(coords) && (board.getHex(coords).getLevel() >= minLevel) && (board.getHex(coords).getLevel() <= maxLevel);
+        return matchesBoardId(board) && board.contains(coords) && (board.getHex(coords).getLevel() >= minLevel) && (board.getHex(coords).getLevel() <= maxLevel);
     }
 }

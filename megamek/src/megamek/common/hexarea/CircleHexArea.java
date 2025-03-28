@@ -22,10 +22,13 @@ import megamek.common.Board;
 import megamek.common.Coords;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
- * This class represents a hex area that is a filled "circle" around a center (all hexes up to a given maximum distance).
+ * This class represents a hex area that is a filled "circle" around a center (all hexes up to a given maximum
+ * distance).
  */
 public class CircleHexArea extends AbstractHexArea {
 
@@ -33,8 +36,9 @@ public class CircleHexArea extends AbstractHexArea {
     private final int radius;
 
     /**
-     * Creates a hex circle around the given center with the given radius. The circle includes all hexes within (it is filled). A radius of
-     * 0 is the center only, a radius of 1 includes the hexes adjacent to the center (7 hexes all in all).
+     * Creates a hex circle around the given center with the given radius. The circle includes all hexes within (it is
+     * filled). A radius of 0 is the center only, a radius of 1 includes the hexes adjacent to the center (7 hexes all
+     * in all).
      *
      * @param center The center coords
      * @param radius The radius of the circle
@@ -46,7 +50,7 @@ public class CircleHexArea extends AbstractHexArea {
 
     @Override
     public boolean containsCoords(Coords coords, Board board) {
-        return (coords != null) && (coords.distance(center) <= radius);
+        return matchesBoardId(board) && (coords != null) && (coords.distance(center) <= radius);
     }
 
     @Override

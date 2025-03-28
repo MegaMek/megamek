@@ -69,7 +69,7 @@ public class BorderHexArea extends AbstractHexArea {
 
     @Override
     public boolean containsCoords(Coords coords, Board board) {
-        return (north && (coords.getY() >= minInset) && (coords.getY() <= maxInset))
+        return matchesBoardId(board) && (north && (coords.getY() >= minInset) && (coords.getY() <= maxInset))
             || (west && (coords.getX() >= minInset) && (coords.getX() <= maxInset))
             || (south && (coords.getY() <= board.getHeight() - 1 - minInset) && (coords.getY() >= board.getHeight() - 1 - maxInset))
             || (east && (coords.getX() <= board.getWidth() - 1 - minInset) && (coords.getX() >= board.getWidth() - 1 - maxInset));

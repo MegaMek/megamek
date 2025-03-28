@@ -48,7 +48,7 @@ public class HalfPlaneHexArea extends AbstractHexArea {
 
     @Override
     public boolean containsCoords(Coords coords, Board board) {
-        return switch (halfPlaneDirection) {
+        return matchesBoardId(board) && switch (halfPlaneDirection) {
             case ABOVE -> coords.getY() <= coordinate;
             case BELOW -> coords.getY() >= coordinate;
             case RIGHT -> coords.getX() >= coordinate;

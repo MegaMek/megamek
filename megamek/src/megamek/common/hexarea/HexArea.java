@@ -23,23 +23,27 @@ import megamek.common.annotations.Nullable;
 import megamek.server.trigger.UnitPositionTrigger;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 /**
- * This class represents an area composed of hexes. The area can be a basic shape or be defined by adding, subtracting or intersecting basic
- * shapes. Areas can be used to define deployment zones in code using {@link Board#addDeploymentZone(int, HexArea)}, to set a zone where
- * units may flee the board from in {@link Entity#setFleeZone(HexArea)} and in positional triggers for events
- * ({@link UnitPositionTrigger}).
+ * This class represents an area composed of hexes on a single board. The area can be a basic shape or be defined by
+ * adding, subtracting or intersecting basic shapes. Areas can be used to define deployment zones in code using
+ * {@link Board#addDeploymentZone(int, HexArea)}, to set a zone where units may flee the board from in
+ * {@link Entity#setFleeZone(HexArea)} and in positional triggers for events ({@link UnitPositionTrigger}). HexAreas
+ * can be present on some or all boards; on each board that it is present, it has the same shape.
  * <P>Note:
  * <BR>- A HexArea can be empty if its shapes result in no valid hexes;
  * <BR>- A HexArea can be infinite; therefore, its hexes can only be retrieved by limiting the results to a Board;
  * <BR>- A HexArea can be absolute (independent of the board's size and contents) or relative to the board;
  * <BR>- A HexArea can appear empty when its shapes do not contain any hexes within the given board;
  * <BR>- A HexArea does not have to be contiguous;
- * <BR>- HexAreas are typically lightweight as they don't store their hexes (unless ListHexArea is misused to store thousands of hexes),
+ * <BR>- HexAreas are typically lightweight as they don't store their hexes (unless ListHexArea is misused to store
+ * thousands of hexes),
  * only the rules to create the hexes;
  * <P>HexArea is immutable.
- * <P>Note that the shape can have any complexity by being itself constructed from other shapes. For example, the intersection of two
+ * <P>Note that the shape can have any complexity by being itself constructed from other shapes. For example, the
+ * intersection of two
  * circles can be created by calling
  * <pre>{@code
  * new HexAreaIntersection(
@@ -59,12 +63,14 @@ public interface HexArea extends Serializable {
     HexArea EMPTY_AREA = new EmptyHexArea();
 
     /**
-     * Returns true if this shape contains the given coords. Returns false when the given coords is null. If this shape is absolute, i.e.
-     * does not depend on parameters outside itself, the board does not matter. Some shapes however may be relative to the board size, e.g.
-     * a shape that returns the borders of the board; or even board contents, such as terrain.
+     * Returns true if this shape contains the given coords. Returns false when the given coords is null. If this shape
+     * is absolute, i.e. does not depend on parameters outside itself, the board does not matter. Some shapes however
+     * may be relative to the board size, e.g. a shape that returns the borders of the board; or even board contents,
+     * such as terrain.
      *
      * @param coords The coords that are tested if they are part of this shape
      * @param board  The board to limit the area coords to
+     *
      * @return True if this shape contains the coords
      */
     boolean containsCoords(@Nullable Coords coords, Board board);
@@ -73,7 +79,28 @@ public interface HexArea extends Serializable {
      * Returns a set of the coords of this area that are part of the given board.
      *
      * @param board The board to limit the results to
+     *
      * @return Coords of this shape that lie on the board
      */
     Set<Coords> getCoords(Board board);
+
+
+    /**
+     * Returns true if this HexArea is present on the given board.
+     * <p>
+     * Note: By default, this returns true so that any hex area without board ID information defaults to being present
+     * on the one and only board in a single board setup.
+     *
+     * @return True if this area is present on the given board
+     */
+    default boolean matchesBoardId(Board board) {
+        return true;
+    }
+
+    /**
+     * Replaces the board IDs that this area is on with the given board IDs.
+     *
+     * @param boardIds The new board IDs to use for this area
+     */
+    void setBoardIds(List<Integer> boardIds);
 }

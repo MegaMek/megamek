@@ -50,6 +50,6 @@ public class RectangleHexArea extends AbstractHexArea {
 
     @Override
     public boolean containsCoords(Coords coords, Board board) {
-        return (coords.getX() >= x1) && (coords.getX() <= x2) && (coords.getY() >= y1) && (coords.getY() <= y2);
+        return matchesBoardId(board) && (coords.getX() >= x1) && (coords.getX() <= x2) && (coords.getY() >= y1) && (coords.getY() <= y2);
     }
 }

@@ -29,6 +29,7 @@ factions:
       circle:
         center: [ 5, 5 ]
         radius: 3
+        boards: [ 1, 2 ]
 
   units:
   - fullname: Mobile Long Tom Artillery LT-MOB-25

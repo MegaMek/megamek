@@ -24,6 +24,7 @@ import megamek.common.Terrains;
 import megamek.common.hexarea.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,6 +69,7 @@ public final class HexAreaDeserializer {
     private static final String MIN_LEVEL = "minlevel";
     private static final String MAX_LEVEL = "maxlevel";
     private static final String ALL = "all";
+    private static final String BOARDS = "boards";
 
     /**
      * Parses a HexArea from the given YAML node. The node should be below the "area:" level.
@@ -126,17 +128,41 @@ public final class HexAreaDeserializer {
 
     private static HexArea parseCircle(JsonNode node) {
         MMUReader.requireFields("HexArea", node, CENTER, RADIUS);
-        return new CircleHexArea(CoordsDeserializer.parseNode(node.get(CENTER)), node.get(RADIUS).intValue());
+        var area = new CircleHexArea(CoordsDeserializer.parseNode(node.get(CENTER)), node.get(RADIUS).intValue());
+        area.setBoardIds(parseBoardsList(node));
+        return area;
+    }
+
+    private static List<Integer> parseBoardsList(JsonNode node) {
+        if (node.has(BOARDS)) {
+            JsonNode boardsNode = node.get(BOARDS);
+            if (boardsNode.isArray()) {
+                List<Integer> boardsList = new ArrayList<>();
+                boardsNode.elements().forEachRemaining(n -> boardsList.add(n.asInt()));
+                if (boardsList.isEmpty()) {
+                    throw new IllegalArgumentException("Must give one or more board IDs!");
+                } else {
+                    return boardsList;
+                }
+            } else {
+                return List.of(boardsNode.asInt());
+            }
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private static HexArea parseList(JsonNode node) {
+        ListHexArea area;
         if (node.isArray()) {
             Set<Coords> coords = new HashSet<>();
             node.forEach(n -> coords.add(CoordsDeserializer.parseNode(n)));
-            return new ListHexArea(coords);
+            area = new ListHexArea(coords);
         } else {
-            return new ListHexArea(CoordsDeserializer.parseNode(node));
+            area = new ListHexArea(CoordsDeserializer.parseNode(node));
         }
+        area.setBoardIds(parseBoardsList(node));
+        return area;
     }
 
     private static HexArea parseRectangle(JsonNode node) {
@@ -144,7 +170,10 @@ public final class HexAreaDeserializer {
             List<Coords> coords = new ArrayList<>();
             node.forEach(n -> coords.add(CoordsDeserializer.parseNode(n)));
             if (coords.size() == 2) {
-                return new RectangleHexArea(coords.get(0).getX(), coords.get(0).getY(), coords.get(1).getX(), coords.get(1).getY());
+                var area = new RectangleHexArea(coords.get(0).getX(), coords.get(0).getY(),
+                      coords.get(1).getX(), coords.get(1).getY());
+                area.setBoardIds(parseBoardsList(node));
+                return area;
             } else {
                 throw new IllegalArgumentException("A Rectangle must be defined by two corner coords!");
             }
@@ -154,30 +183,38 @@ public final class HexAreaDeserializer {
     }
 
     private static HexArea parseHalfPlane(JsonNode node) {
+        HexArea area;
         MMUReader.requireFields("Halfplane HexArea", node, DIRECTION);
         if (node.has(COORDINATE)) {
             int coordinate = node.get(COORDINATE).intValue() - 1;
             var type = HalfPlaneHexArea.HalfPlaneType.valueOf(node.get(EXTENDS).asText().toUpperCase());
-            return new HalfPlaneHexArea(coordinate, type);
+            area = new HalfPlaneHexArea(coordinate, type);
         } else {
             Coords point = CoordsDeserializer.parseNode(node.get(POINT));
             int direction = node.get(DIRECTION).intValue();
             var type = RowHalfPlaneHexArea.HalfPlaneType.valueOf(node.get(EXTENDS).asText().toUpperCase());
-            return new RowHalfPlaneHexArea(point, direction, type);
+            area = new RowHalfPlaneHexArea(point, direction, type);
         }
+        area.setBoardIds(parseBoardsList(node));
+        return area;
     }
 
     private static HexArea parseLine(JsonNode node) {
         MMUReader.requireFields("Line HexArea", node, POINT, DIRECTION);
-        return new LineHexArea(CoordsDeserializer.parseNode(node.get(POINT)), node.get(DIRECTION).asInt());
+        var area = new LineHexArea(CoordsDeserializer.parseNode(node.get(POINT)), node.get(DIRECTION).asInt());
+        area.setBoardIds(parseBoardsList(node));
+        return area;
     }
 
     private static HexArea parseRay(JsonNode node) {
         MMUReader.requireFields("Ray HexArea", node, POINT, DIRECTION);
-        return new RayHexArea(CoordsDeserializer.parseNode(node.get(POINT)), node.get(DIRECTION).asInt());
+        var area = new RayHexArea(CoordsDeserializer.parseNode(node.get(POINT)), node.get(DIRECTION).asInt());
+        area.setBoardIds(parseBoardsList(node));
+        return area;
     }
 
     private static HexArea parseBorder(JsonNode node) {
+        BorderHexArea area;
         if (node.has(EDGES)) {
             List<String> borders = TriggerDeserializer.parseArrayOrSingleNode(node.get(EDGES), NORTH, SOUTH, EAST, WEST);
             int mindistance = 0;
@@ -189,12 +226,16 @@ public final class HexAreaDeserializer {
                 maxdistance = node.get(MAX_DISTANCE).intValue();
             }
             maxdistance = Math.max(maxdistance, mindistance);
-            return new BorderHexArea(borders.contains(NORTH), borders.contains(SOUTH), borders.contains(EAST), borders.contains(WEST),
+            area = new BorderHexArea(borders.contains(NORTH), borders.contains(SOUTH), borders.contains(EAST),
+              borders.contains(WEST),
                 mindistance, maxdistance);
         } else {
             List<String> borders = TriggerDeserializer.parseArrayOrSingleNode(node, NORTH, SOUTH, EAST, WEST);
-            return new BorderHexArea(borders.contains(NORTH), borders.contains(SOUTH), borders.contains(EAST), borders.contains(WEST));
+            area = new BorderHexArea(borders.contains(NORTH), borders.contains(SOUTH), borders.contains(EAST),
+              borders.contains(WEST));
         }
+        area.setBoardIds(parseBoardsList(node));
+        return area;
     }
 
     private static HexArea parseTerrainArea(JsonNode node) {
@@ -221,12 +262,15 @@ public final class HexAreaDeserializer {
                 maxDistance = node.get(MAX_DISTANCE).intValue();
             }
         }
-        return new TerrainHexArea(terrainType, minLevel, maxLevel, minDistance, maxDistance);
+        var area = new TerrainHexArea(terrainType, minLevel, maxLevel, minDistance, maxDistance);
+        area.setBoardIds(parseBoardsList(node));
+        return area;
     }
 
     private static HexArea parseHexLevelArea(JsonNode node) {
+        HexLevelArea area;
         if (node.isValueNode()) {
-            return new HexLevelArea(node.asInt());
+            area = new HexLevelArea(node.asInt());
         } else {
             int minLevel = Integer.MIN_VALUE;
             int maxLevel = Integer.MAX_VALUE;
@@ -236,8 +280,10 @@ public final class HexAreaDeserializer {
             if (node.has(MAX_LEVEL)) {
                 maxLevel = node.get(MAX_LEVEL).intValue();
             }
-            return new HexLevelArea(minLevel, maxLevel);
+            area = new HexLevelArea(minLevel, maxLevel);
         }
+        area.setBoardIds(parseBoardsList(node));
+        return area;
     }
 
     private HexAreaDeserializer() { }

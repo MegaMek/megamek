@@ -24,7 +24,11 @@ import megamek.common.Coords;
 import java.util.Set;
 
 /**
- * This class represents the addition (union) of two HexAreaShapes.
+ * This class represents the addition (union) of two HexAreaShapes. A coord is contained in the resulting area if it
+ * is present in either of the two. The board IDs of the two areas do not have to overlap.
+ * <p>
+ * Note that this HexArea itself has no board IDs. The result of this hex area is defined only by the two unioned
+ * areas.
  */
 public class HexAreaUnion extends AbstractHexArea {
 

@@ -1,18 +1,18 @@
 /*
-* MegaMek -
-* Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * MegaMek -
+ * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018 The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.client.ui.swing;
 
 import java.awt.Dimension;
@@ -25,8 +25,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
+import java.util.Objects;
 import java.util.StringTokenizer;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -43,6 +44,7 @@ import megamek.common.BombType;
  * @author suvarov454@sourceforge.net
  */
 public class BombPayloadDialog extends JDialog implements ActionListener, ItemListener {
+    @Serial
     private static final long serialVersionUID = -4629867982571421459L;
 
     private boolean confirm = false;
@@ -51,9 +53,9 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
     private int internalBombCount = 0;
     private int[] bombs;
 
-    private JPanel panButtons = new JPanel();
-    private JButton butOK = new JButton(Messages.getString("Okay"));
-    private JButton butCancel = new JButton(Messages.getString("Cancel"));
+    private final JPanel panButtons = new JPanel();
+    private final JButton butOK = new JButton(Messages.getString("Okay"));
+    private final JButton butCancel = new JButton(Messages.getString("Cancel"));
 
     @SuppressWarnings("rawtypes")
     private JComboBox[] b_choices;
@@ -61,33 +63,24 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
     private JLabel description;
 
     /**
-     * Keeps track of the number of fighters in the squadron, 0 implies a
-     * single fighter not in a squadron squadron.
+     * Keeps track of the number of fighters in the squadron, 0 implies a single fighter not in a squadron squadron.
      */
     private double numFighters;
 
     /**
      * Create and initialize the dialog.
      *
-     * @param parent
-     *            - the <code>Frame</code> that is locked by this dialog.
-     * @param title
-     *            - the title <code>String</code> for this dialog.
-     * @param b
-     *            The bomb choice list
-     * @param spaceBomb
-     *            Flag for whether or not this is space bombing
+     * @param parent      - the <code>Frame</code> that is locked by this dialog.
+     * @param title       - the title <code>String</code> for this dialog.
+     * @param b           The bomb choice list
+     * @param spaceBomb   Flag for whether this is space bombing
      * @param bombDump
-     *
      * @param lim
-     *
-     * @param numFighters
-     *            The number of fighters in a squadron, 0 implies a single
-     *            fighter not in a squadron.
+     * @param numFighters The number of fighters in a squadron, 0 implies a single fighter not in a squadron.
      */
     @SuppressWarnings("unchecked")
-    private void initialize(JFrame parent, String title, int[] b,
-            boolean spaceBomb, boolean bombDump, int lim, int numFighters) {
+    private void initialize(JFrame parent, String title, int[] b, boolean spaceBomb, boolean bombDump, int lim,
+                            int numFighters) {
         // super.setResizable(false);
 
         this.numFighters = numFighters;
@@ -107,11 +100,9 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
 
         description = new JLabel();
         if (numFighters != 0) {
-            description.setText(Messages
-                    .getString("BombPayloadDialog.SquadronBombDesc"));
+            description.setText(Messages.getString("BombPayloadDialog.SquadronBombDesc"));
         } else {
-            description.setText(Messages
-                    .getString("BombPayloadDialog.FighterBombDesc"));
+            description.setText(Messages.getString("BombPayloadDialog.FighterBombDesc"));
         }
         add(description, c);
 
@@ -123,7 +114,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         b_choices = new JComboBox[bombs.length];
         b_labels = new JLabel[bombs.length];
         //initialize the bomb choices
-        for (int i = 0; i< bombs.length; i++) {
+        for (int i = 0; i < bombs.length; i++) {
             b_choices[i] = new JComboBox<String>();
             b_labels[i] = new JLabel(BombType.getBombName(i));
             int max = bombs[i];
@@ -136,14 +127,14 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
 
                 // Add 0 bombs
                 b_choices[i].addItem(Integer.toString(0));
-                double maxNumSalvos = Math.ceil(bombs[i]/this.numFighters);
+                int maxNumSalvos = (int) Math.ceil(bombs[i] / this.numFighters);
                 // Add the full-squadron salvos
                 for (int j = 1; j < maxNumSalvos; j++) {
                     int numBombs = j * numFighters;
-                    b_choices[i].addItem(j + " (" + numBombs +")");
+                    b_choices[i].addItem(j + " (" + numBombs + ")");
                 }
                 // Add the maximum number of salvos
-                b_choices[i].addItem((int) maxNumSalvos + " (" + bombs[i] +")");
+                b_choices[i].addItem((int) maxNumSalvos + " (" + bombs[i] + ")");
             } else {
                 for (int x = 0; x <= max; x++) {
                     b_choices[i].addItem(Integer.toString(x));
@@ -160,12 +151,12 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
                 continue;
             }
             c.gridx = 1;
-            c.gridy = i+1;
+            c.gridy = i + 1;
             c.anchor = GridBagConstraints.EAST;
             add(b_labels[i], c);
             gridbag.setConstraints(b_labels[i], c);
             c.gridx = 2;
-            c.gridy = i+1;
+            c.gridy = i + 1;
             c.anchor = GridBagConstraints.WEST;
             add(b_choices[i], c);
             gridbag.setConstraints(b_choices[i], c);
@@ -187,9 +178,8 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
 
         pack();
         Dimension size = getSize();
-        setLocation((parent.getLocation().x + (parent.getSize().width / 2))
-                - (size.width / 2), (parent.getLocation().y
-                + (parent.getSize().height / 2)) - (size.height / 2));
+        setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (size.width / 2),
+              (parent.getLocation().y + (parent.getSize().height / 2)) - (size.height / 2));
     }
 
     private void setupButtons() {
@@ -197,46 +187,41 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         butCancel.addActionListener(this);
 
         // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panButtons.setLayout(gridbag);
+        GridBagLayout gridBag = new GridBagLayout();
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        panButtons.setLayout(gridBag);
 
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(10, 5, 5, 5);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.fill = GridBagConstraints.VERTICAL;
-        c.ipadx = 20;
-        c.ipady = 5;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new Insets(10, 5, 5, 5);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        gridBagConstraints.ipadx = 20;
+        gridBagConstraints.ipady = 5;
 
-        c.gridwidth = 1;
-        gridbag.setConstraints(butOK, c);
+        gridBagConstraints.gridwidth = 1;
+        gridBag.setConstraints(butOK, gridBagConstraints);
         panButtons.add(butOK);
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(butCancel, c);
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBag.setConstraints(butCancel, gridBagConstraints);
         panButtons.add(butCancel);
     }
 
     /**
-     * Create a choice dialog. The player can choose any or all of the choices.
-     * If no choices are passed in, this will be a very boring dialog, but it
-     * will not suffer an exception.
+     * Create a choice dialog. The player can choose any or all of the choices. If no choices are passed in, this will
+     * be a very boring dialog, but it will not suffer an exception.
      *
-     * @param parent
-     *            - the <code>Frame</code> that is locked by this dialog.
-     * @param title
-     *            - the title <code>String</code> for this dialog.
-     * @param bombs
-     *            - an array of <code>String</code>s the number of bombs of each
-     *            type
+     * @param parent      - the <code>Frame</code> that is locked by this dialog.
+     * @param title       - the title <code>String</code> for this dialog.
+     * @param bombs       - an array of <code>String</code>s the number of bombs of each type
      * @param spaceBomb
      * @param bombDump
      * @param limit
      * @param numFighters
      */
-    public BombPayloadDialog(JFrame parent, String title, int[] bombs,
-            boolean spaceBomb, boolean bombDump, int limit, int numFighters) {
+    public BombPayloadDialog(JFrame parent, String title, int[] bombs, boolean spaceBomb, boolean bombDump, int limit,
+                             int numFighters) {
         super(parent, title, true);
         initialize(parent, title, bombs, spaceBomb, bombDump, limit, numFighters);
     }
@@ -294,8 +279,8 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      * See if the player confirmed a choice.
      *
      * @return <code>true</code> if the player has confirmed a choice.
-     *         <code>false</code> if the player canceled, if the player did not
-     *         select a choice, or if no choices were available.
+     *       <code>false</code> if the player canceled, if the player did not
+     *       select a choice, or if no choices were available.
      */
     public boolean getAnswer() {
         return (null != getChoices());
@@ -304,11 +289,9 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
     /**
      * Which choices did the player select?
      *
-     * @return If no choices were available, if the player canceled, if the
-     *         player did not select a choice, or if the player canceled the
-     *         choice, a <code>null</code> value is returned, otherwise an array
-     *         of the <code>int</code> indexes from the input array that match
-     *         the selected choices is returned.
+     * @return If no choices were available, if the player canceled, if the player did not select a choice, or if the
+     *       player canceled the choice, a <code>null</code> value is returned, otherwise an array of the
+     *       <code>int</code> indexes from the input array that match the selected choices is returned.
      */
     public int[] getChoices() {
         int[] choices = null;
@@ -330,11 +313,27 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
                 }
             } else {
                 for (int i = 0; i < b_choices.length; i++) {
-                    choices[i] = Integer.parseInt((String) b_choices[i].getSelectedItem());
+                    choices[i] = Integer.parseInt((String) Objects.requireNonNull(b_choices[i].getSelectedItem()));
                 }
             }
         }
 
         return choices;
+    }
+
+    public int getInternalBombLimit() {
+        return internalBombLimit;
+    }
+
+    public void setInternalBombLimit(int internalBombLimit) {
+        this.internalBombLimit = internalBombLimit;
+    }
+
+    public int getInternalBombCount() {
+        return internalBombCount;
+    }
+
+    public void setInternalBombCount(int internalBombCount) {
+        this.internalBombCount = internalBombCount;
     }
 }

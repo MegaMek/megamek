@@ -1747,18 +1747,32 @@ public class Board implements Serializable {
     }
 
     /**
-     * Removes the given SHD from the given coords. This method should be used only by the server (including
-     * weaponhandlers).
+     * Removes the given SHD from the given coords.
      *
      * @param coords The position of the SHD on this board
      * @param shd    The SpecialHexDisplay to remove
      */
     public void removeSpecialHexDisplay(Coords coords, SpecialHexDisplay shd) {
+        removeSpecialHexDisplay(coords, shd, false);
+    }
+
+    /**
+     * Removes the given SHD from the given coords.
+     *
+     * @param coords The position of the SHD on this board
+     * @param shd    The SpecialHexDisplay to remove
+     */
+    public void removeSpecialHexDisplay(Coords coords, SpecialHexDisplay shd, boolean fireEvent) {
         Collection<SpecialHexDisplay> col = specialHexes.get(coords);
         if (col != null) {
             col.remove(shd);
         }
+        if (fireEvent) {
+            processBoardEvent(new BoardEvent(this, coords, BoardEvent.BOARD_CHANGED_HEX));
+        }
     }
+
+
 
     public Map<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable() {
         return specialHexes;

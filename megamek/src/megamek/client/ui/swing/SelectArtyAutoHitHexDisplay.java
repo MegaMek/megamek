@@ -174,10 +174,9 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         // Make sure we've got the correct local player
         player = clientgui.getClient().getLocalPlayer();
         // By default, we should get 5 hexes per 4 mapsheets (4 mapsheets is 16*17*4 = 1088 hexes)
-        Game game = clientgui.getClient().getGame();
-        Board board = game.getBoard();
-        int preDesignateArea = game.getOptions().intOption(OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE);
-        int hexesPer = game.getOptions().intOption(OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE);
+        Board board = game().getBoard();
+        int preDesignateArea = game().getOptions().intOption(OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE);
+        int hexesPer = game().getOptions().intOption(OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE);
         double mapArea = board.getWidth() * board.getHeight();
         startingHexes = (int) Math.ceil(mapArea / preDesignateArea) * hexesPer;
         plannedAutoHits.clear();
@@ -289,7 +288,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     @Override
     public void clear() {
         plannedAutoHits.forEach((location, shd) ->
-                  game().getBoard(location).removeSpecialHexDisplay(location.coords(), shd));
+                  game().getBoard(location).removeSpecialHexDisplay(location.coords(), shd, true));
         plannedAutoHits.clear();
         player.removeArtyAutoHitHexes();
         setArtyEnabled(startingHexes);
@@ -301,6 +300,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         PlayerIDandList<BoardLocation> finalAutoHits = new PlayerIDandList<>();
         finalAutoHits.setPlayerID(player.getId());
         finalAutoHits.addAll(plannedAutoHits.keySet());
+        plannedAutoHits.clear();
         clientgui.getClient().sendArtyAutoHitHexes(finalAutoHits);
         clientgui.getClient().sendPlayerInfo();
     }
@@ -313,8 +313,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void removeAllListeners() {
-        clientgui.getClient().getGame().removeGameListener(this);
-        clientgui.getBoardView().removeBoardViewListener(this);
+        game().removeGameListener(this);
+        clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
     }
 
     private void toggleShowDeployment() {

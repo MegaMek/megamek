@@ -4164,7 +4164,7 @@ public final class BoardView extends AbstractBoardView
      * Determines if this Board contains the (x, y) Coords, and if so, notifies listeners about the specified mouse
      * action.
      */
-    public void mouseAction(int x, int y, int mtype, int modifiers, int mouseButton) {
+    public void mouseAction(int x, int y, int mouseActionType, int modifiers, int mouseButton) {
         if (game.getBoard(boardId).contains(x, y)) {
             Coords c = new Coords(x, y);
             switch (mouseActionType) {
@@ -4277,7 +4277,7 @@ public final class BoardView extends AbstractBoardView
                 refreshMoveVectors();
             }
             if ((mp != null) && !mp.isEmpty() && GUIP.getShowMoveStep()
-                    && !gopts.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)) {
+                    && !gameOptions.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)) {
                 Player localPlayer = getLocalPlayer();
                 if ((localPlayer == null)
                         || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)

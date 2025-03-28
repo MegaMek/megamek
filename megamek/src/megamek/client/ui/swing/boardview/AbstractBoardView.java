@@ -33,7 +33,7 @@ public abstract class AbstractBoardView implements IBoardView {
     protected final int boardId;
 
     // the player who owns this BoardView's client
-    private Player localPlayer = null;
+    protected Player localPlayer = null;
 
     AbstractBoardView(int boardId) {
         this.boardId = boardId;

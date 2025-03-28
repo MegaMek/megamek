@@ -156,12 +156,11 @@ public class ScenarioV2 implements Scenario {
                 Board embeddedBoard = game.getBoard(board.getEmbeddedBoardAt(coord));
                 embeddedBoard.setEnclosingBoard(board.getBoardId());
             }
-        }
-
-        for (Board board : game.getBoards().values()) {
             int zone = 1000;
             for (HexArea hexArea : deploymentAreas) {
-                board.addDeploymentZone(zone++, hexArea);
+                if (hexArea.matchesBoardId(board)) {
+                    board.addDeploymentZone(zone++, hexArea);
+                }
             }
         }
         if ((game instanceof PlanetaryConditionsUsing)) {

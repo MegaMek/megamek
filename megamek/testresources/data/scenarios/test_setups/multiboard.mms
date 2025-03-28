@@ -24,12 +24,11 @@ options:
 factions:
 - name: P1
   deploy:
-    # see also area definitions
     area:
       circle:
         center: [ 5, 5 ]
         radius: 3
-        boards: [ 1, 2 ]
+        boards: [ 0, 1 ]
 
   units:
   - fullname: Mobile Long Tom Artillery LT-MOB-25

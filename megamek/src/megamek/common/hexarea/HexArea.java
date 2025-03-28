@@ -86,14 +86,24 @@ public interface HexArea extends Serializable {
 
 
     /**
-     * Returns true if this HexArea is present on the given board.
-     * <p>
-     * Note: By default, this returns true so that any hex area without board ID information defaults to being present
-     * on the one and only board in a single board setup.
+     * Returns true if this HexArea is present on the given board. By default, forwards to
+     * {@link #matchesBoardId(int)}. This method will usually not need to be overridden.
      *
      * @return True if this area is present on the given board
      */
     default boolean matchesBoardId(Board board) {
+        return matchesBoardId(board.getBoardId());
+    }
+
+    /**
+     * Returns true if this HexArea is present on the given board.
+     * <p>
+     * Note: By default, this returns true so that any hex area without board ID information defaults to being present
+     * on the one and only board in a single board setup. Override to provide useful multiboard support.
+     *
+     * @return True if this area is present on the given board
+     */
+    default boolean matchesBoardId(int boardId) {
         return true;
     }
 

@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3078-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='AB'>
 			<omniMargin>2</omniMargin>
@@ -4416,7 +4413,7 @@
             </model>
         </chassis>
         <chassis name='Clan Field Gun Point' unitType='Infantry'>
-            <availability>CLAN.HW:3+,CLAN.IS:3+,CHH!Keshik:5!Front Line:5!Second Line:4!Solahma:1!Provisional Garrison:1,CNC!Keshik:2!Front Line:2!Second Line:1,CWIE:3+,BAN!Keshik:2!Front Line:1</availability>
+            <availability>CLAN.HW:3+,CLAN.IS:3+,CHH!Keshik:5!Front Line:5!Second Line:4!Solahma:1!Provisional Garrison:1,CSL!Keshik:5!Front Line:5!Second Line:4!Solahma:1!Provisional Garrison:1,CNC!Keshik:2!Front Line:2!Second Line:1,CWIE:3+,BAN!Keshik:2!Front Line:1</availability>
             <model name='(Motorized AC2 Basic)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
                 <availability>CLAN.HW!Front Line:1!Second Line:7,CLAN.IS!Front Line:1!Second Line:7,CHH!Solahma:2!Provisional Garrison:8,CNC:0,CWIE:0,BAN!Keshik:6!Front Line:3</availability>

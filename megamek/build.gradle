@@ -495,12 +495,3 @@ tasks.register('testAi', JavaExec) {
 
     jvmArgs = mmJvmOptions
 }
-
-sentry {
-    debug = true
-    includeSourceContext = true
-    includeDependenciesReport = true
-    autoInstallation {
-        enabled = true
-    }
-}

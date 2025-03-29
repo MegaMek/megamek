@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3150-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
     <factions>
         <faction key='AML'>
             <techMargin>16</techMargin>
@@ -4921,7 +4918,7 @@
         <chassis name='Clan Jump Point' unitType='Infantry'>
             <availability>CLAN.IS!Keshik:7!Front Line:4!Second Line:1,RD!Keshik:4!Front Line:3!Second Line:1,CHH!Keshik:7!Front Line:7!Second Line:5!Solahma:1,CWIE!Keshik:5!Front Line:3!Second Line:1,SE!Keshik:2!Front Line:1,BAN:4+</availability>
             <model name='(ER Laser Advanced)'>
-                <availability>RD!Keshik:1,SE!Keshik:2</availability>
+                <availability>SE!Keshik:2</availability>
             </model>
             <model name='(Flamer Advanced)'>
                 <roles>urban</roles>

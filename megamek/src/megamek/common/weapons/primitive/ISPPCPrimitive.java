@@ -43,7 +43,7 @@ public class ISPPCPrimitive extends PPCWeapon {
         waterShortRange = 4;
         waterMediumRange = 7;
         waterLongRange = 10;
-        waterExtremeRange = 14;
+        waterExtremeRange = 15;
         tonnage = 7.0;
         criticals = 3;
         bv = 176;

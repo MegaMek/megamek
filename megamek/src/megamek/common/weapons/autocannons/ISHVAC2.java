@@ -37,7 +37,7 @@ public class ISHVAC2 extends HVACWeapon {
         shortRange = 10;
         mediumRange = 20;
         longRange = 35;
-        extremeRange = 40;
+        extremeRange = 52;
         tonnage = 8.0;
         criticals = 2;
         bv = 53;

@@ -22,8 +22,7 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 
 /**
- * Marshaller that Java native serialization for <code>Packet</code>
- * representation.
+ * Marshaller that Java native serialization for <code>Packet</code> representation.
  */
 class NativeSerializationMarshaller extends PacketMarshaller {
     protected static final PacketCommand[] PACKET_COMMANDS = PacketCommand.values();
@@ -39,6 +38,12 @@ class NativeSerializationMarshaller extends PacketMarshaller {
     @Override
     public Packet unmarshall(final InputStream stream) throws Exception {
         final ObjectInputStream in = new ObjectInputStream(stream);
-        return new Packet(PACKET_COMMANDS[in.readInt()], (Object[]) in.readObject());
+        final int command = in.readInt();
+
+        if (command < PACKET_COMMANDS.length) {
+            return new Packet(PACKET_COMMANDS[in.readInt()], (Object[]) in.readObject());
+        } else {
+            throw new InvalidPacketCommandReceivedException(command);
+        }
     }
 }

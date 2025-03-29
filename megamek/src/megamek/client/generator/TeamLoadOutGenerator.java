@@ -36,7 +36,6 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
-import org.apache.commons.collections4.IteratorUtils;
 
 /**
  * Notes: check out - RATGenerator.java - ForceDescriptor.java for era-based search examples
@@ -429,6 +428,10 @@ public class TeamLoadOutGenerator {
         trueRandom = value;
     }
 
+    /**
+     * @deprecated not in use.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public boolean getTrueRandom() {
         return trueRandom;
     }
@@ -542,9 +545,12 @@ public class TeamLoadOutGenerator {
     // endregion Check for various unit types, armor types, etc.
 
     // region generateParameters
-    public ReconfigurationParameters generateParameters(Team t) {
-        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(t));
-        return generateParameters(game, gameOptions, ownTeamEntities, t.getFaction(), t);
+    public ReconfigurationParameters generateParameters(Team team) {
+        Iterator<Entity> entityIterator = game.getTeamEntities(team);
+        ArrayList<Entity> ownTeamEntities = new ArrayList<>();
+        entityIterator.forEachRemaining(ownTeamEntities::add);
+
+        return generateParameters(game, gameOptions, ownTeamEntities, team.getFaction(), team);
     }
 
     public ReconfigurationParameters generateParameters(ArrayList<Entity> ownEntities, String ownFaction, Team t) {
@@ -562,19 +568,22 @@ public class TeamLoadOutGenerator {
      *
      * @return ReconfigurationParameters with information about enemy and friendly forces
      */
-    public static ReconfigurationParameters generateParameters(Game g, GameOptions gOpts, ArrayList<Entity> ownEntities, String friendlyFaction, Team team) {
+    public static ReconfigurationParameters generateParameters(Game g, GameOptions gOpts, ArrayList<Entity> ownEntities,
+                                                               String friendlyFaction, Team team) {
         if (ownEntities.isEmpty()) {
             // Nothing to generate
             return new ReconfigurationParameters();
         }
         ArrayList<Entity> etEntities = new ArrayList<>();
         ArrayList<String> enemyFactions = new ArrayList<>();
+
         for (Team et : g.getTeams()) {
             if (!et.isEnemyOf(team)) {
                 continue;
             }
             enemyFactions.add(et.getFaction());
-            etEntities.addAll(IteratorUtils.toList(g.getTeamEntities(et)));
+            Iterator<Entity> entityIterator = g.getTeamEntities(et);
+            entityIterator.forEachRemaining(etEntities::add);
         }
 
         return generateParameters(g,
@@ -587,7 +596,10 @@ public class TeamLoadOutGenerator {
               1.0f);
     }
 
-    public static ReconfigurationParameters generateParameters(Game g, GameOptions gOpts, ArrayList<Entity> ownEntities, String friendlyFaction, ArrayList<Entity> enemyEntities, ArrayList<String> enemyFactions, int rating, float fillRatio) {
+    public static ReconfigurationParameters generateParameters(Game g, GameOptions gOpts, ArrayList<Entity> ownEntities,
+                                                               String friendlyFaction, ArrayList<Entity> enemyEntities,
+                                                               ArrayList<String> enemyFactions, int rating,
+                                                               float fillRatio) {
 
         boolean blind = gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP) ||
                               gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
@@ -611,7 +623,11 @@ public class TeamLoadOutGenerator {
               fillRatio);
     }
 
-    public static ReconfigurationParameters generateParameters(ArrayList<Entity> ownTeamEntities, ArrayList<Entity> etEntities, String friendlyFaction, ArrayList<String> enemyFactions, boolean blind, boolean darkEnvironment, boolean groundMap, boolean spaceEnvironment, int rating, float fillRatio) {
+    public static ReconfigurationParameters generateParameters(ArrayList<Entity> ownTeamEntities,
+                                                               ArrayList<Entity> etEntities, String friendlyFaction,
+                                                               ArrayList<String> enemyFactions, boolean blind,
+                                                               boolean darkEnvironment, boolean groundMap,
+                                                               boolean spaceEnvironment, int rating, float fillRatio) {
         ReconfigurationParameters reconfigurationParameters = new ReconfigurationParameters();
 
         // Set own faction and quality rating (default to generic IS if faction is not
@@ -677,7 +693,8 @@ public class TeamLoadOutGenerator {
     // endregion generateParameters
 
     // region Imperative mutators
-    private static void setACImperatives(Entity e, MunitionTree mt, ReconfigurationParameters reconfigurationParameters) {
+    private static void setACImperatives(Entity e, MunitionTree mt,
+                                         ReconfigurationParameters reconfigurationParameters) {
         applyACCaselessImperative(e, mt, reconfigurationParameters);
     }
 
@@ -701,38 +718,32 @@ public class TeamLoadOutGenerator {
                            .count();
     }
 
-    private static boolean applyACCaselessImperative(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
+    private static void applyACCaselessImperative(Entity e, MunitionTree mt, ReconfigurationParameters rp) {
         // TODO: remove this block when implementing new anti-ground Aero errata
         // Ignore Aero's, which can't use most alt munitions.
         if (e.isAero()) {
-            return false;
+            return;
         }
 
-        boolean swapped = false;
         Map<String, Double> caliberToRatioMap = Map.of("2", 0.25, // if 1 ton or fewer per 4 AC/2 barrels,
               "5", 0.5, // if 1 ton or fewer per 2 AC/5 barrels,
               "10", 1.0, // if 1 ton or fewer per AC/10 or AC/20 barrel
               "20", 1.0 // Replace existing imperatives with Caseless only.
         );
 
-        // Iterate over any possible AutoCannons and update their ammo imperatives if
-        // count of bins/barrel
-        // is at or below the relevant ratio.
+        // Iterate over any possible AutoCannons and update their ammo imperatives if count of bins/barrel is at or
+        // below the relevant ratio.
         for (String caliber : caliberToRatioMap.keySet()) {
             int barrelCount = getACWeaponCount(e, caliber);
             int binCount = getACAmmoCount(e, caliber);
 
-            if (barrelCount == 0) {
-                // Nothing to do
-                continue;
-            } else if (((double) binCount) / barrelCount <= caliberToRatioMap.get(caliber)) {
-                // Replace any existing imperatives with Caseless as default
-                mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/" + caliber, "Caseless");
-                swapped = true;
+            if (barrelCount != 0) {
+                if (((double) binCount) / barrelCount <= caliberToRatioMap.get(caliber)) {
+                    // Replace any existing imperatives with Caseless as default
+                    mt.insertImperative(e.getFullChassis(), e.getModel(), "any", "AC/" + caliber, "Caseless");
+                }
             }
         }
-
-        return swapped;
     }
 
     private static void insertArtemisImperatives(Entity e, MunitionTree mt, String ammoClass) {
@@ -764,12 +775,21 @@ public class TeamLoadOutGenerator {
     // region Imperative mutators
 
     // region generateMunitionTree
-    public MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team t) {
-        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(t));
+
+    /**
+     * @deprecated Not inidicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
+    public MunitionTree generateMunitionTree(ReconfigurationParameters rp, Team team) {
+        Iterator<Entity> entityIterator = game.getTeamEntities(team);
+        ArrayList<Entity> ownTeamEntities = new ArrayList<>();
+        entityIterator.forEachRemaining(ownTeamEntities::add);
+
         return generateMunitionTree(rp, ownTeamEntities, "");
     }
 
-    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, ArrayList<Entity> entities, String defaultSettingsFile) {
+    public static MunitionTree generateMunitionTree(ReconfigurationParameters rp, ArrayList<Entity> entities,
+                                                    String defaultSettingsFile) {
         // Based on various requirements from rp, set weights for some ammo types over
         // others
         MunitionWeightCollection mwc = new MunitionWeightCollection();
@@ -787,7 +807,9 @@ public class TeamLoadOutGenerator {
      *
      * @return generated MunitionTree with imperatives for each weapon type
      */
-    public static MunitionTree generateMunitionTree(ReconfigurationParameters reconfigurationParameters, ArrayList<Entity> ownTeamEntities, String defaultSettingsFile, MunitionWeightCollection mwc) {
+    public static MunitionTree generateMunitionTree(ReconfigurationParameters reconfigurationParameters,
+                                                    ArrayList<Entity> ownTeamEntities, String defaultSettingsFile,
+                                                    MunitionWeightCollection mwc) {
 
         // Either create a new tree or, if a defaults file is provided, load that as a base config
         MunitionTree mt = (defaultSettingsFile == null || defaultSettingsFile.isBlank()) ?
@@ -1015,10 +1037,8 @@ public class TeamLoadOutGenerator {
      *
      * @param mt  {@link MunitionTree} Object
      * @param mwc {@link MunitionWeightCollection} Object
-     *
-     * @return computed munition weights into imperatives
      */
-    public static MunitionTree applyWeightsToMunitionTree(MunitionWeightCollection mwc, MunitionTree mt) {
+    public static void applyWeightsToMunitionTree(MunitionWeightCollection mwc, MunitionTree mt) {
         // Iterate over every entry in the set of top-weighted munitions for each category
         HashMap<String, List<String>> topWeights = mwc.getTopN(castPropertyInt("mtTopMunitionsSubsetCount", 8));
 
@@ -1036,7 +1056,6 @@ public class TeamLoadOutGenerator {
 
             mt.insertImperative("any", "any", "any", e.getKey(), sb.toString());
         }
-        return mt;
     }
     // endregion generateMunitionTree
 
@@ -1044,7 +1063,10 @@ public class TeamLoadOutGenerator {
 
     /**
      * Wrapper to streamline bot team configuration using standardized defaults
+     *
+     * @deprecated - no indicated uses.
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public void reconfigureBotTeamWithDefaults(Team team, String faction) {
         // Load in some hard-coded defaults now before calculating more.
         reconfigureTeam(team, faction, defaultBotMunitionsFile);
@@ -1061,7 +1083,9 @@ public class TeamLoadOutGenerator {
         ReconfigurationParameters reconfigurationParameters = generateParameters(team);
         reconfigurationParameters.allowedYear = allowedYear;
 
-        ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(team));
+        Iterator<Entity> entityIterator = game.getTeamEntities(team);
+        ArrayList<Entity> updateEntities = new ArrayList<>();
+        entityIterator.forEachRemaining(updateEntities::add);
 
         MunitionTree mt = generateMunitionTree(reconfigurationParameters, updateEntities, adfFile);
         reconfigureEntities(updateEntities, faction, mt, reconfigurationParameters);
@@ -1074,7 +1098,8 @@ public class TeamLoadOutGenerator {
      * @param faction  String code for entities' main faction
      * @param mt       MunitionTree defining all applicable load out imperatives
      */
-    public void reconfigureEntities(ArrayList<Entity> entities, String faction, MunitionTree mt, ReconfigurationParameters reconfigurationParameters) {
+    public void reconfigureEntities(ArrayList<Entity> entities, String faction, MunitionTree mt,
+                                    ReconfigurationParameters reconfigurationParameters) {
         // For Pirate forces, assume fewer rounds per bin at lower quality levels, minimum 20%. If fill ratio is
         // already set, leave it.
         if (reconfigurationParameters.binFillPercent == UNSET_FILL_RATIO) {
@@ -1120,7 +1145,10 @@ public class TeamLoadOutGenerator {
      */
     public void randomizeBotTeamConfiguration(Team team, String faction) {
         ReconfigurationParameters rp = generateParameters(team);
-        ArrayList<Entity> updateEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(team));
+        Iterator<Entity> entityIterator = game.getTeamEntities(team);
+        ArrayList<Entity> updateEntities = new ArrayList<>();
+        entityIterator.forEachRemaining(updateEntities::add);
+
         reconfigureEntities(updateEntities, faction, generateRandomizedMT(), rp);
     }
 
@@ -1212,7 +1240,8 @@ public class TeamLoadOutGenerator {
     // endregion reconfigureAero
 
     // region iterativelyLoadAmmo
-    private void iterativelyLoadAmmo(Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName, String faction) {
+    private void iterativelyLoadAmmo(Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName,
+                                     String faction) {
         String techBase = (e.isClan()) ? "CL" : "IS";
         iterativelyLoadAmmo(e, mt, binList, binName, techBase, faction);
     }
@@ -1231,7 +1260,8 @@ public class TeamLoadOutGenerator {
      * @param techBase "CL" or "IS"
      * @param faction  Faction to outfit for, used in ammo validity checks (uses MM, not IO, faction codes)
      */
-    private void iterativelyLoadAmmo(Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName, String techBase, String faction) {
+    private void iterativelyLoadAmmo(Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName,
+                                     String techBase, String faction) {
         // Copy counts that we will update, otherwise mt entry gets edited permanently.
         HashMap<String, Integer> counts = new HashMap<>(mt.getCountsOfAmmosForKey(e.getFullChassis(),
               e.getModel(),
@@ -1370,7 +1400,8 @@ public class TeamLoadOutGenerator {
      * @param quality          IUnitRating enum for force quality (A/A* through F)
      * @param isPirate         true to use specific pirate ordnance loadouts
      */
-    public void populateAeroBombs(List<Entity> entityList, int year, boolean hasGroundTargets, int quality, boolean isPirate, String faction) {
+    public void populateAeroBombs(List<Entity> entityList, int year, boolean hasGroundTargets, int quality,
+                                  boolean isPirate, String faction) {
 
         // Get all valid bombers, and sort unarmed ones to the front. Ignore VTOLs for now, as they suffer extra
         // penalties for mounting bomb munitions
@@ -1478,7 +1509,8 @@ public class TeamLoadOutGenerator {
         loadBombsOntoBombers(bomberList, bombsByCarrier, forceHasGuided);
     }
 
-    private static void loadBombsOntoBombers(List<Entity> bomberList, Map<Integer, int[]> bombsByCarrier, boolean forceHasGuided) {
+    private static void loadBombsOntoBombers(List<Entity> bomberList, Map<Integer, int[]> bombsByCarrier,
+                                             boolean forceHasGuided) {
         // Load ordnance onto units. If there is guided ordnance present then randomly add some TAG pods to those
         // without the guided ordnance.
         int tagCount = Math.min(bomberList.size(), Compute.randomInt(castPropertyInt("bombersToAddTagMaxCount", 3)));
@@ -1520,7 +1552,8 @@ public class TeamLoadOutGenerator {
      * @return array of integers, with each element being a bomb count using BombUnit enums as the lookup e.g.
      *       [BombUnit.HE] will get the number of HE bombs.
      */
-    public int[] generateExternalOrdnance(int bombUnits, boolean airOnly, boolean isPirate, int quality, int year, String faction, String techBase, boolean mixedTech) {
+    public int[] generateExternalOrdnance(int bombUnits, boolean airOnly, boolean isPirate, int quality, int year,
+                                          String faction, String techBase, boolean mixedTech) {
 
         int[] bombLoad = new int[BombType.B_NUM];
 
@@ -2083,7 +2116,8 @@ class MunitionWeightCollection {
      * @param factor
      * @param increment
      */
-    private static void modifyMatchingWeights(HashMap<String, Double> current, List<String> types, double factor, double increment) {
+    private static void modifyMatchingWeights(HashMap<String, Double> current, List<String> types, double factor,
+                                              double increment) {
         for (String key : types) {
             if (current.containsKey(key)) {
                 current.put(key, current.get(key) * factor + increment);

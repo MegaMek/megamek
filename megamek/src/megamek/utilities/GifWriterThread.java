@@ -18,39 +18,43 @@
  */
 package megamek.utilities;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.util.StringUtil;
-import megamek.logging.MMLogger;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
 
 /**
  * Thread that writes frames to a GIF file.
+ *
  * @author Luana Coppio
  */
 public class GifWriterThread extends Thread {
     private static final MMLogger logger = MMLogger.create(GifWriter.class);
 
-    private record Frame(BufferedImage image, long duration) {}
+    private record Frame(BufferedImage image, long duration) {
+    }
 
     private final GifWriter gifWriter;
     private final Deque<Frame> imageDeque = new ConcurrentLinkedDeque<>();
     private boolean isLive = true;
     private boolean forceInterrupt = false;
-    public static final String CG_FILEEXTENTIONGIF = ".gif";
-    public static final String CG_FILEPATHGIF = "gif";
+    public static final String CG_FILE_EXTENSION_GIF = ".gif";
+    public static final String CG_FILE_PATH_GIF = "gif";
 
     /**
      * Creates a new GifWriterThread.
+     *
      * @param gifWriter the GIF writer
-     * @param name the thread name
+     * @param name      the thread name
      */
     public GifWriterThread(GifWriter gifWriter, String name) {
         super(name);
@@ -59,7 +63,8 @@ public class GifWriterThread extends Thread {
 
     /**
      * Adds a frame to the GIF.
-     * @param image the frame image
+     *
+     * @param image          the frame image
      * @param durationMillis the frame duration in milliseconds
      */
     public void addFrame(BufferedImage image, long durationMillis) {
@@ -124,8 +129,8 @@ public class GifWriterThread extends Thread {
     private void saveGif() {
         SaveDialogResult result = getSaveDialog();
         if ((result.returnVal() != JFileChooser.APPROVE_OPTION) || (result.saveDialog().getSelectedFile() == null)) {
-            // without a file there is no saving for the file, which them means we can't save the gif
-            // and instead we delete it
+            // without a file there is no saving for the file, which them means we can't save the gif and instead we
+            // delete it
             deleteGif();
             return;
         }
@@ -133,12 +138,12 @@ public class GifWriterThread extends Thread {
         // Did the player select a file?
         File gifFile = result.saveDialog().getSelectedFile();
         if (gifFile != null) {
-            if (!gifFile.getName().toLowerCase().endsWith(CG_FILEEXTENTIONGIF)) {
+            if (!gifFile.getName().toLowerCase().endsWith(CG_FILE_EXTENSION_GIF)) {
                 try {
-                    gifFile = new File(gifFile.getCanonicalPath() + CG_FILEEXTENTIONGIF);
+                    gifFile = new File(gifFile.getCanonicalPath() + CG_FILE_EXTENSION_GIF);
                 } catch (Exception ignored) {
-                    // without a file there is no saving for the file, which them means we can't save the gif
-                    // and instead we delete it
+                    // without a file there is no saving for the file, which them means we can't save the gif and
+                    // instead we delete it
                     deleteGif();
                     return;
                 }
@@ -148,10 +153,17 @@ public class GifWriterThread extends Thread {
                 if (gifWriter.getOutputFile().renameTo(finalGifFile)) {
                     logger.info("Game summary GIF saved to {}", finalGifFile);
                 } else {
-                    logger.errorDialog("Unable to save GIF in destination", "Unable to save file {} at {}", gifWriter.getOutputFile(), finalGifFile);
+                    logger.errorDialog("Unable to save GIF in destination",
+                          "Unable to save file {} at {}",
+                          gifWriter.getOutputFile(),
+                          finalGifFile);
                 }
             } catch (Exception ex) {
-                logger.errorDialog(ex, "Unable to save file {} at {}", "Unable to save GIF in destination", gifWriter.getOutputFile(), finalGifFile);
+                logger.errorDialog(ex,
+                      "Unable to save file {} at {}",
+                      "Unable to save GIF in destination",
+                      gifWriter.getOutputFile(),
+                      finalGifFile);
             }
         }
     }
@@ -162,11 +174,11 @@ public class GifWriterThread extends Thread {
         var frame = JOptionPane.getRootFrame();
         saveDialog.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         saveDialog.setDialogTitle(Messages.getString("ClientGUI.saveGameSummaryGifFileDialog.title"));
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-              Messages.getString("ClientGUI.descriptionGIFFiles"), CG_FILEPATHGIF);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(Messages.getString("ClientGUI.descriptionGIFFiles"),
+              CG_FILE_PATH_GIF);
         saveDialog.setFileFilter(filter);
 
-        saveDialog.setSelectedFile(new File(filename + CG_FILEEXTENTIONGIF));
+        saveDialog.setSelectedFile(new File(filename + CG_FILE_EXTENSION_GIF));
 
         int returnVal = saveDialog.showSaveDialog(frame);
         return new SaveDialogResult(saveDialog, returnVal);

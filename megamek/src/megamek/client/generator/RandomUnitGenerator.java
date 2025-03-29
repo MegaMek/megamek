@@ -418,7 +418,7 @@ public class RandomUnitGenerator implements Serializable {
                     for (int roll = 0; roll < numRolls; roll++) {
                         double rand = getRandom();
                         int i = 0;
-                        while (i < re.getWeights().size() && rand > re.getWeights().get(i)) {
+                        while (i < re.getWeights().size() && rand > (double) re.getWeights().get(i)) {
                             rand -= re.getWeights().get(i);
                             i++;
                         }

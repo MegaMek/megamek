@@ -4542,7 +4542,7 @@
             </model>
             <model name='(Wheeled CLBX20 Advanced)'>
                 <roles>field_gun,urban</roles>
-                <availability>CGB!Keshik:2!Front Line:1,RD!Keshik:2!Front Line:1,CHH!Keshik:2</availability>
+                <availability>CGB!Keshik:2!Front Line:1,CHH!Keshik:2</availability>
             </model>
             <model name='(Wheeled CLBX5 Advanced)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>

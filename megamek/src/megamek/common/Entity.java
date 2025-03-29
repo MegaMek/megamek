@@ -3287,21 +3287,52 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Returns true if the specified hex contains some sort of prohibited terrain.
+     * Returns true when the given location cannot legally be entered or deployed into by this unit at its present
+     * elevation or altitude. Also returns true when the location doesn't exist. Even when this method returns true,
+     * the location need not be deadly to the unit.
+     *
+     * @param boardLocation The location to test
+     * @return True when the location is illegal to be in for this unit, regardless of elevation
+     *
+     * @see #isLocationDeadly(Coords)
      */
-    public boolean isLocationProhibited(Coords c) {
-        return isLocationProhibited(c, elevation);
+    public boolean isLocationProhibited(BoardLocation boardLocation) {
+        return isLocationProhibited(boardLocation.coords(), boardLocation.boardId(), isAero() ? altitude : elevation);
     }
 
     /**
-     * @param c             {@link Coords} Coordinates
-     * @param currElevation Elevation level
+     * Returns true when the given location cannot legally be entered or deployed into by this unit at the given
+     * elevation or altitude. Also returns true when the location doesn't exist. Even when this
+     * method returns true, the location need not be deadly to the unit.
      *
-     * @return true if the specified hex contains some sort of prohibited terrain if the Entity is at the specified
-     *       elevation. Elevation generally only matters for units like WiGEs or VTOLs.
+     * @param boardLocation The location to test
+     * @param testElevation The elevation or altitude to test
+     * @return True when the location is illegal to be in for this unit, regardless of elevation
+     *
+     * @see #isLocationDeadly(Coords)
      */
-    public boolean isLocationProhibited(Coords c, int currElevation) {
-        Hex hex = game.getBoard().getHex(c);
+    public boolean isLocationProhibited(BoardLocation boardLocation, int testElevation) {
+        return isLocationProhibited(boardLocation.coords(), boardLocation.boardId(), testElevation);
+    }
+
+    /**
+     * Returns true when the given location cannot legally be entered or deployed into by this unit at the given
+     * elevation or altitude. Also returns true when the location doesn't exist. Even when this
+     * method returns true, the location need not be deadly to the unit.
+     *
+     * @param testPosition The position to test
+     * @param testBoardId The board to test
+     * @param testElevation The elevation or altitude to test
+     * @return True when the location is illegal to be in for this unit, regardless of elevation
+     *
+     * @see #isLocationDeadly(Coords)
+     */
+    public boolean isLocationProhibited(Coords testPosition, int testBoardId, int testElevation) {
+        if (!game.hasBoardLocation(testPosition, testBoardId)) {
+            return true;
+        }
+
+        Hex hex = game.getHex(testPosition, testBoardId);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return !isAirborne();
         }
@@ -3317,14 +3348,35 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return true;
             }
             // Can't deploy on a bridge
-            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == testElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
             // Can't deploy on the surface of water
-            return hex.containsTerrain(Terrains.WATER) && (currElevation == 0);
+            return hex.containsTerrain(Terrains.WATER) && (testElevation == 0);
         }
 
         return false;
+    }
+
+    /**
+     * Returns true if the specified hex contains some sort of prohibited terrain.
+     * legacy - use the board location/board ID methods instead
+     */
+    public boolean isLocationProhibited(Coords c) {
+        return isLocationProhibited(c, elevation);
+    }
+
+    /**
+     * @param c             {@link Coords} Coordinates
+     * @param currElevation Elevation level
+     *
+     * @return true if the specified hex contains some sort of prohibited terrain if the Entity is at the specified
+     *       elevation. Elevation generally only matters for units like WiGEs or VTOLs.
+     *
+     * legacy - use the board location/board ID methods instead
+     */
+    public boolean isLocationProhibited(Coords c, int currElevation) {
+        return isLocationProhibited(c, boardId, currElevation);
     }
 
     /**
@@ -12677,7 +12729,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // for now if you are in space, you are spaceborne, but this will become more complicated when we start
         // adding multiple maps to the same game and so I should try to replace most calls to `game.getBoard()
         // .inSpace()` with this one
-        return game != null && game.getBoard().inSpace();
+        return (game != null) && game.isSpace(getBoardLocation());
     }
 
     /**

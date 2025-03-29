@@ -22,6 +22,7 @@ package megamek.client.ui.swing;
 import megamek.common.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
@@ -37,6 +38,16 @@ public class TowLinkWarning {
      * If a search reaches 10000 let's stop.
       */
     private static final int MAX_SEARCH_DEPTH = 10000;
+
+    public static List<BoardLocation> findTowLinkIssues(Game game, Entity entity) {
+        List<BoardLocation> warnList = new LinkedList<>();
+        for (Board board : game.getBoards().values()) {
+            List<Coords> boardWarnings = findTowLinkIssues(game, entity, board);
+            warnList.addAll(boardWarnings.stream().map(c -> BoardLocation.of(c, board.getBoardId())).toList());
+        }
+        warnList.removeIf(BoardLocation::isNoLocation);
+        return warnList;
+    }
 
     /**
      * This is used by the {@link MovementDisplay} class.

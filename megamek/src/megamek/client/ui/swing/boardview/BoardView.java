@@ -1270,12 +1270,12 @@ public final class BoardView extends AbstractBoardView
                     if (en_Deployer.getAltitude() > 0) {
                         // Flying Aeros are always above it all
                         if (board.isLegalDeployment(c, en_Deployer) &&
-                                  !en_Deployer.isLocationProhibited(c, board.getMaxElevation())) {
+                                  !en_Deployer.isLocationProhibited(c, boardId, board.getMaxElevation())) {
                             drawHexBorder(g, getHexLocation(c), Color.yellow);
                         }
                     } else if (en_Deployer.getAltitude() == 0) {
                         // Show prospective Altitude 1+ hexes
-                        if (board.isLegalDeployment(c, en_Deployer) && !en_Deployer.isLocationProhibited(c, 1)) {
+                        if (board.isLegalDeployment(c, en_Deployer) && !en_Deployer.isLocationProhibited(c, boardId, 1)) {
                             drawHexBorder(g, getHexLocation(c), Color.cyan);
                         }
                     }
@@ -1284,14 +1284,14 @@ public final class BoardView extends AbstractBoardView
                     Hex hex = board.getHex(c);
                     // Default to Elevation 1 if ceiling + 1 <= 0.
                     int maxHeight = (isWiGE) ? 1 : (hex != null) ? Math.max(hex.ceiling() + 1, 1) : 1;
-                    if (board.isLegalDeployment(c, en_Deployer) && !en_Deployer.isLocationProhibited(c, maxHeight)) {
+                    if (board.isLegalDeployment(c, en_Deployer) && !en_Deployer.isLocationProhibited(c, boardId, maxHeight)) {
                         drawHexBorder(g, getHexLocation(c), Color.cyan);
                     }
                 }
 
                 if (board.isLegalDeployment(c, en_Deployer) &&
                           // Draw hexes that are legal at lowest deployment elevation
-                          !en_Deployer.isLocationProhibited(c)) {
+                          !en_Deployer.isLocationProhibited(c, boardId)) {
                     drawHexBorder(g, getHexLocation(c), Color.yellow);
                 }
             }
@@ -1301,7 +1301,7 @@ public final class BoardView extends AbstractBoardView
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
                 if (board.isLegalDeployment(c, en_Deployer) &&
-                          !en_Deployer.isLocationProhibited(c) &&
+                          !en_Deployer.isLocationProhibited(c, boardId) &&
                           en_Deployer.isLocationDeadly(c)) {
                     drawHexBorder(g, getHexLocation(c), GUIP.getWarningColor());
                 }

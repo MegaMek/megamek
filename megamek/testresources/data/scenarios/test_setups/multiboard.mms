@@ -24,6 +24,7 @@ options:
 
 factions:
 - name: P1
+  deploy: W
 #  deploy:
 #    area:
 #      terrain:
@@ -39,5 +40,7 @@ factions:
   - fullname: Locust LCT-1V
 
   - fullname: Atlas AS7-D
+
+  - fullname: Cheetah IIC
 #    at: [8, 9]
 

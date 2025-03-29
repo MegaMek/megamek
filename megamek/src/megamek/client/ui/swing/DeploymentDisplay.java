@@ -255,8 +255,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     private void computeTowLinkBreakageHexes(Entity ce) {
-        List<Coords> warnList = TowLinkWarning.findTowLinkIssues(game, ce, game.getBoard());
-//        clientgui.showCollapseWarning(warnList);
+        List<BoardLocation> warnList = TowLinkWarning.findTowLinkIssues(game, ce);
+        clientgui.showCollapseWarning(warnList);
     }
 
     /** Enables relevant buttons and sets up for your turn. */

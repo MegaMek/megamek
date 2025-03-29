@@ -578,6 +578,17 @@ public interface IGame {
         return hasBoardLocation(coords, boardId) ? getBoard(boardId).getHex(coords) : null;
     }
 
+    /**
+     * Returns true when the given location exists in this game (i.e., is part of a board) and the board it is on is
+     * a space board, including high-atmosphere boards (even atmospheric hexes on such a board).
+     *
+     * @param boardLocation The location to test
+     * @return True when the location is part of a space board
+     */
+    default boolean isSpace(@Nullable BoardLocation boardLocation) {
+        return hasBoardLocation(boardLocation) && getBoard(boardLocation).isSpaceMap();
+    }
+
     // endregion
 
     /**

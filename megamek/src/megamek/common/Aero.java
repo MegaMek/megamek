@@ -2027,12 +2027,16 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int currElevation) {
-        if ((currElevation != 0) || isSpaceborne()) {
+    public boolean isLocationProhibited(Coords testPosition, int testBoardId, int testAltitude) {
+        if (!game.hasBoardLocation(testPosition, testBoardId)) {
+            return true;
+        }
+        
+        if ((testAltitude != 0) || isSpaceborne()) {
             return false;
         }
 
-        Hex hex = game.getBoard().getHex(c);
+        Hex hex = game.getHex(testPosition, testBoardId);
 
         // Additional restrictions for hidden units
         if (isHidden()) {
@@ -2041,11 +2045,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 return true;
             }
             // Can't deploy on a bridge
-            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == testAltitude) && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
             // Can't deploy on the surface of water
-            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+            if (hex.containsTerrain(Terrains.WATER) && (testAltitude == 0)) {
                 return true;
             }
         }

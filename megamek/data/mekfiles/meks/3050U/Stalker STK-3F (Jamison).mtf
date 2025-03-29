@@ -3,7 +3,7 @@ model:STK-3F (Jamison)
 mul id:5119
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
+TechBase:Clan
 Era:3054
 Source:TRO: 3050
 Rules Level:4

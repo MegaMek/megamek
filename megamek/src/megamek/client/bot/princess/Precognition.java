@@ -250,9 +250,10 @@ public class Precognition implements Runnable {
                     getGame().setFlares(v2);
                     break;
                 case SENDING_SPECIAL_HEX_DISPLAY:
-                    getGame().getBoard().setSpecialHexDisplayTable(
-                            (Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
-                    getGame().processGameEvent(new GameBoardChangeEvent(this));
+                    var shdTable = (Map<Coords, Collection<SpecialHexDisplay>>) c.getObject(0);
+                    var boardId = (int) c.getObject(1);
+                    game.getBoard(boardId).setSpecialHexDisplayTable(shdTable);
+                    game.processGameEvent(new GameBoardChangeEvent(this));
                     break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
                     receiveEntityNovaNetworkModeChange(c);

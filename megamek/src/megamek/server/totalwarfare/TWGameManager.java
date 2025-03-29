@@ -9388,14 +9388,15 @@ public class TWGameManager extends AbstractGameManager {
     private void receiveDeployment(Packet packet, int connId) {
         Entity entity = game.getEntity(packet.getIntValue(0));
         Coords coords = (Coords) packet.getObject(1);
-        int nFacing = packet.getIntValue(2);
-        int elevation = packet.getIntValue(3);
+        int boardId = (int) packet.getObject(2);
+        int nFacing = packet.getIntValue(3);
+        int elevation = packet.getIntValue(4);
 
         // Handle units that deploy loaded with other units.
-        int loadedCount = packet.getIntValue(4);
+        int loadedCount = packet.getIntValue(5);
         Vector<Entity> loadVector = new Vector<>();
         for (int i = 0; i < loadedCount; i++) {
-            int loadedId = packet.getIntValue(6 + i);
+            int loadedId = packet.getIntValue(7 + i);
             loadVector.addElement(game.getEntity(loadedId));
         }
 
@@ -9406,14 +9407,14 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // can this player/entity act right now?
-        final boolean assaultDrop = packet.getBooleanValue(5);
+        final boolean assaultDrop = packet.getBooleanValue(6);
         // can this player/entity act right now?
         GameTurn turn = game.getTurn();
         if (getGame().getPhase().isSimultaneous(getGame())) {
             turn = game.getTurnForPlayer(connId);
         }
         if ((turn == null) || !turn.isValid(connId, entity, game)
-                || !(game.getBoard().isLegalDeployment(coords, entity)
+                || !(game.getBoard(boardId).isLegalDeployment(coords, entity)
                         || (assaultDrop && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)
                                 && entity.canAssaultDrop()))) {
             String msg = "server got invalid deployment packet from "
@@ -9430,7 +9431,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // looks like mostly everything's okay
-        processDeployment(entity, coords, nFacing, elevation, loadVector, assaultDrop);
+        processDeployment(entity, coords, boardId, nFacing, elevation, loadVector, assaultDrop);
 
         // Update Aero sensors for a space or atmospheric game
         if (entity.isAero()) {
@@ -9509,7 +9510,8 @@ public class TWGameManager extends AbstractGameManager {
      * specified entities inside of it too. Also, check that the deployment is
      * valid.
      */
-    private void processDeployment(Entity entity, Coords coords, int nFacing, int elevation, Vector<Entity> loadVector,
+    private void processDeployment(Entity entity, Coords coords, int boardId, int nFacing, int elevation,
+     Vector<Entity> loadVector,
             boolean assaultDrop) {
         for (Entity loaded : loadVector) {
             if (loaded.getTransportId() != Entity.NONE) {
@@ -9553,6 +9555,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         entity.setPosition(coords);
+        entity.setBoardId(boardId);
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
 
@@ -9568,7 +9571,7 @@ public class TWGameManager extends AbstractGameManager {
             entity.setElevation(elevation);
         }
 
-        Hex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard(boardId).getHex(coords);
         if (assaultDrop) {
             entity.setAltitude(1);
             // from the sky!
@@ -9585,7 +9588,7 @@ public class TWGameManager extends AbstractGameManager {
             if (entity.isAirborne()) {
                 entity.setElevation(0);
             }
-            if (!game.getBoard().inSpace()) {
+            if (!entity.isSpaceborne()) {
                 // all spheroid craft should have velocity of zero in atmosphere
                 // regardless of what was entered
                 IAero a = (IAero) entity;
@@ -9596,14 +9599,14 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 // make sure that entity is above the level of the hex if in
                 // atmosphere
-                if (game.getBoard().inAtmosphere()
+                if (game.getBoard(boardId).inAtmosphere()
                         && (entity.getAltitude() <= hex.ceiling(true))) {
                     // you can't be grounded on low atmosphere map
                     entity.setAltitude(hex.ceiling(true) + 1);
                 }
             }
         } else {
-            Building bld = game.getBoard().getBuildingAt(entity.getPosition());
+            Building bld = game.getBoard(boardId).getBuildingAt(entity.getPosition());
             if ((bld != null) && (bld.getType() == BuildingType.WALL)) {
                 entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             }
@@ -9616,9 +9619,9 @@ public class TWGameManager extends AbstractGameManager {
 
         // when first entering a building, we need to roll what type
         // of basement it has
-        Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
+        Building bldg = game.getBoard(boardId).getBuildingAt(entity.getPosition());
         if ((bldg != null)) {
-            if (bldg.rollBasement(entity.getPosition(), game.getBoard(), mainPhaseReport)) {
+            if (bldg.rollBasement(entity.getPosition(), game.getBoard(boardId), mainPhaseReport)) {
                 sendChangedHex(entity.getPosition());
                 Vector<Building> buildings = new Vector<>();
                 buildings.add(bldg);

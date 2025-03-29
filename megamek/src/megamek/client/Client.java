@@ -209,7 +209,7 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Maintain backwards compatibility.
+     * Maintain backwards compatibility. Legacy!
      *
      * @param id
      *                - the <code>int</code> ID of the deployed entity
@@ -219,32 +219,27 @@ public class Client extends AbstractClient {
      *                - the <code>int</code> direction the entity should face
      */
     public void deploy(int id, Coords c, int nFacing, int elevation) {
-        this.deploy(id, c, nFacing, elevation, new Vector<>(), false);
+        deploy(id, c, 0, nFacing, elevation, new Vector<>(), false);
     }
 
     /**
-     * Deploy an entity at the given coordinates, with the given facing, and
-     * starting with the given units already loaded.
+     * Deploy an entity at the given coordinates, with the given facing, and starting with the given units already
+     * loaded.
      *
-     * @param id
-     *                    - the <code>int</code> ID of the deployed entity
-     * @param c
-     *                    - the <code>Coords</code> where the entity should be
-     *                    deployed
-     * @param nFacing
-     *                    - the <code>int</code> direction the entity should face
-     * @param loadedUnits
-     *                    - a <code>List</code> of units that start the game being
-     *                    transported byt the deployed entity.
-     * @param assaultDrop
-     *                    - true if deployment is an assault drop
+     * @param id          the ID of the deployed entity
+     * @param c           the Coords where the entity should be deployed
+     * @param nFacing     the direction the entity should face
+     * @param loadedUnits a List of units that start the game being transported by the deployed entity.
+     * @param assaultDrop true if deployment is an assault drop
      */
-    public void deploy(int id, Coords c, int nFacing, int elevation, List<Entity> loadedUnits, boolean assaultDrop) {
-        int packetCount = 6 + loadedUnits.size();
+    public void deploy(int id, Coords c, int boardId, int nFacing, int elevation, List<Entity> loadedUnits,
+                       boolean assaultDrop) {
+        int packetCount = 7 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
         data[index++] = id;
         data[index++] = c;
+        data[index++] = boardId;
         data[index++] = nFacing;
         data[index++] = elevation;
         data[index++] = loadedUnits.size();

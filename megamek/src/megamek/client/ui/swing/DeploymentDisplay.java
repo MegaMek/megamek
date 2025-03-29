@@ -300,23 +300,24 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
     }
 
+    /**
+     * Notify the player that the planned deployment is not possible if vertain circumstances are met. Returns true
+     * in that case (cancel deployment), false if deployment can proceed.
+     *
+     * @return True to cancel deployment, false to proceed.
+     */
     private boolean checkNags() {
-        if ((ce() != null)
-                && (ce() instanceof Dropship)
-                && !ce().isAirborne()) {
-            ArrayList<Coords> crushedBuildingLocs = new ArrayList<>();
-            ArrayList<Coords> secondaryPositions = new ArrayList<>();
-            secondaryPositions.add(ce().getPosition());
-            for (int dir = 0; dir < 6; dir++) {
-                secondaryPositions.add(ce().getPosition().translated(dir));
-            }
-            for (Coords pos : secondaryPositions) {
-                Building bld = game.getBoard().getBuildingAt(pos);
-                if (bld != null) {
-                    crushedBuildingLocs.add(pos);
-                }
-            }
-            if (!crushedBuildingLocs.isEmpty()) {
+        Entity entity = ce();
+        if (entity == null || entity.getPosition() == null) {
+            return true;
+        }
+        if ((entity instanceof Dropship) && !entity.isAirborne()) {
+            List<Coords> allPositions = new ArrayList<>();
+            allPositions.add(entity.getPosition());
+            allPositions.addAll(entity.getPosition().allAdjacent());
+            boolean crushesBuildingHex = allPositions.stream()
+                   .anyMatch(c -> game.getBoard(entity.getBoardId()).getBuildingAt(c) != null);
+            if (crushesBuildingHex) {
                 String title = Messages.getString("DeploymentDisplay.alertDialog.title");
                 String body = Messages.getString("DeploymentDisplay.dropshipBuildingDeploy");
                 clientgui.doAlertDialog(title, body);
@@ -326,26 +327,20 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         // Check nag for doomed planetary conditions
         if (GUIP.getNagForDoomed()) {
-            if (ce() != null) {
-                String reason = game.getPlanetaryConditions().whyDoomed(ce(), game);
-                if (reason != null) {
-                    String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
-                    String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", reason);
-                    ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
-                    if (nag.getAnswer()) {
-                        // do they want to be bothered again?
-                        if (!nag.getShowAgain()) {
-                            GUIP.setNagForDoomed(false);
-                        }
-                    } else {
-                        return true;
+            String reason = game.getPlanetaryConditions().whyDoomed(entity, game);
+            if (reason != null) {
+                String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
+                String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", reason);
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForDoomed(false);
                     }
+                } else {
+                    return true;
                 }
             }
-        }
-
-        if (ce() == null) {
-            return true;
         }
 
         return false;
@@ -360,7 +355,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         disableButtons();
 
         int elevationOrAltitude = entity.isAero() ? entity.getAltitude() : entity.getElevation();
-        clientgui.getClient().deploy(entity.getId(), entity.getPosition(), entity.getFacing(),
+        clientgui.getClient().deploy(entity.getId(), entity.getPosition(), entity.getBoardId(), entity.getFacing(),
                 elevationOrAltitude, entity.getLoadedUnits(), assaultDropPreference);
         entity.setDeployed(true);
 

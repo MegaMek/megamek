@@ -57,7 +57,7 @@ public class Packet implements Serializable {
      * @return the object at the specified index
      */
     public @Nullable Object getObject(final int index) {
-        return (index > 0 && index < data.length) ? data[index] : null;
+        return (index >= 0 && index < data.length) ? data[index] : null;
     }
 
     /**

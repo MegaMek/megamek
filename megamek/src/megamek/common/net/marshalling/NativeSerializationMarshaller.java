@@ -26,6 +26,7 @@ import megamek.common.net.packets.Packet;
  */
 class NativeSerializationMarshaller extends PacketMarshaller {
     protected static final PacketCommand[] PACKET_COMMANDS = PacketCommand.values();
+    private static final SanityInputFilter SANITY_INPUT_FILTER = new SanityInputFilter();
 
     @Override
     public void marshall(final Packet packet, final OutputStream stream) throws Exception {
@@ -38,8 +39,10 @@ class NativeSerializationMarshaller extends PacketMarshaller {
     @Override
     public Packet unmarshall(final InputStream stream) throws Exception {
         final ObjectInputStream in = new ObjectInputStream(stream);
+        in.setObjectInputFilter(SANITY_INPUT_FILTER);
+
         final int command = in.readInt();
-        
+
         if (command >= 0 && command < PACKET_COMMANDS.length) {
             return new Packet(PACKET_COMMANDS[command], (Object[]) in.readObject());
         } else {

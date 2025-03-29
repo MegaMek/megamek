@@ -127,7 +127,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         this.clientgui = clientgui;
         game = clientgui.getClient().getGame();
         game.addGameListener(this);
-//        clientgui.getBoardView().addBoardViewListener(this);
         setupStatusBar(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase"));
 
         setButtons();
@@ -192,15 +191,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         // when
         // trying to draw a c3 sprite belonging to the previously selected,
         // but not deployed entity. BoardView1 should take care of that itself.
-        if (clientgui.getBoardView() != null) {
-            clientgui.getBoardView().clearC3Networks();
-        }
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).clearC3Networks());
         cen = en;
         clientgui.setSelectedEntityNum(en);
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         setTurnEnabled(true);
         butDone.setEnabled(false);
-        clientgui.boardViews().forEach(bv -> ((BoardView) bv).markDeploymentHexesFor(entity));
+        markDeploymentHexes(entity);
         // set facing according to starting position
         switch (entity.getStartingPos()) {
             case Board.START_W:
@@ -253,13 +250,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     private void computeCFWarningHexes(Entity ce) {
-        List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(game, ce, game.getBoard());
+        List<BoardLocation> warnList = CollapseWarning.findCFWarningsDeployment(game, ce);
         clientgui.showCollapseWarning(warnList);
     }
 
     private void computeTowLinkBreakageHexes(Entity ce) {
         List<Coords> warnList = TowLinkWarning.findTowLinkIssues(game, ce, game.getBoard());
-        clientgui.showCollapseWarning(warnList);
+//        clientgui.showCollapseWarning(warnList);
     }
 
     /** Enables relevant buttons and sets up for your turn. */
@@ -268,7 +265,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         selectEntity(clientgui.getClient().getFirstDeployableEntityNum());
         setNextEnabled(true);
         setRemoveEnabled(true);
-        clientgui.getBoardView().markDeploymentHexesFor(ce());
     }
 
     /** Clears out old deployment data and disables relevant buttons. */
@@ -279,10 +275,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
-        clientgui.getBoardView().select(null);
-        clientgui.getBoardView().highlight(null);
-        clientgui.getBoardView().cursor(null);
-        clientgui.getBoardView().markDeploymentHexesFor(null);
+        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
+        hideDeploymentHexes();
         clientgui.setSelectedEntityNum(Entity.NONE);
         clientgui.clearTemporarySprites();
         disableButtons();
@@ -396,32 +390,24 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getClient().isMyTurn()) {
             endMyTurn();
         }
-        clientgui.getBoardView().markDeploymentHexesFor(null);
+        hideDeploymentHexes();
         game.removeGameListener(this);
-        clientgui.getBoardView().removeBoardViewListener(this);
+        clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
         removeAll();
     }
 
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
+        if (isIgnoringEvents() || !game.getPhase().isDeployment()) {
             return;
         }
 
-        // On simultaneous phases, each player ending their turn will generate a turn
-        // change
-        // We want to ignore turns from other players and only listen to events we
-        // generated
+        // On simultaneous phases, each player ending their turn will generate a turn change
+        // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
         if (game.getPhase().isSimultaneous(game)
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
                 && (game.getTurnIndex() != 0)) {
-            return;
-        }
-
-        if (!game.getPhase().isDeployment()) {
-            // ignore
             return;
         }
 
@@ -451,7 +437,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-        clientgui.getBoardView().markDeploymentHexesFor(null);
+        hideDeploymentHexes();
 
         // In case of a /reset command, ensure the state gets reset
         if (game.getPhase().isLounge()) {
@@ -467,8 +453,16 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
     }
 
+    private void hideDeploymentHexes() {
+        markDeploymentHexes(null);
+    }
+
+    private void markDeploymentHexes(@Nullable Entity entity) {
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).markDeploymentHexesFor(entity));
+    }
+
     //
-    // BoardListener
+    // BoardViewListener
     //
     @Override
     public void hexMoused(BoardViewEvent b) {
@@ -629,7 +623,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void processTurn(Entity entity, Coords coords) {
         entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
-        clientgui.getBoardView().redrawEntity(entity);
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
         turnMode = false;
@@ -642,17 +636,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     public void actionPerformed(ActionEvent evt) {
         final Client client = clientgui.getClient();
         final String actionCmd = evt.getActionCommand();
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
+        if (isIgnoringEvents() || !client.isMyTurn()) {
             return;
         }
 
-        if (!client.isMyTurn()) {
-
-        } else if (actionCmd.equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
+        if (actionCmd.equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
             if (ce() != null) {
                 ce().setPosition(null);
-                clientgui.getBoardView().redrawEntity(ce());
+                clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(ce()));
                 // Unload any loaded units during this turn
                 List<Integer> lobbyLoadedUnits = ce().getLoadedKeepers();
                 for (Entity other : ce().getLoadedUnits()) {
@@ -863,7 +854,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             if (client.getGame().getTurn().isValidEntity(e, client.getGame())) {
                 if (ce() != null) {
                     ce().setPosition(null);
-                    clientgui.getBoardView().redrawEntity(ce());
+                    clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(ce()));
                     // Unload any loaded units during this turn
                     List<Integer> lobbyLoadedUnits = ce().getLoadedKeepers();
                     for (Entity other : ce().getLoadedUnits()) {
@@ -876,15 +867,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     }
                 }
                 selectEntity(e.getId());
-                if (null != e.getPosition()) {
-                    clientgui.getBoardView().centerOnHex(e.getPosition());
+                if (game.hasBoardLocation(e.getPosition(), e.getBoardId())) {
+                    clientgui.getBoardView(e).centerOnHex(e.getPosition());
                 }
             }
         } else {
             clientgui.maybeShowUnitDisplay();
             clientgui.getUnitDisplay().displayEntity(e);
-            if (e.isDeployed()) {
-                clientgui.getBoardView().centerOnHex(e.getPosition());
+            if (game.hasBoardLocation(e.getPosition(), e.getBoardId())) {
+                clientgui.getBoardView(e).centerOnHex(e.getPosition());
             }
         }
     }

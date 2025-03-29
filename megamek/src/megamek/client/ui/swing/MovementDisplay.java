@@ -4741,7 +4741,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void computeCFWarningHexes(Entity ce) {
         Game game = clientgui.getClient().getGame();
-        List<Coords> warnList = CollapseWarning.findCFWarningsMovement(game, ce, game.getBoard());
+        List<BoardLocation> warnList = CollapseWarning.findCFWarningsMovement(game, ce);
         clientgui.showCollapseWarning(warnList);
     }
 

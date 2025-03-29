@@ -20,9 +20,11 @@ package megamek.client.ui.swing;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
 
 import megamek.common.Board;
+import megamek.common.BoardLocation;
 import megamek.common.Building;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -68,6 +70,18 @@ public final class CollapseWarning {
         GUIPreferences GUIP = GUIPreferences.getInstance();
         GUIP.setShowCFWarnings(!GUIP.getShowCFWarnings());
         return (GUIP.getShowCFWarnings());
+    }
+
+    public static List<BoardLocation> findCFWarningsMovement(Game game, Entity entity) {
+        // Since this is limited to ground units, only show warnings on their board
+        int boardId = entity.getBoardId();
+        var warnList = new LinkedList<BoardLocation>();
+        if (game.hasBoard(boardId)) {
+            List<Coords> boardWarnings = findCFWarningsMovement(game, entity, game.getBoard(boardId));
+            warnList.addAll(boardWarnings.stream().map(c -> BoardLocation.of(c, boardId)).toList());
+            warnList.removeIf(BoardLocation::isNoLocation);
+        }
+        return warnList;
     }
 
     /**
@@ -134,28 +148,38 @@ public final class CollapseWarning {
         return (e.isGround() && !e.isOffBoard());
     }
 
+    public static List<BoardLocation> findCFWarningsDeployment(Game game, Entity entity) {
+        List<BoardLocation> warnList = new LinkedList<>();
+        for (Board board : game.getBoards().values()) {
+            List<Coords> boardWarnings = findCFWarningsDeployment(game, entity, board);
+            warnList.addAll(boardWarnings.stream().map(c -> BoardLocation.of(c, board.getBoardId())).toList());
+        }
+        warnList.removeIf(BoardLocation::isNoLocation);
+        return warnList;
+    }
+
     /**
      * Looks for all building locations in a legal deploy zone that would collapse
      * if the currently selected entity would deploy there. This is used by
      * {@link DeploymentDisplay} to render a warning sprite on danger hexes.
      *
-     * @param g {@link Game} provided by the phase display class
-     * @param e {@link Entity} currently selected in the movement phase.
-     * @param b {@link Board} board object with building data.
+     * @param game {@link Game} provided by the phase display class
+     * @param entity {@link Entity} currently selected in the movement phase.
+     * @param board {@link Board} board object with building data.
      *
      * @return returns a list of {@link Coords} that where warning flags
      *         should be placed.
      */
-    public static List<Coords> findCFWarningsDeployment(Game g, Entity e, Board b) {
-        List<Coords> warnList = new ArrayList<Coords>();
+    public static List<Coords> findCFWarningsDeployment(Game game, Entity entity, Board board) {
+        List<Coords> warnList = new ArrayList<>();
 
         try {
             // Only calculate CF Warnings for entity types in the whitelist.
-            if (!entityTypeIsInWhiteList(e)) {
+            if (!entityTypeIsInWhiteList(entity)) {
                 return warnList;
             }
 
-            Enumeration<Building> buildings = b.getBuildings();
+            Enumeration<Building> buildings = board.getBuildings();
 
             // Enumerate through all the buildings
             while (buildings.hasMoreElements()) {
@@ -164,9 +188,9 @@ public final class CollapseWarning {
 
                 // For each hex occupied by the building, check if it's a legal deploy hex.
                 for (Coords c : buildingList) {
-                    if (b.isLegalDeployment(c, e)) {
+                    if (board.isLegalDeployment(c, entity)) {
                         // Check for weight limits for collapse and add a warning sprite.
-                        if (calculateTotalTonnage(g, e, c) > bld.getCurrentCF(c)) {
+                        if (calculateTotalTonnage(game, entity, c) > bld.getCurrentCF(c)) {
                             warnList.add(c);
                         }
                     }
@@ -176,7 +200,7 @@ public final class CollapseWarning {
             // Something bad is going to happen. This is a passive feature return an empty
             // list.
             logger.error(exc, "Unable to calculate construction factor collapse candidates. (Deployment)");
-            return new ArrayList<Coords>();
+            return new ArrayList<>();
         }
 
         return warnList;

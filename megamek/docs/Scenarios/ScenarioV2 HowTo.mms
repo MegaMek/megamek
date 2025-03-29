@@ -761,7 +761,7 @@ area:
     # OR optional: a range of terrain levels to include
     minlevel: 1
     maxlevel: 2
-    # optional: the minimum distance from any hex with the terrain; 0 means only the hexes themselves
+    # optional: the minimum distance from any hex with the terrain; 0 means the hexes themselves
     mindistance: 2
     # optional: the maximum distance from any hex with the terrain
     # be careful with distances of more than 3 or so on big boards: this leads to exploding calculation times

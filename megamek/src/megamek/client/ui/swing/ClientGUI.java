@@ -3168,7 +3168,7 @@ public class ClientGUI extends AbstractClientGUI
      *
      * @param warnList The list of coordinates to show the warning on
      */
-    public void showCollapseWarning(List<Coords> warnList) {
+    public void showCollapseWarning(List<BoardLocation> warnList) {
         collapseWarningSpriteHandler.setCFWarningSprites(warnList);
     }
 

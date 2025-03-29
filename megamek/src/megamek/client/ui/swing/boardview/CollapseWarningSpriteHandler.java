@@ -20,7 +20,7 @@ package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Coords;
+import megamek.common.BoardLocation;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 
@@ -29,13 +29,13 @@ import java.util.List;
 public class CollapseWarningSpriteHandler extends BoardViewSpriteHandler implements IPreferenceChangeListener {
 
     // Cache the warn list; thus, when CF warning is turned on the sprites can easily be created
-    private List<Coords> currentWarnList;
+    private List<BoardLocation> currentWarnList;
 
     public CollapseWarningSpriteHandler(AbstractClientGUI clientGUI) {
         super(clientGUI);
     }
 
-    public void setCFWarningSprites(List<Coords> warnList) {
+    public void setCFWarningSprites(List<BoardLocation> warnList) {
         clear();
         if (clientGUI.boardViews().isEmpty()) {
             return;
@@ -43,10 +43,11 @@ public class CollapseWarningSpriteHandler extends BoardViewSpriteHandler impleme
         currentWarnList = warnList;
         if ((warnList != null) && GUIP.getShowCFWarnings()) {
             warnList.stream()
-                  .map(coords -> new CollapseWarningSprite((BoardView) clientGUI.boardViews().get(0), coords))
+                  .map(location -> new CollapseWarningSprite(
+                        (BoardView) clientGUI.boardViews().get(location.boardId()), location.coords()))
                   .forEach(currentSprites::add);
         }
-        clientGUI.boardViews().get(0).addSprites(currentSprites);
+        currentSprites.forEach(sprite -> sprite.bv.addSprite(sprite));
     }
 
     @Override

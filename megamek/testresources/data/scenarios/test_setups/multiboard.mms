@@ -15,6 +15,7 @@ map:
         id: 0
       - at: [ 8, 9 ]
         id: 1
+  - file: buildingsnobasement/Flughafen 6.board
 
 
 options:
@@ -23,14 +24,12 @@ options:
 
 factions:
 - name: P1
-  deploy:
-    area:
-      # the area can be given as a terrain type
-      terrain:
-        # required: the terrain type to include in the area
-        type: pavement
-        maxdistance: 1
-        boards: 1
+#  deploy:
+#    area:
+#      terrain:
+#        type: pavement
+#        maxdistance: 1
+#        boards: 1
 
   units:
   - fullname: Mobile Long Tom Artillery LT-MOB-25
@@ -38,6 +37,7 @@ factions:
     distance: 200
 
   - fullname: Locust LCT-1V
-    board: 1
+
+  - fullname: Atlas AS7-D
 #    at: [8, 9]
 

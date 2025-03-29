@@ -888,8 +888,12 @@ public class ChatLounge extends AbstractPhaseDisplay
             showPlayerDeployment.setSelected(true);
             showPlayerDeployment.addActionListener(e -> previewGameBoard());
 
+            JButton previewSaveAs = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoardSaveAs"));
+            previewSaveAs.addActionListener(e -> clientgui.boardSaveAs(boardPreviewGame));
+
             JPanel previewSettingsPanel = new JPanel(new FlowLayout());
             previewSettingsPanel.add(showPlayerDeployment);
+            previewSettingsPanel.add(previewSaveAs);
 
             Box previewPanel = Box.createVerticalBox();
             previewPanel.add(previewSettingsPanel);

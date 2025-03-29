@@ -436,7 +436,7 @@ public class Compute {
     public static Entity stackingViolation(Game game, Entity entering,
             Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode) {
         // no stacking violations on the low-atmosphere and space maps
-        if (!game.getBoard().onGround()) {
+        if (!game.getBoard(entering).onGround()) {
             return null;
         }
 
@@ -467,11 +467,10 @@ public class Compute {
         for (Coords coords : positions) {
             int thisLowStackingLevel = elevation;
             if ((coords != null) && (origPosition != null)) {
-                thisLowStackingLevel = entering.calcElevation(game.getBoard()
-                        .getHex(origPosition),
-                        game.getBoard()
-                                .getHex(coords),
-                        elevation, climbMode, false);
+                thisLowStackingLevel = entering.calcElevation(
+                      game.getBoard(entering).getHex(origPosition),
+                      game.getBoard(entering).getHex(coords),
+                      elevation, climbMode, false);
             }
             int thisHighStackingLevel = thisLowStackingLevel;
             // meks only occupy one level of a building

@@ -1154,8 +1154,8 @@ public final class BoardView extends AbstractBoardView
      * Updates the boardSize variable with the proper values for this board.
      */
     void updateBoardSize() {
-        int width = (game.getBoard().getWidth() * (int) (HEX_WC * scale)) + (int) ((HEX_W / 4.0f) * scale);
-        int height = (game.getBoard().getHeight() * (int) (HEX_H * scale)) + (int) ((HEX_H / 2.0f) * scale);
+        int width = (game.getBoard(boardId).getWidth() * (int) (HEX_WC * scale)) + (int) ((HEX_W / 4.0f) * scale);
+        int height = (game.getBoard(boardId).getHeight() * (int) (HEX_H * scale)) + (int) ((HEX_H / 2.0f) * scale);
         boardSize = new Dimension(width, height);
     }
 

@@ -258,9 +258,9 @@ public final class HexAreaDeserializer {
         int maxDistance = 0;
         if (node.has(MIN_DISTANCE)) {
             minDistance = node.get(MIN_DISTANCE).intValue();
-            if (node.has(MAX_DISTANCE)) {
-                maxDistance = node.get(MAX_DISTANCE).intValue();
-            }
+        }
+        if (node.has(MAX_DISTANCE)) {
+            maxDistance = node.get(MAX_DISTANCE).intValue();
         }
         var area = new TerrainHexArea(terrainType, minLevel, maxLevel, minDistance, maxDistance);
         area.setBoardIds(parseBoardsList(node));

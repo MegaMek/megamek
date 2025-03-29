@@ -1646,11 +1646,11 @@ public abstract class Mek extends Entity {
      * Gets the number of heat sinks that are underwater.
      */
     private int sinksUnderwater() {
-        if ((getPosition() == null) || isOffBoard()) {
+        if ((getPosition() == null) || isOffBoard() || !game.hasBoardLocation(getPosition(), getBoardId())) {
             return 0;
         }
 
-        Hex curHex = game.getBoard().getHex(getPosition());
+        Hex curHex = game.getHex(getPosition(), getBoardId());
         // are we even in water? is it depth 1+
         if ((curHex.terrainLevel(Terrains.WATER) <= 0) || (getElevation() >= 0)) {
             return 0;

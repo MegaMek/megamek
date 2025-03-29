@@ -92,7 +92,7 @@ public class TerrainHexArea extends AbstractHexArea {
         } else {
             for (int distance = minDistance; distance <= maxDistance; distance++) {
                 for (Coords coordsToCheck : coords.allAtDistance(distance)) {
-                    if (hasCorrectTerrain(board.getHex(coordsToCheck))) {
+                    if (board.contains(coordsToCheck) && hasCorrectTerrain(board.getHex(coordsToCheck))) {
                         return true;
                     }
                 }

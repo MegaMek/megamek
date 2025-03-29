@@ -25,10 +25,12 @@ factions:
 - name: P1
   deploy:
     area:
-      circle:
-        center: [ 5, 5 ]
-        radius: 3
-        boards: [ 0, 1 ]
+      # the area can be given as a terrain type
+      terrain:
+        # required: the terrain type to include in the area
+        type: pavement
+        maxdistance: 1
+        boards: 1
 
   units:
   - fullname: Mobile Long Tom Artillery LT-MOB-25

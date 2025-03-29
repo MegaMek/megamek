@@ -127,9 +127,10 @@ public class FovHighlightingAndDarkening {
 
             // Determine if any of the entities at the coordinates are illuminated, or if the
             // coordinates are illuminated themselves
-            boolean targetIlluminated = boardView.game.getEntitiesVector(c).stream().anyMatch(Entity::isIlluminated) ||
-                                              !IlluminationLevel.determineIlluminationLevel(boardView.game, c)
-                                                     .isNone();
+            boolean targetIlluminated = boardView.game.getEntitiesVector(c, boardView.boardId)
+                                              .stream()
+                                              .anyMatch(Entity::isIlluminated) ||
+                                              !IlluminationLevel.determineIlluminationLevel(boardView.game, c).isNone();
 
             final int max_dist;
             // We don't want to have to compute a LoSEffects yet, as that can be expensive on large viewing areas

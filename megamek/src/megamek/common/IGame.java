@@ -509,22 +509,73 @@ public interface IGame {
         return getBoard(targetable.getBoardId());
     }
 
+    /**
+     * Returns true if the given boardLocation really exists, i.e. is not null, its board ID is an actual board in
+     * the game and its coords are contained in that board. This means that a hex can be found for this boardLocation.
+     *
+     * @param boardLocation The location to test
+     * @return True when the location exists and is on a board
+     */
     default boolean hasBoardLocation(@Nullable BoardLocation boardLocation) {
         return boardLocation != null &&
                      !boardLocation.isNoLocation() &&
                      hasBoardLocation(boardLocation.coords(), boardLocation.boardId());
     }
 
-    default boolean hasBoardLocation(Coords coords, int boardId) {
+    /**
+     * Returns true if the given coords and boardID really exist, are not null, the board ID is an actual board in
+     * the game and the coords are contained in that board. This means that a hex can be found for these values.
+     *
+     * @param coords The coords to test
+     * @param boardId The board ID to test
+     * @return True when the location exists and is on a board
+     */
+    default boolean hasBoardLocation(@Nullable Coords coords, int boardId) {
         return hasBoard(boardId) && getBoard(boardId).contains(coords);
     }
 
+    /**
+     * Returns true if the given boardLocation points to an existing board, i.e. its board ID is an actual board in
+     * the game. Does not check the location's coords.
+     *
+     * @param boardLocation The location to test
+     * @return True when the location is not null and its board exists
+     */
     default boolean hasBoard(@Nullable BoardLocation boardLocation) {
         return (boardLocation != null) && !boardLocation.isNoLocation() && hasBoard(boardLocation.boardId());
     }
 
+    /**
+     * Returns true if the given bboard ID is an actual board in the game.
+     *
+     * @param boardId The board ID to test
+     * @return True when the board exists
+     */
     default boolean hasBoard(int boardId) {
         return getBoards().containsKey(boardId);
+    }
+
+    /**
+     * Returns the hex for the given location, i.e. the hex at the coords and on the board ID of the given
+     * location. Returns null when the board doesn't exist or when there is no hex at the given coords.
+     *
+     * @param boardLocation The location to query
+     * @return The hex at the given location
+     */
+    default @Nullable Hex getHex(BoardLocation boardLocation) {
+        return hasBoardLocation(boardLocation) ? getBoard(boardLocation).getHex(boardLocation.coords()) : null;
+    }
+
+    /**
+     * Returns the hex for the given location, i.e. the hex at the coords and on the board of the given
+     * ID. Returns null when the board doesn't exist or when there is no hex at the given coords.
+     *
+     * @param coords The coords
+     * @param boardId The board ID
+     * @return The hex at the given location
+     */
+    default @Nullable Hex getHex(Coords coords, int boardId) {
+        return hasBoardLocation(coords, boardId) ? getBoard(boardId).getHex(coords) : null;
     }
 
     // endregion

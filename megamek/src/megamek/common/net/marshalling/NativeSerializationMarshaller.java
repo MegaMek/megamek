@@ -39,8 +39,8 @@ class NativeSerializationMarshaller extends PacketMarshaller {
     public Packet unmarshall(final InputStream stream) throws Exception {
         final ObjectInputStream in = new ObjectInputStream(stream);
         final int command = in.readInt();
-
-        if (command < PACKET_COMMANDS.length) {
+        
+        if (command >= 0 && command < PACKET_COMMANDS.length) {
             return new Packet(PACKET_COMMANDS[command], (Object[]) in.readObject());
         } else {
             throw new InvalidPacketCommandReceivedException(command);

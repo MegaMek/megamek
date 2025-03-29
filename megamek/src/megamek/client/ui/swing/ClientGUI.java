@@ -879,12 +879,12 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case BOARD_SAVE:
                 ignoreHotKeys = true;
-                boardSave();
+                boardSave(client.getGame());
                 ignoreHotKeys = false;
                 break;
             case BOARD_SAVE_AS:
                 ignoreHotKeys = true;
-                boardSaveAs();
+                boardSaveAs(client.getGame());
                 ignoreHotKeys = false;
                 break;
             case BOARD_SAVE_AS_IMAGE:
@@ -2844,15 +2844,15 @@ public class ClientGUI extends AbstractClientGUI
      * Checks to see if there is already a path and name stored; if not, calls "save as"; otherwise, saves the board to
      * the specified file.
      */
-    private void boardSave() {
+    private void boardSave(Game game) {
         if (curfileBoard == null) {
-            boardSaveAs();
+            boardSaveAs(game);
             return;
         }
 
         // save!
         try (OutputStream os = new FileOutputStream(curfileBoard)) {
-            client.getGame().getBoard().save(os);
+            game.getBoard().save(os);
         } catch (Exception ex) {
             logger.error(ex, "Failed to save board!");
         }
@@ -2888,7 +2888,7 @@ public class ClientGUI extends AbstractClientGUI
     /**
      * Opens a file dialog box to select a file to save as; saves the board to the file.
      */
-    private void boardSaveAs() {
+    public void boardSaveAs(Game game) {
         JFileChooser fc = new JFileChooser(CG_FILEPATHDATA + File.separator + CG_FILEPATHBOARDS);
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
@@ -2909,7 +2909,7 @@ public class ClientGUI extends AbstractClientGUI
                 return;
             }
         }
-        boardSave();
+        boardSave(game);
     }
 
     /**

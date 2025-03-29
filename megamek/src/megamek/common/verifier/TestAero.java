@@ -995,8 +995,6 @@ public class TestAero extends TestEntity {
         weight += getWeightPowerAmp();
 
         weight += getWeightCarryingSpace();
-
-        weight += getArmoredComponentWeight();
         return weight;
     }
 

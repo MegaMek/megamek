@@ -68,11 +68,7 @@ Wheeled
 IS Light Machine Gun Ammo - Half
 ISCASE
 ISAngelECMSuite
-ISDroneCarrierControlSystem
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
+ISDroneCarrierControlSystem:SIZE:4
 </Body Equipment>
 
 <Front Equipment>

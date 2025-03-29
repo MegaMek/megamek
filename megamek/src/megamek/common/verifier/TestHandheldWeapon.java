@@ -14,11 +14,16 @@
 
 package megamek.common.verifier;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.HandheldWeapon;
 import megamek.common.MiscType;
-import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.options.OptionsConstants;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class TestHandheldWeapon extends TestEntity {
     private final HandheldWeapon hhw;
@@ -111,7 +116,9 @@ public class TestHandheldWeapon extends TestEntity {
         }
         if (hhw.getMiscEquipment(MiscType.F_CLUB).isEmpty()) {
             var items = hhw.getEquipment().stream()
-                .filter(m -> !(m.getType() instanceof AmmoType) && !m.getType().hasFlag(MiscType.F_WEAPON_ENHANCEMENT))
+                              // Ammo and weapon enhancements (artemis, ppc capacitors, etc) don't count towards the
+                              // item limit
+                .filter(m -> !(m.getType() instanceof AmmoType) && !(m instanceof MiscMounted && m.getType().hasFlag(MiscType.F_WEAPON_ENHANCEMENT)))
                 .count();
             if (items > 6) {
                 buff.append("Handheld Weapon can only mount up to 6 items!\n");
@@ -124,6 +131,21 @@ public class TestHandheldWeapon extends TestEntity {
             }
         }
 
+        if (showFailedEquip() && hasFailedEquipment(buff)) {
+            correct = false;
+        }
+        if (hasIllegalTechLevels(buff, ammoTechLvl)) {
+            correct = false;
+        }
+        if (showIncorrectIntroYear() && hasIncorrectIntroYear(buff)) {
+            correct = false;
+        }
+        if (hasIllegalEquipmentCombinations(buff)) {
+            correct = false;
+        }
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
+            correct = true;
+        }
         return correct;
     }
 
@@ -143,6 +165,25 @@ public class TestHandheldWeapon extends TestEntity {
         buff.append(printWeightCalculation()).append("\n");
         printFailedEquipment(buff);
         return buff;
+    }
+
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        boolean illegal = super.hasIllegalEquipmentCombinations(buff);
+
+        Set<Pair<Integer, Integer>> ammoKinds = new HashSet<>();
+        for (var at : hhw.getAmmo()) {
+            var kind = Pair.of(at.getType().getAmmoType(), at.getType().getRackSize());
+            if (ammoKinds.contains(kind)) {
+                illegal = true;
+                buff.append("Handheld weapon can only mount a single ammo bin for a given kind of ammo.\n");
+                buff.append("        Hint: If you're designing this weapon, instead of adding more ammo bins,\n        you can edit the value in the Shots column of the equipment list.\n");
+                break;
+            }
+            ammoKinds.add(kind);
+        }
+
+        return illegal;
     }
 
     @Override

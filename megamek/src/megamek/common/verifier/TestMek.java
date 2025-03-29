@@ -50,8 +50,7 @@ public class TestMek extends TestEntity {
         JJ_IMPROVED(EquipmentTypeLookup.IMPROVED_JUMP_JET, false, Mek.JUMP_IMPROVED),
         JJ_PROTOTYPE(EquipmentTypeLookup.PROTOTYPE_JUMP_JET, true, Mek.JUMP_PROTOTYPE),
         JJ_PROTOTYPE_IMPROVED(EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ, false, Mek.JUMP_PROTOTYPE_IMPROVED),
-        JJ_UMU(EquipmentTypeLookup.MEK_UMU, false, Mek.JUMP_NONE),
-        JJ_BOOSTER(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER, true, Mek.JUMP_BOOSTER);
+        JJ_UMU(EquipmentTypeLookup.MEK_UMU, false, Mek.JUMP_NONE);
 
         private String internalName;
         private boolean industrial;
@@ -133,9 +132,7 @@ public class TestMek extends TestEntity {
         if (mek.isSuperHeavy()) {
             return 0;
         }
-        if (mek.getJumpType() == Mek.JUMP_BOOSTER) {
-            return null;
-        } else if (!mek.hasEngine()
+        if (!mek.hasEngine()
                 || (!mek.getEngine().isFusion() && (mek.getEngine().getEngineType() != Engine.FISSION))) {
             return 0;
         } else if ((mek.getJumpType() == Mek.JUMP_IMPROVED)
@@ -684,15 +681,13 @@ public class TestMek extends TestEntity {
         // Mechanical Jump Boosts can be greater then Running as long as
         // the unit can handle the weight.
         if ((mek.getJumpMP(MPCalculationSetting.NO_GRAVITY) > mek.getOriginalRunMP())
-                && !mek.hasJumpBoosters()
                 && !mek.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             buff.append("Jump MP exceeds run MP\n");
             return false;
         }
         if ((mek.getJumpMP(MPCalculationSetting.NO_GRAVITY) > mek.getOriginalWalkMP())
                 && (((mek.getJumpType() != Mek.JUMP_IMPROVED) && (mek.getJumpType() != Mek.JUMP_PROTOTYPE_IMPROVED))
-                        && !mek.hasWorkingMisc(MiscType.F_PARTIAL_WING) && !mek
-                                .hasJumpBoosters())) {
+                        && !mek.hasWorkingMisc(MiscType.F_PARTIAL_WING))) {
             buff.append("Jump MP exceeds walk MP without IJJs\n");
             return false;
         }
@@ -786,21 +781,16 @@ public class TestMek extends TestEntity {
         return "Mek: " + mek.getDisplayName();
     }
 
-    /**
-     * calculates the total weight of all armored components.
-     */
     @Override
     public double getArmoredComponentWeight() {
         double weight = 0.0;
         double cockpitWeight = 0.0;
-        for (int location = Mek.LOC_HEAD; location < mek.locations(); location++) {
+        for (int location = 0; location < mek.locations(); location++) {
             for (int slot = 0; slot < mek.getNumberOfCriticals(location); slot++) {
                 CriticalSlot cs = mek.getCritical(location, slot);
                 if ((cs != null) && cs.isArmored()) {
-                    // Armored cockpit (including command console) adds 1 ton, regardless of number
-                    // of slots
-                    if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                            && (cs.getIndex() == Mek.SYSTEM_COCKPIT)) {
+                    // Armored cockpit (including command console) adds 1 ton, regardless of number of slots
+                    if ((cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mek.SYSTEM_COCKPIT)) {
                         cockpitWeight = 1.0;
                     } else {
                         weight += 0.5;
@@ -872,11 +862,9 @@ public class TestMek extends TestEntity {
         for (Mounted<?> m : getEntity().getMisc()) {
             final MiscType misc = (MiscType) m.getType();
 
-            if (misc.hasFlag(MiscType.F_UMU) && (mek.getJumpType() != Mek.JUMP_NONE)
-                    && (mek.getJumpType() != Mek.JUMP_BOOSTER)) {
+            if (misc.hasFlag(MiscType.F_UMU) && (mek.getJumpType() != Mek.JUMP_NONE)) {
                 illegal = true;
-                buff.append("UMUs cannot be mounted with jump jets "
-                        + "(jump boosters are legal)\n");
+                buff.append("UMUs cannot be mounted with jump jets\n");
             }
 
             if (misc.hasFlag(MiscType.F_MASC)
@@ -1121,8 +1109,7 @@ public class TestMek extends TestEntity {
             }
             if ((mek.getJumpType() != Mek.JUMP_STANDARD)
                     && (mek.getJumpType() != Mek.JUMP_NONE)
-                    && (mek.getJumpType() != Mek.JUMP_PROTOTYPE)
-                    && (mek.getJumpType() != Mek.JUMP_BOOSTER)) {
+                    && (mek.getJumpType() != Mek.JUMP_PROTOTYPE)) {
                 buff.append("industrial meks can only mount standard jump jets or mechanical jump boosters\n");
                 illegal = true;
             }

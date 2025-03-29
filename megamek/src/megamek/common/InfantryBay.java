@@ -12,68 +12,14 @@
  * details.
  */
 package megamek.common;
+import megamek.common.InfantryTransporter.PlatoonType;
 
 /**
  * Represents a volume of space set aside for carrying infantry platoons aboard large spacecraft
  * and mobile structures. Marines count as crew and should have at least steerage quarters.
  */
-public final class InfantryBay extends Bay {
+public final class InfantryBay extends Bay implements InfantryTransporter {
     private static final long serialVersionUID = 946578184870030662L;
-
-    /** The amount of space taken up by an infantry unit in a transport bay differs from the space
-     * in an infantry compartment (used in APCs) due to quarters, equipment storage, and maintenance
-     * equipment. A single cubicle holds a platoon, except in the case of mechanized which requires
-     * a cubicle per squad. */
-    public enum PlatoonType {
-        FOOT (5, 28, 25),
-        JUMP (6, 21, 20),
-        MOTORIZED (7, 28, 25),
-        MECHANIZED (8, 7, 5);
-
-        private int weight;
-        private int isPersonnel;
-        private int clanPersonnel;
-
-        PlatoonType(int weight, int isPersonnel, int clanPersonnel) {
-            this.weight = weight;
-            this.isPersonnel = isPersonnel;
-            this.clanPersonnel = clanPersonnel;
-        }
-
-        public int getWeight() {
-            return weight;
-        }
-
-        public int getISPersonnel() {
-            return isPersonnel;
-        }
-
-        public int getClanPersonnel() {
-            return clanPersonnel;
-        }
-
-        @Override
-        public String toString() {
-            return name().charAt(0) + name().substring(1).toLowerCase();
-        }
-
-        public static PlatoonType getPlatoonType(Entity en) {
-            switch (en.getMovementMode()) {
-                case TRACKED:
-                case WHEELED:
-                case HOVER:
-                case VTOL:
-                case SUBMARINE:
-                    return MECHANIZED;
-                case INF_MOTORIZED:
-                    return MOTORIZED;
-                case INF_JUMP:
-                    return JUMP;
-                default:
-                    return FOOT;
-            }
-        }
-    }
 
     // This represents the "factory setting" of the bay, and is used primarily by the construction rules.
     // In practice we support loading any type of infantry into the bay as long as there is room to avoid
@@ -110,45 +56,6 @@ public final class InfantryBay extends Bay {
     }
 
     @Override
-    public double spaceForUnit(Entity unit) {
-        PlatoonType type = PlatoonType.getPlatoonType(unit);
-        if ((unit instanceof Infantry) && (type == PlatoonType.MECHANIZED)) {
-            return type.getWeight() * ((Infantry) unit).getSquadCount();
-        } else {
-            return type.getWeight();
-        }
-    }
-
-    /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
-     *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
-     */
-    @Override
-    public boolean canLoad(Entity unit) {
-        // Only infantry
-        boolean result = unit.hasETypeFlag(Entity.ETYPE_INFANTRY);
-
-        // We must have enough space for the new troops.
-        // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if (getUnused() < spaceForUnit(unit)) {
-            result = false;
-        }
-
-        // is the door functional
-        if (currentdoors < loadedThisTurn) {
-            result = false;
-        }
-
-        // Return our result.
-        return result;
-    }
-
-    @Override
     public String getUnusedString(boolean showRecovery) {
         StringBuilder sb = new StringBuilder();
         sb.append("Infantry Bay ").append(numDoorsString()).append(" - ")
@@ -163,6 +70,47 @@ public final class InfantryBay extends Bay {
             sb.append("s");
         }
         return sb.toString();
+    }
+
+    /**
+     * Determines if this object can accept the given unit. The unit may not be
+     * of the appropriate type or there may be no room for the unit.
+     *
+     * @param unit
+     *            - the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code>
+     *         otherwise.
+     */
+    @Override public boolean canLoad(Entity unit) {
+        // Only infantry
+        boolean result = unit.hasETypeFlag(Entity.ETYPE_INFANTRY);
+
+        // We must have enough space for the new troops.
+        // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
+        if (getUnused() < spaceForUnit(unit)) {
+            result = false;
+        }
+
+        // Return our result.
+        return result;
+    }
+
+    @Override
+    public boolean canUnloadUnits() {
+        // Infantry is only restricted by adjacency requirements (TW pp. 223 - 225)
+        return super.canUnloadUnits() || troops.stream()
+            .map(unit -> game.getEntity(unit))
+            .anyMatch(e -> (e != null && e.isInfantry()));
+    }
+
+    @Override
+    public double spaceForUnit(Entity unit) {
+        PlatoonType type = PlatoonType.getPlatoonType(unit);
+        if ((unit instanceof Infantry) && (type == PlatoonType.MECHANIZED)) {
+            return type.getWeight() * ((Infantry) unit).getSquadCount();
+        } else {
+            return type.getWeight();
+        }
     }
 
     @Override

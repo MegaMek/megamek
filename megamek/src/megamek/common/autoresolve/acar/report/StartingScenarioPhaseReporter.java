@@ -15,6 +15,7 @@ package megamek.common.autoresolve.acar.report;
 
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.autoresolve.acar.SimulationContext;
@@ -101,9 +102,10 @@ public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseRepo
                 }
                 for (var element : unit.getElements()) {
                     var entity = (Entity) game.getInGameObject(element.getId()).orElseThrow();
-                    var armor = entity.getArmorRemainingPercent();
-                    var internal = entity.getInternalRemainingPercent();
                     var crew = entity.getCrew();
+                    var armor = Math.max(entity.getArmorRemainingPercent(), 0d);
+                    var internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).get0SI()
+                        : entity.getInternalRemainingPercent();
                     reportConsumer.accept(new PublicReportEntry("acar.startingScenario.unitStats")
                         .add(new EntityNameReportEntry(entity).reportText())
                         .add(String.format("%.2f%%", armor * 100))

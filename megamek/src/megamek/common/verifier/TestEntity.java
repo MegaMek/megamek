@@ -1933,8 +1933,12 @@ public abstract class TestEntity implements TestEntityOption {
                 + getEntity().getYear() + ")\n";
     }
 
+    /**
+     * @return The total additional weight due to critical slot armoring. Does not include the weight of the equipment
+     * itself.
+     */
     public double getArmoredComponentWeight() {
-        return 0.0;
+        return 0;
     }
 
     public static boolean usesKgStandard(Entity entity) {

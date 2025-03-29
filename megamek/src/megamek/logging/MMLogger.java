@@ -19,6 +19,8 @@
 
 package megamek.logging;
 
+import javax.swing.JOptionPane;
+
 import io.sentry.Sentry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -27,31 +29,42 @@ import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 
-import javax.swing.*;
-import java.util.Collections;
-
 /**
- * <p>Utility class to handle logging functions as well as reporting exceptions to
- * Sentry. To deal with general recommendations of confirming log level before
- * logging, additional checks are added to ensure we're only ever logging data
- * based upon the currently active log level.</p>
+ * <p>
+ * Utility class to handle logging functions as well as reporting exceptions to Sentry. To deal with general
+ * recommendations of confirming log level before logging, additional checks are added to ensure we're only ever logging
+ * data based upon the currently active log level.
+ * </p>
  * <h2>How to use:</h2>
- * <p>To utilize this class properly, it must be initialized within each class that
- * will use it. For example for use with the {@code megamek.MegaMek.class}.</p>
- * <pre>{@code private static final MMLogger logger = MMLogger.create(MegaMek.class);}</pre>
- * <p>And then for use, use {@code logger.info(message)} and pass a string to it. Currently
- * supported levels include trace, info, warn, debug, error, and fatal. Warn, Error and Fatal
- * can take any Throwable for sending to Sentry and has an overload for a title
- * to allow for displaying of a dialog box.</p>
- * <p>This class also implements both the parametric pattern and the string format
- * for the functions that are overriden and added here. This means that you can
- * use the following formats for the messages in some cases:</p>
- * <pre>{@code logger.info("number: {} string: {}", 42, "Hello");
- * logger.info("number: %d string: %s", 42, "Hello");}</pre>
- * <p>Due to how the logger works, the first format using curly braces is preferred, but the second one
- * is grandfathered exclusively for logs already existing, and it is not recommended for any new log.</p>
+ * <p>
+ * To utilize this class properly, it must be initialized within each class that will use it. For example for use with
+ * the {@code megamek.MegaMek.class}.
+ * </p>
+ *
+ * <pre>{@code
+ * private static final MMLogger logger = MMLogger.create(MegaMek.class);
+ * }</pre>
+ * <p>
+ * And then for use, use {@code logger.info(message)} and pass a string to it. Currently supported levels include trace,
+ * info, warn, debug, error, and fatal. Warn, Error and Fatal can take any Throwable for sending to Sentry and has an
+ * overload for a title to allow for displaying of a dialog box.
+ * </p>
+ * <p>
+ * This class also implements both the parametric pattern and the string format for the functions that are overriden and
+ * added here. This means that you can use the following formats for the messages in some cases:
+ * </p>
+ *
+ * <pre>{@code
+ * logger.info("number: {} string: {}", 42, "Hello");
+ * logger.info("number: %d string: %s", 42, "Hello");
+ * }</pre>
+ * <p>
+ * Due to how the logger works, the first format using curly braces is preferred, but the second one is grandfathered
+ * exclusively for logs already existing, and it is not recommended for any new log.
+ * </p>
  */
 public class MMLogger extends ExtendedLoggerWrapper {
+
     private final ExtendedLoggerWrapper exLoggerWrapper;
 
     private static final String FQCN = MMLogger.class.getName();
@@ -64,7 +77,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
         this.exLoggerWrapper = this;
     }
 
-
     /**
      * Returns a custom Logger with the name of the calling class.
      *
@@ -76,11 +88,11 @@ public class MMLogger extends ExtendedLoggerWrapper {
     }
 
     /**
-     * Returns a custom Logger using the fully qualified name of the Class as
-     * the Logger name.
+     * Returns a custom Logger using the fully qualified name of the Class as the Logger name.
      *
-     * @param loggerName The Class whose name should be used as the Logger name.
-     *                   If null it will default to the calling class.
+     * @param loggerName The Class whose name should be used as the Logger name. If null it will default to the calling
+     *                   class.
+     *
      * @return The custom Logger.
      */
     public static MMLogger create(final Class<?> loggerName) {
@@ -175,8 +187,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
     }
 
     /**
-     * Error Level Logging w/ Exception
-     * This one was made to make it easier to replace the Log4J Calls
+     * Error Level Logging w/ Exception This one was made to make it easier to replace the Log4J Calls
      *
      * @param message   Message to be logged.
      * @param exception Exception to be logged.
@@ -197,25 +208,12 @@ public class MMLogger extends ExtendedLoggerWrapper {
     }
 
     /**
-     * Error Level Logging w/ Exception w/ Dialog.
-     * @deprecated (since 21-feb-2025) Use {@link #errorDialog(Throwable, String, String, Object...)} instead.
-     * @param exception Exception to be logged.
-     * @param message   Message to write to the log file AND be displayed in the
-     *                  error pane.
-     * @param title     Title of the error message box.
-     */
-    @Deprecated
-    public void error(Throwable exception, String message, String title) {
-        errorDialog(exception, message, title, Collections.emptyList());
-    }
-
-    /**
      * Formatted Error Level Logging w/ Exception w/ Dialog.
+     *
      * @param exception Exception to be logged.
-     * @param message Message to write to the log file AND be displayed in the
-     *                error pane.
-     * @param title   Title of the error message box.
-     * @param args    Variable list of arguments for the message.
+     * @param message   Message to write to the log file AND be displayed in the error pane.
+     * @param title     Title of the error message box.
+     * @param args      Variable list of arguments for the message.
      */
     public void errorDialog(Throwable exception, String message, String title, Object... args) {
         Sentry.captureException(exception);
@@ -227,10 +225,9 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Formatted Error Level Logging w/o Exception w/ Dialog.
      *
-     * @param message Message to write to the log file AND be displayed in the
-     *                error pane.
+     * @param message Message to write to the log file AND be displayed in the error pane.
      * @param title   Title of the error message box.
-     * @param args      Variable list of arguments for the message
+     * @param args    Variable list of arguments for the message
      */
     public void errorDialog(String title, String message, Object... args) {
         message = parametrizedStringAnyway(message, args);
@@ -241,29 +238,12 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Formatted Error Level Logging w/o Exception w/ Dialog.
      *
-     * @param message Message to write to the log file AND be displayed in the
-     *                error pane.
+     * @param message Message to write to the log file AND be displayed in the error pane.
      * @param title   Title of the error message box.
-     * @param args      Variable list of arguments for the message
+     * @param args    Variable list of arguments for the message
      */
     private void popupErrorDialog(String title, String message, Object... args) {
         message = parametrizedStringAnyway(message, args);
-        try {
-            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
-        } catch (Exception ignored) {
-            // if the message dialog crashes, we don't really care
-        }
-    }
-
-    /**
-     * Error Level Logging w/o Exception w/ Dialog.
-     *
-     * @param message Message to write to the log file AND be displayed in the
-     *                error pane.
-     * @param title   Title of the error message box.
-     */
-    public void error(String message, String title) {
-        error(message);
         try {
             JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
         } catch (Exception ignored) {
@@ -285,19 +265,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Fatal Level Logging w/ Exception w/ Dialog
      *
-     * @deprecated (since 21-feb-2025) Use {@link #fatalDialog(Throwable, String, String)} instead.
-     * @param exception Exception that was triggered. Probably uncaught.
-     * @param message   Message to report to the log file.
-     * @param title     Title of the error message box.
-     */
-    @Deprecated
-    public void fatal(Throwable exception, String message, String title) {
-        fatalDialog(exception, message, title);
-    }
-
-    /**
-     * Fatal Level Logging w/ Exception w/ Dialog
-     *
      * @param exception Exception that was triggered. Probably uncaught.
      * @param message   Message to report to the log file.
      * @param title     Title of the error message box.
@@ -305,17 +272,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
     public void fatalDialog(Throwable exception, String message, String title) {
         fatal(exception, message);
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
-    }
-
-    /**
-     *  Fatal Level Logging w/o Exception w/ Dialog
-     * @deprecated (since 21-feb-2025) Use {@link #fatalDialog(String, String)} instead.
-     * @param message Message to report to the log file.
-     * @param title   Title of the error message box.
-     */
-    @Deprecated
-    public void fatal(String message, String title) {
-        fatalDialog(message, title);
     }
 
     /**
@@ -330,11 +286,11 @@ public class MMLogger extends ExtendedLoggerWrapper {
     }
 
     /**
-     * Takes the passed in Level and checks if the current log level is more
-     * specific than provided. This is a helper method around the default logger's
-     * method.
+     * Takes the passed in Level and checks if the current log level is more specific than provided. This is a helper
+     * method around the default logger's method.
      *
      * @param checkedLevel Passed in Level to compare to.
+     *
      * @return True if the current log level is more specific than the passed in
      */
     public boolean isLevelMoreSpecificThan(Level checkedLevel) {
@@ -342,11 +298,11 @@ public class MMLogger extends ExtendedLoggerWrapper {
     }
 
     /**
-     * Takes the passed in Level and checks if the current log level is less
-     * specific than provided. This is a helper method around the default logger's
-     * method.
+     * Takes the passed in Level and checks if the current log level is less specific than provided. This is a helper
+     * method around the default logger's method.
      *
      * @param checkedLevel Passed in Level to compare to.
+     *
      * @return True if the current log level is less specific than the passed in
      */
     public boolean isLevelLessSpecificThan(Level checkedLevel) {
@@ -370,5 +326,4 @@ public class MMLogger extends ExtendedLoggerWrapper {
         }
         return message;
     }
-
 }

@@ -1,4 +1,4 @@
-#Saved from version 0.50.0-SNAPSHOT on 2024-06-29
+#Saved from version 0.50.04-SNAPSHOT on 2025-03-15
 <UnitType>
 SupportVTOL
 </UnitType>
@@ -52,9 +52,13 @@ standardseats:6.0:0:-1::-1:0
 45
 </armor_type>
 
-<armor_tech>
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
+<armor_tech_level>
 1
-</armor_tech>
+</armor_tech_level>
 
 <armor>
 5

@@ -204,6 +204,10 @@ public class Tank extends Entity {
 
     @Override
     public CrewType defaultCrewType() {
+        // A tank that is a trailer, has no weapon list, and has no engine does not need any crew.
+        if (isTrailer() && getWeaponList().isEmpty() && (getEngineType() == Engine.NONE)) {
+            return CrewType.NONE;
+        }
         return CrewType.CREW;
     }
 
@@ -545,8 +549,14 @@ public class Tank extends Entity {
         crewHitPS = hit;
     }
 
+    /**
+     * @return  true if <code>m_bImmobile</code> is true and the original walk MP
+     *          for the unit is greater than 0.
+     * @see #applyMovementDamage
+     */
     public boolean isMovementHit() {
-        return m_bImmobile;
+        // We don't want to return true for trailers,
+        return (m_bImmobile) && (getOriginalWalkMP() > 0);
     }
 
     public boolean isMovementHitPending() {
@@ -3140,5 +3150,14 @@ public class Tank extends Entity {
     @Override
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(2.866 + 0.987 * Math.log(getWeight())));
+    }
+
+    /**
+     * @param location The location to check
+     * @return True when the given location is a side location, i.e. left, right or, on superheavy units, front or
+     * rear left/right.
+     */
+    public boolean isSideLocation(int location) {
+        return (location == Tank.LOC_LEFT) || (location == Tank.LOC_RIGHT);
     }
 }

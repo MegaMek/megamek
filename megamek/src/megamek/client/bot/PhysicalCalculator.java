@@ -22,6 +22,10 @@ package megamek.client.bot;
 
 import java.util.Iterator;
 
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.HonorUtil;
+import megamek.client.bot.princess.IHonorUtil;
+import megamek.client.bot.princess.Princess;
 import megamek.common.*;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -37,7 +41,7 @@ public final class PhysicalCalculator {
         // should never call this
     }
 
-    public static PhysicalOption getBestPhysical(Entity entity, Game game) {
+    public static PhysicalOption getBestPhysical(Entity entity, Game game, BehaviorSettings behaviorSettings, IHonorUtil honorUtil) {
         // Infantry can't conduct physical attacks.
         if (entity instanceof Infantry) {
             return null;
@@ -165,7 +169,7 @@ public final class PhysicalCalculator {
                     if (test_pod.getType() == INarcPod.NEMESIS) {
                         // Pod is +variable, based on movement
                         test_ranking += (entity.getWalkMP() + entity
-                                .getJumpMP()) / 2.0;
+                                .getAnyTypeMaxJumpMP()) / 2.0;
                     }
                     // If this pod is best, retain it and its ranking
                     if (test_ranking > pod_ranking) {
@@ -263,8 +267,16 @@ public final class PhysicalCalculator {
                 continue;
             }
 
-            // don't bother stomping MekWarriors
-            if (target instanceof MekWarrior) {
+            // don't bother stomping EjectedCrew
+            if (target instanceof EjectedCrew) {
+                continue;
+            }
+
+            if (behaviorSettings.getIgnoredUnitTargets().contains(target.getId())) {
+                continue;
+            }
+
+            if (honorUtil.isEnemyBroken(entity.getId(), entity.getOwnerId(), behaviorSettings.isForcedWithdrawal())) {
                 continue;
             }
 
@@ -487,9 +499,9 @@ public final class PhysicalCalculator {
                     if (to.getWalkMP() > 0) {
                         dmg = dmg
                                 * Math.sqrt((1.0 / to.getWalkMP())
-                                                    + to.getJumpMP());
+                                                    + to.getAnyTypeMaxJumpMP());
                     } else {
-                        dmg *= Math.max(1.0, Math.sqrt(to.getJumpMP()));
+                        dmg *= Math.max(1.0, Math.sqrt(to.getAnyTypeMaxJumpMP()));
                     }
                     // Modify damage by breach factor
                     dmg *= breach;
@@ -515,9 +527,9 @@ public final class PhysicalCalculator {
                 // Modify damage to reflect how bad it is for target to be prone
                 if (to.getWalkMP() > 0) {
                     dmg = dmg
-                            * Math.sqrt((1.0 / to.getWalkMP()) + to.getJumpMP());
+                            * Math.sqrt((1.0 / to.getWalkMP()) + to.getAnyTypeMaxJumpMP());
                 } else {
-                    dmg = dmg * Math.max(1.0, Math.sqrt(to.getJumpMP()));
+                    dmg = dmg * Math.max(1.0, Math.sqrt(to.getAnyTypeMaxJumpMP()));
                 }
                 // Modify damage by breach factor
                 dmg *= breach;
@@ -599,9 +611,9 @@ public final class PhysicalCalculator {
         self_damage = calculateFallingDamage(1.0 - (Compute.oddsAbove(odds.getValue(), fromAptPiloting) / 100.0), from);
         if (from.getWalkMP() > 0) {
             self_damage = self_damage
-                    * Math.sqrt((1.0 / from.getWalkMP()) + from.getJumpMP());
+                    * Math.sqrt((1.0 / from.getWalkMP()) + from.getAnyTypeMaxJumpMP());
         } else {
-            self_damage = self_damage * Math.sqrt(from.getJumpMP());
+            self_damage = self_damage * Math.sqrt(from.getAnyTypeMaxJumpMP());
         }
         // Add together damage values for comparison
         dmg = (dmg + coll_damage) - self_damage;

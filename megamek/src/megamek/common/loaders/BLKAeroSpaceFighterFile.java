@@ -21,14 +21,14 @@ import megamek.common.verifier.TestEntity;
 
 /**
  * BLkFile.java
- *
+ * <p>
  * Created on April 6, 2002, 2:06 AM
  *
  * @author taharqa
  */
 public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
 
-    // armor locatioms
+    // armor locations
     public static final int NOSE = 0;
     public static final int RW = 1;
     public static final int LW = 2;
@@ -101,7 +101,8 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
 
         int engineRating = (dataFile.getDataAsInt("SafeThrust")[0] - 2) * (int) a.getWeight();
         if (a.isPrimitive()) {
-            engineRating *= 1.2;
+            engineRating = Math.round(engineRating * 1.2f);
+
             // Ensure the rating is divisible by 5
             if ((engineRating % 5) != 0) {
                 engineRating = engineRating - (engineRating % 5) + 5;
@@ -200,7 +201,7 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        boolean rearMount = false;
+        boolean rearMount;
 
         if (saEquip[0] != null) {
             for (String element : saEquip) {
@@ -223,23 +224,19 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                 int facing = -1;
                 if (equipName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(FR)")) {
                     facing = 1;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(RL)")) {
                     facing = 4;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(RR)")) {
                     facing = 2;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
 
                 EquipmentType etype = EquipmentType.get(equipName);
@@ -267,8 +264,7 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                         Mounted<?> mount = t.addEquipment(etype, useLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
-                        if ((etype instanceof WeaponType)
-                                && etype.hasFlag(WeaponType.F_VGL)) {
+                        if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));
                             } else {
@@ -284,7 +280,10 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                         if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_CARGO)) {
                             // Treat F_CARGO equipment as cargo bays with 1 door, e.g. for ASF with IBB.
                             int idx = t.getTransportBays().size();
-                            t.addTransporter(new CargoBay(mount.getSize(), 1, idx), omniMounted);
+                            double baySize = (mount.getName().contains("Container")) ?
+                                                   mount.getTonnage() :
+                                                   mount.getSize();
+                            t.addTransporter(new CargoBay(baySize, 1, idx), omniMounted);
                         }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());

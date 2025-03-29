@@ -43,8 +43,7 @@ import megamek.common.options.Quirks;
 import megamek.logging.MMLogger;
 
 /**
- * The MekSummary of a unit offers compiled information about the unit without
- * having to load the file.
+ * The MekSummary of a unit offers compiled information about the unit without having to load the file.
  */
 public class MekSummary implements Serializable, ASCardDisplayable {
     private static final MMLogger logger = MMLogger.create(MekSummary.class);
@@ -74,8 +73,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int year;
     private int type;
     private int[] altTypes = new int[] { TechConstants.T_IS_TW_NON_BOX, TechConstants.T_IS_ADVANCED,
-            TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules
-                                               // levels
+                                         TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules
+    // levels
     private double tons;
     private int bv;
 
@@ -157,9 +156,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int internalsType;
 
     /**
-     * Each location can have a separate armor type, but this is used for search
-     * purposes. We really
-     * only care about which types are present.
+     * Each location can have a separate armor type, but this is used for search purposes. We really only care about
+     * which types are present.
      */
     private final HashSet<Integer> armorTypeSet;
 
@@ -173,8 +171,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private Vector<String> equipmentNames;
 
     /**
-     * The number of times the piece of equipment in the corresponding
-     * equipmentNames list appears.
+     * The number of times the piece of equipment in the corresponding equipmentNames list appears.
      */
     private Vector<Integer> equipmentQuantities;
 
@@ -281,40 +278,29 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return unitSubType;
     }
 
+    /**
+     * @deprecated No indicated Uses
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public static String determineETypeName(MekSummary ms) {
-        switch (ms.getUnitType()) {
-            case "BattleArmor":
-            case "Infantry":
-                return Entity.getEntityMajorTypeName(Entity.ETYPE_INFANTRY);
-            case "VTOL":
-                return Entity.getEntityMajorTypeName(Entity.ETYPE_VTOL);
-            case "Naval":
-            case "Gun Emplacement":
-            case "Tank":
-                return Entity.getEntityMajorTypeName(Entity.ETYPE_TANK);
-            case "Mek":
-                return Entity.getEntityMajorTypeName(Entity.ETYPE_MEK);
-            case "ProtoMek":
-                return Entity.getEntityMajorTypeName(Entity.ETYPE_PROTOMEK);
-            case "Space Station":
-            case "Jumpship":
-            case "Dropship":
-            case "Small Craft":
-            case "Aero":
-                return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
-            case "Conventional Fighter":
-            case "AeroSpaceFighter":
-                return Entity.getEntityMajorTypeName(Entity.ETYPE_AEROSPACEFIGHTER);
-            case "Unknown":
-                return Entity.getEntityMajorTypeName(-1);
-        }
-        return Entity.getEntityMajorTypeName(-1);
+        return switch (ms.getUnitType()) {
+            case "BattleArmor", "Infantry" -> Entity.getEntityMajorTypeName(Entity.ETYPE_INFANTRY);
+            case "VTOL" -> Entity.getEntityMajorTypeName(Entity.ETYPE_VTOL);
+            case "Naval", "Gun Emplacement", "Tank" -> Entity.getEntityMajorTypeName(Entity.ETYPE_TANK);
+            case "Mek" -> Entity.getEntityMajorTypeName(Entity.ETYPE_MEK);
+            case "ProtoMek" -> Entity.getEntityMajorTypeName(Entity.ETYPE_PROTOMEK);
+            case "Space Station", "Jumpship", "Dropship", "Small Craft", "Aero" ->
+                  Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+            case "Conventional Fighter", "AeroSpaceFighter" ->
+                  Entity.getEntityMajorTypeName(Entity.ETYPE_AEROSPACEFIGHTER);
+            default -> Entity.getEntityMajorTypeName(-1);
+        };
     }
 
     // This is here for legacy purposes to not break the API
-    @Deprecated
+    @Deprecated(since = "0.50.4", forRemoval = true)
     public static String determineUnitType(Entity e) {
-        return UnitType.determineUnitType(e);
+        return UnitType.getTypeName(e.getUnitType());
     }
 
     public File getSourceFile() {
@@ -357,6 +343,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return type;
     }
 
+    /**
+     * @deprecated No indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public int[] getAltTypes() {
         return altTypes;
     }
@@ -1061,8 +1051,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Given the list of equipment mounted on this unit, parse it into a unique
-     * list of names and the number of times that name appears.
+     * Given the list of equipment mounted on this unit, parse it into a unique list of names and the number of times
+     * that name appears.
      *
      * @param mountedList A collection of <code>Mounted</code> equipment
      */
@@ -1094,10 +1084,11 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     public void setQuirkNames(Quirks quirks) {
-        Set<String> quirkNameList = quirks.getOptionsList().stream()
-                .filter(IOption::booleanValue)
-                .map(IOptionInfo::getDisplayableNameWithValue)
-                .collect(Collectors.toSet());
+        Set<String> quirkNameList = quirks.getOptionsList()
+                                          .stream()
+                                          .filter(IOption::booleanValue)
+                                          .map(IOptionInfo::getDisplayableNameWithValue)
+                                          .collect(Collectors.toSet());
         quirkNames = String.join(";", quirkNameList);
     }
 
@@ -1108,10 +1099,12 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     public void setWeaponQuirkNames(Entity entity) {
         Set<String> weaponQuirkNameList = new HashSet<>();
         for (Mounted<?> mounted : entity.getEquipment()) {
-            weaponQuirkNameList.addAll(mounted.getQuirks().getOptionsList().stream()
-                    .filter(IOption::booleanValue)
-                    .map(IOptionInfo::getDisplayableNameWithValue)
-                    .collect(Collectors.toSet()));
+            weaponQuirkNameList.addAll(mounted.getQuirks()
+                                             .getOptionsList()
+                                             .stream()
+                                             .filter(IOption::booleanValue)
+                                             .map(IOptionInfo::getDisplayableNameWithValue)
+                                             .collect(Collectors.toSet()));
         }
         weaponQuirkNames = String.join(";", weaponQuirkNameList);
     }
@@ -1153,8 +1146,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Takes the armor type at all locations and creates a set of the armor
-     * types.
+     * Takes the armor type at all locations and creates a set of the armor types.
      *
      * @param locsArmor An array that stores the armor type at each location.
      */
@@ -1323,8 +1315,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         }
         final MekSummary other = (MekSummary) obj;
         // we match on chassis + model + unittype + sourcefile
-        return Objects.equals(chassis, other.chassis) && Objects.equals(model, other.model)
-                && Objects.equals(unitType, other.unitType) && Objects.equals(sourceFile, other.sourceFile);
+        return Objects.equals(chassis, other.chassis) &&
+                     Objects.equals(model, other.model) &&
+                     Objects.equals(unitType, other.unitType) &&
+                     Objects.equals(sourceFile, other.sourceFile);
     }
 
     @Override
@@ -1343,9 +1337,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Loads and returns the entity for this MekSummary. If the entity cannot be
-     * loaded, the error is logged
-     * and null is returned.
+     * Loads and returns the entity for this MekSummary. If the entity cannot be loaded, the error is logged and null is
+     * returned.
      *
      * @return The loaded entity or null in case of an error
      */
@@ -1359,10 +1352,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Loads and returns the entity for the given full name. If the entity cannot be
-     * loaded, the error is logged
-     * and null is returned. This is a shortcut for first loading the MekSummary
-     * using
+     * Loads and returns the entity for the given full name. If the entity cannot be loaded, the error is logged and
+     * null is returned. This is a shortcut for first loading the MekSummary using
      * {@link MekSummaryCache#getMek(String)} and then {@link #loadEntity()}.
      *
      * @return The loaded entity or null in case of an error

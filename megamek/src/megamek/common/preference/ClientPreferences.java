@@ -122,6 +122,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_ASK_FOR_VICTORY_LIST, true);
         store.setDefault(DATA_LOGGING, false);
         store.setDefault(SHOW_AUTO_RESOLVE_PANEL, true);
+        store.setDefault(STAMP_FILENAMES, false);
+
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }

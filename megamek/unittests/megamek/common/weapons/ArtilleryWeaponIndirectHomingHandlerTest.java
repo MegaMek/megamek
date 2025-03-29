@@ -1,5 +1,24 @@
+/*
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common.weapons;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -22,8 +41,6 @@ import java.util.Random;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import static megamek.MMConstants.MAX_PORT;
-import static megamek.MMConstants.MIN_PORT;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -74,7 +91,8 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         when(mockBoard.getSpecialHexDisplayTable()).thenReturn(new Hashtable<>());
         game.setBoard(mockBoard);
 
-        server = new Server(null, random.nextInt(MIN_PORT, MAX_PORT), gameManager, false, "", null, true);
+        server = new Server(null, random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
+            gameManager, false, "", null, true);
     }
 
     Mek createMek(String chassis, String model, String crewName, Player owner) {
@@ -207,8 +225,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         return new WeaponAttackAction(
             attacker.getId(),
             defender.getId(),
-            attacker.getEquipmentNum(weapon)
-        );
+            attacker.getEquipmentNum(weapon));
     }
 
     ArtilleryAttackAction makeArtilleryWAA(Entity attacker, Entity defender, Mounted weapon) {
@@ -217,10 +234,8 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
             defender.getTargetType(),
             defender.getId(),
             attacker.getEquipmentNum(weapon),
-            game
-        );
+            game);
     }
-
 
     void loadBombOnASF(Entity bomber, int bombType) {
         loadBombsOnASF(bomber, bombType, 1);
@@ -234,10 +249,8 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
     }
 
     /**
-     * This test actually exists to quickly iterate through artillery handling code,
-     * for debugging purposes.
-     * It iterates through one Homing Arrow IV bomb launch, the subsequent tagging turn,
-     * and the homing attack conversion / handling.
+     * This test actually exists to quickly iterate through artillery handling code, for debugging purposes. It iterates through one Homing
+     * Arrow IV bomb launch, the subsequent tagging turn, and the homing attack conversion / handling.
      */
     @Test
     void handleArrowIVHomingBombTargetMekWithTAG() throws LocationFullException {
@@ -250,9 +263,9 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         Infantry crunchies = createInfantry("LittleGreen", "ArmyMen", "Elgato", dPlayer);
 
         // Set positions; critical for WAA
-        Coords attackerPosition = new Coords(8,15);
-        Coords taggerPosition = new Coords(1,1);
-        Coords defenderPosition = new Coords(8,1);
+        Coords attackerPosition = new Coords(8, 15);
+        Coords taggerPosition = new Coords(1, 1);
+        Coords defenderPosition = new Coords(8, 1);
         attacker.setPosition(attackerPosition);
         tagger.setPosition(taggerPosition);
         defender.setPosition(defenderPosition);
@@ -289,8 +302,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         // Infantry shouldn't be fully destroyed, though!
         assertFalse(crunchies.isDestroyed());
 
-        // for debugging purposes only.  Use debug mode, place breakpoint above,
-        // evaluate manually
+        // for debugging purposes only. Use debug mode, place breakpoint above, evaluate manually
         reports.stream()
             .map(Report::text)
             .collect(Collectors.joining(",\n"));
@@ -307,9 +319,9 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         Mek defender = createMek("TGT-1A", "Targeto", "Bob", dPlayer);
 
         // Set positions; critical for WAA
-        Coords attackerPosition = new Coords(8,15);
-        Coords taggerPosition = new Coords(1,1);
-        Coords defenderPosition = new Coords(8,1);
+        Coords attackerPosition = new Coords(8, 15);
+        Coords taggerPosition = new Coords(1, 1);
+        Coords defenderPosition = new Coords(8, 1);
         attacker.setPosition(attackerPosition);
         tagger.setPosition(taggerPosition);
         defender.setPosition(defenderPosition);
@@ -342,8 +354,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         gameManager.changePhase(GamePhase.FIRING);
         assertTrue(defender.isDestroyed());
 
-        // for debugging purposes only.  Use debug mode, place breakpoint above,
-        // evaluate manually
+        // for debugging purposes only. Use debug mode, place breakpoint above, evaluate manually
         reports.stream()
             .map(Report::text)
             .collect(Collectors.joining(",\n"));

@@ -21,14 +21,18 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
 class CoordsTest {
     //========================================================
@@ -330,6 +334,24 @@ class CoordsTest {
         assertEquals(Math.PI / 2, source.radian(target5), 0.1);
         assertEquals(2, source.direction(target5));
 
+    }
+
+    @TestFactory
+    Stream<DynamicTest> testCoordsToCubeToOffset() {
+        return generateCoords().map(target -> dynamicTest(
+              "Test Coords(" + target.getX() + ", " + target.getY() + ") to Cube to Offset",
+              () -> assertEquals(target, target.toCube().toOffset())
+        ));
+    }
+
+    private Stream<Coords> generateCoords() {
+        List<Coords> coordsList = new ArrayList<>();
+        for (int x = 0; x < 100; x++) {
+            for (int y = 0; y < 100; y++) {
+                coordsList.add(new Coords(x, y));
+            }
+        }
+        return coordsList.stream();
     }
 
     @Test

@@ -282,8 +282,8 @@ public class PathEnumerator {
                 paths.addAll(ppf.getPronePaths());
 
                 // add jumping moves
-                if (mover.getJumpMP() > 0) {
-                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getJumpMP(),
+                if (mover.getAnyTypeMaxJumpMP() > 0) {
+                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getAnyTypeMaxJumpMP(),
                             MoveStepType.FORWARDS, getGame());
                     spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                     spf.run((new MovePath(game, mover, wayPoint)).addStep(MoveStepType.START_JUMP));
@@ -331,7 +331,7 @@ public class PathEnumerator {
             logger.debug(ex, "Lost sight of a unit while plotting predicted paths");
             return false;
         } catch (Exception e) {
-            logger.error(e, "reclaculateMovesForWorker");
+            logger.error(e, "recalculateMovesForWorker");
             return false;
         }
     }

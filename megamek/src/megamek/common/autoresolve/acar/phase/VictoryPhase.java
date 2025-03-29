@@ -13,7 +13,9 @@
  */
 package megamek.common.autoresolve.acar.phase;
 
+import megamek.common.Aero;
 import megamek.common.Entity;
+import megamek.common.IAero;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
@@ -62,20 +64,19 @@ public class VictoryPhase extends PhaseHandler {
     private static void applyDamageToEntitiesFromUnit(SimulationContext context, SBFUnit unit) {
         for (var element : unit.getElements()) {
             var entityOpt = context.getEntity(element.getId());
-            if (entityOpt.isPresent()) {
-                var entity = entityOpt.get();
-                applyDamageToEntityFromUnit(unit, entity);
-            }
+            entityOpt.ifPresent(entity -> applyDamageToEntityFromUnit(unit, entity));
         }
     }
 
     private static void applyDamageToEntityFromUnit(SBFUnit unit, Entity entity) {
-        var percent = (double) unit.getCurrentArmor() / unit.getArmor();
+        double percent = (double) unit.getCurrentArmor() / unit.getArmor();
         var crits = Math.min(9, unit.getTargetingCrits() + unit.getMpCrits() + unit.getDamageCrits());
         percent -= percent * (crits / 11.0);
         percent = Math.min(0.95, percent);
-        var totalDamage = (int) ((entity.getTotalArmor() + entity.getTotalInternal()) * (1 - percent));
+        int armor = Math.max(entity.getTotalArmor(), 0);
+        int internal = (entity instanceof IAero) ? ((IAero) entity).getSI() : entity.getTotalInternal();
+        int totalDamage = (int) ((armor + internal) * (1.0 - percent));
         DamageApplierChooser.choose(entity, EntityFinalState.CREW_AND_ENTITY_MUST_SURVIVE)
-            .applyDamageInClusters(totalDamage, 5);
+            .applyDamageInClusters(totalDamage, -1);
     }
 }

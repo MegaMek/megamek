@@ -65,13 +65,7 @@ ISC3Sensors
 ISC3Sensors
 ISAngelECMSuite
 ISC3MasterBoostedSystemUnit
-ISDroneCarrierControlSystem
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
+ISDroneCarrierControlSystem:SIZE:6
 ISLimitedAmphibiousChassis
 </Body Equipment>
 

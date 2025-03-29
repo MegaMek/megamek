@@ -952,7 +952,7 @@ public class MapMenu extends JPopupMenu {
 
             menu.add(item);
 
-            if (myEntity.getJumpMP() > 0) {
+            if (myEntity.getAnyTypeMaxJumpMP() > 0) {
                 item = new JMenuItem(Messages.getString("CommonMenuBar.moveJump"));
                 item.setActionCommand(MovementDisplay.MoveCommand.MOVE_JUMP.getCmd());
                 item.addActionListener(evt -> {
@@ -1030,7 +1030,7 @@ public class MapMenu extends JPopupMenu {
 
             menu.add(item);
 
-            if (myEntity.getJumpMP() > 0) {
+            if (myEntity.getAnyTypeMaxJumpMP() > 0) {
                 item = new JMenuItem(Messages.getString("CommonMenuBar.moveJump"));
                 item.setActionCommand(MovementDisplay.MoveCommand.MOVE_JUMP.getCmd());
                 item.addActionListener(evt -> {

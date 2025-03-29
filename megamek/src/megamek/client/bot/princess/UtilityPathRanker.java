@@ -45,7 +45,7 @@ public class UtilityPathRanker extends BasicPathRanker {
 
     @Override
     public @Nullable Coords calculateAlliesCenter(int myId, @Nullable List<Entity> friends, Game game) {
-        return getOwner().getSwarmContext().getCurrentCenter();
+        return getOwner().getSwarmContext().getCenterForUnit(myId);
     }
     /**
      * Returns the best path of a list of ranked paths.
@@ -88,7 +88,7 @@ public class UtilityPathRanker extends BasicPathRanker {
         boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
         for (Entity enemy : enemies) {
             // Skip ejected pilots.
-            if (enemy instanceof MekWarrior) {
+            if (enemy instanceof EjectedCrew) {
                 continue;
             }
 
@@ -131,9 +131,9 @@ public class UtilityPathRanker extends BasicPathRanker {
 
         // if we're not in the air, we may get hit by friendly artillery
         if (!path.getEntity().isAirborne() && !path.getEntity().isAirborneVTOLorWIGE()) {
-            double friendlyArtilleryDamage = 0;
             Map<Coords, Double> artyDamage = getOwner().getPathRankerState().getIncomingFriendlyArtilleryDamage();
 
+            double friendlyArtilleryDamage;
             if (!artyDamage.containsKey(path.getFinalCoords())) {
                 friendlyArtilleryDamage = ArtilleryTargetingControl
                     .evaluateIncomingArtilleryDamage(path.getFinalCoords(), getOwner());
@@ -155,7 +155,7 @@ public class UtilityPathRanker extends BasicPathRanker {
             damageEstimate.physicalDamage = 0;
         }
 
-//        double braveryMod = getBraveryMod(successProbability, damageEstimate, expectedDamageTaken);
+        double braveryMod = getBraveryMod(successProbability, damageEstimate, expectedDamageTaken);
 
         var isNotAirborne = !path.getEntity().isAirborneAeroOnGroundMap();
         // the only critters not subject to aggression and herding mods are
@@ -186,33 +186,41 @@ public class UtilityPathRanker extends BasicPathRanker {
         double exposurePenalty = calculateExposurePenalty(movingUnit, pathCopy, enemies);
 
         double fallBack = shouldFallBack(pathCopy, movingUnit, enemies.get(0)) ? 0.5 : 1.0;
-        double utility = 1.0;
-        utility *= fallMod;
-        utility *= formationMod;
-        utility *= aggressionMod;
-        utility *= movementMod;
-        utility *= facingMod;
-        utility *= selfPreservationMod;
-        utility *= strategicMod;
-        utility *= exposurePenalty;
-        utility *= fallBack;
 
-        double modificationFactor = 1.0 - (1.0 / 13.0);
-        double makeUpValue = (1 - utility) * modificationFactor;
-        double finalScore = utility + (makeUpValue * utility);
-
-        utility = clamp01(finalScore);
+        double utility = clamp01(calculateGeometricMean(new double[] {
+              braveryMod,
+              fallMod,
+              formationMod,
+              aggressionMod,
+              movementMod,
+              selfPreservationMod,
+              strategicMod,
+              exposurePenalty,
+              fallBack
+        })) * facingMod;
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy,
-            "utility [" + utility + "= fallMod(" + fallMod + ") * formationMod("+ formationMod +
-                ") * movementMod("+ movementMod + ") * aggressionMod(" + aggressionMod + ") * fallBack(" + fallBack +
-                ") * facingMod("+ facingMod +") * selfPreservationMod("+selfPreservationMod+") * strategicMod("+strategicMod+
-                ") * exposurePenalty("+exposurePenalty+")]"
+            "utility = " + utility + " :: geometricMean( [fallMod(" + fallMod + "), formationMod("+ formationMod +
+                "), movementMod("+ movementMod + "), aggressionMod(" + aggressionMod + "), fallBack(" + fallBack +
+                "), selfPreservationMod("+selfPreservationMod+"), strategicMod("+strategicMod+
+                "), exposurePenalty("+exposurePenalty+")] ) * facingMod(" + facingMod +")"
         );
 
         logger.info(rankedPath.getReason());
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
         return rankedPath;
+    }
+
+    private double calculateGeometricMean(double[] values) {
+        int n = values.length;
+        double accumulator = 0.0d;
+        for (double value : values) {
+            if (value == 0d) {
+                return 0.0d;
+            }
+            accumulator += Math.log(value);
+        }
+        return Math.exp(accumulator / n);
     }
 
     private void checkBlackIcePresence(Game game) {

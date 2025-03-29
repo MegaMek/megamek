@@ -1,0 +1,68 @@
+#Saved from version 0.50.03-SNAPSHOT on 2025-02-05
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Gun Century (MHAF)
+</Name>
+
+<Model>
+(Motorized Light Cannon)
+</Model>
+
+<year>
+2920
+</year>
+
+<originalBuildYear>
+2920
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Troopers Equipment>
+Generic Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
+</Field Guns Equipment>
+
+<capabilities>
+Like most of the Periphery Bandit Kingdoms the Marian Hegemony was lacking heavy manufacturing in it's early days, limiting the availability of heavier prime movers for mechanized infantry.  Because of this, it resorted to using lightweight vehicles to enable deployment of field guns in short Century formations.  These formations continue to be used in forces which are stuck at the end of the prcurement chain.
+</capabilities>
+
+<squad_size>
+10
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+

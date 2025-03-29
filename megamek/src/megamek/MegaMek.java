@@ -20,6 +20,28 @@
  */
 package megamek;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputFilter;
+import java.lang.management.ManagementFactory;
+import java.net.URL;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+
 import io.sentry.Sentry;
 import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
@@ -35,24 +57,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import megamek.server.DedicatedServer;
 import megamek.utilities.GifWriter;
-import megamek.utilities.PrincessFineTuning;
 import megamek.utilities.RATGeneratorEditor;
-
-import javax.swing.*;
-import java.io.*;
-import java.lang.management.ManagementFactory;
-import java.net.URL;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 /**
  * This is the primary MegaMek class.
@@ -71,10 +76,9 @@ public class MegaMek {
     public static void main(String... args) {
         ObjectInputFilter.Config.setSerialFilter(sanityInputFilter);
 
-        // Configure Sentry with defaults. Although the client defaults to enabled, the
-        // properties file is used to disable it and additional configuration can be
-        // done inside of the sentry.properties file. The defaults for everything else
-        // is set here.
+        // Configure Sentry with defaults. Although the client defaults to enabled, the properties file is used to
+        // disable it and additional configuration can be done inside the sentry.properties file. The defaults for
+        // everything else is set here.
         Sentry.init(options -> {
             options.setEnableExternalConfiguration(true);
             options.setDsn("https://b1720cb789ec56df7df9610dfa463c09@sentry.tapenvy.us/8");
@@ -105,8 +109,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            logger.fatal(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
-                    parser.help()));
+            logger.fatal(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
             System.exit(1);
         }
 
@@ -141,10 +144,6 @@ public class MegaMek {
             startGifWriter(restArgs);
             return;
         }
-        if (parser.aiFineTuning()) {
-            startPrincessFineTuning(restArgs);
-            return;
-        }
         if (parser.ratGenEditor()) {
             RATGeneratorEditor.main(restArgs);
         } else {
@@ -165,9 +164,8 @@ public class MegaMek {
     }
 
     /**
-     * Calculates the SHA-256 hash of the MegaMek.jar file
-     * Used primarily for purposes of checksum comparison when connecting a new
-     * client.
+     * Calculates the SHA-256 hash of the MegaMek.jar file Used primarily for purposes of checksum comparison when
+     * connecting a new client.
      *
      * @return String representing the SHA-256 hash
      */
@@ -210,8 +208,7 @@ public class MegaMek {
     }
 
     /**
-     * This function returns the memory used in the heap (heap memory - free
-     * memory).
+     * This function returns the memory used in the heap (heap memory - free memory).
      *
      * @return memory used in kB
      */
@@ -222,8 +219,8 @@ public class MegaMek {
     }
 
     /**
-     * Starts a dedicated server with the arguments in args. See
-     * {@link DedicatedServer#start(String[])} for more information.
+     * Starts a dedicated server with the arguments in args. See {@link DedicatedServer#start(String[])} for more
+     * information.
      *
      * @param args the arguments to the dedicated server.
      */
@@ -233,31 +230,29 @@ public class MegaMek {
     }
 
     /**
-     * Skip splash GUI, starts a host
-     * :megamek:run --args='-host'
+     * Skip splash GUI, starts a host :megamek:run --args='-host'
      */
     private static void startHost(String... args) {
-        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(
-                args,
-                MegaMekCommandLineFlag.HOST.toString(),
-                false,
-                false,
-                true);
+        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
+              MegaMekCommandLineFlag.HOST.toString(),
+              false,
+              false,
+              true);
 
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            final String message = String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
-                    parser.help());
+            final String message = String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS,
+                  e.getMessage(),
+                  parser.help());
             logger.error(e, message);
             System.exit(1);
         }
 
-        ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
-                null,
-                MMConstants.DEFAULT_PORT,
-                MMConstants.LOCALHOST,
-                PreferenceManager.getClientPreferences().getLastPlayerName());
+        ClientServerCommandLineParser.Resolver resolver = parser.getResolver(null,
+              MMConstants.DEFAULT_PORT,
+              MMConstants.LOCALHOST,
+              PreferenceManager.getClientPreferences().getLastPlayerName());
 
         logger.info(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
 
@@ -266,14 +261,13 @@ public class MegaMek {
             mmg.start(false);
 
             File gameFile = resolver.getSaveGameFile();
-            mmg.startHost(
-                    resolver.password,
-                    resolver.port,
-                    resolver.registerServer,
-                    resolver.announceUrl,
-                    resolver.mailPropertiesFile,
-                    gameFile,
-                    resolver.playerName);
+            mmg.startHost(resolver.password,
+                  resolver.port,
+                  resolver.registerServer,
+                  resolver.announceUrl,
+                  resolver.mailPropertiesFile,
+                  gameFile,
+                  resolver.playerName);
         });
     }
 
@@ -281,26 +275,23 @@ public class MegaMek {
      * Skip splash GUI, starts a host with using quicksave file
      */
     private static void startQuickLoad(String... args) {
-        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(
-                args,
-                MegaMekCommandLineFlag.HOST.toString(),
-                false,
-                false,
-                true);
+        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
+              MegaMekCommandLineFlag.HOST.toString(),
+              false,
+              false,
+              true);
 
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            logger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
-                    parser.help()));
+            logger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
             System.exit(1);
         }
 
-        ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
-                null,
-                MMConstants.DEFAULT_PORT,
-                MMConstants.LOCALHOST,
-                PreferenceManager.getClientPreferences().getLastPlayerName());
+        ClientServerCommandLineParser.Resolver resolver = parser.getResolver(null,
+              MMConstants.DEFAULT_PORT,
+              MMConstants.LOCALHOST,
+              PreferenceManager.getClientPreferences().getLastPlayerName());
 
         logger.info(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
 
@@ -310,14 +301,13 @@ public class MegaMek {
 
             File gameFile = getQuickSaveFile();
 
-            mmg.startHost(
-                    resolver.password,
-                    resolver.port,
-                    resolver.registerServer,
-                    resolver.announceUrl,
-                    resolver.mailPropertiesFile,
-                    gameFile,
-                    resolver.playerName);
+            mmg.startHost(resolver.password,
+                  resolver.port,
+                  resolver.registerServer,
+                  resolver.announceUrl,
+                  resolver.mailPropertiesFile,
+                  gameFile,
+                  resolver.playerName);
         });
     }
 
@@ -325,24 +315,23 @@ public class MegaMek {
      * Skip splash GUI, starts a client session
      */
     private static void startClient(String... args) {
-        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(
-                args,
-                MegaMekCommandLineFlag.CLIENT.toString(),
-                false,
-                true,
-                false);
+        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
+              MegaMekCommandLineFlag.CLIENT.toString(),
+              false,
+              true,
+              false);
 
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            logger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(),
-                    parser.help()));
+            logger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
             System.exit(1);
         }
 
-        ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
-                null, MMConstants.DEFAULT_PORT, MMConstants.LOCALHOST,
-                PreferenceManager.getClientPreferences().getLastPlayerName());
+        ClientServerCommandLineParser.Resolver resolver = parser.getResolver(null,
+              MMConstants.DEFAULT_PORT,
+              MMConstants.LOCALHOST,
+              PreferenceManager.getClientPreferences().getLastPlayerName());
 
         logger.info(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args));
 
@@ -361,10 +350,6 @@ public class MegaMek {
         }
     }
 
-    private static void startPrincessFineTuning(String... args) {
-        PrincessFineTuning.main(args);
-    }
-
     /**
      * Starts MegaMek's splash GUI
      */
@@ -375,6 +360,7 @@ public class MegaMek {
 
     /**
      * @param originProject the project that launched MegaMek
+     *
      * @return the underlying information for this launch of MegaMek
      */
     public static String getUnderlyingInformation(final String originProject) {
@@ -384,39 +370,41 @@ public class MegaMek {
     /**
      * @param originProject  the launching project
      * @param currentProject the currently described project
+     *
      * @return the underlying information for this launch
      */
     public static String getUnderlyingInformation(final String originProject, final String currentProject) {
         final LocalDateTime buildDate = getBuildDate();
         return String.format("""
-                Starting %s v%s
-                    Build Date: %s
-                    Today: %s
-                    Origin Project: %s
-                    Java Vendor: %s
-                    Java Version: %s
-                    Platform: %s %s (%s)
-                    System Locale: %s
-                    Total memory available to %s: %,.0f GB
-                    MM Code Revision: %s
-                    MML Code Revision: %s
-                    MHQ Code Revision: %s
-                """,
-                currentProject,
-                SuiteConstants.VERSION,
-                ((buildDate == null) ? "N/A" : buildDate),
-                LocalDate.now(),
-                originProject,
-                System.getProperty("java.vendor"),
-                System.getProperty("java.version"),
-                System.getProperty("os.name"),
-                System.getProperty("os.version"),
-                System.getProperty("os.arch"),
-                Locale.getDefault(), currentProject,
-                Runtime.getRuntime().maxMemory() / Math.pow(2, 30),
-                Revision.mmRevision(),
-                Revision.mmlRevision(),
-                Revision.mhqRevision());
+                    Starting %s v%s
+                        Build Date: %s
+                        Today: %s
+                        Origin Project: %s
+                        Java Vendor: %s
+                        Java Version: %s
+                        Platform: %s %s (%s)
+                        System Locale: %s
+                        Total memory available to %s: %,.0f GB
+                        MM Code Revision: %s
+                        MML Code Revision: %s
+                        MHQ Code Revision: %s
+                    """,
+              currentProject,
+              SuiteConstants.VERSION,
+              ((buildDate == null) ? "N/A" : buildDate),
+              LocalDate.now(),
+              originProject,
+              System.getProperty("java.vendor"),
+              System.getProperty("java.version"),
+              System.getProperty("os.name"),
+              System.getProperty("os.version"),
+              System.getProperty("os.arch"),
+              Locale.getDefault(),
+              currentProject,
+              Runtime.getRuntime().maxMemory() / Math.pow(2, 30),
+              Revision.mmRevision(),
+              Revision.mmlRevision(),
+              Revision.mhqRevision());
     }
 
     public static @Nullable LocalDateTime getBuildDate() {

@@ -1,23 +1,60 @@
+/*
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ *
+ *  This file is part of MegaMek.
+ *
+ *  MekHQ is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  MekHQ is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with MekHQ. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common;
 
-
+/**
+ * Represents a set of cube coordinates in a hex grid.
+ * Cube Coordinate allows for more precise manipulation of distances, movements, and other operations.
+ * @author Luana Coppio
+ */
 public class CubeCoords {
 
-    public final double q, r, s;
+    public final double q;
+    public final double r;
+    public final double s;
 
+    /**
+     * Creates a new CubeCoords object with the given cube coordinates.
+     * @param q the q coordinate
+     * @param r the r coordinate
+     * @param s the s coordinate
+     */
     public CubeCoords(double q, double r, double s) {
         this.q = q;
         this.r = r;
         this.s = s;
     }
 
+    /**
+     * Converts cube coordinates to offset coordinates.
+     * @return a new Coords object with the offset coordinates
+     */
     public Coords toOffset() {
-        // Implement your hex grid's conversion logic
-        int x = (int) Math.round(q);
-        int y = (int) Math.round(r + (q - Math.round(q)) / 2);
+        int x = (int) q;
+        int y = (int) (r + q / 2);
         return new Coords(x, y);
     }
 
+    /**
+     * Rounds the cube coordinates to the nearest hex.
+     * @return a new CubeCoords object with the rounded coordinates
+     */
     public CubeCoords roundToNearestHex() {
         // Implement cube coordinate rounding
         double rx = Math.round(q);

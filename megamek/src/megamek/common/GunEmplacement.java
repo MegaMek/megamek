@@ -410,4 +410,8 @@ public class GunEmplacement extends Tank {
         return 205;
     }
 
+    @Override
+    public boolean isSideLocation(int location) {
+        return false;
+    }
 }

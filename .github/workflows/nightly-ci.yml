@@ -14,9 +14,9 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        java-distribution: [temurin]
-        java-version: [17]
+        os: [ ubuntu-latest ]
+        java-distribution: [ temurin ]
+        java-version: [ 17 ]
       fail-fast: false
 
     name: Nightly MegaMek CI ${{ matrix.os }} on ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
@@ -49,12 +49,6 @@ jobs:
         with:
           name: ${{ matrix.os }}-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}-ci-failure-logs
           path: megamek/megamek/build/reports/
-
-      #      - name: Upload Zip Artifacts
-      #        uses: actions/upload-artifact@v4
-      #        with:
-      #          name: mm-release-zip-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-      #          path: ./megamek/megamek/build/distributions/*.zip
 
       - name: Upload TarGZ Release
         uses: actions/upload-artifact@v4

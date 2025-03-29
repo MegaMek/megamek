@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2024 - The MegaMek Team. All Rights Reserved
+ * Copyright (C) 2020-2025 - The MegaMek Team. All Rights Reserved
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,10 @@ import megamek.client.generator.RandomGenderGenerator;
 import megamek.logging.MMLogger;
 
 /**
- * In this context, sex relates to the character's capacity to incubate
- * offspring.
- * While this is a very limited view of the broad spectrum of human genders,
- * the needs of programming dictate that we need to take a more binary view of
- * things.
- * To this end, males can't birth children, females can.
- * 'Other' genders are used for characters that fall outside the gender binary,
- * with the sex following 'other' determining their capacity to birth children.
+ * In this context, sex relates to the character's capacity to incubate offspring. While this is a very limited view of
+ * the broad spectrum of human genders, the needs of programming dictate that we need to take a more binary view of
+ * things. To this end, males can't birth children, females can. 'Other' genders are used for characters that fall
+ * outside the gender binary, with the sex following 'other' determining their capacity to birth children.
  */
 public enum Gender {
     // region Enum Declarations
@@ -58,6 +54,7 @@ public enum Gender {
     // endregion Constructors
 
     // region Boolean Checks
+
     /**
      * @return true if the person's biological gender is male, otherwise false
      */
@@ -70,6 +67,13 @@ public enum Gender {
      */
     public boolean isFemale() {
         return (this == FEMALE) || (this == OTHER_FEMALE);
+    }
+
+    /**
+     * @return {@code true} if the person uses gender-neutral pronouns, otherwise {@code false}.
+     */
+    public boolean isGenderNeutral() {
+        return (this == OTHER_MALE) || (this == OTHER_FEMALE);
     }
 
     /**
@@ -118,9 +122,8 @@ public enum Gender {
 
     /**
      * @param input the string to parse
-     * @return the gender defined by the input, or a randomly generated string if
-     *         the string isn't a
-     *         proper value
+     *
+     * @return the gender defined by the input, or a randomly generated string if the string isn't a proper value
      */
     public static Gender parseFromString(String input) {
         try {
@@ -141,9 +144,9 @@ public enum Gender {
 
         }
 
-        MMLogger.create(Gender.class).error(
-                "Failed to parse the gender value from input String {}. Returning a newly generated gender.",
-                input);
+        MMLogger.create(Gender.class)
+              .error("Failed to parse the gender value from input String {}. Returning a newly generated gender.",
+                    input);
         return RandomGenderGenerator.generate();
     }
 

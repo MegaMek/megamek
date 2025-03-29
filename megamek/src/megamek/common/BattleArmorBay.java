@@ -18,7 +18,7 @@ package megamek.common;
  * Represents a volume of space set aside for carrying Battle Armor squads aboard large spacecraft
  * and mobile structures
  */
-public final class BattleArmorBay extends Bay {
+public final class BattleArmorBay extends Bay implements InfantryTransporter {
     private static final long serialVersionUID = 7091227399812361916L;
 
     private boolean isClan = false;
@@ -78,13 +78,16 @@ public final class BattleArmorBay extends Bay {
             result = false;
         }
 
-        // is the door functional
-        if (currentdoors < loadedThisTurn) {
-            result = false;
-        }
-
         // Return our result.
         return result;
+    }
+
+    @Override
+    public boolean canUnloadUnits() {
+        // Infantry is only restricted by adjacency requirements (TW pp. 223 - 225)
+        return super.canUnloadUnits() || troops.stream()
+            .map(unit -> game.getEntity(unit))
+            .anyMatch(e -> (e != null && e.isBattleArmor()));
     }
 
     @Override

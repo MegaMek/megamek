@@ -84,24 +84,23 @@ public final class UIUtil {
      * Returns an HTML FONT tag setting the font face to Dialog
      * and the font size according to GUIScale.
      */
-    @Deprecated
     public static String fontHTML() {
         return "<FONT FACE=Dialog>";
     }
 
     /**
-     * Returns an HTML FONT tag setting the color to the given col and the font face to Dialog.
+     * Returns an HTML FONT tag setting the color to the given col and the font face
+     * to Dialog.
      */
-    @Deprecated
     public static String fontHTML(Color col) {
         return "<FONT FACE=Dialog " + colorString(col) + ">";
     }
 
     /**
-     * Returns an HTML FONT tag setting the font face to Dialog and the font size according to the given scale delta,
+     * Returns an HTML FONT tag setting the font face to Dialog and the font size
+     * according to the given scale delta,
      * where the font size target is standard font size * (1 + deltaScale)
      */
-    @Deprecated
     public static String fontHTML(float deltaScale) {
         return "<FONT FACE=Dialog " + sizeString(deltaScale) + ">";
     }
@@ -112,8 +111,7 @@ public final class UIUtil {
     public static String tag(String tag, String attributes, String text) {
         attributes = attributes.isEmpty() ? attributes : ' ' + attributes;
         String format = "<%s%s>%s</%s>";
-        String result = String.format(format, tag, attributes, text, tag);
-        return result;
+        return String.format(format, tag, attributes, text, tag);
     }
 
     /** Returns the yellow and gui-scaled warning sign. */
@@ -158,7 +156,7 @@ public final class UIUtil {
      * Wraps the content in a link for an internal anchor.
      *
      * @param anchorId the name of the anchor
-     * @param content the text to go in the link
+     * @param content  the text to go in the link
      * @return the complete link block
      */
     public static String link(String anchorId, String content) {
@@ -173,7 +171,6 @@ public final class UIUtil {
     public static String divider() {
         return "<hr/>";
     }
-
 
     /**
      * Returns a div of the given CSS class with opening and closing tag and the
@@ -436,7 +433,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns the given values multiplied by the current GUI scaling as a Dimension. Use this to adapt things that the automatic scaling
+     * Returns the given values multiplied by the current GUI scaling as a
+     * Dimension. Use this to adapt things that the automatic scaling
      * doesn't affect, e.g. images.
      *
      * @param width  the width of the Dimension
@@ -447,8 +445,10 @@ public final class UIUtil {
     }
 
     /**
-     * Returns the given value multiplied by the current GUI scaling. Use this to adapt things that the automatic scaling doesn't affect,
-     * e.g. images. Note that the given int value is scaled as a float and then rounded.
+     * Returns the given value multiplied by the current GUI scaling. Use this to
+     * adapt things that the automatic scaling doesn't affect,
+     * e.g. images. Note that the given int value is scaled as a float and then
+     * rounded.
      *
      * @param value The value to scale up or down according to the current GUI scale
      */
@@ -457,7 +457,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns the given value multiplied by the current GUI scaling. Use this to adapt things that the automatic scaling doesn't affect,
+     * Returns the given value multiplied by the current GUI scaling. Use this to
+     * adapt things that the automatic scaling doesn't affect,
      * e.g. images.
      *
      * @param value The value to scale up or down according to the current GUI scale
@@ -682,7 +683,8 @@ public final class UIUtil {
     }
 
     /**
-     * Updates all existing windows and frames. Use after a gui scale change or look-and-feel change.
+     * Updates all existing windows and frames. Use after a gui scale change or
+     * look-and-feel change.
      */
     public static void updateAfterUiChange() {
         for (Window window : Window.getWindows()) {
@@ -1109,7 +1111,7 @@ public final class UIUtil {
     }
 
     /**
-     * Completes the tooltip for a dialog using one of the TipXXX clasess, setting
+     * Completes the tooltip for a dialog using one of the TipXXX classes, setting
      * its width and adding HTML tags.
      */
     public static String formatSideTooltip(String text) {
@@ -1178,9 +1180,12 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a Font object using the "Dialog" logic font. The font size 14. legacy from manual gui scaling. This method should eventually be removed
+     * Returns a Font object using the "Dialog" logic font. The font size 14. legacy
+     * from manual gui scaling. This method should eventually be removed
+     *
+     * @deprecated since 0.50.04 - use the default font instead
      */
-    @Deprecated
+    @Deprecated(since = "0.50.04")
     public static Font getScaledFont() {
         return new Font(MMConstants.FONT_DIALOG, Font.PLAIN, FONT_SCALE1);
     }
@@ -1191,43 +1196,33 @@ public final class UIUtil {
      */
     public static boolean isModalDialogDisplayed() {
         return Stream.of(Window.getWindows())
-                .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog) w).isModal());
+                .anyMatch(w -> w.isShowing() && (w instanceof JDialog dialogWindow) && (dialogWindow.isModal()));
     }
 
     // PRIVATE
 
-    private final static Color LIGHTUI_GREEN = new Color(20, 140, 20);
-    private final static Color DARKUI_GREEN = new Color(40, 180, 40);
-    private final static Color LIGHTUI_GRAY = new Color(100, 100, 100);
-    private final static Color DARKUI_GRAY = new Color(150, 150, 150);
-    private final static Color LIGHTUI_LIGHTBLUE = new Color(100, 100, 150);
-    private final static Color DARKUI_LIGHTBLUE = new Color(150, 150, 210);
-    private final static Color LIGHTUI_LIGHTRED = new Color(210, 100, 100);
-    private final static Color DARKUI_LIGHTRED = new Color(210, 150, 150);
-    private final static Color LIGHTUI_LIGHTVIOLET = new Color(180, 100, 220);
-    private final static Color DARKUI_LIGHTVIOLET = new Color(180, 150, 220);
-    private final static Color LIGHTUI_YELLOW = new Color(250, 170, 40);
-    private final static Color DARKUI_YELLOW = new Color(200, 200, 60);
-    private final static Color LIGHTUI_LIGHTCYAN = new Color(40, 130, 130);
-    private final static Color DARKUI_LIGHTCYAN = new Color(100, 180, 180);
-    private final static Color LIGHTUI_LIGHTGREEN = new Color(80, 180, 80);
-    private final static Color DARKUI_LIGHTGREEN = new Color(150, 210, 150);
-    private final static Color LIGHTUI_DARKBLUE = new Color(225, 225, 245);
-    private final static Color DARKUI_DARKBLUE = new Color(50, 50, 80);
-    private final static Color LIGHTUI_BLACK = new Color(0, 0, 0);
-    private final static Color DARKUI_BLACK = new Color(0, 0, 0);
-    private final static Color LIGHTUI_WHITE = new Color(255, 255, 255);
-    private final static Color DARKUI_WHITE = new Color(255, 255, 255);
-
-    /**
-     * Returns an HTML FONT Size String, according to GUIScale (e.g.
-     * "style=font-size:22").
-     */
-    private static String sizeString() {
-        return "";
-//        int fontSize = (int) (GUIPreferences.getInstance().getGUIScale() * FONT_SCALE1);
-//        return " style=font-size:" + fontSize + " ";
-    }
+    private static final Color LIGHTUI_GREEN = new Color(20, 140, 20);
+    private static final Color DARKUI_GREEN = new Color(40, 180, 40);
+    private static final Color LIGHTUI_GRAY = new Color(100, 100, 100);
+    private static final Color DARKUI_GRAY = new Color(150, 150, 150);
+    private static final Color LIGHTUI_LIGHTBLUE = new Color(100, 100, 150);
+    private static final Color DARKUI_LIGHTBLUE = new Color(150, 150, 210);
+    private static final Color LIGHTUI_LIGHTRED = new Color(210, 100, 100);
+    private static final Color DARKUI_LIGHTRED = new Color(210, 150, 150);
+    private static final Color LIGHTUI_LIGHTVIOLET = new Color(180, 100, 220);
+    private static final Color DARKUI_LIGHTVIOLET = new Color(180, 150, 220);
+    private static final Color LIGHTUI_YELLOW = new Color(250, 170, 40);
+    private static final Color DARKUI_YELLOW = new Color(200, 200, 60);
+    private static final Color LIGHTUI_LIGHTCYAN = new Color(40, 130, 130);
+    private static final Color DARKUI_LIGHTCYAN = new Color(100, 180, 180);
+    private static final Color LIGHTUI_LIGHTGREEN = new Color(80, 180, 80);
+    private static final Color DARKUI_LIGHTGREEN = new Color(150, 210, 150);
+    private static final Color LIGHTUI_DARKBLUE = new Color(225, 225, 245);
+    private static final Color DARKUI_DARKBLUE = new Color(50, 50, 80);
+    private static final Color LIGHTUI_BLACK = new Color(0, 0, 0);
+    private static final Color DARKUI_BLACK = new Color(0, 0, 0);
+    private static final Color LIGHTUI_WHITE = new Color(255, 255, 255);
+    private static final Color DARKUI_WHITE = new Color(255, 255, 255);
 
     /**
      * Returns an HTML FONT Size String, according to GUIScale and deltaScale
@@ -1237,9 +1232,6 @@ public final class UIUtil {
      * Suitable deltaScale values are usually between -0.4 and +0.4
      */
     private static String sizeString(float deltaScale) {
-//        float guiScale = GUIPreferences.getInstance().getGUIScale();
-//        float boundedScale = Math.max(ClientGUI.MIN_GUISCALE, guiScale + deltaScale);
-//        boundedScale = Math.min(ClientGUI.MAX_GUISCALE, boundedScale);
         int fontSize = (int) ((1 + deltaScale) * FONT_SCALE1);
         return " style=font-size:" + fontSize + " ";
     }
@@ -1278,11 +1270,15 @@ public final class UIUtil {
     }
 
     /**
+     * Only place this is used is in the Skin Builder. If the Skin Builder can be
+     * worked without this method, it can be removed.
+     *
      * @return the 'virtual bounds' of the screen. That is, the union of the
-     *         displayable space on
-     *         all available screen devices.
+     *         displayable space on all available screen devices.
+     *
+     * @deprecated since 0.50.04 - Unknown replacement.
      */
-    @Deprecated
+    @Deprecated(since = "0.50.04")
     public static Rectangle getVirtualBounds() {
         final Rectangle bounds = new Rectangle();
         Stream.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())

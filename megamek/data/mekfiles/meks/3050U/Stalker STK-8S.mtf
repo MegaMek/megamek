@@ -44,7 +44,8 @@ Weapons:6
 1 ISERPPC, Left Arm
 1 ISMediumPulseLaser, Left Arm
 1 ISHeavyGaussRifle, Right Torso, Ammo:12
-2 ISERMediumLaser, Left Torso
+1 ISERMediumLaser, Left Torso
+1 ISERMediumLaser, Right Torso
 
 Left Arm:
 Shoulder
@@ -84,7 +85,7 @@ ISDouble Heat Sink
 ISDouble Heat Sink
 ISDouble Heat Sink
 ISERMediumLaser
-ISERMediumLaser
+ISHeavyGauss Ammo
 ISHeavyGauss Ammo
 ISHeavyGauss Ammo
 
@@ -100,7 +101,7 @@ ISHeavyGaussRifle (Split)
 ISHeavyGaussRifle (Split)
 ISHeavyGaussRifle (Split)
 ISHeavyGaussRifle (Split)
-ISHeavyGauss Ammo
+ISERMediumLaser
 
 Center Torso:
 Fusion Engine

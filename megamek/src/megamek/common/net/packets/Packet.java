@@ -13,19 +13,18 @@
  */
 package megamek.common.net.packets;
 
-import megamek.common.annotations.Nullable;
-import megamek.common.net.enums.PacketCommand;
-
 import java.io.Serializable;
 import java.util.Arrays;
 
+import megamek.common.annotations.Nullable;
+import megamek.common.net.enums.PacketCommand;
+
 /**
- * Application layer data packet used to exchange information between client and
- * server.
+ * Application layer data packet used to exchange information between client and server.
  */
 public class Packet implements Serializable {
-    private PacketCommand command;
-    private Object[] data;
+    private final PacketCommand command;
+    private final Object[] data;
 
     /**
      * Creates a <code>Packet</code> with a command and an array of objects
@@ -39,49 +38,73 @@ public class Packet implements Serializable {
     }
 
     /**
-     * Returns the command associated.
+     * @return the command associated.
      */
     public PacketCommand getCommand() {
         return command;
     }
 
     /**
-     * Returns the data in the packet
+     * @return the data in the packet
      */
     public Object[] getData() {
         return data;
     }
 
     /**
-     * Returns the object at the specified index
-     *
      * @param index the index of the desired object
+     *
      * @return the object at the specified index
      */
     public @Nullable Object getObject(final int index) {
-        return (index < data.length) ? data[index] : null;
+        return (index > 0 && index < data.length) ? data[index] : null;
     }
 
     /**
-     * Returns the <code>int</code> value of the object at the specified index
-     *
      * @param index the index of the desired object
+     *
      * @return the <code>int</code> value of the object at the specified index
      */
     public int getIntValue(int index) {
-        return (Integer) getObject(index);
+        Object o = getObject(index);
+
+        if (o instanceof Integer integer) {
+            return integer;
+        }
+
+        return 0;
     }
 
     /**
-     * Returns the <code>boolean</code> value of the object at the specified
-     * index
-     *
      * @param index the index of the desired object
+     *
      * @return the <code>boolean</code> value of the object at the specified index
      */
     public boolean getBooleanValue(int index) {
-        return (Boolean) getObject(index);
+        Object o = getObject(index);
+
+        if (o instanceof Boolean bool) {
+            return bool;
+        }
+
+        return false;
     }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return the <code>String</code> value of the object at the specified index
+     */
+    public String getStringValue(int index) {
+        Object o = getObject(index);
+
+        if (o instanceof String string) {
+            return string;
+        }
+
+        return "";
+    }
+
 
     @Override
     public String toString() {

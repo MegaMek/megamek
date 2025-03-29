@@ -188,6 +188,7 @@ public class EntityState {
         return naturalAptPilot;
     }
 
+    @Override
     public String toString() {
         return new ParameterizedMessage("EntityState{ position = {}, movementType = {}, facing = {}, secondaryFacing" +
                                               " = {}, heat = {}, hexesMoved = {}, prone = {}, immobile = {}, building" +

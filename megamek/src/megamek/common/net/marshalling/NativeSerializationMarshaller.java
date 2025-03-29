@@ -41,7 +41,7 @@ class NativeSerializationMarshaller extends PacketMarshaller {
         final int command = in.readInt();
 
         if (command < PACKET_COMMANDS.length) {
-            return new Packet(PACKET_COMMANDS[in.readInt()], (Object[]) in.readObject());
+            return new Packet(PACKET_COMMANDS[command], (Object[]) in.readObject());
         } else {
             throw new InvalidPacketCommandReceivedException(command);
         }

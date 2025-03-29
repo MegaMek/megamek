@@ -390,8 +390,12 @@ public class LargeSupportTank extends SupportTank {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int currElevation) {
-        Hex hex = game.getBoard().getHex(c);
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+        if (!game.hasBoardLocation(c, testBoardId)) {
+            return true;
+        }
+
+        Hex hex = game.getHex(c, testBoardId);
         // Additional restrictions for hidden large support tanks
         if (isHidden()) {
             // Can't deploy in paved hexes
@@ -413,7 +417,7 @@ public class LargeSupportTank extends SupportTank {
                 return true;
             }
         }
-        return super.isLocationProhibited(c, currElevation);
+        return super.isLocationProhibited(c, testBoardId, currElevation);
     }
 
     @Override

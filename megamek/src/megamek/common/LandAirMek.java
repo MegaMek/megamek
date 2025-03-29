@@ -541,13 +541,18 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int currElevation) {
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+        if (!game.hasBoardLocation(c, testBoardId)) {
+            return true;
+        }
+
         // Fighter mode has the same terrain restrictions as ASFs.
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             if (isAirborne()) {
                 return false;
             }
-            Hex hex = game.getBoard().getHex(c);
+
+            Hex hex = game.getHex(c, testBoardId);
 
             // Additional restrictions for hidden units
             if (isHidden()) {
@@ -577,13 +582,13 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         } else if (getConversionMode() == CONV_MODE_AIRMEK && currElevation > 0) {
             // Cannot enter woods or a building hex in AirMek mode unless using ground movement or flying over the
             // terrain.
-            Hex hex = game.getBoard().getHex(c);
+            Hex hex = game.getHex(c, testBoardId);
             return (hex.containsTerrain(Terrains.WOODS) ||
                           hex.containsTerrain(Terrains.JUNGLE) ||
                           hex.containsTerrain(Terrains.BLDG_ELEV)) && hex.ceiling() > currElevation;
         } else {
             // Mek mode or AirMek mode using ground MP have the same restrictions as Biped Mek.
-            return super.isLocationProhibited(c, currElevation);
+            return super.isLocationProhibited(c, testBoardId, currElevation);
         }
     }
 

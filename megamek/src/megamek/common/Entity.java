@@ -3296,7 +3296,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @see #isLocationDeadly(Coords)
      */
-    public boolean isLocationProhibited(BoardLocation boardLocation) {
+    public final boolean isLocationProhibited(BoardLocation boardLocation) {
         return isLocationProhibited(boardLocation.coords(), boardLocation.boardId(), isAero() ? altitude : elevation);
     }
 
@@ -3311,7 +3311,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @see #isLocationDeadly(Coords)
      */
-    public boolean isLocationProhibited(BoardLocation boardLocation, int testElevation) {
+    public final boolean isLocationProhibited(BoardLocation boardLocation, int testElevation) {
         return isLocationProhibited(boardLocation.coords(), boardLocation.boardId(), testElevation);
     }
 
@@ -3362,7 +3362,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns true if the specified hex contains some sort of prohibited terrain.
      * legacy - use the board location/board ID methods instead
      */
-    public boolean isLocationProhibited(Coords c) {
+    public final boolean isLocationProhibited(Coords c) {
         return isLocationProhibited(c, elevation);
     }
 
@@ -3375,7 +3375,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * legacy - use the board location/board ID methods instead
      */
-    public boolean isLocationProhibited(Coords c, int currElevation) {
+    public final boolean isLocationProhibited(Coords c, int currElevation) {
         return isLocationProhibited(c, boardId, currElevation);
     }
 

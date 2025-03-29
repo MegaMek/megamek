@@ -106,8 +106,12 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int elevation) {
-        Hex hex = game.getBoard().getHex(c);
+    public boolean isLocationProhibited(Coords c, int testBoardId, int elevation) {
+        if (!game.hasBoardLocation(c, testBoardId)) {
+            return true;
+        }
+
+        Hex hex = game.getHex(c, testBoardId);
 
         if (hex.containsAnyTerrainOf(IMPASSABLE, SPACE, SKY)) {
             return true;

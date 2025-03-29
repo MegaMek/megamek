@@ -526,12 +526,12 @@ public class Infantry extends Entity {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int currElevation) {
-        // Coords off the board aren't legal
-        if (!game.getBoard().contains(c)) {
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+        if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }
-        Hex hex = game.getBoard().getHex(c);
+
+        Hex hex = game.getHex(c, testBoardId);
         // Taharqa: waiting to hear back from Welshie but I am going to assume that
         // units pulling artillery
         // should be treated as wheeled rather than motorized because otherwise

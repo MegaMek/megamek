@@ -203,7 +203,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             } else {
                 isWinner = (player.getTeam() == this.victoryTeam ? 1 : -1);
             }
-            player.getRating().updateRating(getGlobalGameRating(),isWinner);
+            player.getRatingObject().updateRating(getGlobalGameRating(),isWinner);
         }
     }
 
@@ -215,7 +215,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         double globalRating = 0.0;
         List<Player> players = getPlayersList();
         for (Player player : players) {
-            globalRating += player.getRating().getCurrentRating();
+            globalRating += player.getRatingNumber();
         }
         return globalRating;
     }

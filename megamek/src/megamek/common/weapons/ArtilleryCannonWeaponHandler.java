@@ -155,11 +155,11 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        int altitude = ((targetHex != null) ? targetHex.getLevel() : 0);
+        int height = ((targetHex != null) ? targetHex.getLevel() : 0);
         if (asfFlak) {
-            altitude = target.getAltitude();
+            height = target.getAltitude();
         } else if (isFlak) {
-            altitude += target.getElevation();
+            height += target.getElevation();
         }
 
         // According to TacOps eratta, artillery cannons can only fire standard
@@ -198,11 +198,11 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 // so just hit it for full damage.
                 if (asfFlak) {
                     AreaEffectHelper.artilleryDamageEntity((Entity) target, ammoType.getRackSize(), null,
-                            0, false, asfFlak, isFlak, altitude,
+                            0, false, asfFlak, isFlak, height,
                             targetPos, atype, targetPos, false, ae, null, getAttackerId(),
                             vPhaseReport, gameManager);
                 } else {
-                    AreaEffectHelper.processFuelAirDamage(targetPos, altitude,
+                    AreaEffectHelper.processFuelAirDamage(targetPos, height,
                             ammoType, ae, vPhaseReport, gameManager);
                 }
 
@@ -226,7 +226,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         }
 
         gameManager.artilleryDamageArea(targetPos, ae.getPosition(), ammoType,
-                subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
+                subjectId, ae, isFlak, height, mineClear, vPhaseReport,
                 asfFlak);
 
         // artillery may unintentionally clear minefields, but only if it wasn't trying

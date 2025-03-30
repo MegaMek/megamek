@@ -321,7 +321,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
         // In the case of misses, we'll need to hit multiple hexes
         List<Coords> targets = new ArrayList<>();
-        List<Integer> altitudes = new ArrayList<>();
+        List<Integer> heights = new ArrayList<>();
         Hex targetHex = null;
 
         if (!bMissed) {
@@ -335,7 +335,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 vPhaseReport.addElement(r);
             }
             targetHex = game.getBoard().getHex(targetPos);
-            altitudes.add((targetHex != null) ? game.getBoard().getHex(targetPos).getLevel() : 0);
+            heights.add((targetHex != null) ? game.getBoard().getHex(targetPos).getLevel() : 0);
             artyMsg = "Artillery hit here on round " + game.getRoundCount()
                     + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
                     + " (this hex is now an auto-hit)";
@@ -369,13 +369,13 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     targets.add(targetPos);
                     targetHex = game.getBoard().getHex(targetPos);
                     if (targetHex != null) {
-                        altitudes.add(
+                        heights.add(
                               (isFlak) ? (
                                     (asfFlak) ? target.getAltitude() : targetHex.getLevel() + target.getElevation()
                               ) : targetHex.getLevel()
                         );
                     } else {
-                        altitudes.add(0);
+                        heights.add(0);
                     }
                     // misses and scatters to another hex
                     if (!isFlak) {
@@ -560,17 +560,17 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             // Here we're doing damage for each hit with more standard artillery shells
             while (nweaponsHit > 0) {
                 gameManager.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
-                        subjectId, ae, isFlak, altitudes.get(0), mineClear, vPhaseReport,
+                        subjectId, ae, isFlak, heights.get(0), mineClear, vPhaseReport,
                         asfFlak);
                 nweaponsHit--;
             }
         } else {
             // Now if we missed, resolve a strike on each scatter hex
             Coords c;
-            int altitude;
+            int height;
             for (int index=0;index<targets.size();index++) {
                 c = targets.get(index);
-                altitude = altitudes.get(index);
+                height = heights.get(index);
                 // Accidental mine clearance...
                 if (!mineClear && game.containsMinefield(c)) {
                     Enumeration<Minefield> minefields = game.getMinefields(c).elements();
@@ -587,7 +587,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 }
                 handleArtilleryDriftMarker(origPos, c, aaa,
                         gameManager.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,
-                                altitude, mineClear, vPhaseReport, asfFlak));
+                                height, mineClear, vPhaseReport, asfFlak));
             }
 
         }

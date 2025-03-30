@@ -18,45 +18,34 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 
 public class ButtonOrderPreferences extends PreferenceStoreProxy {
-
-
-    protected static ButtonOrderPreferences instance =
-            new ButtonOrderPreferences();
+    protected static ButtonOrderPreferences instance = new ButtonOrderPreferences();
 
     public static ButtonOrderPreferences getInstance() {
         return instance;
     }
 
     protected ButtonOrderPreferences() {
+        store = PreferenceManager.getInstance().getPreferenceStore(getClass().getName());
 
-        store = PreferenceManager.getInstance().getPreferenceStore(
-                getClass().getName());
-
-        for (MovementDisplay.MoveCommand cmd :
-                MovementDisplay.MoveCommand.values()) {
+        for (MovementDisplay.MoveCommand cmd : MovementDisplay.MoveCommand.values()) {
             store.setDefault(cmd.getCmd(), cmd.ordinal());
         }
 
-        for (FiringDisplay.FiringCommand cmd :
-                FiringDisplay.FiringCommand.values()) {
+        for (FiringDisplay.FiringCommand cmd : FiringDisplay.FiringCommand.values()) {
             store.setDefault(cmd.getCmd(), cmd.ordinal());
         }
 
-        for (PhysicalDisplay.PhysicalCommand cmd :
-                PhysicalDisplay.PhysicalCommand.values()) {
+        for (PhysicalDisplay.PhysicalCommand cmd : PhysicalDisplay.PhysicalCommand.values()) {
             store.setDefault(cmd.getCmd(), cmd.ordinal());
         }
 
-        for (TargetingPhaseDisplay.TargetingCommand cmd :
-                TargetingPhaseDisplay.TargetingCommand.values()) {
+        for (TargetingPhaseDisplay.TargetingCommand cmd : TargetingPhaseDisplay.TargetingCommand.values()) {
             store.setDefault(cmd.getCmd(), cmd.ordinal());
         }
 
-        for (DeploymentDisplay.DeployCommand cmd :
-                DeploymentDisplay.DeployCommand.values()) {
+        for (DeploymentDisplay.DeployCommand cmd : DeploymentDisplay.DeployCommand.values()) {
             store.setDefault(cmd.getCmd(), cmd.ordinal());
         }
-
     }
 
     @Override
@@ -65,46 +54,29 @@ public class ButtonOrderPreferences extends PreferenceStoreProxy {
     }
 
     public void setButtonPriorities() {
-        for (MovementDisplay.MoveCommand cmd :
-                MovementDisplay.MoveCommand.values()) {
-            Integer priority = store.getInt(cmd.getCmd());
-            if (priority != null) {
-                cmd.setPriority(priority);
-            }
+        for (MovementDisplay.MoveCommand cmd : MovementDisplay.MoveCommand.values()) {
+            int priority = store.getInt(cmd.getCmd());
+            cmd.setPriority(priority);
         }
 
-        for (FiringDisplay.FiringCommand cmd :
-                FiringDisplay.FiringCommand.values()) {
-            Integer priority = store.getInt(cmd.getCmd());
-            if (priority != null) {
-                cmd.setPriority(priority);
-            }
+        for (FiringDisplay.FiringCommand cmd : FiringDisplay.FiringCommand.values()) {
+            int priority = store.getInt(cmd.getCmd());
+            cmd.setPriority(priority);
         }
 
-        for (PhysicalDisplay.PhysicalCommand cmd :
-                PhysicalDisplay.PhysicalCommand.values()) {
-            Integer priority = store.getInt(cmd.getCmd());
-            if (priority != null) {
-                cmd.setPriority(priority);
-            }
+        for (PhysicalDisplay.PhysicalCommand cmd : PhysicalDisplay.PhysicalCommand.values()) {
+            int priority = store.getInt(cmd.getCmd());
+            cmd.setPriority(priority);
         }
 
-        for (TargetingPhaseDisplay.TargetingCommand cmd :
-                TargetingPhaseDisplay.TargetingCommand.values()) {
-            Integer priority = store.getInt(cmd.getCmd());
-            if (priority != null) {
-                cmd.setPriority(priority);
-            }
+        for (TargetingPhaseDisplay.TargetingCommand cmd : TargetingPhaseDisplay.TargetingCommand.values()) {
+            int priority = store.getInt(cmd.getCmd());
+            cmd.setPriority(priority);
         }
 
-        for (DeploymentDisplay.DeployCommand cmd :
-                DeploymentDisplay.DeployCommand.values()) {
-            Integer priority = store.getInt(cmd.getCmd());
-            if (priority != null) {
-                cmd.setPriority(priority);
-            }
+        for (DeploymentDisplay.DeployCommand cmd : DeploymentDisplay.DeployCommand.values()) {
+            int priority = store.getInt(cmd.getCmd());
+            cmd.setPriority(priority);
         }
     }
-
-
 }

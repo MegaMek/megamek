@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,16 +18,21 @@
  */
 package megamek.common.battlevalue;
 
-import megamek.common.*;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import megamek.common.AmmoType;
+import megamek.common.Entity;
+import megamek.common.Mounted;
+import megamek.common.WeaponType;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.weapons.bayweapons.BayWeapon;
 
 public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
 
@@ -85,21 +90,25 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
         for (Mounted<?> weapon : entity.getTotalWeaponList()) {
             WeaponType wtype = (WeaponType) weapon.getType();
 
-            if (weapon.isDestroyed() || wtype.hasFlag(WeaponType.F_AMS)
-                    || wtype.hasFlag(WeaponType.F_B_POD) || wtype.hasFlag(WeaponType.F_M_POD)
-                    || wtype instanceof BayWeapon || weapon.isWeaponGroup()) {
+            if (weapon.isDestroyed() ||
+                      wtype.hasFlag(WeaponType.F_AMS) ||
+                      wtype.hasFlag(WeaponType.F_B_POD) ||
+                      wtype.hasFlag(WeaponType.F_M_POD) ||
+                      wtype instanceof BayWeapon ||
+                      weapon.isWeaponGroup()) {
                 continue;
             }
 
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !((wtype.getAmmoType() == AmmoType.T_PLASMA)
-                    || (wtype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
-                    || (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER)
-                    || (wtype.getAmmoType() == AmmoType.T_CHEMICAL_LASER)))
-                    || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY)
-                    || (wtype.getAmmoType() == AmmoType.T_NA))) {
+            if (!((wtype.hasFlag(WeaponType.F_ENERGY) &&
+                         !((wtype.getAmmoType() == AmmoType.T_PLASMA) ||
+                                 (wtype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER) ||
+                                 (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER) ||
+                                 (wtype.getAmmoType() == AmmoType.T_CHEMICAL_LASER))) ||
+                        wtype.hasFlag(WeaponType.F_ONESHOT) ||
+                        wtype.hasFlag(WeaponType.F_INFANTRY) ||
+                        (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = bvLocation(weapon) + ":" + wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(entity));
@@ -202,39 +211,40 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
         }
 
         bvReport.addLine("Nominal Nose Location",
-                arcName(nominalNoseLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalNoseLocation)),
-                "");
+              arcName(nominalNoseLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalNoseLocation)),
+              "");
         bvReport.addLine("Nominal Left Location",
-                arcName(nominalLeftLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalLeftLocation)),
-                "");
+              arcName(nominalLeftLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalLeftLocation)),
+              "");
         bvReport.addLine("Nominal Right Location",
-                arcName(nominalRightLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalRightLocation)),
-                "");
+              arcName(nominalRightLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalRightLocation)),
+              "");
         frontAndRearDecided = true;
     }
 
     /**
-     * @return True when the two weapons are equal for conversion purposes (same
-     *         type, location and links).
+     * @return True when the two weapons are equal for conversion purposes (same type, location and links).
      */
     protected boolean canBeSummed(Mounted<?> weapon1, Mounted<?> weapon2) {
-        return weapon1.getType().equals(weapon2.getType())
-                && weapon1.getLocation() == weapon2.getLocation()
-                && weapon1.isRearMounted() == weapon2.isRearMounted()
-                && ((weapon1.getLinkedBy() == null && weapon2.getLinkedBy() == null)
-                        || (weapon1.getLinkedBy() != null
-                                && weapon1.getLinkedBy().getType().equals(weapon2.getLinkedBy().getType())));
+        return weapon1.getType().equals(weapon2.getType()) &&
+                     weapon1.getLocation() == weapon2.getLocation() &&
+                     weapon1.isRearMounted() == weapon2.isRearMounted() &&
+                     ((weapon1.getLinkedBy() == null && weapon2.getLinkedBy() == null) ||
+                            (weapon1.getLinkedBy() != null &&
+                                   weapon1.getLinkedBy().getType().equals(weapon2.getLinkedBy().getType())));
     }
 
     @Override
     protected void processWeapons() {
         for (WeaponMounted weapon : entity.getTotalWeaponList()) {
             if (countAsOffensiveWeapon(weapon)) {
-                WeaponMounted key = collectedWeapons.keySet().stream()
-                        .filter(wp -> canBeSummed(weapon, wp)).findFirst().orElse(weapon);
+                // Create a copy of the keyset to avoid CME during modification
+                List<WeaponMounted> keys = new ArrayList<>(collectedWeapons.keySet());
+                WeaponMounted key = keys.stream().filter(wp -> canBeSummed(weapon, wp)).findFirst().orElse(weapon);
                 collectedWeapons.merge(key, 1, Integer::sum);
             }
         }
+
         int heatEfficiency = heatEfficiency();
 
         double totalHeatSum = processArc(nominalNoseLocation);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,13 +18,23 @@
  */
 package megamek.common.battlevalue;
 
-import megamek.common.*;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import megamek.common.Aero;
+import megamek.common.AmmoType;
+import megamek.common.ConvFighter;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.MPCalculationSetting;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.SmallCraft;
 
 public class AeroBVCalculator extends HeatTrackingBVCalculator {
 
@@ -55,8 +65,12 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
         boolean hasExplosiveEquipment = false;
         bvReport.startTentativeSection();
         bvReport.addLine("Explosive Equipment:", "", "");
+
+        // We iterate over a copy to avoid any risk of ConcurrentModificationException
+        List<Mounted<?>> equipmentCopy = new ArrayList<>(aero.getEquipment());
         Set<AmmoType> ammos = new HashSet<>();
-        for (Mounted<?> mounted : aero.getEquipment()) {
+
+        for (Mounted<?> mounted : equipmentCopy) {
             if (!countsAsExplosive(mounted)) {
                 continue;
             }
@@ -71,13 +85,13 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
             if (eType instanceof AmmoType) {
                 if (ammos.add((AmmoType) eType)) {
                     defensiveValue -= 15;
-                    bvReport.addLine("- " + equipmentDescriptor(mounted), "- 15",
-                            "= " + formatForReport(defensiveValue));
+                    bvReport.addLine("- " + equipmentDescriptor(mounted),
+                          "- 15",
+                          "= " + formatForReport(defensiveValue));
                 }
             } else {
                 defensiveValue -= 1;
-                bvReport.addLine("- " + equipmentDescriptor(mounted), "- 1",
-                        "= " + formatForReport(defensiveValue));
+                bvReport.addLine("- " + equipmentDescriptor(mounted), "- 1", "= " + formatForReport(defensiveValue));
             }
             hasExplosiveEquipment = true;
         }
@@ -100,8 +114,7 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
         }
         calculation = formatForReport(defensiveValue) + " x " + calculation;
 
-        bvReport.addLine("Type Modifier:", calculation,
-                "= " + formatForReport(defensiveValue * typeModifier));
+        bvReport.addLine("Type Modifier:", calculation, "= " + formatForReport(defensiveValue * typeModifier));
         defensiveValue *= typeModifier;
     }
 
@@ -136,8 +149,7 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
 
         double cockpitMod = 1;
         String modifier = "";
-        if ((aero.getCockpitType() == Aero.COCKPIT_SMALL)
-                || (aero.getCockpitType() == Aero.COCKPIT_COMMAND_CONSOLE)) {
+        if ((aero.getCockpitType() == Aero.COCKPIT_SMALL) || (aero.getCockpitType() == Aero.COCKPIT_COMMAND_CONSOLE)) {
             cockpitMod = 0.95;
             modifier = " (" + aero.getCockpitTypeString() + ")";
         } else if (entity.hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
@@ -147,8 +159,8 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
         if (cockpitMod != 1) {
             baseBV *= cockpitMod;
             bvReport.addLine("Cockpit Modifier:",
-                    formatForReport(baseBV) + " x " + formatForReport(cockpitMod) + modifier,
-                    "= " + baseBV);
+                  formatForReport(baseBV) + " x " + formatForReport(cockpitMod) + modifier,
+                  "= " + baseBV);
             bvReport.addResultLine("Base BV:", "", formatForReport(baseBV));
         }
     }

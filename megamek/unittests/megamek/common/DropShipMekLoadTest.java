@@ -28,23 +28,23 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.jupiter.api.Test;
-
 import megamek.common.enums.GamePhase;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.verifier.TestEntity;
 import megamek.server.totalwarfare.TWGameManager;
+import org.junit.jupiter.api.Test;
 
 class DropShipMekLoadTest {
 
     @Test
     void test() throws Exception {
-        MekSummaryCache instance = MekSummaryCache.getInstance(true);
+        MekSummaryCache instance = MekSummaryCache.getInstance("testresources", true);
         Mek atlas = (Mek) instance.getMek("Atlas AS7-D").loadEntity();
         atlas.setId(2);
         Dropship leopard = (Dropship) instance.getMek("Leopard (2537)").loadEntity();
         leopard.setId(1);
+        MekSummaryCache.refreshUnitData(null, true);
 
         Game game = new Game();
         game.setPhase(GamePhase.LOUNGE);
@@ -74,10 +74,12 @@ class DropShipMekLoadTest {
         StringBuffer errors = new StringBuffer();
         assertTrue(isValid(leopard, errors), "Leopard is not valid after loading Atlas, errors: " + errors);
         assertTrue(isValid(atlas, errors), "Atlas is not valid after loading onto Leopard, errors: " + errors);
-        assertEquals(atlas.getTransportId(), leopard.getId(),
-                "Carrier ID " + atlas.getTransportId() + " wrong, should be " + leopard.getId());
-        assertEquals(1, leopard.getLoadedUnits().size(),
-                "Loaded unit list size" + leopard.getLoadedUnits().size() + " wrong, should be 1");
+        assertEquals(atlas.getTransportId(),
+              leopard.getId(),
+              "Carrier ID " + atlas.getTransportId() + " wrong, should be " + leopard.getId());
+        assertEquals(1,
+              leopard.getLoadedUnits().size(),
+              "Loaded unit list size" + leopard.getLoadedUnits().size() + " wrong, should be 1");
         assertNull(atlas.getPosition(), "Loaded Atlas position is " + atlas.getPosition() + ", should be null");
     }
 

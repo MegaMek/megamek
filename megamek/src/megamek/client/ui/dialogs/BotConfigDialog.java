@@ -274,7 +274,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                     .collect(Collectors.toSet());
             while (playerNames.contains(name) && counter < 1000) {
                 counter++;
-                name = "Princess " + RandomCallsignGenerator.getInstance().generate();
+                name = "Princess-" + RandomCallsignGenerator.getInstance().generate();
+
             }
         }
         return name;

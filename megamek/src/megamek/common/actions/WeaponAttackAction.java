@@ -2308,7 +2308,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         return Messages.getString("WeaponAttackAction.TooShortForDirectArty");
                     }
                     // ...or more than 17 hexes
-                    if (distance > Board.DEFAULT_BOARD_HEIGHT) {
+                    if (!(target.isAirborne()) && distance > Board.DEFAULT_BOARD_HEIGHT) {
+                        return Messages.getString("WeaponAttackAction.TooLongForDirectArty");
+                    }
+                    // Artillery Flak targeting Aerospace ignores altitude when computing range
+                    if (target.isAirborne() && ae.getPosition().distance(target.getPosition()) > Board.DEFAULT_BOARD_HEIGHT) {
                         return Messages.getString("WeaponAttackAction.TooLongForDirectArty");
                     }
                 }
@@ -5510,7 +5514,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Per TW pg 114, all other mods _should_ be included.
 
             // Special range calc
-            int distance = Compute.effectiveDistance(game, ae, target);
+            int distance = ae.getPosition().distance(target.getPosition());
             toHit.addModifier(Compute.getADARangeModifier(distance),
                   Messages.getString("WeaponAttackAction.ADARangeBracket"));
 

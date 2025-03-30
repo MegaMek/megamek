@@ -40,13 +40,18 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         super(entityId, targetType, targetId, weaponId);
         this.playerId = game.getEntity(entityId).getOwnerId();
         this.firingCoords = game.getEntity(entityId).getPosition();
-        int distance = Compute.effectiveDistance(game, getEntity(game), getTarget(game));
-        // TODO: replace this as it is completely wrong; see TO:AR pg 155
-        // Should be leaving distance alone as gravity only applies to _artillery range bands_, not actual distance
-        // distance = (int) Math.floor((double) distance / game.getPlanetaryConditions().getGravity());
+        int distance;
         EquipmentType eType = getEntity(game).getEquipment(weaponId).getType();
         WeaponType wType = (WeaponType) eType;
         WeaponMounted mounted = (WeaponMounted) getEntity(game).getEquipment(weaponId);
+        // Remove altitude from Artillery Flak and ADA distance calcs
+        if (mounted.getLinkedAmmo() != null && mounted.getLinkedAmmo().getType().countsAsFlak()) {
+            turnsTilHit = 0;
+            return;
+        } else {
+            distance = Compute.effectiveDistance(game, getEntity(game), getTarget(game));
+        }
+
         if (getEntity(game).usesWeaponBays() && wType.getAtClass() == WeaponType.CLASS_ARTILLERY) {
             for (WeaponMounted bayW : mounted.getBayWeapons()) {
                 WeaponType bayWType = bayW.getType();

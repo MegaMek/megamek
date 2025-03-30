@@ -59,6 +59,10 @@ public enum BoardType implements Serializable {
         return this == GROUND;
     }
 
+    public boolean isHighAltitude() {
+        return this == NEAR_SPACE;
+    }
+
     public boolean isRadarMap() {
         return this == RADAR;
     }

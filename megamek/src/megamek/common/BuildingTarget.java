@@ -238,19 +238,11 @@ public class BuildingTarget implements Targetable {
         return sideTable(src);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Targetable#isOffBoard()
-     */
     @Override
     public boolean isOffBoard() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Targetable#isAirborne()
-     */
     @Override
     public boolean isAirborne() {
         return false;

@@ -2204,4 +2204,8 @@ public class Board implements Serializable {
     public void setBoardType(BoardType boardType) {
         this.boardType = boardType;
     }
+
+    public boolean isHighAltitudeMap() {
+        return boardType.isHighAltitude();
+    }
 }

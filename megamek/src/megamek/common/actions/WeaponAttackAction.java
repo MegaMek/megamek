@@ -247,7 +247,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     public boolean isAirToAir(Game game) {
-        return Compute.isAirToAir(getEntity(game), getTarget(game));
+        return Compute.isAirToAir(game, getEntity(game), getTarget(game));
     }
 
     public boolean isGroundToAir(Game game) {
@@ -2750,7 +2750,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Ground-to-air attacks
 
             // air2air and air2ground cannot be combined by any aerospace units
-            if (Compute.isAirToAir(ae, target) || Compute.isAirToGround(ae, target)) {
+            if (Compute.isAirToAir(game, ae, target) || Compute.isAirToGround(ae, target)) {
                 for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
                     EntityAction ea = i.nextElement();
                     if (!(ea instanceof WeaponAttackAction)) {
@@ -2760,7 +2760,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     if (prevAttack.getEntityId() != ae.getId()) {
                         continue;
                     }
-                    if (Compute.isAirToAir(ae, target) && prevAttack.isAirToGround(game)) {
+                    if (Compute.isAirToAir(game, ae, target) && prevAttack.isAirToGround(game)) {
                         return Messages.getString("WeaponAttackAction.AlreadyAtgAttack");
                     }
                     if (Compute.isAirToGround(ae, target) && prevAttack.isAirToAir(game)) {
@@ -4205,7 +4205,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 }
             }
             // Altitude-related mods for air-to-air combat
-            if (Compute.isAirToAir(ae, target)) {
+            if (Compute.isAirToAir(game, ae, target)) {
                 if (target.isAirborneVTOLorWIGE()) {
                     toHit.addModifier(+5, Messages.getString("WeaponAttackAction.TeNonAeroAirborne"));
                 }
@@ -4256,7 +4256,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
             // units making air to ground attacks are easier to hit by air-to-air
             // attacks
-            if (Compute.isAirToAir(ae, target)) {
+            if (Compute.isAirToAir(game, ae, target)) {
                 for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
                     EntityAction ea = i.nextElement();
                     if (!(ea instanceof WeaponAttackAction)) {
@@ -5062,7 +5062,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // To-hit table changes with no to-hit modifiers
 
         // Aeros in air-to-air combat can hit above and below
-        if (Compute.isAirToAir(ae, target)) {
+        if (Compute.isAirToAir(game, ae, target)) {
             if ((ae.getAltitude() - target.getAltitude()) > 2) {
                 toHit.setHitTable(ToHitData.HIT_ABOVE);
             } else if ((target.getAltitude() - ae.getAltitude()) > 2) {

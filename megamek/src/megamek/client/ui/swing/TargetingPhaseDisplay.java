@@ -247,7 +247,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     }
 
     private boolean shouldPerformFireKeyCommand() {
-        return this.shouldReceiveKeyCommands() && buttons.get(TargetingCommand.FIRE_FIRE).isEnabled();
+        return shouldReceiveKeyCommands() && buttons.get(TargetingCommand.FIRE_FIRE).isEnabled();
     }
 
     protected boolean shouldPerformClearKeyCommand() {

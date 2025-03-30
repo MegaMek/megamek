@@ -47,7 +47,7 @@ factions:
   - fullname: Mobile Long Tom Artillery LT-MOB-25
     offboard: NORTH
     distance: 200
-    board: 1 #makes no diff yet
+#    board: 1 #makes no diff yet
 
   - fullname: Locust LCT-1V
 #    board: 8

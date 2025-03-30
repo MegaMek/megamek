@@ -582,8 +582,117 @@ public interface IGame {
      * @param boardLocation The location to test
      * @return True when the location is part of a space board
      */
-    default boolean isSpace(@Nullable BoardLocation boardLocation) {
+    default boolean isOnSpaceMap(@Nullable BoardLocation boardLocation) {
         return hasBoardLocation(boardLocation) && getBoard(boardLocation).isSpaceMap();
+    }
+
+    /**
+     * @param boardLocation The location to check
+     * @return True when the location is not null and a valid ground board location
+     */
+    default boolean isOnGroundMap(@Nullable BoardLocation boardLocation) {
+        return hasBoardLocation(boardLocation) && getBoard(boardLocation).isGroundMap();
+    }
+
+    /**
+     * @param targetable The target to check
+     * @return True when the targetable is considered to be on a ground board (not an atmospheric or space board).
+     * This is true for units that are deployed either offboard or on a valid ground board location; for other
+     * targets such as hexes or buildings, this is true when on a valid ground board location.
+     */
+    default boolean isOnGroundMap(Targetable targetable) {
+        // offboard artillery, when deployed, can only be "on" a ground map
+        if (targetable instanceof Entity entity) {
+            return entity.isDeployed() && (entity.isOffBoard() || isOnGroundMap(targetable.getBoardLocation()));
+        } else {
+            return isOnGroundMap(targetable.getBoardLocation());
+        }
+    }
+
+    default boolean isOnSpaceMap(Targetable targetable) {
+        return isOnSpaceMap(targetable.getBoardLocation());
+    }
+
+    default boolean hasConnectedBoard(Board board) {
+        return hasEnclosingBoard(board.getBoardId()) || !board.embeddedBoardCoords().isEmpty();
+    }
+
+    default boolean isOnAtmosphericMap(BoardLocation boardLocation) {
+        return hasBoardLocation(boardLocation) && getBoard(boardLocation).isLowAtmosphereMap();
+    }
+
+    default boolean isOnAtmosphericMap(Targetable targetable) {
+        return isOnAtmosphericMap(targetable.getBoardLocation());
+    }
+
+    /**
+     * Returns true when both given units or objects are on boards that are connected at least through a common
+     * high altitude map. For two connected maps, an aerospace fighter can reach one from the other, traversing
+     * atmospheric and/or high atmospheric maps. Also returns true when both are on the same board.
+     *
+     * When two maps are not connected they're part of different hierarchies of maps and therefore,
+     * nothing happening on one can influence the other. It is possible to set up games of such unrelated
+     * map clusters but it is not advisable. Such games could just as well be played separately from each other
+     * and suffer a lower chance of MM crashing both...
+     *
+     * @param entity1 The first unit or object to test
+     * @param entity2 The second unit or object to test
+     *
+     * @return True when both units or objects are on connected boards (or the same board)
+     */
+    default boolean onConnectedBoards(@Nullable Targetable entity1, @Nullable Targetable entity2) {
+        return (entity1 != null) && (entity2 != null) && areConnectedBoards(entity1.getBoardId(), entity2.getBoardId());
+    }
+
+    /**
+     * Returns true when both given boards are connected at least through a common high altitude map.
+     * When two boards are connected, a fighter unit can reach one from the other, traversing
+     * atmospheric and/or high atmospheric maps. Also returns true if the boards are one and the same.
+     *
+     * When two maps are not connected they're part of different hierarchies of maps and therefore,
+     * nothing happening on one can influence the other. It is possible to set up games of such unrelated
+     * map clusters but it is not advisable. Such games could just as well be played separately from each other
+     * and suffer a lower chance of MM crashing both...
+     *
+     * @param boardId1 The first board ID
+     * @param boardId2 The second board ID
+     *
+     * @return True when the given boards are connected at least through a common high atmosphere map
+     */
+    default boolean areConnectedBoards(int boardId1, int boardId2) {
+        List<Integer> hierarchy1 = getAllEnclosingBoards(boardId1);
+        hierarchy1.add(boardId1);
+        List<Integer> hierarchy2 = getAllEnclosingBoards(boardId2);
+        hierarchy2.add(boardId2);
+        return !Collections.disjoint(hierarchy1, hierarchy2);
+    }
+
+    /**
+     * Returns a list of IDs of all enclosing boards of the given board. These are at most two other boards;
+     * for a ground board, the enclosing atmospheric board (if present) and that one's enclosing high-atmo
+     * map (if present). For an atmospheric map, this will be at most the enclosing high-altitude map (if present);
+     * for any space map, the returned List will be empty.
+     *
+     * @param boardId The board to find enclosed boards for
+     * @return All enclosing boards in the hierarchy of the given board (between zero and two boards)
+     */
+    default List<Integer> getAllEnclosingBoards(int boardId) {
+        List<Integer> allEnclosingBoards = new ArrayList<>();
+        if (hasEnclosingBoard(boardId)) {
+            Board board = getBoard(boardId);
+            Board enclosingBoard = getEnclosingBoard(board);
+            allEnclosingBoards.add(enclosingBoard.getBoardId());
+            if (hasEnclosingBoard(enclosingBoard.getBoardId())) {
+                Board secondEnclosingBoard = getEnclosingBoard(enclosingBoard);
+                allEnclosingBoards.add(secondEnclosingBoard.getBoardId());
+            }
+        }
+        return allEnclosingBoards;
+    }
+
+
+    default @Nullable Board getEnclosingBoard(Board board) {
+        return getBoard(board.getEnclosingBoardId());
     }
 
     // endregion

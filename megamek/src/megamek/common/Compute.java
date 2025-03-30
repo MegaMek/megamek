@@ -1784,7 +1784,7 @@ public class Compute {
         if (target == null) {
             logger.error("Attempted to determine the effective distance to a null target");
             return 0;
-        } else if (Compute.isAirToGround(attacker, target)
+        } else if (isAirToGround(attacker, target)
                 || (attacker.isBomber() && target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             // always a distance of zero
             return 0;
@@ -1794,6 +1794,30 @@ public class Compute {
         attackPos.add(attacker.getPosition());
         Vector<Coords> targetPos = new Vector<>();
         targetPos.add(target.getPosition());
+
+        if (isAirToAir(game, attacker, target)) {
+            // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
+            // position of the unit on the ground map with the position of the ground map itself in the atmo map
+            if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
+                attackPos.clear();
+                attackPos.add(BoardHelper.positionOnEnclosingBoard(game, attacker.getBoardId()));
+
+            } else if (game.isOnAtmosphericMap(attacker) && game.isOnGroundMap(target)) {
+                targetPos.clear();
+                targetPos.add(BoardHelper.positionOnEnclosingBoard(game, target.getBoardId()));
+
+            } else if (BoardHelper.onDifferentGroundMaps(game, attacker, target)) {
+                // Different ground maps, here replace both positions with their respective atmo map hexes
+                attackPos.clear();
+                attackPos.add(BoardHelper.positionOnEnclosingBoard(game, attacker.getBoardId()));
+                targetPos.clear();
+                targetPos.add(BoardHelper.positionOnEnclosingBoard(game, target.getBoardId()));
+            }
+        } else if (!game.onTheSameBoard(attacker, target) && game.isOnGroundMap(attacker) && game.isOnGroundMap(target)) {
+            // S2S attacks (either artillery or capital weapons) need the ground distance instead of the atmo distance
+            return CrossBoardAttackHelper.getCrossBoardGroundMapDistance(attacker, target, game);
+        }
+
         // if a grounded dropship is the attacker, then it gets to choose the
         // best secondary position for LoS
         if ((attacker instanceof Dropship) && !attacker.isAirborne() && !attacker.isSpaceborne()) {
@@ -1835,7 +1859,7 @@ public class Compute {
 
         // if this is an air-to-air attack on the ground map, then divide
         // distance by 16
-        if (Compute.isAirToAir(attacker, target) && game.getBoard().onGround() && !useGroundDistance) {
+        if (Compute.isAirToAir(game, attacker, target) && game.getBoard().onGround() && !useGroundDistance) {
             distance = (int) Math.ceil(distance / 16.0);
         }
 
@@ -1849,7 +1873,7 @@ public class Compute {
         }
 
         // air-to-air attacks add one for altitude differences
-        if (Compute.isAirToAir(attacker, target) && !attacker.isSpaceborne()) {
+        if (Compute.isAirToAir(game, attacker, target) && !attacker.isSpaceborne()) {
             int aAlt = attacker.getAltitude();
             int tAlt = target.getAltitude();
             if (target.isAirborneVTOLorWIGE()) {
@@ -5159,7 +5183,7 @@ public class Compute {
         // find an enemy aero on the map
         // but still won't be able to see it and shoot at it beyond normal visual
         // conditions.
-        if (isAirToAir(ae, target) && game.getBoard().onGround()) {
+        if (isAirToAir(game, ae, target) && game.getBoard().onGround()) {
             distance = (int) Math.ceil(distance / 16.0);
         }
         return (distance > minSensorRange) && (distance <= maxSensorRange);
@@ -5456,7 +5480,7 @@ public class Compute {
         boolean usePrior = false;
         // aeros in the same hex need to adjust position to get side
         // table
-        if (isAirToAir(attacker, target)
+        if (isAirToAir(attacker.getGame(), attacker, target)
                 && attackPos.equals(target.getPosition())
                 && attacker.isAero() && target.isAero()) {
             int moveSort = shouldMoveBackHex(attacker, (Entity) target);
@@ -7191,12 +7215,23 @@ public class Compute {
 
     }
 
-    public static boolean isAirToAir(Entity attacker, Targetable target) {
-        if ((attacker == null) || (target == null)) {
+    /**
+     * Returns true when an attack of the given units would be an A2A attack. Checks for null units and
+     * if both units are airborne, {@link Entity#isAirborne()}. Also checks if they're either on the same
+     * map or on connected maps (atmo/ground or ground/ground within one atmo map).
+     *
+     * @param game The game
+     * @param attacker The attacking unit
+     * @param target   The target
+     * @return True when the supposed attack would be an A2A attack
+     */
+    public static boolean isAirToAir(Game game, Entity attacker, Targetable target) {
+        if ((attacker == null) || (target == null) || !attacker.isAirborne() || !target.isAirborne()) {
             return false;
         }
-        // According to errata, VTOL and WiGes are considered ground targets
-        return attacker.isAirborne() && target.isAirborne();
+        return game.onTheSameBoard(attacker, target)
+                     || game.onDirectlyConnectedBoards(attacker, target)
+                     || CrossBoardAttackHelper.onGroundMapsWithinOneAtmoMap(game, attacker, target);
     }
 
     public static boolean isGroundToAir(Entity attacker, Targetable target) {
@@ -7250,7 +7285,7 @@ public class Compute {
             return false;
         }
         // Account for "dead zones" between Aeros at different altitudes
-        if (Compute.isAirToAir(ae, target)) {
+        if (Compute.isAirToAir(game, ae, target)) {
             int distance = Compute.effectiveDistance(game, ae, target,
                     target.isAirborneVTOLorWIGE());
             int aAlt = ae.getAltitude();

@@ -12729,7 +12729,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // for now if you are in space, you are spaceborne, but this will become more complicated when we start
         // adding multiple maps to the same game and so I should try to replace most calls to `game.getBoard()
         // .inSpace()` with this one
-        return (game != null) && game.isSpace(getBoardLocation());
+        return (game != null) && game.isOnSpaceMap(getBoardLocation());
     }
 
     /**

@@ -84,9 +84,6 @@ ext {
             'java.base/java.util.concurrent=ALL-UNNAMED',
             '-Dsun.awt.disablegrab=true'
     ]
-    data = 'data'
-    unitFiles = "${data}/mekfiles"
-    rats = "${data}/rat"
     docs = "docs"
     lib = "lib"
     log = "logs"
@@ -112,6 +109,15 @@ jar {
     }
 }
 
+tasks.register('handleDataDirectory', Sync) {
+    description = 'Update MM Data'
+    group = 'build'
+
+    from "${projectDir}/../../mm-data/data"
+    into "${layout.buildDirectory.get()}/data"
+    include '**/*'
+}
+
 tasks.register('generateDynamicFiles') {
     def jvmOptions = project.ext.mmJvmOptions.join('\n')
 
@@ -124,14 +130,52 @@ ${jvmOptions}
     }
 }
 
+tasks.register('copyDataFiles', Copy) {
+    description = 'Copy data files into Staging directory'
+    group = 'build'
+
+    dependsOn handleDataDirectory
+
+    from("${layout.buildDirectory.get()}/data") {
+        include '**/*'
+        exclude "mekfiles"
+        exclude "rat"
+    }
+
+    into "${fileStagingDir}/data"
+}
+
+task unitFilesZip(dependsOn: handleDataDirectory) {
+    description = 'Creates zip archives of all the unit file folders.'
+
+    def sourceFolder = "${layout.buildDirectory.get()}/data/mekfiles"
+
+    if (file(sourceFolder).exists()) {
+        file(sourceFolder).eachDir { subDir ->
+            dependsOn tasks.create("${name}${subDir.name}", Zip) {
+                dependsOn handleDataDirectory
+                from subDir
+                archiveFileName = "${subDir.name}.zip"
+                destinationDirectory = file("${fileStagingDir}/data/mekfiles")
+            }
+        }
+    } else {
+        logger.warn("No unit files found in ${sourceFolder}")
+    }
+
+    outputs.dir "${fileStagingDir}/data/mekfiles"
+}
+
 tasks.register('copyFiles', Copy) {
     description = 'Stages files that are to be copied into the distribution.'
     group = 'build'
 
+    dependsOn copyDataFiles
     dependsOn generateDynamicFiles
+    dependsOn unitFilesZip
+    dependsOn ratZip
 
     from projectDir
-    include "${data}/**"
     include "${docs}/**"
     include "${mmconf}/**"
     include "SubmitBug.html"
@@ -139,9 +183,6 @@ tasks.register('copyFiles', Copy) {
     include "sentry.properties"
     include "*.ini"
     exclude "**/*.psd"
-
-    // No need to copy the files that are going to be zipped
-    exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
 
     // User Config Files
     exclude "${mmconf}/clientsettings.xml"
@@ -151,8 +192,6 @@ tasks.register('copyFiles', Copy) {
     exclude "${mmconf}/mhq.preferences"
     exclude "${mmconf}/mm.preferences"
     exclude "${mmconf}/mml.preferences"
-
-    exclude "${rats}/**"
     include "${userdata}/"
 
     into fileStagingDir
@@ -187,37 +226,25 @@ tasks.register('officialUnitList', JavaExec) {
     args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
 }
 
-task unitFilesZip(dependsOn: copyFiles) {
-    description = 'Creates zip archives of all the unit file folders.'
-    file(unitFiles).eachDir { subDir ->
-        dependsOn tasks.create("${name}${subDir.name}", Zip) {
-            from subDir
-            archiveFileName = "${subDir.name}.zip"
-            destinationDirectory = file("${fileStagingDir}/${unitFiles}")
-        }
-    }
-    inputs.dir "${projectDir}/${unitFiles}"
-    outputs.dir "${fileStagingDir}/${unitFiles}"
-}
-
 tasks.register('ratZip', Zip) {
     description = 'Creates a zip archive of all the random assignment tables.'
-    from rats
+    dependsOn handleDataDirectory
+
+    from "${layout.buildDirectory.get()}/data/rat"
+
     archiveFileName = "rat_default.zip"
-    destinationDirectory = file("${fileStagingDir}/${rats}")
+    destinationDirectory = file("${fileStagingDir}/data/rat")
     doFirst {
-        mkdir "${fileStagingDir}/${rats}"
+        mkdir "${fileStagingDir}/data/rat"
     }
-    inputs.dir "${projectDir}/${rats}"
-    outputs.dir "${fileStagingDir}/${rats}"
+    inputs.dir "${layout.buildDirectory.get()}/data/rat"
+    outputs.dir "${fileStagingDir}/data/rat"
 }
 
 tasks.register('stageFiles') {
     description = 'Process data files to be included in distribution'
     group = 'distribution'
     dependsOn officialUnitList
-    dependsOn unitFilesZip
-    dependsOn ratZip
     dependsOn deleteAtlasedImages
 
     doLast {
@@ -239,7 +266,7 @@ distributions {
     main {
         distributionBaseName = 'MegaMek'
         contents {
-            from("${buildDir}/launch4j") {
+            from("${layout.buildDirectory.get()}/launch4j") {
                 include '*.exe'
             }
             from(jar) {
@@ -264,7 +291,7 @@ launch4j {
     description = 'Create Windows executable for Megamek'
     mainClassName = application.mainClass
     outfile = 'MegaMek.exe'
-    icon = "${projectDir}/data/images/misc/megamek.ico"
+    icon = "${layout.buildDirectory.get()}/data/images/misc/megamek.ico"
     jarTask = project.tasks.jar
     windowTitle = 'MegaMek'
     internalName = 'MegaMek'
@@ -281,12 +308,10 @@ launch4j {
 
 tasks.register("packagePrepWork") {
     description = 'General Catch All for all distributions'
-    dependsOn stageFiles
     dependsOn startScripts
     dependsOn createStartScripts
     dependsOn copyFiles
     dependsOn createImageAtlases
-    dependsOn ratZip
     dependsOn createAllExecutables
 }
 

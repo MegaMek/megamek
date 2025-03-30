@@ -34,10 +34,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import megamek.common.options.GameOptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import megamek.common.options.GameOptions;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -75,7 +74,7 @@ class ComputeECMTest {
         Entity archer;
 
         try {
-            f = new File("data/mekfiles/meks/3039u/Archer ARC-2R.mtf");
+            f = new File("testresources/data/mekfiles/meks/3039u/Archer ARC-2R.mtf");
             mfp = new MekFileParser(f);
             archer = mfp.getEntity();
         } catch (Exception exc) {
@@ -186,8 +185,7 @@ class ComputeECMTest {
     }
 
     /**
-     * Basic tests for ECM on ground maps, includes single enemy single ally single
-     * hex.
+     * Basic tests for ECM on ground maps, includes single enemy single ally single hex.
      */
     @Test
     void testBasicECM() {
@@ -420,8 +418,7 @@ class ComputeECMTest {
     }
 
     /**
-     * Basic tests for ECM on ground maps, includes single enemy single ally
-     * multiple hexes.
+     * Basic tests for ECM on ground maps, includes single enemy single ally multiple hexes.
      */
     @Test
     void testBasicECMMultiHex() {
@@ -667,11 +664,12 @@ class ComputeECMTest {
     }
 
     /**
-     * Creates a single enemy with basic ECM owned by the supplied owner and
-     * returning the supplied game. Other enemies are created without ECM.
+     * Creates a single enemy with basic ECM owned by the supplied owner and returning the supplied game. Other enemies
+     * are created without ECM.
      *
      * @param owner
      * @param mockGame
+     *
      * @return
      */
     private static Vector<Entity> createECMEnemy(Player owner, Game mockGame) {
@@ -724,11 +722,12 @@ class ComputeECMTest {
     }
 
     /**
-     * Creates a single enemy with Angel ECM owned by the supplied owner and
-     * returning the supplied game. Other enemies are created without ECM.
+     * Creates a single enemy with Angel ECM owned by the supplied owner and returning the supplied game. Other enemies
+     * are created without ECM.
      *
      * @param owner
      * @param mockGame
+     *
      * @return
      */
     private static Vector<Entity> createAngelEnemy(Player owner, Game mockGame) {

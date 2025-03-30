@@ -18,15 +18,15 @@
  */
 package megamek.common.loaders;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
+import megamek.common.MekSummaryCache;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import megamek.common.MekSummaryCache;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CacheRebuildTest {
@@ -37,17 +37,19 @@ class CacheRebuildTest {
     @Test
     void testCacheRebuild() {
         File cacheFile = new File(MekSummaryCache.getUnitCacheDir(), MekSummaryCache.FILENAME_UNITS_CACHE);
+
         if (cacheFile.exists()) {
             assertTrue(cacheFile.delete(), "Couldn't delete cache");
         }
 
-        MekSummaryCache cache = MekSummaryCache.getInstance(true);
-
+        MekSummaryCache cache = MekSummaryCache.getInstance("testresources", true);
         MekSummaryCache.refreshUnitData(true);
 
         // Make sure no units failed loading
         assertTrue(cache.getFailedFiles().isEmpty());
+
         // Sanity check to make sure the loader thread didn't fail outright
-        assertTrue(cache.getAllMeks().length > 0);
+        assertEquals(3, cache.getAllMeks().length);
+        MekSummaryCache.refreshUnitData(null, true);
     }
 }

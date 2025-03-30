@@ -195,12 +195,30 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     private void updateEloRatings() {
         List<Player> players = getPlayersList();
+
         for (Player player : players) {
-            boolean isWinner = (player.getTeam() == this.victoryTeam);
-            player.updateElo(isWinner);
+            int isWinner;
+            if (this.victoryTeam == Player.TEAM_NONE && this.victoryPlayerId == Player.PLAYER_NONE) {
+                isWinner = 0; // Match nul
+            } else {
+                isWinner = (player.getTeam() == this.victoryTeam ? 1 : -1);
+            }
+            player.getRating().updateRating(getGlobalGameRating(),isWinner);
         }
     }
 
+    /**
+     * Get the average rating of the current game
+     */
+    public double getGlobalGameRating()
+    {
+        double globalRating = 0.0;
+        List<Player> players = getPlayersList();
+        for (Player player : players) {
+            globalRating += player.getRating().getCurrentRating();
+        }
+        return globalRating;
+    }
 
     /**
      * Get the coordinates of all mined hexes in the game.

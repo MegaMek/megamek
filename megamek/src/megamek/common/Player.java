@@ -53,6 +53,7 @@ public final class Player extends TurnOrdered {
     private final int id;
     private int elo;
     private double score;
+    private PlayerRating rating;
 
     private int team = TEAM_NONE;
 
@@ -113,8 +114,7 @@ public final class Player extends TurnOrdered {
     public Player(int id, String name) {
         this.name = name;
         this.id = id;
-        //initialisation à 0 lors que le joueurs est créer
-        this.elo = 0;
+        this.rating = new PlayerRating(this.id,this.name,false);
     }
     //endregion Constructors
 
@@ -163,18 +163,9 @@ public final class Player extends TurnOrdered {
         this.elo = elo;
     }
 
-    /**
-     * Peut être revu pour gérer la gesion des points de ratings
-     */
-    public void updateElo(boolean isWinner) {
-        if(isWinner)
-        {
-            this.elo += 1;
-        }
-        else
-        {
-            this.elo -= 1;
-        }
+
+    public PlayerRating getRating() {
+        return rating;
     }
 
     public double getScore() {

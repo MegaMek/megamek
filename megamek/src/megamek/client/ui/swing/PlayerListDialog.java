@@ -30,7 +30,8 @@ import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.List;
 
-public class PlayerListDialog extends JDialog implements ActionListener {
+public class
+PlayerListDialog extends JDialog implements ActionListener {
 
     private static final long serialVersionUID = 7270469195373150106L;
 

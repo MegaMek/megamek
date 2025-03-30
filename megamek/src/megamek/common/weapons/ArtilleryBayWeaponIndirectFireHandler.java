@@ -321,6 +321,9 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
         // In the case of misses, we'll need to hit multiple hexes
         List<Coords> targets = new ArrayList<>();
+        List<Integer> altitudes = new ArrayList<>();
+        Hex targetHex = null;
+
         if (!bMissed) {
             r = new Report(3199);
             r.subject = subjectId;
@@ -331,6 +334,8 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             if (!mineClear) {
                 vPhaseReport.addElement(r);
             }
+            targetHex = game.getBoard().getHex(targetPos);
+            altitudes.add((targetHex != null) ? game.getBoard().getHex(targetPos).getLevel() : 0);
             artyMsg = "Artillery hit here on round " + game.getRoundCount()
                     + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
                     + " (this hex is now an auto-hit)";
@@ -362,6 +367,16 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 targetPos = Compute.scatterDirectArty(origPos, moF);
                 if (game.getBoard().contains(targetPos)) {
                     targets.add(targetPos);
+                    targetHex = game.getBoard().getHex(targetPos);
+                    if (targetHex != null) {
+                        altitudes.add(
+                              (isFlak) ? (
+                                    (asfFlak) ? target.getAltitude() : targetHex.getLevel() + target.getElevation()
+                              ) : targetHex.getLevel()
+                        );
+                    } else {
+                        altitudes.add(0);
+                    }
                     // misses and scatters to another hex
                     if (!isFlak) {
                         r = new Report(3202);
@@ -502,10 +517,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        int altitude = 0;
-        if (isFlak) {
-            altitude = target.getElevation();
-        }
 
         // check to see if this is a mine clearing attack
         // According to the RAW you have to hit the right hex to hit even if the
@@ -549,13 +560,17 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             // Here we're doing damage for each hit with more standard artillery shells
             while (nweaponsHit > 0) {
                 gameManager.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
-                        subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
+                        subjectId, ae, isFlak, altitudes.get(0), mineClear, vPhaseReport,
                         asfFlak);
                 nweaponsHit--;
             }
         } else {
             // Now if we missed, resolve a strike on each scatter hex
-            for (Coords c : targets) {
+            Coords c;
+            int altitude;
+            for (int index=0;index<targets.size();index++) {
+                c = targets.get(index);
+                altitude = altitudes.get(index);
                 // Accidental mine clearance...
                 if (!mineClear && game.containsMinefield(c)) {
                     Enumeration<Minefield> minefields = game.getMinefields(c).elements();

@@ -307,9 +307,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (finalHex != null) {
             if (targetIsEntity) {
                 if (!isFlak && !bMissed) {
-                    altitude = target.getElevation();
+                    altitude = finalHex.getLevel() + target.getElevation();
                 } else if (isFlak) {
-                    altitude = (asfFlak) ? target.getAltitude() : target.getElevation();
+                    altitude = (asfFlak) ? target.getAltitude() : finalHex.getLevel() + target.getElevation();
                 }
             } else {
                 altitude = finalHex.getLevel();

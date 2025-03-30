@@ -48,6 +48,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         }
 
         Coords targetPos = target.getPosition();
+        Hex targetHex = game.getBoard().getHex(targetPos);
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         boolean isFlak = targetIsEntity && Compute.isFlakAttack(ae, (Entity) target);
         boolean asfFlak = isFlak && target.isAirborne();
@@ -154,6 +155,13 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
+        int altitude = ((targetHex != null) ? targetHex.getLevel() : 0);
+        if (asfFlak) {
+            altitude = target.getAltitude();
+        } else if (isFlak) {
+            altitude += target.getElevation();
+        }
+
         // According to TacOps eratta, artillery cannons can only fire standard
         // rounds and fuel-air cannon shells (Interstellar Ops p165).
         // But, they're still in as unofficial tech, because they're fun. :)
@@ -188,31 +196,18 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 // Currently Artillery Cannons _can_ make Flak attacks using FAE munitions
                 // If this is an ASF Flak attack we know we hit an entity by itself in the air,
                 // so just hit it for full damage.
-                int height = target.getElevation();
-                if (target instanceof HexTarget) {
-                    Board board = game.getBoard();
-                    if (board.contains(targetPos)) {
-                        height = board.getHex(targetPos).getLevel();
-                    }
-                }
-
                 if (asfFlak) {
                     AreaEffectHelper.artilleryDamageEntity((Entity) target, ammoType.getRackSize(), null,
-                            0, false, asfFlak, isFlak, height,
+                            0, false, asfFlak, isFlak, altitude,
                             targetPos, atype, targetPos, false, ae, null, getAttackerId(),
                             vPhaseReport, gameManager);
                 } else {
-                    AreaEffectHelper.processFuelAirDamage(targetPos, height,
+                    AreaEffectHelper.processFuelAirDamage(targetPos, altitude,
                             ammoType, ae, vPhaseReport, gameManager);
                 }
 
                 return false;
             }
-        }
-
-        int altitude = 0;
-        if (isFlak) {
-            altitude = target.getElevation();
         }
 
         // check to see if this is a mine clearing attack

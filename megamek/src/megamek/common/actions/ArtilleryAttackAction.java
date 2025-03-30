@@ -41,15 +41,18 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         this.playerId = game.getEntity(entityId).getOwnerId();
         this.firingCoords = game.getEntity(entityId).getPosition();
         int distance;
+        Targetable target = getTarget(game);
         EquipmentType eType = getEntity(game).getEquipment(weaponId).getType();
         WeaponType wType = (WeaponType) eType;
         WeaponMounted mounted = (WeaponMounted) getEntity(game).getEquipment(weaponId);
         // Remove altitude from Artillery Flak and ADA distance calcs
-        if (mounted.getLinkedAmmo() != null && mounted.getLinkedAmmo().getType().countsAsFlak()) {
+        if ((target != null) && target.isAirborne() && (mounted.getLinkedAmmo() != null)
+                  && mounted.getLinkedAmmo().getType().countsAsFlak())
+        {
             turnsTilHit = 0;
             return;
         } else {
-            distance = Compute.effectiveDistance(game, getEntity(game), getTarget(game));
+            distance = Compute.effectiveDistance(game, getEntity(game), target);
         }
 
         if (getEntity(game).usesWeaponBays() && wType.getAtClass() == WeaponType.CLASS_ARTILLERY) {

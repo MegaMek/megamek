@@ -14,23 +14,22 @@
 package megamek.common.net.packets;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.Version;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Base64Image;
 import megamek.common.*;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.enums.PacketCommand;
+import megamek.common.options.GameOptions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.server.SmokeCloud;
 
@@ -61,12 +60,46 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         return data;
     }
 
+    /*
+     * Everything above here are items to help deal with migrations to the naming below as well as allow direct
+     * access to the data.
+     *
+     * Everything BELOW here are methods meant to validate the data that is coming in is actually to be what it is
+     * supposed to be, provide defaults for lower level types (int, boolean, etc.) and to throw errors for all others
+     * . When adding new methods, follow the patter of <code>get`Type`</code> or <code>get`TypeStorage`</code> or in
+     * the cases of Maps, <code>getMapOfFirstTypeAndSecondType</code> and so on.
+     *
+     * Any single `gets` should throw if the value can't be correctly determined. For all other Collection types,
+     * return an empty version of them.
+     */
+
     /**
      * @param index the index of the desired object
      *
-     * @return The {@link megamek.client.ui.Base64Image} value of the object at the specified index
+     * @return Vector of {@link ArtilleryAttackAction} Objects
      */
-    public Base64Image getBase64Image(int index) {
+    public Vector<ArtilleryAttackAction> getArtilleryAttackActionVector(int index) {
+        Object o = getObject(index);
+
+        Vector<ArtilleryAttackAction> artilleryAttackActions = new Vector<>();
+
+        if (o instanceof List<?> objects) {
+            for (Object o1 : objects) {
+                if (o1 instanceof ArtilleryAttackAction artilleryAttackAction) {
+                    artilleryAttackActions.add(artilleryAttackAction);
+                }
+            }
+        }
+
+        return artilleryAttackActions;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return {@link Base64Image} Object
+     */
+    public Base64Image getBase64Image(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof Base64Image image) {
@@ -79,10 +112,32 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>boolean</code> value of the object at the specified index
+     * @return Set of {@link BoardDimensions} Objects
+     */
+    public Set<BoardDimensions> getBoardDimensionsSet(int index) {
+        Object o = getObject(index);
+
+        List<BoardDimensions> dataSet = new ArrayList<>();
+
+        if (o instanceof List<?> objects) {
+            for (Object o1 : objects) {
+                if (o1 instanceof BoardDimensions boardDimensions) {
+                    dataSet.add(boardDimensions);
+                }
+            }
+        }
+
+        return Set.copyOf(dataSet);
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return the <code>boolean</code> value or false
      *
      * @deprecated Use {@link #getBoolean(int)} instead.
      */
+    @Deprecated(since = "0.50.05")
     public boolean getBooleanValue(int index) {
         return getBoolean(index);
     }
@@ -90,7 +145,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>boolean</code> value of the object at the specified index. Defaults to false.
+     * @return the <code>boolean</code> value or false
      */
     public boolean getBoolean(int index) {
         Object o = getObject(index);
@@ -105,7 +160,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return List of <code>boolean</code> value of the object at the specified index
+     * @return List of <code>boolean</code> values
      */
     public List<Boolean> getBooleanList(int index) {
         Object o = getObject(index);
@@ -126,7 +181,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return List of <code>String</code> value of the object at the specified index
+     * @return Vector of {@link Building} Objects
      */
     public Vector<Building> getBuildingVector(int index) {
         Object o = getObject(index);
@@ -147,9 +202,9 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>String</code> value of the object at the specified index
+     * @return {@link Coords} Object
      */
-    public Coords getCoords(int index) {
+    public Coords getCoords(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof Coords coords) {
@@ -162,7 +217,28 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return Set of <code>String</code> value of the object at the specified index
+     * @return HashSet of {@link Coords} Objects
+     */
+    public HashSet<Coords> getCoordsHashSet(int index) {
+        Object o = getObject(index);
+
+        HashSet<Coords> coordsSet = new HashSet<>();
+
+        if (o instanceof List<?> objects) {
+            for (Object o1 : objects) {
+                if (o1 instanceof Coords coords) {
+                    coordsSet.add(coords);
+                }
+            }
+        }
+
+        return coordsSet;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return Set of {@link Coords} Objects
      */
     public Set<Coords> getCoordsSet(int index) {
         Object o = getObject(index);
@@ -183,9 +259,30 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>String</code> value of the object at the specified index
+     * @return Vector of {@link Coords} Objects
      */
-    public Entity getEntity(int index) {
+    public Vector<Coords> getCoordsVector(int index) {
+        Object o = getObject(index);
+
+        Vector<Coords> coordsVector = new Vector<>();
+
+        if (o instanceof List<?> objects) {
+            for (Object o1 : objects) {
+                if (o1 instanceof Coords coords) {
+                    coordsVector.add(coords);
+                }
+            }
+        }
+
+        return coordsVector;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return {@link Entity} Object
+     */
+    public Entity getEntity(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof Entity entity) {
@@ -198,7 +295,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return List of <code>String</code> value of the object at the specified index
+     * @return List of {@link Entity} Objects
      */
     public List<Entity> getEntityList(int index) {
         Object o = getObject(index);
@@ -219,7 +316,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return List of <code>String</code> value of the object at the specified index
+     * @return List of {@link EntityAction} Objects
      */
     public List<EntityAction> getEntityActionList(int index) {
         Object o = getObject(index);
@@ -240,9 +337,30 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the {@link Force} value of the object at the specified index
+     * @return Vector of {@link Flare} Objects
      */
-    public Force getForce(int index) {
+    public Vector<Flare> getFlareVector(int index) {
+        Object o = getObject(index);
+
+        Vector<Flare> flares = new Vector<>();
+
+        if (o instanceof List<?> objects) {
+            for (Object o1 : objects) {
+                if (o1 instanceof Flare flare) {
+                    flares.add(flare);
+                }
+            }
+        }
+
+        return flares;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return {@link Force} Object
+     */
+    public Force getForce(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof Force force) {
@@ -255,7 +373,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return A List of {@link Force} value of the object at the specified index
+     * @return A List of {@link Force} Objects
      */
     public List<Force> getForceList(int index) {
         Object o = getObject(index);
@@ -276,9 +394,9 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>String</code> value of the object at the specified index
+     * @return {@link Forces} Object
      */
-    public Forces getForces(int index) {
+    public Forces getForces(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof Forces forces) {
@@ -291,7 +409,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return List of <code>String</code> value of the object at the specified index
+     * @return List of {@link Forces} Objects.
      */
     public List<Forces> getForcesList(int index) {
         Object o = getObject(index);
@@ -312,9 +430,24 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return The {@link GamePhase} value of the object at the specified index
+     * @return {@link GameOptions} object
      */
-    public GamePhase getGamePhase(int index) {
+    public GameOptions getGameOptions(int index) throws InvalidPacketObjectException {
+        Object o = getObject(index);
+
+        if (o instanceof GameOptions gameOptions) {
+            return gameOptions;
+        }
+
+        throw new InvalidPacketObjectException("Invalid GameOptions Object Received");
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return {@link GamePhase} Object.
+     */
+    public GamePhase getGamePhase(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof GamePhase gamePhase) {
@@ -327,9 +460,9 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>String</code> value of the object at the specified index
+     * @return {@link GameTurn} Object
      */
-    public GameTurn getGameTurn(int index) {
+    public GameTurn getGameTurn(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof GameTurn gameTurn) {
@@ -342,7 +475,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return List of <code>String</code> value of the object at the specified index
+     * @return List of {@link GameTurn} Objects
      */
     public List<GameTurn> getGameTurnList(int index) {
         Object o = getObject(index);
@@ -363,9 +496,43 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>String</code> value of the object at the specified index
+     * @return HashTable of a Collection of {@link SpecialHexDisplay} Objects Keyed by {@link Coords}
      */
-    public Hex getHex(int index) {
+    public Hashtable<Coords, Collection<SpecialHexDisplay>> getHashTableOfCoordsAndCollectionOfSpecialHexDisplay(
+          int index) {
+        Object o = getObject(index);
+
+        Hashtable<Coords, Collection<SpecialHexDisplay>> mapData = new Hashtable<>();
+
+        if (o instanceof Hashtable<?, ?> mapOfCoords) {
+            for (Object key : mapOfCoords.keySet()) {
+                if (key instanceof Coords coords) {
+                    Object value = mapOfCoords.get(key);
+
+                    if (value instanceof Collection<?> collection) {
+                        List<SpecialHexDisplay> values = new ArrayList<>();
+
+                        for (Object object : collection) {
+                            if (object instanceof SpecialHexDisplay specialHexDisplay) {
+                                values.add(specialHexDisplay);
+                            }
+                        }
+
+                        mapData.put(coords, values);
+                    }
+                }
+            }
+        }
+
+        return mapData;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return {@link Hex} Object.
+     */
+    public Hex getHex(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof Hex hex) {
@@ -375,11 +542,10 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         throw new InvalidPacketObjectException("Invalid Hex Object Received");
     }
 
-
     /**
      * @param index the index of the desired object
      *
-     * @return Set of <code>String</code> value of the object at the specified index
+     * @return Set of {@link Hex} Objects
      */
     public Set<Hex> getHexSet(int index) {
         Object o = getObject(index);
@@ -400,7 +566,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return A List of {@link InGameObject} value of the object at the specified index
+     * @return A List of {@link InGameObject} objects
      */
     public List<InGameObject> getInGameObjectList(int index) {
         Object o = getObject(index);
@@ -421,7 +587,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>int</code> value of the object at the specified index
+     * @return the <code>int</code> value or 0
      *
      * @deprecated use {@link #getInt(int)} instead.
      */
@@ -433,7 +599,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>int</code> value of the object at the specified index
+     * @return the <code>int</code> value or 0
      */
     public int getInt(int index) {
         Object o = getObject(index);
@@ -469,7 +635,40 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return A Map of {@link Board} keyed to Integers value of the object at the specified index
+     * @return A Mapping of {@link Coords} to a listing of {@link ICarryable} Objects
+     */
+    public Map<Coords, List<ICarryable>> getMapOfCoordsAndListICarryables(int index) {
+        Object o = getObject(index);
+
+        Map<Coords, List<ICarryable>> verifiedObjects = new HashMap<>();
+
+        if (o instanceof Map<?, ?> outterMap) {
+            for (Object o1 : outterMap.keySet()) {
+                if (o1 instanceof Coords coords) {
+                    Object value = outterMap.get(coords);
+
+                    if (value instanceof List<?> list) {
+                        List<ICarryable> carryables = new ArrayList<>();
+
+                        for (Object o2 : list) {
+                            if (o2 instanceof ICarryable carryable) {
+                                carryables.add(carryable);
+                            }
+                        }
+
+                        verifiedObjects.put(coords, carryables);
+                    }
+                }
+            }
+        }
+
+        return verifiedObjects;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return A Map of {@link Board}'s keyed to Integers value
      */
     public Map<Integer, Board> getMapOfIntegerAndBoard(int index) {
         Object o = getObject(index);
@@ -492,9 +691,47 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>String</code> value of the object at the specified index
+     * @return A Map of {@link BehaviorSettings} keyed with <code>String</code>'s.
      */
-    public Minefield getMinefield(int index) {
+    public Map<String, BehaviorSettings> getMapOfStringAndBehaviorSettings(int index) {
+        Object o = getObject(index);
+
+        Map<String, BehaviorSettings> mapData = new HashMap<>();
+
+        if (o instanceof Map<?, ?> mapOfString) {
+            for (Object key : mapOfString.keySet()) {
+                Object value = mapOfString.get(key);
+
+                if (key instanceof String string && value instanceof BehaviorSettings settings) {
+                    mapData.put(string, settings);
+                }
+            }
+        }
+
+        return mapData;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return {@link MapSettings} Object
+     */
+    public MapSettings getMapSettings(int index) throws InvalidPacketObjectException {
+        Object o = getObject(index);
+
+        if (o instanceof MapSettings mapSettings) {
+            return mapSettings;
+        }
+
+        throw new InvalidPacketObjectException("Invalid MapSettings Object Received");
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return {@link Minefield} Object
+     */
+    public Minefield getMinefield(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof Minefield minefield) {
@@ -507,7 +744,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return List of <code>String</code> value of the object at the specified index
+     * @return Vector of {@link Minefield} Objects
      */
     public Vector<Minefield> getMinefieldVector(int index) {
         Object o = getObject(index);
@@ -540,9 +777,9 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return A List of {@link Packet} value of the object at the specified index
+     * @return A List of {@link Packet} objects
      */
-    public List<Packet> getPackteList(int index) {
+    public List<Packet> getPackteList(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         List<Packet> verifiedPackets = new ArrayList<>();
@@ -561,9 +798,24 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the {@link Player} value of the object at the specified index
+     * @return {@link PlanetaryConditions} object
      */
-    public Player getPlayer(int index) {
+    public PlanetaryConditions getPlanetaryConditions(int index) throws InvalidPacketObjectException {
+        Object o = getObject(index);
+
+        if (o instanceof PlanetaryConditions planetaryConditions) {
+            return planetaryConditions;
+        }
+
+        throw new InvalidPacketObjectException("Invalid PlanetaryConditions Object Received");
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return {@link Player} object
+     */
+    public Player getPlayer(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof Player player) {
@@ -576,7 +828,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return List of {@link Player} value of the object at the specified index
+     * @return Vector of {@link Player} objects
      */
     public Vector<Player> getPlayerVector(int index) {
         Object o = getObject(index);
@@ -597,9 +849,59 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>String</code> value of the object at the specified index
+     * @return A List of {@link Report} objects
      */
-    public SBFMovePath getSBFMovePath(int index) {
+    public List<Report> getReportList(int index) {
+        Object o = getObject(index);
+
+        List<Report> reports = new ArrayList<>();
+
+        if (o instanceof List<?> packets) {
+            for (Object force : packets) {
+                if (force instanceof Report report) {
+                    reports.add(report);
+                }
+            }
+        }
+
+        return reports;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return A List of... List of {@link Report} objects (yea, 2 lists deep)
+     */
+    public List<List<Report>> getReportListOfAList(int index) {
+        Object o = getObject(index);
+
+        List<List<Report>> reports = new ArrayList<>();
+
+        if (o instanceof List<?> outer) {
+            for (Object o1 : outer) {
+                if (o1 instanceof List<?> list) {
+                    List<Report> innerReports = new ArrayList<>();
+
+                    for (Object o2 : list) {
+                        if (o2 instanceof Report report) {
+                            innerReports.add(report);
+                        }
+                    }
+
+                    reports.add(innerReports);
+                }
+            }
+        }
+
+        return reports;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return {@link SBFMovePath} Object
+     */
+    public SBFMovePath getSBFMovePath(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof SBFMovePath sbfMovePath) {
@@ -612,9 +914,9 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>String</code> value of the object at the specified index
+     * @return {@link SmokeCloud} Object
      */
-    public SmokeCloud getSmokeCloud(int index) {
+    public SmokeCloud getSmokeCloud(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof SmokeCloud smokeCloud) {
@@ -627,7 +929,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>String</code> value of the object at the specified index
+     * @return the <code>String</code> value at index or an empty string.
      *
      * @deprecated use {@link #getString(int)} instead
      */
@@ -639,7 +941,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>String</code> value of the object at the specified index. Defaults to empty string.
+     * @return the <code>String</code> value at index or an empty string.
      */
     public String getString(int index) {
         Object o = getObject(index);
@@ -654,7 +956,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return List of <code>String</code> value of the object at the specified index
+     * @return List of <code>String</code>'s
      */
     public List<String> getStringList(int index) {
         Object o = getObject(index);
@@ -672,13 +974,33 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         return strings;
     }
 
+    /**
+     * @param index the index of the desired object
+     *
+     * @return Vector of {@link TagInfo} Objects
+     */
+    public Vector<TagInfo> getTagInfoVector(int index) {
+        Object o = getObject(index);
+
+        Vector<TagInfo> tagInfos = new Vector<>();
+
+        if (o instanceof List<?> objects) {
+            for (Object o1 : objects) {
+                if (o1 instanceof TagInfo tagInfo) {
+                    tagInfos.add(tagInfo);
+                }
+            }
+        }
+
+        return tagInfos;
+    }
 
     /**
      * @param index the index of the desired object
      *
-     * @return the <code>String</code> value of the object at the specified index
+     * @return {@link UnitLocation} Object
      */
-    public UnitLocation getUnitLocation(int index) {
+    public UnitLocation getUnitLocation(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof UnitLocation unitLocation) {
@@ -691,7 +1013,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return List of <code>String</code> value of the object at the specified index
+     * @return Vector of {@link UnitLocation} data
      */
     public Vector<UnitLocation> getUnitLocationVector(int index) {
         Object o = getObject(index);
@@ -712,9 +1034,9 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return The {@link Version} value of the object at the specified index
+     * @return {@link Version} Object
      */
-    public Version getVersion(int index) {
+    public Version getVersion(int index) throws InvalidPacketObjectException {
         Object o = getObject(index);
 
         if (o instanceof Version version) {
@@ -722,6 +1044,27 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketObjectException("Invalid Version Object Received");
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return A List of {@link WeaponAttackAction} Objects
+     */
+    public List<WeaponAttackAction> getWeaponAttackActionList(int index) {
+        Object o = getObject(index);
+
+        List<WeaponAttackAction> verifiedData = new ArrayList<>();
+
+        if (o instanceof List<?> inGameObjects) {
+            for (Object force : inGameObjects) {
+                if (force instanceof WeaponAttackAction verifiedObject) {
+                    verifiedData.add(verifiedObject);
+                }
+            }
+        }
+
+        return verifiedData;
     }
 
     @Override

@@ -250,9 +250,9 @@ public abstract class AbstractClient implements IClient {
      * @param packet The packet we received.
      */
     protected void receivePlayerInfo(Packet packet) {
-        int packetIndex = packet.getIntValue(0);
+        int packetIndex = packet.getInt(0);
 
-        Player newPlayer = packet.getPlayerValue(1);
+        Player newPlayer = packet.getPlayer(1);
 
         if (newPlayer == null) {
             return;
@@ -328,7 +328,7 @@ public abstract class AbstractClient implements IClient {
     }
 
     protected void correctName(Packet inP) {
-        setName(inP.getStringValue(0));
+        setName(inP.getString(0));
     }
 
     protected void setName(String newName) {
@@ -348,10 +348,10 @@ public abstract class AbstractClient implements IClient {
     }
 
     protected void receiveUnitReplace(Packet packet) {
-        List<Force> forces = packet.getForceListValue(1);
+        List<Force> forces = packet.getForceList(1);
         forces.forEach(force -> getGame().getForces().replace(force.getId(), force));
 
-        List<InGameObject> units = packet.getInGameObjectListValue(0);
+        List<InGameObject> units = packet.getInGameObjectList(0);
         getGame().replaceUnits(units);
     }
 
@@ -379,7 +379,7 @@ public abstract class AbstractClient implements IClient {
         try {
             if (packet.command() == PacketCommand.MULTI_PACKET) {
                 // TODO gather any fired events and fire them only at the end of the packets, possibly only for SBF
-                var includedPackets = packet.getPackteListValue(0);
+                var includedPackets = packet.getPackteList(0);
                 for (Packet includedPacket : includedPackets) {
                     handlePacket(includedPacket);
                 }
@@ -434,7 +434,7 @@ public abstract class AbstractClient implements IClient {
                 send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION, MegaMek.getMegaMekSHA256()));
                 break;
             case ILLEGAL_CLIENT_VERSION:
-                final Version serverVersion = packet.getVersionValue(0);
+                final Version serverVersion = packet.getVersion(0);
                 LOGGER.errorDialog("Connection Failure: Version Difference",
                       "Failed to connect to the server at {} because of version differences. " +
                             "Cannot connect to a server running {} with a {} install.",
@@ -444,26 +444,26 @@ public abstract class AbstractClient implements IClient {
                 disconnected();
                 break;
             case LOCAL_PN:
-                localPlayerNumber = packet.getIntValue(0);
+                localPlayerNumber = packet.getInt(0);
                 break;
             case PLAYER_UPDATE:
             case PLAYER_ADD:
                 receivePlayerInfo(packet);
                 break;
             case PLAYER_READY:
-                Player player = getPlayer(packet.getIntValue(0));
+                Player player = getPlayer(packet.getInt(0));
                 if (player != null) {
-                    player.setDone(packet.getBooleanValue(1));
+                    player.setDone(packet.getBoolean(1));
                     getGame().fireGameEvent(new GamePlayerChangeEvent(player, player));
                 }
                 break;
             case PLAYER_REMOVE:
-                int playerNumber = packet.getIntValue(0);
+                int playerNumber = packet.getInt(0);
                 bots.values().removeIf(bot -> bot.localPlayerNumber == playerNumber);
                 getGame().removePlayer(playerNumber);
                 break;
             case CHAT:
-                String message = packet.getStringValue(0);
+                String message = packet.getString(0);
                 possiblyWriteToLog(message);
                 getGame().fireGameEvent(new GamePlayerChatEvent(this, null, message));
                 break;
@@ -474,16 +474,16 @@ public abstract class AbstractClient implements IClient {
                 getGame().receiveBoards(packet.getMapOfIntegerAndBoard(0));
                 break;
             case ROUND_UPDATE:
-                getGame().setCurrentRound(packet.getIntValue(0));
+                getGame().setCurrentRound(packet.getInt(0));
                 break;
             case PHASE_CHANGE:
-                changePhase(packet.getGamePhaseValue(0));
+                changePhase(packet.getGamePhase(0));
                 break;
             case SCRIPTED_MESSAGE:
                 getGame().fireGameEvent(new GameScriptedMessageEvent(this,
-                      packet.getStringValue(0),
-                      packet.getStringValue(1),
-                      packet.getBase64ImageValue(2)));
+                      packet.getString(0),
+                      packet.getString(1),
+                      packet.getBase64Image(2)));
                 break;
             default:
                 return false;

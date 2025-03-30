@@ -1,14 +1,15 @@
 plugins {
     id 'java'
-    id 'org.sonarqube" version "6.0.1.5171'
+    id 'org.sonarqube' version '6.0.1.5171'
 }
 
 sonar {
     properties {
-    property 'sonar.projectKey", "Crystelab_megamek'
-    property 'sonar.organization", "crystelab'
-    property 'sonar.host.url", "https://sonarcloud.io'
-  }
+        property 'sonar.projectKey', 'Crystelab_megamek'
+        property 'sonar.organization', 'crystelab'
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.java.source', '17'
+    }
 }
 
 java {

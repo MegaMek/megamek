@@ -57,7 +57,7 @@ public abstract class AbstractGameManager implements IGameManager {
 
     @Override
     public void handlePacket(int connId, Packet packet) {
-        if (packet.getCommand() == PacketCommand.PLAYER_READY) {
+        if (packet.command() == PacketCommand.PLAYER_READY) {
             receivePlayerDone(packet, connId);
             send(packetHelper.createPlayerDonePacket(connId));
             checkReady();
@@ -70,21 +70,18 @@ public abstract class AbstractGameManager implements IGameManager {
     protected abstract void endCurrentPhase();
 
     /**
-     * Do anything we need to work through the current phase, such as give a turn to
-     * the first player to play.
+     * Do anything we need to work through the current phase, such as give a turn to the first player to play.
      */
     protected abstract void executeCurrentPhase();
 
     /**
-     * Prepares for the game's current phase. This typically involves resetting the
-     * states of units in the game and making sure the clients have the information
-     * they need for the new phase.
+     * Prepares for the game's current phase. This typically involves resetting the states of units in the game and
+     * making sure the clients have the information they need for the new phase.
      */
     protected abstract void prepareForCurrentPhase();
 
     /**
-     * Switches to the given new Phase and preforms preparation, checks if it should
-     * be skipped and executes it.
+     * Switches to the given new Phase and preforms preparation, checks if it should be skipped and executes it.
      */
     public final void changePhase(GamePhase newPhase) {
         if (getGame().getPhase().isExchange() || getGame().getPhase().isStartingScenario()) {
@@ -122,8 +119,7 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Called when a player declares that they are "done". By default, this method
-     * advances to the next phase, if
+     * Called when a player declares that they are "done". By default, this method advances to the next phase, if
      * <BR>
      * - all non-ghost, non-observer players are done,
      * <BR>
@@ -131,9 +127,9 @@ public abstract class AbstractGameManager implements IGameManager {
      * <BR>
      * - we are not in an empty lobby (= no units at all).
      * <BR>
-     * In other circumstances, ending the current phase is triggered elsewhere. Note
-     * that specifically, ghost players are not checked for their status here so the
-     * game can advance through non-turn (report) phases even with ghost players.
+     * In other circumstances, ending the current phase is triggered elsewhere. Note that specifically, ghost players
+     * are not checked for their status here so the game can advance through non-turn (report) phases even with ghost
+     * players.
      */
     protected void checkReady() {
         for (Player player : getGame().getPlayersList()) {
@@ -155,16 +151,14 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * @return True when the game is in the lobby phase and is empty (no units
-     *         present).
+     * @return True when the game is in the lobby phase and is empty (no units present).
      */
     protected boolean isEmptyLobby() {
         return getGame().getPhase().isLounge() && getGame().getInGameObjects().isEmpty();
     }
 
     /**
-     * Sets a player's ready status as received from the Client. This method does
-     * not perform any follow-up actions.
+     * Sets a player's ready status as received from the Client. This method does not perform any follow-up actions.
      */
     private void receivePlayerDone(Packet packet, int connIndex) {
         boolean ready = packet.getBooleanValue(0);
@@ -177,10 +171,11 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Sends out the player object to all players. Private info of the given player
-     * is redacted before being sent to other players.
+     * Sends out the player object to all players. Private info of the given player is redacted before being sent to
+     * other players.
      *
      * @param player The player whose information is to be shared
+     *
      * @see #transmitAllPlayerUpdates()
      */
     protected void transmitPlayerUpdate(Player player) {
@@ -188,8 +183,7 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Shares all player objects with all players. Private info is redacted before
-     * being sent to other players.
+     * Shares all player objects with all players. Private info is redacted before being sent to other players.
      *
      * @see #transmitPlayerUpdate(Player)
      */
@@ -198,10 +192,9 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Performs an automatic save (does not check the autosave settings - the
-     * autosave will simply be done). Depending on the settings, the "autosave"
-     * filename is appended with a timestamp and/or a chat message is sent
-     * announcing the autosave.
+     * Performs an automatic save (does not check the autosave settings - the autosave will simply be done). Depending
+     * on the settings, the "autosave" filename is appended with a timestamp and/or a chat message is sent announcing
+     * the autosave.
      */
     public void autoSave() {
         String fileName = "autosave";
@@ -240,8 +233,7 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Sends the current list of player turns as stored in the game's turn list to
-     * the Clients.
+     * Sends the current list of player turns as stored in the game's turn list to the Clients.
      *
      * @see IGame#getTurnsList()
      */
@@ -266,15 +258,14 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
-     * Sends out a notification message indicating that a ghost player's turn may be
-     * skipped with the /skip command.
+     * Sends out a notification message indicating that a ghost player's turn may be skipped with the /skip command.
      *
      * @param ghost the Player who is ghosted. This value must not be null.
      */
     protected void sendGhostSkipMessage(Player ghost) {
         String message = String.format(
-                "Player '%s' is disconnected. You may skip their current turn with the /skip command.",
-                ghost.getName());
+              "Player '%s' is disconnected. You may skip their current turn with the /skip command.",
+              ghost.getName());
         sendServerChat(message);
     }
 }

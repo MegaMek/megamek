@@ -481,7 +481,8 @@ public class AmmoType extends EquipmentType {
         if (flag instanceof AmmoTypeFlag) {
             return super.hasFlag(flag);
         } else {
-            LOGGER.warn("Incorrect flag check: make sure to test only AmmoTypeFlags on an AmmoType.");
+            LOGGER.warn("Incorrect flag check: make sure to test only AmmoTypeFlags on an AmmoType. Checked flag: {}",
+                  flag);
             return false;
         }
     }
@@ -15440,7 +15441,8 @@ public class AmmoType extends EquipmentType {
 
         private final TechAdvancement techAdvancement;
 
-        public MunitionMutator(String munitionName, int weightRatio, Munitions munitionType, TechAdvancement techAdvancement, String rulesRefs) {
+        public MunitionMutator(String munitionName, int weightRatio, Munitions munitionType,
+                               TechAdvancement techAdvancement, String rulesRefs) {
             name = munitionName;
             weight = weightRatio;
             type = EnumSet.of(munitionType);

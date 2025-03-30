@@ -16,6 +16,22 @@
  */
 package megamek.client;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
@@ -26,9 +42,21 @@ import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.DodgeAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FlipArmsAction;
+import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.*;
+import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.GameCFREvent;
+import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.event.GameReportEvent;
+import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.enums.PacketCommand;
@@ -44,27 +72,16 @@ import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.List;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-
 /**
- * This class is instantiated for each client and for each bot running on that
- * client. non-local clients are not also instantiated on the local server.
+ * This class is instantiated for each client and for each bot running on that client. non-local clients are not also
+ * instantiated on the local server.
  */
 public class Client extends AbstractClient {
     private final static MMLogger logger = MMLogger.create(Client.class);
 
     /**
-     * The game state object: this object is not ever replaced during a game, only
-     * updated. A
-     * reference can therefore be cached by other objects.
+     * The game state object: this object is not ever replaced during a game, only updated. A reference can therefore be
+     * cached by other objects.
      */
     protected final Game game = new Game();
 
@@ -102,8 +119,7 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Returns an Enumeration of the entities that match the
-     * selection criteria.
+     * Returns an Enumeration of the entities that match the selection criteria.
      */
     public Iterator<Entity> getSelectedEntities(EntitySelector selector) {
         return game.getSelectedEntities(selector);
@@ -204,49 +220,37 @@ public class Client extends AbstractClient {
     /**
      * Loads the turn list from the data in the packet
      */
-    @SuppressWarnings("unchecked")
     protected void receiveTurns(Packet packet) {
-        game.setTurnVector((List<GameTurn>) packet.getObject(0));
+        game.setTurnVector(packet.getGameTurnListValue(0));
     }
 
     /**
      * Can I unload entities stranded on immobile transports?
      */
     public boolean canUnloadStranded() {
-        return (game.getTurn() instanceof UnloadStrandedTurn)
-                && game.getTurn().isValid(localPlayerNumber, game);
+        return (game.getTurn() instanceof UnloadStrandedTurn) && game.getTurn().isValid(localPlayerNumber, game);
     }
 
     /**
      * Maintain backwards compatibility.
      *
-     * @param id
-     *                - the <code>int</code> ID of the deployed entity
-     * @param c
-     *                - the <code>Coords</code> where the entity should be deployed
-     * @param nFacing
-     *                - the <code>int</code> direction the entity should face
+     * @param id      - the <code>int</code> ID of the deployed entity
+     * @param c       - the <code>Coords</code> where the entity should be deployed
+     * @param nFacing - the <code>int</code> direction the entity should face
      */
     public void deploy(int id, Coords c, int nFacing, int elevation) {
         this.deploy(id, c, nFacing, elevation, new Vector<>(), false);
     }
 
     /**
-     * Deploy an entity at the given coordinates, with the given facing, and
-     * starting with the given units already loaded.
+     * Deploy an entity at the given coordinates, with the given facing, and starting with the given units already
+     * loaded.
      *
-     * @param id
-     *                    - the <code>int</code> ID of the deployed entity
-     * @param c
-     *                    - the <code>Coords</code> where the entity should be
-     *                    deployed
-     * @param nFacing
-     *                    - the <code>int</code> direction the entity should face
-     * @param loadedUnits
-     *                    - a <code>List</code> of units that start the game being
-     *                    transported byt the deployed entity.
-     * @param assaultDrop
-     *                    - true if deployment is an assault drop
+     * @param id          - the <code>int</code> ID of the deployed entity
+     * @param c           - the <code>Coords</code> where the entity should be deployed
+     * @param nFacing     - the <code>int</code> direction the entity should face
+     * @param loadedUnits - a <code>List</code> of units that start the game being transported byt the deployed entity.
+     * @param assaultDrop - true if deployment is an assault drop
      */
     public void deploy(int id, Coords c, int nFacing, int elevation, List<Entity> loadedUnits, boolean assaultDrop) {
         int packetCount = 6 + loadedUnits.size();
@@ -268,10 +272,8 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * For ground to air attacks, the ground unit targets the closest hex in the
-     * air units flight path. In the case of several equidistant hexes, the
-     * attacker gets to choose. This method updates the server with the users
-     * choice.
+     * For ground to air attacks, the ground unit targets the closest hex in the air units flight path. In the case of
+     * several equidistant hexes, the attacker gets to choose. This method updates the server with the users choice.
      *
      * @param targetId   The target ID
      * @param attackerId The attacker Entity ID
@@ -341,23 +343,21 @@ public class Client extends AbstractClient {
 
     public void sendEntityWeaponOrderUpdate(Entity entity) {
         if (entity.getWeaponSortOrder().isCustom()) {
-            send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(),
-                    entity.getWeaponSortOrder(), entity.getCustomWeaponOrder()));
+            send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE,
+                  entity.getId(),
+                  entity.getWeaponSortOrder(),
+                  entity.getCustomWeaponOrder()));
         } else {
-            send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(),
-                    entity.getWeaponSortOrder()));
+            send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(), entity.getWeaponSortOrder()));
         }
         entity.setWeapOrderChanged(false);
     }
 
     /**
-     * Sends an "add entity" packet that contains a collection of Entity
-     * objects.
+     * Sends an "add entity" packet that contains a collection of Entity objects.
      *
-     * @see megamek.server.totalwarfare.TWGameManager#receiveEntityAdd(Packet, int)
-     *
-     * @param entities The collection of Entity objects to add.
-     *                 This should ideally be an {@link ArrayList<Entity>}, but other kinds of {@link List} will be converted to an {@link ArrayList}.
+     * @param entities The collection of Entity objects to add. This should ideally be an {@link ArrayList<Entity>}, but
+     *                 other kinds of {@link List} will be converted to an {@link ArrayList}.
      */
     public void sendAddEntity(List<Entity> entities) {
         // Trying to pass a non-ArrayList jams the receiving client and prevents it from ever receiving more packets.
@@ -408,16 +408,14 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends a packet containing multiple entity updates. Should only be used
-     * in the lobby phase.
+     * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
     public void sendUpdateEntity(Collection<Entity> entities) {
         send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, entities));
     }
 
     /**
-     * Sends a packet containing multiple entity updates. Should only be used
-     * in the lobby phase.
+     * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
     public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) {
         send(new Packet(PacketCommand.ENTITY_ASSIGN, entities, newOwnerId));
@@ -466,22 +464,22 @@ public class Client extends AbstractClient {
     /**
      * Loads the entities from the data in the net command.
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveEntities(Packet c) {
-        List<Entity> newEntities = (List<Entity>) c.getObject(0);
-        List<Entity> newOutOfGame = (List<Entity>) c.getObject(1);
-        Forces forces = (Forces) c.getObject(2);
+    protected void receiveEntities(Packet packet) {
+        List<Entity> newEntities = packet.getEntityListValue(0);
+        List<Entity> newOutOfGame = packet.getEntityListValue(1);
+        Forces forces = packet.getForcesValue(2);
         // Replace the entities in the game.
         if (forces != null) {
             game.setForces(forces);
         }
+
         game.setEntitiesVector(newEntities);
-        if (newOutOfGame != null) {
-            game.setOutOfGameEntitiesVector(newOutOfGame);
-            for (Entity e : newOutOfGame) {
-                cacheImgTag(e);
-            }
+
+        game.setOutOfGameEntitiesVector(newOutOfGame);
+        for (Entity e : newOutOfGame) {
+            cacheImgTag(e);
         }
+
         // cache the image data for the entities and set force for entities
         for (Entity e : newEntities) {
             cacheImgTag(e);
@@ -489,20 +487,20 @@ public class Client extends AbstractClient {
         }
 
         if (GUIPreferences.getInstance().getMiniReportShowSprites() &&
-                game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
-                iconCache != null && !iconCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
+                  iconCache != null &&
+                  !iconCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
             ImageUtil.createDoubleBlindHiddenImage(iconCache);
         }
     }
 
     /**
-     * Receives a force-related update containing affected forces and affected
-     * entities
+     * Receives a force-related update containing affected forces and affected entities
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveForceUpdate(Packet c) {
-        Collection<Force> forces = (Collection<Force>) c.getObject(0);
-        Collection<Entity> entities = (Collection<Entity>) c.getObject(1);
+    protected void receiveForceUpdate(Packet packet) {
+        Collection<Force> forces = packet.getForceListValue(0);
+        Collection<Entity> entities = packet.getEntityListValue(1);
+
         for (Force force : forces) {
             getGame().getForces().replace(force.getId(), force);
         }
@@ -513,12 +511,10 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Receives a server packet commanding deletion of forces. Only valid in the
-     * lobby phase.
+     * Receives a server packet commanding deletion of forces. Only valid in the lobby phase.
      */
-    protected void receiveForcesDelete(Packet c) {
-        @SuppressWarnings("unchecked")
-        Collection<Integer> forceIds = (Collection<Integer>) c.getObject(0);
+    protected void receiveForcesDelete(Packet packet) {
+        Collection<Integer> forceIds = packet.getIntListValue(0);
         Forces forces = game.getForces();
 
         // Gather the forces and entities to be deleted
@@ -526,10 +522,11 @@ public class Client extends AbstractClient {
         Set<Entity> delEntities = new HashSet<>();
         forceIds.stream().map(forces::getForce).forEach(delForces::add);
         for (Force delForce : delForces) {
-            forces.getFullEntities(delForce).stream()
-                    .filter(e -> e instanceof Entity)
-                    .map(e -> (Entity) e)
-                    .forEach(delEntities::add);
+            forces.getFullEntities(delForce)
+                  .stream()
+                  .filter(e -> e instanceof Entity)
+                  .map(e -> (Entity) e)
+                  .forEach(delEntities::add);
         }
 
         forces.deleteForces(delForces);
@@ -542,54 +539,52 @@ public class Client extends AbstractClient {
     /**
      * Loads entity update data from the data in the net command.
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveEntityUpdate(Packet c) {
-        int eindex = c.getIntValue(0);
-        Entity entity = (Entity) c.getObject(1);
-        Vector<UnitLocation> movePath = (Vector<UnitLocation>) c.getObject(2);
+    protected void receiveEntityUpdate(Packet packet) {
+        int entityIndex = packet.getIntValue(0);
+        Entity entity = packet.getEntityValue(1);
+        Vector<UnitLocation> movePath = packet.getUnitLocationVectorValue(2);
         // Replace this entity in the game.
-        getGame().setEntity(eindex, entity, movePath);
+        getGame().setEntity(entityIndex, entity, movePath);
     }
 
     /**
      * Update multiple entities from the server. Used only in the lobby phase.
      */
-    @SuppressWarnings("unchecked")
     protected void receiveEntitiesUpdate(Packet c) {
-        Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
+        Collection<Entity> entities = c.getEntityListValue(0);
         for (Entity entity : entities) {
             getGame().setEntity(entity.getId(), entity);
         }
     }
 
     protected void receiveEntityRemove(Packet packet) {
-        @SuppressWarnings("unchecked")
-        List<Integer> entityIds = (List<Integer>) packet.getObject(0);
+        List<Integer> entityIds = packet.getIntListValue(0);
         int condition = packet.getIntValue(1);
-        @SuppressWarnings("unchecked")
-        List<Force> forces = (List<Force>) packet.getObject(2);
+        List<Force> forces = packet.getForceListValue(2);
+
         // create a final image for the entity
         for (int id : entityIds) {
             cacheImgTag(game.getEntity(id));
         }
+
         for (Force force : forces) {
             game.getForces().replace(force.getId(), force);
         }
+
         // Move the unit to its final resting place.
         game.removeEntities(entityIds, condition);
     }
 
-    @SuppressWarnings("unchecked")
     protected void receiveEntityVisibilityIndicator(Packet packet) {
         Entity e = game.getEntity(packet.getIntValue(0));
-        if (e != null) { // we may not have this entity due to double blind
+        if (e != null) {
+            // we may not have this entity due to double blind
             e.setEverSeenByEnemy(packet.getBooleanValue(1));
             e.setVisibleToEnemy(packet.getBooleanValue(2));
             e.setDetectedByEnemy(packet.getBooleanValue(3));
-            e.setWhoCanSee((Vector<Player>) packet.getObject(4));
-            e.setWhoCanDetect((Vector<Player>) packet.getObject(5));
-            // this next call is only needed sometimes, but we'll just
-            // call it everytime
+            e.setWhoCanSee(packet.getPlayerVectorValue(4));
+            e.setWhoCanDetect(packet.getPlayerVectorValue(5));
+            // this next call is only needed sometimes, but we'll just call it everytime
             game.processGameEvent(new GameEntityChangeEvent(this, e));
         }
     }
@@ -652,18 +647,16 @@ public class Client extends AbstractClient {
      * Loads entity firing data from the data in the net command
      */
     @SuppressWarnings("unchecked")
-    protected void receiveAttack(Packet c) {
-        List<EntityAction> vector = (List<EntityAction>) c.getObject(0);
-        boolean isCharge = c.getBooleanValue(1);
+    protected void receiveAttack(Packet packet) {
+        List<EntityAction> vector = (List<EntityAction>) packet.getObject(0);
+        boolean isCharge = packet.getBooleanValue(1);
         boolean addAction = true;
         for (EntityAction ea : vector) {
             int entityId = ea.getEntityId();
-            if ((ea instanceof TorsoTwistAction) && game.hasEntity(entityId)) {
-                TorsoTwistAction tta = (TorsoTwistAction) ea;
+            if ((ea instanceof TorsoTwistAction tta) && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
                 entity.setSecondaryFacing(tta.getFacing());
-            } else if ((ea instanceof FlipArmsAction) && game.hasEntity(entityId)) {
-                FlipArmsAction faa = (FlipArmsAction) ea;
+            } else if ((ea instanceof FlipArmsAction faa) && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
                 entity.setArmsFlipped(faa.getIsFlipped());
             } else if ((ea instanceof DodgeAction) && game.hasEntity(entityId)) {
@@ -692,7 +685,7 @@ public class Client extends AbstractClient {
             return "[null report vector]";
         }
 
-        StringBuffer report = new StringBuffer();
+        StringBuilder report = new StringBuilder();
         for (Report r : reports) {
             report.append(r.text());
         }
@@ -717,7 +710,8 @@ public class Client extends AbstractClient {
         // loop through the hashset of unique ids and replace the ids with img tags
         for (int i : setEntity) {
             if (getCachedImgTag(i) != null) {
-                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
+                updatedReport = updatedReport.replace("<span id='" + i + "'></span>",
+                      Objects.requireNonNull(getCachedImgTag(i)));
             }
         }
 
@@ -756,16 +750,18 @@ public class Client extends AbstractClient {
                         // Adjust the portrait size to the GUI scale and number of pilots
                         float imgSize = UIUtil.scaleForGUI(PilotToolTip.PORTRAIT_BASESIZE);
                         imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
-                        Image portrait = crew.getPortrait(crewID).getBaseImage().getScaledInstance(-1, (int) imgSize,
-                                Image.SCALE_SMOOTH);
+                        Image portrait = crew.getPortrait(crewID)
+                                               .getBaseImage()
+                                               .getScaledInstance(-1, (int) imgSize, Image.SCALE_SMOOTH);
                         // convert image to base64, add to the <img> tag and store in cache
                         BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null),
-                                portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                              portrait.getHeight(null),
+                              BufferedImage.TYPE_INT_RGB);
                         bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
                         String base64Text = ImageUtil.base64TextEncodeImage(bufferedImage);
                         String img = "<img src='data:image/png;base64," + base64Text + "'>";
                         updatedReport = updatedReport.replace("<span crew='" + entityID + ":" + crewID + "'></span>",
-                                img);
+                              img);
                     }
                 }
             }
@@ -778,8 +774,9 @@ public class Client extends AbstractClient {
      * returns the stored <img> tag for given unit id
      */
     private String getCachedImgTag(int id) {
-        if (!GUIPreferences.getInstance().getMiniReportShowSprites()
-                || (iconCache == null) || !iconCache.containsKey(id)) {
+        if (!GUIPreferences.getInstance().getMiniReportShowSprites() ||
+                  (iconCache == null) ||
+                  !iconCache.containsKey(id)) {
             return null;
         }
         return iconCache.get(id);
@@ -858,7 +855,7 @@ public class Client extends AbstractClient {
     @SuppressWarnings("unchecked")
     @Override
     protected boolean handleGameSpecificPacket(Packet packet) {
-        switch (packet.getCommand()) {
+        switch (packet.command()) {
             case SERVER_GREETING:
                 if (this instanceof Princess) {
                     ((Princess) this).sendPrincessSettings();
@@ -946,13 +943,12 @@ public class Client extends AbstractClient {
                 }
                 game.addReports((List<Report>) packet.getObject(0));
                 roundReport = receiveReport(game.getReports(game.getRoundCount()));
-                if (packet.getCommand().isSendingReportsTacticalGenius()) {
+                if (packet.command().isSendingReportsTacticalGenius()) {
                     game.processGameEvent(new GameReportEvent(this, roundReport));
                 }
                 break;
             case SENDING_REPORTS_SPECIAL:
-                game.processGameEvent(new GameReportEvent(this,
-                        receiveReport((List<Report>) packet.getObject(0))));
+                game.processGameEvent(new GameReportEvent(this, receiveReport((List<Report>) packet.getObject(0))));
                 break;
             case SENDING_REPORTS_ALL:
                 var allReports = (List<List<Report>>) packet.getObject(0);
@@ -961,8 +957,8 @@ public class Client extends AbstractClient {
                     // Re-write gamelog.txt from scratch
                     initGameLog();
                     if (log != null) {
-                        for (int i = 0; i < allReports.size(); i++) {
-                            log.append(receiveReport(allReports.get(i)));
+                        for (List<Report> allReport : allReports) {
+                            log.append(receiveReport(allReport));
                         }
                     }
                 }
@@ -1002,7 +998,7 @@ public class Client extends AbstractClient {
                 game.resetTagInfo();
                 break;
             case END_OF_GAME:
-                String sEntityStatus = (String) packet.getObject(0);
+                String sEntityStatus = packet.getStringValue(0);
                 game.end(packet.getIntValue(1), packet.getIntValue(2));
                 // save victory report
                 saveEntityStatus(sEntityStatus);
@@ -1016,8 +1012,8 @@ public class Client extends AbstractClient {
                 game.setFlares(v2);
                 break;
             case SEND_SAVEGAME:
-                String sFinalFile = (String) packet.getObject(0);
-                String sLocalPath = (String) packet.getObject(2);
+                String sFinalFile = packet.getStringValue(0);
+                String sLocalPath = packet.getStringValue(2);
                 String localFile = sLocalPath + File.separator + sFinalFile;
                 File sDir = new File(sLocalPath);
                 if (!sDir.exists()) {
@@ -1032,8 +1028,8 @@ public class Client extends AbstractClient {
                 }
 
                 try (OutputStream os = new FileOutputStream(localFile);
-                        BufferedOutputStream bos = new BufferedOutputStream(os)) {
-                    List<Integer> data = (List<Integer>) packet.getObject(1);
+                      BufferedOutputStream bos = new BufferedOutputStream(os)) {
+                    List<Integer> data = packet.getIntListValue(1);
                     for (Integer d : data) {
                         bos.write(d);
                     }
@@ -1044,7 +1040,7 @@ public class Client extends AbstractClient {
                 }
                 break;
             case LOAD_SAVEGAME:
-                String loadFile = (String) packet.getObject(0);
+                String loadFile = packet.getStringValue(0);
                 try {
                     sendLoadGame(new File(MMConstants.SAVEGAME_DIR, loadFile));
                 } catch (Exception ex) {
@@ -1053,8 +1049,8 @@ public class Client extends AbstractClient {
                 }
                 break;
             case SENDING_SPECIAL_HEX_DISPLAY:
-                game.getBoard().setSpecialHexDisplayTable(
-                        (Hashtable<Coords, Collection<SpecialHexDisplay>>) packet.getObject(0));
+                game.getBoard()
+                      .setSpecialHexDisplayTable((Hashtable<Coords, Collection<SpecialHexDisplay>>) packet.getObject(0));
                 game.processGameEvent(new GameBoardChangeEvent(this));
                 break;
             case SENDING_AVAILABLE_MAP_SIZES:
@@ -1065,33 +1061,33 @@ public class Client extends AbstractClient {
                 receiveEntityNovaNetworkModeChange(packet);
                 break;
             case CLIENT_FEEDBACK_REQUEST:
-                final PacketCommand cfrType = (PacketCommand) packet.getData()[0];
+                final PacketCommand cfrType = (PacketCommand) packet.data()[0];
                 GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
                 switch (cfrType) {
                     case CFR_DOMINO_EFFECT:
-                        cfrEvt.setEntityId((int) packet.getData()[1]);
+                        cfrEvt.setEntityId((int) packet.data()[1]);
                         break;
                     case CFR_AMS_ASSIGN:
-                        cfrEvt.setEntityId((int) packet.getData()[1]);
-                        cfrEvt.setAmsEquipNum((int) packet.getData()[2]);
-                        cfrEvt.setWAAs((List<WeaponAttackAction>) packet.getData()[3]);
+                        cfrEvt.setEntityId(packet.getIntValue(1));
+                        cfrEvt.setAmsEquipNum(packet.getIntValue(2));
+                        cfrEvt.setWAAs((List<WeaponAttackAction>) packet.data()[3]);
                         break;
                     case CFR_APDS_ASSIGN:
-                        cfrEvt.setEntityId((int) packet.getData()[1]);
-                        cfrEvt.setApdsDists((List<Integer>) packet.getData()[2]);
-                        cfrEvt.setWAAs((List<WeaponAttackAction>) packet.getData()[3]);
+                        cfrEvt.setEntityId(packet.getIntValue(1));
+                        cfrEvt.setApdsDists(packet.getIntListValue(2));
+                        cfrEvt.setWAAs((List<WeaponAttackAction>) packet.data()[3]);
                         break;
                     case CFR_HIDDEN_PBS:
-                        cfrEvt.setEntityId((int) packet.getObject(1));
-                        cfrEvt.setTargetId((int) packet.getObject(2));
+                        cfrEvt.setEntityId(packet.getIntValue(1));
+                        cfrEvt.setTargetId(packet.getIntValue(2));
                         break;
                     case CFR_TELEGUIDED_TARGET:
-                        cfrEvt.setTeleguidedMissileTargets((List<Integer>) packet.getObject(1));
-                        cfrEvt.setTmToHitValues((List<Integer>) packet.getObject(2));
+                        cfrEvt.setTeleguidedMissileTargets(packet.getIntListValue(1));
+                        cfrEvt.setTmToHitValues(packet.getIntListValue(2));
                         break;
                     case CFR_TAG_TARGET:
-                        cfrEvt.setTAGTargets((List<Integer>) packet.getObject(1));
-                        cfrEvt.setTAGTargetTypes((List<Integer>) packet.getObject(2));
+                        cfrEvt.setTAGTargets(packet.getIntListValue(1));
+                        cfrEvt.setTAGTargetTypes(packet.getIntListValue(2));
                         break;
                     default:
                         break;
@@ -1116,7 +1112,7 @@ public class Client extends AbstractClient {
     private void receiveEntityNovaNetworkModeChange(Packet c) {
         try {
             int entityId = c.getIntValue(0);
-            String networkID = c.getObject(1).toString();
+            String networkID = c.getStringValue(1);
             Entity e = game.getEntity(entityId);
             if (e != null) {
                 e.setNewRoundNovaNetworkString(networkID);
@@ -1184,8 +1180,7 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends a packet containing multiple entity updates. Should only be used
-     * in the lobby phase.
+     * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
     public void sendChangeTeam(Collection<Player> players, int newTeamId) {
         send(new Packet(PacketCommand.PLAYER_TEAM_CHANGE, players, newTeamId));
@@ -1206,20 +1201,16 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends a packet instructing the server to add the given entities to the given
-     * force.
-     * The server will handle this; the client does not have to implement the
-     * change.
+     * Sends a packet instructing the server to add the given entities to the given force. The server will handle this;
+     * the client does not have to implement the change.
      */
     public void sendAddEntitiesToForce(Collection<Entity> entities, int forceId) {
         send(new Packet(PacketCommand.FORCE_ADD_ENTITY, entities, forceId));
     }
 
     /**
-     * Sends a packet instructing the server to add the given entities to the given
-     * force.
-     * The server will handle this; the client does not have to implement the
-     * change.
+     * Sends a packet instructing the server to add the given entities to the given force. The server will handle this;
+     * the client does not have to implement the change.
      */
     public void sendAssignForceFull(Collection<Force> forceList, int newOwnerId) {
         send(new Packet(PacketCommand.FORCE_ASSIGN_FULL, forceList, newOwnerId));
@@ -1229,10 +1220,8 @@ public class Client extends AbstractClient {
      * Sends a packet to the Server requesting to delete the given forces.
      */
     public void sendDeleteForces(List<Force> toDelete) {
-        send(new Packet(PacketCommand.FORCE_DELETE, toDelete.stream()
-                .mapToInt(Force::getId)
-                .boxed()
-                .collect(Collectors.toList())));
+        send(new Packet(PacketCommand.FORCE_DELETE,
+              toDelete.stream().mapToInt(Force::getId).boxed().collect(Collectors.toList())));
     }
 
     /**

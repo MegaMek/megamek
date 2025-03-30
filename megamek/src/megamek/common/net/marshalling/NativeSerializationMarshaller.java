@@ -31,8 +31,8 @@ class NativeSerializationMarshaller extends PacketMarshaller {
     @Override
     public void marshall(final Packet packet, final OutputStream stream) throws Exception {
         ObjectOutputStream out = new ObjectOutputStream(stream);
-        out.writeInt(packet.getCommand().ordinal());
-        out.writeObject(packet.getData());
+        out.writeInt(packet.command().ordinal());
+        out.writeObject(packet.data());
         out.flush();
     }
 

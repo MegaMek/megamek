@@ -35,12 +35,12 @@ class SendPacket implements INetworkPacket {
     private final AbstractConnection connection;
 
     public SendPacket(Packet packet, AbstractConnection connection) {
-        command = packet.getCommand();
+        command = packet.command();
         this.connection = connection;
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         OutputStream out;
         try {
-            if (connection.isCompressed() && (packet.getData() != null)) {
+            if (connection.isCompressed() && (packet.data() != null)) {
                 out = new GZIPOutputStream(bos);
                 zipped = true;
             } else {

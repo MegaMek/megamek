@@ -37,7 +37,6 @@ import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -47,9 +46,8 @@ import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 
 /**
- * unit_potential_locations keeps track of all the potential coordinates and
- * facings a unit could reach It tries to keep all the calculations up to date,
- * and do most of the work when the opponent is moving
+ * unit_potential_locations keeps track of all the potential coordinates and facings a unit could reach It tries to keep
+ * all the calculations up to date, and do most of the work when the opponent is moving
  */
 public class Precognition implements Runnable {
     private final static MMLogger logger = MMLogger.create(Precognition.class);
@@ -57,18 +55,15 @@ public class Precognition implements Runnable {
     private final Princess owner;
 
     /**
-     * Precognition's version of the game, which should mirror the game in
-     * Princess, but should not be the same reference. If Precognition and
-     * Princess share the same game reference, then this will cause concurrency
-     * issues.
+     * Precognition's version of the game, which should mirror the game in Princess, but should not be the same
+     * reference. If Precognition and Princess share the same game reference, then this will cause concurrency issues.
      */
     private Game game;
     private final ReentrantLock GAME_LOCK = new ReentrantLock();
 
     /**
-     * Computing ECMInfo requires iterating over all Entities in the Game and
-     * this can be an expensive operation, so it's cheaper to use cache it and
-     * re-use the cache.
+     * Computing ECMInfo requires iterating over all Entities in the Game and this can be an expensive operation, so
+     * it's cheaper to use cache it and re-use the cache.
      */
     private List<ECMInfo> ecmInfo;
 
@@ -103,20 +98,18 @@ public class Precognition implements Runnable {
         });
         setPathEnumerator(new PathEnumerator(owner, getGame()));
         // Initialize ECM Info, especially important if Princess added mid-game
-        ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
-                getGame().getEntitiesVector());
+        ecmInfo = ComputeECM.computeAllEntitiesECMInfo(getGame().getEntitiesVector());
     }
 
     /**
-     * Pared down version of Client.handlePacket; essentially it's only looking
-     * for packets that update Game. This ensures that Precognition's Game
-     * instance stays up-to-date with Princess's instance of Game.
+     * Pared down version of Client.handlePacket; essentially it's only looking for packets that update Game. This
+     * ensures that Precognition's Game instance stays up-to-date with Princess's instance of Game.
      *
-     * @param c The packet to be handled.
+     * @param packet The packet to be handled.
      */
     @SuppressWarnings("unchecked")
-    void handlePacket(Packet c) {
-        if (c == null) {
+    void handlePacket(Packet packet) {
+        if (packet == null) {
             logger.warn("Client: got null packet");
             return;
         }
@@ -124,116 +117,112 @@ public class Precognition implements Runnable {
         // it may be being updated
         GAME_LOCK.lock();
         try {
-            switch (c.getCommand()) {
-                case PLAYER_UPDATE:
-                    receivePlayerInfo(c);
+            switch (packet.command()) {
+                case PLAYER_UPDATE, PLAYER_ADD:
+                    receivePlayerInfo(packet);
                     break;
                 case PLAYER_READY:
-                    final Player player = getPlayer(c.getIntValue(0));
+                    final Player player = getPlayer(packet.getIntValue(0));
                     if (player != null) {
-                        player.setDone(c.getBooleanValue(1));
+                        player.setDone(packet.getBooleanValue(1));
                         game.processGameEvent(new GamePlayerChangeEvent(player, player));
                     }
                     break;
-                case PLAYER_ADD:
-                    receivePlayerInfo(c);
-                    break;
                 case PLAYER_REMOVE:
-                    getGame().removePlayer(c.getIntValue(0));
+                    getGame().removePlayer(packet.getIntValue(0));
                     break;
                 case CHAT:
-                    getGame().processGameEvent(new GamePlayerChatEvent(this, null,
-                            (String) c.getObject(0)));
+                    getGame().processGameEvent(new GamePlayerChatEvent(this, null, packet.getStringValue(0)));
                     break;
                 case ENTITY_ADD:
-                    receiveEntityAdd(c);
+                    receiveEntityAdd(packet);
                     break;
                 case ENTITY_UPDATE:
-                    receiveEntityUpdate(c);
+                    receiveEntityUpdate(packet);
                     break;
                 case ENTITY_REMOVE:
-                    receiveEntityRemove(c);
+                    receiveEntityRemove(packet);
                     break;
                 case ENTITY_VISIBILITY_INDICATOR:
-                    receiveEntityVisibilityIndicator(c);
+                    receiveEntityVisibilityIndicator(packet);
                     break;
                 case SENDING_MINEFIELDS:
-                    receiveSendingMinefields(c);
+                    receiveSendingMinefields(packet);
                     break;
                 case SENDING_ILLUM_HEXES:
-                    receiveIlluminatedHexes(c);
+                    receiveIlluminatedHexes(packet);
                     break;
                 case CLEAR_ILLUM_HEXES:
                     getGame().clearIlluminatedPositions();
                     break;
                 case UPDATE_MINEFIELDS:
-                    receiveUpdateMinefields(c);
+                    receiveUpdateMinefields(packet);
                     break;
                 case DEPLOY_MINEFIELDS:
-                    receiveDeployMinefields(c);
+                    receiveDeployMinefields(packet);
                     break;
                 case REVEAL_MINEFIELD:
-                    receiveRevealMinefield(c);
+                    receiveRevealMinefield(packet);
                     break;
                 case REMOVE_MINEFIELD:
-                    receiveRemoveMinefield(c);
+                    receiveRemoveMinefield(packet);
                     break;
                 case ADD_SMOKE_CLOUD:
-                    SmokeCloud cloud = (SmokeCloud) c.getObject(0);
+                    SmokeCloud cloud = (SmokeCloud) packet.getObject(0);
                     getGame().addSmokeCloud(cloud);
                     break;
                 case CHANGE_HEX:
-                    getGame().getBoard().setHex((Coords) c.getObject(0), (Hex) c.getObject(1));
+                    getGame().getBoard().setHex((Coords) packet.getObject(0), (Hex) packet.getObject(1));
                     break;
                 case CHANGE_HEXES:
-                    List<Coords> coords = new ArrayList<>((Set<Coords>) c.getObject(0));
-                    List<Hex> hexes = new ArrayList<>((Set<Hex>) c.getObject(1));
+                    List<Coords> coords = new ArrayList<>((Set<Coords>) packet.getObject(0));
+                    List<Hex> hexes = new ArrayList<>((Set<Hex>) packet.getObject(1));
                     getGame().getBoard().setHexes(coords, hexes);
                     break;
                 case BLDG_UPDATE:
-                    receiveBuildingUpdate(c);
+                    receiveBuildingUpdate(packet);
                     break;
                 case BLDG_COLLAPSE:
-                    receiveBuildingCollapse(c);
+                    receiveBuildingCollapse(packet);
                     break;
                 case PHASE_CHANGE:
-                    getGame().setPhase((GamePhase) c.getObject(0));
+                    getGame().setPhase(packet.getGamePhaseValue(0));
                     break;
                 case TURN:
-                    getGame().setTurnIndex(c.getIntValue(0), c.getIntValue(1));
+                    getGame().setTurnIndex(packet.getIntValue(0), packet.getIntValue(1));
                     break;
                 case ROUND_UPDATE:
-                    getGame().setRoundCount(c.getIntValue(0));
+                    getGame().setRoundCount(packet.getIntValue(0));
                     break;
                 case SENDING_TURNS:
-                    receiveTurns(c);
+                    receiveTurns(packet);
                     break;
                 case SENDING_BOARD:
-                    getGame().receiveBoards((Map<Integer, Board>) c.getObject(0));
+                    getGame().receiveBoards(packet.getMapOfIntegerAndBoard(0));
                     break;
                 case SENDING_ENTITIES:
-                    receiveEntities(c);
+                    receiveEntities(packet);
                     break;
                 case SENDING_REPORTS:
                 case SENDING_REPORTS_TACTICAL_GENIUS:
-                    getGame().addReports((List<Report>) c.getObject(0));
+                    getGame().addReports((List<Report>) packet.getObject(0));
                     break;
                 case SENDING_REPORTS_ALL:
-                    var allReports = (List<List<Report>>) c.getObject(0);
+                    var allReports = (List<List<Report>>) packet.getObject(0);
                     getGame().setAllReports(allReports);
                     break;
                 case ENTITY_ATTACK:
-                    receiveAttack(c);
+                    receiveAttack(packet);
                     break;
                 case SENDING_GAME_SETTINGS:
-                    getGame().setOptions((GameOptions) c.getObject(0));
+                    getGame().setOptions((GameOptions) packet.getObject(0));
                     break;
                 case SENDING_PLANETARY_CONDITIONS:
-                    getGame().setPlanetaryConditions((PlanetaryConditions) c.getObject(0));
+                    getGame().setPlanetaryConditions((PlanetaryConditions) packet.getObject(0));
                     getGame().processGameEvent(new GameSettingsChangeEvent(this));
                     break;
                 case SENDING_TAG_INFO:
-                    Vector<TagInfo> vti = (Vector<TagInfo>) c.getObject(0);
+                    Vector<TagInfo> vti = (Vector<TagInfo>) packet.getObject(0);
                     for (TagInfo ti : vti) {
                         getGame().addTagInfo(ti);
                     }
@@ -242,37 +231,38 @@ public class Precognition implements Runnable {
                     getGame().resetTagInfo();
                     break;
                 case SENDING_ARTILLERY_ATTACKS:
-                    Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c.getObject(0);
+                    Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) packet.getObject(0);
                     getGame().setArtilleryVector(v);
                     break;
                 case SENDING_FLARES:
-                    Vector<Flare> v2 = (Vector<Flare>) c.getObject(0);
+                    Vector<Flare> v2 = (Vector<Flare>) packet.getObject(0);
                     getGame().setFlares(v2);
                     break;
                 case SENDING_SPECIAL_HEX_DISPLAY:
-                    getGame().getBoard().setSpecialHexDisplayTable(
-                            (Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
+                    getGame().getBoard()
+                          .setSpecialHexDisplayTable((Hashtable<Coords, Collection<SpecialHexDisplay>>) packet.getObject(
+                                0));
                     getGame().processGameEvent(new GameBoardChangeEvent(this));
                     break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
-                    receiveEntityNovaNetworkModeChange(c);
+                    receiveEntityNovaNetworkModeChange(packet);
                     break;
                 case CLIENT_FEEDBACK_REQUEST:
-                    final PacketCommand cfrType = (PacketCommand) c.getData()[0];
+                    final PacketCommand cfrType = (PacketCommand) packet.data()[0];
                     GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
                     switch (cfrType) {
                         case CFR_DOMINO_EFFECT:
-                            cfrEvt.setEntityId((int) c.getData()[1]);
+                            cfrEvt.setEntityId(packet.getIntValue(1));
                             break;
                         case CFR_AMS_ASSIGN:
-                            cfrEvt.setEntityId((int) c.getData()[1]);
-                            cfrEvt.setAmsEquipNum((int) c.getData()[2]);
-                            cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+                            cfrEvt.setEntityId(packet.getIntValue(1));
+                            cfrEvt.setAmsEquipNum(packet.getIntValue(2));
+                            cfrEvt.setWAAs((List<WeaponAttackAction>) packet.data()[3]);
                             break;
                         case CFR_APDS_ASSIGN:
-                            cfrEvt.setEntityId((int) c.getData()[1]);
-                            cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
-                            cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+                            cfrEvt.setEntityId(packet.getIntValue(1));
+                            cfrEvt.setApdsDists(packet.getIntListValue(2));
+                            cfrEvt.setWAAs((List<WeaponAttackAction>) packet.data()[3]);
                             break;
                         default:
                             break;
@@ -284,10 +274,10 @@ public class Precognition implements Runnable {
                     getGame().processGameEvent(gve);
                     break;
                 case ENTITY_MULTIUPDATE:
-                    receiveEntitiesUpdate(c);
+                    receiveEntitiesUpdate(packet);
                     break;
                 case UPDATE_GROUND_OBJECTS:
-                    receiveUpdateGroundObjects(c);
+                    receiveUpdateGroundObjects(packet);
                     break;
                 case SERVER_GREETING:
                 case SERVER_CORRECT_NAME:
@@ -305,10 +295,10 @@ public class Precognition implements Runnable {
                 case LOAD_SAVEGAME:
                 case SENDING_AVAILABLE_MAP_SIZES:
                 case SCRIPTED_MESSAGE:
-                    logger.debug("Intentionally ignoring PacketCommand: {}", c.getCommand().name());
+                    logger.debug("Intentionally ignoring PacketCommand: {}", packet.command().name());
                     break;
                 default:
-                    logger.error("Attempted to parse unknown PacketCommand: {}", c.getCommand().name());
+                    logger.error("Attempted to parse unknown PacketCommand: {}", packet.command().name());
                     break;
             }
         } catch (Exception ex) {
@@ -321,9 +311,8 @@ public class Precognition implements Runnable {
     /**
      * Update multiple entities from the server. Used only in the lobby phase.
      */
-    @SuppressWarnings("unchecked")
     protected void receiveEntitiesUpdate(Packet c) {
-        Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
+        Collection<Entity> entities = c.getEntityListValue(0);
         for (Entity entity : entities) {
             getGame().setEntity(entity.getId(), entity);
         }
@@ -346,8 +335,8 @@ public class Precognition implements Runnable {
     }
 
     /**
-     * Tells the thread there's something to do Note, you can't just call
-     * notifyAll in the event listener because it doesn't have the thread
+     * Tells the thread there's something to do Note, you can't just call notifyAll in the event listener because it
+     * doesn't have the thread
      */
     private synchronized void wakeUp() {
         notifyAll();
@@ -358,8 +347,8 @@ public class Precognition implements Runnable {
     }
 
     /**
-     * Makes sure pathEnumerator has up-to-date information about other units
-     * locations call this right before making a move. automatically pauses.
+     * Makes sure pathEnumerator has up-to-date information about other units locations call this right before making a
+     * move. automatically pauses.
      */
     void ensureUpToDate() {
         try {
@@ -372,9 +361,10 @@ public class Precognition implements Runnable {
                 if (!isEntityOnMap(entity)) {
                     continue;
                 }
-                if (((!getPathEnumerator().getLastKnownLocations().containsKey(entity.getId()))
-                        || (!getPathEnumerator().getLastKnownLocations().get(entity.getId())
-                                .equals(CoordFacingCombo.createCoordFacingCombo(entity))))) {
+                if (((!getPathEnumerator().getLastKnownLocations().containsKey(entity.getId())) ||
+                           (!getPathEnumerator().getLastKnownLocations()
+                                   .get(entity.getId())
+                                   .equals(CoordFacingCombo.createCoordFacingCombo(entity))))) {
                     markUnitAsDirty(entity.getId());
                 }
             }
@@ -405,8 +395,7 @@ public class Precognition implements Runnable {
             while (!getDone().get()) {
                 if (!getEventsToProcess().isEmpty()) {
                     processGameEvents();
-                    ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
-                            getGame().getEntitiesVector());
+                    ecmInfo = ComputeECM.computeAllEntitiesECMInfo(getGame().getEntitiesVector());
                 } else if (!getDirtyUnits().isEmpty()) {
                     Entity entity = getGame().getEntity(getDirtyUnits().pollFirst());
                     if ((entity != null) && isEntityOnMap(entity)) {
@@ -430,18 +419,18 @@ public class Precognition implements Runnable {
     }
 
     /**
-     * Waits until the thread is not paused, and there's indication that it has
-     * something to do
+     * Waits until the thread is not paused, and there's indication that it has something to do
      */
     private synchronized void waitForUnpause() {
         try {
             while (!getDone().get() &&
-                    (getWaitWhenDone().get() ||
-                            (getEventsToProcess().isEmpty() &&
-                                    getDirtyUnits().isEmpty()))) {
-                logger.debug("waitWhenDone = " + getWaitWhenDone() +
-                        " :: eventsToProcess = " + getEventsToProcess().size() +
-                        " :: dirtyUnits = " + getDirtyUnits().size());
+                         (getWaitWhenDone().get() || (getEventsToProcess().isEmpty() && getDirtyUnits().isEmpty()))) {
+                logger.debug("waitWhenDone = " +
+                                   getWaitWhenDone() +
+                                   " :: eventsToProcess = " +
+                                   getEventsToProcess().size() +
+                                   " :: dirtyUnits = " +
+                                   getDirtyUnits().size());
                 getWaiting().set(true);
                 try {
                     wait();
@@ -456,8 +445,8 @@ public class Precognition implements Runnable {
     }
 
     /**
-     * Process game events that have happened since the thread last checked i.e.
-     * if a unit has moved, my precaculated paths are no longer valid
+     * Process game events that have happened since the thread last checked i.e. if a unit has moved, my precaculated
+     * paths are no longer valid
      */
     private void processGameEvents() {
         // We don't want Game to change while this is happening
@@ -473,12 +462,11 @@ public class Precognition implements Runnable {
                 }
                 logger.debug("Processing " + event);
                 getEventsToProcess().remove(event);
-                if (event instanceof GameEntityChangeEvent) {
+                if (event instanceof GameEntityChangeEvent changeEvent) {
                     // Ignore entity changes that don't happen during movement
                     if (!getGame().getPhase().isMovement()) {
                         continue;
                     }
-                    GameEntityChangeEvent changeEvent = (GameEntityChangeEvent) event;
                     if (changeEvent.getEntity() == null) {
                         continue; // just to be safe
                     }
@@ -500,12 +488,13 @@ public class Precognition implements Runnable {
                     if (position.equals(getPathEnumerator().getLastKnownCoords(entity.getId()))) {
                         continue; // no sense in updating a unit if it hasn't moved
                     }
-                    logger.debug("Received entity change event for "
-                            + changeEvent.getEntity().getDisplayName()
-                            + " (ID " + entity.getId() + ")");
+                    logger.debug("Received entity change event for " +
+                                       changeEvent.getEntity().getDisplayName() +
+                                       " (ID " +
+                                       entity.getId() +
+                                       ")");
                     markUnitAsDirty(changeEvent.getEntity().getId());
-                } else if (event instanceof GamePhaseChangeEvent) {
-                    GamePhaseChangeEvent phaseChange = (GamePhaseChangeEvent) event;
+                } else if (event instanceof GamePhaseChangeEvent phaseChange) {
                     logger.debug("Phase change detected: " + phaseChange.getNewPhase().name());
                     // this marks when I can all I can start recalculating paths.
                     // All units are dirty
@@ -526,8 +515,8 @@ public class Precognition implements Runnable {
     }
 
     /**
-     * Called when a unit has moved and should be put on the dirty list, as well
-     * as any units who's moves contain that unit
+     * Called when a unit has moved and should be put on the dirty list, as well as any units who's moves contain that
+     * unit
      */
     private void markUnitAsDirty(int id) {
         // Prevent Game from changing while processing
@@ -546,25 +535,21 @@ public class Precognition implements Runnable {
             // with its initial or final position
             // in their list become dirty
             if (!getGame().getEntity(id).isAero()) {
-                TreeSet<Integer> toDirty = new TreeSet<>(
-                        getPathEnumerator().getEntitiesWithLocation(
-                                getGame().getEntity(id).getPosition(), true));
-                if (getPathEnumerator().getLastKnownLocations()
-                        .containsKey(id)) {
-                    if ((getGame().getEntity(id) != null)
-                            && getGame().getEntity(id).isSelectableThisTurn()) {
-                        toDirty.addAll(getPathEnumerator()
-                                .getEntitiesWithLocation(getPathEnumerator()
-                                        .getLastKnownLocations().get(id)
-                                        .getCoords(), true));
+                TreeSet<Integer> toDirty = new TreeSet<>(getPathEnumerator().getEntitiesWithLocation(getGame().getEntity(
+                      id).getPosition(), true));
+                if (getPathEnumerator().getLastKnownLocations().containsKey(id)) {
+                    if ((getGame().getEntity(id) != null) && getGame().getEntity(id).isSelectableThisTurn()) {
+                        toDirty.addAll(getPathEnumerator().getEntitiesWithLocation(getPathEnumerator().getLastKnownLocations()
+                                                                                         .get(id)
+                                                                                         .getCoords(), true));
                     }
                 }
                 // no need to dirty units that aren't selectable this turn
                 List<Integer> toRemove = new ArrayList<>();
                 for (Integer index : toDirty) {
-                    if ((getGame().getEntity(index) == null)
-                            || (!getGame().getEntity(index).isSelectableThisTurn()
-                                    && getGame().getPhase().isMovement())) {
+                    if ((getGame().getEntity(index) == null) ||
+                              (!getGame().getEntity(index).isSelectableThisTurn() &&
+                                     getGame().getPhase().isMovement())) {
                         toRemove.add(index);
                     }
                 }
@@ -577,7 +562,7 @@ public class Precognition implements Runnable {
                     StringBuilder msg = new StringBuilder("The following units have become dirty");
                     if (getGame().getEntity(id) != null) {
                         msg.append(" as a result of a nearby move of ")
-                                .append(getGame().getEntity(id).getDisplayName());
+                              .append(getGame().getEntity(id).getDisplayName());
                     }
 
                     Iterator<Integer> dirtyIterator = toDirty.descendingIterator();
@@ -593,12 +578,10 @@ public class Precognition implements Runnable {
                 getDirtyUnits().addAll(toDirty);
             }
             Entity entity = getGame().getEntity(id);
-            if (((entity != null) && entity.isSelectableThisTurn())
-                    || !getGame().getPhase().isMovement()) {
+            if (((entity != null) && entity.isSelectableThisTurn()) || !getGame().getPhase().isMovement()) {
                 getDirtyUnits().add(id);
             } else if (entity != null) {
-                getPathEnumerator().getLastKnownLocations().put(id,
-                        CoordFacingCombo.createCoordFacingCombo(entity));
+                getPathEnumerator().getLastKnownLocations().put(id, CoordFacingCombo.createCoordFacingCombo(entity));
             }
         } finally {
             GAME_LOCK.unlock();
@@ -687,9 +670,9 @@ public class Precognition implements Runnable {
     /**
      * Receives player information from the message packet.
      */
-    private void receivePlayerInfo(Packet c) {
-        int playerIndex = c.getIntValue(0);
-        Player newPlayer = (Player) c.getObject(1);
+    private void receivePlayerInfo(Packet packet) {
+        int playerIndex = packet.getIntValue(0);
+        Player newPlayer = packet.getPlayerValue(1);
         if (getPlayer(newPlayer.getId()) == null) {
             getGame().addPlayer(playerIndex, newPlayer);
         } else {
@@ -708,63 +691,56 @@ public class Precognition implements Runnable {
     /**
      * Loads the board from the data in the net command.
      */
-    private void receiveBoard(Packet c) {
-        Board newBoard = (Board) c.getObject(0);
+    private void receiveBoard(Packet packet) {
+        Board newBoard = (Board) packet.getObject(0);
         getGame().setBoard(newBoard);
     }
 
     /**
      * Loads the entities from the data in the net command.
      */
-    @SuppressWarnings("unchecked")
-    private void receiveEntities(Packet c) {
-        List<Entity> newEntities = (List<Entity>) c.getObject(0);
-        List<Entity> newOutOfGame = (List<Entity>) c.getObject(1);
+    private void receiveEntities(Packet packet) {
+        List<Entity> newEntities = packet.getEntityListValue(0);
+        List<Entity> newOutOfGame = packet.getEntityListValue(1);
 
         // Replace the entities in the game.
         getGame().setEntitiesVector(newEntities);
-        if (newOutOfGame != null) {
-            getGame().setOutOfGameEntitiesVector(newOutOfGame);
-        }
+        getGame().setOutOfGameEntitiesVector(newOutOfGame);
     }
 
     /**
      * Loads entity update data from the data in the net command.
      */
-    @SuppressWarnings("unchecked")
-    private void receiveEntityUpdate(Packet c) {
-        int entityIndex = c.getIntValue(0);
-        Entity entity = (Entity) c.getObject(1);
-        Vector<UnitLocation> movePath = (Vector<UnitLocation>) c.getObject(2);
+    private void receiveEntityUpdate(Packet packet) {
+        int entityIndex = packet.getIntValue(0);
+        Entity entity = packet.getEntityValue(1);
+        Vector<UnitLocation> movePath = packet.getUnitLocationVectorValue(2);
         // Replace this entity in the game.
         getGame().setEntity(entityIndex, entity, movePath);
     }
 
     private void receiveEntityAdd(Packet packet) {
-        @SuppressWarnings(value = "unchecked")
-        List<Entity> entities = (List<Entity>) packet.getObject(0);
+        List<Entity> entities = packet.getEntityListValue(0);
         getGame().addEntities(entities);
     }
 
     private void receiveEntityRemove(Packet packet) {
-        @SuppressWarnings("unchecked")
-        List<Integer> entityIds = (List<Integer>) packet.getObject(0);
+        List<Integer> entityIds = packet.getIntListValue(0);
         int condition = packet.getIntValue(1);
         // Move the unit to its final resting place.
         getGame().removeEntities(entityIds, condition);
     }
 
-    @SuppressWarnings("unchecked")
     private void receiveEntityVisibilityIndicator(Packet packet) {
         Entity e = getGame().getEntity(packet.getIntValue(0));
-        if (e != null) { // we may not have this entity due to double blind
+        if (e != null) {
+            // we may not have this entity due to double-blind
             e.setEverSeenByEnemy(packet.getBooleanValue(1));
             e.setVisibleToEnemy(packet.getBooleanValue(2));
             e.setDetectedByEnemy(packet.getBooleanValue(3));
-            e.setWhoCanSee((Vector<Player>) packet.getObject(4));
-            e.setWhoCanDetect((Vector<Player>) packet.getObject(5));
-            // this next call is only needed sometimes, but we'll just
-            // call it every time
+            e.setWhoCanSee(packet.getPlayerVectorValue(4));
+            e.setWhoCanDetect(packet.getPlayerVectorValue(5));
+            // this next call is only needed sometimes, but we'll just call it every time
             getGame().processGameEvent(new GameEntityChangeEvent(this, e));
         }
     }
@@ -821,18 +797,16 @@ public class Precognition implements Runnable {
      * Loads entity firing data from the data in the net command
      */
     @SuppressWarnings("unchecked")
-    private void receiveAttack(Packet c) {
-        List<EntityAction> vector = (List<EntityAction>) c.getObject(0);
-        boolean isCharge = c.getBooleanValue(1);
+    private void receiveAttack(Packet packet) {
+        List<EntityAction> vector = (List<EntityAction>) packet.getObject(0);
+        boolean isCharge = packet.getBooleanValue(1);
         boolean addAction = true;
         for (EntityAction ea : vector) {
             int entityId = ea.getEntityId();
-            if ((ea instanceof TorsoTwistAction) && game.hasEntity(entityId)) {
-                TorsoTwistAction tta = (TorsoTwistAction) ea;
+            if ((ea instanceof TorsoTwistAction tta) && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
                 entity.setSecondaryFacing(tta.getFacing());
-            } else if ((ea instanceof FlipArmsAction) && game.hasEntity(entityId)) {
-                FlipArmsAction faa = (FlipArmsAction) ea;
+            } else if ((ea instanceof FlipArmsAction faa) && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
                 entity.setArmsFlipped(faa.getIsFlipped());
             } else if ((ea instanceof DodgeAction) && game.hasEntity(entityId)) {
@@ -862,12 +836,12 @@ public class Precognition implements Runnable {
     /**
      * receive and process an entity nova network mode change packet
      *
-     * @param c The packet containing the change.
+     * @param packet The packet containing the change.
      */
-    private void receiveEntityNovaNetworkModeChange(Packet c) {
+    private void receiveEntityNovaNetworkModeChange(Packet packet) {
         try {
-            int entityId = c.getIntValue(0);
-            String networkID = c.getObject(1).toString();
+            int entityId = packet.getIntValue(0);
+            String networkID = packet.getStringValue(1);
             Entity e = getGame().getEntity(entityId);
             if (e != null) {
                 e.setNewRoundNovaNetworkString(networkID);

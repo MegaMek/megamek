@@ -23,7 +23,6 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.ForceAssignable;
@@ -47,20 +46,16 @@ import megamek.logging.MMLogger;
 public class SBFClient extends AbstractClient {
     private final static MMLogger logger = MMLogger.create(SBFClient.class);
     /**
-     * The game object that holds all game information. This object is persistent,
-     * i.e. it is never replaced
-     * by another game object sent from the server. Instead, the info in this game
-     * object is added to
-     * or replaced as necessary. Therefore, other objects may keep a reference to
-     * this game object. Other
-     * objects however, like the players or units, *will* be replaced by objects
-     * sent from the server.
+     * The game object that holds all game information. This object is persistent, i.e. it is never replaced by another
+     * game object sent from the server. Instead, the info in this game object is added to or replaced as necessary.
+     * Therefore, other objects may keep a reference to this game object. Other objects however, like the players or
+     * units, *will* be replaced by objects sent from the server.
      */
     private final SBFGame game = new SBFGame();
 
     /**
-     * Construct a client which will try to connect. If the connection fails, it
-     * will alert the player, free resources and hide the frame.
+     * Construct a client which will try to connect. If the connection fails, it will alert the player, free resources
+     * and hide the frame.
      *
      * @param name the player name for this client
      * @param host the hostname
@@ -83,7 +78,7 @@ public class SBFClient extends AbstractClient {
     @Override
     @SuppressWarnings("unchecked")
     protected boolean handleGameSpecificPacket(Packet packet) {
-        switch (packet.getCommand()) {
+        switch (packet.command()) {
             case SENDING_ENTITIES:
                 receiveEntities(packet);
                 break;
@@ -93,7 +88,7 @@ public class SBFClient extends AbstractClient {
                 if (keepGameLog()) {
                     // Re-write the gamelog from scratch
                     initGameLog();
-                    for (int round : receivedReports.keySet().stream().sorted().collect(Collectors.toList())) {
+                    for (int round : receivedReports.keySet().stream().sorted().toList()) {
                         possiblyWriteToLog(assembleAndAddImages(receivedReports.get(round)));
                     }
                 }
@@ -127,7 +122,7 @@ public class SBFClient extends AbstractClient {
                 getGame().receiveUnit((InGameObject) packet.getObject(0));
                 break;
             case UNIT_INVISIBLE:
-                getGame().forget((int) packet.getObject(0));
+                getGame().forget(packet.getIntValue(0));
             case ACTIONS:
                 getGame().clearActions();
                 for (EntityAction action : (List<EntityAction>) packet.getObject(0)) {
@@ -158,11 +153,10 @@ public class SBFClient extends AbstractClient {
     /**
      * Loads the entities from the data in the net command.
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveEntities(Packet c) {
-        List<InGameObject> newActiveUnits = (List<InGameObject>) c.getObject(0);
-        List<InGameObject> newGraveyard = (List<InGameObject>) c.getObject(1);
-        Forces newForces = (Forces) c.getObject(2);
+    protected void receiveEntities(Packet packet) {
+        List<InGameObject> newActiveUnits = packet.getInGameObjectListValue(0);
+        List<InGameObject> newGraveyard = packet.getInGameObjectListValue(1);
+        Forces newForces = packet.getForcesValue(2);
         // Replace the entities in the game.
         if (newForces != null) {
             game.setForces(newForces);
@@ -183,8 +177,9 @@ public class SBFClient extends AbstractClient {
         }
 
         if (GUIPreferences.getInstance().getMiniReportShowSprites() &&
-                game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
-                iconCache != null && !iconCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
+                  iconCache != null &&
+                  !iconCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
             ImageUtil.createDoubleBlindHiddenImage(iconCache);
         }
     }

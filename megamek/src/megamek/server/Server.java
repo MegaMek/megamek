@@ -246,7 +246,7 @@ public class Server implements Runnable {
         @Override
         public void packetReceived(PacketReceivedEvent e) {
             ReceivedPacket rp = new ReceivedPacket(e.getConnection().getId(), e.getPacket());
-            switch (e.getPacket().getCommand()) {
+            switch (e.getPacket().command()) {
                 case CLIENT_FEEDBACK_REQUEST:
                     // Handled CFR packets specially
                     gameManager.handleCfrPacket(rp);
@@ -583,7 +583,7 @@ public class Server implements Runnable {
      * Allow the player to set whatever parameters he is able to
      */
     private void receivePlayerInfo(Packet packet, int connId) {
-        Player player = (Player) packet.getObject(0);
+        Player player = packet.getPlayerValue(0);
         Player gamePlayer = getGame().getPlayer(connId);
         if (null != gamePlayer) {
             gamePlayer.setColour(player.getColour());
@@ -645,7 +645,7 @@ public class Server implements Runnable {
     }
 
     private boolean receivePlayerVersion(Packet packet, int connId) {
-        final Version version = (Version) packet.getObject(0);
+        final Version version = packet.getVersionValue(0);
 
         if (!SuiteConstants.VERSION.is(version)) {
             final String message = String.format("Client/Server Version Mismatch -- Client: %s, Server: %s",
@@ -661,7 +661,7 @@ public class Server implements Runnable {
             return false;
         }
 
-        final String clientChecksum = (String) packet.getObject(1);
+        final String clientChecksum = packet.getStringValue(1);
         final String serverChecksum = MegaMek.getMegaMekSHA256();
         String message = "";
 
@@ -1297,7 +1297,7 @@ public class Server implements Runnable {
             return;
         }
         // act on it
-        switch (packet.getCommand()) {
+        switch (packet.command()) {
             case CLIENT_VERSIONS:
                 final boolean valid = receivePlayerVersion(packet, connId);
                 if (valid) {
@@ -1323,11 +1323,11 @@ public class Server implements Runnable {
                 transmitPlayerUpdate(getPlayer(connId));
                 break;
             case CHAT:
-                String chat = (String) packet.getObject(0);
+                String chat = packet.getStringValue(0);
                 if (chat.startsWith("/")) {
                     processCommand(connId, chat);
-                } else if (packet.getData().length > 1) {
-                    connId = (int) packet.getObject(1);
+                } else if (packet.data().length > 1) {
+                    connId = packet.getIntValue(1);
                     if (connId == Player.PLAYER_NONE) {
                         sendServerChat(chat);
                     } else {

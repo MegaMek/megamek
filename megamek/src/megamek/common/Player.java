@@ -164,8 +164,8 @@ public final class Player extends TurnOrdered {
     }
 
 
-    public PlayerRating getRating() {
-        return rating;
+    public double getRating() {
+        return rating.getCurrentRating();
     }
 
     public double getScore() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,14 +18,20 @@
  */
 package megamek.common.battlevalue;
 
-import megamek.common.*;
-import megamek.common.equipment.WeaponMounted;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import megamek.common.Entity;
+import megamek.common.Jumpship;
+import megamek.common.MPCalculationSetting;
+import megamek.common.Mounted;
+import megamek.common.Warship;
+import megamek.common.equipment.WeaponMounted;
 
 public class WarShipBVCalculator extends JumpShipBVCalculator {
 
@@ -116,14 +122,14 @@ public class WarShipBVCalculator extends JumpShipBVCalculator {
         nominalRightLocation = oppositeLocation[nominalNoseLocation];
 
         bvReport.addLine("Nominal Nose Location",
-                arcName(nominalNoseLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalNoseLocation)),
-                "");
+              arcName(nominalNoseLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalNoseLocation)),
+              "");
         bvReport.addLine("Nominal Left Location",
-                arcName(nominalLeftLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalLeftLocation)),
-                "");
+              arcName(nominalLeftLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalLeftLocation)),
+              "");
         bvReport.addLine("Nominal Right Location",
-                arcName(nominalRightLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalRightLocation)),
-                "");
+              arcName(nominalRightLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalRightLocation)),
+              "");
         frontAndRearDecided = true;
     }
 
@@ -131,8 +137,9 @@ public class WarShipBVCalculator extends JumpShipBVCalculator {
     protected void processWeapons() {
         for (WeaponMounted weapon : entity.getTotalWeaponList()) {
             if (countAsOffensiveWeapon(weapon)) {
-                WeaponMounted key = collectedWeapons.keySet().stream()
-                        .filter(wp -> canBeSummed(weapon, wp)).findFirst().orElse(weapon);
+                // Create a copy of the keySet to avoid CME when modifying the map
+                List<WeaponMounted> keys = new ArrayList<>(collectedWeapons.keySet());
+                WeaponMounted key = keys.stream().filter(wp -> canBeSummed(weapon, wp)).findFirst().orElse(weapon);
                 collectedWeapons.merge(key, 1, Integer::sum);
             }
         }
@@ -208,8 +215,8 @@ public class WarShipBVCalculator extends JumpShipBVCalculator {
     protected void processTypeModifier() {
         double typeModifier = 0.8;
         bvReport.addLine("Type Modifier:",
-                formatForReport(defensiveValue) + " x " + formatForReport(typeModifier),
-                "= " + formatForReport(defensiveValue * typeModifier));
+              formatForReport(defensiveValue) + " x " + formatForReport(typeModifier),
+              "= " + formatForReport(defensiveValue * typeModifier));
         defensiveValue *= typeModifier;
     }
 }

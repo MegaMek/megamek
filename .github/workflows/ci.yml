@@ -2,7 +2,7 @@ name: MegaMek CI with Gradle
 
 on:
   pull_request:
-    branches: [master]
+    branches: [ master ]
 
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
@@ -17,9 +17,9 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        java-distribution: [temurin]
-        java-version: [17]
+        os: [ ubuntu-latest ]
+        java-distribution: [ temurin ]
+        java-version: [ 17 ]
       fail-fast: false
 
     steps:
@@ -65,7 +65,7 @@ jobs:
 
       - name: Build with Gradle
         working-directory: megamek
-        run: ./gradlew build  -x checkstyleMain -x checkstyleTest --stacktrace --scan
+        run: ./gradlew build sentryUploadSourceBundleJava --stacktrace --scan
 
       - name: Upload Test Logs on Failure
         uses: actions/upload-artifact@v4

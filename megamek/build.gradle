@@ -2,14 +2,11 @@ import java.time.LocalDateTime
 
 plugins {
     id 'application'
-    id 'checkstyle'
     id 'com.palantir.git-version' version '3.1.0'
     id 'edu.sc.seis.launch4j' version '3.0.6'
-    id "io.sentry.jvm.gradle" version '5.2.0'
+    id "io.sentry.jvm.gradle" version '5.3.0'
     id 'jacoco'
     id 'java'
-    id 'org.ec4j.editorconfig' version '0.1.0'
-
 }
 
 java {
@@ -37,8 +34,8 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.3'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.3'
 
     implementation 'com.formdev:flatlaf:3.5.4'
     implementation 'com.formdev:flatlaf-extras:3.5.4'
@@ -64,14 +61,14 @@ dependencies {
 
     implementation 'com.squareup:gifencoder:0.10.1'
 
-    implementation 'com.ibm.icu:icu4j:76.1'
+    implementation 'com.ibm.icu:icu4j:77.1'
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.1'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
-    testImplementation 'org.mockito:mockito-core:5.15.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.1'
+    testImplementation 'org.mockito:mockito-core:5.16.1'
 }
 
 application {
@@ -80,26 +77,20 @@ application {
 
 ext {
     mmJvmOptions = [
-        '-Xmx4096m',
-        '--add-opens',
-        'java.base/java.util=ALL-UNNAMED',
-        '--add-opens',
-        'java.base/java.util.concurrent=ALL-UNNAMED',
-        '-Dsun.awt.disablegrab=true'
+            '-Xmx4096m',
+            '--add-opens',
+            'java.base/java.util=ALL-UNNAMED',
+            '--add-opens',
+            'java.base/java.util.concurrent=ALL-UNNAMED',
+            '-Dsun.awt.disablegrab=true'
     ]
     docs = "docs"
     lib = "lib"
     log = "logs"
     mmconf = "mmconf"
     userdata = 'userdata'
-    fileStagingDir = "${buildDir}/files"
+    fileStagingDir = "${layout.buildDirectory.get()}/files"
     atlasedImages = "${fileStagingDir}/atlasedImages.txt"
-}
-
-checkstyle {
-    toolVersion = '10.18.1'
-    configFile = file("config/checkstyle/checkstyle.xml")
-    ignoreFailures = false
 }
 
 run {
@@ -110,11 +101,11 @@ jar {
     archiveFileName = 'MegaMek.jar'
 
     manifest {
-        attributes "Main-Class" : application.mainClass
-        attributes "Class-Path" : project.sourceSets.main.runtimeClasspath.files
-            .findAll { it.name.endsWith(".jar") }.collect { "${lib}/${it.name}" }.join(' ')
-        attributes "Add-Opens" : 'java.base/java.util java.base/java.util.concurrent'
-        attributes "Build-Date" : LocalDateTime.now()
+        attributes "Main-Class": application.mainClass
+        attributes "Class-Path": project.sourceSets.main.runtimeClasspath.files
+                .findAll { it.name.endsWith(".jar") }.collect { "${lib}/${it.name}" }.join(' ')
+        attributes "Add-Opens": 'java.base/java.util java.base/java.util.concurrent'
+        attributes "Build-Date": LocalDateTime.now()
     }
 }
 
@@ -187,7 +178,6 @@ tasks.register('copyFiles', Copy) {
 
 tasks.register('createImageAtlases', JavaExec) {
     dependsOn copyFiles
-
     description = 'Combines individual image files into a set of image atlases.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -197,7 +187,6 @@ tasks.register('createImageAtlases', JavaExec) {
 
 tasks.register('deleteAtlasedImages') {
     dependsOn createImageAtlases
-
     description = 'Removes images from the staging directory that have been incorporated into atlases.'
     doLast {
         if (file(atlasedImages).exists()) {
@@ -209,7 +198,6 @@ tasks.register('deleteAtlasedImages') {
 
 tasks.register('officialUnitList', JavaExec) {
     dependsOn jar
-
     description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -217,16 +205,17 @@ tasks.register('officialUnitList', JavaExec) {
     args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
 }
 
-tasks.register('unitFilesZip', Zip) {
+task unitFilesZip(dependsOn: copyFiles) {
     description = 'Creates zip archives of all the unit file folders.'
-    dependsOn handleDataDirectory
-
-    from "${buildDir}/data/mekfiles"
-    archiveFileName = "unitfiles.zip"
-    destinationDirectory = file("${fileStagingDir}/data/mekfiles")
-
+    file("${buildDir}/data/mekfiles").eachDir { subDir ->
+        dependsOn tasks.create("${name}${subDir.name}", Zip) {
+            from subDir
+            archiveFileName = "${subDir.name}.zip"
+            destinationDirectory = file("${fileStagingDir}/${unitFiles}")
+        }
+    }
     inputs.dir "${buildDir}/data/mekfiles"
-    outputs.dir "${fileStagingDir}/data/mekfiles"
+    outputs.dir "${fileStagingDir}/${unitFiles}"
 }
 
 tasks.register('ratZip', Zip) {
@@ -244,7 +233,7 @@ tasks.register('ratZip', Zip) {
     outputs.dir "${fileStagingDir}/data/rat"
 }
 
-task stageFiles {
+tasks.register('stageFiles') {
     description = 'Process data files to be included in distribution'
     group = 'distribution'
     dependsOn officialUnitList
@@ -269,7 +258,7 @@ distributions {
     main {
         distributionBaseName = 'MegaMek'
         contents {
-            from ("${buildDir}/launch4j") {
+            from("${buildDir}/launch4j") {
                 include '*.exe'
             }
             from(jar) {
@@ -281,7 +270,7 @@ distributions {
             }
             from(jar)
             from fileStagingDir
-            from (project.sourceSets.main.runtimeClasspath.files
+            from(project.sourceSets.main.runtimeClasspath.files
                     .findAll { it.name.endsWith(".jar") }) {
                 into "${lib}"
             }
@@ -366,64 +355,58 @@ tasks.register('testWithGUITests', Test) {
     jvmArgs = mmJvmOptions
     environment 'GUITests', "true"
 
-    group='verification'
-    description='Sets environment var to include GUI unit tests; no report generated.'
+    group = 'verification'
+    description = 'Sets environment var to include GUI unit tests; no report generated.'
 }
 
 // These are utility classes for all of the classes with the src/utilities folder.
 tasks.register('equipmentList', JavaExec) {
     dependsOn jar
-
     description = 'Generate Full Equipment Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
-    args = [ '-eqdb', "${projectDir}/equipment.txt" ]
+    args = ['-eqdb', "${projectDir}/equipment.txt"]
 }
 
 tasks.register('extendedEquipmentList', JavaExec) {
     dependsOn jar
-
     description = 'Generate Extended Equipment Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
-    args = [ '-eqedb', "${projectDir}/extended-equipment.txt" ]
+    args = ['-eqedb', "${projectDir}/extended-equipment.txt"]
 }
 
 tasks.register('weaponsList', JavaExec) {
     dependsOn jar
-
     description = 'Generate Weapons Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
-    args = [ '-eqwdb', "${projectDir}/weapons.txt" ]
+    args = ['-eqwdb', "${projectDir}/weapons.txt"]
 }
 
 tasks.register('ammoList', JavaExec) {
     dependsOn jar
-
     description = 'Generate Ammo Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
-    args = [ '-eqadb', "${projectDir}/ammo.txt" ]
+    args = ['-eqadb', "${projectDir}/ammo.txt"]
 }
 
 tasks.register('weaponsMiscList', JavaExec) {
     dependsOn jar
-
     description = 'Generate Misc Weapons Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
-    args = [ '-eqmdb', "${projectDir}/misc-weapons.txt" ]
+    args = ['-eqmdb', "${projectDir}/misc-weapons.txt"]
 }
 
 tasks.register('alphaStrikeMassConvert', JavaExec) {
     dependsOn jar
-
     description = 'Outputs the Alpha Strike conversion of all units'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -432,7 +415,6 @@ tasks.register('alphaStrikeMassConvert', JavaExec) {
 
 tasks.register('boardsTagger', JavaExec) {
     dependsOn jar
-
     description = 'Tags all boards'
     group = 'boards'
     classpath = sourceSets.main.runtimeClasspath
@@ -441,7 +423,6 @@ tasks.register('boardsTagger', JavaExec) {
 
 tasks.register('boardsValidator', JavaExec) {
     dependsOn jar
-
     description = 'Validates all boards'
     group = 'boards'
     classpath = sourceSets.main.runtimeClasspath
@@ -450,7 +431,6 @@ tasks.register('boardsValidator', JavaExec) {
 
 tasks.register('filteredUnitListTool', JavaExec) {
     dependsOn jar
-
     description = 'Filter Unit List Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -459,7 +439,6 @@ tasks.register('filteredUnitListTool', JavaExec) {
 
 tasks.register('gifWriter', JavaExec) {
     dependsOn jar
-
     description = 'Generate a GIF from a game summary'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -469,7 +448,6 @@ tasks.register('gifWriter', JavaExec) {
 
 tasks.register('entityVerifier', JavaExec) {
     dependsOn jar
-
     description = 'Entity Verifier'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -478,7 +456,6 @@ tasks.register('entityVerifier', JavaExec) {
 
 tasks.register('iconTest', JavaExec) {
     dependsOn jar
-
     description = 'Icon Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -487,7 +464,6 @@ tasks.register('iconTest', JavaExec) {
 
 tasks.register('mekCacheCSVTool', JavaExec) {
     dependsOn jar
-
     description = 'Mek CSV Database'
     group = 'database'
     classpath = sourceSets.main.runtimeClasspath
@@ -496,7 +472,6 @@ tasks.register('mekCacheCSVTool', JavaExec) {
 
 tasks.register('nameChangesValidator', JavaExec) {
     dependsOn jar
-
     description = 'Checks for issues related to name changes.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -505,7 +480,6 @@ tasks.register('nameChangesValidator', JavaExec) {
 
 tasks.register('ratGeneratorEditor', JavaExec) {
     dependsOn copyFiles
-
     description = 'RAT Editor.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -514,7 +488,6 @@ tasks.register('ratGeneratorEditor', JavaExec) {
 
 tasks.register('techLevelCompareTool', JavaExec) {
     dependsOn jar
-
     description = 'Tech Level Comparison Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -523,7 +496,6 @@ tasks.register('techLevelCompareTool', JavaExec) {
 
 tasks.register('unitFileMigrationTool', JavaExec) {
     dependsOn jar
-
     description = 'Unit File Migration Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -532,7 +504,6 @@ tasks.register('unitFileMigrationTool', JavaExec) {
 
 tasks.register('testAi', JavaExec) {
     dependsOn jar
-
     description = 'Test AI'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -540,13 +511,4 @@ tasks.register('testAi', JavaExec) {
     args(project.hasProperty("testAiArgs") ? project.property("testAiArgs").split(' ') : "")
 
     jvmArgs = mmJvmOptions
-}
-
-tasks.withType(Checkstyle) {
-    minHeapSize = "200m"
-    maxHeapSize = "1g"
-    reports {
-        xml.required = false
-        html.required = true
-    }
 }

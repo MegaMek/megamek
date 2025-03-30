@@ -1,18 +1,18 @@
 /*
-* MegaMek -
-* Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * MegaMek -
+ * Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018 The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.common.util;
 
 import java.awt.*;
@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 import javax.swing.UIManager;
 
@@ -50,21 +49,24 @@ import megamek.logging.MMLogger;
  * Generic utility methods for image data
  */
 public final class ImageUtil {
-    private static final MMLogger logger = MMLogger.create(ImageUtil.class);
+    private static final MMLogger LOGGER = MMLogger.create(ImageUtil.class);
     /**
-     * The graphics configuration of the local graphic card/monitor combination,
-     * if we aren't running in "headless" mode.
+     * The graphics configuration of the local graphic card/monitor combination, if we aren't running in "headless"
+     * mode.
      */
-    private static final GraphicsConfiguration GC;
+    private static final GraphicsConfiguration GRAPHICS_CONFIGURATION;
+
     static {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gd = null;
+        GraphicsEnvironment localGraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice graphicsDevice = null;
+
         try {
-            gd = ge.getDefaultScreenDevice();
+            graphicsDevice = localGraphicsEnvironment.getDefaultScreenDevice();
         } catch (HeadlessException ignored) {
 
         }
-        GC = (null != gd) ? gd.getDefaultConfiguration() : null;
+
+        GRAPHICS_CONFIGURATION = (null != graphicsDevice) ? graphicsDevice.getDefaultConfiguration() : null;
     }
 
     public static final int IMAGE_SCALE_BICUBIC = 1;
@@ -74,35 +76,34 @@ public final class ImageUtil {
     public static BufferedImage failStandardImage;
 
     /**
-     * @return an image in a format best fitting for hardware acceleration, if
-     *         possible, else just the image passed to it
+     * @return an image in a format best fitting for hardware acceleration, if possible, else just the image passed to
+     *       it
      */
     public static BufferedImage createAcceleratedImage(Image base) {
-        if ((null == GC) || (null == base)) {
+        if ((null == GRAPHICS_CONFIGURATION) || (null == base)) {
             return null;
         }
-        BufferedImage acceleratedImage = GC.createCompatibleImage(
-                base.getWidth(null), base.getHeight(null),
-                Transparency.TRANSLUCENT);
-        Graphics2D g2d = acceleratedImage.createGraphics();
-        g2d.drawImage(base, 0, 0, base.getWidth(null), base.getHeight(null),
-                null);
-        g2d.dispose();
+        BufferedImage acceleratedImage = GRAPHICS_CONFIGURATION.createCompatibleImage(base.getWidth(null),
+              base.getHeight(null),
+              Transparency.TRANSLUCENT);
+        Graphics2D graphics2D = acceleratedImage.createGraphics();
+        graphics2D.drawImage(base, 0, 0, base.getWidth(null), base.getHeight(null), null);
+        graphics2D.dispose();
         return acceleratedImage;
     }
 
     /**
-     * @return an image in a format best fitting for hardware acceleration, if
-     *         possible
+     * @return an image in a format best fitting for hardware acceleration, if possible
      */
     public static BufferedImage createAcceleratedImage(int w, int h) {
-        return (GC == null) ? new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB)
-                : GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
+        return (GRAPHICS_CONFIGURATION == null) ?
+                     new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB) :
+                     GRAPHICS_CONFIGURATION.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
     }
 
     /**
-     * Returns a standard size (84x72) "fail" image having a red on white cross.
-     * The image is drawn, not loaded and should therefore work in almost all cases.
+     * Returns a standard size (84x72) "fail" image having a red on white cross. The image is drawn, not loaded and
+     * should therefore work in almost all cases.
      */
     public static BufferedImage failStandardImage() {
         if (failStandardImage == null) {
@@ -119,21 +120,22 @@ public final class ImageUtil {
     }
 
     /**
-     * Get a scaled version of the input image.
+     * @param img       {@link Image} Image to scale.
+     * @param newWidth  Width to scale to
+     * @param newHeight Height to scale to.
      *
-     * @param img
-     * @return
+     * @return Get a scaled version of the input image.
      */
     public static BufferedImage getScaledImage(Image img, int newWidth, int newHeight) {
         return getScaledImage(img, newWidth, newHeight, IMAGE_SCALE_BICUBIC);
     }
 
     /**
-     * Converts the given image to a BufferedImage. If it already is a
-     * BufferedImage, the image is only
-     * returned with a type cast without doing any further conversion.
+     * Converts the given image to a BufferedImage. If it already is a BufferedImage, the image is only returned with a
+     * type cast without doing any further conversion.
      *
      * @param image An Image of any type
+     *
      * @return The image as a BufferedImage
      */
     public static BufferedImage convertToBufferedImage(Image image) {
@@ -145,39 +147,38 @@ public final class ImageUtil {
     }
 
     /**
-     * Returns a scaled version of the given image. Scaling is adjusted so that the
-     * image fits in the
-     * given maximum width and maximum height, keeping the aspect ratio of the
-     * image. Either the height
-     * or the width of the resulting image will be equal to the given max width or
-     * height, while the other value
-     * will be smaller than the given maximum. Uses the supplied scaling method.
+     * Returns a scaled version of the given image. Scaling is adjusted so that the image fits in the given maximum
+     * width and maximum height, keeping the aspect ratio of the image. Either the height or the width of the resulting
+     * image will be equal to the given max width or height, while the other value will be smaller than the given
+     * maximum. Uses the supplied scaling method.
      *
      * @param image     The image to scale
      * @param maxWidth  The maximum width of the resulting image
      * @param maxHeight The maximum height of the resulting image
-     * @param scaleType The scale type, {@link #IMAGE_SCALE_BICUBIC} or
-     *                  {@link #IMAGE_SCALE_AVG_FILTER}
-     * @return A scaled image fitting in a rectangle of the size (maxWidth,
-     *         maxHeight)
+     * @param scaleType The scale type, {@link #IMAGE_SCALE_BICUBIC} or {@link #IMAGE_SCALE_AVG_FILTER}
+     *
+     * @return A scaled image fitting in a rectangle of the size (maxWidth, maxHeight)
      */
     public static BufferedImage fitImage(Image image, int maxWidth, int maxHeight, int scaleType) {
         int width = maxWidth;
         int height = maxHeight;
+
         if ((float) image.getWidth(null) / maxWidth > (float) image.getHeight(null) / maxHeight) {
             height = image.getHeight(null) * maxWidth / image.getWidth(null);
         } else {
             width = image.getWidth(null) * maxHeight / image.getHeight(null);
         }
+
         return getScaledImage(image, width, height, scaleType);
     }
 
     /**
-     * Get a scaled version of the input image, using the supplied type to
-     * select which scaling method to use.
+     * @param img       {@link Image} Image to scale.
+     * @param newWidth  Width to scale to
+     * @param newHeight Height to scale to
+     * @param scaleType Type of scaling to do.
      *
-     * @param img
-     * @return
+     * @return scaled version of the input image, using the supplied type to select which scaling method to use.
      */
     public static BufferedImage getScaledImage(Image img, int newWidth, int newHeight, int scaleType) {
         if (scaleType == IMAGE_SCALE_BICUBIC) {
@@ -188,7 +189,9 @@ public final class ImageUtil {
             return scaled;
         } else {
             ImageFilter filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
-                    img.getHeight(null), newWidth, newHeight);
+                  img.getHeight(null),
+                  newWidth,
+                  newHeight);
 
             ImageProducer prod = new FilteredImageSource(img.getSource(), filter);
             Image result = Toolkit.getDefaultToolkit().createImage(prod);
@@ -199,6 +202,7 @@ public final class ImageUtil {
 
     /** Image loaders */
     private static final List<ImageLoader> IMAGE_LOADERS;
+
     static {
         IMAGE_LOADERS = new ArrayList<>();
         IMAGE_LOADERS.add(new AtlasImageLoader());
@@ -207,8 +211,7 @@ public final class ImageUtil {
     }
 
     /**
-     * Add a new image loader to the first position of the list, if it isn't there
-     * already
+     * Add a new image loader to the first position of the list, if it isn't there already
      */
     public static void addImageLoader(ImageLoader loader) {
         if (null != loader && !IMAGE_LOADERS.contains(loader)) {
@@ -217,15 +220,12 @@ public final class ImageUtil {
     }
 
     /**
-     * Loads and returns the image of the given fileName. This method does not make
-     * sure the image
-     * is fully loaded, this must be done by the caller when necessary (the simplest
-     * way is to
-     * create a new ImageIcon with the image). If the image cannot be loaded for any
-     * reason,
-     * the method returns a placeholder image but not null.
+     * Loads and returns the image of the given fileName. This method does not make sure the image is fully loaded, this
+     * must be done by the caller when necessary (the simplest way is to create a new ImageIcon with the image). If the
+     * image cannot be loaded for any reason, the method returns a placeholder image but not null.
      *
      * @param fileName The image filename
+     *
      * @return The image if possible, a placeholder image otherwise
      */
     public static Image loadImageFromFile(String fileName) {
@@ -243,15 +243,12 @@ public final class ImageUtil {
 
 
     /**
-     * Loads and returns the image of the given fileName. This method does not make
-     * sure the image
-     * is fully loaded, this must be done by the caller when necessary (the simplest
-     * way is to
-     * create a new ImageIcon with the image). If the image cannot be loaded for any
-     * reason,
-     * the method returns a placeholder image but not null.
+     * Loads and returns the image of the given fileName. This method does not make sure the image is fully loaded, this
+     * must be done by the caller when necessary (the simplest way is to create a new ImageIcon with the image). If the
+     * image cannot be loaded for any reason, the method returns a placeholder image but not null.
      *
      * @param file The image as a MegaMekFile
+     *
      * @return The image if possible, a placeholder image otherwise
      */
     public static Image loadImageFromFile(MegaMekFile file) {
@@ -270,61 +267,68 @@ public final class ImageUtil {
         /**
          * Given a string representation of a file,
          *
-         * @param fileName
-         * @return
+         * @param fileName File to load.
+         *
+         * @return An {@link Image} object
          */
         Image loadImage(String fileName);
     }
 
     /**
-     * ImageLoader implementation that expects a path to an image file, and that
-     * file is loaded
-     * directly and the loaded image is returned.
+     * ImageLoader implementation that expects a path to an image file, and that file is loaded directly and the loaded
+     * image is returned.
      */
     public static class AWTImageLoader implements ImageLoader {
         @Override
         public @Nullable Image loadImage(String fileName) {
             File fin = new File(fileName);
+
             if (!fin.exists()) {
-                logger.error("Trying to load image for a non-existent file " + fileName);
+                LOGGER.error("Trying to load image for a non-existent file {}", fileName);
                 return null;
             }
+
             Image result = Toolkit.getDefaultToolkit().getImage(fileName);
+
             if (result == null) {
                 return null;
             }
+
             final boolean isAnimated = waitUntilLoaded(result);
+
             if ((result.getWidth(null) < 0) || (result.getHeight(null) < 0)) {
                 return null;
             }
+
             return isAnimated ? result : ImageUtil.createAcceleratedImage(result);
         }
     }
 
     /**
-     * ImageLoader that loads sub-regions from a larger atlas file. The filename is
-     * assumed to have
-     * the format {imageFile}(X,Y-Width,Height), where X,Y is the start of the image
-     * tile, and
-     * Width,Height are the size of the image tile.
+     * ImageLoader that loads sub-regions from a larger atlas file. The filename is assumed to have the format
+     * {imageFile}(X,Y-Width,Height), where X,Y is the start of the image tile, and Width,Height are the size of the
+     * image tile.
      */
     public static class TileMapImageLoader implements ImageLoader {
         /**
-         * Given a String with the format "X,Y" split this into the X,Y components, and
-         * use those to
-         * create a Coords object.
+         * Given a String with the format "X,Y" split this into the X,Y components, and use those to create a Coords
+         * object.
          *
-         * @param c
-         * @return
+         * @param coords String containing coordinates.
+         *
+         * @return {@link Coords} parsed.
          */
-        protected @Nullable Coords parseCoords(@Nullable String c) {
-            if (null == c || c.isEmpty()) {
+        protected @Nullable Coords parseCoords(@Nullable String coords) {
+            if (null == coords || coords.isEmpty()) {
                 return null;
             }
-            String[] elements = c.split(",", -1);
+
+            String[] elements = coords.split(",", -1);
+
             if (elements.length != 2) {
                 return null;
             }
+
             try {
                 int x = Integer.parseInt(elements[0]);
                 int y = Integer.parseInt(elements[1]);
@@ -335,55 +339,69 @@ public final class ImageUtil {
         }
 
         /**
-         * Given a string with the format {imageFile}(X,Y-W,H), load the image file and
-         * then use
-         * X,Y and W,H to find a sub-image within the original image and return that
-         * sub-image.
+         * Given a string with the format {imageFile}(X,Y-W,H), load the image file and then use X,Y and W,H to find a
+         * sub-image within the original image and return that sub-image.
          */
         @Override
         public @Nullable Image loadImage(String fileName) {
             int tileStart = fileName.indexOf('(');
             int tileEnd = fileName.indexOf(')');
+
             if ((tileStart == -1) || (tileEnd == -1) || (tileEnd < tileStart)) {
                 return null;
             }
+
             String coords = fileName.substring(tileStart + 1, tileEnd);
             int coordsSplitter = coords.indexOf('-');
+
             if (coordsSplitter == -1) {
                 return null;
             }
+
             Coords start = parseCoords(coords.substring(0, coordsSplitter));
             Coords size = parseCoords(coords.substring(coordsSplitter + 1));
+
             if ((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
                 return null;
             }
+
             String baseName = fileName.substring(0, tileStart);
             File baseFile = new File(baseName);
+
             if (!baseFile.exists()) {
                 return null;
             }
-            logger.info("Loading atlas: " + baseFile);
+
+            LOGGER.info("Loading atlas: {}", baseFile);
             Image base = Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
+
             if (null == base) {
                 return null;
             }
+
             waitUntilLoaded(base);
             BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
             Graphics2D g2d = result.createGraphics();
-            g2d.drawImage(base, 0, 0, result.getWidth(), result.getHeight(),
-                    start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);
+            g2d.drawImage(base,
+                  0,
+                  0,
+                  result.getWidth(),
+                  result.getHeight(),
+                  start.getX(),
+                  start.getY(),
+                  start.getX() + size.getX(),
+                  start.getY() + size.getY(),
+                  null);
             g2d.dispose();
             return result;
         }
     }
 
     /**
-     * ImageLoader that loads sub-regions from a larger atlas file, but is given
-     * file names that are mapped into an atlas. When constructed, this class
-     * reads in a map that maps image files to an atlas image and offset
-     * location. When an image file is requested to be opened, it first looks to
-     * see if the map contains that file, and if it does returns an image from
-     * the corresponding key which includes an atlas and offset.
+     * ImageLoader that loads sub-regions from a larger atlas file, but is given file names that are mapped into an
+     * atlas. When constructed, this class reads in a map that maps image files to an atlas image and offset location.
+     * When an image file is requested to be opened, it first looks to see if the map contains that file, and if it does
+     * return an image from the corresponding key which includes an atlas and offset.
      */
     public static class AtlasImageLoader extends TileMapImageLoader {
         ImageAtlasMap imgFileToAtlasMap;
@@ -394,9 +412,8 @@ public final class ImageUtil {
 
         @Override
         public Image loadImage(String fileName) {
-            // The tileset could be using the tiling syntax to flip the image
-            // We may still need to look up the base file name in an atlas and then modify
-            // the image
+            // The tile set could be using the tiling syntax to flip the image We may still need to look up the base
+            // file name in an atlas and then modify the image
             int tileStart = fileName.indexOf('(');
             int tileEnd = fileName.indexOf(')');
 
@@ -442,8 +459,16 @@ public final class ImageUtil {
                 Image img = super.loadImage(imgFileToAtlasMap.get(p));
                 BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
                 Graphics2D g2d = result.createGraphics();
-                g2d.drawImage(img, 0, 0, result.getWidth(), result.getHeight(),
-                        start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);
+                g2d.drawImage(img,
+                      0,
+                      0,
+                      result.getWidth(),
+                      result.getHeight(),
+                      start.getX(),
+                      start.getY(),
+                      start.getX() + size.getX(),
+                      start.getY() + size.getY(),
+                      null);
                 g2d.dispose();
                 return img;
             } else {
@@ -454,11 +479,11 @@ public final class ImageUtil {
     }
 
     /**
-     * Wait until the given toolkit image is fully loaded and return if the image is
-     * animated.
+     * Wait until the given toolkit image is fully loaded
      *
      * @param result Returns true if the given image is animated.
-     * @return
+     *
+     * @return if the image is animated
      */
     private static boolean waitUntilLoaded(Image result) {
         FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
@@ -468,11 +493,13 @@ public final class ImageUtil {
             long maxRuntime = 10000;
             long runTime = 0;
             while (!observer.isLoaded() && runTime < maxRuntime) {
+
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException ignored) {
                     // Do nothing
                 }
+
                 runTime = System.currentTimeMillis() - startTime;
             }
         }
@@ -480,8 +507,10 @@ public final class ImageUtil {
     }
 
     private static class FinishedLoadingObserver implements ImageObserver {
-        private static final int DONE = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.FRAMEBITS
-                | ImageObserver.ALLBITS;
+        private static final int DONE = ImageObserver.ABORT |
+                                              ImageObserver.ERROR |
+                                              ImageObserver.FRAMEBITS |
+                                              ImageObserver.ALLBITS;
 
         private final Thread mainThread;
         private volatile boolean loaded = false;
@@ -492,10 +521,10 @@ public final class ImageUtil {
         }
 
         @Override
-        public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-            if ((infoflags & DONE) > 0) {
+        public boolean imageUpdate(Image img, int informationFlags, int x, int y, int width, int height) {
+            if ((informationFlags & DONE) > 0) {
                 loaded = true;
-                animated = ((infoflags & ImageObserver.FRAMEBITS) > 0);
+                animated = ((informationFlags & ImageObserver.FRAMEBITS) > 0);
                 mainThread.interrupt();
                 return false;
             }
@@ -512,9 +541,8 @@ public final class ImageUtil {
     }
 
     /**
-     * takes an image and converts it to text in the Base64 encoding. When the given
-     * image is null, an
-     * empty String is returned.
+     * takes an image and converts it to text in the Base64 encoding. When the given image is null, an empty String is
+     * returned.
      */
     public static String base64TextEncodeImage(@Nullable Image image) {
         if (image == null) {
@@ -524,11 +552,11 @@ public final class ImageUtil {
         String base64Text;
 
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(bufferedImage, "png", baos);
-            baos.flush();
-            base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
-            baos.close();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+            byteArrayOutputStream.flush();
+            base64Text = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
+            byteArrayOutputStream.close();
         } catch (final IOException ioe) {
             throw new UncheckedIOException(ioe);
         }
@@ -537,7 +565,7 @@ public final class ImageUtil {
     }
 
     /**
-     * creates a ? image, used when units are hidden in double blind
+     * creates a ? image, used when units are hidden in double-blind
      */
     public static void createDoubleBlindHiddenImage(Map<Integer, String> imgCache) {
         BufferedImage image = new BufferedImage(56, 48, BufferedImage.TYPE_INT_ARGB);
@@ -556,17 +584,15 @@ public final class ImageUtil {
     }
 
     /**
-     * Returns a square normalized Kernel for a Gaussian Blur. The Kernel is has
-     * width x width elements.
-     * Sigma gives its Gauss sharpness. A high sigma of e.g. 1000 returns a flat
-     * Kernel of equal elements
-     * (= 1 / width ^ 2); sigma should not be smaller than about 0.2 (will lead to
-     * an exception).
-     * Normal sigma values are in the area of 1 to 5.
+     * Returns a square normalized Kernel for a Gaussian Blur. The Kernel has width x width elements. Sigma gives its
+     * Gauss sharpness. A high sigma of e.g. 1000 returns a flat Kernel of equal elements (= 1 / width ^ 2); sigma
+     * should not be smaller than about 0.2 (will lead to an exception). Normal sigma values are in the area of 1 to 5.
      *
      * @param width The length and height of the Kernel
      * @param sigma The extent of the Gaussian
+     *
      * @return A Kernel
+     *
      * @see ConvolveOp
      */
     public static Kernel getGaussKernel(int width, float sigma) {
@@ -575,9 +601,10 @@ public final class ImageUtil {
         float sum = 0;
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < width; ++y) {
-                float value = (float) (Math
-                        .exp(-0.5 * (Math.pow((x - mean) / sigma, 2.0) + Math.pow((y - mean) / sigma, 2.0)))
-                        / (2 * Math.PI * sigma * sigma));
+                float value = (float) (Math.exp(-0.5 *
+                                                      (Math.pow((x - mean) / sigma, 2.0) +
+                                                             Math.pow((y - mean) / sigma, 2.0))) /
+                                             (2 * Math.PI * sigma * sigma));
                 data[y * width + x] = value;
                 sum += value;
             }

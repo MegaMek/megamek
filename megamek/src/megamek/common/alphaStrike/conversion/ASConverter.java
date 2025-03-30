@@ -181,8 +181,8 @@ public final class ASConverter {
             element.getSpecialAbilities().setSUA(BattleForceSUA.AERODYNESC);
         }
         ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, conversionReport);
-        element.setPointValue(pvConverter.getSkillAdjustedPointValue());
         element.setBasePointValue(pvConverter.getBasePointValue());
+        element.setPointValue(pvConverter.getSkillAdjustedPointValue(element.getBasePointValue()));
         element.setConversionReport(conversionReport);
         return element;
     }
@@ -296,7 +296,8 @@ public final class ASConverter {
         element.setTMM(ASMovementConverter.convertTMM(conversionData));
         element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
         ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, report);
-        element.setPointValue(pvConverter.getSkillAdjustedPointValue());
+        element.setBasePointValue(pvConverter.getBasePointValue());
+        element.setPointValue(pvConverter.getSkillAdjustedPointValue(element.getBasePointValue()));
     }
 
     /**

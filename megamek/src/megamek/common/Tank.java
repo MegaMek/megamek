@@ -3151,4 +3151,13 @@ public class Tank extends Entity {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(2.866 + 0.987 * Math.log(getWeight())));
     }
+
+    /**
+     * @param location The location to check
+     * @return True when the given location is a side location, i.e. left, right or, on superheavy units, front or
+     * rear left/right.
+     */
+    public boolean isSideLocation(int location) {
+        return (location == Tank.LOC_LEFT) || (location == Tank.LOC_RIGHT);
+    }
 }

@@ -8191,7 +8191,7 @@ public class TWGameManager extends AbstractGameManager {
                     || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
                     || (entity.moved == EntityMovementType.MOVE_SKID)) {
                 entity.heatBuildup += entity.getRunHeat();
-            } else if (entity.moved == EntityMovementType.MOVE_JUMP) {
+            } else if (entity.moved == EntityMovementType.MOVE_JUMP && !entity.isJumpingWithMechanicalBoosters()) {
                 entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
             } else if (entity.moved == EntityMovementType.MOVE_SPRINT
                     || entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {
@@ -17161,7 +17161,10 @@ public class TWGameManager extends AbstractGameManager {
                     if (game.getPlanetaryConditions().getGravity() < 1) {
                         int j = entity.mpUsed;
                         int damage = 0;
-                        while (j > entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)) {
+                        int noGravityJumpMP = entity.isJumpingWithMechanicalBoosters()
+                              ? entity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                              : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY);
+                        while (j > noGravityJumpMP) {
                             j--;
                             damage++;
                         }

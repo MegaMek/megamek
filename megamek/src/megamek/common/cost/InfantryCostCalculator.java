@@ -90,6 +90,9 @@ public class InfantryCostCalculator {
         // Cost of armor on a per man basis added
         costs[idx++] = armorCost * infantry.getOInternal(0); // OInternal = menStarting
 
+        // For all additive costs - replace negatives with 0 to separate from multipliers
+        CostCalculator.removeNegativeAdditiveCosts(costs);
+
         // Price multiplier includes anti-mek training, motive type, and specializations
         costs[idx++] = -infantry.getPriceMultiplier();
 

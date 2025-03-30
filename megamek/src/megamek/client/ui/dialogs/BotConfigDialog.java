@@ -79,6 +79,7 @@ import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.internationalization.Internationalization;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
@@ -274,7 +275,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                     .collect(Collectors.toSet());
             while (playerNames.contains(name) && counter < 1000) {
                 counter++;
-                name = "Princess-" + RandomCallsignGenerator.getInstance().generate();
+                name = "Princess-" + Internationalization.normalizeTextToASCII(
+                      RandomCallsignGenerator.getInstance().generate(),
+                      true
+                ).replace(" ", "-");
 
             }
         }

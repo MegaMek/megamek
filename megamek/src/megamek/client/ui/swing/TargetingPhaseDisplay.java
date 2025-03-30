@@ -821,31 +821,39 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         // update target panel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        if ((currentEntity != Entity.NONE) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
-                && (target != null) && (weaponId != -1)) {
+        Entity entity = ce();
+        if ((entity != null) && entity.equals(clientgui.getUnitDisplay().getCurrentEntity())
+                && (target != null) && (weaponId != -1) && (entity.getPosition() != null)) {
             ToHitData toHit;
-            Mounted<?> m = ce().getEquipment(weaponId);
+            Mounted<?> m = entity.getEquipment(weaponId);
 
-            int targetDistance = ce().getPosition().distance(target.getPosition());
+            int targetDistance = entity.getPosition().distance(target.getPosition());
+
+            String distanceText = Integer.toString(targetDistance);
+            Game game = clientgui.getClient().getGame();
+            if (!game.onTheSameBoard(entity, target) && game.isOnGroundMap(entity) && game.isOnGroundMap(target)) {
+                targetDistance = CrossBoardAttackHelper.getCrossBoardGroundMapDistance(ce(), target, game);
+                distanceText = targetDistance / 17 + " Map Sheets";
+            }
+
             boolean isArtilleryAttack = m.getType().hasFlag(WeaponType.F_ARTILLERY)
                     // For other weapons that can make artillery attacks
                     || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
 
-            toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(),
+            toHit = WeaponAttackAction.toHit(game,
                     currentEntity, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
 
             String flightTimeText = "";
             if (isArtilleryAttack) {
-                ArtilleryAttackAction aaa = new ArtilleryAttackAction(ce().getId(), target.getTargetType(),
-                        target.getId(), weaponId, clientgui.getClient().getGame());
+                ArtilleryAttackAction aaa = new ArtilleryAttackAction(entity.getId(), target.getTargetType(),
+                        target.getId(), weaponId, game);
                 flightTimeText = String.format("(%d turns)", aaa.getTurnsTilHit());
             }
 
             clientgui.getUnitDisplay().wPan.setTarget(target, null);
-            clientgui.getUnitDisplay().wPan.wRangeR.setText(String.format("%d %s", targetDistance, flightTimeText));
+            clientgui.getUnitDisplay().wPan.wRangeR.setText(String.format("%s %s", distanceText, flightTimeText));
 
-            Game game = clientgui.getClient().getGame();
-            int distance = Compute.effectiveDistance(game, ce(), target);
+            int distance = Compute.effectiveDistance(game, entity, target);
             if (m.isUsedThisRound()) {
                 clientgui.getUnitDisplay().wPan.setToHit(
                         Messages.getString("TargetingPhaseDisplay.alreadyFired"));
@@ -867,7 +875,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 setFireEnabled(true);
             } else {
                 clientgui.getUnitDisplay().wPan.setToHit(toHit,
-                        ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
+                      entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
                 setFireEnabled(true);
             }
             setSkipEnabled(true);

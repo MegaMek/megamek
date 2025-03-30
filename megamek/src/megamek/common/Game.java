@@ -1070,7 +1070,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 case Targetable.TYPE_HEX_SCREEN:
                 case Targetable.TYPE_HEX_AERO_BOMB:
                 case Targetable.TYPE_HEX_TAG:
-                    return new HexTarget(HexTarget.idToCoords(nID), nType);
+                    return new HexTarget(HexTarget.idToLocation(nID), nType);
                 case Targetable.TYPE_FUEL_TANK:
                 case Targetable.TYPE_FUEL_TANK_IGNITE:
                 case Targetable.TYPE_BUILDING:

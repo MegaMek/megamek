@@ -40,6 +40,10 @@ public class HexTarget implements Targetable {
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
     }
 
+    public HexTarget(BoardLocation boardLocation, int nType) {
+        this(boardLocation.coords(), boardLocation.boardId(), nType);
+    }
+
     @Override
     public int getBoardId() {
         return boardId;
@@ -52,7 +56,7 @@ public class HexTarget implements Targetable {
 
     @Override
     public int getId() {
-        return HexTarget.coordsToId(m_coords);
+        return locationToId(getBoardLocation());
     }
 
     @Override
@@ -144,22 +148,19 @@ public class HexTarget implements Targetable {
         return m_bIgnite;
     }
 
-    /**
-     * The transformation encodes the y value in the top 5 decimal digits and
-     * the x value in the bottom 5. Could more efficiently encode this by
-     * partitioning the binary representation, but this is more human readable
-     * and still allows for a 99999x99999 hex map.
-     */
-
-    // encode 2 numbers into 1
-    public static int coordsToId(Coords c) {
-        return c.getY() * 100000 + c.getX();
+    /** Allows a 9999 x 999 map and board IDs up to 200 */
+    public static int locationToId(BoardLocation boardLocation) {
+        return boardLocation.boardId() * 10000000
+                     + boardLocation.coords().getY() * 10000
+                     + boardLocation.coords().getX();
     }
 
-    // decode 1 number into 2
-    public static Coords idToCoords(int id) {
-        int y = id / 100000;
-        return new Coords(id - (y * 100000), y);
+    public static BoardLocation idToLocation(int id) {
+        int boardId = id / 10000000;
+        id -= boardId * 10000000;
+        int y = id / 10000;
+        int x = id - y * 10000;
+        return BoardLocation.of(new Coords(x, y), boardId);
     }
 
     @Override
@@ -238,4 +239,8 @@ public class HexTarget implements Targetable {
         this.targetLevel = targetLevel;
     }
 
+    @Override
+    public String toString() {
+        return "HexTarget (type %d): %s; Board #%d".formatted(m_type, getPosition(), boardId);
+    }
 }

@@ -11010,16 +11010,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * defensively check and correct elevation
      */
     public boolean fixElevation() {
-        if (!isDeployed() || isOffBoard() || !game.getBoard().contains(getPosition())) {
+        if (!isDeployed() || isOffBoard() || !game.getBoard(boardId).contains(getPosition())) {
             return false;
         }
 
-        if (!isElevationValid(getElevation(), game.getBoard().getHex(getPosition()))) {
+        if (!isElevationValid(getElevation(), game.getBoard(boardId).getHex(getPosition()))) {
             logger.error("{} in hex {} is at invalid elevation {}",
                   getDisplayName(),
-                  HexTarget.coordsToId(getPosition()),
+                  HexTarget.locationToId(getBoardLocation()),
                   getElevation());
-            setElevation(-game.getBoard().getHex(getPosition()).depth());
+            setElevation(-game.getBoard(boardId).getHex(getPosition()).depth());
             logger.error(" moved to elevation {}", getElevation());
             return true;
         }

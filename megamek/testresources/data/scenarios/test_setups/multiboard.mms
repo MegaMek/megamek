@@ -50,8 +50,8 @@ factions:
     board: 1 #makes no diff yet
 
   - fullname: Locust LCT-1V
-    board: 8
-    at: [ 4,4 ]
+#    board: 8
+#    at: [ 4,4 ]
 
   - fullname: Atlas AS7-D
 

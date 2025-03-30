@@ -1772,8 +1772,6 @@ public class Board implements Serializable {
         }
     }
 
-
-
     public Map<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable() {
         return specialHexes;
     }
@@ -1815,9 +1813,9 @@ public class Board implements Serializable {
 //            }
 //        }
         toRedraw.addAll(shd.keySet());
-        //TODO: Add a BoardEvent for a set of coords
         toRedraw.forEach(coords ->
                processBoardEvent(new BoardEvent(this, coords, BoardEvent.BOARD_CHANGED_HEX)));
+        //TODO: Add a BoardEvent for a set of coords to avoid many events
     }
 
     public void setType(int t) {

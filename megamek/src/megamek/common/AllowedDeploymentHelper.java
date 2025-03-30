@@ -29,11 +29,11 @@ import static megamek.common.DeploymentElevationType.*;
 public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board, Hex hex, Game game) {
 
     /**
-     * Returns a list of elevations/altitudes that the given entity can deploy to at the given coords. This can be anything from the
-     * seafloor, swimming, ice, water surface, ground, up to elevations and altitudes. For VTOLs, elevations up to 10 are always included
-     * individually if available. Above that and above all terrain features of the hex, only a single elevation is reported using the
-     * ELEVATIONS_ABOVE marker, meaning that any elevation above the reported value is also available. Altitudes are always reported
-     * individually (0 to 10).
+     * Returns a list of elevations/altitudes that the given entity can deploy to at the given coords. This can be
+     * anything from the seafloor, swimming, ice, water surface, ground, up to elevations and altitudes. For VTOLs,
+     * elevations up to 10 are always included individually if available. Above that and above all terrain features of
+     * the hex, only a single elevation is reported using the ELEVATIONS_ABOVE marker, meaning that any elevation above
+     * the reported value is also available. Altitudes are always reported individually (0 to 10).
      *
      * @return All legal deployment elevations/altitudes
      */
@@ -42,11 +42,11 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
     }
 
     /**
-     * Returns a list of elevations/altitudes that the given entity can deploy to at the given coords that are of the given type. This can
-     * be anything from the seafloor, swimming, ice, water surface, ground, up to elevations and altitudes. For VTOLs, elevations up to 10
-     * are always included individually if available. Above that and above all terrain features of the hex, only a single elevation is
-     * reported using the ELEVATIONS_ABOVE marker, meaning that any elevation above the reported value is also available. Altitudes are
-     * always reported individually (0 to 10).
+     * Returns a list of elevations/altitudes that the given entity can deploy to at the given coords that are of the
+     * given type. This can be anything from the seafloor, swimming, ice, water surface, ground, up to elevations and
+     * altitudes. For VTOLs, elevations up to 10 are always included individually if available. Above that and above all
+     * terrain features of the hex, only a single elevation is reported using the ELEVATIONS_ABOVE marker, meaning that
+     * any elevation above the reported value is also available. Altitudes are always reported individually (0 to 10).
      *
      * @return All legal deployment elevations/altitudes of the given type
      */
@@ -62,7 +62,8 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
             result.addAll(allowedGroundElevations());
         }
         result.removeIf(o -> entity.isLocationProhibited(coords, o.elevation()));
-        result.removeIf(o -> Compute.stackingViolation(game, entity, o.elevation(), coords, null, entity.climbMode()) != null);
+        result.removeIf(o -> Compute.stackingViolation(game, entity, o.elevation(), coords,
+              board.getBoardId(), null, entity.climbMode()) != null);
 
         if (entity.getMovementMode().isWiGE()) {
             addAirborneWigeOptions(result);
@@ -126,7 +127,8 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         // Bridges block deployment for units of more than 1 level height if they intersect; height() == 0 is 1 level
         if (hex.containsTerrain(Terrains.BRIDGE) && (entity.height() > 0)) {
             int bridgeHeight = hex.terrainLevel(Terrains.BRIDGE_ELEV);
-            result.removeIf(o -> (o.elevation() < bridgeHeight) && (o.elevation() + entity.getHeight() >= bridgeHeight));
+            result.removeIf(o -> (o.elevation() < bridgeHeight) &&
+                                       (o.elevation() + entity.getHeight() >= bridgeHeight));
         }
 
         if (entity.getMovementMode().isVTOL()) {

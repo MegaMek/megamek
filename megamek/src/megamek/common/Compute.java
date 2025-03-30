@@ -362,8 +362,7 @@ public class Compute {
      * @param climbMode  The moving Entity's climb mode at the point it enters the
      *                   destination hex
      */
-    public static Entity stackingViolation(Game game, int enteringId,
-            Coords coords, boolean climbMode) {
+    public static Entity stackingViolation(Game game, int enteringId, Coords coords, boolean climbMode) {
         Entity entering = game.getEntity(enteringId);
         if (entering == null) {
             return null;
@@ -412,7 +411,19 @@ public class Compute {
     public static Entity stackingViolation(Game game, Entity entering,
             int elevation, Coords dest, Entity transport, boolean climbMode) {
         return stackingViolation(game, entering, entering.getPosition(),
-                elevation, dest, transport, climbMode);
+                elevation, dest, 0, transport, climbMode);
+    }
+
+    public static Entity stackingViolation(Game game, Entity entering,
+               Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode) {
+        return stackingViolation(game, entering, origPosition,
+              elevation, dest, 0, transport, climbMode);
+    }
+
+    public static Entity stackingViolation(Game game, Entity entering,
+               int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode) {
+        return stackingViolation(game, entering, entering.getPosition(),
+              elevation, dest, destBoardId, transport, climbMode);
     }
 
     /**
@@ -434,14 +445,14 @@ public class Compute {
      *                     destination hex
      */
     public static Entity stackingViolation(Game game, Entity entering,
-            Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode) {
+            Coords origPosition, int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode) {
         // no stacking violations on the low-atmosphere and space maps
-        if (!game.getBoard(entering).onGround()) {
+        if (!game.getBoard(destBoardId).onGround()) {
             return null;
         }
 
         // no stacking violations for flying aeros, except during deployment - no crushing units during deployment!
-        if (entering.isAirborne() && !((game.getPhase().equals(GamePhase.DEPLOYMENT) && elevation == 0))) {
+        if (entering.isAirborne() && !(game.getPhase().isDeployment() && (elevation == 0))) {
             return null;
         }
 
@@ -449,8 +460,7 @@ public class Compute {
                 || (entering instanceof SmallCraft);
         boolean isLargeSupport = (entering instanceof LargeSupportTank)
                 || (entering instanceof Dropship)
-                || ((entering instanceof Mek) && ((Mek) entering)
-                        .isSuperHeavy());
+                || ((entering instanceof Mek) && entering.isSuperHeavy());
 
         boolean isTrain = !entering.getAllTowedUnits().isEmpty();
         boolean isDropship = entering instanceof Dropship;
@@ -460,16 +470,15 @@ public class Compute {
         Vector<Coords> positions = new Vector<>();
         positions.add(dest);
         if (isDropship) {
-            for (int dir = 0; dir < 6; dir++) {
-                positions.add(dest.translated(dir));
-            }
+            positions.addAll(dest.allAdjacent());
         }
+        Board board = game.getBoard(destBoardId);
         for (Coords coords : positions) {
             int thisLowStackingLevel = elevation;
             if ((coords != null) && (origPosition != null)) {
                 thisLowStackingLevel = entering.calcElevation(
-                      game.getBoard(entering).getHex(origPosition),
-                      game.getBoard(entering).getHex(coords),
+                      board.getHex(origPosition),
+                      board.getHex(coords),
                       elevation, climbMode, false);
             }
             int thisHighStackingLevel = thisLowStackingLevel;
@@ -479,7 +488,7 @@ public class Compute {
             }
 
             // Walk through the entities in the given hex.
-            for (Entity inHex : game.getEntitiesVector(coords)) {
+            for (Entity inHex : game.getEntitiesVector(coords, destBoardId)) {
 
                 if (inHex.isAirborne()) {
                     continue;

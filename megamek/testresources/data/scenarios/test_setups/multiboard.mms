@@ -5,16 +5,19 @@ description: uses two boards
 map:
   - file: Beginner Box/16x17 Grassland 1.board
     name: Grassland
+    id: 6
   - file: Battle of Tukayyid Pack/32x17 Pozoristu Mountains (CW).board
     name: Pozoristu Mountains
+    id: 8
   - type: sky
     width: 35
     height: 20
     embed:
       - at: [ 5, 5 ]
-        id: 0
+        id: 6
       - at: [ 8, 9 ]
-        id: 1
+        id: 8
+    id: 12
   - file: buildingsnobasement/Flughafen 6.board
 
 
@@ -36,11 +39,16 @@ factions:
   - fullname: Mobile Long Tom Artillery LT-MOB-25
     offboard: NORTH
     distance: 200
+    board: 1 #makes no diff yet
 
   - fullname: Locust LCT-1V
+    board: 8
+    at: [ 4,4 ]
 
   - fullname: Atlas AS7-D
 
   - fullname: Cheetah IIC
-#    at: [8, 9]
-
+    at: [12, 9]
+    board: 12
+    facing: 2
+    altitude: 3

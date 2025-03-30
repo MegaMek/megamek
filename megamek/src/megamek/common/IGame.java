@@ -350,12 +350,9 @@ public interface IGame {
     // region Board
 
     /**
-     * Sets the given board as the game's board with the given boardId, possibly
-     * replacing the former board
-     * of the same id. This method is written with the idea that a game might have
-     * more than one board.
-     * Game's legacy methods of setBoard() and getBoard() use the boardId 0.
-     * This method is meant as a server-side method.
+     * Sets the given board as the game's board with the given boardId, possibly replacing the former board of the same
+     * id. This method is written with the idea that a game might have more than one board. Game's legacy methods of
+     * setBoard() and getBoard() use the boardId 0. This method is meant as a server-side method.
      *
      * @param boardId (currently ignored) The boardId to assing to that board
      * @param board   The board to use

@@ -147,10 +147,15 @@ public class ScenarioV2 implements Scenario {
 
         int id = 0;
         for (Board board : createBoard()) {
-            board.setBoardId(id);
-            game.setBoard(id++, board);
+            int boardId = board.getBoardId();
+            if (boardId == 0) { // default to 0 instead of -1 to keep compatibility with single-board!
+                boardId = id;
+                id++;
+                board.setBoardId(boardId);
+            }
+            game.setBoard(boardId, board);
         }
-        // post-process embedded boards
+        // post-process embedded boards and deployment areas
         for (Board board : game.getBoards().values()) {
             for (Coords coord : board.getEmbeddedBoardHexes()) {
                 Board embeddedBoard = game.getBoard(board.getEmbeddedBoardAt(coord));

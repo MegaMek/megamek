@@ -155,7 +155,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private void setDeployedPosition(Entity entity, Coords coords) {
         entity.setDeployed(true);
         // translate the position so "at: 2, 3" will place a unit on 0203 (instead of 0102)
-        entity.setPosition(new Coords(coords.getX() - 1, coords.getY() - 1));
+        entity.setPosition(coords);
     }
 
     private void assignStatus(Entity entity, JsonNode node) {

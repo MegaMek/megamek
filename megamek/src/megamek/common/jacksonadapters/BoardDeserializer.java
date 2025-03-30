@@ -71,18 +71,16 @@ public class BoardDeserializer extends StdDeserializer<Board> {
     }
 
     /**
-     * Parses the given map: or maps: node to return a list of one or more boards
-     * (the list should
-     * ideally never be empty, an exception being thrown instead). Board files are
-     * tried first
-     * in the given basePath; if not found there, MM's data/boards/ is tried
-     * instead.
+     * Parses the given map: or maps: node to return a list of one or more boards (the list should ideally never be
+     * empty, an exception being thrown instead). Board files are tried first in the given basePath; if not found there,
+     * MM's data/boards/ is tried instead.
      *
      * @param mapNode  a map: or maps: node from a YAML definition file
      * @param basePath a path to search board files in (e.g. scenario path)
+     *
      * @return a list of parsed boards
-     * @throws IllegalArgumentException for illegal node combinations and other
-     *                                  errors
+     *
+     * @throws IllegalArgumentException for illegal node combinations and other errors
      */
     public static List<Board> parse(JsonNode mapNode, File basePath) {
         // the map node is
@@ -128,6 +126,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             Board board = parseBoardFileNode(mapNode, basePath, fileName);
             board.setBoardType(BoardType.GROUND);
             board.setMapName(processName(mapNode).orElse(fileName));
+            board.setBoardId(parseId(mapNode));
             return board;
 
         } else if (mapNode.has(SURPRISE)) {
@@ -141,6 +140,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             parseBoardProcessors(board, mapNode);
             board.setBoardType(BoardType.GROUND);
             board.setMapName(processName(mapNode).orElse("Surprise Map"));
+            board.setBoardId(parseId(mapNode));
             return board;
         }
 
@@ -148,7 +148,6 @@ public class BoardDeserializer extends StdDeserializer<Board> {
         int mapWidth = mapNode.has(WIDTH) ? mapNode.get(WIDTH).intValue() : 16;
         int mapHeight = mapNode.has(HEIGHT) ? mapNode.get(HEIGHT).intValue() : 17;
         int columns = mapNode.has(COLS) ? mapNode.get(COLS).intValue() : 1;
-        // TODO: board ID
 
         Board board;
         if (mapNode.has(TYPE)) {
@@ -160,6 +159,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
                     board = Board.getSkyBoard(mapWidth, mapHeight);
                     board.setBoardType(BoardType.SKY);
                     board.setMapName(processName(mapNode).orElse("Atmospheric Map"));
+                    board.setBoardId(parseId(mapNode));
                     parseEmbeddedBoards(board, mapNode);
                     return board;
                 case ATMOSPHERIC:
@@ -167,18 +167,21 @@ public class BoardDeserializer extends StdDeserializer<Board> {
                     board = Board.getSkyBoard(mapWidth, mapHeight);
                     board.setBoardType(BoardType.SKY_WITH_TERRAIN);
                     board.setMapName(processName(mapNode).orElse("Atmospheric Map"));
+                    board.setBoardId(parseId(mapNode));
                     parseEmbeddedBoards(board, mapNode);
                     return board;
                 case SPACE:
                     board = Board.getSpaceBoard(mapWidth, mapHeight);
                     board.setBoardType(BoardType.FAR_SPACE);
                     board.setMapName(processName(mapNode).orElse("Space Map"));
+                    board.setBoardId(parseId(mapNode));
                     parseEmbeddedBoards(board, mapNode);
                     return board;
                 case HIGH_ALTITUDE:
                     // TODO: dont have that type yet
                     board.setBoardType(BoardType.NEAR_SPACE);
                     board.setMapName(processName(mapNode).orElse("High-Atmosphere Map"));
+                    board.setBoardId(parseId(mapNode));
                     break;
             }
         } else {
@@ -205,11 +208,16 @@ public class BoardDeserializer extends StdDeserializer<Board> {
         parseEmbeddedBoards(board, mapNode);
         board.setBoardType(BoardType.GROUND);
         board.setMapName(processName(mapNode).orElse("Ground Map"));
+        board.setBoardId(parseId(mapNode));
         return board;
     }
 
     private static Optional<String> processName(JsonNode boardNode) {
         return Optional.ofNullable(boardNode.has(NAME) ? boardNode.get(NAME).asText() : null);
+    }
+
+    private static int parseId(JsonNode boardNode) {
+        return boardNode.has(ID) ? boardNode.get(ID).intValue() : 0;
     }
 
     private static void parseEmbeddedBoards(Board board, JsonNode boardNode) {

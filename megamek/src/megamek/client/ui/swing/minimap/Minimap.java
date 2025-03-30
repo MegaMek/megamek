@@ -748,6 +748,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
 
             drawDeploymentZone(g);
+            drawEmbeddedBoards(g);
+
             // In case the flag SHOW SYMBOLS is set, it will draw the units and other stuff
             if (symbolsDisplayMode == SHOW_SYMBOLS) {
                 if (null != game) {
@@ -819,11 +821,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     /** Indicates the deployment hexes. */
     private void drawDeploymentZone(Graphics g) {
         if ((null != client) && (null != game) && game.getPhase().isDeployment() && (bv != null)
-                && (bv.getDeployingEntity() != null) && (dialog != null)) {
+                && (bv.getDeployingEntity() != null) && (dialog != null) && (getLocalPlayer() != null)) {
             GameTurn turn = game.getTurn();
-            if (getLocalPlayer() == null) {
-                return;
-            }
             if ((turn != null) && (turn.playerId() == getLocalPlayer().getId())) {
                 Entity deployingUnit = bv.getDeployingEntity();
 
@@ -832,12 +831,21 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                         Coords coords = new Coords(j, k);
 
                         if (board.isLegalDeployment(coords, deployingUnit) &&
-                                !deployingUnit.isLocationProhibited(coords, boardId)) {
+                                !deployingUnit.isLocationProhibited(BoardLocation.of(coords, boardId))) {
                             paintSingleCoordBorder(g, j, k, Color.yellow);
                         }
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Draw an outline around legal deployment hexes
+     */
+    private void drawEmbeddedBoards(Graphics g) {
+        for (Coords coords : board.embeddedBoardCoords()) {
+            paintEmbeddedBoard(g, coords.getX(), coords.getY(), Color.GREEN);
         }
     }
 
@@ -1059,6 +1067,27 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         g.setColor(c);
         ((Graphics2D) g).setStroke(new BasicStroke(Math.max(1, zoom / 2f)));
         g.drawPolygon(xPoints(x), yPoints(x, y), 6);
+    }
+
+
+    private void paintEmbeddedBoard(Graphics g, int x, int y, Color c) {
+        g.setColor(c);
+        ((Graphics2D) g).setStroke(new BasicStroke(Math.max(0.8f, zoom / 3f)));
+
+        int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
+        int[] xPoints = new int[6];
+        xPoints[0] = baseX + HEX_SIDE_BY_SIN30[zoom];
+        xPoints[1] = xPoints[0] + HEX_SIDE[zoom];
+        xPoints[2] = xPoints[1];
+        xPoints[3] = xPoints[0];
+
+        int baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
+        int[] yPoints = new int[6];
+        yPoints[0] = baseY + HEX_SIDE_BY_COS30[zoom];
+        yPoints[1] = yPoints[0];
+        yPoints[2] = baseY - HEX_SIDE_BY_COS30[zoom];
+        yPoints[3] = yPoints[2];
+        g.drawPolygon(xPoints, yPoints, 4);
     }
 
     private void paintCoord(Graphics g, int x, int y, boolean border) {

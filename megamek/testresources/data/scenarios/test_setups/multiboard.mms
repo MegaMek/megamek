@@ -27,13 +27,21 @@ options:
 
 factions:
 - name: P1
-  deploy: W
+#  deploy: W
 #  deploy:
 #    area:
 #      terrain:
-#        type: pavement
+#        type: woods
 #        maxdistance: 1
 #        boards: 1
+  deploy:
+    area:
+      border:
+        edges: [ east, north ]
+        # optional: the minimum distance from the edge; 0 means start at the edge hexes
+        mindistance: 2
+        # optional: the maximum distance from the edge
+        maxdistance: 3
 
   units:
   - fullname: Mobile Long Tom Artillery LT-MOB-25

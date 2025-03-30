@@ -55,11 +55,10 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
      * ImageObserver interface. This provides the necessary functionality.
      */
     @Override
-    public boolean imageUpdate(Image image, int infoflags, int x, int y,
-                               int width, int height) {
+    public boolean imageUpdate(Image image, int infoflags, int x, int y, int width, int height) {
         if (infoflags == ImageObserver.ALLBITS) {
             prepare();
-            bv.getPanel().repaint();
+            bv.repaint();
             return false;
         }
         return true;
@@ -154,7 +153,7 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
             // For use in a TreeSet, must not return 0 for equal priority as long as the objects aren't equal
             return hashCode() - o.hashCode();
         } else {
-            return this.getSpritePriority() - o.getSpritePriority();
+            return getSpritePriority() - o.getSpritePriority();
         }
     }
 

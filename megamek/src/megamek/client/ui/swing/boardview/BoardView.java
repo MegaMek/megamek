@@ -5180,7 +5180,7 @@ public final class BoardView extends AbstractBoardView
     public void addSprites(Collection<? extends Sprite> sprites) {
         super.addSprites(sprites);
         sprites.stream()
-              .filter(s -> !(s instanceof HexSprite) || !((HexSprite) s).isBehindTerrain())
+              .filter(s -> !(s instanceof HexSprite hexSprite) || !hexSprite.isBehindTerrain())
               .forEach(overTerrainSprites::add);
         sprites.stream()
               .filter(s -> s instanceof HexSprite)

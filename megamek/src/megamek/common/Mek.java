@@ -4195,7 +4195,7 @@ public abstract class Mek extends Entity {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+    public boolean isLocationProhibited(Coords c, int testBoardId, int testElevation) {
         if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }
@@ -4205,7 +4205,8 @@ public abstract class Mek extends Entity {
             return true;
         }
 
-        if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
+        if ((game.getBoard(testBoardId).isSpaceMap() && doomedInSpace())
+                  || (game.getBoard(testBoardId).isLowAtmosphereMap() && doomedInAtmosphere())) {
             return true;
         }
 
@@ -4219,7 +4220,7 @@ public abstract class Mek extends Entity {
                 return true;
             }
             // Can't deploy on a bridge
-            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == testElevation)
                     && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
@@ -4265,7 +4266,7 @@ public abstract class Mek extends Entity {
         }
 
         // a swimming Mek (UMU) may not reach above the surface
-        if ((currElevation == -1) && hex.hasDepth1WaterOrDeeper()
+        if ((testElevation == -1) && hex.hasDepth1WaterOrDeeper()
                 && (hex.terrainLevel(Terrains.WATER) > 1) && !isProne()) {
             return true;
         }

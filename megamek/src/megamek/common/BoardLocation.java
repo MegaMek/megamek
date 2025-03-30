@@ -179,7 +179,7 @@ public class BoardLocation implements Serializable {
         if (isNoLocation) {
             return "No Location";
         } else {
-            return coords.toFriendlyString() + " (Map Id: " + boardId + ")";
+            return coords.toFriendlyString() + " (Board Id: " + boardId + ")";
         }
     }
 

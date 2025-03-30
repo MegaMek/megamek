@@ -245,21 +245,16 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.SUMMARY);
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
-        computeCFWarningHexes(entity);
-        computeTowLinkBreakageHexes(entity);
+        computeWarningHexes(entity);
     }
 
-    private void computeCFWarningHexes(Entity ce) {
-        List<BoardLocation> warnList = CollapseWarning.findCFWarningsDeployment(game, ce);
+    private void computeWarningHexes(Entity ce) {
+        Set<BoardLocation> warnList = new HashSet<>(CollapseWarning.findCFWarningsDeployment(game, ce));
+        warnList.addAll(TowLinkWarning.findTowLinkIssues(game, ce));
         clientgui.showCollapseWarning(warnList);
     }
 
-    private void computeTowLinkBreakageHexes(Entity ce) {
-        List<BoardLocation> warnList = TowLinkWarning.findTowLinkIssues(game, ce);
-        clientgui.showCollapseWarning(warnList);
-    }
-
-    /** Enables relevant buttons and sets up for your turn. */
+    /** Enables relevant buttons and sets up for the local player's turn. */
     private void beginMyTurn() {
         clientgui.maybeShowUnitDisplay();
         selectEntity(clientgui.getClient().getFirstDeployableEntityNum());

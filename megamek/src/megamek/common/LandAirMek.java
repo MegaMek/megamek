@@ -541,7 +541,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+    public boolean isLocationProhibited(Coords c, int testBoardId, int testElevation) {
         if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }
@@ -561,11 +561,11 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                     return true;
                 }
                 // Can't deploy on a bridge
-                if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
+                if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == testElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
                     return true;
                 }
                 // Can't deploy on the surface of water
-                if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+                if (hex.containsTerrain(Terrains.WATER) && (testElevation == 0)) {
                     return true;
                 }
             }
@@ -579,16 +579,16 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                          hex.containsTerrain(Terrains.JUNGLE) ||
                          (hex.terrainLevel(Terrains.SNOW) > 1) ||
                          (hex.terrainLevel(Terrains.GEYSER) == 2);
-        } else if (getConversionMode() == CONV_MODE_AIRMEK && currElevation > 0) {
+        } else if (getConversionMode() == CONV_MODE_AIRMEK && testElevation > 0) {
             // Cannot enter woods or a building hex in AirMek mode unless using ground movement or flying over the
             // terrain.
             Hex hex = game.getHex(c, testBoardId);
             return (hex.containsTerrain(Terrains.WOODS) ||
                           hex.containsTerrain(Terrains.JUNGLE) ||
-                          hex.containsTerrain(Terrains.BLDG_ELEV)) && hex.ceiling() > currElevation;
+                          hex.containsTerrain(Terrains.BLDG_ELEV)) && hex.ceiling() > testElevation;
         } else {
             // Mek mode or AirMek mode using ground MP have the same restrictions as Biped Mek.
-            return super.isLocationProhibited(c, testBoardId, currElevation);
+            return super.isLocationProhibited(c, testBoardId, testElevation);
         }
     }
 

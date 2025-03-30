@@ -26,6 +26,7 @@ import megamek.client.ui.dialogs.MMNarrativeStoryDialog;
 import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.BoardLocation;
 import megamek.common.Configuration;
 import megamek.common.Targetable;
 import megamek.common.event.GameScriptedMessageEvent;
@@ -222,5 +223,9 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
 
     public IBoardView getBoardView(Targetable entity) {
         return boardViews.get(entity.getBoardId());
+    }
+
+    public IBoardView getBoardView(BoardLocation boardLocation) {
+        return boardViews.get(boardLocation.boardId());
     }
 }

@@ -23,7 +23,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.event.*;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This is a base class for SpriteHandlers that create and remove sprites in an attached BoardView.
@@ -37,7 +37,7 @@ public abstract class BoardViewSpriteHandler implements GameListener {
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     protected final AbstractClientGUI clientGUI;
-    protected final List<Sprite> currentSprites = new ArrayList<>();
+    protected final Collection<Sprite> currentSprites = new ArrayList<>();
 
     public BoardViewSpriteHandler(AbstractClientGUI clientGUI) {
         this.clientGUI = clientGUI;

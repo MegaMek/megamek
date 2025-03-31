@@ -15,15 +15,15 @@ public class PlayerRating {
     private int losses;
     private List<String> history; // Historique sous forme de chaînes de caractères
     private static final double K_FACTOR = 32.0;
+    // Elo Rating Strategy par défaut
     private RatingStrategy ratingStrategy = new EloRatingStrategy();
 
     /**
      * Constructeur de Rating.
      *
      * @param player Joueur pour lequel on veut le rating
-     * @param strategy strategy utiliser pour le calcul du rating
      */
-    public PlayerRating(Player player, RatingStrategy strategy) {
+    public PlayerRating(Player player) {
         this.playerId = player.getId();
         this.playerName = player.getName();
         this.isBot = player.isBot();

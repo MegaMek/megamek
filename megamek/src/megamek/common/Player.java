@@ -113,7 +113,7 @@ public final class Player extends TurnOrdered {
         this.name = name;
         this.id = id;
         // Stratégie par défaut est le EloRating Strategy
-        this.rating = new PlayerRating(this,new EloRatingStrategy());
+        this.rating = new PlayerRating(this);
     }
     //endregion Constructors
 

@@ -20,7 +20,6 @@ package megamek.client.ui.swing;
 
 import java.awt.event.KeyEvent;
 import java.net.URL;
-
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -34,8 +33,7 @@ import javax.swing.event.HyperlinkEvent;
 import megamek.logging.MMLogger;
 
 /**
- * This is a basic help dialog that can display HTML pages and also reacts to
- * hyperlink clicks.
+ * This is a basic help dialog that can display HTML pages and also reacts to hyperlink clicks.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @author Simon (Juliez)
@@ -56,7 +54,7 @@ public class HelpDialog extends JDialog {
         try {
             mainView.setPage(helpURL);
         } catch (Exception ex) {
-            logger.error(ex, "");
+            logger.debug("Help File Not Found: {}", helpURL);
             JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
 

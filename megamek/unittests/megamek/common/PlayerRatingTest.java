@@ -12,7 +12,7 @@ class PlayerRatingTest {
     @Test
     void testPlayerRatingInitialization() {
         Player player = new Player(1, "Test Player");
-        PlayerRating playerRating = new PlayerRating(player);
+        PlayerRating playerRating = new PlayerRating(player.getId());
 
         assertEquals(1500, playerRating.getCurrentRating(), "Le rating initial du joueur doit être de 1500.");
         assertEquals(0, playerRating.getMatchesPlayed(), "Le nombre de matchs joués doit être initialisé à 0.");
@@ -25,7 +25,7 @@ class PlayerRatingTest {
     @Test
     void testUpdateRating() {
         Player player = new Player(1, "Test Player");
-        PlayerRating playerRating = new PlayerRating(player);
+        PlayerRating playerRating = new PlayerRating(player.getId());
 
         double initialRating = playerRating.getCurrentRating();
         double enemyTeamRating = 1600;
@@ -48,7 +48,7 @@ class PlayerRatingTest {
     @Test
     void testRatingHistory() {
         Player player = new Player(1, "Test Player");
-        PlayerRating playerRating = new PlayerRating(player);
+        PlayerRating playerRating = new PlayerRating(player.getId());
 
         double enemyTeamRating = 1600;
 
@@ -64,7 +64,7 @@ class PlayerRatingTest {
     void testBotPlayerRating() {
         Player botPlayer = new Player(1, "Bot Player");
         botPlayer.setBot(true);
-        PlayerRating botRating = new PlayerRating(botPlayer);
+        PlayerRating botRating = new PlayerRating(botPlayer.getId());
 
         assertTrue(botRating.isBot(), "Le joueur doit être un bot.");
         assertEquals(1500, botRating.getCurrentRating(), "Le rating initial du bot doit être de 1500.");
@@ -90,7 +90,7 @@ class PlayerRatingTest {
     @Test
     void testToString() {
         Player player = new Player(1, "Test Player");
-        PlayerRating playerRating = new PlayerRating(player);
+        PlayerRating playerRating = new PlayerRating(player.getId());
 
         String ratingString = playerRating.toString();
         assertTrue(ratingString.contains("playerId=1"), "La chaîne doit contenir l'ID du joueur.");
@@ -190,7 +190,7 @@ class PlayerRatingTest {
     @Test
     void testStatisticsTracking() {
         Player player = new Player(1, "Test Player");
-        PlayerRating playerRating = new PlayerRating(player);
+        PlayerRating playerRating = new PlayerRating(player.getId());
 
         // Initial
         assertEquals(0, playerRating.getMatchesPlayed());
@@ -223,7 +223,7 @@ class PlayerRatingTest {
     @Test
     void testExtremeRatingValues() {
         Player player = new Player(1, "Test Player");
-        PlayerRating playerRating = new PlayerRating(player);
+        PlayerRating playerRating = new PlayerRating(player.getId());
 
         // Tester avec un rating très élevé
         playerRating.setPlayerRating(3000);
@@ -240,7 +240,7 @@ class PlayerRatingTest {
     @Test
     void testSetPlayerRating() {
         Player player = new Player(1, "Test Player");
-        PlayerRating playerRating = new PlayerRating(player);
+        PlayerRating playerRating = new PlayerRating(player.getId());
 
         // Tester la modification directe du rating
         playerRating.setPlayerRating(2000);
@@ -251,7 +251,7 @@ class PlayerRatingTest {
     @Test
     void testCalculWithDifferentResults() {
         Player player = new Player(1, "Test Player");
-        PlayerRating playerRating = new PlayerRating(player);
+        PlayerRating playerRating = new PlayerRating(player.getId());
 
         // Sauvegarder le rating initial
         double initialRating = playerRating.getCurrentRating();

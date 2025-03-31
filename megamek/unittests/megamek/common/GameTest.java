@@ -78,65 +78,61 @@ class GameTest {
 
 
     @Test
-    void testPlayerEloAjusted() {
+    void testPlayerEloAdjusted() {
 
         Game game = new Game();
+        double rating1 = 2000;
+        double rating2 = 1900;
+        double rating3 = 1850;
+        double rating4 = 2200;
 
-        // Définir l'équipe victorieuse(équipe 10)
+        // Définir l'équipe victorieuse (équipe 10)
         game.setVictoryTeam(10);
         game.setForceVictory(true);
 
-        // Création d'une equipe gagnante (équipe 10) avec des elos differents pour chaque
-        String playerName = "Test Player 2";
-        Player winner = new Player(1, playerName);
-        winner.setTeam(10);
-        winner.setPlayerElo(1500);
+        // Création d'une équipe gagnante (équipe 10) avec des Elos différents
+        Player winner1 = new Player(1, "Test Player 1");
+        winner1.getRatingObject().setPlayerRating(rating1);
+        winner1.setTeam(10);
 
-        String playerName2 = "Test Player 2";
-        Player winner2 = new Player(2, playerName2);
+        Player winner2 = new Player(2, "Test Player 2");
+        winner2.getRatingObject().setPlayerRating(rating2);
         winner2.setTeam(10);
-        winner2.setPlayerElo(1000);
 
-        String playerName3 = "Test Player 2";
-        Player winner3 = new Player(3, playerName3);
+        Player winner3 = new Player(3, "Test Player 3");
+        winner3.getRatingObject().setPlayerRating(rating3);
         winner3.setTeam(10);
-        winner3.setPlayerElo(1300);
 
         // Création d'un joueur perdant (équipe 20) avec un Elo initial de 1500
-        String playerName4 = "Test Player 2";
-        Player loser = new Player(4, playerName4);
+        Player loser = new Player(4, "Test Player 4");
+        loser.getRatingObject().setPlayerRating(rating4);
         loser.setTeam(20);
-        loser.setPlayerElo(1500);
 
         // Ajout des joueurs à la partie
-        game.addPlayer(winner.getId(), winner);
+        game.addPlayer(winner1.getId(), winner1);
         game.addPlayer(winner2.getId(), winner2);
         game.addPlayer(winner3.getId(), winner3);
         game.addPlayer(loser.getId(), loser);
 
         // Simuler la fin de partie en passant la phase à END
-        game.end(10,10);
+        game.end(10, 10);
 
         // Récupérer les Elo mis à jour
-        int winnerNewElo = winner.getPlayerElo();
-        int winnerNewElo2 = winner2.getPlayerElo();
-        int winnerNewElo3 = winner3.getPlayerElo();
-        int loserNewElo = loser.getPlayerElo();
+        int winnerNewElo1 = (int) winner1.getRatingObject().getCurrentRating();
+        int winnerNewElo2 = (int) winner2.getRatingObject().getCurrentRating();
+        int winnerNewElo3 = (int) winner3.getRatingObject().getCurrentRating();
+        int loserNewElo = (int) loser.getRatingObject().getCurrentRating();
 
+        System.out.println("Elo gagnant 1 : " + winnerNewElo1);
+        System.out.println("Elo gagnant 2 : " + winnerNewElo2);
+        System.out.println("Elo gagnant 3 : " + winnerNewElo3);
+        System.out.println("Elo perdant : " + loserNewElo);
 
-        // Pour déboguer, on peut afficher les valeurs (optionnel)
-        System.out.println("Elo du gagnant : " + winnerNewElo);
-        System.out.println("Elo du gagnant : " + winnerNewElo2);
-        System.out.println("Elo du gagnant : " + winnerNewElo3);
-        System.out.println("Elo du perdant : " + loserNewElo);
-
-        // Vérifier que l'Elo du gagnant a augmenté et que celui du perdant a diminué
-        assertTrue(winnerNewElo > 1500, "Le joueur gagnant doit voir son Elo augmenter.");
-        assertTrue(winnerNewElo2 > 1000, "Le joueur gagnant doit voir son Elo augmenter.");
-        assertTrue(winnerNewElo3 > 1300, "Le joueur gagnant doit voir son Elo augmenter.");
-        assertTrue(loserNewElo < 1500, "Le joueur perdant doit voir son Elo diminuer.");
-
-
-
+        // Vérifier que les gagnants voient leur Elo augmenter et que celui du perdant diminue
+        assertTrue(winnerNewElo1 > rating1, "Le joueur gagnant 1 doit voir son Elo augmenter.");
+        assertTrue(winnerNewElo2 > rating2, "Le joueur gagnant 2 doit voir son Elo augmenter.");
+        assertTrue(winnerNewElo3 > rating3, "Le joueur gagnant 3 doit voir son Elo augmenter.");
+        assertTrue(loserNewElo < rating4, "Le joueur perdant doit voir son Elo diminuer.");
     }
+
 }

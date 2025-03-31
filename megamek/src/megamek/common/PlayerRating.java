@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class PlayerRating {
-    private int INITIAL_RATING = 1500;
+    private final int INITIAL_RATING = 1500;
     private int playerId;
     private String playerName;
     private boolean isBot;
@@ -15,18 +15,18 @@ public class PlayerRating {
     private int losses;
     private List<String> history; // Historique sous forme de chaînes de caractères
     private static final double K_FACTOR = 32.0;
+    private RatingStrategy ratingStrategy = new EloRatingStrategy();
 
     /**
      * Constructeur de Rating.
      *
-     * @param playerId Identifiant unique du joueur
-     * @param playerName Nom du joueur
-     * @param isBot Indique si le joueur est un bot
+     * @param player Joueur pour lequel on veut le rating
+     * @param strategy strategy utiliser pour le calcul du rating
      */
-    public PlayerRating(int playerId, String playerName, boolean isBot) {
-        this.playerId = playerId;
-        this.playerName = playerName;
-        this.isBot = isBot;
+    public PlayerRating(Player player, RatingStrategy strategy) {
+        this.playerId = player.getId();
+        this.playerName = player.getName();
+        this.isBot = player.isBot();
         this.currentRating = INITIAL_RATING;
         this.matchesPlayed = 0;
         this.wins = 0;
@@ -37,33 +37,13 @@ public class PlayerRating {
 
 
     /**
-     * Calcule la nouvelle note Elo pour ce joueur.
-     *
-     * @param globalRating moyenne de rating de l'équipe adverse.
-     * @param result Résultat du match : 1 (victoire), 0 (match nul), -1 (défaite).
-     * @return La nouvelle note calculée.
-     */
-    public double calculateNewEloRating(double globalRating, int result) {
-        double actualScore;
-        if (result > 0) {
-            actualScore = 1.0;
-        } else if (result == 0) {
-            actualScore = 0.5;
-        } else {
-            actualScore = 0.0;
-        }
-        double expectedScore = 1.0 / (1.0 + Math.pow(10.0, (globalRating - currentRating) / 400.0));
-        return currentRating + K_FACTOR * (actualScore - expectedScore);
-    }
-
-    /**
      * Met à jour la note du joueur après un match, calcule la nouvelle note Elo et enregistre l'historique du changement.
      *
-     * @param globalRating La note actuelle de l'adversaire.
+     * @param enemyTeamRating La note actuelle de l'adversaire.
      * @param result Résultat du match : 1 (victoire), 0 (match nul), -1 (défaite).
      */
-    public void updateRating(double globalRating, int result) {
-        double newRating = calculateNewEloRating(globalRating, result);
+    public void updateRating(double enemyTeamRating, int result) {
+        double newRating = ratingStrategy.calculateNewRating(this.currentRating,enemyTeamRating,result);
 
         String changeLog = "Ancienne note: " + currentRating +
               ", Nouvelle note: " + newRating +
@@ -83,8 +63,20 @@ public class PlayerRating {
 
     // Getters et setters
 
+
+    public double getPlayerRating() {
+        return currentRating;
+    }
+    public void setPlayerRating(double playerRating) {
+        this.currentRating = playerRating;
+    }
+
     public int getPlayerId() {
         return playerId;
+    }
+
+    public void setRatingStrategy(RatingStrategy strategy) {
+        this.ratingStrategy = strategy;
     }
 
     public String getPlayerName() {

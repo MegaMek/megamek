@@ -198,26 +198,35 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         for (Player player : players) {
             int isWinner;
-            if (this.victoryTeam == Player.TEAM_NONE && this.victoryPlayerId == Player.PLAYER_NONE) {
+            if (isDraw()) {
                 isWinner = 0; // Match nul
             } else {
                 isWinner = (player.getTeam() == this.victoryTeam ? 1 : -1);
             }
-            player.getRatingObject().updateRating(getGlobalGameRating(),isWinner);
+            player.getRatingObject().updateRating(getEnemyTeamRating(),isWinner);
         }
+    }
+
+
+    public boolean isDraw()
+    {
+        return this.victoryTeam == Player.TEAM_NONE && this.victoryPlayerId == Player.PLAYER_NONE;
     }
 
     /**
      * Get the average rating of the current game
      */
-    public double getGlobalGameRating()
+    public double getEnemyTeamRating()
     {
-        double globalRating = 0.0;
+        double enemyTeamRating = 0.0;
         List<Player> players = getPlayersList();
         for (Player player : players) {
-            globalRating += player.getRatingNumber();
+            if(player.getTeam() != this.victoryTeam)
+            {
+                enemyTeamRating += player.getRatingNumber();
+            }
         }
-        return globalRating;
+        return enemyTeamRating;
     }
 
     /**

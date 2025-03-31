@@ -51,8 +51,6 @@ public final class Player extends TurnOrdered {
     private String name;
     private String email;
     private final int id;
-    private int elo;
-    private double score;
     private PlayerRating rating;
 
     private int team = TEAM_NONE;
@@ -114,7 +112,8 @@ public final class Player extends TurnOrdered {
     public Player(int id, String name) {
         this.name = name;
         this.id = id;
-        this.rating = new PlayerRating(this.id,this.name,false);
+        // Stratégie par défaut est le EloRating Strategy
+        this.rating = new PlayerRating(this,new EloRatingStrategy());
     }
     //endregion Constructors
 
@@ -153,31 +152,12 @@ public final class Player extends TurnOrdered {
               || getGroundObjectsToPlace().size() > 0;
     }
 
-    public int getPlayerElo()
-    {
-        return this.elo;
-    }
-
-    public void setPlayerElo(int elo)
-    {
-        this.elo = elo;
-    }
-
-
     public double getRatingNumber() {
         return rating.getCurrentRating();
     }
 
     public PlayerRating getRatingObject() {
         return rating;
-    }
-
-    public double getScore() {
-        return this.score;
-    }
-
-    public void setScore(double score) {
-        this.score = score;
     }
 
     public void setNbrMFConventional(int nbrMF) {
@@ -729,6 +709,7 @@ public final class Player extends TurnOrdered {
         var copy = new Player(id, name);
 
         copy.email = email;
+        copy.rating = rating;
 
         copy.game = game;
         copy.team = team;

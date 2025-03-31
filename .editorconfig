@@ -46,7 +46,7 @@ ij_java_align_multiline_assignment = false
 ij_java_align_multiline_binary_operation = false
 ij_java_align_multiline_chained_methods = false
 ij_java_align_multiline_deconstruction_list_components = false
-ij_java_align_multiline_extends_list = false
+ij_java_align_multiline_extends_list = true
 ij_java_align_multiline_for = false
 ij_java_align_multiline_method_parentheses = false
 ij_java_align_multiline_parameters = true
@@ -139,7 +139,7 @@ ij_java_entity_vo_suffix = VO
 ij_java_enum_constants_wrap = on_every_item
 ij_java_enum_field_annotation_wrap = on_every_item
 ij_java_extends_keyword_wrap = normal
-ij_java_extends_list_wrap = on_every_item
+ij_java_extends_list_wrap = normal
 ij_java_field_annotation_wrap = split_into_lines
 ij_java_field_name_prefix =
 ij_java_field_name_suffix =
@@ -214,7 +214,6 @@ ij_java_prefer_longer_names = true
 ij_java_prefer_parameters_wrap = false
 ij_java_preserve_module_imports = true
 ij_java_record_components_wrap = normal
-ij_java_repeat_annotations =
 ij_java_repeat_synchronized = true
 ij_java_replace_instanceof_and_cast = false
 ij_java_replace_null_check = true
@@ -585,6 +584,10 @@ ij_html_space_after_tag_name = false
 ij_html_space_around_equality_in_attribute = false
 ij_html_space_inside_empty_tag = false
 ij_html_text_wrap = normal
+
+[{*.jsf,*.jsp,*.jspf,*.tag,*.tagf,*.xjsp}]
+ij_jsp_jsp_prefer_comma_separated_import_list = false
+ij_jsp_keep_indents_on_empty_lines = false
 
 [{*.markdown,*.md}]
 ij_markdown_force_one_space_after_blockquote_symbol = true

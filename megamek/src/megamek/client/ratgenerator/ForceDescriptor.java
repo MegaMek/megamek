@@ -26,9 +26,9 @@ import megamek.common.MekFileParser;
 import megamek.common.MekSummary;
 import megamek.common.MekSummaryCache;
 import megamek.common.UnitType;
+import megamek.common.annotations.Nullable;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.logging.MMLogger;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Describes the characteristics of a force. May be changed during generation.

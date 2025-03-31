@@ -23,7 +23,6 @@ import java.util.Objects;
 import jakarta.xml.bind.annotation.XmlElement;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.common.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Coords stores x and y values. Since these are hexes, coordinates with odd x values are a half-hex down. Directions
@@ -129,7 +128,7 @@ public class Coords implements Serializable {
         }
     }
 
-    private static String @NotNull [] getParts(String input) {
+    private static String[] getParts(String input) {
         String[] parts;
 
         if (input.contains(",")) {
@@ -563,7 +562,7 @@ public class Coords implements Serializable {
             // HACK to make left appear before right in the sequence reliably
             centerDirection = (int) Math.round(src.radian(dest) + 0.0001 / HEXSIDE) % 6;
         }
-        
+
         directions[2] = centerDirection; // center last
         directions[1] = (centerDirection + 5) % 6;
         directions[0] = (centerDirection + 1) % 6;

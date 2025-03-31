@@ -29185,6 +29185,12 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
+    public Vector<Report> damageBuilding(Building bldg, int damage,
+                                         Coords coords) {
+        final String defaultWhy = " absorbs ";
+        return damageBuilding(bldg, damage, defaultWhy, coords);
+    }
+
     /**
      * Apply the given amount of damage to the building. Please note, this
      * method does <b>not</b> apply any damage to units inside the building,
@@ -29197,12 +29203,16 @@ public class TWGameManager extends AbstractGameManager {
      *               should not be <code>null</code>, but no exception will occur.
      * @param damage - the <code>int</code> amount of damage.
      * @param coords - the <code>Coords</code> of the building hex to be damaged
+     * @param level - the absolute level where the damage is dealt
      * @return a <code>Report</code> to be shown to the players.
      */
-    public Vector<Report> damageBuilding(Building bldg, int damage,
-            Coords coords) {
+    public Vector<Report> damageBuilding(Building bldg, int damage, Coords coords, int level) {
         final String defaultWhy = " absorbs ";
-        return damageBuilding(bldg, damage, defaultWhy, coords);
+        return damageBuilding(bldg, damage, defaultWhy, coords, level);
+    }
+
+    public Vector<Report> damageBuilding(Building bldg, int damage, String why, Coords coords) {
+        return damageBuilding(bldg, damage, why, coords, 0);
     }
 
     /**
@@ -29216,18 +29226,20 @@ public class TWGameManager extends AbstractGameManager {
      * @param why    - the <code>String</code> message that describes why the
      *               building took the damage.
      * @param coords - the <code>Coords</code> of the building hex to be damaged
+     * @param level  - the level at which the damage occurred (defaults to 0)
      * @return a <code>Report</code> to be shown to the players.
      */
-    public Vector<Report> damageBuilding(Building bldg, int damage, String why, Coords coords) {
+    public Vector<Report> damageBuilding(Building bldg, int damage, String why, Coords coords, int level) {
         Vector<Report> vPhaseReport = new Vector<>();
         Report r = new Report(1210, Report.PUBLIC);
 
         // Do nothing if no building or no damage was passed.
         if ((bldg != null) && (damage > 0)) {
-            r.messageId = 3435;
+            r.messageId = 3434;
             r.add(bldg.toString());
             r.add(why);
             r.add(damage);
+            r.add(level);
             vPhaseReport.add(r);
             int curArmor = bldg.getArmor(coords);
             if (curArmor >= damage) {
@@ -31808,30 +31820,32 @@ public class TWGameManager extends AbstractGameManager {
         // We only process _some_ of the normal damage when a hex is off-board
         if (hex != null) {
 
-            // Non-flak artillery damages terrain
-            if (!flak) {
-                // Report that damage applied to terrain, if there's TF to damage
+            // Non-ASF-targeting flak artillery damages terrain
+            if (!asfFlak) {
+                // Report that damage applied to terrain, if there's TF to damage and the level matches
                 Hex h = game.getBoard().getHex(coords);
                 if ((h != null) && h.hasTerrainFactor() && (altitude == h.getLevel())) {
-                    r = new Report(3384);
+                    r = new Report(3386);
                     r.indent(2);
                     r.subject = subjectId;
                     r.add(coords.getBoardNum());
                     r.add(damage * 2);
+                    r.add(altitude);
                     vPhaseReport.addElement(r);
+
+                    // Update hex and report any changes
+                    Vector<Report> newReports = tryClearHex(coords, damage * 2, subjectId);
+                    for (Report nr : newReports) {
+                        nr.indent(3);
+                    }
+                    vPhaseReport.addAll(newReports);
                 }
-                // Update hex and report any changes
-                Vector<Report> newReports = tryClearHex(coords, damage * 2, subjectId);
-                for (Report nr : newReports) {
-                    nr.indent(3);
-                }
-                vPhaseReport.addAll(newReports);
             }
 
             // Buildings do _not_ shield housed units from artillery damage!
-            if ((bldg != null)
-                    && !(flak && (((altitude > hex.terrainLevel(Terrains.BLDG_ELEV))
-                            || (altitude > hex.terrainLevel(Terrains.BRIDGE_ELEV)))))) {
+            if ((bldg != null) && ((altitude < hex.terrainLevel(Terrains.BLDG_ELEV))
+                            || (altitude < hex.terrainLevel(Terrains.BRIDGE_ELEV)))
+                      && !(asfFlak)) {
                 if (!((ammo != null) && (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)))) {
                     int buildingDamage;
                     if (variableDamage) {
@@ -31884,19 +31898,19 @@ public class TWGameManager extends AbstractGameManager {
                         }
                     }
 
-                    // damage the building
-                    Vector<Report> buildingReport = damageBuilding(bldg, buildingDamage, coords);
-                    for (Report report : buildingReport) {
-                        report.subject = subjectId;
+                    // damage the building (skip basement damage if no basement has been discovered)
+                    if (altitude >= hex.getLevel() || !(bldg.getBasement(coords).isUnknownOrNone())) {
+                        Vector<Report> buildingReport = damageBuilding(bldg, buildingDamage, coords, altitude);
+                        for (Report report : buildingReport) {
+                            report.subject = subjectId;
+                        }
+                        vPhaseReport.addAll(buildingReport);
                     }
-                    vPhaseReport.addAll(buildingReport);
                 }
             }
 
-            if (flak && ((altitude <= 0)
-                    || (altitude <= hex.terrainLevel(Terrains.BLDG_ELEV))
-                    || (altitude == hex.terrainLevel(Terrains.BRIDGE_ELEV)))) {
-                // Flak in this hex would only hit landed units
+            if (asfFlak && (altitude <= 0)) {
+                // Anti-ASF Flak in this hex should hit nothing at all
                 return alreadyHit;
             }
         }
@@ -31997,7 +32011,7 @@ public class TWGameManager extends AbstractGameManager {
             Coords bCoords = entry.getValue();
             int bLevel = entry.getKey();
             alreadyHit = artilleryDamageHex(
-                    bCoords, attackSource, blastShape.get(entry), ammo, subjectId, killer, null, flak,
+                    bCoords, centre, blastShape.get(entry), ammo, subjectId, killer, null, flak,
                     bLevel, altitude, vPhaseReport, asfFlak, alreadyHit, false, falloff);
         }
 

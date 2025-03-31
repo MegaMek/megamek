@@ -63,10 +63,6 @@ public class PlayerRating {
 
     // Getters et setters
 
-
-    public double getPlayerRating() {
-        return currentRating;
-    }
     public void setPlayerRating(double playerRating) {
         this.currentRating = playerRating;
     }

@@ -112,6 +112,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private boolean ignorePlayerDefeatVotes = false;
     private int victoryPlayerId = Player.PLAYER_NONE;
     private int victoryTeam = Player.TEAM_NONE;
+    private boolean isCompetitive = false;
 
     private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<>();
     private Vector<Minefield> vibrabombs = new Vector<>();
@@ -528,6 +529,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         processGameEvent(new GamePlayerChangeEvent(this, player));
     }
 
+    public boolean getIsCompetitive() {
+        return this.isCompetitive;
+    }
+
+    public void setIsCompetitive(boolean isCompetitive)
+    {
+        this.isCompetitive = isCompetitive;
+    }
     /**
      * Returns the number of entities owned by the player, regardless of their
      * status.
@@ -2697,7 +2706,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void end(int winner, int winnerTeam) {
         setVictoryPlayerId(winner);
         setVictoryTeam(winnerTeam);
-        updateEloRatings();
+        if(isCompetitive)
+        {
+            updateEloRatings();
+        }
         processGameEvent(new GameEndEvent(this));
 
     }

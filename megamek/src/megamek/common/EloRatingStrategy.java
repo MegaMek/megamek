@@ -10,7 +10,7 @@ public class EloRatingStrategy implements RatingStrategy {
         if (result > 0) {
             actualScore = 1.0;  // Victoire
         } else if (result == 0) {
-            actualScore = 0.5; // Match nul
+            return currentRating; // Match nul
         } else {
             actualScore = 0.0; // Défaite
         }

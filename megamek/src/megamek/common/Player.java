@@ -156,7 +156,7 @@ public final class Player extends TurnOrdered {
 
     public PlayerRating getRatingObject() {
         if (rating == null) {
-            rating = new PlayerRating(this.getId());
+            rating = RatingPersistenceManager.getInstance().getPlayerRating(this.getId(), this);
         }
         return rating;
     }

@@ -112,7 +112,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private boolean ignorePlayerDefeatVotes = false;
     private int victoryPlayerId = Player.PLAYER_NONE;
     private int victoryTeam = Player.TEAM_NONE;
-    private boolean isCompetitive = false;
+    private boolean isCompetitive = true;
 
     private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<>();
     private Vector<Minefield> vibrabombs = new Vector<>();
@@ -196,6 +196,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     private void updateEloRatings() {
         List<Player> players = getPlayersList();
+        RatingPersistenceManager ratingManager = RatingPersistenceManager.getInstance();
 
         for (Player player : players) {
             int isWinner;
@@ -204,7 +205,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             } else {
                 isWinner = (player.getTeam() == this.victoryTeam ? 1 : -1);
             }
-            player.getRatingObject().updateRating(getEnemyTeamRating(),isWinner);
+            player.getRatingObject().updateRating(getEnemyTeamRating(), isWinner);
+
+            // Sauvegarder le rating mis à jour
+            ratingManager.updatePlayerRating(player.getRatingObject());
         }
     }
 

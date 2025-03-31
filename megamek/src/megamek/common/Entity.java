@@ -7880,7 +7880,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         if ((this instanceof Infantry) || (this instanceof ProtoMek)) {
-            if ((rv != 2) && (rv != 8) && (rv != 10)) {
+            if ((rv != 2) && (rv != 8)) {
                 rv = 0;
             }
         }

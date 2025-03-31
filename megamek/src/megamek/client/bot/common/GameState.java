@@ -124,4 +124,11 @@ public interface GameState {
      * @return An enumeration of artillery attacks
      */
     Enumeration<ArtilleryAttackAction> getArtilleryAttacks();
+
+    /**
+     * Returns the success probability of the pathing.
+     * @param pathing The pathing object to evaluate
+     * @return The success probability of the pathing
+     */
+    float successProbability(Pathing pathing);
 }

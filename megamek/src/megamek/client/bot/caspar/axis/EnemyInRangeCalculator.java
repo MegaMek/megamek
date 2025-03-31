@@ -29,27 +29,47 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
-import megamek.common.UnitRole;
+import megamek.client.bot.common.StructOfUnitArrays;
+import megamek.common.Coords;
+
+import java.util.List;
+
+import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * Calculates the threat by role
+ * Calculates the enemy threat in nearby hexes (37 values).
  * @author Luana Coppio
  */
-public class ThreatByRoleCalculator extends BaseAxisCalculator {
-    @Override
-    public float[] axis() {
-        return new float[3];
-    }
+public class EnemyInRangeCalculator extends BaseAxisCalculator {
 
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
-        //            "threat_by_sniper",
-        //            "threat_by_missile_boat",
-        //            "threat_by_juggernaut",
+        float[] distance = axis();
+        var unit = pathing.getEntity();
+        var maxRange = unit.getMaxWeaponRange();
+        var enemies = gameState.getEnemyUnitsSOU();
+        var closestEnemy = getClosestEnemy(pathing, enemies);
 
-        // This calculates the threat by role
-        float[] threatByRole = axis();
+        if (maxRange > 0 && closestEnemy < maxRange) {
+            distance[0] = clamp01(1 - (float) closestEnemy / maxRange);
+        }
 
-        return threatByRole;
+        return distance;
+    }
+
+    private static int getClosestEnemy(Pathing pathing, StructOfUnitArrays enemies) {
+        int originX = pathing.getFinalCoords().getX();
+        int originY = pathing.getFinalCoords().getY();
+        int x;
+        int y;
+        int closestEnemy = Integer.MAX_VALUE;
+        int distance;
+        for (int i = 0; i < enemies.size(); i++) {
+            x = enemies.getX(i);
+            y = enemies.getY(i);
+            distance = Coords.distance(originX, originY, x, y);
+            closestEnemy = Math.min(Coords.distance(originX, originY, x, y), closestEnemy);
+        }
+        return closestEnemy;
     }
 }

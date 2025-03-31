@@ -30,22 +30,43 @@ package megamek.client.bot.caspar.axis;
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
 import megamek.common.Entity;
+import megamek.common.UnitRole;
 
-import static megamek.codeUtilities.MathUtility.clamp01;
+import java.util.List;
+
+import static megamek.common.UnitRole.AMBUSHER;
+import static megamek.common.UnitRole.BRAWLER;
+import static megamek.common.UnitRole.JUGGERNAUT;
+import static megamek.common.UnitRole.MISSILE_BOAT;
+import static megamek.common.UnitRole.SCOUT;
+import static megamek.common.UnitRole.SKIRMISHER;
+import static megamek.common.UnitRole.SNIPER;
+import static megamek.common.UnitRole.STRIKER;
+
 
 /**
- * Calculates the unit movement
+ * Calculates the unit role
  * @author Luana Coppio
  */
-public class UnitMovementCalculator extends BaseAxisCalculator {
+public class UnitRoleBehaviorCalculator extends BaseAxisCalculator {
+
+    private static final List<UnitRole> UNIT_ROLES = List.of(AMBUSHER,
+          BRAWLER, JUGGERNAUT, MISSILE_BOAT, SCOUT, SKIRMISHER, SNIPER, STRIKER);
+
+    @Override
+    public float[] axis() {
+        return new float[UNIT_ROLES.size()];
+    }
+
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
-        // This calculates the unit movement
-        float[] unitMovement = axis();
-
+        // This calculates the unit role
+        float[] unitRole = axis();
         Entity unit = pathing.getEntity();
-        float move = pathing.getDistanceTravelled() / (float) unit.getRunMP();
-        unitMovement[0] = move;
-        return unitMovement;
+        int index = UNIT_ROLES.indexOf(unit.getRole());
+        if (index != -1) {
+            unitRole[index] = 1.0f;
+        }
+        return unitRole;
     }
 }

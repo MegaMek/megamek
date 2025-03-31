@@ -30,24 +30,21 @@ package megamek.client.bot.caspar.axis;
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
 import megamek.common.Entity;
-import megamek.common.UnitRole;
+
+import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * Calculates the unit role
+ * Calculates the unit movement
  * @author Luana Coppio
  */
-public class UnitRoleCalculator extends BaseAxisCalculator {
-    @Override
-    public float[] axis() {
-        return new float[UnitRole.values().length];
-    }
-
+public class DistanceTraveledCalculator extends BaseAxisCalculator {
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
-        // This calculates the unit role
-        float[] unitRole = axis();
+        // This calculates the unit movement
+        float[] unitMovement = axis();
+
         Entity unit = pathing.getEntity();
-        unitRole[unit.getRole().ordinal()] = 1.0f;
-        return unitRole;
+        unitMovement[0] = normalize(pathing.getDistanceTravelled(), 0f, unit.getRunMP());
+        return unitMovement;
     }
 }

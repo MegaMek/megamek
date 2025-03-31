@@ -59,6 +59,7 @@ public class StructOfUnitArrays implements Iterable<Integer> {
     private int[] role;
     private int[] armor;
     private int[] internal;
+    private int[] bv;
     private boolean[] ecm;
     private boolean[] vip;
     private boolean[] cargoTransport;
@@ -81,6 +82,7 @@ public class StructOfUnitArrays implements Iterable<Integer> {
         this.role = new int[length];
         this.armor = new int[length];
         this.internal = new int[length];
+        this.bv = new int[length];
         this.ecm = new boolean[length];
         this.vip = new boolean[length];
         this.cargoTransport = new boolean[length];
@@ -109,6 +111,7 @@ public class StructOfUnitArrays implements Iterable<Integer> {
             this.armor[i] = Math.max(entity.getTotalArmor(), 0);
             this.internal[i] = (entity instanceof IAero aero) ?  Math.max(aero.getSI(), 0) :
                   Math.max(entity.getTotalInternal(), 0);
+            this.bv[i] = entity.getInitialBV();
             this.ecm[i] = entity.hasECM();
             this.vip[i] = UnitClassifier.isVIP(entity);
             this.cargoTransport[i] = UnitClassifier.isTransport(entity);
@@ -130,6 +133,7 @@ public class StructOfUnitArrays implements Iterable<Integer> {
             this.role = new int[length];
             this.armor = new int[length];
             this.internal = new int[length];
+            this.bv = new int[length];
             this.ecm = new boolean[length];
             this.vip = new boolean[length];
             this.cargoTransport = new boolean[length];
@@ -396,6 +400,16 @@ public class StructOfUnitArrays implements Iterable<Integer> {
     public int getInternal(int index) {
         assertIndex(index);
         return internal[index];
+    }
+
+    /**
+     * Get the battle value of the unit at the given index.
+     * @param index index of the unit
+     * @return the battle value of the unit
+     */
+    public int getBV(int index) {
+        assertIndex(index);
+        return bv[index];
     }
 
     /**

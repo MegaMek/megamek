@@ -34,6 +34,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
 
+import static megamek.codeUtilities.MathUtility.clamp;
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
@@ -51,17 +52,18 @@ public class FavoriteTargetInRangeCalculator extends BaseAxisCalculator {
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // calculate if the favorite target role type is in range
         float[] favoriteTarget = axis();
-        // 0 - SNIPER
-        // 1 - MISSILE BOAT
-        // 2 - JUGGERNAUT
         Entity unit = pathing.getEntity();
         int maxRange = unit.getMaxWeaponRange();
-        for (int i = 0; i < UnitRole.values().length; i++) {
-            favoriteTarget[i] = getDistanceToClosestEnemyWithRole(pathing, gameState.getEnemyUnitsSOU(), maxRange, UnitRole.values()[i]);
-        }
+
+        favoriteTarget[0] = getNormalizedDistanceToClosestEnemyWithRole(pathing, gameState.getEnemyUnitsSOU(), maxRange,
+              UnitRole.SNIPER);
+        favoriteTarget[1] = getNormalizedDistanceToClosestEnemyWithRole(pathing, gameState.getEnemyUnitsSOU(), maxRange,
+              UnitRole.MISSILE_BOAT);
+        favoriteTarget[2] = getNormalizedDistanceToClosestEnemyWithRole(pathing, gameState.getEnemyUnitsSOU(), maxRange,
+              UnitRole.JUGGERNAUT);
+
         return favoriteTarget;
     }
-
 
     /**
      * Counts the number of units covering the current unit
@@ -69,18 +71,16 @@ public class FavoriteTargetInRangeCalculator extends BaseAxisCalculator {
      * @param structOfUnitArrays The struct of unit arrays to evaluate
      * @return The number of units covering the current unit
      */
-    private float getDistanceToClosestEnemyWithRole(Pathing pathing, StructOfUnitArrays structOfUnitArrays, int distance, UnitRole role) {
-        int xd;
-        int yd;
+    private float getNormalizedDistanceToClosestEnemyWithRole(Pathing pathing, StructOfUnitArrays structOfUnitArrays, int distance, UnitRole role) {
         int x = pathing.getFinalCoords().getX();
         int y = pathing.getFinalCoords().getY();
         int length = structOfUnitArrays.size();
 
+        int xd;
+        int yd;
         float dist;
         float closedDist = Integer.MAX_VALUE;
         for (int i = 0; i < length; i++) {
-            int id = structOfUnitArrays.getId(i);
-
             xd = structOfUnitArrays.getX(i);
             yd = structOfUnitArrays.getY(i);
             if (role == structOfUnitArrays.getRole(i)) {
@@ -88,6 +88,6 @@ public class FavoriteTargetInRangeCalculator extends BaseAxisCalculator {
                 closedDist = Math.min(closedDist, dist);
             }
         }
-        return 1 - clamp01(closedDist / (distance + 1f));
+        return clamp01(1 - clamp01(closedDist / (distance + 1f)));
     }
 }

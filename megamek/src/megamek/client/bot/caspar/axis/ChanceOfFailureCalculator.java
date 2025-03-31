@@ -29,27 +29,21 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
-import megamek.common.UnitRole;
+
+import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * Calculates the threat by role
+ * Calculates the unit max range
  * @author Luana Coppio
  */
-public class ThreatByRoleCalculator extends BaseAxisCalculator {
-    @Override
-    public float[] axis() {
-        return new float[3];
-    }
+public class ChanceOfFailureCalculator extends BaseAxisCalculator {
 
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
-        //            "threat_by_sniper",
-        //            "threat_by_missile_boat",
-        //            "threat_by_juggernaut",
+        // This calculates the unit movement
+        float[] maxRange = axis();
 
-        // This calculates the threat by role
-        float[] threatByRole = axis();
-
-        return threatByRole;
+        maxRange[0] = clamp01(1 - gameState.successProbability(pathing));
+        return maxRange;
     }
 }

@@ -44,12 +44,10 @@ public class EcmCoverageCalculator extends BaseAxisCalculator {
         float[] ecmCoverage = axis();
 
         var unit = pathing.getEntity();
-        if (!unit.hasECM()) {
-            ecmCoverage[0] = 0.0f;
-        } else {
+        if (unit.hasECM()) {
             int overlappingECM = unitsUnderECMRange(pathing, gameState.getFriendlyUnitsSOU());
             overlappingECM += unitsUnderECMRange(pathing, gameState.getOwnUnitsSOU());
-            ecmCoverage[0] = 1.0f / (overlappingECM + 1.0f);
+            ecmCoverage[0] = normalize(1.0f / (overlappingECM + 1.0f), 0, 1);
         }
 
         return ecmCoverage;

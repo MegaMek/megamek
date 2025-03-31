@@ -39,7 +39,7 @@ import java.util.Set;
  * Calculates the facing of the unit against the 5 closest enemy units in the final position
  * @author Luana Coppio
  */
-public class FacingEnemyCalculator extends BaseAxisCalculator {
+public class IsFacingEnemyCalculator extends BaseAxisCalculator {
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates if the unit is facing the enemy

@@ -29,27 +29,37 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
+import megamek.common.Entity;
 import megamek.common.UnitRole;
 
+import java.util.List;
+
+import static megamek.common.UnitRole.*;
+
+
 /**
- * Calculates the threat by role
+ * Calculates the unit role
  * @author Luana Coppio
  */
-public class ThreatByRoleCalculator extends BaseAxisCalculator {
+public class MyUnitRoleCalculator extends BaseAxisCalculator {
+
+    private static final List<UnitRole> UNIT_ROLES = List.of(AMBUSHER,
+          BRAWLER, JUGGERNAUT, MISSILE_BOAT, SCOUT, SKIRMISHER, SNIPER, STRIKER);
+
     @Override
     public float[] axis() {
-        return new float[3];
+        return new float[UNIT_ROLES.size()];
     }
 
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
-        //            "threat_by_sniper",
-        //            "threat_by_missile_boat",
-        //            "threat_by_juggernaut",
-
-        // This calculates the threat by role
-        float[] threatByRole = axis();
-
-        return threatByRole;
+        // This calculates the unit role
+        float[] unitRole = axis();
+        Entity unit = pathing.getEntity();
+        int index = UNIT_ROLES.indexOf(unit.getRole());
+        if (index != -1) {
+            unitRole[index] = 1.0f;
+        }
+        return unitRole;
     }
 }

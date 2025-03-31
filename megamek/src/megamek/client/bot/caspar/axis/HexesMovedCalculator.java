@@ -29,27 +29,20 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
-import megamek.common.UnitRole;
+import megamek.common.Entity;
 
 /**
- * Calculates the threat by role
+ * Calculates the unit movement
  * @author Luana Coppio
  */
-public class ThreatByRoleCalculator extends BaseAxisCalculator {
-    @Override
-    public float[] axis() {
-        return new float[3];
-    }
-
+public class HexesMovedCalculator extends BaseAxisCalculator {
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
-        //            "threat_by_sniper",
-        //            "threat_by_missile_boat",
-        //            "threat_by_juggernaut",
+        // This calculates the unit movement
+        float[] unitMovement = axis();
 
-        // This calculates the threat by role
-        float[] threatByRole = axis();
-
-        return threatByRole;
+        Entity unit = pathing.getEntity();
+        unitMovement[0] = normalize(pathing.getDistanceTravelled(), 0f, unit.getRunMP());
+        return unitMovement;
     }
 }

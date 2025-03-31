@@ -94,4 +94,14 @@ public class UnitPath implements Pathing {
     public Coords getWaypoint() {
         return null;
     }
+
+    @Override
+    public boolean isJumping() {
+        return unitAction.jumping();
+    }
+
+    @Override
+    public int getMpUsed() {
+        return unitAction.mpUsed();
+    }
 }

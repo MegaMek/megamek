@@ -59,10 +59,11 @@ public class UnitHealthCalculator extends BaseAxisCalculator {
 
         float[] health = axis();
         Entity unit = pathing.getEntity();
+
         health[0] = OVERALL_ARMOR.getArmorRemainingPercent(unit);
         health[1] = FRONT_SIDE.getArmorRemainingPercent(unit);
-        health[2] = LEFT_SIDE.getArmorRemainingPercent(unit);
-        health[3] = RIGHT_SIDE.getArmorRemainingPercent(unit);
+        health[2] = RIGHT_SIDE.getArmorRemainingPercent(unit);
+        health[3] = LEFT_SIDE.getArmorRemainingPercent(unit);
         health[4] = BACK_SIDE.getArmorRemainingPercent(unit);
 
         return health;

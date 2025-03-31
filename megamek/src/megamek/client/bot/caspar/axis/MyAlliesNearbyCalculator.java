@@ -33,57 +33,46 @@ import megamek.client.bot.common.StructOfUnitArrays;
 import megamek.common.Coords;
 
 /**
- * Calculates the distance to the closest enemy VIP
+ * Calculates the number of enemies close by.
  * @author Luana Coppio
  */
-public class EnemyVipDistanceCalculator extends BaseAxisCalculator {
-    private static final int MAX_DISTANCE = 34; // approximately 2 boards
+public class MyAlliesNearbyCalculator extends BaseAxisCalculator {
 
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
-        // This calculates the distance to the closest enemy VIP
-        float[] vipDistance = axis();
-        int dist = getDistanceToClosestVIP(pathing, gameState.getEnemyUnitsSOU());
+        float[] enemiesNearby = axis();
 
-        vipDistance[0] = normalize(dist, 0, MAX_DISTANCE);
-        return vipDistance;
+        int units = getUnitsAtRange(8, pathing, gameState.getOwnUnitsSOU());
+        units += getUnitsAtRange(8, pathing, gameState.getFriendlyUnitsSOU());
+
+        enemiesNearby[0] = normalize(units, 0, 4);
+        return enemiesNearby;
     }
 
     /**
      * Calculates the distance to the closest enemy VIP
      * @param pathing the pathing object
-     * @param enemies the enemy units on a StructOfUnitArrays
+     * @param friendlies the enemy units on a StructOfUnitArrays
      * @return the distance to the closest enemy VIP, 0 if there are no VIP enemies
      */
-    private static int getDistanceToClosestVIP(Pathing pathing, StructOfUnitArrays enemies) {
+    private static int getUnitsAtRange(int distance, Pathing pathing, StructOfUnitArrays friendlies) {
         int originX = pathing.getFinalCoords().getX();
         int originY = pathing.getFinalCoords().getY();
+        int id = pathing.getEntity().getId();
         int x;
         int y;
-        int highestBV = 0;
-        int dist = Integer.MAX_VALUE;
-        for (int i = 0; i < enemies.size(); i++) {
-            if (enemies.isVIP(i)) {
-                x = enemies.getX(i);
-                y = enemies.getY(i);
-                dist = Math.min(dist, Coords.distance(originX, originY, x, y));
+        int units = 0;
+        for (int i = 0; i < friendlies.size(); i++) {
+            x = friendlies.getX(i);
+            y = friendlies.getY(i);
+            // Ignore the unit itself
+            if (friendlies.getId(i) == id) {
+                continue;
+            }
+            if (Coords.distance(originX, originY, x, y) < distance) {
+                units++;
             }
         }
-        if (dist == Integer.MAX_VALUE) {
-            for (int i = 0; i < enemies.size(); i++) {
-                if (enemies.getBV(i) > highestBV) {
-                    x = enemies.getX(i);
-                    y = enemies.getY(i);
-                    highestBV = enemies.getBV(i);
-                    dist = Coords.distance(originX, originY, x, y);
-                }
-            }
-        }
-        if (dist == Integer.MAX_VALUE) {
-            dist = 0;
-        }
-        return dist;
+        return units;
     }
-
-
 }

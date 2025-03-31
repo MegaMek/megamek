@@ -1350,6 +1350,7 @@ public class MovePath implements Cloneable, Serializable, Pathing {
     /**
      * Returns the number of MPs used in the path
      */
+    @Override
     public int getMpUsed() {
         if (getLastStep() != null) {
             return getLastStep().getMpUsed();
@@ -1388,6 +1389,7 @@ public class MovePath implements Cloneable, Serializable, Pathing {
     /**
      * Returns true if the entity is jumping or if it's a flying lam.
      */
+    @Override
     public boolean isJumping() {
         return contains(MoveStepType.START_JUMP);
     }

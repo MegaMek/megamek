@@ -29,27 +29,42 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
-import megamek.common.UnitRole;
+import megamek.client.bot.common.StructOfUnitArrays;
+import megamek.common.Coords;
 
 /**
- * Calculates the threat by role
+ * Calculates the number of enemies close by.
  * @author Luana Coppio
  */
-public class ThreatByRoleCalculator extends BaseAxisCalculator {
-    @Override
-    public float[] axis() {
-        return new float[3];
-    }
+public class EnemiesNearbyCalculator extends BaseAxisCalculator {
 
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
-        //            "threat_by_sniper",
-        //            "threat_by_missile_boat",
-        //            "threat_by_juggernaut",
+        float[] enemiesNearby = axis();
+        // 10 distance
+        enemiesNearby[0] = normalize(getUnitsAtRange(10, pathing, gameState.getEnemyUnitsSOU()), 0, 8);
+        return enemiesNearby;
+    }
 
-        // This calculates the threat by role
-        float[] threatByRole = axis();
-
-        return threatByRole;
+    /**
+     * Calculates the distance to the closest enemy VIP
+     * @param pathing the pathing object
+     * @param enemies the enemy units on a StructOfUnitArrays
+     * @return the distance to the closest enemy VIP, 0 if there are no VIP enemies
+     */
+    private static int getUnitsAtRange(int distance, Pathing pathing, StructOfUnitArrays enemies) {
+        int originX = pathing.getFinalCoords().getX();
+        int originY = pathing.getFinalCoords().getY();
+        int x;
+        int y;
+        int units = 0;
+        for (int i = 0; i < enemies.size(); i++) {
+            x = enemies.getX(i);
+            y = enemies.getY(i);
+            if (Coords.distance(originX, originY, x, y) < distance) {
+                units++;
+            }
+        }
+        return units;
     }
 }

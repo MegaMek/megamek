@@ -32,7 +32,7 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
 
 public class LandAirMek extends BipedMek implements IAero, IBomber {
-    private static final MMLogger logger = MMLogger.create(LandAirMek.class);
+    private static final MMLogger LOGGER = MMLogger.create(LandAirMek.class);
 
     @Serial
     private static final long serialVersionUID = -8118673802295814548L;
@@ -61,7 +61,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public static final int LOC_CAPITAL_WINGS = 10;
 
     /**
-     * Translate a 'Mek location to the equivalent Aero location.
+     * Translate a `Mek location to the equivalent Aero location.
      */
     public static int getAeroLocation(int loc) {
         return switch (loc) {
@@ -204,7 +204,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public String getLAMTypeString(int lamType) {
         if (lamType < 0 || lamType >= LAM_STRING.length) {
-            logger.error("Attempted to get LAM Type string for unknown type {} returning standard.", lamType);
+            LOGGER.error("Attempted to get LAM Type string for unknown type {} returning standard.", lamType);
             return LAM_STRING[LAM_STANDARD];
         }
         return LAM_STRING[lamType];
@@ -907,7 +907,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     /*
-     * Cycling through conversion modes for LAMs in 'Mek or fighter mode is simple toggling between two states. LAMs
+     * Cycling through conversion modes for LAMs in `Mek or fighter mode is simple toggling between two states. LAMs
      * in AirMek mode have three possible states.
      */
     @Override
@@ -934,6 +934,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         return canConvertTo(getConversionMode(), getConversionModeFor(toMode));
     }
 
+    /**
+     * @deprecated No indicated Uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public boolean canConvertTo(int fromMode, EntityMovementMode toMode) {
         return canConvertTo(fromMode, getConversionModeFor(toMode));
     }
@@ -1045,8 +1049,6 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     /**
      * LAMs can only carry mechanized BA in mek mode
-     *
-     * @return
      */
     @Override
     public boolean canLoad(Entity unit, boolean checkElev) {
@@ -1082,6 +1084,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         whoFirst = Compute.randomInt(500);
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public int getWhoFirst() {
         return whoFirst;
     }
@@ -1861,22 +1867,22 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public Map<String, Integer> groupWeaponsByLocation() {
         Map<String, Integer> groups = new HashMap<>();
+
         for (Mounted<?> mounted : getTotalWeaponList()) {
-            int loc = LOC_CAPITAL_WINGS;
-            if ((loc == Mek.LOC_CT) || (loc == Mek.LOC_HEAD)) {
-                loc = LOC_CAPITAL_NOSE;
-            }
-            if (mounted.isRearMounted() || (loc == Mek.LOC_LLEG) || (loc == Mek.LOC_RLEG)) {
-                loc = LOC_CAPITAL_AFT;
-            }
+            int loc = switch (mounted.getLocation()) {
+                case Mek.LOC_CT, Mek.LOC_HEAD -> LOC_CAPITAL_NOSE;
+                case Mek.LOC_LLEG, Mek.LOC_RLEG -> mounted.isRearMounted() ? LOC_CAPITAL_AFT : LOC_CAPITAL_WINGS;
+                default -> LOC_CAPITAL_WINGS;
+            };
+
             String key = mounted.getType().getInternalName() + ":" + loc;
             groups.merge(key, mounted.getNWeapons(), Integer::sum);
         }
+
         return groups;
     }
 
-    // Damage a fighter that was part of a squadron when splitting it. Per
-    // StratOps pg. 32 & 34
+    // Damage a fighter that was part of a squadron when splitting it. Per StratOps pg. 32 & 34
     @Override
     public void doDisbandDamage() {
 
@@ -2010,7 +2016,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     protected void addBomb(Mounted<?> mounted, int loc) throws LocationFullException {
         if ((loc < 0) || (loc >= crits.length)) {
-            logger.error("Cannot add bomb {} at illegal location {}", mounted.getName(), loc);
+            LOGGER.error("Cannot add bomb {} at illegal location {}", mounted.getName(), loc);
             return;
         }
 

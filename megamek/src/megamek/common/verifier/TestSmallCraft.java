@@ -63,7 +63,7 @@ public class TestSmallCraft extends TestAero {
     public static int maxArmorPoints(SmallCraft sc) {
         ArmorType a = ArmorType.forEntity(sc);
         return (int) Math.floor(a.getPointsPerTon(sc) * maxArmorWeight(sc) +
-                                      sc.get0SI() * (sc.isPrimitive() ? 2.64 : 4));
+                                      sc.getOSI() * (sc.isPrimitive() ? 2.64 : 4));
     }
 
     /**
@@ -71,9 +71,9 @@ public class TestSmallCraft extends TestAero {
      */
     public static double maxArmorWeight(SmallCraft smallCraft) {
         if (smallCraft.isSpheroid()) {
-            return floor(smallCraft.get0SI() * 3.6, Ceil.HALFTON);
+            return floor(smallCraft.getOSI() * 3.6, Ceil.HALFTON);
         } else {
-            return floor(smallCraft.get0SI() * 4.5, Ceil.HALFTON);
+            return floor(smallCraft.getOSI() * 4.5, Ceil.HALFTON);
         }
     }
 

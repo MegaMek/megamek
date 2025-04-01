@@ -1281,7 +1281,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     @Override
-    public int get0SI() {
+    public int getOSI() {
         return getOInternal(LOC_CT);
     }
 

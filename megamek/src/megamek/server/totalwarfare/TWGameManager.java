@@ -1978,7 +1978,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (entity.isCapitalScale()) {
                     if (a != null) {
                         int currentSI = a.getSI() * 20;
-                        a.initializeSI(a.get0SI() * 20);
+                        a.initializeSI(a.getOSI() * 20);
                         a.setSI(currentSI);
                     }
                     if (entity.isCapitalFighter()) {
@@ -1998,7 +1998,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 } else if (a != null) {
                     int currentSI = a.getSI() * 2;
-                    a.initializeSI(a.get0SI() * 2);
+                    a.initializeSI(a.getOSI() * 2);
                     a.setSI(currentSI);
                 }
             }
@@ -19469,7 +19469,7 @@ public class TWGameManager extends AbstractGameManager {
                         int opRoll = Compute.d6(1);
                         if (((te instanceof Jumpship) && !(te instanceof Warship) && (opRoll > 3))
                                 || ((te instanceof Dropship) && (opRoll > 4))
-                                || ((te instanceof Warship) && (a.get0SI() <= 30) && (opRoll > 5))) {
+                                || ((te instanceof Warship) && (a.getOSI() <= 30) && (opRoll > 5))) {
                             // over-penetration happened
                             r = new Report(9090);
                             r.subject = te_n;

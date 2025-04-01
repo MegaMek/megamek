@@ -28,7 +28,6 @@ import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.GZIPOutputStream;
@@ -1206,7 +1205,7 @@ public class EntityListFile {
                 if (craft instanceof EscapePods) {
                     // Original number of pods, used to set the strength of a group of pods
                     output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ORIG_PODS + ' ' + MULParser.ATTR_NUMBER
-                            + "=\"" + craft.get0SI());
+                            + "=\"" + craft.getOSI());
                     output.write("\"/>\n");
                 }
 

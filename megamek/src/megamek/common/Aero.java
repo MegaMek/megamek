@@ -644,7 +644,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    public int get0SI() {
+    public int getOSI() {
         return orig_structIntegrity;
     }
 
@@ -1750,7 +1750,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public double getInternalRemainingPercent() {
-        return ((double) getSI() / (double) get0SI());
+        return ((double) getSI() / (double) getOSI());
     }
 
     protected int calculateWalk() {

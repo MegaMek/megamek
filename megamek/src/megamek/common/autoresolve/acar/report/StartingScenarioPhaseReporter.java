@@ -104,7 +104,7 @@ public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseRepo
                     var entity = (Entity) game.getInGameObject(element.getId()).orElseThrow();
                     var crew = entity.getCrew();
                     var armor = Math.max(entity.getArmorRemainingPercent(), 0d);
-                    var internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).get0SI()
+                    var internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).getOSI()
                         : entity.getInternalRemainingPercent();
                     reportConsumer.accept(new PublicReportEntry("acar.startingScenario.unitStats")
                         .add(new EntityNameReportEntry(entity).reportText())

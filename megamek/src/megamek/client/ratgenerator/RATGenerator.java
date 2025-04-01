@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.common.universe.Factions2;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1394,41 +1395,10 @@ public class RATGenerator {
     }
 
     private void loadFactions(File dir) {
-        File file = new MegaMekFile(dir, "factions.xml").getFile(); // TODO : Remove inline file path
-        FileInputStream fis;
-        try {
-            fis = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            logger.error(e, "Unable to read RAT generator factions file");
-            return;
-        }
-
-        Document xmlDoc;
-
-        try {
-            DocumentBuilder db = MMXMLUtility.newSafeDocumentBuilder();
-            xmlDoc = db.parse(fis);
-        } catch (Exception ex) {
-            logger.error(ex, "loadFactions");
-            return;
-        }
-
-        Element element = xmlDoc.getDocumentElement();
-        NodeList nl = element.getChildNodes();
-
-        element.normalize();
-
-        for (int x = 0; x < nl.getLength(); x++) {
-            Node wn = nl.item(x);
-            if (wn.getNodeName().equalsIgnoreCase("faction")) {
-                if (wn.getAttributes().getNamedItem("key") != null) {
-                    FactionRecord rec = FactionRecord.createFromXml(wn);
-                    factions.put(rec.getKey(), rec);
-                } else {
-                    logger.warn("Faction key not found in " + file.getPath());
-                }
-            }
-        }
+        // As a temporary measure, the RAT Generator factions are populated from the new unified factions
+        // list instead of using that directly.
+        var yamlFactions = Factions2.getInstance();
+        yamlFactions.getFactions().stream().map(FactionRecord::new).forEach(f -> factions.put(f.getKey(), f));
     }
 
     /**
@@ -1674,35 +1644,14 @@ public class RATGenerator {
         PrintWriter pw;
 
         FactionRecord[] factionRecs = factions.values().toArray(new FactionRecord[0]);
-        Arrays.sort(factionRecs, (arg0, arg1) -> {
-            if ((arg0.getParentFactions() == null) && (arg1.getParentFactions() != null)) {
-                return -1;
-            } else if ((arg0.getParentFactions() != null) && (arg1.getParentFactions() == null)) {
-                return 1;
-            } else if (arg0.getKey().contains(".") && !arg1.getKey().contains(".")) {
-                return 1;
-            } else if (!arg0.getKey().contains(".") && arg1.getKey().contains(".")) {
-                return -1;
-            } else {
-                return arg0.getName().compareTo(arg1.getName());
-            }
-        });
-
-        File file = new File(dir + "/factions.xml"); // TODO : Remove inline file path
-        try {
-            pw = new PrintWriter(file, StandardCharsets.UTF_8);
-        } catch (Exception ex) {
-            logger.error(ex, "exportRATGen");
-            return;
-        }
-
-        pw.println("<?xml version='1.0' encoding='UTF-8'?>");
-        pw.println("<factions>");
         for (FactionRecord fRec : factionRecs) {
-            fRec.writeToXml(pw);
+            try {
+                fRec.saveIfChanged();
+            } catch (Exception ex) {
+                logger.error(ex, "exportRATGen");
+                return;
+            }
         }
-        pw.println("</factions>");
-        pw.close();
 
         ChassisRecord[] chassisRecs = chassis.values().toArray(new ChassisRecord[0]);
         Arrays.sort(chassisRecs, Comparator.comparing(AbstractUnitRecord::getKey));
@@ -1714,7 +1663,7 @@ public class RATGenerator {
             int era = ERAS.get(i);
             int nextEra = (i < ERAS.size() - 1) ? ERAS.get(i + 1) : Integer.MAX_VALUE;
             try {
-                file = new File(dir + "/" + era + ".xml");
+                File file = new File(dir + "/" + era + ".xml");
                 pw = new PrintWriter(file, StandardCharsets.UTF_8);
                 pw.println("<?xml version='1.0' encoding='UTF-8'?>");
                 pw.println("<!-- Era " + era + "-->");

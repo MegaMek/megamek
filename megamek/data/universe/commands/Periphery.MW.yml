@@ -1,0 +1,12 @@
+key: Periphery.MW
+name: March Worlds
+tags:
+  - PERIPHERY
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery

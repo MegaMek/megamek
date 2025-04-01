@@ -1,0 +1,13 @@
+key: CJF.TA
+name: Turkina Ascendancy
+yearsActive:
+  - start: 3150
+    end: 3152
+tags:
+  - MINOR
+  - CLAN
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+fallBackFactions:
+  - CJF

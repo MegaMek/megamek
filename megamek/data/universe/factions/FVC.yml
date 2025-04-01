@@ -1,0 +1,36 @@
+key: FVC
+name: Filtvelt Coalition
+capital: Filtvelt
+yearsActive:
+  - start: 3072
+tags:
+  - PERIPHERY
+color:
+  red: 255
+  green: 228
+  blue: 181
+logo: Periphery/Filtvelt Coalition.png
+background: Inner Sphere/Federated Suns.png
+camos: Filtvelt Coalition
+nameGenerator: FS
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.HR
+  - FS

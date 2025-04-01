@@ -1,0 +1,13 @@
+key: SL3.CJF
+name: Star League (Clan Jade Falcon)
+yearsActive:
+  - start: 3151
+tags:
+  - MINOR
+  - CLAN
+ratingLevels:
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.IS
+  - CJF

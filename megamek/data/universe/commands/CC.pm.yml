@@ -1,0 +1,9 @@
+key: CC.pm
+name: Planetary Militia
+yearsActive:
+  - start: 2367
+ratingLevels:
+  - F
+fallBackFactions:
+  - CC
+  - IS.pm

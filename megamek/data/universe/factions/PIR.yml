@@ -1,0 +1,32 @@
+key: PIR
+name: Pirate
+capital: Terra
+tags:
+  - PLAYABLE
+  - PIRATE
+color:
+  red: 128
+  green: 40
+  blue: 0
+background: Pirate.png
+camos: Pirates
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 2
+  - 1
+  - 0
+  - 1
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery

@@ -1,0 +1,30 @@
+key: CGS
+name: Clan Goliath Scorpion
+nameChanges:
+  3080: Escorpión Imperio
+capital: Roche
+yearsActive:
+  - start: 2807
+    end: 3080
+successor: CEI
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 104
+  green: 125
+  blue: 11
+logo: Clan/Clan Goliath Scorpion.png
+background: Clan/Clan Goliath Scorpion.png
+camos: Clans/Goliath Scorpion
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.HW
+postInvasionHonorRating: STRICT

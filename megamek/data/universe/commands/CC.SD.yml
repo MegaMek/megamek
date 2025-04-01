@@ -1,0 +1,9 @@
+key: CC.SD
+name: Sian Lancers
+yearsActive:
+  - start: 2367
+    end: 3000
+ratingLevels:
+  - D
+fallBackFactions:
+  - CC

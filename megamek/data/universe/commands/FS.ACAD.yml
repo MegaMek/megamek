@@ -1,0 +1,8 @@
+key: FS.ACAD
+name: Academy and Training Units
+yearsActive:
+  - start: 2317
+ratingLevels:
+  - D
+fallBackFactions:
+  - FS

@@ -1,0 +1,27 @@
+key: CWIE
+name: Clan Wolf-in-Exile
+capital: Arc-Royal
+yearsActive:
+  - start: 3057
+    end: 3151
+successor: CWE
+tags:
+  - SMALL
+  - CLAN
+color:
+  red: 160
+  green: 82
+  blue: 45
+logo: Clan/Clan Wolf-in-Exile.png
+background: Clan/Clan Wolf-in-Exile.png
+camos: Clans/Wolf-in-Exile
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.IS
+postInvasionHonorRating: LIBERAL

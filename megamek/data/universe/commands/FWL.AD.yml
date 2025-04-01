@@ -1,0 +1,10 @@
+key: FWL.AD
+name: Atrean Dragoons
+yearsActive:
+  - start: 2271
+    end: 3079
+  - start: 3138
+ratingLevels:
+  - B
+fallBackFactions:
+  - FWL

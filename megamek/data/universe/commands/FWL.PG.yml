@@ -1,0 +1,10 @@
+key: FWL.PG
+name: Protectorate Guard
+yearsActive:
+  - start: 3000
+    end: 3079
+  - start: 3138
+ratingLevels:
+  - C
+fallBackFactions:
+  - FWL

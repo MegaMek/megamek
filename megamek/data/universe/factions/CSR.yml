@@ -1,0 +1,30 @@
+key: CSR
+name: Clan Snow Raven
+nameChanges:
+  3083: Raven Alliance
+capital: Circe
+yearsActive:
+  - start: 2807
+    end: 3082
+successor: RA
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+color:
+  red: 0
+  green: 158
+  blue: 155
+logo: Clan/Clan Snow Raven.png
+background: Clan/Clan Snow Raven.png
+camos: Clans/Snow Raven
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.IS
+preInvasionHonorRating: OPPORTUNISTIC

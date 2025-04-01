@@ -1,0 +1,35 @@
+key: FOR
+name: Fiefdom of Randis
+capital: Randis IV (Hope IV 2988-)
+yearsActive:
+  - start: 2988
+tags:
+  - MINOR
+  - PERIPHERY
+color:
+  red: 30
+  green: 144
+  blue: 255
+logo: Periphery/Fiefdom of Randis.png
+background: Periphery/Fiefdom of Randis.png
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - MERC
+  - Periphery.OS

@@ -1,0 +1,32 @@
+key: IP
+name: Illyrian Palatinate
+capital: Illyria
+yearsActive:
+  - start: 2350
+    end: 3063
+successor: MH
+tags:
+  - PERIPHERY
+color:
+  red: 181
+  green: 191
+  blue: 209
+logo: Periphery/Illyrian Palatinate.png
+background: Periphery/Illyrian Palatinate.png
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.MW

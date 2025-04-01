@@ -1,0 +1,10 @@
+key: DIS
+name: Disputed
+capital: Terra
+tags:
+  - SPECIAL
+  - CHAOS
+color:
+  red: 192
+  green: 192
+  blue: 192

@@ -1,0 +1,31 @@
+key: CW
+name: Clan Wolf
+capital: Tranquil
+capitalChanges: 
+  3052: Tamar
+yearsActive:
+  - start: 2807
+    end: 3142
+successor: CWE
+tags:
+  - PLAYABLE
+  - MAJOR
+  - CLAN
+color:
+  red: 214
+  green: 112
+  blue: 61
+logo: Clan/Clan Wolf.png
+background: Clan/Clan Wolf.png
+camos: Clans/Wolf
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.IS
+preInvasionHonorRating: OPPORTUNISTIC
+postInvasionHonorRating: LIBERAL

@@ -1,0 +1,41 @@
+key: FC
+name: Federated Commonwealth
+nameChanges:
+  3028: Federated Commonwealth Alliance
+  3055: Federated Commonwealth
+capital: New Avalon
+yearsActive:
+  - start: 3028
+    end: 3057
+successor: FS
+tags:
+  - PLAYABLE
+  - IS
+  - SUPER
+  - GENEROUS
+color:
+  red: 255
+  green: 221
+  blue: 0
+logo: Inner Sphere/Federated Commonwealth.png
+background: Inner Sphere/Federated Commonwealth.png
+camos: Federated Commonwealth
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 2
+  - 0
+  - 0
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - LA
+  - FS

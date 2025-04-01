@@ -686,7 +686,12 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         currentDamage = i;
     }
 
-    public void set0SI(int si) {
+    /**
+     * Set the starting Structural Integrity of this unit.
+     * Also sets the current SI as if by {@link #setSI(int)}.
+     * @param si The new value for SI
+     */
+    public void setOSI(int si) {
         orig_structIntegrity = si;
         structIntegrity = si;
     }
@@ -716,9 +721,12 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
     }
 
+    /**
+     * @deprecated use {@link Aero#setOSI(int)} instead
+     */
+    @Deprecated(since = "0.50.05")
     public void initializeSI(int val) {
-        orig_structIntegrity = val;
-        setSI(val);
+        setOSI(val);
     }
 
     @Override

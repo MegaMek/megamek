@@ -22,7 +22,6 @@ package megamek.client.ui.swing.lobby;
 import static megamek.client.ui.Messages.getString;
 import static megamek.client.ui.swing.lobby.LobbyMekPopupActions.resetBombChoices;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
-import static megamek.client.ui.swing.util.UIUtil.fontHTML;
 import static megamek.client.ui.swing.util.UIUtil.teamColor;
 import static megamek.client.ui.swing.util.UIUtil.uiYellow;
 
@@ -34,6 +33,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 import java.math.RoundingMode;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -43,11 +43,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
@@ -78,14 +75,15 @@ import megamek.client.ui.swing.util.UIUtil.TipButton;
 import megamek.client.ui.swing.util.UIUtil.TipLabel;
 import megamek.client.ui.swing.util.UIUtil.TipTextField;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.containers.MunitionTree;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.server.ServerBoardHelper;
 
 /**
- * A dialog that can be used to adjust advanced player settings like initiative,
- * minefields, and maybe other things in the future like force abilities.
+ * A dialog that can be used to adjust advanced player settings like initiative, minefields, and maybe other things in
+ * the future like force abilities.
  *
  * @author Jay Lawson
  * @author Simon (Juliez)
@@ -125,24 +123,22 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         txtGroundObjectName = new JTextField();
         txtGroundObjectName.setColumns(20);
         // if it's longer than 20 characters, undo the edit
-        txtGroundObjectName.getDocument().addUndoableEditListener(new UndoableEditListener() {
-            @Override
-            public void undoableEditHappened(UndoableEditEvent e) {
-                if (txtGroundObjectName.getText().length() > 20 && e.getEdit().canUndo()) {
-                    e.getEdit().undo();
-                }
+        txtGroundObjectName.getDocument().addUndoableEditListener(e -> {
+            if (txtGroundObjectName.getText().length() > 20 && e.getEdit().canUndo()) {
+                e.getEdit().undo();
             }
         });
 
         initialize();
     }
 
-    private DefaultListCellRenderer factionCbRenderer = new DefaultListCellRenderer() {
+    private final DefaultListCellRenderer factionCbRenderer = new DefaultListCellRenderer() {
+        @Serial
         private static final long serialVersionUID = -333065979253244440L;
 
         @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                                                      boolean cellHasFocus) {
             if (value == null) {
                 setText("General");
             } else {
@@ -152,7 +148,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         }
     };
 
-    private Comparator<FactionRecord> factionSorter = new Comparator<>() {
+    private final Comparator<FactionRecord> factionSorter = new Comparator<>() {
         @Override
         public int compare(FactionRecord o1, FactionRecord o2) {
             return o1.getName(year).compareTo(o2.getName(year));
@@ -241,14 +237,14 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     // Initiative Section
     private final JLabel labInit = new TipLabel(Messages.getString("PlayerSettingsDialog.initMod"),
-            SwingConstants.RIGHT);
+          SwingConstants.RIGHT);
     private final TipTextField fldInit = new TipTextField(3);
 
     // Mines Section
     private final JLabel labConventional = new JLabel(getString("PlayerSettingsDialog.labConventional"),
-            SwingConstants.RIGHT);
+          SwingConstants.RIGHT);
     private final JLabel labVibrabomb = new JLabel(getString("PlayerSettingsDialog.labVibrabomb"),
-            SwingConstants.RIGHT);
+          SwingConstants.RIGHT);
     private final JLabel labActive = new JLabel(getString("PlayerSettingsDialog.labActive"), SwingConstants.RIGHT);
     private final JLabel labInferno = new JLabel(getString("PlayerSettingsDialog.labInferno"), SwingConstants.RIGHT);
     private final JTextField fldConventional = new JTextField(3);
@@ -279,7 +275,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final JTextField txtGroundObjectName;
     private final JFormattedTextField txtGroundObjectTonnage;
     private final JCheckBox chkGroundObjectInvulnerable = new JCheckBox();
-    private List<List<Component>> groundSectionComponents = new ArrayList<>();
+    private final List<List<Component>> groundSectionComponents = new ArrayList<>();
 
     // Bot Settings Section
     private final JButton butBotSettings = new JButton(Messages.getString("PlayerSettingsDialog.botSettings"));
@@ -288,13 +284,13 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private Team team;
     private transient ReconfigurationParameters rp;
     private int year;
-    private final JLabel labelAutoconfig = new TipLabel(
-            Messages.getString("PlayerSettingsDialog.autoConfigFaction"), SwingConstants.LEFT);
-    private JComboBox<FactionRecord> cmbFaction = new JComboBox<>();
+    private final JLabel labelAutoconfig = new TipLabel(Messages.getString("PlayerSettingsDialog.autoConfigFaction"),
+          SwingConstants.LEFT);
+    private final JComboBox<FactionRecord> cmbFaction = new JComboBox<>();
     private final JButton butAutoconfigure = new JButton(Messages.getString("PlayerSettingsDialog.autoConfig"));
     private final JButton butRandomize = new JButton(Messages.getString("PlayerSettingsDialog.randomize"));
-    private JCheckBox chkTrulyRandom = new JCheckBox("Truly Random", false);
-    private JCheckBox chkBanNukes = new JCheckBox("No Nukes", true);
+    private final JCheckBox chkTrulyRandom = new JCheckBox("Truly Random", false);
+    private final JCheckBox chkBanNukes = new JCheckBox("No Nukes", true);
     private final JButton butSaveADF = new JButton(Messages.getString("PlayerSettingsDialog.saveADF"));
     private final JButton butLoadADF = new JButton(Messages.getString("PlayerSettingsDialog.loadADF"));
     private final JButton butRestoreMT = new JButton(Messages.getString("PlayerSettingsDialog.restore"));
@@ -354,7 +350,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         result.add(panContent);
 
-        // Set up auto-configuration controls for player
+        // Set up autoconfiguration controls for player
         panContent.add(labelAutoconfig, gbc);
         panContent.add(cmbFaction, gbc);
         cmbFaction.setToolTipText(Messages.getString("CustomMekDialog.acfFactionChooser"));
@@ -451,8 +447,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         gbc.gridx = 3;
         JButton btnRemove = new JButton("Remove");
-        btnRemove
-                .setActionCommand(String.format(CMD_REMOVE_GROUND_OBJECT, player.getGroundObjectsToPlace().size() - 1));
+        btnRemove.setActionCommand(String.format(CMD_REMOVE_GROUND_OBJECT,
+              player.getGroundObjectsToPlace().size() - 1));
         btnRemove.addActionListener(listener);
         groundSectionContent.add(btnRemove, gbc);
         row.add(btnRemove);
@@ -461,19 +457,19 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Worker function that uses the current state of the ground object inputs to
-     * add a new ground object to the backing player and the UI
+     * Worker function that uses the current state of the ground object inputs to add a new ground object to the backing
+     * player and the UI
      */
     private void addGroundObject() {
         Briefcase briefcase = new Briefcase();
         briefcase.setName(txtGroundObjectName.getText());
 
-        Double tonnage = 0.0;
+        double tonnage = 0.0;
 
         try {
             tonnage = Double.parseDouble(txtGroundObjectTonnage.getText());
 
-            // don't allow negative tonnage as we do not have anti-gravity technology
+            // don't allow negative tonnage as we do not have antigravity technology
             if (tonnage < 0) {
                 tonnage = 0.0;
             }
@@ -489,8 +485,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Worker function that removes the chosen ground object from the backing player
-     * and the UI
+     * Worker function that removes the chosen ground object from the backing player and the UI
      */
     private void removeGroundObject(String command) {
         int index = Integer.parseInt(command.substring(CMD_REMOVE_GROUND_OBJECT_PREFIX.length()));
@@ -505,8 +500,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         // the one that just removed, so they're not pointing to higher indexes than
         // they need to
         for (int componentIndex = index; componentIndex < groundSectionComponents.size(); componentIndex++) {
-            ((JButton) groundSectionComponents.get(index).get(2))
-                    .setActionCommand(String.format(CMD_REMOVE_GROUND_OBJECT, componentIndex));
+            ((JButton) groundSectionComponents.get(index).get(2)).setActionCommand(String.format(
+                  CMD_REMOVE_GROUND_OBJECT,
+                  componentIndex));
         }
 
         validate();
@@ -592,12 +588,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
 
-        // If the gameoption set_arty_player_homeedge is set, adjust the player's
-        // offboard
-        // arty units to be behind the newly selected home edge.
+        // If the game option set_arty_player_home edge is set, adjust the player's offboard arty units to be behind
+        // the newly selected home edge.
         OffBoardDirection direction = OffBoardDirection.translateStartPosition(getStartPos());
         if (direction != OffBoardDirection.NONE &&
-                gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE)) {
+                  gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE)) {
             for (Entity entity : client.getGame().getPlayerEntities(client.getLocalPlayer(), false)) {
                 if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
                     entity.setOffBoard(entity.getOffBoardDistance(), direction);
@@ -608,7 +603,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         // Unit Munition Configuration
         String faction = getFactionCode();
         team.setFaction(faction);
-        if ((clientgui != null) && (clientgui.chatlounge != null)) {
+        if (clientgui.chatlounge != null) {
             ArrayList<Entity> updateEntities = clientgui.getClient().getGame().getPlayerEntities(player, false);
 
             if (null != munitionTree && null != rp) {
@@ -733,10 +728,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             butStartPos.get(i).setActionCommand(((Integer) i).toString());
         }
 
-        var currentBoard =
-                clientgui.getClient().getGame().getPhase().isLounge() ?
-                ServerBoardHelper.getPossibleGameBoard(clientgui.getClient().getMapSettings(), true) :
-                clientgui.getClient().getGame().getBoard();
+        var currentBoard = clientgui.getClient().getGame().getPhase().isLounge() ?
+                                 ServerBoardHelper.getPossibleGameBoard(clientgui.getClient().getMapSettings(), true) :
+                                 clientgui.getClient().getGame().getBoard();
         var deploymentZones = currentBoard.getCustomDeploymentZones();
         int extraRowCount = (int) Math.ceil(deploymentZones.size() / 3.0);
 
@@ -753,7 +747,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         panStartButtons.add(butStartPos.get(0));
         panStartButtons.add(butStartPos.get(9));
         panStartButtons.add(new JLabel("")); // extra spacer as custom deployment zones should start
-                                             // on next line to avoid confusion
+        // on next line to avoid confusion
 
         // now we build any custom deployment zones that the board has and add them as
         // buttons
@@ -772,11 +766,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             zoneBuilder.delete(zoneBuilder.length() - 2, zoneBuilder.length() - 2); // chop off last two characters
 
             buttonCustomZone.setToolTipText(zoneBuilder.toString());
-            // the custom zones should not overlap with the fixed zones
-            // this includes the deep zones
-            Integer internalZoneID = Board.encodeCustomDeploymentZoneID(zoneID);
 
-            buttonCustomZone.setActionCommand(internalZoneID.toString());
+            // the custom zones should not overlap with the fixed zones this includes the deep zones
+            int internalZoneID = Board.encodeCustomDeploymentZoneID(zoneID);
+            buttonCustomZone.setActionCommand(Integer.valueOf(internalZoneID).toString());
             buttonCustomZone.addActionListener(listener);
             butStartPos.put(internalZoneID, buttonCustomZone);
             panStartButtons.add(buttonCustomZone);
@@ -806,7 +799,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             if (i <= Board.NUM_ZONES) {
                 butText.get(i).append(IStartingPositions.START_LOCATION_NAMES[i]);
             } else {
-                butText.get(i).append("Zone " + Board.decodeCustomDeploymentZoneID(i));
+                butText.get(i).append("Zone ").append(Board.decodeCustomDeploymentZoneID(i));
             }
             butText.get(i).append("</FONT><BR>");
         }
@@ -817,7 +810,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 butText.get(pos).append(UIUtil.fontHTML(teamColor(listedPlayer, client.getLocalPlayer())));
                 butText.get(pos).append("\u25A0</FONT>");
                 if (!hasPlayer.containsKey(pos)) {
-                    if (butTT.get(pos).length() > 0) {
+                    if (!butTT.get(pos).isEmpty()) {
                         butTT.get(pos).append("<BR><BR>");
                     }
                     butTT.get(pos).append(Messages.getString("PlayerSettingsDialog.deployingHere"));
@@ -832,7 +825,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         for (int i : butStartPos.keySet()) {
             butStartPos.get(i).setText(butText.get(i).toString());
-            if (butTT.get(i).length() > 0) {
+            if (!butTT.get(i).isEmpty()) {
                 butStartPos.get(i).setToolTipText(butTT.get(i).toString());
             }
         }
@@ -862,7 +855,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 rp.nukesBannedForMe = chkBanNukes.isSelected();
                 ArrayList<Entity> entities = clientgui.getClient().getGame().getPlayerEntities(player, false);
                 munitionTree = TeamLoadOutGenerator.generateMunitionTree(rp, entities, "");
-                return;
             } else if (butRandomize.equals(e.getSource())) {
                 // Randomize team loadout
                 butRestoreMT.setEnabled(true);
@@ -894,8 +886,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 // Bot settings button
             } else if (butBotSettings.equals(e.getSource()) && client instanceof Princess) {
                 BehaviorSettings behavior = ((Princess) client).getBehaviorSettings();
-                var bcd = new BotConfigDialog(clientgui.getFrame(), client.getLocalPlayer().getName(), behavior,
-                        clientgui);
+                var bcd = new BotConfigDialog(clientgui.getFrame(),
+                      client.getLocalPlayer().getName(),
+                      behavior,
+                      clientgui);
                 bcd.setVisible(true);
                 if (bcd.getResult() == DialogResult.CONFIRMED) {
                     ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());
@@ -904,23 +898,20 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 addGroundObject();
             } else if (e.getActionCommand().contains(CMD_REMOVE_GROUND_OBJECT_PREFIX)) {
                 removeGroundObject(e.getActionCommand());
-                return;
             }
         }
     };
 
     /**
-     * Let user select an ADF file (Autoconfiguration Definition File) from which to
-     * load munition loadout
-     * imperatives, which can then be applied to selected units.
+     * Let user select an ADF file (Autoconfiguration Definition File) from which to load munition loadout imperatives,
+     * which can then be applied to selected units.
      *
-     * @return
+     * @return {@link MunitionTree} of available options, null otherwise.
      */
-    private MunitionTree loadLoadout() {
+    private @Nullable MunitionTree loadLoadout() {
         MunitionTree mt = null;
         JFileChooser fc = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR).toAbsolutePath().toString());
-        FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
-                "adf files (*.adf)", "adf");
+        FileNameExtensionFilter adfFilter = new FileNameExtensionFilter("adf files (*.adf)", "adf");
         fc.addChoosableFileFilter(adfFilter);
         fc.setFileFilter(adfFilter);
         fc.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
@@ -941,8 +932,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     private void saveLoadout(MunitionTree source) {
         JFileChooser fc = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR).toAbsolutePath().toString());
-        FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
-                "adf files (*.adf)", "adf");
+        FileNameExtensionFilter adfFilter = new FileNameExtensionFilter("adf files (*.adf)", "adf");
         fc.addChoosableFileFilter(adfFilter);
         fc.setFileFilter(adfFilter);
         fc.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
@@ -963,8 +953,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Parse the given field and return the integer it contains or 0, if
-     * the field cannot be parsed.
+     * Parse the given field and return the integer it contains or 0, if the field cannot be parsed.
      */
     private int parseField(JTextField field) {
         try {
@@ -984,8 +973,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     public FactionRecord getFactionFromCode(String code, int year) {
         for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
-            if ((!fRec.isMinor()) && !fRec.getKey().contains(".") && fRec.isActiveInYear(year)
-                    && fRec.getKey().equals(code)) {
+            if ((!fRec.isMinor()) &&
+                      !fRec.getKey().contains(".") &&
+                      fRec.isActiveInYear(year) &&
+                      fRec.getKey().equals(code)) {
                 return fRec;
             }
         }
@@ -998,8 +989,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         cmbFaction.removeAllItems();
         List<FactionRecord> recs = new ArrayList<>();
         for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
-            if ((!fRec.isMinor())
-                    && !fRec.getKey().contains(".") && fRec.isActiveInYear(year)) {
+            if ((!fRec.isMinor()) && !fRec.getKey().contains(".") && fRec.isActiveInYear(year)) {
                 recs.add(fRec);
             }
         }

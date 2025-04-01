@@ -93,7 +93,7 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
 
         for (var entity : playerEntities) {
             double armor = Math.max(entity.getArmorRemainingPercent(), 0d);
-            double internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).get0SI()
+            double internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).getOSI()
                 : entity.getInternalRemainingPercent();
             reportConsumer.accept(new PublicReportEntry("acar.endOfCombat.teamUnitStats")
                 .add(new EntityNameReportEntry(entity).reportText())
@@ -118,7 +118,7 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
 
         for (var entity : deadEntities) {
             double armor = Math.max(entity.getArmorRemainingPercent(), 0d);
-            double internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).get0SI()
+            double internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).getOSI()
                 : entity.getInternalRemainingPercent();
 
             reportConsumer.accept(new PublicReportEntry("acar.endOfCombat.teamUnitStats")
@@ -143,7 +143,7 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
 
         for (var entity : retreatingEntities) {
             double armor = Math.max(entity.getArmorRemainingPercent(), 0d);
-            double internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).get0SI()
+            double internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).getOSI()
                 : entity.getInternalRemainingPercent();
             reportConsumer.accept(new PublicReportEntry("acar.endOfCombat.teamUnitStats")
                 .add(new EntityNameReportEntry(entity).reportText())

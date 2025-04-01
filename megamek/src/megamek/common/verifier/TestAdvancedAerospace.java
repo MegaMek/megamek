@@ -14,6 +14,14 @@
  */
 package megamek.common.verifier;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
@@ -23,15 +31,10 @@ import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 /**
- * Validation and construction data for advanced aerospace units (jumpships,
- * warships, space stations)
+ * Validation and construction data for advanced aerospace units (jump ships, warships, space stations)
  *
  * @author Neoancient
- *
  */
 public class TestAdvancedAerospace extends TestAero {
 
@@ -41,72 +44,62 @@ public class TestAdvancedAerospace extends TestAero {
      * Filters all capital armor according to given tech constraints
      *
      * @param techManager Constraints used to filter the possible armor types
+     *
      * @return A list of all armors that meet the tech constraints
      */
     public static List<ArmorType> legalArmorsFor(ITechManager techManager, boolean primitive) {
         if (primitive) {
             return Collections.singletonList(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false));
         } else {
-            return ArmorType.allArmorTypes().stream()
-                    .filter(at -> at.hasFlag(MiscType.F_JS_EQUIPMENT) && techManager.isLegal(at))
-                    .collect(Collectors.toList());
+            return ArmorType.allArmorTypes()
+                         .stream()
+                         .filter(at -> at.hasFlag(MiscType.F_JS_EQUIPMENT) && techManager.isLegal(at))
+                         .collect(Collectors.toList());
         }
     }
 
     public static int maxArmorPoints(Jumpship vessel) {
-        // The ship gets a number of armor points equal to 10% of the SI, rounded
-        // normally, per facing.
-        double freeSI = Math.round(vessel.get0SI() / 10.0) * 6;
-        // Primitive jumpships multiply the armor by a factor of 0.66. Per errata, the
-        // armor is calculated
-        // based on standard armor then rounded down, and the free SI armor is rounded
-        // down separately.
+        // The ship gets a number of armor points equal to 10% of the SI, rounded normally, per facing.
+        double freeSI = Math.round(vessel.getOSI() / 10.0) * 6;
+        // Primitive jump ships multiply the armor by a factor of 0.66. Per errata, the armor is calculated based on
+        // standard armor then rounded down, and the free SI armor is rounded down separately.
         if (vessel.isPrimitive()) {
-            return (int) (Math.floor(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false)
-                    .getPointsPerTon(vessel) * maxArmorWeight(vessel))
-                    + Math.floor(freeSI * 0.66));
+            return (int) (Math.floor(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false).getPointsPerTon(vessel) *
+                                           maxArmorWeight(vessel)) + Math.floor(freeSI * 0.66));
         }
         return (int) Math.floor(ArmorType.forEntity(vessel).getPointsPerTon(vessel) * maxArmorWeight(vessel) + freeSI);
     }
 
     /**
      * Computes the maximum number armor level in tons
-     *
      */
     public static double maxArmorWeight(Jumpship vessel) {
         // max armor tonnage is based on SI weight
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             // SI weight (SI/1000) / 50
-            return floor(vessel.get0SI() * vessel.getWeight() / 50000.0, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 50000.0, Ceil.HALFTON);
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             // SI weight (SI/100) / 3 + 60
-            return floor(vessel.get0SI() * vessel.getWeight() / 300.0 + 60, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 300.0 + 60, Ceil.HALFTON);
         } else {
             // SI weight (SI/150) / 12
-            return floor(vessel.get0SI() * vessel.getWeight() / 1800.0, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 1800.0, Ceil.HALFTON);
         }
     }
 
     public static double armorPointsPerTon(Jumpship vessel, int at, boolean clan) {
         ArmorType arm = ArmorType.of(at, clan);
-        if (null != arm) {
-            return arm.getPointsPerTon(vessel);
-        } else {
-            return 0;
-        }
+        return arm.getPointsPerTon(vessel);
     }
 
     /**
-     * Computes the amount of weight required for fire control systems and power
-     * distribution
-     * systems for exceeding the base limit of weapons per firing arc.
+     * Computes the amount of weight required for fire control systems and power distribution systems for exceeding the
+     * base limit of weapons per firing arc.
      *
      * @param vessel The advanced aerospace unit in question
-     * @return Returns a <code>double</code> array, where each element corresponds
-     *         to a
-     *         location and the value is the extra tonnage required by exceeding the
-     *         base
-     *         allotment
+     *
+     * @return Returns a <code>double</code> array, where each element corresponds to a location and the value is the
+     *       extra tonnage required by exceeding the base allotment
      */
     public static double[] extraSlotCost(Jumpship vessel) {
         int slotsPerArc = 12;
@@ -126,8 +119,7 @@ public class TestAdvancedAerospace extends TestAero {
                 if (arc < 0) {
                     continue;
                 }
-                if ((m.getType() instanceof WeaponType)
-                        && m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
+                if ((m.getType() instanceof WeaponType) && m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
                     weaponsPerArc[arc] += 10;
                 } else {
                     weaponsPerArc[arc]++;
@@ -149,47 +141,37 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     public static int getMinTonnage(Jumpship vessel) {
-        switch (vessel.getDriveCoreType()) {
-            case Jumpship.DRIVE_CORE_COMPACT:
-                return 100000;
-            case Jumpship.DRIVE_CORE_SUBCOMPACT:
-                return 5000;
-            case Jumpship.DRIVE_CORE_NONE:
-                return 2000;
-            case Jumpship.DRIVE_CORE_STANDARD:
-            case Jumpship.DRIVE_CORE_PRIMITIVE:
-            default:
-                return 50000;
-        }
+        return switch (vessel.getDriveCoreType()) {
+            case Jumpship.DRIVE_CORE_COMPACT -> 100000;
+            case Jumpship.DRIVE_CORE_SUBCOMPACT -> 5000;
+            case Jumpship.DRIVE_CORE_NONE -> 2000;
+            default -> 50000;
+        };
     }
 
     public static int getWeightIncrement(Jumpship vessel) {
-        switch (vessel.getDriveCoreType()) {
-            case Jumpship.DRIVE_CORE_COMPACT:
-                return 10000;
-            case Jumpship.DRIVE_CORE_SUBCOMPACT:
-                return 100;
-            case Jumpship.DRIVE_CORE_NONE:
-                return 500;
-            case Jumpship.DRIVE_CORE_STANDARD:
-            case Jumpship.DRIVE_CORE_PRIMITIVE:
-            default:
-                return 1000;
-        }
+        return switch (vessel.getDriveCoreType()) {
+            case Jumpship.DRIVE_CORE_COMPACT -> 10000;
+            case Jumpship.DRIVE_CORE_SUBCOMPACT -> 100;
+            case Jumpship.DRIVE_CORE_NONE -> 500;
+            default -> 1000;
+        };
     }
 
     /**
      * Computes the weight of the engine.
      *
      * @param vessel The ship
+     *
      * @return The weight of the engine in tons
      */
     public static double calculateEngineTonnage(Jumpship vessel) {
         if (vessel.hasStationKeepingDrive()) {
             return round(vessel.getWeight() * 0.012, Ceil.HALFTON);
         } else if (vessel.isPrimitive()) {
-            return round(vessel.getWeight() * vessel.getOriginalWalkMP()
-                    * primitiveEngineMultiplier(vessel.getOriginalBuildYear()), Ceil.HALFTON);
+            return round(vessel.getWeight() *
+                               vessel.getOriginalWalkMP() *
+                               primitiveEngineMultiplier(vessel.getOriginalBuildYear()), Ceil.HALFTON);
         } else {
             return round(vessel.getWeight() * vessel.getOriginalWalkMP() * 0.06, Ceil.HALFTON);
         }
@@ -197,6 +179,7 @@ public class TestAdvancedAerospace extends TestAero {
 
     /**
      * @param year The original construction year of the jumpship chassis
+     *
      * @return The engine weight multiplier for the primitive jumpship.
      */
     public static double primitiveEngineMultiplier(int year) {
@@ -215,26 +198,23 @@ public class TestAdvancedAerospace extends TestAero {
 
     /**
      * @param vessel An advanced aerospace unit
+     *
      * @return The number of heat sinks that are accounted for in the engine weight.
      */
     public static int weightFreeHeatSinks(Jumpship vessel) {
-        return (int) Math.floor(45 + Math.sqrt(calculateEngineTonnage(vessel)
-                * (vessel.isPrimitive() ? 1 : 2)));
+        return (int) Math.floor(45 + Math.sqrt(calculateEngineTonnage(vessel) * (vessel.isPrimitive() ? 1 : 2)));
     }
 
     /**
-     * The maximum number of docking hardpoints (collars) depends on the tonnage of
-     * the vessel. Naval
-     * Repair Facilities and Dropshuttle bays count against the total and reduce the
-     * maximum number
-     * by two each.
+     * The maximum number of docking hard points (collars) depends on the tonnage of the vessel. Naval Repair Facilities
+     * and Drop shuttle bays count against the total and reduce the maximum number by two each.
      *
      * @param vessel The ship
-     * @return The maximum number of docking hardpoints (collars) that can be
-     *         mounted on the ship.
+     *
+     * @return The maximum number of docking hard points (collars) that can be mounted on the ship.
      */
     public static int getMaxDockingHardpoints(Jumpship vessel) {
-        // minimum of 50ktons
+        // minimum of 50kilotons
         if (vessel.getWeight() < 50000) {
             return 0;
         }
@@ -247,6 +227,7 @@ public class TestAdvancedAerospace extends TestAero {
 
     /**
      * @param vessel The ship
+     *
      * @return The maximum number of gravity decks that can be mounted on the ship.
      */
     public static int getMaxGravDecks(Jumpship vessel) {
@@ -255,6 +236,7 @@ public class TestAdvancedAerospace extends TestAero {
 
     /**
      * @param vessel The ship
+     *
      * @return The maximum diameter (in meters) for a grav deck mounted on the unit.
      */
     public static int getMaxGravDeckDiameter(Jumpship vessel) {
@@ -270,13 +252,11 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     /**
-     * @return Minimum crew requirements based on unit type and equipment crew
-     *         requirements.
+     * @return Minimum crew requirements based on unit type and equipment crew requirements.
      */
     public static int minimumBaseCrew(Jumpship vessel) {
         int crew;
-        if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)
-                || vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+        if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP) || vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             crew = 45 + (int) Math.ceil(vessel.getWeight() / 5000);
         } else {
             crew = 6 + (int) Math.ceil(vessel.getWeight() / 20000);
@@ -288,8 +268,7 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     /**
-     * One gunner is required for each capital weapon and each six standard scale
-     * weapons, rounding up
+     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up
      *
      * @return The vessel's minimum gunner requirements.
      */
@@ -297,14 +276,12 @@ public class TestAdvancedAerospace extends TestAero {
         int capitalWeapons = 0;
         int stdWeapons = 0;
         for (Mounted<?> m : vessel.getTotalWeaponList()) {
-            if ((m.getType() instanceof BayWeapon)
-                    || (((WeaponType) m.getType()).getLongRange() <= 1)) {
+            if ((m.getType() instanceof BayWeapon) || (((WeaponType) m.getType()).getLongRange() <= 1)) {
                 continue;
             }
             if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
                 capitalWeapons += 10;
-            } else if (((WeaponType) m.getType()).isCapital()
-                    || (m.getType() instanceof ScreenLauncherWeapon)) {
+            } else if (((WeaponType) m.getType()).isCapital() || (m.getType() instanceof ScreenLauncherWeapon)) {
                 capitalWeapons++;
             } else {
                 stdWeapons++;
@@ -332,8 +309,7 @@ public class TestAdvancedAerospace extends TestAero {
     @Override
     public double getWeightControls() {
         if (vessel.isPrimitive()) {
-            return ceil(vessel.getWeight()
-                    * primitiveControlMultiplier(vessel.getOriginalBuildYear()), Ceil.TON);
+            return ceil(vessel.getWeight() * primitiveControlMultiplier(vessel.getOriginalBuildYear()), Ceil.TON);
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             return ceil(vessel.getWeight() * 0.001, Ceil.TON);
         } else {
@@ -343,6 +319,7 @@ public class TestAdvancedAerospace extends TestAero {
 
     /**
      * @param year The original construction year of the jumpship chassis
+     *
      * @return The control weight multiplier for the primitive jumpship.
      */
     public static double primitiveControlMultiplier(int year) {
@@ -366,8 +343,9 @@ public class TestAdvancedAerospace extends TestAero {
 
     @Override
     public String printWeightEngine() {
-        return StringUtil.makeLength("Engine: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightEngine()) + "\n";
+        return StringUtil.makeLength("Engine: ", getPrintSize() - 5) +
+                     TestEntity.makeWeightString(getWeightEngine()) +
+                     "\n";
     }
 
     public double getWeightKFDrive() {
@@ -375,8 +353,9 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     public String printWeightKFDrive() {
-        return StringUtil.makeLength("K/F Drive Core: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightKFDrive()) + "\n";
+        return StringUtil.makeLength("K/F Drive Core: ", getPrintSize() - 5) +
+                     TestEntity.makeWeightString(getWeightKFDrive()) +
+                     "\n";
     }
 
     public double getWeightSail() {
@@ -402,13 +381,14 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     public String printWeightSail() {
-        return StringUtil.makeLength("Jump Sail: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightSail()) + "\n";
+        return StringUtil.makeLength("Jump Sail: ", getPrintSize() - 5) +
+                     TestEntity.makeWeightString(getWeightSail()) +
+                     "\n";
     }
 
     @Override
     public double getWeightFuel() {
-        // Fuel tanks and pumps add an additional 2%, rounded to the nearest ton
+        // Fuel tanks and pumps add 2%, rounded to the nearest ton
         double pumpWeight = RoundWeight.nextTon(vessel.getFuelTonnage() * 0.02);
         return vessel.getFuelTonnage() + pumpWeight;
     }
@@ -445,35 +425,31 @@ public class TestAdvancedAerospace extends TestAero {
      * @return The combined weight of grav decks mounted on the vessel
      */
     public double getWeightGravDecks() {
-        return vessel.getGravDeck() * 50
-                + vessel.getGravDeckLarge() * 100
-                + vessel.getGravDeckHuge() * 500;
+        return vessel.getGravDeck() * 50 + vessel.getGravDeckLarge() * 100 + vessel.getGravDeckHuge() * 500;
     }
 
     public String printWeightGravDecks() {
-        return StringUtil.makeLength("Gravity Decks: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightGravDecks()) + "\n";
+        return StringUtil.makeLength("Gravity Decks: ", getPrintSize() - 5) +
+                     TestEntity.makeWeightString(getWeightGravDecks()) +
+                     "\n";
     }
 
     /**
      * @return The combined weight of all lifeboats and escape pods
      */
     public double getWeightLifeBoats() {
-        // 7 tons each for life boats and escape pods, which includes the 5-ton vehicle
-        // and a
-        // 2-ton launch mechanism
+        // 7 tons each for lifeboats and escape pods, which includes the 5-ton vehicle and a 2-ton launch mechanism
         return (vessel.getLifeBoats() + vessel.getEscapePods()) * 7;
     }
 
     public String printWeightLifeBoats() {
-        return StringUtil.makeLength("Life Boats/Escape Pods: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightLifeBoats()) + "\n";
+        return StringUtil.makeLength("Life Boats/Escape Pods: ", getPrintSize() - 5) +
+                     TestEntity.makeWeightString(getWeightLifeBoats()) +
+                     "\n";
     }
 
     /**
-     *
-     * @return Extra fire control system weight for exceeding base slot limit per
-     *         firing arc
+     * @return Extra fire control system weight for exceeding base slot limit per firing arc
      */
     public double getWeightFireControl() {
         double weight = 0.0;
@@ -484,12 +460,12 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     public String printWeightFireControl() {
-        return StringUtil.makeLength("Extra Fire Control: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightFireControl()) + "\n";
+        return StringUtil.makeLength("Extra Fire Control: ", getPrintSize() - 5) +
+                     TestEntity.makeWeightString(getWeightFireControl()) +
+                     "\n";
     }
 
     /**
-     *
      * @return The weight of the lithium fusion battery (0 if not present).
      */
     public double getWeightLFBattery() {
@@ -500,8 +476,9 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     public String printWeightLFBattery() {
-        return StringUtil.makeLength("LF Battery: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightLFBattery()) + "\n";
+        return StringUtil.makeLength("LF Battery: ", getPrintSize() - 5) +
+                     TestEntity.makeWeightString(getWeightLFBattery()) +
+                     "\n";
     }
 
     public double getWeightHardpoints() {
@@ -509,8 +486,9 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     public String printWeightHardpoints() {
-        return StringUtil.makeLength("Docking Hardpoints: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightHardpoints()) + "\n";
+        return StringUtil.makeLength("Docking Hard points: ", getPrintSize() - 5) +
+                     TestEntity.makeWeightString(getWeightHardpoints()) +
+                     "\n";
     }
 
     @Override
@@ -520,22 +498,23 @@ public class TestAdvancedAerospace extends TestAero {
         }
         StringBuffer buffer = new StringBuffer();
         for (WeaponMounted m : getEntity().getWeaponBayList()) {
-            buffer.append(m.getName()).append(" ")
-                    .append(getLocationAbbr(m.getLocation()));
+            buffer.append(m.getName()).append(" ").append(getLocationAbbr(m.getLocation()));
             if (m.isRearMounted()) {
                 buffer.append(" (R)");
             }
             buffer.append("\n");
             for (WeaponMounted w : m.getBayWeapons()) {
-                buffer.append("   ").append(StringUtil.makeLength(w.getName(),
-                        getPrintSize() - 25)).append(w.getTonnage())
-                        .append("\n");
+                buffer.append("   ")
+                      .append(StringUtil.makeLength(w.getName(), getPrintSize() - 25))
+                      .append(w.getTonnage())
+                      .append("\n");
             }
             for (AmmoMounted a : m.getBayAmmo()) {
-                double weight = ceil(a.getTonnage()
-                        * a.getBaseShotsLeft() / ((AmmoType) a.getType()).getShots(), Ceil.HALFTON);
-                buffer.append("   ").append(StringUtil.makeLength(a.getName(),
-                        getPrintSize() - 25)).append(weight).append("\n");
+                double weight = ceil(a.getTonnage() * a.getBaseShotsLeft() / a.getType().getShots(), Ceil.HALFTON);
+                buffer.append("   ")
+                      .append(StringUtil.makeLength(a.getName(), getPrintSize() - 25))
+                      .append(weight)
+                      .append("\n");
             }
         }
         return buffer;
@@ -556,14 +535,14 @@ public class TestAdvancedAerospace extends TestAero {
 
     @Override
     public String printWeightControls() {
-        return StringUtil.makeLength("Control Systems:", getPrintSize() - 5)
-                + makeWeightString(getWeightControls()) + "\n";
+        return StringUtil.makeLength("Control Systems:", getPrintSize() - 5) +
+                     makeWeightString(getWeightControls()) +
+                     "\n";
     }
 
     @Override
     public String printWeightFuel() {
-        return StringUtil.makeLength("Fuel: ", getPrintSize() - 5)
-                + makeWeightString(getWeightFuel()) + "\n";
+        return StringUtil.makeLength("Fuel: ", getPrintSize() - 5) + makeWeightString(getWeightFuel()) + "\n";
     }
 
     @Override
@@ -579,6 +558,7 @@ public class TestAdvancedAerospace extends TestAero {
      * Checks to see if this unit has valid armor assignment.
      *
      * @param buff The StringBuffer to receive error descriptions
+     *
      * @return False when something is invalid, true otherwise
      */
     @Override
@@ -587,9 +567,10 @@ public class TestAdvancedAerospace extends TestAero {
         double maxArmor = maxArmorWeight(vessel);
         if (vessel.getLabArmorTonnage() > maxArmor) {
             buff.append("Total armor, ")
-                    .append(vessel.getLabArmorTonnage())
-                    .append(" tons, is greater than the maximum: ")
-                    .append(maxArmor).append("\n");
+                  .append(vessel.getLabArmorTonnage())
+                  .append(" tons, is greater than the maximum: ")
+                  .append(maxArmor)
+                  .append("\n");
             correct = false;
         }
 
@@ -602,15 +583,17 @@ public class TestAdvancedAerospace extends TestAero {
      * Checks that the heatsink type is a legal value.
      *
      * @param buff The StringBuffer to receive error descriptions
+     *
      * @return False when something is invalid, true otherwise
      */
     @Override
     public boolean correctHeatSinks(StringBuffer buff) {
-        if ((vessel.getHeatType() != Aero.HEAT_SINGLE)
-                && (vessel.getHeatType() != Aero.HEAT_DOUBLE)) {
-            buff.append("Invalid heatsink type!  Valid types are " + Aero.HEAT_SINGLE + " and "
-                    + Aero.HEAT_DOUBLE + ".  Found ")
-                    .append(vessel.getHeatType()).append(".");
+        if ((vessel.getHeatType() != Aero.HEAT_SINGLE) && (vessel.getHeatType() != Aero.HEAT_DOUBLE)) {
+            buff.append("Invalid heatsink type!  Valid types are " +
+                              Aero.HEAT_SINGLE +
+                              " and " +
+                              Aero.HEAT_DOUBLE +
+                              ".  Found ").append(vessel.getHeatType()).append(".");
             return false;
         }
         return true;
@@ -630,8 +613,8 @@ public class TestAdvancedAerospace extends TestAero {
         }
         if (getCountHeatSinks() < weightFreeHeatSinks(vessel)) {
             buff.append("Heat Sinks:\n");
-            buff.append(" Total     " + getCountHeatSinks() + "\n");
-            buff.append(" Required  " + weightFreeHeatSinks(vessel) + "\n");
+            buff.append(" Total     ").append(getCountHeatSinks()).append("\n");
+            buff.append(" Required  ").append(weightFreeHeatSinks(vessel)).append("\n");
             correct = false;
         }
 
@@ -649,7 +632,8 @@ public class TestAdvancedAerospace extends TestAero {
         correct &= correctGravDecks(buff);
         correct &= correctBays(buff);
         correct &= correctCriticals(buff);
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) ||
+                  getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -685,10 +669,10 @@ public class TestAdvancedAerospace extends TestAero {
                     } else if ((at == AmmoType.T_AC_ROTARY)) {
                         needed *= 6;
                     }
-                    if (!ammoTypeCount.containsKey(at)
-                            || ammoTypeCount.get(at) < needed) {
-                        buff.append("Bay ").append(bay.getName())
-                                .append(" does not have the minimum 10 shots of ammo for each weapon\n");
+                    if (!ammoTypeCount.containsKey(at) || ammoTypeCount.get(at) < needed) {
+                        buff.append("Bay ")
+                              .append(bay.getName())
+                              .append(" does not have the minimum 10 shots of ammo for each weapon\n");
                         illegal = true;
                         break;
                     }
@@ -725,9 +709,9 @@ public class TestAdvancedAerospace extends TestAero {
                     illegal = true;
                 }
             } else if (m.getType() instanceof WeaponType) {
-                if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)
-                        && !vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)
-                        && !vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+                if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER) &&
+                          !vessel.hasETypeFlag(Entity.ETYPE_WARSHIP) &&
+                          !vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
                     buff.append("A mass driver may not be mounted on a Jumpship.\n");
                     illegal = true;
                 }
@@ -752,24 +736,26 @@ public class TestAdvancedAerospace extends TestAero {
                         break;
                 }
                 if (!isAeroWeapon(m.getType(), vessel)) {
-                    buff.append("Cannot mount " + m.getType().getName() + "\n");
+                    buff.append("Cannot mount ").append(m.getType().getName()).append("\n");
                     illegal = true;
                 }
-                if ((m.getType().hasFlag(WeaponType.F_MASS_DRIVER)
-                        && !(m.getType() instanceof BayWeapon))) {
+                if ((m.getType().hasFlag(WeaponType.F_MASS_DRIVER) && !(m.getType() instanceof BayWeapon))) {
                     massDriversPerArc.merge(m.getLocation(), 1, Integer::sum);
                     int at = ((WeaponType) m.getType()).getAmmoType();
                     if ((at == AmmoType.T_HMASS) && vessel.getWeight() < 2000000) {
                         buff.append("Minimum vessel tonnage for ")
-                                .append(m.getType().getName()).append(" is 2,000,000 tons\n");
+                              .append(m.getType().getName())
+                              .append(" is 2,000,000 tons\n");
                         illegal = true;
                     } else if ((at == AmmoType.T_MMASS) && vessel.getWeight() < 1500000) {
                         buff.append("Minimum vessel tonnage for ")
-                                .append(m.getType().getName()).append(" is 1,500,000 tons\n");
+                              .append(m.getType().getName())
+                              .append(" is 1,500,000 tons\n");
                         illegal = true;
                     } else if ((at == AmmoType.T_LMASS) && vessel.getWeight() < 750000) {
                         buff.append("Minimum vessel tonnage for ")
-                                .append(m.getType().getName()).append(" is 750,000 tons\n");
+                              .append(m.getType().getName())
+                              .append(" is 750,000 tons\n");
                         illegal = true;
                     }
                 }
@@ -834,9 +820,9 @@ public class TestAdvancedAerospace extends TestAero {
         }
 
         for (Map.Entry<Integer, Integer> entry : massDriversPerArc.entrySet()) {
-            if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)
-                    && (entry.getKey() != Warship.LOC_NOSE)
-                    && (entry.getValue() > 0)) {
+            if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP) &&
+                      (entry.getKey() != Warship.LOC_NOSE) &&
+                      (entry.getValue() > 0)) {
                 buff.append("A warship may only mount a mass driver in the nose firing arc.\n");
                 illegal = true;
             } else if (entry.getValue() > 1) {
@@ -868,6 +854,7 @@ public class TestAdvancedAerospace extends TestAero {
      * Checks that the unit meets minimum crew and quarters requirements.
      *
      * @param buffer Where to write messages explaining failures.
+     *
      * @return true if the crew data is valid.
      */
     public boolean correctCrew(StringBuffer buffer) {
@@ -875,11 +862,11 @@ public class TestAdvancedAerospace extends TestAero {
         int crewSize = vessel.getNCrew() - vessel.getBayPersonnel();
         int reqCrew = minimumBaseCrew(vessel) + requiredGunners(vessel);
         if (crewSize < reqCrew) {
-            buffer.append("Requires " + reqCrew + " crew and only has " + crewSize + "\n");
+            buffer.append("Requires ").append(reqCrew).append(" crew and only has ").append(crewSize).append("\n");
             illegal = true;
         }
         if (vessel.getNOfficers() < Math.ceil(reqCrew / 6.0)) {
-            buffer.append("Requires at least " + (int) Math.ceil(reqCrew / 6.0) + " officers\n");
+            buffer.append("Requires at least ").append((int) Math.ceil(reqCrew / 6.0)).append(" officers\n");
             illegal = true;
         }
         crewSize += vessel.getNPassenger();
@@ -889,27 +876,31 @@ public class TestAdvancedAerospace extends TestAero {
         for (Bay bay : vessel.getTransportBays()) {
             Quarters q = Quarters.getQuartersForBay(bay);
             if (null != q) {
-                quarters += bay.getCapacity();
+                quarters += (int) bay.getCapacity();
             }
         }
         if (quarters < crewSize) {
-            buffer.append("Requires quarters for " + crewSize + " crew but only has " + quarters + "\n");
+            buffer.append("Requires quarters for ")
+                  .append(crewSize)
+                  .append(" crew but only has ")
+                  .append(quarters)
+                  .append("\n");
             illegal = true;
         }
         return !illegal;
     }
 
     /**
-     * Checks that the unit does not exceed the maximum number or size of gravity
-     * decks.
+     * Checks that the unit does not exceed the maximum number or size of gravity decks.
      *
      * @param buffer Where to write messages explaining failures.
+     *
      * @return true if the crew data is valid.
      */
     public boolean correctGravDecks(StringBuffer buffer) {
         boolean illegal = false;
         if (vessel.getGravDecks().size() > getMaxGravDecks(vessel)) {
-            buffer.append("Exceeds maximum " + getMaxGravDecks(vessel) + " gravity decks.\n");
+            buffer.append("Exceeds maximum ").append(getMaxGravDecks(vessel)).append(" gravity decks.\n");
             illegal = true;
         }
         int maxSize = Jumpship.GRAV_DECK_LARGE_MAX;
@@ -918,7 +909,7 @@ public class TestAdvancedAerospace extends TestAero {
         }
         for (Integer dia : vessel.getGravDecks()) {
             if (dia > maxSize) {
-                buffer.append("Maximum grav deck diameter is " + maxSize + "\n");
+                buffer.append("Maximum grav deck diameter is ").append(maxSize).append("\n");
                 illegal = true;
                 break;
             }
@@ -927,12 +918,11 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     /**
-     * Checks that the unit does not have more than one naval repair facility or
-     * dropshuttle bay
-     * per facing, all are assigned a facing, and non-stations have no more than one
-     * repair facility.
+     * Checks that the unit does not have more than one naval repair facility or drop shuttle bay per facing, all are
+     * assigned a facing, and non-stations have no more than one repair facility.
      *
      * @param buffer Where to write messages explaining failures.
+     *
      * @return true if the bay data is valid
      */
     public boolean correctBays(StringBuffer buffer) {
@@ -943,10 +933,10 @@ public class TestAdvancedAerospace extends TestAero {
         for (Bay bay : vessel.getTransportBays()) {
             if (bay.hardpointCost() > 0) {
                 if ((bay.getFacing() < 0) || (bay.getFacing() >= Warship.LOC_LBS)) {
-                    buffer.append(bay.getType() + " is not assigned a legal armor facing.\n");
+                    buffer.append(bay.getType()).append(" is not assigned a legal armor facing.\n");
                     legal = false;
                 } else if (facings.contains(bay.getFacing())) {
-                    buffer.append("Exceeds maximum of one repair facility or dropshuttle bay per armor facing.\n");
+                    buffer.append("Exceeds maximum of one repair facility or drop shuttle bay per armor facing.\n");
                     legal = false;
                 }
                 facings.add(bay.getFacing());
@@ -973,8 +963,7 @@ public class TestAdvancedAerospace extends TestAero {
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
-            buff.append("Weight: ").append(getWeight()).append(" (")
-                    .append(calculateWeight()).append(")\n");
+            buff.append("Weight: ").append(getWeight()).append(" (").append(calculateWeight()).append(")\n");
         }
         buff.append(printWeightCalculation()).append("\n");
         buff.append(printArmorPlacement());
@@ -1016,16 +1005,25 @@ public class TestAdvancedAerospace extends TestAero {
 
     @Override
     public String printWeightCalculation() {
-        return printWeightStructure() + printWeightEngine()
-                + printWeightKFDrive() + printWeightLFBattery()
-                + printWeightSail() + printWeightControls()
-                + printWeightFuel() + printWeightHeatSinks()
-                + printWeightArmor() + printWeightFireControl()
-                + printWeightCarryingSpace() + printWeightHardpoints()
-                + printWeightQuarters() + printWeightGravDecks()
-                + printWeightLifeBoats()
-                + "Equipment:\n"
-                + printMiscEquip() + printWeapon() + printAmmo();
+        return printWeightStructure() +
+                     printWeightEngine() +
+                     printWeightKFDrive() +
+                     printWeightLFBattery() +
+                     printWeightSail() +
+                     printWeightControls() +
+                     printWeightFuel() +
+                     printWeightHeatSinks() +
+                     printWeightArmor() +
+                     printWeightFireControl() +
+                     printWeightCarryingSpace() +
+                     printWeightHardpoints() +
+                     printWeightQuarters() +
+                     printWeightGravDecks() +
+                     printWeightLifeBoats() +
+                     "Equipment:\n" +
+                     printMiscEquip() +
+                     printWeapon() +
+                     printAmmo();
     }
 
     @Override

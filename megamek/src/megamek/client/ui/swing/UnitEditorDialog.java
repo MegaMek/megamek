@@ -256,7 +256,7 @@ public class UnitEditorDialog extends JDialog {
 
         int si = Math.max(aero.getSI(), 0);
         spnInternal[0] = new JSpinner(new SpinnerNumberModel(si, 0,
-                aero.get0SI(), 1));
+                aero.getOSI(), 1));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;

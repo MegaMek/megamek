@@ -32,25 +32,19 @@ package megamek.client.bot.common;
  * @author Luana Coppio
  */
 public enum DifficultyLevel {
-    BEGINNER(40, 0.8),
-    EASY(20, 0.9),
-    MEDIUM(10, 1.0),
-    HARD(3, 1.1),
-    HARDCORE(1, 1.2);
+    BEGINNER(20),
+    EASY(15),
+    MEDIUM(10),
+    HARD(5),
+    HARDCORE(1);
 
     private final int topPathsToConsider;
-    private final double alphaValue;
 
-    DifficultyLevel(int topPathsToConsider, double alphaValue) {
+    DifficultyLevel(int topPathsToConsider) {
         this.topPathsToConsider = topPathsToConsider;
-        this.alphaValue = alphaValue;
     }
 
     public int getTopPathsToConsider() {
         return topPathsToConsider;
-    }
-
-    public double getAlphaValue() {
-        return alphaValue;
     }
 }

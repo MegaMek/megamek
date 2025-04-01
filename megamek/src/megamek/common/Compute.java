@@ -6856,35 +6856,50 @@ public class Compute {
                 isAttackThruBuilding, attackerId, vReport, 1);
     }
 
+
     /**
+     * Computed the total damage that can be caused by a weapon.
+     * Obs.: It estimates rather than compute exact bay / trooper damage sum.
+     * @param weaponList The list of weapons to check
      * @return the maximum damage that a set of weapons can generate.
      */
     public static int computeTotalDamage(List<WeaponMounted> weaponList) {
-        int totalDmg = 0;
-        for (WeaponMounted weapon : weaponList) {
-            if (!weapon.isBombMounted() && weapon.isCrippled()) {
-                continue;
-            }
-            WeaponType type = weapon.getType();
-            if (type.getDamage() == WeaponType.DAMAGE_VARIABLE) {
-                // Estimate rather than compute exact bay / trooper damage sum.
-                totalDmg += type.getRackSize();
-            } else if (type.getDamage() == WeaponType.DAMAGE_ARTILLERY
-                    || type.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
-                totalDmg += type.getRackSize();
-            } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {// Handle dive bomb attacks here!
-                if (type instanceof DiveBombAttack) {
-                    totalDmg += weapon.getEntity().bombList.stream().mapToInt(Mounted::getExplosionDamage).sum();
-                }
-                if (type instanceof ISBAPopUpMineLauncher) {
-                    totalDmg += 4;
-                }
-            } else {
-                totalDmg += type.getDamage();
-            }
-        }
+        return weaponList.stream().mapToInt(Compute::computeTotalDamage).sum();
+    }
 
-        return totalDmg;
+    /**
+     * Computed the total damage that can be caused by a weapon.
+     * Obs.: It estimates rather than compute exact bay / trooper damage sum.
+     * @param weapon The weapon to check
+     * @return the maximum damage that a weapon can generate.
+     */
+    public static int computeTotalDamage(WeaponMounted weapon) {
+        if (weapon.isCrippled() && !weapon.isBombMounted()) {
+            return 0;
+        }
+        WeaponType type = weapon.getType();
+        return switch (type.getDamage()) {
+            case WeaponType.DAMAGE_VARIABLE, WeaponType.DAMAGE_ARTILLERY, WeaponType.DAMAGE_BY_CLUSTERTABLE ->
+                  type.getRackSize();
+            case WeaponType.DAMAGE_SPECIAL -> computeSpecialDamage(weapon);
+            default -> type.getDamage();
+        };
+    }
+
+    /**
+     * Dive-bomb attack and popup miner weapons have special damages
+     * @param weapon The weapon to check
+     * @return The special damage value
+     */
+    private static int computeSpecialDamage(WeaponMounted weapon) {
+        var type = weapon.getType();
+        if (type instanceof DiveBombAttack) {
+            return weapon.getEntity().bombList.stream().mapToInt(Mounted::getExplosionDamage).sum();
+        }
+        if (type instanceof ISBAPopUpMineLauncher) {
+            return 4;
+        }
+        return type.getDamage();
     }
 
     /**
@@ -8040,5 +8055,30 @@ public class Compute {
         }
         // No enemies in the volume == all outside
         return entities;
+    }
+
+    /**
+     * Get the mass of all entities in a building at the given coordinates.
+     * @param game
+     * @param coords
+     * @return
+     */
+    public static double getMassOfAllInBuilding(final Game game, final Coords coords) {
+        double mass = 0;
+
+        // Add the mass of anyone else standing in/on this building.
+        final Hex hex = game.getBoard().getHex(coords);
+        final int buildingElevation = hex.terrainLevel(Terrains.BLDG_ELEV);
+        final int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+        Iterator<Entity> crowd = game.getEntities(coords);
+        while (crowd.hasNext()) {
+            Entity e = crowd.next();
+
+            if (buildingElevation >= e.getElevation() || bridgeElevation >= e.getElevation()) {
+                mass += e.getWeight();
+            }
+        }
+
+        return mass;
     }
 } // End public class Compute

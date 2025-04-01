@@ -24,6 +24,7 @@ import javax.swing.JFrame;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.caspar.Caspar;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
@@ -137,25 +138,27 @@ public class AddBotUtil {
             return concatResults();
         }
 
-        final BotClient botClient;
+        Princess botClient;
         if ("Princess".equalsIgnoreCase(botName.toString())) {
             botClient = makeNewPrincessClient(target, host, port);
-            if (!StringUtility.isNullOrBlank(configName)) {
-                final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
-                        .getBehavior(configName.toString());
-                if (null != behavior) {
-                    ((Princess) botClient).setBehaviorSettings(behavior);
-                } else {
-                    results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");
-                    ((Princess) botClient).setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-                }
-            } else {
-                ((Princess) botClient).setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-            }
+        } else if ("Caspar".equalsIgnoreCase(botName.toString())) {
+            botClient = makeNewCasparClient(target, host, port);
         } else {
             results.add("Unrecognized bot: '" + botName + "'.  Defaulting to Princess.");
             botName = new StringBuilder("Princess");
             botClient = makeNewPrincessClient(target, host, port);
+        }
+
+        if (!StringUtility.isNullOrBlank(configName)) {
+            final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance().getBehavior(configName.toString());
+            if (null != behavior) {
+                botClient.setBehaviorSettings(behavior);
+            } else {
+                results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");
+                botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
+            }
+        } else {
+            botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
         }
 
         if (!GraphicsEnvironment.isHeadless()) {
@@ -170,50 +173,45 @@ public class AddBotUtil {
             return concatResults();
         }
         botClient.setLocalPlayerNumber(playerId);
-
-        final StringBuilder result = new StringBuilder(botName);
-        result.append(" has replaced ").append(target.getName()).append(".");
-        if (botClient instanceof Princess) {
-            result.append("  Config: ").append(((Princess) botClient).getBehaviorSettings().getDescription())
-                    .append(".");
-        }
-        results.add(result.toString());
+        String result = botName + " has replaced " + target.getName() + "." + "  Config: " +
+                              botClient.getBehaviorSettings().getDescription() + ".";
+        results.add(result);
         return concatResults();
     }
 
-    public @Nullable Princess replaceGhostWithBot(final BehaviorSettings behavior, final String playerName,
-            final Client client,
-            StringBuilder message) {
+    public @Nullable Princess replaceGhostWithBot(BehaviorSettings behavior, String playerName, Client client,
+                                                  StringBuilder message, boolean useCaspar) {
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
 
-        final Game game = client.getGame();
-        final String host = client.getHost();
-        final int port = client.getPort();
+        Game game = client.getGame();
+        String host = client.getHost();
+        int port = client.getPort();
 
         Objects.requireNonNull(game);
 
         Optional<Player> possible = game.getPlayersList().stream()
                 .filter(p -> p.getName().equals(playerName)).findFirst();
         if (possible.isEmpty()) {
-            message.append("No player with the name '" + playerName + "'.");
+            message.append("No player with the name '").append(playerName).append("'.");
             return null;
         } else if (!possible.get().isGhost()) {
-            message.append("Player '" + playerName + "' is not a ghost.");
+            message.append("Player '").append(playerName).append("' is not a ghost.");
             return null;
         }
 
-        final Player target = possible.get();
-        final Princess princess = new Princess(target.getName(), host, port);
+        Player target = possible.get();
+        Princess princess = useCaspar ? makeNewCasparClient(target, host, port)
+                                  : makeNewPrincessClient(target, host, port);
         princess.setBehaviorSettings(behavior);
 
         try {
             princess.connect();
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             message.append("Princess failed to connect.");
         }
         princess.setLocalPlayerNumber(target.getId());
-        message.append("Princess has replaced " + playerName + ".");
+        message.append("Princess has replaced ").append(playerName).append(".");
         return princess;
     }
 
@@ -298,7 +296,12 @@ public class AddBotUtil {
         return true;
     }
 
-    BotClient makeNewPrincessClient(final Player target, final String host, final int port) {
+    Princess makeNewPrincessClient(final Player target, final String host, final int port) {
         return new Princess(target.getName(), host, port);
+    }
+
+    Caspar makeNewCasparClient(Player player, String host, int port) {
+        return new Caspar(player.getName(), host, port, "default",
+              BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
     }
 }

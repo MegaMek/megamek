@@ -41,7 +41,7 @@ public class MaxRangeCalculator extends BaseAxisCalculator {
         // This calculates the unit movement
         float[] maxRange = axis();
 
-        maxRange[0] = normalize(pathing.getEntity().getMaxWeaponRange(), 0, 28);
+        maxRange[0] = pathing.getEntity().getMaxWeaponRange();
         return maxRange;
     }
 }

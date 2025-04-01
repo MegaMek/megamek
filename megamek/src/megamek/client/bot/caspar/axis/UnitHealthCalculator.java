@@ -72,61 +72,61 @@ public class UnitHealthCalculator extends BaseAxisCalculator {
     private static class OverallArmor {
         public float getArmorRemainingPercent(Entity unit) {
             if (unit instanceof Warship warship) {
-                return getDamage(warship);
+                return getHealth(warship);
             } else if (unit instanceof SpaceStation spaceStation) {
-                return getDamage(spaceStation);
+                return getHealth(spaceStation);
             } else if (unit instanceof Jumpship jumpship) {
-                return getDamage(jumpship);
+                return getHealth(jumpship);
             } else if (unit instanceof Aero aero) {
-                return getDamage(aero);
+                return getHealth(aero);
             } else if (unit instanceof SuperHeavyTank superHeavyTank) {
-                return getDamage(superHeavyTank);
+                return getHealth(superHeavyTank);
             } else if (unit instanceof GunEmplacement gunEmplacement) {
-                return getDamage(gunEmplacement);
+                return getHealth(gunEmplacement);
             } else if (unit instanceof Tank tank) {
-                return getDamage(tank);
+                return getHealth(tank);
             } else if (unit instanceof Mek mek) {
-                return getDamage(mek);
+                return getHealth(mek);
             } else if (unit instanceof ProtoMek protoMek) {
-                return getDamage(protoMek);
+                return getHealth(protoMek);
             } else {
                 return (float) unit.getArmorRemainingPercent();
             }
         }
 
-        protected float getDamage(Aero unit) {
+        protected float getHealth(Aero unit) {
             return (float) unit.getArmorRemainingPercent();
         }
 
-        protected float getDamage(Tank unit) {
+        protected float getHealth(Tank unit) {
             return (float)  unit.getArmorRemainingPercent();
         }
 
-        protected float getDamage(GunEmplacement unit) {
+        protected float getHealth(GunEmplacement unit) {
             return (float) unit.getArmorRemainingPercent();
         }
 
-        protected float getDamage(SuperHeavyTank unit) {
+        protected float getHealth(SuperHeavyTank unit) {
             return (float) unit.getArmorRemainingPercent();
         }
 
-        protected float getDamage(Mek unit) {
+        protected float getHealth(Mek unit) {
             return (float) unit.getArmorRemainingPercent();
         }
 
-        protected float getDamage(ProtoMek unit) {
+        protected float getHealth(ProtoMek unit) {
             return (float) unit.getArmorRemainingPercent();
         }
 
-        protected float getDamage(Jumpship unit) {
+        protected float getHealth(Jumpship unit) {
             return (float) unit.getArmorRemainingPercent();
         }
 
-        protected float getDamage(SpaceStation unit) {
+        protected float getHealth(SpaceStation unit) {
             return (float) unit.getArmorRemainingPercent();
         }
 
-        protected float getDamage(Warship unit) {
+        protected float getHealth(Warship unit) {
             return (float) unit.getArmorRemainingPercent();
         }
     }
@@ -134,38 +134,38 @@ public class UnitHealthCalculator extends BaseAxisCalculator {
     private static class BackSide extends OverallArmor {
 
         @Override
-        protected float getDamage(Aero unit) {
+        protected float getHealth(Aero unit) {
             return unit.getArmor(Aero.LOC_AFT) / (float) unit.getOArmor(Aero.LOC_AFT);
         }
 
         @Override
-        protected float getDamage(Tank unit) {
+        protected float getHealth(Tank unit) {
             return unit.getArmor(Tank.LOC_REAR) / (float) unit.getOArmor(Tank.LOC_REAR);
         }
 
         @Override
-        protected float getDamage(SuperHeavyTank unit) {
+        protected float getHealth(SuperHeavyTank unit) {
             return (unit.getArmor(SuperHeavyTank.LOC_REAR)) / (float) (unit.getOArmor(SuperHeavyTank.LOC_REAR));
         }
 
         @Override
-        protected float getDamage(Mek unit) {
+        protected float getHealth(Mek unit) {
             return (unit.getArmor(Mek.LOC_LT, true) + unit.getArmor(Mek.LOC_CT, true) + unit.getArmor(Mek.LOC_RT, true))
-                  / (float) (unit.getOArmor(Mek.LOC_LT, true) + unit.getOArmor(Mek.LOC_CT, true) + unit.getOArmor(Mek.LOC_RT, true));
+                         / (float) (unit.getOArmor(Mek.LOC_LT, true) + unit.getOArmor(Mek.LOC_CT, true) + unit.getOArmor(Mek.LOC_RT, true));
         }
 
         @Override
-        protected float getDamage(Jumpship unit) {
+        protected float getHealth(Jumpship unit) {
             return (unit.getArmor(Jumpship.LOC_AFT) + unit.getArmor(Jumpship.LOC_ARS)) / (float) (unit.getOArmor(Jumpship.LOC_FRS) + unit.getOArmor(Jumpship.LOC_ARS));
         }
 
         @Override
-        protected float getDamage(SpaceStation unit) {
+        protected float getHealth(SpaceStation unit) {
             return (unit.getArmor(SpaceStation.LOC_FRS) + unit.getArmor(SpaceStation.LOC_ARS)) / (float) (unit.getOArmor(SpaceStation.LOC_FRS) + unit.getOArmor(SpaceStation.LOC_ARS));
         }
 
         @Override
-        protected float getDamage(Warship unit) {
+        protected float getHealth(Warship unit) {
             return (unit.getArmor(Warship.LOC_FRS) + unit.getArmor(Warship.LOC_ARS) + unit.getArmor(Warship.LOC_RBS)) / (float) (unit.getOArmor(Warship.LOC_FRS) + unit.getOArmor(Warship.LOC_ARS) + unit.getOArmor(Warship.LOC_RBS));
         }
     }
@@ -173,43 +173,43 @@ public class UnitHealthCalculator extends BaseAxisCalculator {
     private static class FrontSide extends OverallArmor {
 
         @Override
-        protected float getDamage(Aero unit) {
+        protected float getHealth(Aero unit) {
             return unit.getArmor(Aero.LOC_NOSE) / (float) unit.getOArmor(Aero.LOC_NOSE);
         }
 
         @Override
-        protected float getDamage(Tank unit) {
+        protected float getHealth(Tank unit) {
             return unit.getArmor(Tank.LOC_FRONT) / (float) unit.getOArmor(Tank.LOC_FRONT);
         }
 
         @Override
-        protected float getDamage(SuperHeavyTank unit) {
+        protected float getHealth(SuperHeavyTank unit) {
             return unit.getArmor(SuperHeavyTank.LOC_FRONT) / (float) unit.getOArmor(SuperHeavyTank.LOC_FRONT);
         }
 
         @Override
-        protected float getDamage(Mek unit) {
+        protected float getHealth(Mek unit) {
             return (unit.getArmor(Mek.LOC_CT) + unit.getArmor(Mek.LOC_LT) + unit.getArmor(Mek.LOC_RT))
-                  / (float) (unit.getOArmor(Mek.LOC_CT) + unit.getOArmor(Mek.LOC_LT) + unit.getOArmor(Mek.LOC_RT));
+                         / (float) (unit.getOArmor(Mek.LOC_CT) + unit.getOArmor(Mek.LOC_LT) + unit.getOArmor(Mek.LOC_RT));
         }
 
         @Override
-        protected float getDamage(ProtoMek unit) {
+        protected float getHealth(ProtoMek unit) {
             return unit.getArmor(ProtoMek.LOC_BODY) / (float) unit.getOArmor(ProtoMek.LOC_BODY);
         }
 
         @Override
-        protected float getDamage(Jumpship unit) {
+        protected float getHealth(Jumpship unit) {
             return unit.getArmor(Jumpship.LOC_NOSE) / (float) unit.getOArmor(Jumpship.LOC_NOSE);
         }
 
         @Override
-        protected float getDamage(SpaceStation unit) {
+        protected float getHealth(SpaceStation unit) {
             return unit.getArmor(SpaceStation.LOC_NOSE) / (float) unit.getOArmor(SpaceStation.LOC_NOSE);
         }
 
         @Override
-        protected float getDamage(Warship unit) {
+        protected float getHealth(Warship unit) {
             return unit.getArmor(Warship.LOC_NONE) / (float) unit.getOArmor(Warship.LOC_NOSE);
         }
     }
@@ -217,38 +217,38 @@ public class UnitHealthCalculator extends BaseAxisCalculator {
     private static class LeftSide extends OverallArmor {
 
         @Override
-        protected float getDamage(Aero unit) {
+        protected float getHealth(Aero unit) {
             return unit.getArmor(Aero.LOC_LWING) / (float) unit.getOArmor(Aero.LOC_LWING);
         }
 
         @Override
-        protected float getDamage(Tank unit) {
+        protected float getHealth(Tank unit) {
             return unit.getArmor(Tank.LOC_LEFT) / (float) unit.getOArmor(Tank.LOC_LEFT);
         }
 
         @Override
-        protected float getDamage(SuperHeavyTank unit) {
+        protected float getHealth(SuperHeavyTank unit) {
             return (unit.getArmor(SuperHeavyTank.LOC_FRONTLEFT) + unit.getArmor(SuperHeavyTank.LOC_REARLEFT))/ (float) (unit.getOArmor(SuperHeavyTank.LOC_FRONTLEFT) + unit.getOArmor(SuperHeavyTank.LOC_REARLEFT));
         }
 
         @Override
-        protected float getDamage(Mek unit) {
+        protected float getHealth(Mek unit) {
             return (unit.getArmor(Mek.LOC_LT) + unit.getArmor(Mek.LOC_LARM) + unit.getArmor(Mek.LOC_LLEG))
-                  / (float) (unit.getOArmor(Mek.LOC_LT) + unit.getOArmor(Mek.LOC_LARM) + unit.getOArmor(Mek.LOC_LLEG));
+                         / (float) (unit.getOArmor(Mek.LOC_LT) + unit.getOArmor(Mek.LOC_LARM) + unit.getOArmor(Mek.LOC_LLEG));
         }
 
         @Override
-        protected float getDamage(Jumpship unit) {
+        protected float getHealth(Jumpship unit) {
             return (unit.getArmor(Jumpship.LOC_FLS) + unit.getArmor(Jumpship.LOC_ALS)) / (float) (unit.getOArmor(Jumpship.LOC_FLS) + unit.getOArmor(Jumpship.LOC_ALS));
         }
 
         @Override
-        protected float getDamage(SpaceStation unit) {
+        protected float getHealth(SpaceStation unit) {
             return (unit.getArmor(SpaceStation.LOC_FLS) + unit.getArmor(SpaceStation.LOC_ALS)) / (float) (unit.getOArmor(SpaceStation.LOC_FLS) + unit.getOArmor(SpaceStation.LOC_ALS));
         }
 
         @Override
-        protected float getDamage(Warship unit) {
+        protected float getHealth(Warship unit) {
             return (unit.getArmor(Warship.LOC_FLS) + unit.getArmor(Warship.LOC_ALS) + unit.getArmor(Warship.LOC_LBS)) / (float) (unit.getOArmor(Warship.LOC_FLS) + unit.getOArmor(Warship.LOC_ALS) + unit.getOArmor(Warship.LOC_LBS));
         }
 
@@ -257,38 +257,38 @@ public class UnitHealthCalculator extends BaseAxisCalculator {
     private static class RightSide extends OverallArmor {
 
         @Override
-        protected float getDamage(Aero unit) {
+        protected float getHealth(Aero unit) {
             return unit.getArmor(Aero.LOC_RWING) / (float) unit.getOArmor(Aero.LOC_RWING);
         }
 
         @Override
-        protected float getDamage(Tank unit) {
+        protected float getHealth(Tank unit) {
             return unit.getArmor(Tank.LOC_RIGHT) / (float) unit.getOArmor(Tank.LOC_RIGHT);
         }
 
         @Override
-        protected float getDamage(SuperHeavyTank unit) {
+        protected float getHealth(SuperHeavyTank unit) {
             return (unit.getArmor(SuperHeavyTank.LOC_FRONTRIGHT) + unit.getArmor(SuperHeavyTank.LOC_REARRIGHT)) / (float) (unit.getOArmor(SuperHeavyTank.LOC_FRONTRIGHT) + unit.getOArmor(SuperHeavyTank.LOC_REARRIGHT));
         }
 
         @Override
-        protected float getDamage(Mek unit) {
+        protected float getHealth(Mek unit) {
             return (unit.getArmor(Mek.LOC_RT) + unit.getArmor(Mek.LOC_RARM) + unit.getArmor(Mek.LOC_RLEG))
-                  / (float) (unit.getOArmor(Mek.LOC_RT) + unit.getOArmor(Mek.LOC_RARM) + unit.getOArmor(Mek.LOC_RLEG));
+                         / (float) (unit.getOArmor(Mek.LOC_RT) + unit.getOArmor(Mek.LOC_RARM) + unit.getOArmor(Mek.LOC_RLEG));
         }
 
         @Override
-        protected float getDamage(Jumpship unit) {
+        protected float getHealth(Jumpship unit) {
             return (unit.getArmor(Jumpship.LOC_FRS) + unit.getArmor(Jumpship.LOC_ARS)) / (float) (unit.getOArmor(Jumpship.LOC_FRS) + unit.getOArmor(Jumpship.LOC_ARS));
         }
 
         @Override
-        protected float getDamage(SpaceStation unit) {
+        protected float getHealth(SpaceStation unit) {
             return (unit.getArmor(SpaceStation.LOC_FRS) + unit.getArmor(SpaceStation.LOC_ARS)) / (float) (unit.getOArmor(SpaceStation.LOC_FRS) + unit.getOArmor(SpaceStation.LOC_ARS));
         }
 
         @Override
-        protected float getDamage(Warship unit) {
+        protected float getHealth(Warship unit) {
             return (unit.getArmor(Warship.LOC_FRS) + unit.getArmor(Warship.LOC_ARS) + unit.getArmor(Warship.LOC_RBS)) / (float) (unit.getOArmor(Warship.LOC_FRS) + unit.getOArmor(Warship.LOC_ARS) + unit.getOArmor(Warship.LOC_RBS));
         }
     }

@@ -63,11 +63,9 @@ public class EnemyInRangeCalculator extends BaseAxisCalculator {
         int x;
         int y;
         int closestEnemy = Integer.MAX_VALUE;
-        int distance;
         for (int i = 0; i < enemies.size(); i++) {
             x = enemies.getX(i);
             y = enemies.getY(i);
-            distance = Coords.distance(originX, originY, x, y);
             closestEnemy = Math.min(Coords.distance(originX, originY, x, y), closestEnemy);
         }
         return closestEnemy;

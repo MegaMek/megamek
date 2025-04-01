@@ -37,15 +37,13 @@ import megamek.common.Coords;
  * @author Luana Coppio
  */
 public class EnemyVipDistanceCalculator extends BaseAxisCalculator {
-    private static final int MAX_DISTANCE = 34; // approximately 2 boards
-
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the distance to the closest enemy VIP
         float[] vipDistance = axis();
         int dist = getDistanceToClosestVIP(pathing, gameState.getEnemyUnitsSOU());
 
-        vipDistance[0] = normalize(dist, 0, MAX_DISTANCE);
+        vipDistance[0] = dist;
         return vipDistance;
     }
 
@@ -84,6 +82,4 @@ public class EnemyVipDistanceCalculator extends BaseAxisCalculator {
         }
         return dist;
     }
-
-
 }

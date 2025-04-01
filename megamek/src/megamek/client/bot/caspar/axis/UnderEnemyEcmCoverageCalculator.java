@@ -29,19 +29,55 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
+import megamek.client.bot.common.StructOfUnitArrays;
+import megamek.common.Coords;
 
 /**
  * Calculates if the unit is under enemy ECM coverage
  * @author Luana Coppio
  */
 public class UnderEnemyEcmCoverageCalculator extends BaseAxisCalculator {
+
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the potential of the unit to act as a decoy
         float[] ecmCoverage = axis();
+        var unit = pathing.getEntity();
 
-        // Implementation goes here
+        int overlappingECMs = this.unitUnderECM(pathing, gameState.getEnemyUnitsSOU());
+        if (unit.hasActiveECCM()) {
+            overlappingECMs--;
+        }
+        ecmCoverage[0] = Math.min(overlappingECMs, 1);
 
         return ecmCoverage;
+    }
+
+    /**
+     * Counts the number ECM bubbles that are overlapping with the unit
+     * @param pathing The movement path to evaluate
+     * @param structOfUnitArrays The struct of unit arrays to evaluate
+     * @return The number of ECM bubbles this unit is under
+     */
+    private int unitUnderECM(Pathing pathing, StructOfUnitArrays structOfUnitArrays) {
+        int xd;
+        int yd;
+        int x = pathing.getFinalCoords().getX();
+        int y = pathing.getFinalCoords().getY();
+        int length = structOfUnitArrays.size();
+
+        double dist;
+        int number_of_ecm = 0;
+
+        for (int i = 0; i < length; i++) {
+            xd = structOfUnitArrays.getX(i);
+            yd = structOfUnitArrays.getY(i);
+
+            dist = Coords.distance(x, y, xd, yd);
+            if (dist <= 6 && structOfUnitArrays.hasECM(i)) {
+                number_of_ecm++;
+            }
+        }
+        return number_of_ecm;
     }
 }

@@ -30,9 +30,14 @@ package megamek.client.bot.caspar.axis;
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
 import megamek.client.bot.common.StructOfUnitArrays;
+import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.options.OptionsConstants;
+import org.tensorflow.proto.TestResults;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,6 +45,9 @@ import java.util.Set;
  * @author Luana Coppio
  */
 public class IsFacingEnemyCalculator extends BaseAxisCalculator {
+
+    private static final UnitHealthCalculator unitHealthCalculator = new UnitHealthCalculator();
+
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates if the unit is facing the enemy
@@ -48,7 +56,6 @@ public class IsFacingEnemyCalculator extends BaseAxisCalculator {
         var coordsToFace = unitsThreatening(pathing, gameState.getEnemyUnitsSOU());
         if (coordsToFace.isEmpty()) {
             // should face the direction it is moving
-
             int direction = pathing.getStartCoords().direction(pathing.getFinalCoords());
             int deltaFacing = direction - pathing.getFinalFacing();
             facing[0] = 1.0f - normalize(deltaFacing, 0, 3);
@@ -57,10 +64,79 @@ public class IsFacingEnemyCalculator extends BaseAxisCalculator {
 
             // its never null, but the check is important, who knows what could happen?
             int desiredFacing = toFace != null ? (toFace.direction(pathing.getFinalCoords()) + 3) % 6 : 0;
+
+            boolean useExtremeRange = gameState.useExtremeRange();
+            // preferred facing due to best firing arc
+            float[] health = unitHealthCalculator.calculateAxis(pathing, gameState);
+
+            int bestFiringArc = getBestFiringArc(pathing.getEntity(), health, useExtremeRange);
+            desiredFacing -= bestFiringArc;
+            if (desiredFacing < 0) {
+                desiredFacing += 6;
+            }
             int facingDiff = getFacingDiff(finalFacing, desiredFacing);
             facing[0] = 1f - normalize(facingDiff, 0f, 3f);
         }
         return facing;
+    }
+
+    /**
+     * This helps account for units with rear-arc mounted weapons "only", which is the case for some trailer
+     * weapons and weird tank setups.
+     * @param shooter the unit that is shooting
+     * @param health the health of the unit
+     * @param usesExtremeRange true if the unit uses extreme range, false otherwise
+     * @return the best firing arc for the unit
+     */
+    private int getBestFiringArc(Entity shooter, float[] health, boolean usesExtremeRange) {
+        var weapons = shooter.getWeaponList();
+        int bestArc = 0;
+        int bestDamage = 0;
+        int bestRange = 0;
+        int currentRange;
+        int currentDamage;
+        int currentArc;
+        int[] arcDamage = new int[]{0, 0, 0, 0, 0, 0};
+        int[] arcRange = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        for (var weapon : weapons) {
+            var type = weapon.getType();
+            currentRange = usesExtremeRange ? type.getExtremeRange() : type.getLongRange();
+            currentDamage = Compute.computeTotalDamage(weapon);
+            currentArc = weapon.isRearMounted() ? -shooter.getWeaponArc(weapon.getLocation()) :
+                               shooter.getWeaponArc(weapon.getLocation());
+            arcDamage[currentArc] += currentDamage;
+            arcRange[currentArc] = Math.max(arcRange[currentArc], currentRange);
+        }
+
+        float mod;
+        for (int i = 0; i < 6; i++) {
+            // from UnitHealthCalculator
+            // health array / arc position
+            // 0 - average
+            // 1 - front = 0, 1, 5
+            // 2 - left = 4
+            // 3 - right = 2
+            // 4 - back = 3
+            mod = switch (i) {
+                case 0, 1, 5 -> health[1];
+                case 4 -> health[2];
+                case 2 -> health[3];
+                case 3 -> health[4];
+                default -> 0;
+            };
+            if (arcDamage[i] * mod > bestDamage) {
+                bestDamage = arcDamage[i];
+                bestArc = i;
+                bestRange = arcRange[i];
+            } else if (arcDamage[i] * mod == bestDamage) {
+                if (arcRange[i] > bestRange) {
+                    bestArc = i;
+                    bestRange = arcRange[i];
+                }
+            }
+        }
+
+        return bestArc;
     }
 
     private int getFacingDiff(int currentFacing, int desiredFacing) {

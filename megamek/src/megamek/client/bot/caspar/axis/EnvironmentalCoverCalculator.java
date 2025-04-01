@@ -117,14 +117,13 @@ public class EnvironmentalCoverCalculator extends BaseAxisCalculator {
                                                int baseLevel, BoardQuickRepresentation boardQuickRepresentation) {
 
         float bonus = 0.0f;
-        float maxBonusPerEnemy = 1.0f / (enemyPositions.size() + 1.0f);
         for (Coords targetPosition : enemyPositions) {
             List<Coords> between = coverPosition.toCube().lineTo(targetPosition.toCube()).stream().map(CubeCoords::toOffset).toList();
             int woodCount = 0;
             boolean hasPartialCover = false;
             for (Coords c : between) {
                 if (boardQuickRepresentation.hasFullCover(c, baseLevel, unitHeight)) {
-                    bonus += maxBonusPerEnemy;
+                    bonus += 1.0f;
                     hasPartialCover = false;
                     break;
                 } else if (boardQuickRepresentation.hasPartialCover(c, baseLevel, unitHeight)) {
@@ -133,14 +132,14 @@ public class EnvironmentalCoverCalculator extends BaseAxisCalculator {
                 if (!c.equals(coverPosition) && boardQuickRepresentation.hasWoods(c)) {
                     woodCount++;
                     if (woodCount > 1) {
-                        bonus += maxBonusPerEnemy;
+                        bonus += 1.0f;
                         hasPartialCover = false;
                         break;
                     }
                 }
             }
             if (hasPartialCover) {
-                bonus += maxBonusPerEnemy / 2;
+                bonus += 0.25f;
             }
         }
         return bonus;
@@ -151,10 +150,10 @@ public class EnvironmentalCoverCalculator extends BaseAxisCalculator {
 
         for (Coords coords : coverPosition.allAdjacent()) {
             if (boardQuickRepresentation.hasFullCover(coords, baseLevel, unitHeight)) {
-                bonus += 0.01f;
+                bonus += 0.5f;
             } else if (boardQuickRepresentation.hasPartialCover(coords, baseLevel, unitHeight)
                   || boardQuickRepresentation.hasWoods(coords)) {
-                bonus += 0.005f;
+                bonus += 0.1f;
             }
         }
         return bonus;

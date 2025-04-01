@@ -30,6 +30,9 @@ package megamek.client.bot.caspar.axis;
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
 import megamek.common.Coords;
+import megamek.common.Entity;
+
+import java.util.Objects;
 
 /**
  * Calculates if the unit is moving toward the waypoint
@@ -40,11 +43,27 @@ public class MovingTowardWaypointCalculator extends BaseAxisCalculator {
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates if the unit is moving toward the waypoint
         float[] movingTowardWaypoint = axis();
+
         if (pathing.hasWaypoint()) {
             Coords waypoint = pathing.getWaypoint();
             int distFromStart = pathing.getStartCoords().distance(waypoint);
             int distFromFinalCoords = pathing.getFinalCoords().distance(waypoint);
             movingTowardWaypoint[0] = distFromStart > distFromFinalCoords ? 1 : 0;
+        } else {
+            Coords goal =
+                  Coords.median(
+                        gameState.getEnemyUnits()
+                              .stream()
+                              .map(Entity::getPosition)
+                              .filter(Objects::nonNull)
+                              .filter(c -> c.getX() > 0 && c.getY() > 0)
+                              .toList());
+
+            if (goal != null) {
+                int distFromStart = pathing.getStartCoords().distance(goal);
+                int distFromFinalCoords = pathing.getFinalCoords().distance(goal);
+                movingTowardWaypoint[0] = distFromStart > distFromFinalCoords ? 1 : 0;
+            }
         }
         return movingTowardWaypoint;
     }

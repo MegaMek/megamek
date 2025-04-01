@@ -40,6 +40,9 @@ public enum AxisType {
     JUMPING(new IsJumpingCalculator()),
     DISTANCE_TRAVELED(new DistanceTraveledCalculator()),
     HEXES_MOVED(new HexesMovedCalculator()),
+    CHANCE_OF_FAILURE(new ChanceOfFailureCalculator()),
+    MAX_RANGE(new MaxRangeCalculator()),
+    TOTAL_DAMAGE(new TotalDamageCalculator()),
     IS_FACING_ENEMY(new IsFacingEnemyCalculator()),
     ENEMY_IN_RANGE(new EnemyInRangeCalculator()),
     ALLIES_NEARBY(new MyAlliesNearbyCalculator()),
@@ -60,7 +63,7 @@ public enum AxisType {
     ENEMY_VIP_DISTANCE(new EnemyVipDistanceCalculator()),
     IS_CRIPPLED(new IsCrippledCalculator()),
     MOVING_TOWARD_WAYPOINT(new MovingTowardWaypointCalculator()),
-    UNIT_ROLE(new MyUnitRoleCalculator()),
+    UNIT_ROLE_BEHAVIOR(new UnitRoleBehaviorCalculator()),
     THREAT_BY_ROLE(new ThreatByRoleCalculator()),
     UNIT_TMM(new UnitTmmCalculator()),
     PILOTING_CAUTION(new PilotingCautionCalculator()),
@@ -71,10 +74,7 @@ public enum AxisType {
     TARGET_HEALTH(new TargetHealthCalculator()),
     TARGET_WITHIN_OPTIMAL_RANGE(new TargetWithinOptimalRangeCalculator()),
     TURNS_TO_ENCOUNTER(new TurnsToEncounterCalculator()),
-    CHANCE_OF_FAILURE(new ChanceOfFailureCalculator()),
-    MAX_RANGE(new MaxRangeCalculator()),
-    TOTAL_DAMAGE(new TotalDamageCalculator()),
-    UNIT_ROLE_BEHAVIOR(new UnitRoleBehaviorCalculator());
+    UNIT_ROLE(new MyUnitRoleCalculator());
 
     private final AxisCalculator axisCalculator;
 

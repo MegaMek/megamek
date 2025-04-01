@@ -48,5 +48,6 @@ public interface Pathing {
     boolean hasWaypoint();
     @Nullable Coords getWaypoint();
     boolean isJumping();
+    boolean getFinalProne();
     int getMpUsed();
 }

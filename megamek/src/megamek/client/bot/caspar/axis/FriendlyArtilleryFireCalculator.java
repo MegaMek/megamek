@@ -29,6 +29,8 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
+import megamek.client.bot.common.StructOfUnitArrays;
+import megamek.common.Coords;
 import megamek.common.actions.ArtilleryAttackAction;
 
 import java.util.Enumeration;
@@ -42,8 +44,33 @@ public class FriendlyArtilleryFireCalculator extends BaseAxisCalculator {
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the friendly artillery fire potential
         float[] artilleryFire = axis();
-        Enumeration<ArtilleryAttackAction> artilleryAttacks = gameState.getArtilleryAttacks();
-        artilleryFire[0] = artilleryAttacks.hasMoreElements() ? 1.0f : 0.0f;
+        float maxRange = pathing.getEntity().getMaxWeaponRange();
+        float artillerySupport = getArtillerySupport(pathing, gameState.getFriendlyUnitsSOU());
+        artillerySupport = Math.max(artillerySupport, getArtillerySupport(pathing, gameState.getOwnUnitsSOU()));
+
+        artilleryFire[0] = artillerySupport / (maxRange + 1f);
         return artilleryFire;
+    }
+
+    private static int getArtillerySupport(Pathing pathing, StructOfUnitArrays units) {
+        int originX = pathing.getFinalCoords().getX();
+        int originY = pathing.getFinalCoords().getY();
+        int x;
+        int y;
+        int maxRange;
+        int distance;
+        int support = 0;
+        for (int i = 0; i < units.size(); i++) {
+            maxRange = units.getMaxWeaponRange(i);
+            if (maxRange >= 22) {
+                x = units.getX(i);
+                y = units.getY(i);
+                distance = Coords.distance(originX, originY, x, y);
+                if (distance <= 17) {
+                    support = Math.max(support, maxRange - distance);
+                }
+            }
+        }
+        return support;
     }
 }

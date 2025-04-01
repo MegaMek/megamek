@@ -101,6 +101,11 @@ public class UnitPath implements Pathing {
     }
 
     @Override
+    public boolean getFinalProne() {
+        return unitAction.prone();
+    }
+
+    @Override
     public int getMpUsed() {
         return unitAction.mpUsed();
     }

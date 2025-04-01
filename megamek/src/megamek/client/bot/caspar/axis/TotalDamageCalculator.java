@@ -42,8 +42,7 @@ public class TotalDamageCalculator extends BaseAxisCalculator {
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the unit movement
         float[] totalDamage = axis();
-
-        totalDamage[0] = normalize(getMaxDamage(pathing.getEntity()), 0, 100);
+        totalDamage[0] = getMaxDamage(pathing.getEntity());
         return totalDamage;
     }
 

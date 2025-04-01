@@ -42,12 +42,12 @@ public class EnemiesNearbyCalculator extends BaseAxisCalculator {
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         float[] enemiesNearby = axis();
         // 10 distance
-        enemiesNearby[0] = normalize(getUnitsAtRange(10, pathing, gameState.getEnemyUnitsSOU()), 0, 8);
+        enemiesNearby[0] = getUnitsAtRange(10, pathing, gameState.getEnemyUnitsSOU());
         return enemiesNearby;
     }
 
     /**
-     * Calculates the distance to the closest enemy VIP
+     * Calculates the distance to the closest enemy
      * @param pathing the pathing object
      * @param enemies the enemy units on a StructOfUnitArrays
      * @return the distance to the closest enemy VIP, 0 if there are no VIP enemies

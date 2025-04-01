@@ -37,8 +37,31 @@ import megamek.client.bot.common.Pathing;
 public class UnitTmmCalculator extends BaseAxisCalculator {
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
-        // This calculates the unit TMM
+        // This is just an approximation
         float[] unitTmm = axis();
+        int hexesMoved = pathing.getHexesMoved();
+        boolean jumped = pathing.isJumping();
+        boolean prone = pathing.getFinalProne();
+
+        float tmm = jumped ? 1 : 0;
+        tmm+= prone ? -2 : 0;
+
+        if (hexesMoved >= 25) {
+            tmm += 6;
+        } else if (hexesMoved >= 18) {
+            tmm += 5;
+        } else if (hexesMoved >= 10) {
+            tmm += 4;
+        } else if (hexesMoved >= 7) {
+            tmm += 3;
+        } else if (hexesMoved >= 5) {
+            tmm += 2;
+        } else if (hexesMoved >= 3) {
+            tmm += 1;
+        } else if (hexesMoved == 0) {
+            tmm -= 4;
+        }
+        unitTmm[0] = tmm;
 
         return unitTmm;
     }

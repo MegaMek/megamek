@@ -98,7 +98,6 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
 
         // Check each visible enemy for best flanking opportunity
         float bestScore = 0.0f;
-        int maxRange = unit.getMaxWeaponRange();
         for (Entity enemy : visibleEnemies) {
             float flankingScore = calculateFlankingScore(unit, unitPosition, unitFacing, enemy, gameState);
 
@@ -251,8 +250,7 @@ public class FlankingPositionCalculator extends BaseAxisCalculator {
         int enemyFacing = enemy.getFacing();
 
         // Get all friendly units
-        List<Entity> friendlyUnits = gameState.getFriendlyUnits();
-        friendlyUnits.addAll(gameState.getOwnedUnits());
+        List<Entity> friendlyUnits = gameState.getMyTeamUnits();
         // Count friendly units in flanking positions
         int flankingSupportCount = 0;
 

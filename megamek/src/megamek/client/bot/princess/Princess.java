@@ -189,6 +189,7 @@ public class Princess extends BotClient implements Agent {
     private EnemyTracker enemyTracker;
     private CoverageValidator coverageValidator;
     private SwarmCenterManager swarmCenterManager;
+
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -438,6 +439,7 @@ public class Princess extends BotClient implements Agent {
         return 0.0; // If we have no entry, return zero
     }
 
+    @Override
     public BehaviorSettings getBehaviorSettings() {
         return behaviorSettings;
     }
@@ -3794,5 +3796,15 @@ public class Princess extends BotClient implements Agent {
     @Override
     public StrategicGoalsManager getStrategicGoalsManager() {
         return strategicGoalsManager;
+    }
+
+    @Override
+    public double getMovePathSuccessProbability(MovePath movePath) {
+        var entityPathRanker = getPathRanker(movePath.getEntity());
+        if (entityPathRanker instanceof PathRanker pathRanker) {
+            return pathRanker.getMovePathSuccessProbability(movePath);
+        } else {
+            return 1.0;
+        }
     }
 }

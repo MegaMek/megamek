@@ -23,7 +23,7 @@ import megamek.client.bot.BotLogger;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.codeUtilities.StringUtility;
+
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
@@ -33,8 +33,8 @@ import org.apache.logging.log4j.Level;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.text.NumberFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static megamek.client.ui.SharedUtility.predictLeapDamage;
 import static megamek.client.ui.SharedUtility.predictLeapFallDamage;
@@ -61,11 +61,129 @@ public abstract class PathRanker implements IPathRanker {
         Utility
     }
 
+    private final List<PathFilter> filters = List.of(
+          new AirborneAeroAltitudeFilter(),
+          new RangeFilter(),
+          new BuildingCollapseFilter(),
+          new FallToleranceFilter(),
+          new RACUnjamFilter()
+    );
+
     private final Princess owner;
 
     public PathRanker(Princess princess) {
         owner = princess;
     }
+
+    // region MovePathFilter
+
+    public class ValidationContext {
+        final Entity mover;
+        final Targetable closestTarget;
+        final int startingTargetDistance;
+        final boolean hasNoEnemyAvailable;
+        final boolean inRange;
+        final boolean isAirborneAeroOnGroundMap;
+        final boolean needToUnjamRAC;
+        final int walkMP;
+        final double fallTolerance;
+        final int maxRange;
+
+        public ValidationContext(Entity mover, Game game, int maxRange, double fallTolerance) {
+            this.mover = mover;
+            this.closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
+            this.startingTargetDistance = (closestTarget == null) ? Integer.MAX_VALUE
+                                                : closestTarget.getPosition().distance(mover.getPosition());
+            this.hasNoEnemyAvailable = (closestTarget == null);
+            this.inRange = maxRange >= startingTargetDistance;
+            this.isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
+            this.needToUnjamRAC = mover.canUnjamRAC();
+            this.walkMP = mover.getWalkMP();
+            this.fallTolerance = fallTolerance;
+            this.maxRange = maxRange;
+        }
+    }
+
+    public interface PathFilter {
+        boolean isValid(MovePath path, Game game, PathRanker.ValidationContext context);
+    }
+
+    public class AirborneAeroAltitudeFilter implements PathFilter {
+        @Override
+        public boolean isValid(MovePath path, Game game, ValidationContext context) {
+            return !(context.isAirborneAeroOnGroundMap && path.getEntity().getBombs(BombType.F_GROUND_BOMB).isEmpty() &&
+                           path.getFinalAltitude() < 2);
+        }
+    }
+
+    public class RangeFilter implements PathFilter {
+        @Override
+        public boolean isValid(MovePath path, Game game, ValidationContext context) {
+            if (context.isAirborneAeroOnGroundMap ||
+                      getOwner().wantsToFallBack(context.mover) ||
+                      context.hasNoEnemyAvailable) {
+                return true;
+            }
+            Targetable closestToEnd = findClosestEnemy(context.mover, path.getFinalCoords(), game);
+            return validRange(path.getFinalCoords(), closestToEnd, context.startingTargetDistance, context.maxRange,
+                  context.inRange);
+        }
+    }
+
+    public class BuildingCollapseFilter implements PathFilter {
+        @Override
+        public boolean isValid(MovePath path, Game game, ValidationContext context) {
+            return !willBuildingCollapse(path, game);
+        }
+    }
+
+    public class FallToleranceFilter implements PathFilter {
+        @Override
+        public boolean isValid(MovePath path, Game game, ValidationContext context) {
+            return getMovePathSuccessProbability(path) >= context.fallTolerance;
+        }
+    }
+
+    public class RACUnjamFilter implements PathFilter {
+        @Override
+        public boolean isValid(MovePath path, Game game, ValidationContext context) {
+            if (!context.needToUnjamRAC) {
+                return true;
+            }
+            return path.getMpUsed() <= context.walkMP && !path.isJumping();
+        }
+    }
+
+    /**
+     * Validates a list of paths, removing any that are invalid.
+     * @param startingPathList The list of paths to validate
+     * @param game The current {@link Game}
+     * @param maxRange The maximum range of the unit in question
+     * @param fallTolerance The maximum chance of falling that is acceptable
+     * @return A list of valid paths
+     */
+    public List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
+                                        double fallTolerance) {
+        if (startingPathList.isEmpty()) {
+            return startingPathList;
+        }
+
+        Entity mover = startingPathList.get(0).getEntity();
+        ValidationContext context = new ValidationContext(mover, game, maxRange, fallTolerance);
+
+        List<MovePath> returnPaths = startingPathList.stream()
+              .filter(path -> path != null && path.isMoveLegal())
+              .filter(path -> filters.stream().allMatch(filter -> filter.isValid(path, game, context)))
+              .collect(Collectors.toList());
+
+        if (returnPaths.isEmpty()) {
+            return getOwner().getMovePathsAndSetNecessaryTargets(mover, true);
+        }
+
+        return returnPaths;
+    }
+
+    // endregion MovePathFilter
 
     protected abstract RankedPath rankPath(MovePath path, Game game, int maxRange,
             double fallTolerance, List<Entity> enemies,
@@ -80,50 +198,39 @@ public abstract class PathRanker implements IPathRanker {
             return new TreeSet<>();
         }
 
-        // the cached path probability data is really only relevant for one iteration
-        // through this method
+        // the cached path probability data is really only relevant for one iteration through this method
         getPathRankerState().getPathSuccessProbabilities().clear();
-
-        // Let's try to whittle down this list.
         List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
-        logger.debug("Validated " + validPaths.size() + " out of " + movePaths.size() + " possible paths.");
+        logger.debug("Validated {} out of {} possible paths.", validPaths.size(), movePaths.size());
 
         // If the heat map of friendly activity has sufficient data, use the nearest hot
         // spot as
         // the anchor point
         Coords allyCenter = owner.getFriendlyHotSpot(movePaths.get(0).getEntity().getPosition());
         if (allyCenter == null) {
-            allyCenter = this.calculateAlliesCenter(movePaths.get(0).getEntity().getId(), friends, game);
+            allyCenter = this.calculateAlliesCenter(movePaths.get(0).getEntity(), friends, game);
         }
 
         TreeSet<RankedPath> returnPaths = new TreeSet<>(Collections.reverseOrder());
 
         try {
-            final BigDecimal numberPaths = new BigDecimal(validPaths.size());
-            BigDecimal count = BigDecimal.ZERO;
-            BigDecimal interval = new BigDecimal(5);
-            boolean withHeader = true;
+            int numberPaths = validPaths.size();
+            int count = 0;
+            int interval = 5;
             boolean pathsHaveExpectedDamage = false;
             for (MovePath path : validPaths) {
                 try {
-                    count = count.add(BigDecimal.ONE);
+                    count++;
 
                     RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, enemies, allyCenter);
-
                     returnPaths.add(rankedPath);
+                    // keep track of if any of the paths have some kind of damage potential
+                    pathsHaveExpectedDamage |= rankedPath.hasExpectedDamage();
 
-                    withHeader = false;
-                    // we want to keep track of if any of the paths we've considered have some kind
-                    // of damage potential
-                    pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
-
-                    BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
-                        .round(new MathContext(0, RoundingMode.DOWN));
-                    if (percent.compareTo(interval) >= 0) {
-                        if (logger.isLevelLessSpecificThan(Level.INFO)) {
-                            getOwner().sendChat("... " + percent.intValue() + "% complete.");
-                        }
-                        interval = percent.add(new BigDecimal(5));
+                    int percent = (int) ((count * 100d) / numberPaths);
+                    if (percent >= interval) {
+                        logPercentConcluded(percent);
+                        interval = percent + 5;
                     }
                 } catch (Exception e) {
                     logger.error(e, e.getMessage() + "while processing " + path);
@@ -147,6 +254,13 @@ public abstract class PathRanker implements IPathRanker {
             logger.error(exception, exception.getMessage());
             return returnPaths;
         }
+
+        logPaths(game, returnPaths);
+
+        return returnPaths;
+    }
+
+    protected void logPaths(Game game, TreeSet<RankedPath> returnPaths) {
         botLogger.append(game, true);
         // log the top 50 paths
         int numPathsToLog = Math.min(50, returnPaths.size());
@@ -158,99 +272,103 @@ public abstract class PathRanker implements IPathRanker {
             botLogger.append(rankedPath, i == 0);
             i++;
         }
-
-        return returnPaths;
     }
 
-    private List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
-            double fallTolerance) {
-        if (startingPathList.isEmpty()) {
-            // Nothing to validate here, might as well return the empty list
-            // straight away.
-            return startingPathList;
+    protected void logPercentConcluded(int percent) {
+        if (logger.isLevelLessSpecificThan(Level.INFO)) {
+            getOwner().sendChat("... " + percent + "% complete.");
         }
-
-        Entity mover = startingPathList.get(0).getEntity();
-
-        Targetable closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
-        int startingTargetDistance = (closestTarget == null) ? Integer.MAX_VALUE
-                : closestTarget.getPosition().distance(mover.getPosition());
-        boolean hasNoEnemyAvailable = (closestTarget == null);
-        List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
-        boolean inRange = maxRange >= startingTargetDistance;
-
-        boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
-        boolean needToUnjamRAC = mover.canUnjamRAC();
-        int walkMP = mover.getWalkMP();
-
-        for (MovePath path : startingPathList) {
-            // just in case
-            if ((path == null) || !path.isMoveLegal()) {
-                continue;
-            }
-
-            logger.trace("Validating path {}", path);
-            // if we are an aero unit on the ground map, we want to discard paths that keep
-            // us at altitude 1 with no bombs
-            if (isAirborneAeroOnGroundMap) {
-                // if we have no bombs, we want to make sure our altitude is above 1
-                // if we do have bombs, we may consider altitude bombing (in the future)
-                if (path.getEntity().getBombs(BombType.F_GROUND_BOMB).isEmpty()
-                        && (path.getFinalAltitude() < 2)) {
-                    logger.trace("INVALID: No bombs but at altitude 1. No way.");
-                    continue;
-                }
-            }
-
-            Coords finalCoords = path.getFinalCoords();
-
-            // Make sure I'm trying to get/stay in range of a target.
-            // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
-            // also skip this part if I'm attempting to retreat, as engagement is not the
-            // point here
-            if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover) && !hasNoEnemyAvailable) {
-                Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
-                var validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange,
-                        inRange);
-                if (!validation) {
-                    logger.trace("Invalid range to target.");
-                    continue;
-                }
-            }
-
-            // Don't move on/through buildings that will not support our weight.
-            if (willBuildingCollapse(path, game)) {
-                logger.trace("INVALID: Building in path will collapse.");
-                continue;
-            }
-
-            // Skip any path where I am too likely to fail my piloting roll.
-            double chance = getMovePathSuccessProbability(path);
-            if (chance < fallTolerance) {
-                logger.trace("INVALID: Too likely to fall on my face.");
-                continue;
-            }
-
-            // first crack at logic involving unjamming RACs: just do it
-            if (needToUnjamRAC && ((path.getMpUsed() > walkMP) || path.isJumping())) {
-                logger.trace("INADVISABLE: Want to unjam autocannon but path involves running or jumping");
-                continue;
-            }
-
-            // If all the above checks have passed, this is a valid path.
-            logger.trace("VALID");
-            returnPaths.add(path);
-
-        }
-
-        // If we've eliminated all valid paths, let's try to pick out a long range path
-        // instead
-        if (returnPaths.isEmpty()) {
-            return getOwner().getMovePathsAndSetNecessaryTargets(mover, true);
-        }
-
-        return returnPaths;
     }
+
+    //    protected List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
+//            double fallTolerance) {
+//        if (startingPathList.isEmpty()) {
+//            // Nothing to validate here, might as well return the empty list
+//            // straight away.
+//            return startingPathList;
+//        }
+//
+//        Entity mover = startingPathList.get(0).getEntity();
+//
+//        Targetable closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
+//        int startingTargetDistance = (closestTarget == null) ? Integer.MAX_VALUE
+//                : closestTarget.getPosition().distance(mover.getPosition());
+//        boolean hasNoEnemyAvailable = (closestTarget == null);
+//        List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
+//        boolean inRange = maxRange >= startingTargetDistance;
+//
+//        boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
+//        boolean needToUnjamRAC = mover.canUnjamRAC();
+//        int walkMP = mover.getWalkMP();
+//
+//        for (MovePath path : startingPathList) {
+//            // just in case
+//            if ((path == null) || !path.isMoveLegal()) {
+//                continue;
+//            }
+//
+//            logger.trace("Validating path {}", path);
+//            // if we are an aero unit on the ground map, we want to discard paths that keep
+//            // us at altitude 1 with no bombs
+//            if (isAirborneAeroOnGroundMap) {
+//                // if we have no bombs, we want to make sure our altitude is above 1
+//                // if we do have bombs, we may consider altitude bombing (in the future)
+//                if (path.getEntity().getBombs(BombType.F_GROUND_BOMB).isEmpty()
+//                        && (path.getFinalAltitude() < 2)) {
+//                    logger.trace("INVALID: No bombs but at altitude 1. No way.");
+//                    continue;
+//                }
+//            }
+//
+//            Coords finalCoords = path.getFinalCoords();
+//
+//            // Make sure I'm trying to get/stay in range of a target.
+//            // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
+//            // also skip this part if I'm attempting to retreat, as engagement is not the
+//            // point here
+//            if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover) && !hasNoEnemyAvailable) {
+//                Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
+//                var validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange,
+//                        inRange);
+//                if (!validation) {
+//                    logger.trace("Invalid range to target.");
+//                    continue;
+//                }
+//            }
+//
+//            // Don't move on/through buildings that will not support our weight.
+//            if (willBuildingCollapse(path, game)) {
+//                logger.trace("INVALID: Building in path will collapse.");
+//                continue;
+//            }
+//
+//            // Skip any path where I am too likely to fail my piloting roll.
+//            double chance = getMovePathSuccessProbability(path);
+//            if (chance < fallTolerance) {
+//                logger.trace("INVALID: Too likely to fall on my face.");
+//                continue;
+//            }
+//
+//            // first crack at logic involving unjamming RACs: just do it
+//            if (needToUnjamRAC && ((path.getMpUsed() > walkMP) || path.isJumping())) {
+//                logger.trace("INADVISABLE: Want to unjam autocannon but path involves running or jumping");
+//                continue;
+//            }
+//
+//            // If all the above checks have passed, this is a valid path.
+//            logger.trace("VALID");
+//            returnPaths.add(path);
+//
+//        }
+//
+//        // If we've eliminated all valid paths, let's try to pick out a long range path
+//        // instead
+//        if (returnPaths.isEmpty()) {
+//            return getOwner().getMovePathsAndSetNecessaryTargets(mover, true);
+//        }
+//
+//        return returnPaths;
+//    }
 
     /**
      * Returns the best path of a list of ranked paths.
@@ -329,7 +447,7 @@ public abstract class PathRanker implements IPathRanker {
     /**
      * Returns the probability of success of a move path
      */
-    protected double getMovePathSuccessProbability(MovePath movePath) {
+    public double getMovePathSuccessProbability(MovePath movePath) {
         // introduced a caching mechanism, as the success probability was being
         // calculated at least twice
         if (getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {
@@ -514,7 +632,7 @@ public abstract class PathRanker implements IPathRanker {
             double mass = path.getEntity().getWeight() + 10;
 
             // Add the mass of anyone else standing in/on this building.
-            mass += owner.getMassOfAllInBuilding(game, finalCoords);
+            mass += Compute.getMassOfAllInBuilding(game, finalCoords);
 
             return (mass > building.getCurrentCF(finalCoords));
         }
@@ -531,7 +649,7 @@ public abstract class PathRanker implements IPathRanker {
             }
 
             // Add the mass of anyone else standing in/on this building.
-            double fullMass = mass + owner.getMassOfAllInBuilding(game, step.getPosition());
+            double fullMass = mass + Compute.getMassOfAllInBuilding(game, step.getPosition());
 
             if (fullMass > building.getCurrentCF(step.getPosition())) {
                 return true;
@@ -540,8 +658,8 @@ public abstract class PathRanker implements IPathRanker {
         return false;
     }
 
-    public @Nullable Coords calculateAlliesCenter(int myId, @Nullable List<Entity> friends, Game game) {
-        return calcAllyCenter(myId, friends, game);
+    public @Nullable Coords calculateAlliesCenter(Entity unit, @Nullable List<Entity> friends, Game game) {
+        return calcAllyCenter(unit.getId(), friends, game);
     }
 
     public static @Nullable Coords calcAllyCenter(int myId, @Nullable List<Entity> friends, Game game) {

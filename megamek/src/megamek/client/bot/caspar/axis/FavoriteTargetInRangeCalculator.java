@@ -34,9 +34,6 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
 
-import static megamek.codeUtilities.MathUtility.clamp;
-import static megamek.codeUtilities.MathUtility.clamp01;
-
 /**
  * Calculates if the favorite target role type is in range
  * @author Luana Coppio
@@ -44,24 +41,32 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class FavoriteTargetInRangeCalculator extends BaseAxisCalculator {
 
     @Override
-    public float[] axis() {
-        return new float[UnitRole.values().length];
-    }
-
-    @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // calculate if the favorite target role type is in range
         float[] favoriteTarget = axis();
         Entity unit = pathing.getEntity();
+        UnitRole role = unit.getRole();
+        float scoutWeight = 0.3f;
+        float strikerWeight = 0.5f;
+        float juggernautWeight = 0.7f;
+        float sniperWeight = 0.9f;
+        float missileBoatWeight = 0.9f;
+        if (role == UnitRole.SNIPER) {
+            scoutWeight = 0.5f;
+        } else if (role == UnitRole.JUGGERNAUT) {
+            juggernautWeight = 1.0f;
+        } else if (role == UnitRole.STRIKER) {
+            scoutWeight = 0.5f;
+            strikerWeight = 0.6f;
+            juggernautWeight = 0.4f;
+        } else if (role == UnitRole.MISSILE_BOAT) {
+            scoutWeight = 0.6f;
+            strikerWeight = 0.7f;
+            juggernautWeight = 0.3f;
+        }
         int maxRange = unit.getMaxWeaponRange();
-
-        favoriteTarget[0] = getNormalizedDistanceToClosestEnemyWithRole(pathing, gameState.getEnemyUnitsSOU(), maxRange,
-              UnitRole.SNIPER);
-        favoriteTarget[1] = getNormalizedDistanceToClosestEnemyWithRole(pathing, gameState.getEnemyUnitsSOU(), maxRange,
-              UnitRole.MISSILE_BOAT);
-        favoriteTarget[2] = getNormalizedDistanceToClosestEnemyWithRole(pathing, gameState.getEnemyUnitsSOU(), maxRange,
-              UnitRole.JUGGERNAUT);
-
+        favoriteTarget[0] = getFavoriteTargetScore(pathing, gameState.getEnemyUnitsSOU(),
+              maxRange, strikerWeight, scoutWeight, juggernautWeight, sniperWeight, missileBoatWeight);
         return favoriteTarget;
     }
 
@@ -71,23 +76,37 @@ public class FavoriteTargetInRangeCalculator extends BaseAxisCalculator {
      * @param structOfUnitArrays The struct of unit arrays to evaluate
      * @return The number of units covering the current unit
      */
-    private float getNormalizedDistanceToClosestEnemyWithRole(Pathing pathing, StructOfUnitArrays structOfUnitArrays, int distance, UnitRole role) {
+    private float getFavoriteTargetScore(Pathing pathing, StructOfUnitArrays structOfUnitArrays,
+                                         int distance, float strikerWeight, float scoutWeight,
+                                         float juggernautWeight, float sniperWeight,
+                                         float missileBoatWeight) {
         int x = pathing.getFinalCoords().getX();
         int y = pathing.getFinalCoords().getY();
         int length = structOfUnitArrays.size();
-
+        UnitRole unitRole;
         int xd;
         int yd;
         float dist;
-        float closedDist = Integer.MAX_VALUE;
+        float targetScore = 0f;
         for (int i = 0; i < length; i++) {
             xd = structOfUnitArrays.getX(i);
             yd = structOfUnitArrays.getY(i);
-            if (role == structOfUnitArrays.getRole(i)) {
-                dist = Coords.distance(x, y, xd, yd);
-                closedDist = Math.min(closedDist, dist);
+            dist = Coords.distance(x, y, xd, yd);
+            unitRole = structOfUnitArrays.getRole(i);
+            if (dist <= distance) {
+                if (unitRole == UnitRole.STRIKER) {
+                    targetScore = Math.max(targetScore, strikerWeight * (1 - (dist / distance)));
+                } else if (unitRole == UnitRole.SCOUT) {
+                    targetScore = Math.max(targetScore, scoutWeight * (1 - (dist / distance)));
+                } else if (unitRole == UnitRole.JUGGERNAUT) {
+                    targetScore = Math.max(targetScore, juggernautWeight * (1 - (dist / distance)));
+                } else if (unitRole == UnitRole.SNIPER) {
+                    targetScore = Math.max(targetScore, sniperWeight * (1 - (dist / distance)));
+                } else if (unitRole == UnitRole.MISSILE_BOAT) {
+                    targetScore = Math.max(targetScore, missileBoatWeight * (1 - (dist / distance)));
+                }
             }
         }
-        return clamp01(1 - clamp01(closedDist / (distance + 1f)));
+        return targetScore;
     }
 }

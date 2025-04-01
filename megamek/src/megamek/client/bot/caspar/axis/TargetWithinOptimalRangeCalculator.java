@@ -29,6 +29,11 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
+import megamek.client.bot.common.StructOfUnitArrays;
+import megamek.common.Coords;
+import megamek.common.Entity;
+
+import java.util.List;
 
 /**
  * Calculates the target within optimal range
@@ -39,7 +44,29 @@ public class TargetWithinOptimalRangeCalculator extends BaseAxisCalculator {
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the target within optimal range
         float[] targetWithinOptimalRange = axis();
-
+        var unit = pathing.getEntity();
+        var enemyUnits = getUnitsAtRange((int) (unit.getMaxWeaponRange() * 0.6f), pathing,
+              gameState.getEnemyUnitsSOU());
+        var totalEnemies = gameState.getEnemyUnitsSOU().size();
+        if (totalEnemies > 0) {
+            targetWithinOptimalRange[0] = (float) enemyUnits / totalEnemies;
+        }
         return targetWithinOptimalRange;
+    }
+
+    private static int getUnitsAtRange(int distance, Pathing pathing, StructOfUnitArrays enemies) {
+        int originX = pathing.getFinalCoords().getX();
+        int originY = pathing.getFinalCoords().getY();
+        int x;
+        int y;
+        int units = 0;
+        for (int i = 0; i < enemies.size(); i++) {
+            x = enemies.getX(i);
+            y = enemies.getY(i);
+            if (Coords.distance(originX, originY, x, y) < distance) {
+                units++;
+            }
+        }
+        return units;
     }
 }

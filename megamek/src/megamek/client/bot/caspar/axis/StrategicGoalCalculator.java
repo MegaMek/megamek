@@ -29,6 +29,10 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
+import megamek.common.Coords;
+import megamek.common.Entity;
+
+import java.util.Objects;
 
 /**
  * Calculates the strategic goal
@@ -39,6 +43,37 @@ public class StrategicGoalCalculator extends BaseAxisCalculator {
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the strategic goal
         float[] strategicGoal = axis();
+
+        var formationOpt = gameState.getFormationFor(pathing.getEntity());
+        if (formationOpt.isPresent()) {
+            var formation = formationOpt.get();
+            var tacticalOpt = gameState.getTacticalPlanner().getAssignedObjective(formation);
+            if (tacticalOpt.isPresent()) {
+                var tacticalObjective = tacticalOpt.get();
+                var waypoint = tacticalObjective.getPosition();
+                int distFromStart = pathing.getStartCoords().distance(waypoint);
+                int distFromFinalCoords = pathing.getFinalCoords().distance(waypoint);
+                strategicGoal[0] = distFromStart > distFromFinalCoords ? 1 : 0;
+            }
+        } else {
+            int selectedCoords = -1;
+            int selectedCoordsFinal = -1;
+            int dist;
+            int distance = Integer.MAX_VALUE;
+            for (var coords : gameState.getStrategicPoints()) {
+                if (coords.getX() > 0 && coords.getY() > 0) {
+                    dist = pathing.getStartCoords().distance(coords);
+                    if (dist < distance) {
+                        selectedCoords = dist;
+                    }
+                    dist = pathing.getFinalCoords().distance(coords);
+                    if (dist < distance) {
+                        selectedCoordsFinal = dist;
+                    }
+                }
+            }
+            strategicGoal[0] = selectedCoords > selectedCoordsFinal ? 1 : 0;
+        }
 
         return strategicGoal;
     }

@@ -37,6 +37,7 @@ import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.UnitRole;
 import megamek.common.annotations.Nullable;
+import megamek.common.options.Option;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +45,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -350,7 +352,7 @@ public class TacticalPlanner {
             }
 
             // Find the most suitable objective
-            TacticalObjective bestObjective = findBestObjective(formation, unassignedObjectives);
+            TacticalObjective bestObjective = findBestObjective(unassignedObjectives);
 
             if (bestObjective != null) {
                 formationAssignments.put(formation.getId(), bestObjective.getId());
@@ -362,16 +364,14 @@ public class TacticalPlanner {
     /**
      * Finds the best objective for a formation.
      *
-     * @param formation The formation to assign
      * @param availableObjectives Available objectives
      * @return The best matching objective, or null if none
      */
-    private TacticalObjective findBestObjective(Formation formation, List<TacticalObjective> availableObjectives) {
+    private TacticalObjective findBestObjective(List<TacticalObjective> availableObjectives) {
         if (availableObjectives.isEmpty()) {
             return null;
         }
-
-        // Simple matching for now - use the highest priority objective
+        availableObjectives.sort((o1, o2) -> Double.compare(o2.getPriority(), o1.getPriority()));
         return availableObjectives.get(0);
     }
 
@@ -381,9 +381,9 @@ public class TacticalPlanner {
      * @param formation The formation to check
      * @return The assigned objective, or null if none
      */
-    public TacticalObjective getAssignedObjective(Formation formation) {
+    public Optional<TacticalObjective> getAssignedObjective(Formation formation) {
         String objectiveId = formationAssignments.get(formation.getId());
-        return objectiveId != null ? objectives.get(objectiveId) : null;
+        return objectiveId != null ? Optional.of(objectives.get(objectiveId)) : Optional.empty();
     }
 
     /**

@@ -29,6 +29,9 @@ package megamek.client.bot.caspar.axis;
 
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
+import megamek.common.Entity;
+
+import java.util.List;
 
 /**
  * Calculates the turns to encounter
@@ -39,6 +42,24 @@ public class TurnsToEncounterCalculator extends BaseAxisCalculator {
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the turns to encounter
         float[] turnsToEncounter = axis();
+
+        List<Entity> enemies = gameState.getEnemyUnits();
+        int closestDistance = Integer.MAX_VALUE;
+        Entity closestEnemy = null;
+        for (Entity enemy : enemies) {
+            int distance = pathing.getFinalCoords().distance(enemy.getPosition());
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestEnemy = enemy;
+            }
+        }
+
+        if (closestDistance == Integer.MAX_VALUE) {
+            turnsToEncounter[0] = -1.0f; // No enemies
+        } else {
+            int avgMovementPerTurn = Math.max(closestEnemy.getRunMP() + pathing.getEntity().getRunMP(), 1);
+            turnsToEncounter[0] = (float) closestDistance / avgMovementPerTurn;
+        }
 
         return turnsToEncounter;
     }

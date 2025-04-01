@@ -28,7 +28,9 @@
 
 package megamek.client.bot.common;
 
+import megamek.client.bot.caspar.TacticalPlanner;
 import megamek.client.bot.common.formation.Formation;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -130,5 +132,11 @@ public interface GameState {
      * @param pathing The pathing object to evaluate
      * @return The success probability of the pathing
      */
-    float successProbability(Pathing pathing);
+    double successProbability(Pathing pathing);
+
+    boolean useExtremeRange();
+
+    BehaviorSettings getBehaviorSettings();
+
+    TacticalPlanner getTacticalPlanner();
 }

@@ -30,6 +30,8 @@ package megamek.client.bot.caspar.axis;
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.Pathing;
 
+import static megamek.codeUtilities.MathUtility.clamp01;
+
 /**
  * Calculates the piloting caution
  * @author Luana Coppio
@@ -39,7 +41,8 @@ public class PilotingCautionCalculator extends BaseAxisCalculator {
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the piloting caution
         float[] pilotingCaution = axis();
-//        gameState.getPilotingCaution();
+        float pilotCaution = gameState.getBehaviorSettings().getFallShameIndex() / 10f;
+        pilotingCaution[0] = clamp01((float) gameState.successProbability(pathing) - pilotCaution);
         return pilotingCaution;
     }
 }

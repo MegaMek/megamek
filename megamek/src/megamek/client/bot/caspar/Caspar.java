@@ -27,11 +27,16 @@
  */
 package megamek.client.bot.caspar;
 
+import java.util.Optional;
+import java.util.Set;
+
 import megamek.client.bot.common.AdvancedAgent;
 import megamek.client.bot.common.BoardQuickRepresentation;
-import megamek.client.bot.common.formation.Formation;
-import megamek.client.bot.common.minefield.MinefieldDeploymentPlannerStrategy;
 import megamek.client.bot.common.StructOfUnitArrays;
+import megamek.client.bot.common.formation.Formation;
+import megamek.client.bot.common.formation.FormationManager;
+import megamek.client.bot.common.minefield.MinefieldDeploymentPlannerStrategy;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.PathRanker;
 import megamek.client.bot.princess.Princess;
@@ -42,9 +47,6 @@ import megamek.common.Player;
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
 
-import java.util.Optional;
-import java.util.Set;
-
 /**
  * The bot client for CASPAR (Combat Algorithmic System for Predictive Analysis and Response).
  * @author Luana Coppio
@@ -53,12 +55,15 @@ public class Caspar extends Princess implements AdvancedAgent {
     private static final MMLogger logger = MMLogger.create(Caspar.class);
 
     private static final int QUADRANT_SIZE = 6;
+    public static final boolean USE_CASPAR = true;
+
+    private final CasparAI casparAI;
 
     private BoardQuickRepresentation boardQuickRepresentation;
     private StructOfUnitArrays enemyUnitsSOU;
     private StructOfUnitArrays friendlyUnitsSOU;
     private StructOfUnitArrays ownUnitsSOU;
-    private final CasparAI casparAI;
+
     /**
      * Constructor - initializes a new instance of the Princess bot.
      *
@@ -66,10 +71,21 @@ public class Caspar extends Princess implements AdvancedAgent {
      * @param host The host address to which to connect.
      * @param port The port on the host where to connect.
      */
-    public Caspar(String name, String host, int port, String modelName) {
+    public Caspar(String name, String host, int port, String modelName, BehaviorSettings behavior) {
         super(name, host, port);
+        this.setBehaviorSettings(behavior);
         this.deploymentPlannerStrategy = MinefieldDeploymentPlannerStrategy.STRATEGIC;
         this.casparAI = new CasparAI.Builder(this, modelName).build();
+    }
+
+    /**
+     * Returns a new Caspar Bot with the given behavior and name, configured for the given
+     * host and port. The new Princess Bot outputs its settings to its own logger.
+     */
+    public static Caspar createCaspar(String name, String host, int port, BehaviorSettings behavior, String modelName) {
+        Caspar result = new Caspar(name, host, port, modelName, behavior);
+        logger.debug(result.getBehaviorSettings().toLog());
+        return result;
     }
 
     @Override
@@ -78,6 +94,7 @@ public class Caspar extends Princess implements AdvancedAgent {
 
         CasparStandardPathRanker casparStandardPathRanker = new CasparStandardPathRanker(this);
         casparStandardPathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        casparStandardPathRanker.setCasparAI(casparAI);
         pathRankers.put(PathRanker.PathRankerType.Basic, casparStandardPathRanker);
     }
 
@@ -149,6 +166,10 @@ public class Caspar extends Princess implements AdvancedAgent {
         return casparAI.getFormationManager().getUnitFormation(unit);
     }
 
+    public FormationManager getFormationManager() {
+        return casparAI.getFormationManager();
+    }
+
     @Override
     public TacticalPlanner getTacticalPlanner() {
         return casparAI.getTacticalPlanner();
@@ -175,6 +196,7 @@ public class Caspar extends Princess implements AdvancedAgent {
                 continue;
             }
             logger.debug("Updating strategic goals for unit: {}", unit);
+
             this.strategicGoalsManager.removeAllStrategicGoalsOnCoordsQuadrant(unit.getPosition());
         }
     }
@@ -192,5 +214,6 @@ public class Caspar extends Princess implements AdvancedAgent {
         resetSOU();
         resetQuickRepresentation();
         initializeStrategicGoals();
+        getFormationManager().organizeFormations(getEntitiesOwned());
     }
 }

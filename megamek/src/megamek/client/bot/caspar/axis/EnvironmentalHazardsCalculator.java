@@ -47,7 +47,6 @@ public class EnvironmentalHazardsCalculator extends BaseAxisCalculator {
         Entity unit = pathing.getEntity();
         var boardQuickRepresentation = gameState.getBoardQuickRepresentation();
         if (!boardQuickRepresentation.onGround() || unit.isAirborneAeroOnGroundMap()) {
-            hazards[0] = 0.0f;
             return hazards;
         }
 
@@ -65,7 +64,7 @@ public class EnvironmentalHazardsCalculator extends BaseAxisCalculator {
             hazardCounter.getAndIncrement();
         }
 
-        hazards[0] = normalize(1.0f - (hazardCounter.get() / (pathing.getHexesMoved() + 1.0f)), 0, 1);
+        hazards[0] = pathing.isJumping() ? hazardCounter.get() * 0.5f : hazardCounter.get();
 
         return hazards;
     }

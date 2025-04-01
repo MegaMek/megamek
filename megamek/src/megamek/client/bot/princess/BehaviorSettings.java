@@ -19,6 +19,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.common.behavior.MovementPreference;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
@@ -127,6 +128,7 @@ public class BehaviorSettings implements Serializable {
     private int favorHigherTMM = 0; // How much do I want to favor moving in my turn?
     private boolean iAmAPirate = false; // Am I a pirate?
     private boolean experimental = false; // running experimental features?
+    private final MovementPreference movementPreference = new MovementPreference();
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     // endregion Variable Declarations
 
@@ -154,17 +156,21 @@ public class BehaviorSettings implements Serializable {
         copy.setFavorHigherTMM(getFavorHigherTMM());
         copy.setIAmAPirate(iAmAPirate());
         copy.setExperimental(isExperimental());
-        for (final String t : getStrategicBuildingTargets()) {
-            copy.addStrategicTarget(t);
-        }
-        for (final Integer p : getPriorityUnitTargets()) {
-            copy.addPriorityUnit(p);
-        }
-        for (final Integer i : getIgnoredUnitTargets()) {
-            copy.addIgnoredUnitTarget(i);
-        }
+        copy.setMovementPreference(getMovementPreference());
+        getStrategicBuildingTargets().forEach(copy::addStrategicTarget);
+        getPriorityUnitTargets().forEach(copy::addPriorityUnit);
+        getIgnoredUnitTargets().forEach(copy::addIgnoredUnitTarget);
 
         return copy;
+    }
+
+    public void setMovementPreference(MovementPreference movementPreference) {
+        this.movementPreference.setAll(movementPreference.getOffensive(), movementPreference.getDefensive(),
+              movementPreference.getHoldPosition());
+    }
+
+    public MovementPreference getMovementPreference() {
+        return movementPreference;
     }
 
     /**

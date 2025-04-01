@@ -44,9 +44,10 @@ public class UtilityPathRanker extends BasicPathRanker {
 
 
     @Override
-    public @Nullable Coords calculateAlliesCenter(int myId, @Nullable List<Entity> friends, Game game) {
-        return getOwner().getSwarmContext().getCenterForUnit(myId);
+    public @Nullable Coords calculateAlliesCenter(Entity unit, @Nullable List<Entity> friends, Game game) {
+        return getOwner().getSwarmContext().getCenterForUnit(unit.getId());
     }
+
     /**
      * Returns the best path of a list of ranked paths.
      *

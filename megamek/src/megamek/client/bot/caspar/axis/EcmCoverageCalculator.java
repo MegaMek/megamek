@@ -34,10 +34,14 @@ import megamek.common.Coords;
 
 /**
  * Calculates the ecm coverage of the unit ECM in the map, 1.0 means that we have no overlapping ECM
- * and 0.0 means that we are completely covered by ECM
+ * and 0.0 means that we have alot of ECM overlaping
  * @author Luana Coppio
  */
 public class EcmCoverageCalculator extends BaseAxisCalculator {
+
+    private static final int DISTANCE_FROM_OTHER_ECM_UNITS = 13; // 6 is the ECM range, but if we want minimal ECM
+    // overlap then we consider that the distance to keep is of 13 hexes
+
     @Override
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the potential of the unit to act as a decoy
@@ -48,6 +52,8 @@ public class EcmCoverageCalculator extends BaseAxisCalculator {
             int overlappingECM = unitsUnderECMRange(pathing, gameState.getFriendlyUnitsSOU());
             overlappingECM += unitsUnderECMRange(pathing, gameState.getOwnUnitsSOU());
             ecmCoverage[0] = normalize(1.0f / (overlappingECM + 1.0f), 0, 1);
+        } else {
+            ecmCoverage[0] = 1.0f;
         }
 
         return ecmCoverage;
@@ -80,7 +86,7 @@ public class EcmCoverageCalculator extends BaseAxisCalculator {
             yd = structOfUnitArrays.getY(i);
 
             dist = Coords.distance(x, y, xd, yd);
-            if (dist <= 6 && structOfUnitArrays.hasECM(i)) {
+            if (dist <= DISTANCE_FROM_OTHER_ECM_UNITS && structOfUnitArrays.hasECM(i)) {
                 units++;
             }
         }

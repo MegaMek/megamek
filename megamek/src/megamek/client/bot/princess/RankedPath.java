@@ -56,6 +56,10 @@ public class RankedPath implements Comparable<RankedPath> {
         return expectedDamage;
     }
 
+    public boolean hasExpectedDamage() {
+        return expectedDamage > 0;
+    }
+
     void setExpectedDamage(double damage) {
         expectedDamage = damage;
     }

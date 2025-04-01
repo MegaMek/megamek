@@ -39,7 +39,10 @@ public class StandingStillCalculator extends BaseAxisCalculator {
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the standing still
         float[] standingStill = axis();
-
+        boolean movedZero = pathing.getHexesMoved() == 0;
+        boolean inSamePlace = pathing.getStartCoords().equals(pathing.getFinalCoords());
+        boolean isStandingStill = movedZero && inSamePlace;
+        standingStill[0] = isStandingStill ? 1.0f : 0.0f;
         return standingStill;
     }
 }

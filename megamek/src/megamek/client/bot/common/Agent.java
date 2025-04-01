@@ -28,19 +28,26 @@
 
 package megamek.client.bot.common;
 
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.FireControlState;
 import megamek.client.bot.princess.UnitBehavior;
+import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
+import megamek.common.MovePath;
 import megamek.common.Player;
+import megamek.common.TargetRoll;
+import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 
 import java.util.List;
 import java.util.Set;
 
 public interface Agent {
+    BehaviorSettings getBehaviorSettings();
+
     Coords getWaypointForEntity(Entity mover);
 
     Player getLocalPlayer();
@@ -75,4 +82,6 @@ public interface Agent {
     List<Entity> getFriendEntities();
 
     StrategicGoalsManager getStrategicGoalsManager();
+
+    double getMovePathSuccessProbability(MovePath movePath);
 }

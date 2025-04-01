@@ -42,7 +42,7 @@ public class CoveringUnitsCalculator extends BaseAxisCalculator {
         float[] coveringUnits = axis();
         int covering = unitsCovering(pathing, gameState.getFriendlyUnitsSOU());
         covering += unitsCovering(pathing, gameState.getOwnUnitsSOU());
-        coveringUnits[0] = this.normalize(covering, 0, 5);
+        coveringUnits[0] = normalize(covering, 0, 5);
         return coveringUnits;
     }
 

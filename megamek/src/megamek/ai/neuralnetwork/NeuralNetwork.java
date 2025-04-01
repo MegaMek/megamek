@@ -1,16 +1,23 @@
 package megamek.ai.neuralnetwork;
 
+import static megamek.codeUtilities.MathUtility.clamp01;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
 
+import megamek.client.bot.caspar.ClassificationScore;
+import megamek.client.bot.caspar.axis.AxisType;
 import megamek.logging.MMLogger;
 import org.tensorflow.SavedModelBundle;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
 import org.tensorflow.TensorFlow;
-import org.tensorflow.ndarray.Shape;
-import org.tensorflow.ndarray.NdArrays;
 import org.tensorflow.ndarray.FloatNdArray;
+import org.tensorflow.ndarray.NdArrays;
+import org.tensorflow.ndarray.Shape;
 import org.tensorflow.proto.SignatureDef;
 import org.tensorflow.proto.TensorInfo;
 
@@ -25,16 +32,20 @@ public class NeuralNetwork {
     private Session session;
     private String inputOperationName;
     private String outputOperationName;
+    private float[] inputNormalizationMinValues;
+    private float[] inputNormalizationMaxValues;
 
     /**
      * Loads a TensorFlow model from the specified path.
      *
-     * @param modelPath Path to the saved model directory
-     * @throws IOException If the model cannot be loaded
+     * @param modelName Name of the saved model directory
+     * @return this NeuralNetwork instance
+     * @throws RuntimeException If the model cannot be loaded
      */
-    public void loadModel(String modelPath) throws IOException {
+    public NeuralNetwork loadModel(String modelName) {
         try {
-            model = SavedModelBundle.load(modelPath, "serve");
+            Path path = Path.of("userdata", "ai","brains", modelName);
+            model = SavedModelBundle.load(path.toString(), "serve");
             session = model.session();
 
             SignatureDef sigDef = model.metaGraphDef().getSignatureDefMap().get("serving_default");
@@ -47,12 +58,39 @@ public class NeuralNetwork {
             Map.Entry<String, TensorInfo> outputEntry = sigDef.getOutputsMap().entrySet().iterator().next();
             outputOperationName = parseOperationName(outputEntry.getValue().getName());
 
-            logger.info("Model loaded successfully from: {}", modelPath);
+            loadInputNormalizationParameters(modelName);
+
+            logger.info("Model loaded successfully from: {}", path);
             logger.info("Input operation: {}", inputOperationName);
             logger.info("Output operation: {}", outputOperationName);
         } catch (Exception e) {
             logger.error("Failed to load model", e);
-            throw new IOException("Failed to load TensorFlow model: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to load TensorFlow model: " + e.getMessage(), e);
+        }
+        return this;
+    }
+
+    private void loadInputNormalizationParameters(String modelName) {
+        inputNormalizationMinValues = new float[AxisType.totalAxisLength()];
+        inputNormalizationMaxValues = new float[AxisType.totalAxisLength()];
+
+        // Initialize normalization values
+        // the normalization values are on a file named min_max_feature_normalization.csv inside the modelPath
+        Path normalizationFilePath = Path.of("userdata", "ai","brains", modelName, "min_max_feature_normalization.csv");
+        try (var reader = new BufferedReader(new FileReader(normalizationFilePath.toFile()))) {
+            String line;
+            int index;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("feature,")) {
+                    continue;
+                }
+                String[] values = line.split(",");
+                index = Integer.parseInt(values[0]);
+                inputNormalizationMinValues[index] = Float.parseFloat(values[1]);
+                inputNormalizationMaxValues[index] = Float.parseFloat(values[2]);
+            }
+        } catch (IOException e) {
+            logger.warn("Normalization file not found, using default values", e);
         }
     }
 
@@ -74,9 +112,17 @@ public class NeuralNetwork {
      * @return Prediction result as a double
      * @throws IllegalStateException If the model is not loaded
      */
-    public float predict(float[] inputVector) {
+    public ClassificationScore predict(float[] inputVector) {
         if (session == null) {
             throw new IllegalStateException("Model not loaded. Call loadModel() first.");
+        }
+
+        // normalize the input vector with the min and max values
+        for (int i = 0; i < inputVector.length; i++) {
+            inputVector[i] = clamp01(
+                  (inputVector[i] - inputNormalizationMinValues[i]) /
+                        (inputNormalizationMaxValues[i] - inputNormalizationMinValues[i])
+            );
         }
 
         FloatNdArray ndArray = NdArrays.ofFloats(Shape.of(1, inputVector.length));
@@ -92,8 +138,10 @@ public class NeuralNetwork {
                                       .fetch(outputOperationName)
                                       .run()) {
                 // Extract the result
-                try(var rOutputTensor = outputTensors.get(0).asRawTensor()) {
-                    return rOutputTensor.data().asFloats().getFloat(0);
+                try (var rOutputTensor = outputTensors.get(0).asRawTensor()) {
+                    float[] output = new float[3];
+                    rOutputTensor.data().asFloats().read(output);
+                    return new ClassificationScore(output[0], output[1], output[2]);
                 }
             }
         } catch (Exception e) {

@@ -1040,6 +1040,7 @@ public class MovePath implements Cloneable, Serializable, Pathing {
     /**
      * Returns whether or not a unit would end up prone after all of the steps
      */
+    @Override
     public boolean getFinalProne() {
         if (getLastStep() != null) {
             return getLastStep().isProne();

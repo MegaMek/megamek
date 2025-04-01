@@ -45,7 +45,7 @@ public class MyAlliesNearbyCalculator extends BaseAxisCalculator {
         int units = getUnitsAtRange(8, pathing, gameState.getOwnUnitsSOU());
         units += getUnitsAtRange(8, pathing, gameState.getFriendlyUnitsSOU());
 
-        enemiesNearby[0] = normalize(units, 0, 4);
+        enemiesNearby[0] = units;
         return enemiesNearby;
     }
 

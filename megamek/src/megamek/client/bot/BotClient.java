@@ -627,25 +627,6 @@ public abstract class BotClient extends Client {
         }
     }
 
-    public double getMassOfAllInBuilding(final Game game, final Coords coords) {
-        double mass = 0;
-
-        // Add the mass of anyone else standing in/on this building.
-        final Hex hex = game.getBoard().getHex(coords);
-        final int buildingElevation = hex.terrainLevel(Terrains.BLDG_ELEV);
-        final int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
-        Iterator<Entity> crowd = game.getEntities(coords);
-        while (crowd.hasNext()) {
-            Entity e = crowd.next();
-
-            if (buildingElevation >= e.getElevation() || bridgeElevation >= e.getElevation()) {
-                mass += e.getWeight();
-            }
-        }
-
-        return mass;
-    }
-
     /**
      * Gets valid and empty starting coords around the specified point. This
      * method iterates through the list of Coords and returns the first Coords
@@ -665,7 +646,7 @@ public abstract class BotClient extends Client {
             // Make sure we don't overload any buildings in this hex.
             Building building = game.getBoard().getBuildingAt(dest);
             if (null != building) {
-                double mass = getMassOfAllInBuilding(game, dest) + deployedUnit.getWeight();
+                double mass = Compute.getMassOfAllInBuilding(game, dest) + deployedUnit.getWeight();
                 if (mass > building.getCurrentCF(dest)) {
                     continue;
                 }

@@ -83,6 +83,7 @@ import megamek.SuiteConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.caspar.Caspar;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
@@ -2185,12 +2186,16 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (bcd.getResult() == DialogResult.CANCELLED) {
             return;
         }
-        Princess botClient = Princess.createPrincess(bcd.getBotName(),
-              client().getHost(),
-              client().getPort(),
-              bcd.getBehaviorSettings());
+        boolean useCaspar = bcd.getBotName().toLowerCase().startsWith("caspar");
+
+        Princess botClient = useCaspar ? Caspar.createCaspar(bcd.getBotName(), client().getHost(),
+              client().getPort(), bcd.getBehaviorSettings(), "default") :
+                                   Princess.createPrincess(bcd.getBotName(), client().getHost(), client().getPort(),
+                                         bcd.getBehaviorSettings());
+
         botClient.setClientGUI(clientgui);
         botClient.getGame().addGameListener(new BotGUI(getClientgui().getFrame(), botClient));
+
         try {
             botClient.connect();
             clientgui.getLocalBots().put(bcd.getBotName(), botClient);

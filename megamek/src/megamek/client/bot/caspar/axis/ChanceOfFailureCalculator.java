@@ -42,8 +42,7 @@ public class ChanceOfFailureCalculator extends BaseAxisCalculator {
     public float[] calculateAxis(Pathing pathing, GameState gameState) {
         // This calculates the unit movement
         float[] maxRange = axis();
-
-        maxRange[0] = clamp01(1 - gameState.successProbability(pathing));
+        maxRange[0] = clamp01(1f - (float) gameState.successProbability(pathing));
         return maxRange;
     }
 }

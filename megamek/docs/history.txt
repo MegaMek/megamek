@@ -17,6 +17,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6795: Fixes for various Artillery and Artillery Flak issues
 + PR #6796: feat: add a callsign to princess instead of numbers
 + PR #6806: Added Method for Variable Cost Check in MiscType
++ Fix #6807: Auto-set SI in ASFs
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

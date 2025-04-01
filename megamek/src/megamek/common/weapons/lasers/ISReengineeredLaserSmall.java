@@ -36,7 +36,7 @@ public class ISReengineeredLaserSmall extends ReengineeredLaserWeapon {
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 2;
-        waterExtremeRange = 4;
+        waterExtremeRange = 2;
         tonnage = 1.5;
         criticals = 1;
         flags = flags.or(F_NO_FIRES);
@@ -58,7 +58,7 @@ public class ISReengineeredLaserSmall extends ReengineeredLaserWeapon {
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
-    
+
     @Override
     public boolean isAlphaStrikePointDefense() {
         return true;

@@ -42,7 +42,7 @@ public class CLRAC2 extends RACWeapon {
         shortRange = 8;
         mediumRange = 17;
         longRange = 25;
-        extremeRange = 34;
+        extremeRange = 37;
         tonnage = 8.0;
         criticals = 4;
         bv = 161;

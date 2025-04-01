@@ -39,11 +39,11 @@ public class ISRISCHyperLaser extends LaserWeapon {
         shortRange = 8;
         mediumRange = 15;
         longRange = 25;
-        extremeRange = 30;
+        extremeRange = 37;
         waterShortRange = 5;
         waterMediumRange = 10;
         waterLongRange = 18;
-        waterExtremeRange = 20;
+        waterExtremeRange = 27;
         tonnage = 8.0;
         criticals = 6;
         bv = 596;

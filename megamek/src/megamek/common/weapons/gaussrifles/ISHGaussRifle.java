@@ -44,7 +44,7 @@ public class ISHGaussRifle extends GaussWeapon {
         shortRange = 6;
         mediumRange = 13;
         longRange = 20;
-        extremeRange = 26;
+        extremeRange = 30;
         damageShort = 25;
         damageMedium = 20;
         damageLong = 10;

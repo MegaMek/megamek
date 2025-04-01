@@ -46,7 +46,7 @@ public class RocketLauncher20 extends RLWeapon {
         shortRange = 3;
         mediumRange = 7;
         longRange = 12;
-        extremeRange = 14;
+        extremeRange = 18;
         tonnage = 1.5;
         criticals = 3;
         bv = 24;

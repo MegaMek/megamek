@@ -35,7 +35,7 @@ public class CLProtoMekAC8 extends ProtoMekACWeapon {
         shortRange = 3;
         mediumRange = 7;
         longRange = 10;
-        extremeRange = 14;
+        extremeRange = 15;
         tonnage = 5.5;
         criticals = 4;
         bv = 66;

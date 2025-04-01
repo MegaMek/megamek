@@ -43,7 +43,7 @@ public class ISMekTaser extends AmmoWeapon {
         shortRange = 1;
         mediumRange = 2;
         longRange = 4;
-        extremeRange = 4;
+        extremeRange = 6;
         bv = 40;
         toHitModifier = 1;
         cost = 200000;

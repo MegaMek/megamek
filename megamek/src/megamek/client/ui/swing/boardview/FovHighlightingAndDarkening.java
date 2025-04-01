@@ -19,7 +19,7 @@
 package megamek.client.ui.swing.boardview;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -57,12 +57,12 @@ public class FovHighlightingAndDarkening {
     private java.util.List<Color> ringsColors = new ArrayList<>();
     private java.util.List<Integer> ringsRadii = new ArrayList<>();
     GUIPreferences gs = GUIPreferences.getInstance();
-    private final IPreferenceChangeListener ringsChangeListener;
+    private IPreferenceChangeListener ringsChangeListner;
 
     public FovHighlightingAndDarkening(BoardView boardView1) {
         this.boardView1 = boardView1;
         updateRingsProperties();
-        ringsChangeListener = e -> {
+        ringsChangeListner = e -> {
             String eName = e.getName();
             if (eName.equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII) ||
                       eName.equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB) ||
@@ -70,43 +70,45 @@ public class FovHighlightingAndDarkening {
                 updateRingsProperties();
             }
         };
-        gs.addPreferenceChangeListener(ringsChangeListener);
+        gs.addPreferenceChangeListener(ringsChangeListner);
 
-        cacheGameListener = new GameListenerAdapter() {
+        cacheGameListner = new GameListenerAdapter() {
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
                 cacheGameChanged = true;
             }
         };
-        this.boardView1.game.addGameListener(cacheGameListener);
+        this.boardView1.game.addGameListener(cacheGameListner);
     }
 
     public void die() {
-        gs.removePreferenceChangeListener(ringsChangeListener);
-        this.boardView1.game.removeGameListener(cacheGameListener);
+        gs.removePreferenceChangeListener(ringsChangeListner);
+        this.boardView1.game.removeGameListener(cacheGameListner);
     }
 
     /**
-     * Checks if options for darkening and highlighting are turned on: If there is no LOS from currently selected
-     * hex/entity, then darkens hex c. If there is a LOS from the hex c to the selected hex/entity, then hex c is
-     * colored according to distance.
+     * Checks if options for darkening and highlighting are turned on and the respectively: If there is no LOS from
+     * currently selected hex/entity, then darkens hex c. If there is a LOS from the hex c to the selected hex/entity,
+     * then hex c is colored according to distance.
      *
      * @param boardGraph     The board on which we paint.
      * @param c              Hex that is being processed.
      * @param drawX          The x coordinate of hex <b>c</b> on board image. should be equal to getHexLocation(c).x
      * @param drawY          The y coordinate of hex <b>c</b> on board image. should be equal to getHexLocation(c).x
-     * @param saveBoardImage Save The Board Image
+     * @param saveBoardImage
      */
-    boolean draw(Graphics2D boardGraph, Coords c, int drawX, int drawY, boolean saveBoardImage) {
+    boolean draw(Graphics boardGraph, Coords c, int drawX, int drawY, boolean saveBoardImage) {
         Coords src;
         boolean hasLoS = true;
-        // in movement phase, calc LOS based on selected hex, otherwise use selected Entity
+        // in movement phase, calc LOS based on selected hex, otherwise use selected
+        // Entity
         if (boardView1.game.getPhase().isMovement() && this.boardView1.selected != null) {
             src = boardView1.selected;
         } else if (boardView1.getSelectedEntity() != null) {
             Entity viewer = boardView1.getSelectedEntity();
             src = viewer.getPosition();
-            // multi-hex units look from the hex closest to the target to avoid self-blocking
+            // multi-hex units look from the hex closest to the target to avoid
+            // self-blocking
             src = viewer.getSecondaryPositions()
                         .values()
                         .stream()
@@ -150,9 +152,11 @@ public class FovHighlightingAndDarkening {
                                                      .isNone();
 
             final int max_dist;
-            // We don't want to have to compute a LoSEffects yet, as that can be expensive on large viewing areas
+            // We don't want to have to compute a LoSEffects yet, as that
+            // can be expensive on large viewing areas
             if ((boardView1.getSelectedEntity() != null) && doubleBlindOn) {
-                // We can only use this is double-blind is on, otherwise visual range won't affect LoS
+                // We can only use this is double blind is on, otherwise visual
+                // range won't effect LoS
                 max_dist = this.boardView1.game.getPlanetaryConditions()
                                  .getVisualRange(this.boardView1.getSelectedEntity(), targetIlluminated);
             } else {
@@ -247,7 +251,7 @@ public class FovHighlightingAndDarkening {
         losCache = new HashMap<>();
     }
 
-    GameListener cacheGameListener;
+    GameListener cacheGameListner;
 
     /**
      * Returns the cached all ECM info.
@@ -259,13 +263,13 @@ public class FovHighlightingAndDarkening {
     }
 
     /**
-     * Checks for los effects, preferably from cache, if not getLosEffects is invoked, and it's return value is cached.
+     * Checks for los effects, preferably from cache, if not getLosEffects is invoked and it's return value is cached.
      * If environment has changed between calls to this method the cache is cleared.
      */
     public @Nullable LosEffects getCachedLosEffects(Coords src, Coords dest) {
         ArrayList<StepSprite> pathSprites = boardView1.pathSprites;
         StepSprite lastStepSprite = pathSprites.isEmpty() ? null : pathSprites.get(pathSprites.size() - 1);
-        // let's check if cache should be cleared
+        // lets check if cache should be cleared
         if ((cachedSelectedEntity != this.boardView1.getSelectedEntity()) ||
                   (cachedStepSprite != lastStepSprite) ||
                   (!src.equals(cachedSrc)) ||
@@ -340,11 +344,12 @@ public class FovHighlightingAndDarkening {
      */
     private @Nullable LosEffects getLosEffects(final Coords src, final Coords dest) {
         /*
-         * The getCachedLos method depends on that this method uses only information from src, dest, game,
-         * selectedEntity and the last stepSprite from path Sprites. If this behavior changes, please change the
-         * getCachedLos method accordingly.
+         * The getCachedLos method depends that this method uses only
+         * information from src, dest, game, selectedEntity and the last
+         * stepSprite from path Sprites. If this behavior changes, please
+         * change the getCachedLos method accordingly.
          */
-        GUIPreferences guiPreferences = GUIPreferences.getInstance();
+        GUIPreferences guip = GUIPreferences.getInstance();
         Board board = this.boardView1.game.getBoard();
         Hex srcHex = board.getHex(src);
         if (srcHex == null) {
@@ -358,16 +363,16 @@ public class FovHighlightingAndDarkening {
         }
 
         // Need to re-write this to work with Low Alt maps
-        // LosEffects.AttackInfo attackInfo = new LosEffects.AttackInfo();
-        LosEffects.AttackInfo attackInfo = LosEffects.prepLosAttackInfo(this.boardView1.game,
+        // LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+        LosEffects.AttackInfo ai = LosEffects.prepLosAttackInfo(this.boardView1.game,
               this.boardView1.getSelectedEntity(),
               null,
               src,
               dest,
-              guiPreferences.getMekInFirst(),
-              guiPreferences.getMekInSecond());
-        // attackInfo.attackPos = src;
-        // attackInfo.targetPos = dest;
+              guip.getMekInFirst(),
+              guip.getMekInSecond());
+        // ai.attackPos = src;
+        // ai.targetPos = dest;
         // First, we check for a selected unit and use its height. If
         // there's no selected unit we use the mekInFirst GUIPref.
         if (this.boardView1.getSelectedEntity() != null) {
@@ -378,34 +383,32 @@ public class FovHighlightingAndDarkening {
                 // If we've got a step, get the elevation from it
                 int lastStepIdx = this.boardView1.pathSprites.size() - 1;
                 MoveStep lastMS = this.boardView1.pathSprites.get(lastStepIdx).getStep();
-                elevation = (attackInfo.lowAltitude) ? lastMS.getAltitude() : lastMS.getElevation();
+                elevation = (ai.lowAltitude) ? lastMS.getAltitude() : lastMS.getElevation();
             } else {
                 // otherwise we use entity's altitude / elevation
-                elevation = (attackInfo.lowAltitude) ? ae.getAltitude() : ae.getElevation();
+                elevation = (ai.lowAltitude) ? ae.getAltitude() : ae.getElevation();
             }
-            attackInfo.attackAbsHeight = (attackInfo.lowAltitude) ?
-                                               elevation :
-                                               srcHex.getLevel() + elevation + ae.getHeight();
+            ai.attackAbsHeight = (ai.lowAltitude) ? elevation : srcHex.getLevel() + elevation + ae.getHeight();
         } else {
             // For hexes, getLevel is functionally the same as getAltitude()
-            attackInfo.attackAbsHeight = srcHex.getLevel() + attackInfo.attackHeight;
+            ai.attackAbsHeight = srcHex.getLevel() + ai.attackHeight;
         }
         // First, we take the tallest unit in the destination hex, if no units are
         // present we use
         // the mekInSecond GUIPref.
-        attackInfo.targetHeight = attackInfo.targetAbsHeight = Integer.MIN_VALUE;
+        ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
         for (Entity ent : boardView1.game.getEntitiesVector(dest)) {
-            int trAbsHeight = (attackInfo.lowAltitude) ? ent.getAltitude() : dstHex.getLevel() + ent.relHeight();
-            if (trAbsHeight > attackInfo.targetAbsHeight) {
-                attackInfo.targetHeight = ent.getHeight();
-                attackInfo.targetAbsHeight = trAbsHeight;
+            int trAbsheight = (ai.lowAltitude) ? ent.getAltitude() : dstHex.getLevel() + ent.relHeight();
+            if (trAbsheight > ai.targetAbsHeight) {
+                ai.targetHeight = ent.getHeight();
+                ai.targetAbsHeight = trAbsheight;
             }
         }
-        if ((attackInfo.targetHeight == Integer.MIN_VALUE) && (attackInfo.targetAbsHeight == Integer.MIN_VALUE)) {
+        if ((ai.targetHeight == Integer.MIN_VALUE) && (ai.targetAbsHeight == Integer.MIN_VALUE)) {
             // Current hack for more-correct shading on low-alt maps
-            attackInfo.targetHeight = (attackInfo.lowAltitude) ? 1 : (guiPreferences.getMekInSecond()) ? 1 : 0;
-            attackInfo.targetAbsHeight = dstHex.getLevel() + attackInfo.targetHeight;
+            ai.targetHeight = (ai.lowAltitude) ? 1 : (guip.getMekInSecond()) ? 1 : 0;
+            ai.targetAbsHeight = dstHex.getLevel() + ai.targetHeight;
         }
-        return LosEffects.calculateLos(boardView1.game, attackInfo);
+        return LosEffects.calculateLos(boardView1.game, ai);
     }
 }

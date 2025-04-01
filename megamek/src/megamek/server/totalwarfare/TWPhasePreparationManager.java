@@ -259,7 +259,7 @@ public class TWPhasePreparationManager {
                         }
                         Aero a = (Aero) entity;
                         int currentSI = a.getSI() / (2 * scale);
-                        a.set0SI(a.get0SI() / (2 * scale));
+                        a.setOSI(a.get0SI() / (2 * scale));
                         if (currentSI > 0) {
                             a.setSI(currentSI);
                         }

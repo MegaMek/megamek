@@ -307,6 +307,76 @@ class CoordsTest {
     }
 
     @Test
+    void testHex2HexInterveningDistance2() {
+        Coords source = new Coords(0, 0);
+        Coords target = new Coords(3, 3);
+
+        List<Coords> intervening = Coords.intervening(source, target);
+        assertFalse(intervening.isEmpty());
+        assertEquals(6, intervening.size());
+
+        List<CubeCoords> line = source.toCube().lineTo(target.toCube());
+        assertFalse(line.isEmpty());
+        assertEquals(6, line.size());
+        List<Coords> convertedCoords = line.stream().map(CubeCoords::toOffset).toList();
+        assertFalse(line.isEmpty());
+        assertEquals(6, convertedCoords.size());
+        for (int i = 0; i < convertedCoords.size(); i++) {
+            assertEquals(convertedCoords.get(i), intervening.get(i));
+        }
+    }
+
+    @Test
+    void testInterveningPerformance() {
+        Coords source = new Coords(0, 0);
+        Coords target = new Coords(100, 100);
+
+        int numIterations = 1000;
+        long totalDurationIntervening = 0;
+        long totalDurationLineTo = 0;
+
+        for (int i = 0; i < numIterations; i++) {
+            // Test Coords.intervening performance
+            long startTimeIntervening = System.nanoTime();
+            List<Coords> intervening = Coords.intervening(source, target);
+            long endTimeIntervening = System.nanoTime();
+            totalDurationIntervening += (endTimeIntervening - startTimeIntervening);
+
+            // Test CubeCoords.lineTo performance
+            long startTimeLineTo = System.nanoTime();
+            List<CubeCoords> line = source.toCube().lineTo(target.toCube());
+            List<Coords> convertedCoords = line.stream().map(CubeCoords::toOffset).toList();
+            long endTimeLineTo = System.nanoTime();
+            totalDurationLineTo += (endTimeLineTo - startTimeLineTo);
+        }
+
+        long averageDurationIntervening = totalDurationIntervening / numIterations;
+        long averageDurationLineTo = totalDurationLineTo / numIterations;
+
+        System.out.println("Coords.intervening average duration: " + averageDurationIntervening + " ns");
+        System.out.println("CubeCoords.lineTo average duration: " + averageDurationLineTo + " ns");
+        assertTrue(averageDurationIntervening > averageDurationLineTo);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> testCoordsToCubeToOffset() {
+        return generateCoords().map(target -> dynamicTest(
+              "Test Coords(" + target.getX() + ", " + target.getY() + ") to Cube to Offset",
+              () -> assertEquals(target, target.toCube().toOffset())
+        ));
+    }
+
+    private Stream<Coords> generateCoords() {
+        List<Coords> coordsList = new ArrayList<>();
+        for (int x = 0; x < 100; x++) {
+            for (int y = 0; y < 100; y++) {
+                coordsList.add(new Coords(x, y));
+            }
+        }
+        return coordsList.stream();
+    }
+
+    @Test
     void testHex2HexRadianDirections() {
         // Test identity - docs say equals 0?
         Coords source = new Coords(5, 5);
@@ -334,24 +404,6 @@ class CoordsTest {
         assertEquals(Math.PI / 2, source.radian(target5), 0.1);
         assertEquals(2, source.direction(target5));
 
-    }
-
-    @TestFactory
-    Stream<DynamicTest> testCoordsToCubeToOffset() {
-        return generateCoords().map(target -> dynamicTest(
-              "Test Coords(" + target.getX() + ", " + target.getY() + ") to Cube to Offset",
-              () -> assertEquals(target, target.toCube().toOffset())
-        ));
-    }
-
-    private Stream<Coords> generateCoords() {
-        List<Coords> coordsList = new ArrayList<>();
-        for (int x = 0; x < 100; x++) {
-            for (int y = 0; y < 100; y++) {
-                coordsList.add(new Coords(x, y));
-            }
-        }
-        return coordsList.stream();
     }
 
     @Test

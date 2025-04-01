@@ -17,6 +17,7 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.*;
 
+import megamek.client.bot.common.Pathing;
 import megamek.client.bot.princess.Princess;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
@@ -32,7 +33,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Holds movement path for an entity.
  */
-public class MovePath implements Cloneable, Serializable {
+public class MovePath implements Cloneable, Serializable, Pathing {
     private static final MMLogger logger = MMLogger.create(MovePath.class);
 
     private static final long serialVersionUID = -4258296679177532986L;
@@ -247,6 +248,7 @@ public class MovePath implements Cloneable, Serializable {
      * Checks if there is a waypoint referenced by this MovePath.
      * @return true if there is a waypoint, false otherwise.
      */
+    @Override
     public boolean hasWaypoint() {
         return waypoint != null;
     }
@@ -255,10 +257,12 @@ public class MovePath implements Cloneable, Serializable {
      * Returns the waypoint referenced by this MovePath.
      * @return the waypoint, or null if there is none.
      */
+    @Override
     public @Nullable Coords getWaypoint() {
         return waypoint;
     }
 
+    @Override
     public Entity getEntity() {
         return entity;
     }
@@ -404,6 +408,7 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(step, true);
     }
 
+    @Override
     public Set<Coords> getCoordsSet() {
         if (coordsSet != null) {
             return coordsSet;
@@ -993,6 +998,7 @@ public class MovePath implements Cloneable, Serializable {
      *         path, or
      *         null if there's an issue with determining the coords
      */
+    @Override
     public @Nullable Coords getFinalCoords() {
         if (getGame().useVectorMove()) {
             return Compute.getFinalPosition(getEntity().getPosition(), getFinalVectors());
@@ -1006,6 +1012,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Returns the starting {@link Coords} of this path.
      */
+    @Override
     public @Nullable Coords getStartCoords() {
         for (final Enumeration<MoveStep> e = getSteps(); e.hasMoreElements();) {
             final MoveStep step = e.nextElement();
@@ -1021,6 +1028,7 @@ public class MovePath implements Cloneable, Serializable {
      * Returns the final facing if a mek were to perform all the steps in this
      * path.
      */
+    @Override
     public int getFinalFacing() {
         MoveStep last = getLastStep();
         if (last != null) {
@@ -1032,6 +1040,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Returns whether or not a unit would end up prone after all of the steps
      */
+    @Override
     public boolean getFinalProne() {
         if (getLastStep() != null) {
             return getLastStep().isProne();
@@ -1342,6 +1351,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Returns the number of MPs used in the path
      */
+    @Override
     public int getMpUsed() {
         if (getLastStep() != null) {
             return getLastStep().getMpUsed();
@@ -1353,6 +1363,7 @@ public class MovePath implements Cloneable, Serializable {
      * Returns the logical number of hexes moved the path (does not count turns,
      * etc).
      */
+    @Override
     public int getHexesMoved() {
         if (getLastStep() == null) {
             return 0;
@@ -1363,6 +1374,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Returns the linear distance between the first and last hexes in the path.
      */
+    @Override
     public int getDistanceTravelled() {
         var currentEntityPosition = getEntity().getPosition();
         if (currentEntityPosition == null) {
@@ -1378,6 +1390,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Returns true if the entity is jumping or if it's a flying lam.
      */
+    @Override
     public boolean isJumping() {
         return contains(MoveStepType.START_JUMP);
     }

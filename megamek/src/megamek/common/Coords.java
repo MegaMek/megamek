@@ -17,6 +17,8 @@ package megamek.common;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -195,7 +197,7 @@ public class Coords implements Serializable {
      *
      * @return the median of the given list of positions
      */
-    public static @Nullable Coords median(List<Coords> positions) {
+    public static @Nullable Coords median(Collection<Coords> positions) {
         if (positions.isEmpty()) {
             return null;
         }
@@ -203,7 +205,7 @@ public class Coords implements Serializable {
         int n = positions.size();
 
         if (n == 1) {
-            return positions.get(0);
+            return positions.stream().findAny().orElse(null);
         }
 
         double x0 = 0.0;
@@ -456,12 +458,18 @@ public class Coords implements Serializable {
         return (coordinates == null) ? Integer.MAX_VALUE : distance(coordinates.getX(), coordinates.getY());
     }
 
-    /** Returns the distance to the coordinate given as distX, distY. */
-    public int distance(int distX, int distY) {
-        // based on http://www.rossmack.com/ab/RPG/traveller/AstroHexDistance.asp
-        int xd = Math.abs(x - distX);
-        int yo = (xd / 2) + (!isXOdd() && ((distX & 1) == 1) ? 1 : 0);
-        int yMin = y - yo;
+    /** Returns the distance to the coordinate given as distx, disty. */
+    public int distance(int distx, int disty) {
+        return distance(x, y, distx, disty);
+    }
+
+    /** Returns the distance to the coordinate given as distx, disty. */
+    public static int distance(int originX, int originY, int distX, int distY) {
+        // based on
+        // http://www.rossmack.com/ab/RPG/traveller/AstroHexDistance.asp
+        int xd = Math.abs(originX - distX);
+        int yo = (xd / 2) + (!((originX & 1) == 1) && ((distX & 1) == 1) ? 1 : 0);
+        int yMin = originY - yo;
         int yMax = yMin + xd;
         int ym = 0;
         if (distY < yMin) {

@@ -21,6 +21,7 @@ import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.CloseClientListener;
 import megamek.client.HeadlessClient;
+import megamek.client.bot.caspar.Caspar;
 import megamek.client.bot.princess.Princess;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -271,8 +272,17 @@ public class QuickGameRunner {
 
             for (var ghost : ghosts) {
                 var behavior = ((Game) server.getGame()).getBotSettings().get(ghost.getName());
-                Princess botClient = Princess.createPrincess(ghost.getName(), server.getHost(), server.getPort(),
-                    behavior);
+                boolean useCaspar = ghost.getName().toLowerCase().startsWith("caspar");
+
+                Princess botClient = useCaspar ? Caspar.createCaspar(ghost.getName(),
+                      server.getHost(),
+                      server.getPort(),
+                      behavior,
+                      "default") :
+                                           Princess.createPrincess(ghost.getName(),
+                                                 server.getHost(),
+                                                 server.getPort(),
+                                                 behavior);
                 if (botClient.connect()) {
                     getLocalBots().put(botClient.getName(), botClient);
                     int retryCount = 0;

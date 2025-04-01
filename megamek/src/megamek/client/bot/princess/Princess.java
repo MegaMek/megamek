@@ -26,6 +26,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import megamek.client.bot.common.Agent;
+import megamek.client.bot.common.BoardQuickRepresentation;
+import megamek.client.bot.common.StrategicGoalsManager;
+import megamek.client.bot.common.StructOfUnitArrays;
 import megamek.client.ui.swing.TowLinkWarning;
 import org.apache.logging.log4j.Level;
 
@@ -67,7 +71,7 @@ import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.Weapon;
 import megamek.logging.MMLogger;
 
-public class Princess extends BotClient {
+public class Princess extends BotClient implements Agent {
     private static final MMLogger logger = MMLogger.create(Princess.class);
     private static final char PLUS = '+';
     private static final char MINUS = '-';
@@ -135,7 +139,7 @@ public class Princess extends BotClient {
     private boolean initialized = false;
 
     // path rankers and fire controls, organized by their explicitly given types to avoid confusion
-    private HashMap<PathRankerType, IPathRanker> pathRankers;
+    protected HashMap<PathRankerType, IPathRanker> pathRankers;
     private HashMap<FireControlType, FireControl> fireControls;
     private UnitBehavior unitBehaviorTracker;
     private FireControlState fireControlState;
@@ -149,7 +153,7 @@ public class Princess extends BotClient {
 
     private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
-    private final Precognition precognition;
+    protected final Precognition precognition;
     private final Thread precognitionThread;
     /**
      * Mapping to hold the damage allocated to each targetable, stored by ID.
@@ -176,6 +180,7 @@ public class Princess extends BotClient {
     private List<Integer> enhancedTargetingTargetTypes;
     private List<Integer> enhancedTargetingAttackerTypes;
     private SwarmContext swarmContext;
+    protected StrategicGoalsManager strategicGoalsManager = new StrategicGoalsManager();
     // Controls whether Princess will use called shots on immobile targets
     private boolean useCalledShotsOnImmobileTarget;
 
@@ -184,6 +189,7 @@ public class Princess extends BotClient {
     private EnemyTracker enemyTracker;
     private CoverageValidator coverageValidator;
     private SwarmCenterManager swarmCenterManager;
+
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -433,6 +439,7 @@ public class Princess extends BotClient {
         return 0.0; // If we have no entry, return zero
     }
 
+    @Override
     public BehaviorSettings getBehaviorSettings() {
         return behaviorSettings;
     }
@@ -1980,10 +1987,6 @@ public class Princess extends BotClient {
 
     }
 
-
-
-
-
     /**
      * Gets an entity eligible to fire from a list contained in the fire control state.
      */
@@ -2731,7 +2734,7 @@ public class Princess extends BotClient {
         this.swarmContext = new SwarmContext();
         this.swarmCenterManager = new SwarmCenterManager(this);
         int quadrantSize = Math.min(getGame().getBoard().getWidth(), Math.min(getGame().getBoard().getHeight(), 11));
-        this.swarmContext.initializeStrategicGoals(getGame().getBoard(), quadrantSize, quadrantSize);
+        this.strategicGoalsManager.initializeStrategicGoals(getGame().getBoard(), quadrantSize, quadrantSize);
     }
 
     /**
@@ -2912,15 +2915,42 @@ public class Princess extends BotClient {
     }
 
     @Override
+    public Player getLocalPlayer() {
+        return super.getLocalPlayer();
+    }
+
+    @Override
     protected void processChat(final GamePlayerChatEvent ge) {
         chatProcessor.processChat(ge, this);
+    }
+
+    @Override
+    public Coords getWaypointForEntity(Entity unit) {
+        return getUnitBehaviorTracker().getWaypointForEntity(unit).orElse(null);
+    }
+
+    @Override
+    public UnitBehavior.BehaviorType getBehaviorType(Entity unit) {
+        return getUnitBehaviorTracker().getBehaviorType(unit, this);
+    }
+
+    @Override
+    public Set<Coords> getDestinationCoordsWithTerrainReduction(Entity mover) {
+        return getClusterTracker().getDestinationCoords(mover, getHomeEdge(mover), true);
+    }
+
+    @Override
+    public Set<Coords> getOppositeSideDestinationCoordsWithTerrainReduction(Entity mover) {
+        CardinalEdge destinationEdge = BoardUtilities.determineOppositeEdge(mover);
+        return getClusterTracker().getDestinationCoords(mover, destinationEdge, true);
     }
 
     /**
      * Given an entity and the current behavior settings, get the "home" edge to which the entity should attempt to retreat
      * Guaranteed to return a cardinal edge or NONE.
      */
-    CardinalEdge getHomeEdge(Entity entity) {
+    @Override
+    public CardinalEdge getHomeEdge(Entity entity) {
         // if I am crippled and using forced withdrawal rules, my home edge is the "retreat" edge
         if (entity.isCrippled(true) && getBehaviorSettings().isForcedWithdrawal()) {
             if (getBehaviorSettings().getRetreatEdge() == CardinalEdge.NEAREST) {
@@ -2991,7 +3021,7 @@ public class Princess extends BotClient {
     }
 
     @Override
-    public void endOfTurnProcessing() {
+    protected void endOfTurnProcessing() {
         checkForDishonoredEnemies();
         checkForBrokenEnemies();
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
@@ -3021,7 +3051,7 @@ public class Princess extends BotClient {
 
         for (var entity : getEntitiesOwned()) {
             if (entity.isDeployed()) {
-                swarmContext.removeAllStrategicGoalsOnCoordsQuadrant(entity.getPosition());
+                strategicGoalsManager.removeAllStrategicGoalsOnCoordsQuadrant(entity.getPosition());
             }
         }
     }
@@ -3756,5 +3786,20 @@ public class Princess extends BotClient {
 
     public ArtilleryCommandAndControl getArtilleryCommandAndControl() {
         return artilleryCommandAndControl;
+    }
+
+    @Override
+    public StrategicGoalsManager getStrategicGoalsManager() {
+        return strategicGoalsManager;
+    }
+
+    @Override
+    public double getMovePathSuccessProbability(MovePath movePath) {
+        var entityPathRanker = getPathRanker(movePath.getEntity());
+        if (entityPathRanker instanceof PathRanker pathRanker) {
+            return pathRanker.getMovePathSuccessProbability(movePath);
+        } else {
+            return 1.0;
+        }
     }
 }

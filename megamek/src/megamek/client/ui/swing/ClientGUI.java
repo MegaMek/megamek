@@ -3010,7 +3010,8 @@ public class ClientGUI extends AbstractClientGUI
         Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
         for (String ghostName : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
-            Princess princess = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName, client, message);
+            Princess princess = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName, client, message,
+                  true);
             systemMessage(message.toString());
             // Make this princess a locally owned bot if in the lobby. This way it
             // can be configured, and it will faithfully press Done when the local player

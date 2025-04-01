@@ -34,6 +34,8 @@ import javax.swing.ScrollPaneConstants;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.common.minefield.MinefieldDeploymentPlanner;
+import megamek.client.bot.common.minefield.MinefieldDeploymentPlannerStrategy;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
@@ -63,6 +65,7 @@ public abstract class BotClient extends Client {
 
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
+    protected MinefieldDeploymentPlannerStrategy deploymentPlannerStrategy;
 
     // a frame, to show stuff in
     public JFrame frame;
@@ -91,7 +94,7 @@ public abstract class BotClient extends Client {
 
     public BotClient(String playerName, String host, int port) {
         super(playerName, host, port);
-
+        deploymentPlannerStrategy = MinefieldDeploymentPlannerStrategy.RANDOM;
         boardClusterTracker = new BoardClusterTracker();
 
         game.addGameListener(new GameListenerAdapter() {
@@ -396,6 +399,9 @@ public abstract class BotClient extends Client {
                 case LOUNGE:
                     sendChat(Messages.getString("BotClient.Hi"));
                     break;
+                case EXCHANGE:
+                    exchangeSetup();
+                    break;
                 case DEPLOY_MINEFIELDS:
                     deployMinefields();
                     break;
@@ -621,25 +627,6 @@ public abstract class BotClient extends Client {
         }
     }
 
-    public double getMassOfAllInBuilding(final Game game, final Coords coords) {
-        double mass = 0;
-
-        // Add the mass of anyone else standing in/on this building.
-        final Hex hex = game.getBoard().getHex(coords);
-        final int buildingElevation = hex.terrainLevel(Terrains.BLDG_ELEV);
-        final int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
-        Iterator<Entity> crowd = game.getEntities(coords);
-        while (crowd.hasNext()) {
-            Entity e = crowd.next();
-
-            if (buildingElevation >= e.getElevation() || bridgeElevation >= e.getElevation()) {
-                mass += e.getWeight();
-            }
-        }
-
-        return mass;
-    }
-
     /**
      * Gets valid and empty starting coords around the specified point. This
      * method iterates through the list of Coords and returns the first Coords
@@ -659,7 +646,7 @@ public abstract class BotClient extends Client {
             // Make sure we don't overload any buildings in this hex.
             Building building = game.getBoard().getBuildingAt(dest);
             if (null != building) {
-                double mass = getMassOfAllInBuilding(game, dest) + deployedUnit.getWeight();
+                double mass = Compute.getMassOfAllInBuilding(game, dest) + deployedUnit.getWeight();
                 if (mass > building.getCurrentCF(dest)) {
                     continue;
                 }
@@ -1241,10 +1228,14 @@ public abstract class BotClient extends Client {
         this.clientGUI = clientGUI;
     }
 
-    public void endOfTurnProcessing() {
+    protected void endOfTurnProcessing() {
         // Do nothing;
     }
 
+    protected void exchangeSetup() {
+        // Do nothing;
+    }
+  
     private record MinefieldNumbers(int number, int type) {}
 
     /**
@@ -1320,8 +1311,8 @@ public abstract class BotClient extends Client {
      * Get the minefield deployment planner to use for this bot
      * @return the minefield deployment planner
      */
-    protected MinefieldDeploymentPlanner getMinefieldDeploymentPlanner() {
-        return new RandomMinefieldDeploymentPlanner(getBoard());
+    private MinefieldDeploymentPlanner getMinefieldDeploymentPlanner() {
+        return deploymentPlannerStrategy.getPlanner(getBoard());
     }
 
     @Override

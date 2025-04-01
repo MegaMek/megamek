@@ -1435,16 +1435,9 @@ public class MiscType extends EquipmentType {
     }
 
     public double getBV(Entity entity, int location) {
-        // Assuming PM melee weapons add BV according to the damage they add to a frenzy attack rather than the total
-        if (is(EquipmentTypeLookup.PROTOMEK_MELEE)) {
-            // TO:AUE p. 149, p.197
-            return 1.25 * Math.ceil(0.2 * entity.getWeight());
-        } else if (is(EquipmentTypeLookup.PROTOMEK_QUAD_MELEE)) {
-            // IO:AE p.61, p.190
-            return 2.5 * Math.ceil(0.2 * entity.getWeight());
-        }
         double returnBV = 0.0;
-        if ((bv != BV_VARIABLE) || (null == entity)) {
+
+        if ((entity == null) || (bv != BV_VARIABLE)) {
             returnBV = bv;
             // Mast Mounts give extra BV to equipment mounted in the mast
             if ((entity instanceof VTOL) &&
@@ -1457,8 +1450,19 @@ public class MiscType extends EquipmentType {
                              hasFlag(MiscType.F_C3I))) {
                 returnBV += 10;
             }
+
             return returnBV;
         }
+
+        // Assuming PM melee weapons add BV according to the damage they add to a frenzy attack rather than the total
+        if (is(EquipmentTypeLookup.PROTOMEK_MELEE)) {
+            // TO:AUE p. 149, p.197
+            return 1.25 * Math.ceil(0.2 * entity.getWeight());
+        } else if (is(EquipmentTypeLookup.PROTOMEK_QUAD_MELEE)) {
+            // IO:AE p.61, p.190
+            return 2.5 * Math.ceil(0.2 * entity.getWeight());
+        }
+
         // check for known formulas
         double tsmMod = entity.hasWorkingMisc(F_TSM) ? 2 : 1;
         if (hasFlag(F_CLUB) && hasSubType(S_HATCHET)) {
@@ -1474,8 +1478,8 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
             returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275 * tsmMod;
         } else if (hasFlag(F_TALON)) {
-            // according to an email from TPTB, Talon BV is the extra damage they
-            // do for kicks, so 50% of normal kick damage
+            // according to an email from TPTB, Talon BV is the extra damage they do for kicks, so 50% of normal kick
+            // damage
             returnBV = Math.round(Math.floor(entity.getWeight() / 5.0) * 0.5) * tsmMod;
         } else if (hasFlag(MiscType.F_RAM_PLATE)) {
             // half the maximum charge damage (rounded down) * 1.1

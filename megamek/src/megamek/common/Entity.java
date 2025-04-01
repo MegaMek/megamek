@@ -10784,7 +10784,7 @@ public abstract class Entity extends TurnOrdered
         int leftBetter = 2;
         // if we're right on the line, we need to special case this defender would choose along which hex the LOS
         // gets drawn, and that side also determines the side we hit in
-        if ((fa % 30) == 0) {
+        if ((game != null) && (fa % 30) == 0) {
             Hex srcHex = game.getBoard().getHex(src);
             Hex curHex = game.getBoard().getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
@@ -10804,8 +10804,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         boolean targetIsTank = (this instanceof Tank) ||
-                                     (game.getOptions()
-                                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS) &&
+                                     ((game != null) &&
+                                            game.getOptions()
+                                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS) &&
                                             (this instanceof QuadMek));
         if (targetIsTank) {
             if ((leftBetter == 1) && (fa == 150)) {

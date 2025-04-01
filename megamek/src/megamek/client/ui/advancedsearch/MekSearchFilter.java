@@ -18,7 +18,14 @@
  */
 package megamek.client.ui.advancedsearch;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import megamek.common.Entity;
@@ -29,15 +36,14 @@ import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
 /**
- * Class to perform filtering on units. This class stores a list of
- * constraints and for a given <code>MekSummary</code> it can tell whether
- * that <code>MekSummary</code> meets the constraints or not.
+ * Class to perform filtering on units. This class stores a list of constraints and for a given <code>MekSummary</code>
+ * it can tell whether that <code>MekSummary</code> meets the constraints or not.
  *
  * @author JSmyrloglou
  * @author Arlith
  */
 public class MekSearchFilter {
-    private static final MMLogger logger = MMLogger.create(MekSearchFilter.class);
+    private static final MMLogger LOGGER = MMLogger.create(MekSearchFilter.class);
 
     enum BoolOp {
         AND, OR, NOP
@@ -213,55 +219,214 @@ public class MekSearchFilter {
     }
 
     /**
-     * Deep copy constructor. New instantiations of all state variables are
-     * created.
+     * Deep copy constructor. New instantiations of all state variables are created.
      *
      * @param sf The <code>MekSearchFilter</code> to create a copy of.
      */
     public MekSearchFilter(MekSearchFilter sf) {
-        if (sf != null) {
-            isDisabled = sf.isDisabled;
-            checkEquipment = sf.checkEquipment;
-            equipmentCriteria = new ExpressionTree(sf.equipmentCriteria);
-        } else {
+        if (sf == null) {
             isDisabled = true;
             checkEquipment = false;
             equipmentCriteria = new ExpressionTree();
+            return;
         }
+
+        sStartWalk = sf.sStartWalk;
+        sEndWalk = sf.sEndWalk;
+        sStartJump = sf.sStartJump;
+        sEndJump = sf.sEndJump;
+
+        iArmor = sf.iArmor;
+        iOmni = sf.iOmni;
+        iMilitary = sf.iMilitary;
+        iIndustrial = sf.iIndustrial;
+        iMountedInfantry = sf.iMountedInfantry;
+        iWaterOnly = sf.iWaterOnly;
+        iDoomedOnGround = sf.iDoomedOnGround;
+        iDoomedInAtmosphere = sf.iDoomedInAtmosphere;
+        iDoomedInSpace = sf.iDoomedInSpace;
+        iDoomedInExtremeTemp = sf.iDoomedInExtremeTemp;
+        iDoomedInVacuum = sf.iDoomedInVacuum;
+        iSupportVehicle = sf.iSupportVehicle;
+        iAerospaceFighter = sf.iAerospaceFighter;
+        sStartTankTurrets = sf.sStartTankTurrets;
+        sEndTankTurrets = sf.sEndTankTurrets;
+        sStartLowerArms = sf.sStartLowerArms;
+        sEndLowerArms = sf.sEndLowerArms;
+        sStartHands = sf.sStartHands;
+        sEndHands = sf.sEndHands;
+        iClanEngine = sf.iClanEngine;
+        iOfficial = sf.iOfficial;
+        iCanon = sf.iCanon;
+        iPatchwork = sf.iPatchwork;
+        source = sf.source;
+        mulid = sf.mulid;
+        iInvalid = sf.iInvalid;
+        iFailedToLoadEquipment = sf.iFailedToLoadEquipment;
+        sStartTroopSpace = sf.sStartTroopSpace;
+        sEndTroopSpace = sf.sEndTroopSpace;
+        sStartASFBays = sf.sStartASFBays;
+        sEndASFBays = sf.sEndASFBays;
+        sStartASFDoors = sf.sStartASFDoors;
+        sEndASFDoors = sf.sEndASFDoors;
+        sStartASFUnits = sf.sStartASFUnits;
+        sEndASFUnits = sf.sEndASFUnits;
+        sStartSmallCraftBays = sf.sStartSmallCraftBays;
+        sEndSmallCraftBays = sf.sEndSmallCraftBays;
+        sStartSmallCraftDoors = sf.sStartSmallCraftDoors;
+        sEndSmallCraftDoors = sf.sEndSmallCraftDoors;
+        sStartSmallCraftUnits = sf.sStartSmallCraftUnits;
+        sEndSmallCraftUnits = sf.sEndSmallCraftUnits;
+        sStartMekBays = sf.sStartMekBays;
+        sEndMekBays = sf.sEndMekBays;
+        sStartMekDoors = sf.sStartMekDoors;
+        sEndMekDoors = sf.sEndMekDoors;
+        sStartMekUnits = sf.sStartMekUnits;
+        sEndMekUnits = sf.sEndMekUnits;
+        sStartHeavyVehicleBays = sf.sStartHeavyVehicleBays;
+        sEndHeavyVehicleBays = sf.sEndHeavyVehicleBays;
+        sStartHeavyVehicleDoors = sf.sStartHeavyVehicleDoors;
+        sEndHeavyVehicleDoors = sf.sEndHeavyVehicleDoors;
+        sStartHeavyVehicleUnits = sf.sStartHeavyVehicleUnits;
+        sEndHeavyVehicleUnits = sf.sEndHeavyVehicleUnits;
+        sStartLightVehicleBays = sf.sStartLightVehicleBays;
+        sEndLightVehicleBays = sf.sEndLightVehicleBays;
+        sStartLightVehicleDoors = sf.sStartLightVehicleDoors;
+        sEndLightVehicleDoors = sf.sEndLightVehicleDoors;
+        sStartLightVehicleUnits = sf.sStartLightVehicleUnits;
+        sEndLightVehicleUnits = sf.sEndLightVehicleUnits;
+        sStartProtomekBays = sf.sStartProtomekBays;
+        sEndProtomekBays = sf.sEndProtomekBays;
+        sStartProtomekDoors = sf.sStartProtomekDoors;
+        sEndProtomekDoors = sf.sEndProtomekDoors;
+        sStartProtomekUnits = sf.sStartProtomekUnits;
+        sEndProtomekUnits = sf.sEndProtomekUnits;
+        sStartBattleArmorBays = sf.sStartBattleArmorBays;
+        sEndBattleArmorBays = sf.sEndBattleArmorBays;
+        sStartBattleArmorDoors = sf.sStartBattleArmorDoors;
+        sEndBattleArmorDoors = sf.sEndBattleArmorDoors;
+        sStartBattleArmorUnits = sf.sStartBattleArmorUnits;
+        sEndBattleArmorUnits = sf.sEndBattleArmorUnits;
+        sStartInfantryBays = sf.sStartInfantryBays;
+        sEndInfantryBays = sf.sEndInfantryBays;
+        sStartInfantryDoors = sf.sStartInfantryDoors;
+        sEndInfantryDoors = sf.sEndInfantryDoors;
+        sStartInfantryUnits = sf.sStartInfantryUnits;
+        sEndInfantryUnits = sf.sEndInfantryUnits;
+        sStartSuperHeavyVehicleBays = sf.sStartSuperHeavyVehicleBays;
+        sEndSuperHeavyVehicleBays = sf.sEndSuperHeavyVehicleBays;
+        sStartSuperHeavyVehicleDoors = sf.sStartSuperHeavyVehicleDoors;
+        sEndSuperHeavyVehicleDoors = sf.sEndSuperHeavyVehicleDoors;
+        sStartSuperHeavyVehicleUnits = sf.sStartSuperHeavyVehicleUnits;
+        sEndSuperHeavyVehicleUnits = sf.sEndSuperHeavyVehicleUnits;
+        sStartDropshuttleBays = sf.sStartDropshuttleBays;
+        sEndDropshuttleBays = sf.sEndDropshuttleBays;
+        sStartDropshuttleDoors = sf.sStartDropshuttleDoors;
+        sEndDropshuttleDoors = sf.sEndDropshuttleDoors;
+        sStartDropshuttleUnits = sf.sStartDropshuttleUnits;
+        sEndDropshuttleUnits = sf.sEndDropshuttleUnits;
+        sStartDockingCollars = sf.sStartDockingCollars;
+        sEndDockingCollars = sf.sEndDockingCollars;
+        sStartBattleArmorHandles = sf.sStartBattleArmorHandles;
+        sEndBattleArmorHandles = sf.sEndBattleArmorHandles;
+        sStartCargoBayUnits = sf.sStartCargoBayUnits;
+        sEndCargoBayUnits = sf.sEndCargoBayUnits;
+        sStartNavalRepairFacilities = sf.sStartNavalRepairFacilities;
+        sEndNavalRepairFacilities = sf.sEndNavalRepairFacilities;
+        sStartYear = sf.sStartYear;
+        sEndYear = sf.sEndYear;
+        sStartTons = sf.sStartTons;
+        sEndTons = sf.sEndTons;
+        sStartBV = sf.sStartBV;
+        sEndBV = sf.sEndBV;
+        isDisabled = sf.isDisabled;
+        engineType = List.copyOf(sf.engineType);
+        engineTypeExclude = List.copyOf(sf.engineTypeExclude);
+        gyroType = List.copyOf(sf.gyroType);
+        gyroTypeExclude = List.copyOf(sf.gyroTypeExclude);
+        armorType = List.copyOf(sf.armorType);
+        armorTypeExclude = List.copyOf(sf.armorTypeExclude);
+        internalsType = List.copyOf(sf.internalsType);
+        internalsTypeExclude = List.copyOf(sf.internalsTypeExclude);
+        movemodes = List.copyOf(sf.movemodes);
+        movemodeExclude = List.copyOf(sf.movemodeExclude);
+
+        cockpitType = List.copyOf(sf.cockpitType);
+        cockpitTypeExclude = List.copyOf(sf.cockpitTypeExclude);
+
+        techLevel = List.copyOf(sf.techLevel);
+        techLevelExclude = List.copyOf(sf.techLevelExclude);
+
+        techBase = List.copyOf(sf.techBase);
+        techBaseExclude = List.copyOf(sf.techBaseExclude);
+        quirkInclude = sf.quirkInclude;
+        quirkExclude = sf.quirkExclude;
+        quirkType = List.copyOf(sf.quirkType);
+        quirkTypeExclude = List.copyOf(sf.quirkTypeExclude);
+        weaponQuirkInclude = sf.weaponQuirkInclude;
+        weaponQuirkExclude = sf.weaponQuirkExclude;
+        weaponQuirkType = List.copyOf(sf.weaponQuirkType);
+        weaponQuirkTypeExclude = List.copyOf(sf.weaponQuirkTypeExclude);
+        checkEquipment = sf.checkEquipment;
+        filterMek = sf.filterMek;
+        filterBipedMek = sf.filterBipedMek;
+        filterProtomek = sf.filterProtomek;
+        filterLAM = sf.filterLAM;
+        filterTripod = sf.filterTripod;
+        filterQuad = sf.filterQuad;
+        filterQuadVee = sf.filterQuadVee;
+        filterAero = sf.filterAero;
+        filterFixedWingSupport = sf.filterFixedWingSupport;
+        filterConvFighter = sf.filterConvFighter;
+        filterSmallCraft = sf.filterSmallCraft;
+        filterDropship = sf.filterDropship;
+        filterJumpship = sf.filterJumpship;
+        filterWarship = sf.filterWarship;
+        filterSpaceStation = sf.filterSpaceStation;
+        filterInfantry = sf.filterInfantry;
+        filterBattleArmor = sf.filterBattleArmor;
+        filterTank = sf.filterTank;
+        filterVTOL = sf.filterVTOL;
+        filterSupportVTOL = sf.filterSupportVTOL;
+        filterGunEmplacement = sf.filterGunEmplacement;
+        filterSupportTank = sf.filterSupportTank;
+        filterLargeSupportTank = sf.filterLargeSupportTank;
+        filterSuperHeavyTank = sf.filterSuperHeavyTank;
+        equipmentCriteria = new ExpressionTree(sf.equipmentCriteria);
     }
 
     /**
-     * Creates an Expressiontree from a collection of tokens.
+     * Creates an {@link ExpressionTree} from a collection of tokens.
      */
-    public void createFilterExpressionFromTokens(List<FilterToken> toks) throws FilterParsingException {
+    public void createFilterExpressionFromTokens(List<FilterToken> tokens) throws FilterParsingException {
         equipmentCriteria = new ExpressionTree();
-        if (!toks.isEmpty()) {
-            equipmentCriteria.root = createFTFromTokensRecursively(toks.iterator(), null);
+        if (!tokens.isEmpty()) {
+            equipmentCriteria.root = createFTFromTokensRecursively(tokens.iterator(), null);
             checkEquipment = true;
         } else {
             checkEquipment = false;
         }
     }
 
-    private ExpNode createFTFromTokensRecursively(Iterator<FilterToken> toks, ExpNode currNode) {
+    private ExpNode createFTFromTokensRecursively(Iterator<FilterToken> tokens, ExpNode currNode) {
         // Base case. We're out of tokens, so we're done.
-        if (!toks.hasNext()) {
+        if (!tokens.hasNext()) {
             return currNode;
         }
 
-        FilterToken filterTok = toks.next();
+        FilterToken filterTok = tokens.next();
 
         // Parsing Parenthesis
         if (filterTok instanceof ParensFT parensFT) {
             if (parensFT.parens.equals("(")) {
                 if (currNode == null) {
-                    return createFTFromTokensRecursively(toks, null);
+                    return createFTFromTokensRecursively(tokens, null);
                 } else {
-                    currNode.children.add(createFTFromTokensRecursively(toks, null));
+                    currNode.children.add(createFTFromTokensRecursively(tokens, null));
                     return currNode;
                 }
             } else if (parensFT.parens.equals(")")) {
-                ExpNode nextNode = createFTFromTokensRecursively(toks, null);
+                ExpNode nextNode = createFTFromTokensRecursively(tokens, null);
                 // This right paren is the end of the expression
                 if (nextNode == null) {
                     return currNode;
@@ -273,43 +438,54 @@ public class MekSearchFilter {
         }
 
         // Parsing an Operation
-        if (filterTok instanceof OperatorFT ft) {
+        if (filterTok instanceof OperatorFT operatorFT) {
             ExpNode newNode = new ExpNode();
-            // If currNode is null, we came from a right paren
+            // If currNode is null, we came from a right parent
             if (currNode == null) {
-                newNode.operation = ft.op;
-                ExpNode nextNode = createFTFromTokensRecursively(toks, null);
+                newNode.operation = operatorFT.op;
+                ExpNode nextNode = createFTFromTokensRecursively(tokens, null);
+
+                if (nextNode == null) {
+                    return null;
+                }
+
                 if ((nextNode.operation == newNode.operation) || (nextNode.operation == BoolOp.NOP)) {
                     newNode.children.addAll(nextNode.children);
                 } else {
                     newNode.children.add(nextNode);
                 }
+
                 return newNode;
-                // If we are already working on the same operation, keeping adding children to
-                // it
-            } else if ((currNode.operation == ft.op) || (currNode.operation == BoolOp.NOP)) {
-                currNode.operation = ft.op;
+                // If we are already working on the same operation, keeping adding children to it
+            } else if ((currNode.operation == operatorFT.op) || (currNode.operation == BoolOp.NOP)) {
+                currNode.operation = operatorFT.op;
                 // We're already parsing this operation, continue on
-                return createFTFromTokensRecursively(toks, currNode);
+                return createFTFromTokensRecursively(tokens, currNode);
             } else { // Mismatching operation
                 // In the case of an AND, since AND has a higher precedence,
                 // take the last seen operand, then the results of further
                 // parsing becomes a child of the current node
-                if (ft.op == BoolOp.AND) {
+                if (operatorFT.op == BoolOp.AND) {
                     ExpNode leaf = currNode.children.remove(currNode.children.size() - 1);
                     newNode.operation = BoolOp.AND;
                     newNode.children.add(leaf);
-                    ExpNode sibling = createFTFromTokensRecursively(toks, newNode);
+                    ExpNode sibling = createFTFromTokensRecursively(tokens, newNode);
+
+                    if (sibling == null) {
+                        return currNode;
+                    }
+
                     if (sibling.operation == currNode.operation) {
                         currNode.children.addAll(sibling.children);
                     } else {
                         currNode.children.add(sibling);
                     }
+
                     return currNode;
                 } else { // BoolOp.OR
                     newNode.operation = BoolOp.OR;
                     newNode.children.add(currNode);
-                    newNode.children.add(createFTFromTokensRecursively(toks, null));
+                    newNode.children.add(createFTFromTokensRecursively(tokens, null));
                     return newNode;
                 }
             }
@@ -322,7 +498,7 @@ public class MekSearchFilter {
             }
             ExpNode newChild = new ExpNode(ft.internalName, ft.qty, ft.atleast);
             currNode.children.add(newChild);
-            return createFTFromTokensRecursively(toks, currNode);
+            return createFTFromTokensRecursively(tokens, currNode);
 
         }
 
@@ -333,7 +509,7 @@ public class MekSearchFilter {
 
             ExpNode newChild = new ExpNode(ft.equipmentClass, ft.qty, ft.atleast);
             currNode.children.add(newChild);
-            return createFTFromTokensRecursively(toks, currNode);
+            return createFTFromTokensRecursively(tokens, currNode);
         }
         return null;
     }
@@ -618,15 +794,21 @@ public class MekSearchFilter {
             return false;
         }
 
-        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleBays(), f.sStartSuperHeavyVehicleBays, f.sEndSuperHeavyVehicleBays)) {
+        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleBays(),
+              f.sStartSuperHeavyVehicleBays,
+              f.sEndSuperHeavyVehicleBays)) {
             return false;
         }
 
-        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleDoors(), f.sStartSuperHeavyVehicleDoors, f.sEndSuperHeavyVehicleDoors)) {
+        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleDoors(),
+              f.sStartSuperHeavyVehicleDoors,
+              f.sEndSuperHeavyVehicleDoors)) {
             return false;
         }
 
-        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleUnits(), f.sStartSuperHeavyVehicleUnits, f.sEndSuperHeavyVehicleUnits)) {
+        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleUnits(),
+              f.sStartSuperHeavyVehicleUnits,
+              f.sEndSuperHeavyVehicleUnits)) {
             return false;
         }
 
@@ -654,7 +836,9 @@ public class MekSearchFilter {
             return false;
         }
 
-        if (!StringUtil.isBetween(mek.getNavalRepairFacilities(), f.sStartNavalRepairFacilities, f.sEndNavalRepairFacilities)) {
+        if (!StringUtil.isBetween(mek.getNavalRepairFacilities(),
+              f.sStartNavalRepairFacilities,
+              f.sEndNavalRepairFacilities)) {
             return false;
         }
 
@@ -753,13 +937,13 @@ public class MekSearchFilter {
         }
 
         if (f.weaponQuirkInclude == 0) {
-            if ((!f.weaponQuirkTypeExclude.isEmpty())
-                    && (allMatch(f.weaponQuirkTypeExclude, mek.getWeaponQuirkNames()))) {
+            if ((!f.weaponQuirkTypeExclude.isEmpty()) &&
+                      (allMatch(f.weaponQuirkTypeExclude, mek.getWeaponQuirkNames()))) {
                 return false;
             }
         } else {
-            if ((!f.weaponQuirkTypeExclude.isEmpty())
-                    && (anyMatch(f.weaponQuirkTypeExclude, mek.getWeaponQuirkNames()))) {
+            if ((!f.weaponQuirkTypeExclude.isEmpty()) &&
+                      (anyMatch(f.weaponQuirkTypeExclude, mek.getWeaponQuirkNames()))) {
                 return false;
             }
         }
@@ -926,19 +1110,15 @@ public class MekSearchFilter {
             entityTypes = entityTypes | Entity.ETYPE_AEROSPACEFIGHTER;
         }
 
-        if (((entityType & entityTypes) > 0) && (entityTypes != 0)) {
-            return false;
-        }
-
-        return true;
+        return ((entityType & entityTypes) <= 0) || (entityTypes == 0);
     }
 
     /**
-     * Evalutes the given list of equipment names and quantities against the
-     * expression tree in this filter.
+     * Evaluates the given list of equipment names and quantities against the expression tree in this filter.
      *
      * @param eq  Collection of equipment names
      * @param qty The number of each piece of equipment
+     *
      * @return True if the provided lists satisfy the expression tree
      */
     public boolean evaluate(List<String> eq, List<Integer> qty) {
@@ -946,37 +1126,34 @@ public class MekSearchFilter {
     }
 
     /**
-     * Recursive helper function for evaluating an ExpressionTree on a
-     * collection of equipment names and quantities.
+     * Recursive helper function for evaluating an ExpressionTree on a collection of equipment names and quantities.
      *
      * @param eq  A collection of equipment names
      * @param qty The number of occurrences of each piece of equipment
      * @param n   The current node in the ExpressionTree
+     *
      * @return True if the tree evaluates successfully, else false
      */
     private boolean evaluate(List<String> eq, List<Integer> qty, ExpNode n) {
-        // Base Case: See if any of the equipment matches the leaf node in
-        // sufficient quantity
+        // Base Case: See if any of the equipment matches the leaf node in sufficient quantity
         if (n.children.isEmpty()) {
             if (n.equipmentClass != null) {
-                // Since weapon classes can match across different types of equipment, we have
-                // to sum up
-                // all equipment that matches the weaponClass value.
-                // First, convert the two separate lists into a map of name->quantity.
+                // Since weapon classes can match across different types of equipment, we have to sum up all
+                // equipment that matches the weaponClass value. First, convert the two separate lists into a map of
+                // name->quantity.
                 List<Map.Entry<String, Integer>> nameQtyPairs = IntStream.range(0, Math.min(eq.size(), qty.size()))
-                        .mapToObj(i -> Map.entry(eq.get(i), qty.get(i)))
-                        .toList();
+                                                                      .mapToObj(i -> Map.entry(eq.get(i), qty.get(i)))
+                                                                      .toList();
 
-                // Now, stream that map, filtering on a match with the WeaponClass, then extract
-                // the quantities and sum them up.
+                // Now, stream that map, filtering on a match with the WeaponClass, then extract the quantities and
+                // sum them up.
                 int total = nameQtyPairs.stream()
-                        .filter(p -> n.equipmentClass.matches(p.getKey()))
-                        .map(Map.Entry::getValue)
-                        .reduce(0, Integer::sum);
+                                  .filter(p -> n.equipmentClass.matches(p.getKey()))
+                                  .map(Map.Entry::getValue)
+                                  .reduce(0, Integer::sum);
 
-                // If the requested quantity is 0, then we match if and only if the total number
-                // of matching equipment is also 0.
-                // Otherwise, we match if the total equals or exceeds the requested amount.
+                // If the requested quantity is 0, then we match if and only if the total number of matching
+                // equipment is also 0. Otherwise, we match if the total equals or exceeds the requested amount.
                 if (n.atleast) {
                     return total >= n.qty;
                 } else {
@@ -993,45 +1170,32 @@ public class MekSearchFilter {
                     int currQty = qtyIter.next();
 
                     if (null == currEq) {
-                        logger.debug("List<String> currEq is null");
+                        LOGGER.debug("List<String> currEq is null");
                         return false;
                     }
 
-                    if (null == n) {
-                        logger.debug("ExpNode n is null");
-                        return false;
-                    }
-
-                    // If the name matches, that means this is the weapon/equipment we are checking
-                    // for.
-                    // If the requested quantity is greater than 0, then the unit quantity must
-                    // equal or exceed it.
-                    // However, if the requested quantity is 0, then the simple fact that the
-                    // weapon/equipment matches
-                    // means that the unit isn't a match for the filter, as it has a
-                    // weapon/equipment that is required to
+                    // If the name matches, that means this is the weapon/equipment we are checking for. If the
+                    // requested quantity is greater than 0, then the unit quantity must equal or exceed it. However,
+                    // if the requested quantity is 0, then the simple fact that the weapon/equipment matches means
+                    // that the unit isn't a match for the filter, as it has a weapon/equipment that is required to
                     // NOT be there.
                     if (currEq.equals(n.name) && n.atleast && (currQty >= n.qty)) {
                         return true;
                     } else if (currEq.equals(n.name) && !n.atleast && (currQty >= n.qty)) {
                         return false;
                     }
-
                 }
 
-                // If we reach this point. It means that the MekSummary didn't have a
-                // weapon/equipment that matched the leaf node.
-                // If the leaf quantity is 0, that means that the mek is a match. If the leaf
-                // quantity is non-zero, that means the mek isn't
-                // a match.
+                // If we reach this point. It means that the MekSummary didn't have a weapon/equipment that matched
+                // the leaf node. If the leaf quantity is 0, that means that the mek is a match. If the leaf quantity
+                // is non-zero, that means the mek isn't a match.
                 return !n.atleast;
             }
         }
-        // Otherwise, recurse on all the children and either AND the results
-        // or OR them, based upon the operation in this node
+        // Otherwise, recurse on all the children and either AND the results or <code>OR</code> them, based upon the
+        // operation in this node
         boolean retVal = n.operation == BoolOp.AND;
-        // If we set the proper default starting value of retVal, we can take
-        // advantage of logical short-circuiting.
+        // If we set the proper default starting value of retVal, we can take advantage of logical short-circuiting.
         for (ExpNode child : n.children) {
             if (n.operation == BoolOp.AND) {
                 retVal = retVal && evaluate(eq, qty, child);
@@ -1043,9 +1207,8 @@ public class MekSearchFilter {
     }
 
     /**
-     * This class allows to create a tree where the leaf nodes contain names
-     * and quantities of pieces of equipment while the non-leaf nodes contain
-     * boolean operations (AND and OR).
+     * This class allows to create a tree where the leaf nodes contain names and quantities of pieces of equipment while
+     * the non-leaf nodes contain boolean operations (<code>AND</code> and <code>OR</code>).
      *
      * @author Arlith
      */
@@ -1057,8 +1220,7 @@ public class MekSearchFilter {
         }
 
         /**
-         * Deep copy constructor. New instantiations of all state variables
-         * are created.
+         * Deep copy constructor. New instantiations of all state variables are created.
          *
          * @param et The <code>ExpressionTree</code> to create a copy of.
          */
@@ -1088,8 +1250,7 @@ public class MekSearchFilter {
         }
 
         /**
-         * Deep copy constructor. New instantiations of all state variables
-         * are created.
+         * Deep copy constructor. New instantiations of all state variables are created.
          *
          * @param e The <code>ExpressionTree</code> to create a copy of.
          */
@@ -1108,24 +1269,24 @@ public class MekSearchFilter {
             }
         }
 
-        public ExpNode(String n, int q, boolean atleast) {
+        public ExpNode(String n, int q, boolean atLeast) {
             parent = null;
             name = n;
             equipmentClass = null;
             qty = q;
             operation = BoolOp.NOP;
             children = new LinkedList<>();
-            this.atleast = atleast;
+            this.atleast = atLeast;
         }
 
-        public ExpNode(AdvancedSearchEquipmentClass n, int q, boolean atleast) {
+        public ExpNode(AdvancedSearchEquipmentClass n, int q, boolean atLeast) {
             parent = null;
             name = null;
             equipmentClass = n;
             qty = q;
             operation = BoolOp.NOP;
             children = new LinkedList<>();
-            this.atleast = atleast;
+            this.atleast = atLeast;
         }
 
         @Override
@@ -1140,9 +1301,9 @@ public class MekSearchFilter {
                     }
                 } else if (equipmentClass != null) {
                     if (qty == 1) {
-                        return qty + " " + equipmentClass.toString();
+                        return qty + " " + equipmentClass;
                     } else {
-                        return qty + " " + equipmentClass.toString() + "s";
+                        return qty + " " + equipmentClass + "s";
                     }
                 }
             }
@@ -1157,12 +1318,12 @@ public class MekSearchFilter {
                     if (count == children.size() - 1) {
                         result.append(child.toString());
                     } else {
-                        result.append(child.toString() + " AND ");
+                        result.append(child.toString()).append(" AND ");
                     }
                 } else if (count == children.size() - 1) {
                     result.append(child.toString());
                 } else {
-                    result.append(child.toString() + " OR ");
+                    result.append(child.toString()).append(" OR ");
                 }
                 count++;
             }
@@ -1181,11 +1342,13 @@ public class MekSearchFilter {
     }
 
     /**
-     * Returns true if the given searchTarget contains all the tokens (separated by space) given in the saerchTokens String. Comparisons are
-     * done ignoring case. Returns false when any of the strings is null or the search tokens are empty.
+     * Returns true if the given searchTarget contains all the tokens (separated by space) given in the searchTokens
+     * String. Comparisons are done ignoring case. Returns false when any of the strings is null or the search tokens
+     * are empty.
      *
-     * @param searchTarget The String that may contains the search tokens, such as "Shrapnel #9"
+     * @param searchTarget The String that may contain the search tokens, such as "Shrapnel #9"
      * @param searchTokens The String that contains the search tokens, such as "shra 9"
+     *
      * @return True if all search tokens are contained in the searchTarget
      */
     private boolean findTokenized(@Nullable String searchTarget, @Nullable String searchTokens) {

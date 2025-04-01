@@ -27,12 +27,8 @@
  */
 package megamek.ai.dataset;
 
-import megamek.common.MovePath;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**

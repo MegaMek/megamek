@@ -55,7 +55,6 @@ public class Caspar extends Princess implements AdvancedAgent {
     private static final MMLogger logger = MMLogger.create(Caspar.class);
 
     private static final int QUADRANT_SIZE = 6;
-    public static final boolean USE_CASPAR = true;
 
     private final CasparAI casparAI;
 
@@ -111,11 +110,6 @@ public class Caspar extends Princess implements AdvancedAgent {
     @Override
     public UnitBehavior.BehaviorType getBehaviorType(Entity unit) {
         return getUnitBehaviorTracker().getBehaviorType(unit, this);
-    }
-
-    @Override
-    public Set<Coords> getDestinationCoords(Entity mover) {
-        return getClusterTracker().getDestinationCoords(mover, getHomeEdge(mover), false);
     }
 
     @Override

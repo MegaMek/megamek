@@ -25,7 +25,6 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  */
-
 package megamek.client.bot.common;
 
 import megamek.common.Board;

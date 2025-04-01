@@ -2935,11 +2935,6 @@ public class Princess extends BotClient implements Agent {
     }
 
     @Override
-    public Set<Coords> getDestinationCoords(Entity mover) {
-        return getClusterTracker().getDestinationCoords(mover, getHomeEdge(mover), false);
-    }
-
-    @Override
     public Set<Coords> getDestinationCoordsWithTerrainReduction(Entity mover) {
         return getClusterTracker().getDestinationCoords(mover, getHomeEdge(mover), true);
     }

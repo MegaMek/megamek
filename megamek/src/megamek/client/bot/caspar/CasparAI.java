@@ -27,8 +27,6 @@
  */
 package megamek.client.bot.caspar;
 
-import java.io.IOException;
-
 import megamek.ai.axis.InputAxisCalculator;
 import megamek.ai.neuralnetwork.NeuralNetwork;
 import megamek.client.bot.common.AdvancedAgent;
@@ -36,7 +34,6 @@ import megamek.client.bot.common.DifficultyLevel;
 import megamek.client.bot.common.GameState;
 import megamek.client.bot.common.formation.FormationManager;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.common.MovePath;
 
 /**
  * The main AI controller for CASPAR (Combat Algorithmic System for Predictive Analysis and Response). This class
@@ -51,7 +48,7 @@ public class CasparAI {
     private final TacticalPlanner tacticalPlanner;
     private final AdvancedAgent agent;
     private final BehaviorSettings behaviorSettings;
-    private NeuralNetwork neuralNetwork;
+    private final NeuralNetwork neuralNetwork;
     private DifficultyManager difficultyManager;
 
     private CasparAI(Builder builder) {

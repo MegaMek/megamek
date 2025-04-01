@@ -25,7 +25,6 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  */
-
 package megamek.client.bot.common;
 
 import megamek.client.bot.princess.BehaviorSettings;
@@ -53,11 +52,9 @@ public interface Agent {
     Player getLocalPlayer();
 
     UnitBehavior.BehaviorType getBehaviorType(Entity mover);
-    // get homeEdge
-    Set<Coords> getDestinationCoords(Entity mover);
-    // get homeEdge
+
     Set<Coords> getDestinationCoordsWithTerrainReduction(Entity mover);
-    // CardinalEdge oppositeEdge = BoardUtilities.determineOppositeEdge(mover);
+
     Set<Coords> getOppositeSideDestinationCoordsWithTerrainReduction(Entity mover);
 
     /**

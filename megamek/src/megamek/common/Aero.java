@@ -724,7 +724,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * @deprecated use {@link Aero#setOSI(int)} instead
      */
-    @Deprecated
+    @Deprecated(since = "0.50.05")
     public void initializeSI(int val) {
         setOSI(val);
     }

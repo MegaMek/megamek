@@ -16,6 +16,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6782: add Save As to the board preview in the lobby 
 + PR #6795: Fixes for various Artillery and Artillery Flak issues
 + PR #6796: feat: add a callsign to princess instead of numbers
++ PR #6806: Added Method for Variable Cost Check in MiscType
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

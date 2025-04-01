@@ -10,8 +10,9 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 sourceSets {
@@ -155,6 +156,7 @@ tasks.register('copyFiles', Copy) {
     exclude "${mmconf}/mml.preferences"
 
     exclude "${rats}/**"
+    exclude "${data}/mekfiles/units.cache"
     include "${userdata}/"
 
     into fileStagingDir
@@ -189,15 +191,13 @@ tasks.register('officialUnitList', JavaExec) {
     args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
 }
 
-task unitFilesZip(dependsOn: copyFiles) {
+tasks.register('unitFilesZip', Zip) {
+    dependsOn copyFiles
     description = 'Creates zip archives of all the unit file folders.'
-    file(unitFiles).eachDir { subDir ->
-        dependsOn tasks.create("${name}${subDir.name}", Zip) {
-            from subDir
-            archiveFileName = "${subDir.name}.zip"
-            destinationDirectory = file("${fileStagingDir}/${unitFiles}")
-        }
-    }
+    from unitFiles
+    archiveFileName = "unit_files.zip"
+    destinationDirectory = file("${fileStagingDir}/${unitFiles}")
+
     inputs.dir "${projectDir}/${unitFiles}"
     outputs.dir "${fileStagingDir}/${unitFiles}"
 }
@@ -305,19 +305,12 @@ distTar {
     compression = Compression.GZIP
 }
 
-// The distribution plugin adds the distribution packages to the assemble task, which causes the build task
-// to run all the packaging tasks.
-task assemble(overwrite: true) {
+assemble {
     dependsOn jar
 }
 
-// Replace the assembleDist task created by the distributions plugin to create the packages we want to
-task assembleDist(overwrite: true) {
-    description = 'Build unix, Windows, and source packages'
-    group = 'distribution'
-    dependsOn test
+assembleDist {
     dependsOn distTar
-    dependsOn distZip
 }
 
 test {

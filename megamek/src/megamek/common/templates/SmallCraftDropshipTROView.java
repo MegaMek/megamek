@@ -73,7 +73,7 @@ public class SmallCraftDropshipTROView extends AeroTROView {
         setModelData("hsCount",
                 aero.getHeatType() == Aero.HEAT_DOUBLE ? aero.getOHeatSinks() + " (" + (aero.getOHeatSinks() * 2) + ")"
                         : aero.getOHeatSinks());
-        setModelData("si", aero.get0SI());
+        setModelData("si", aero.getOSI());
         setModelData("armorType", formatArmorType(aero, false).toLowerCase());
         setModelData("armorMass", testAero.getWeightArmor());
         setModelData("escapePods", aero.getEscapePods());

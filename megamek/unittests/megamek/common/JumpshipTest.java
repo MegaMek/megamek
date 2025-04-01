@@ -28,7 +28,7 @@ class JumpshipTest {
     void calculateArmorWeightISWithClanArmor() {
         final Jumpship ship = new Jumpship();
         ship.setWeight(100000); // 1.0 for Clan, 0.8 for IS
-        ship.set0SI(0); // ignore the extra armor from SI
+        ship.setOSI(0); // ignore the extra armor from SI
         ship.setTechLevel(TechConstants.T_IS_ADVANCED);
         ship.setMixedTech(true);
         ship.setArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE, true));
@@ -44,7 +44,7 @@ class JumpshipTest {
     void calculateArmorWeightClanWithISArmor() {
         final Jumpship ship = new Jumpship();
         ship.setWeight(100000); // 1.0 for Clan, 0.8 for IS
-        ship.set0SI(0); // ignore the extra armor from SI
+        ship.setOSI(0); // ignore the extra armor from SI
         ship.setTechLevel(TechConstants.T_CLAN_ADVANCED);
         ship.setMixedTech(true);
         ship.setArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE, false));

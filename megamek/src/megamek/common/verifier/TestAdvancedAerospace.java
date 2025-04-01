@@ -60,7 +60,7 @@ public class TestAdvancedAerospace extends TestAero {
 
     public static int maxArmorPoints(Jumpship vessel) {
         // The ship gets a number of armor points equal to 10% of the SI, rounded normally, per facing.
-        double freeSI = Math.round(vessel.get0SI() / 10.0) * 6;
+        double freeSI = Math.round(vessel.getOSI() / 10.0) * 6;
         // Primitive jump ships multiply the armor by a factor of 0.66. Per errata, the armor is calculated based on
         // standard armor then rounded down, and the free SI armor is rounded down separately.
         if (vessel.isPrimitive()) {
@@ -77,13 +77,13 @@ public class TestAdvancedAerospace extends TestAero {
         // max armor tonnage is based on SI weight
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             // SI weight (SI/1000) / 50
-            return floor(vessel.get0SI() * vessel.getWeight() / 50000.0, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 50000.0, Ceil.HALFTON);
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             // SI weight (SI/100) / 3 + 60
-            return floor(vessel.get0SI() * vessel.getWeight() / 300.0 + 60, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 300.0 + 60, Ceil.HALFTON);
         } else {
             // SI weight (SI/150) / 12
-            return floor(vessel.get0SI() * vessel.getWeight() / 1800.0, Ceil.HALFTON);
+            return floor(vessel.getOSI() * vessel.getWeight() / 1800.0, Ceil.HALFTON);
         }
     }
 

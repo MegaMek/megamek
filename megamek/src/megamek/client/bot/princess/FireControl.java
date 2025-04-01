@@ -297,8 +297,7 @@ public class FireControl {
             targetState = new EntityState(target);
         }
 
-        // Can't shoot if one of us is not on the board.
-        // todo exception for off-board artillery.
+        // Can't shoot if one of us has not got a position (n.b.: off-board units have positions, but not hexes).
         if ((null == shooterState.getPosition()) || (null == targetState.getPosition())) {
             return new ToHitData(TH_NULL_POSITION);
         }

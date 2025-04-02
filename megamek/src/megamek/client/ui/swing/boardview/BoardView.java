@@ -135,20 +135,20 @@ public final class BoardView extends AbstractBoardView
 
     // line width of the fly over lines
     static final int FLY_OVER_LINE_WIDTH = 3;
-    private static Font FONT_7 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 7);
-    private static Font FONT_8 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 8);
-    private static Font FONT_9 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 9);
-    private static Font FONT_10 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
-    private static Font FONT_12 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12);
-    private static Font FONT_14 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 14);
-    private static Font FONT_16 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 16);
-    private static Font FONT_18 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 18);
-    private static Font FONT_24 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 24);
+    private static final Font FONT_7 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 7);
+    private static final Font FONT_8 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 8);
+    private static final Font FONT_9 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 9);
+    private static final Font FONT_10 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
+    private static final Font FONT_12 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12);
+    private static final Font FONT_14 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 14);
+    private static final Font FONT_16 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 16);
+    private static final Font FONT_18 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 18);
+    private static final Font FONT_24 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 24);
 
     Dimension hex_size;
 
-    private Font font_note = FONT_10;
-    private Font font_hexnum = FONT_10;
+    private final Font font_note = FONT_10;
+    private Font font_hexNumber = FONT_10;
     private Font font_elev = FONT_9;
     private Font font_minefield = FONT_12;
 
@@ -189,32 +189,32 @@ public final class BoardView extends AbstractBoardView
     private Map<ArrayList<Integer>, IsometricSprite> isometricSpriteIds = new HashMap<>();
 
     // sprites for the three selection cursors
-    private CursorSprite cursorSprite;
-    private CursorSprite highlightSprite;
-    private CursorSprite selectedSprite;
-    private CursorSprite firstLOSSprite;
-    private CursorSprite secondLOSSprite;
+    private final CursorSprite cursorSprite;
+    private final CursorSprite highlightSprite;
+    private final CursorSprite selectedSprite;
+    private final CursorSprite firstLOSSprite;
+    private final CursorSprite secondLOSSprite;
 
     // sprite for current movement
     ArrayList<StepSprite> pathSprites = new ArrayList<>();
     ArrayList<FlightPathIndicatorSprite> fpiSprites = new ArrayList<FlightPathIndicatorSprite>();
 
-    private ArrayList<Coords> strafingCoords = new ArrayList<>(5);
+    private final ArrayList<Coords> strafingCoords = new ArrayList<>(5);
 
     // vector of sprites for all firing lines
-    private ArrayList<AttackSprite> attackSprites = new ArrayList<>();
+    private final ArrayList<AttackSprite> attackSprites = new ArrayList<>();
 
     // vector of sprites for all movement paths (using vectored movement)
-    private ArrayList<MovementSprite> movementSprites = new ArrayList<>();
+    private final ArrayList<MovementSprite> movementSprites = new ArrayList<>();
 
     // vector of sprites for C3 network lines
-    private ArrayList<C3Sprite> c3Sprites = new ArrayList<>();
+    private final ArrayList<C3Sprite> c3Sprites = new ArrayList<>();
 
-    // list of sprites for declared VTOL/airmek bombing/strafing targets
-    private ArrayList<VTOLAttackSprite> vtolAttackSprites = new ArrayList<>();
+    // list of sprites for declared VTOL/AirMek bombing/strafing targets
+    private final ArrayList<VTOLAttackSprite> vtolAttackSprites = new ArrayList<>();
 
     // vector of sprites for aero flyover lines
-    private ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<>();
+    private final ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<>();
 
     TilesetManager tileManager;
 
@@ -257,19 +257,19 @@ public final class BoardView extends AbstractBoardView
     // Initial scale factor for sprites and map
     float scale = 1.00f;
     private ImageCache<Integer, Image> scaledImageCache = new ImageCache<>();
-    private ImageCache<Integer, BufferedImage> shadowImageCache = new ImageCache<>();
+    private final ImageCache<Integer, BufferedImage> shadowImageCache = new ImageCache<>();
 
-    private Set<Integer> animatedImages = new HashSet<>();
+    private final Set<Integer> animatedImages = new HashSet<>();
 
     // Move units step by step
-    private ArrayList<MovingUnit> movingUnits = new ArrayList<>();
+    private final ArrayList<MovingUnit> movingUnits = new ArrayList<>();
 
     private long moveWait = 0;
 
     // moving entity sprites
     private ArrayList<MovingEntitySprite> movingEntitySprites = new ArrayList<>();
     private HashMap<Integer, MovingEntitySprite> movingEntitySpriteIds = new HashMap<>();
-    private ArrayList<GhostEntitySprite> ghostEntitySprites = new ArrayList<>();
+    private final ArrayList<GhostEntitySprite> ghostEntitySprites = new ArrayList<>();
 
     // wreck sprites
     private ArrayList<WreckSprite> wreckSprites = new ArrayList<>();
@@ -297,8 +297,8 @@ public final class BoardView extends AbstractBoardView
     // hexes that are teh centers of ECCM effects
     private Map<Coords, Color> eccmCenters = null;
 
-    // reference to our timertask for redraw
-    private TimerTask redrawTimerTask;
+    // reference to our timer task for redraw
+    private final TimerTask redrawTimerTask;
 
     BufferedImage bvBgImage = null;
     boolean bvBgShouldTile = false;
@@ -309,7 +309,7 @@ public final class BoardView extends AbstractBoardView
     private long totalTime;
     private long averageTime;
     private int frameCount;
-    private Font fpsFont = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 20);
+    private final Font fpsFont = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 20);
 
     /**
      * Keeps track of whether we have an active ChatterBox2
@@ -321,10 +321,10 @@ public final class BoardView extends AbstractBoardView
      */
     private boolean shouldIgnoreKeys = false;
 
-    private FovHighlightingAndDarkening fovHighlightingAndDarkening;
+    private final FovHighlightingAndDarkening fovHighlightingAndDarkening;
 
-    private String FILENAME_RADAR_BLIP_IMAGE = "radarBlip.png";
-    private Image radarBlipImage;
+    private final String FILENAME_RADAR_BLIP_IMAGE = "radarBlip.png";
+    private final Image radarBlipImage;
 
     /**
      * Cache that stores hex images for different coords
@@ -349,7 +349,7 @@ public final class BoardView extends AbstractBoardView
     /**
      * The final position of a soft centering relative to board size (x, y = 0...1).
      */
-    private Point2D softCenterTarget = new Point2D.Double();
+    private final Point2D softCenterTarget = new Point2D.Double();
     private Point2D oldCenter = new Point2D.Double();
     private long waitTimer;
     /** Speed of soft centering of the board, less is faster */
@@ -2224,7 +2224,7 @@ public final class BoardView extends AbstractBoardView
 
         // write hex coordinate unless deactivated or scale factor too small
         if (GUIP.getCoordsEnabled() && (scale >= 0.5)) {
-            drawCenteredString(c.getBoardNum(), 0, (int) (12 * scale), font_hexnum, g);
+            drawCenteredString(c.getBoardNum(), 0, (int) (12 * scale), font_hexNumber, g);
         }
 
         if (displayInvalidHexInfo && !hex.isValid(null)) {
@@ -4956,31 +4956,31 @@ public final class BoardView extends AbstractBoardView
     private void updateFontSizes() {
         if (zoomIndex < 7) {
             font_elev = FONT_7;
-            font_hexnum = FONT_7;
+            font_hexNumber = FONT_7;
             font_minefield = FONT_7;
         } else if ((zoomIndex < 8)) {
             font_elev = FONT_10;
-            font_hexnum = FONT_10;
+            font_hexNumber = FONT_10;
             font_minefield = FONT_10;
         } else if ((zoomIndex < 10)) {
             font_elev = FONT_12;
-            font_hexnum = FONT_12;
+            font_hexNumber = FONT_12;
             font_minefield = FONT_12;
         } else if ((zoomIndex < 11)) {
             font_elev = FONT_14;
-            font_hexnum = FONT_14;
+            font_hexNumber = FONT_14;
             font_minefield = FONT_14;
         } else if (zoomIndex < 12) {
             font_elev = FONT_16;
-            font_hexnum = FONT_16;
+            font_hexNumber = FONT_16;
             font_minefield = FONT_16;
         } else if (zoomIndex < 13) {
             font_elev = FONT_18;
-            font_hexnum = FONT_18;
+            font_hexNumber = FONT_18;
             font_minefield = FONT_18;
         } else {
             font_elev = FONT_24;
-            font_hexnum = FONT_24;
+            font_hexNumber = FONT_24;
             font_minefield = FONT_24;
         }
     }

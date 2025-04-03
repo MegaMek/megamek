@@ -2511,7 +2511,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     private double[] changeAttackValues(AmmoType ammoType, double avShort, double avMed, double avLong, double avExt,
-                                        int maxRange) {
+          int maxRange) {
 
         if (AmmoType.T_ATM == ammoType.getAmmoType()) {
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {

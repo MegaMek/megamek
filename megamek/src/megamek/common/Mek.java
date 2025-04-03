@@ -75,9 +75,9 @@ public abstract class Mek extends Entity {
     public static final int ACTUATOR_UPPER_LEG = 12;
     public static final int ACTUATOR_LOWER_LEG = 13;
     public static final int ACTUATOR_FOOT = 14;
-    public static final String[] systemNames = { "Life Support", "Sensors",
-            "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
-            "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot" };
+    public static final String[] systemNames = { "Life Support", "Sensors", "Cockpit", "Engine", "Gyro", null, null,
+                                                 "Shoulder", "Upper Arm", "Lower Arm", "Hand", "Hip", "Upper Leg",
+                                                 "Lower Leg", "Foot" };
 
     // locations
     public static final int LOC_HEAD = 0;
@@ -104,10 +104,10 @@ public abstract class Mek extends Entity {
     public static final int GYRO_HEAVY_DUTY = 3;
     public static final int GYRO_NONE = 4;
     public static final int GYRO_SUPERHEAVY = 5;
-    public static final String[] GYRO_STRING = { "Standard Gyro", "XL Gyro",
-            "Compact Gyro", "Heavy Duty Gyro", "None", "Superheavy Gyro" };
-    public static final String[] GYRO_SHORT_STRING = { "Standard", "XL",
-            "Compact", "Heavy Duty", "None", "Superheavy" };
+    public static final String[] GYRO_STRING = { "Standard Gyro", "XL Gyro", "Compact Gyro", "Heavy Duty Gyro", "None",
+                                                 "Superheavy Gyro" };
+    public static final String[] GYRO_SHORT_STRING = { "Standard", "XL", "Compact", "Heavy Duty", "None",
+                                                       "Superheavy" };
 
     // cockpit types
     public static final int COCKPIT_UNKNOWN = -1;
@@ -131,29 +131,29 @@ public abstract class Mek extends Entity {
     public static final int COCKPIT_TRIPOD_INDUSTRIAL = 17;
     public static final int COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL = 18;
 
-    public static final String[] COCKPIT_STRING = { "Standard Cockpit",
-            "Small Cockpit", "Command Console", "Torso-Mounted Cockpit",
-            "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit",
-            "Primitive Industrial Cockpit", "Superheavy Cockpit",
-            "Superheavy Tripod Cockpit", "Tripod Cockpit", "Interface Cockpit",
-            "Virtual Reality Piloting Pod", "QuadVee Cockpit",
-            "Superheavy Industrial Cockpit", "Superheavy Command Console",
-            "Small Command Console", "Tripod Industrial Cockpit", "Superheavy Tripod Industrial Cockpit" };
+    public static final String[] COCKPIT_STRING = { "Standard Cockpit", "Small Cockpit", "Command Console",
+                                                    "Torso-Mounted Cockpit", "Dual Cockpit", "Industrial Cockpit",
+                                                    "Primitive Cockpit", "Primitive Industrial Cockpit",
+                                                    "Superheavy Cockpit", "Superheavy Tripod Cockpit", "Tripod Cockpit",
+                                                    "Interface Cockpit", "Virtual Reality Piloting Pod",
+                                                    "QuadVee Cockpit", "Superheavy Industrial Cockpit",
+                                                    "Superheavy Command Console", "Small Command Console",
+                                                    "Tripod Industrial Cockpit",
+                                                    "Superheavy Tripod Industrial Cockpit" };
 
-    public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
-            "Command Console", "Torso Mounted", "Dual", "Industrial",
-            "Primitive", "Primitive Industrial", "Superheavy",
-            "Superheavy Tripod", "Tripod", "Interface", "VRPP", "Quadvee",
-            "Superheavy Industrial", "Superheavy Command",
-            "Small Command", "Tripod Industrial", "Superheavy Tripod Industrial" };
+    public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small", "Command Console", "Torso Mounted",
+                                                          "Dual", "Industrial", "Primitive", "Primitive Industrial",
+                                                          "Superheavy", "Superheavy Tripod", "Tripod", "Interface",
+                                                          "VRPP", "Quadvee", "Superheavy Industrial",
+                                                          "Superheavy Command", "Small Command", "Tripod Industrial",
+                                                          "Superheavy Tripod Industrial" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
     public static final String RISC_HEAT_SINK_OVERRIDE_KIT = "RISC Heat Sink Override Kit";
 
     /**
-     * Contains a mapping of locations which are blocked when carrying cargo in the
-     * "key" location
+     * Contains a mapping of locations which are blocked when carrying cargo in the "key" location
      */
     public static final Map<Integer, List<Integer>> BLOCKED_FIRING_LOCATIONS;
 
@@ -221,8 +221,7 @@ public abstract class Mek extends Entity {
     protected int cockpitType = COCKPIT_STANDARD;
 
     /**
-     * Head armor provided by the Cowl quirk. Ignored when the unit doesn't have
-     * Cowl or quirks aren't used.
+     * Head armor provided by the Cowl quirk. Ignored when the unit doesn't have Cowl or quirks aren't used.
      */
     private int cowlArmor = 3;
 
@@ -298,28 +297,19 @@ public abstract class Mek extends Entity {
         }
 
         // Standard leg crits
-        setCritical(LOC_RLEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                ACTUATOR_HIP));
-        setCritical(LOC_RLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                ACTUATOR_UPPER_LEG));
-        setCritical(LOC_RLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                ACTUATOR_LOWER_LEG));
-        setCritical(LOC_RLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                ACTUATOR_FOOT));
+        setCritical(LOC_RLEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
+        setCritical(LOC_RLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
+        setCritical(LOC_RLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
+        setCritical(LOC_RLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
 
-        setCritical(LOC_LLEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                ACTUATOR_HIP));
-        setCritical(LOC_LLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                ACTUATOR_UPPER_LEG));
-        setCritical(LOC_LLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                ACTUATOR_LOWER_LEG));
-        setCritical(LOC_LLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                ACTUATOR_FOOT));
+        setCritical(LOC_LLEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
+        setCritical(LOC_LLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
+        setCritical(LOC_LLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
+        setCritical(LOC_LLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
 
         // Player setting specify whether their Meks' automatic
         // ejection systems are disabled by default or not.
-        autoEject = !PreferenceManager.getClientPreferences()
-                .defaultAutoejectDisabled();
+        autoEject = !PreferenceManager.getClientPreferences().defaultAutoejectDisabled();
 
         switch (inCockpitType) {
             case COCKPIT_TRIPOD:
@@ -351,8 +341,9 @@ public abstract class Mek extends Entity {
 
     @Override
     public CrewType defaultCrewType() {
-        return (cockpitType == COCKPIT_COMMAND_CONSOLE) || (cockpitType == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE)
-                || (cockpitType == COCKPIT_SMALL_COMMAND_CONSOLE) ? CrewType.COMMAND_CONSOLE : CrewType.SINGLE;
+        return (cockpitType == COCKPIT_COMMAND_CONSOLE) ||
+                     (cockpitType == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) ||
+                     (cockpitType == COCKPIT_SMALL_COMMAND_CONSOLE) ? CrewType.COMMAND_CONSOLE : CrewType.SINGLE;
     }
 
     /**
@@ -361,21 +352,18 @@ public abstract class Mek extends Entity {
     public abstract boolean cannotStandUpFromHullDown();
 
     /**
-     * @return True if this Mek has the Cowl quirk and quirks are used in the
-     *         present game.
+     * @return True if this Mek has the Cowl quirk and quirks are used in the present game.
      */
     public boolean hasCowl() {
         return hasQuirk(OptionsConstants.QUIRK_POS_COWL);
     }
 
     /**
-     * Damages the remaining cowl armor, if any, by the given amount. Returns the
-     * amount of excess damage
-     * that is left after deducting cowl armor. This method tests if the unit has
-     * Cowl and quirks are
-     * being used.
+     * Damages the remaining cowl armor, if any, by the given amount. Returns the amount of excess damage that is left
+     * after deducting cowl armor. This method tests if the unit has Cowl and quirks are being used.
      *
      * @param amount The incoming damage
+     *
      * @return The damage left after deducting the cowl's remaining armor, if any
      */
     public int damageCowl(int amount) {
@@ -389,8 +377,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Returns the location that transferred damage or crits will go to from a
-     * given location.
+     * Returns the location that transferred damage or crits will go to from a given location.
      */
     public static int getInnerLocation(int location) {
         switch (location) {
@@ -415,8 +402,7 @@ public abstract class Mek extends Entity {
     public static int mostRestrictiveLoc(int location1, int location2) {
         if (location1 == location2) {
             return location1;
-        } else if (Mek.restrictScore(location1) >= Mek
-                .restrictScore(location2)) {
+        } else if (Mek.restrictScore(location1) >= Mek.restrictScore(location2)) {
             return location1;
         } else {
             return location2;
@@ -428,13 +414,13 @@ public abstract class Mek extends Entity {
      *
      * @param location1
      * @param location2
+     *
      * @return
      */
     public static int leastRestrictiveLoc(int location1, int location2) {
         if (location1 == location2) {
             return location2;
-        } else if (Mek.restrictScore(location1) >= Mek
-                .restrictScore(location2)) {
+        } else if (Mek.restrictScore(location1) >= Mek.restrictScore(location2)) {
             return location2;
         } else {
             return location1;
@@ -442,8 +428,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Helper function designed to give relative restrictiveness of locations.
-     * Used for finding the most restrictive firing arc for a weapon.
+     * Helper function designed to give relative restrictiveness of locations. Used for finding the most restrictive
+     * firing arc for a weapon.
      */
     public static int restrictScore(int location) {
         switch (location) {
@@ -461,8 +447,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * OmniMeks have handles for Battle Armor squads to latch onto. Please
-     * note, this method should only be called during this Mek's construction.
+     * OmniMeks have handles for Battle Armor squads to latch onto. Please note, this method should only be called
+     * during this Mek's construction.
      * <p>
      * Overrides <code>Entity#setOmni(boolean)</code>
      */
@@ -521,10 +507,10 @@ public abstract class Mek extends Entity {
         if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             boolean rear = bayNumber > 0;
             for (Transporter t : getTransports()) {
-                if ((t instanceof ProtoMekClampMount)
-                        && t.canLoad(unit)
-                        && (!checkElev || (unit.getElevation() == getElevation()))
-                        && (((ProtoMekClampMount) t).isRear() == rear)) {
+                if ((t instanceof ProtoMekClampMount) &&
+                          t.canLoad(unit) &&
+                          (!checkElev || (unit.getElevation() == getElevation())) &&
+                          (((ProtoMekClampMount) t).isRear() == rear)) {
                     t.load(unit);
                     unit.setTargetBay(-1);
                     return;
@@ -556,9 +542,7 @@ public abstract class Mek extends Entity {
             MiscType mtype = (MiscType) m.getType();
 
             // Stealth can not be turned on if it's ECM is destroyed.
-            if (mtype.hasFlag(MiscType.F_STEALTH)
-                    && m.getLinked().isDestroyed()
-                    && m.getLinked().isBreached()) {
+            if (mtype.hasFlag(MiscType.F_STEALTH) && m.getLinked().isDestroyed() && m.getLinked().isBreached()) {
                 m.setMode("Off");
             }
         } // Check the next piece of equipment.
@@ -655,8 +639,7 @@ public abstract class Mek extends Entity {
         }
 
         if (locationIsLeg(loc)) {
-            return (getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.ACTUATOR_HIP, loc) == 0);
+            return (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) == 0);
         }
 
         return false;
@@ -665,8 +648,8 @@ public abstract class Mek extends Entity {
     /**
      * This function returns true iff the system is in perfect condition.
      *
-     * @param system
-     *               the system to check
+     * @param system the system to check
+     *
      * @return false if the system is damaged.
      */
     public boolean isSystemIntact(int system) {
@@ -675,9 +658,7 @@ public abstract class Mek extends Entity {
             for (int i = 0; i < numCrits; i++) {
                 CriticalSlot ccs = getCritical(loc, i);
 
-                if ((ccs != null)
-                        && (ccs.getType() == CriticalSlot.TYPE_SYSTEM)
-                        && (ccs.getIndex() == system)) {
+                if ((ccs != null) && (ccs.getType() == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == system)) {
                     if (ccs.isDamaged() || ccs.isBreached()) {
                         return false;
                     }
@@ -699,16 +680,13 @@ public abstract class Mek extends Entity {
         int legCrits = 0;
 
         if (locationIsLeg(loc)) {
-            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.ACTUATOR_UPPER_LEG, loc) == 0) {
+            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, loc) == 0) {
                 legCrits++;
             }
-            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.ACTUATOR_LOWER_LEG, loc) == 0) {
+            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) == 0) {
                 legCrits++;
             }
-            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT,
-                    loc) == 0) {
+            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_FOOT, loc) == 0) {
                 legCrits++;
             }
         }
@@ -747,8 +725,7 @@ public abstract class Mek extends Entity {
 
                 // one crit destroyed they all all screwed
                 // --Torren
-                if (mEquip.isBreached() || mEquip.isDestroyed()
-                        || mEquip.isMissing()) {
+                if (mEquip.isBreached() || mEquip.isDestroyed() || mEquip.isMissing()) {
                     return false;
                 }
                 jumpBoosters = true;
@@ -762,10 +739,11 @@ public abstract class Mek extends Entity {
      */
     public boolean hasExtendedRetractableBlade() {
         for (Mounted<?> m : getEquipment()) {
-            if (!m.isInoperable() && (m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_CLUB)
-                    && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                    && m.curMode().equals("extended")) {
+            if (!m.isInoperable() &&
+                      (m.getType() instanceof MiscType) &&
+                      m.getType().hasFlag(MiscType.F_CLUB) &&
+                      m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) &&
+                      m.curMode().equals("extended")) {
                 return true;
             }
         }
@@ -773,8 +751,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Does the entity have a retracted blade in the given location? Only true
-     * for biped Meks
+     * Does the entity have a retracted blade in the given location? Only true for biped Meks
      */
     public boolean hasRetractedBlade(int loc) {
         return false;
@@ -783,15 +760,15 @@ public abstract class Mek extends Entity {
     /**
      * Check for whether the Mek has triple strength myomer
      *
-     * @param includePrototype Whether to include prototype TSM in the check.
-     *                         Prototype TSM does not have a movement bonus or
-     *                         a required heat level.
+     * @param includePrototype Whether to include prototype TSM in the check. Prototype TSM does not have a movement
+     *                         bonus or a required heat level.
+     *
      * @return Whether the Mek has TSM
      */
     public boolean hasTSM(boolean includePrototype) {
         for (Mounted<?> m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_TSM)
-                    && (includePrototype || !m.getType().hasFlag(MiscType.F_PROTOTYPE))) {
+            if (m.getType().hasFlag(MiscType.F_TSM) &&
+                      (includePrototype || !m.getType().hasFlag(MiscType.F_PROTOTYPE))) {
                 return true;
             }
         }
@@ -801,8 +778,8 @@ public abstract class Mek extends Entity {
     @Override
     public boolean antiTSMVulnerable() {
         for (Mounted<?> m : getMisc()) {
-            if ((m.getType().hasFlag(MiscType.F_TSM) && m.getType().hasFlag(MiscType.F_PROTOTYPE))
-                    || (m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM) && (getYear() <= 3050))) {
+            if ((m.getType().hasFlag(MiscType.F_TSM) && m.getType().hasFlag(MiscType.F_PROTOTYPE)) ||
+                      (m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM) && (getYear() <= 3050))) {
                 return true;
             }
         }
@@ -814,10 +791,11 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Checks whether any type of TSM is active. Industrial and prototype
-     * are always on. Standard is on when heat level is &gt;= 9.
+     * Checks whether any type of TSM is active. Industrial and prototype are always on. Standard is on when heat level
+     * is &gt;= 9.
      *
      * @param includeIndustrial Whether to include industrial TSM in the check
+     *
      * @return Whether the Mek has some form of TSM and it's active
      */
     public boolean hasActiveTSM(boolean includeIndustrial) {
@@ -838,8 +816,7 @@ public abstract class Mek extends Entity {
      */
     public boolean hasIndustrialTSM() {
         for (Mounted<?> m : getEquipment()) {
-            if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
+            if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
                 return true;
             }
         }
@@ -879,8 +856,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Does this Mek have tracks? Used for tracks as industrial equipment; QuadVees
-     * return false.
+     * Does this Mek have tracks? Used for tracks as industrial equipment; QuadVees return false.
      *
      * @return
      */
@@ -924,8 +900,7 @@ public abstract class Mek extends Entity {
     /**
      * set this Mek's <code>Engine</code>
      *
-     * @param e
-     *          the <code>Engine</code> to set
+     * @param e the <code>Engine</code> to set
      */
     @Override
     public void setEngine(Engine e) {
@@ -938,8 +913,7 @@ public abstract class Mek extends Entity {
     /**
      * Used to set this Mek's original walk mp
      *
-     * @return this units calculated walking speed, dependent on engine rating
-     *         and weight
+     * @return this units calculated walking speed, dependent on engine rating and weight
      */
     protected int calculateWalk() {
         if (!hasEngine()) {
@@ -996,10 +970,14 @@ public abstract class Mek extends Entity {
             if (game != null) {
                 MPBoosters armed = getArmedMPBoosters();
 
-                str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
-                        + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
-                        + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
-                                + (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") : "");
+                str += (mpBoosters.hasMASC() ?
+                              " MASC:" + getMASCTurns() + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") :
+                              "") +
+                             (mpBoosters.hasSupercharger() ?
+                                    " Supercharger:" +
+                                          getSuperchargerTurns() +
+                                          (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") :
+                                    "");
             }
             return str;
         }
@@ -1062,9 +1040,9 @@ public abstract class Mek extends Entity {
         }
 
         int mp = (int) getMisc().stream()
-              .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
-              .filter(Mounted::isOperable)
-              .count();
+                             .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+                             .filter(Mounted::isOperable)
+                             .count();
 
         if (!mpCalculationSetting.ignoreSubmergedJumpJets && hasOccupiedHex() && getElevation() < 0) {
             int waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
@@ -1100,13 +1078,15 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * @return The jump MP for the Mek's mechanical jump boosters, unmodified by damage, other equipment (shields)
-     * or any other effects.
+     * @return The jump MP for the Mek's mechanical jump boosters, unmodified by damage, other equipment (shields) or
+     *       any other effects.
      */
     public int getOriginalMechanicalJumpBoosterMP() {
         return (int) Math.round(getMisc().stream()
-              .filter(m -> m.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER))
-              .findFirst().map(Mounted::getSize).orElse(0d));
+                                      .filter(m -> m.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER))
+                                      .findFirst()
+                                      .map(Mounted::getSize)
+                                      .orElse(0d));
     }
 
     @Override
@@ -1116,9 +1096,9 @@ public abstract class Mek extends Entity {
         }
 
         Optional<MiscMounted> mekMechanicalJumpBooster = getMisc().stream()
-              .filter(m -> m.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER))
-              .filter(Mounted::isOperable)
-              .findFirst();
+                                                               .filter(m -> m.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER))
+                                                               .filter(Mounted::isOperable)
+                                                               .findFirst();
         if (mekMechanicalJumpBooster.isEmpty()) {
             return 0;
         }
@@ -1215,8 +1195,8 @@ public abstract class Mek extends Entity {
     /**
      * Gives the bonus to Jump MP conferred by a Mek partial wing.
      *
-     * @param mount
-     *              The mounted location of the Wing
+     * @param mount The mounted location of the Wing
+     *
      * @return The Jump MP bonus conferred by the wing
      */
     public int getPartialWingJumpBonus(Mounted<?> mount, MPCalculationSetting mpCalculationSetting) {
@@ -1270,8 +1250,7 @@ public abstract class Mek extends Entity {
         jumpType = JUMP_NONE;
         for (MiscMounted m : miscList) {
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                if (m.getType().hasSubType(MiscType.S_IMPROVED)
-                        && m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
+                if (m.getType().hasSubType(MiscType.S_IMPROVED) && m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
                     jumpType = JUMP_PROTOTYPE_IMPROVED;
                 } else if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
                     jumpType = JUMP_IMPROVED;
@@ -1300,8 +1279,7 @@ public abstract class Mek extends Entity {
         }
 
         return switch (getJumpType()) {
-            case JUMP_IMPROVED -> extra
-                  + (hasEngine() ? getEngine().getJumpHeat((movedMP / 2) + (movedMP % 2)) : 0);
+            case JUMP_IMPROVED -> extra + (hasEngine() ? getEngine().getJumpHeat((movedMP / 2) + (movedMP % 2)) : 0);
             case JUMP_PROTOTYPE_IMPROVED ->
                 // min 6 heat, otherwise 2xJumpMp, XTRO:Succession Wars pg17
                   extra + (hasEngine() ? Math.max(6, getEngine().getJumpHeat(movedMP * 2)) : 0);
@@ -1318,9 +1296,10 @@ public abstract class Mek extends Entity {
         int jump = 0;
 
         for (Mounted<?> mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)
-                    && !mounted.isDestroyed() && !mounted.isBreached()
-                    && locationIsTorso(mounted.getLocation())) {
+            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) &&
+                      !mounted.isDestroyed() &&
+                      !mounted.isBreached() &&
+                      locationIsTorso(mounted.getLocation())) {
                 jump++;
             }
         }
@@ -1354,14 +1333,11 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * QuadVees and LAMs may not have to make PSRs to avoid falling depending on
-     * their mode,
-     * and Meks using tracks for movement do not have to make PSRs for damage to
-     * gyro or leg
-     * actuators.
+     * QuadVees and LAMs may not have to make PSRs to avoid falling depending on their mode, and Meks using tracks for
+     * movement do not have to make PSRs for damage to gyro or leg actuators.
      *
-     * @param gyroLegDamage Whether the PSR is due to damage to gyro or leg
-     *                      actuators
+     * @param gyroLegDamage Whether the PSR is due to damage to gyro or leg actuators
+     *
      * @return true if the Mek can fall due to failed PSR.
      */
     @Override
@@ -1378,22 +1354,19 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Adds heat sinks to the engine. Uses clan/normal depending on the
-     * currently set techLevel
+     * Adds heat sinks to the engine. Uses clan/normal depending on the currently set techLevel
      */
     public void addEngineSinks(int totalSinks, EquipmentFlag heatSinkFlag) {
         addEngineSinks(totalSinks, heatSinkFlag, isClan());
     }
 
     /**
-     * Adds heat sinks to the engine. Adds either the engine capacity, or the
-     * entire number of heat sinks, whichever is less
+     * Adds heat sinks to the engine. Adds either the engine capacity, or the entire number of heat sinks, whichever is
+     * less
      */
-    public void addEngineSinks(int totalSinks, EquipmentFlag heatSinkFlag,
-            boolean clan) {
+    public void addEngineSinks(int totalSinks, EquipmentFlag heatSinkFlag, boolean clan) {
         if (heatSinkFlag == MiscType.F_DOUBLE_HEAT_SINK) {
-            addEngineSinks(totalSinks, clan ? EquipmentTypeLookup.CLAN_DOUBLE_HS
-                    : EquipmentTypeLookup.IS_DOUBLE_HS);
+            addEngineSinks(totalSinks, clan ? EquipmentTypeLookup.CLAN_DOUBLE_HS : EquipmentTypeLookup.IS_DOUBLE_HS);
         } else if (heatSinkFlag == MiscType.F_COMPACT_HEAT_SINK) {
             addEngineSinks(totalSinks, EquipmentTypeLookup.COMPACT_HS_1);
         } else if (heatSinkFlag == MiscType.F_LASER_HEAT_SINK) {
@@ -1404,14 +1377,11 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * base for adding engine sinks. Newer method allows externals to say how
-     * much are engine HS.
+     * base for adding engine sinks. Newer method allows externals to say how much are engine HS.
      *
-     * @param totalSinks
-     *                   the amount of heatsinks to add to the engine
-     * @param sinkName
-     *                   the <code>String</code> determining the type of heatsink to
-     *                   add. must be a lookupname of a heatsinktype
+     * @param totalSinks the amount of heatsinks to add to the engine
+     * @param sinkName   the <code>String</code> determining the type of heatsink to add. must be a lookupname of a
+     *                   heatsinktype
      */
     public void addEngineSinks(int totalSinks, String sinkName) {
         if (!hasEngine()) {
@@ -1423,21 +1393,17 @@ public abstract class Mek extends Entity {
             logger.info("Mek: can't find heat sink to add to engine");
         }
 
-        int toAllocate = Math.min(
-                totalSinks,
-                getEngine().integralHeatSinkCapacity(
-                        sinkType.hasFlag(MiscType.F_COMPACT_HEAT_SINK)));
+        int toAllocate = Math.min(totalSinks,
+              getEngine().integralHeatSinkCapacity(sinkType.hasFlag(MiscType.F_COMPACT_HEAT_SINK)));
         addEngineSinks(sinkName, toAllocate);
     }
 
     /**
      * add heat sinks into the engine
      *
-     * @param sinkName
-     *                   the <code>String</code> determining the type of heatsink to
-     *                   add. must be a lookupname of a heatsinktype
-     * @param toAllocate
-     *                   Number of hs to add to the Engine.
+     * @param sinkName   the <code>String</code> determining the type of heatsink to add. must be a lookupname of a
+     *                   heatsinktype
+     * @param toAllocate Number of hs to add to the Engine.
      */
     public void addEngineSinks(String sinkName, int toAllocate) {
         // this relies on these being the correct internalNames for these items
@@ -1466,12 +1432,9 @@ public abstract class Mek extends Entity {
         }
         int engineCritHeat = 0;
         if (!isShutDown() && getEngine().isFusion()) {
-            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.SYSTEM_ENGINE, Mek.LOC_CT);
-            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.SYSTEM_ENGINE, Mek.LOC_LT);
-            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.SYSTEM_ENGINE, Mek.LOC_RT);
+            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_CT);
+            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_LT);
+            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_RT);
         }
         // Partial Repairs of the engine cause additional heat
         if (getPartialRepairs().booleanOption("mek_reactor_3_crit")) {
@@ -1501,20 +1464,19 @@ public abstract class Mek extends Entity {
     /**
      * Returns the number of heat sinks, functional or not.
      *
-     * @param countPrototypes
-     *                        Set TRUE to include Prototype Heat Sinks in the total.
+     * @param countPrototypes Set TRUE to include Prototype Heat Sinks in the total.
      */
     public int heatSinks(boolean countPrototypes) {
         int sinks = 0;
         for (Mounted<?> mounted : getMisc()) {
             EquipmentType etype = mounted.getType();
-            if (etype.hasFlag(MiscType.F_COMPACT_HEAT_SINK)
-                    && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) || (etype
-                            .hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes))) {
+            if (etype.hasFlag(MiscType.F_COMPACT_HEAT_SINK) &&
+                      (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) ||
+                             (etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes))) {
                 sinks += 2;
-            } else if (etype.hasFlag(MiscType.F_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || (etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes)) {
+            } else if (etype.hasFlag(MiscType.F_HEAT_SINK) ||
+                             etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) ||
+                             (etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes)) {
                 sinks++;
             }
         }
@@ -1531,9 +1493,9 @@ public abstract class Mek extends Entity {
             if (!mounted.isDestroyed()) {
                 continue;
             }
-            if (etype.hasFlag(MiscType.F_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            if (etype.hasFlag(MiscType.F_HEAT_SINK) ||
+                      etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) ||
+                      etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 sinks++;
             }
         }
@@ -1551,9 +1513,9 @@ public abstract class Mek extends Entity {
             if (m.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
                 return "Compact Heat Sink";
             }
-            if (m.getType().hasFlag(MiscType.F_HEAT_SINK)
-                    || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || m.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+            if (m.getType().hasFlag(MiscType.F_HEAT_SINK) ||
+                      m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK) ||
+                      m.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                 return m.getName();
             }
         }
@@ -1585,29 +1547,27 @@ public abstract class Mek extends Entity {
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
-            if ((activeCount > 0)
-                    && mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if ((activeCount > 0) && mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
                 activeCount--;
-            } else if ((activeCount > 0)
-                    && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            } else if ((activeCount > 0) && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 activeCount--;
                 capacity += 2;
                 isDoubleHeatSink = true;
-            } else if (mounted.getType().hasFlag(
-                    MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            } else if (mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
                 isDoubleHeatSink = true;
-            } else if (includePartialWing
-                    && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
-                    && // unless all crits are destroyed, we get the bonus
-                    ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT,
-                            getEquipmentNum(mounted), Mek.LOC_RT) > 0)
-                            || (getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT,
-                                    getEquipmentNum(mounted), Mek.LOC_LT) > 0))) {
+            } else if (includePartialWing &&
+                             mounted.getType().hasFlag(MiscType.F_PARTIAL_WING) &&
+                             // unless all crits are destroyed, we get the bonus
+                             ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mounted), Mek.LOC_RT) >
+                                     0) ||
+                                    (getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT,
+                                          getEquipmentNum(mounted),
+                                          Mek.LOC_LT) > 0))) {
                 capacity += getPartialWingHeatBonus();
                 includePartialWing = false; // Only count the partial wing bonus
-                                            // once.
+                // once.
             }
         }
         capacity -= damagedSCMCritCount() * (isDoubleHeatSink ? 2 : 1);
@@ -1615,15 +1575,13 @@ public abstract class Mek extends Entity {
         if (includePartialWing && movementMode == EntityMovementMode.WIGE) {
             capacity += getPartialWingHeatBonus();
         }
-        if (includeRadicalHeatSink
-                && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
+        if (includeRadicalHeatSink && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
             capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
 
         // If the tacops option for coolant failure is enabled, include reductions for
         // coolant failure
-        if (game != null &&
-                game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE)) {
+        if (game != null && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE)) {
             capacity -= heatSinkCoolantFailureFactor;
         }
 
@@ -1631,8 +1589,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Returns the about of heat that the entity can sink each turn, factoring
-     * for water.
+     * Returns the about of heat that the entity can sink each turn, factoring for water.
      */
     @Override
     public int getHeatCapacityWithWater() {
@@ -1664,15 +1621,13 @@ public abstract class Mek extends Entity {
         // okay, count leg sinks
         int sinksUnderwater = 0;
         for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached()
-                    || !locationIsLeg(mounted.getLocation())) {
+            if (mounted.isDestroyed() || mounted.isBreached() || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 sinksUnderwater++;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || mounted.getType().hasFlag(
-                            MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK) ||
+                             mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 sinksUnderwater += 2;
             }
         }
@@ -1688,8 +1643,8 @@ public abstract class Mek extends Entity {
      * Returns the name of the type of movement used. This is Mek-specific.
      */
     @Override
-    public String getMovementString(EntityMovementType mtype) {
-        switch (mtype) {
+    public String getMovementString(EntityMovementType entityMovementTYpe) {
+        switch (entityMovementTYpe) {
             case MOVE_SKID:
                 return "Skidded";
             case MOVE_NONE:
@@ -1717,8 +1672,8 @@ public abstract class Mek extends Entity {
      * Returns the name of the type of movement used. This is Mek-specific.
      */
     @Override
-    public String getMovementAbbr(EntityMovementType mtype) {
-        switch (mtype) {
+    public String getMovementAbbr(EntityMovementType entityMovementTYpe) {
+        switch (entityMovementTYpe) {
             case MOVE_SKID:
                 return "S";
             case MOVE_NONE:
@@ -1762,12 +1717,17 @@ public abstract class Mek extends Entity {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
             if (hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST)) {
-                return (rotate == 0) || (rotate == 1) || (rotate == 2)
-                        || (rotate == -1) || (rotate == -2) || (rotate == -5)
-                        || (rotate == -4) || (rotate == 5) || (rotate == 4);
+                return (rotate == 0) ||
+                             (rotate == 1) ||
+                             (rotate == 2) ||
+                             (rotate == -1) ||
+                             (rotate == -2) ||
+                             (rotate == -5) ||
+                             (rotate == -4) ||
+                             (rotate == 5) ||
+                             (rotate == 4);
             }
-            return (rotate == 0) || (rotate == 1) || (rotate == -1)
-                    || (rotate == -5) || (rotate == 5);
+            return (rotate == 0) || (rotate == 1) || (rotate == -1) || (rotate == -5) || (rotate == 5);
         }
         return rotate == 0;
     }
@@ -1805,8 +1765,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Returns the amount of armor in the location specified. Mek version,
-     * handles rear armor.
+     * Returns the amount of armor in the location specified. Mek version, handles rear armor.
      */
     @Override
     public int getArmor(int loc, boolean rear) {
@@ -1825,8 +1784,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Returns the original amount of armor in the location specified. Mek
-     * version, handles rear armor.
+     * Returns the original amount of armor in the location specified. Mek version, handles rear armor.
      */
     @Override
     public int getOArmor(int loc, boolean rear) {
@@ -1837,8 +1795,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Sets the amount of armor in the location specified. Mek version, handles
-     * rear armor.
+     * Sets the amount of armor in the location specified. Mek version, handles rear armor.
      */
     @Override
     public void setArmor(int val, int loc, boolean rear) {
@@ -1850,8 +1807,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Initializes the rear armor on the Mek. Sets the original and starting
-     * point of the armor to the same number.
+     * Initializes the rear armor on the Mek. Sets the original and starting point of the armor to the same number.
      */
     public void initializeRearArmor(int val, int loc) {
         orig_rearArmor[loc] = val;
@@ -1877,18 +1833,16 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * did the armor in this location take damage which did not destroy it
-     * at least once this turn?
-     * this is used to decide whether to trigger Harjel II/III
+     * did the armor in this location take damage which did not destroy it at least once this turn? this is used to
+     * decide whether to trigger Harjel II/III
      */
     public void setArmorDamagedThisTurn(int loc, boolean tookdamage) {
         armorDamagedThisTurn[loc] = tookdamage;
     }
 
     /**
-     * did the armor in this location take damage which did not destroy it
-     * at least once this turn?
-     * this is used to decide whether to trigger Harjel II/III
+     * did the armor in this location take damage which did not destroy it at least once this turn? this is used to
+     * decide whether to trigger Harjel II/III
      */
     public boolean isArmorDamagedThisTurn(int loc) {
         return armorDamagedThisTurn[loc];
@@ -1902,8 +1856,7 @@ public abstract class Mek extends Entity {
         final Mounted<?> mounted = getEquipment(wn);
 
         // B-Pods need to be special-cased, the have 360 firing arc
-        if ((mounted.getType() instanceof WeaponType)
-                && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
+        if ((mounted.getType() instanceof WeaponType) && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
         // VGLs base arc on their facing
@@ -1924,19 +1877,16 @@ public abstract class Mek extends Entity {
             case LOC_LLEG:
                 return Compute.ARC_FORWARD;
             case LOC_RARM:
-                return getArmsFlipped() ? Compute.ARC_REAR
-                        : Compute.ARC_RIGHTARM;
+                return getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_RIGHTARM;
             case LOC_LARM:
-                return getArmsFlipped() ? Compute.ARC_REAR
-                        : Compute.ARC_LEFTARM;
+                return getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFTARM;
             default:
                 return Compute.ARC_360;
         }
     }
 
     /**
-     * Returns true if this weapon fires into the secondary facing arc. If
-     * false, assume it fires into the primary.
+     * Returns true if this weapon fires into the secondary facing arc. If false, assume it fires into the primary.
      */
     @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
@@ -1950,8 +1900,8 @@ public abstract class Mek extends Entity {
         // If all locations are torso, strip the T from all but the last location.
         // e.g. R/L/CT
         if ((locations.size() > limit) && locations.stream().allMatch(this::locationIsTorso)) {
-            return locations.stream().map(l -> getLocationAbbr(l).replace("T", ""))
-                    .collect(Collectors.joining("/")) + "T";
+            return locations.stream().map(l -> getLocationAbbr(l).replace("T", "")).collect(Collectors.joining("/")) +
+                         "T";
         } else {
             return super.joinLocationAbbr(locations, limit);
         }
@@ -1973,8 +1923,7 @@ public abstract class Mek extends Entity {
      * @see megamek.common.Entity#rollHitLocation(int, int, int, int)
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-            int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover) {
         int roll = -1;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
@@ -2004,8 +1953,8 @@ public abstract class Mek extends Entity {
                 // normal front hits
                 switch (roll) {
                     case 2:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, false));
@@ -2031,8 +1980,7 @@ public abstract class Mek extends Entity {
                     case 12:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -2042,13 +1990,11 @@ public abstract class Mek extends Entity {
                 // normal left side hits
                 switch (roll) {
                     case 2:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(tac(table, side,
-                                    Mek.LOC_LT, cover, false));
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                            result.setUndoneLocation(tac(table, side, Mek.LOC_LT, cover, false));
                             return result;
                         } // if
                         return tac(table, side, Mek.LOC_LT, cover, false);
@@ -2062,14 +2008,14 @@ public abstract class Mek extends Entity {
                     case 7:
                         return new HitData(Mek.LOC_LT);
                     case 8:
-                        if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (game.getOptions()
+                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CT, true);
                         }
                         return new HitData(Mek.LOC_CT);
                     case 9:
-                        if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (game.getOptions()
+                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_RT, true);
                         }
                         return new HitData(Mek.LOC_RT);
@@ -2080,8 +2026,7 @@ public abstract class Mek extends Entity {
                     case 12:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -2091,13 +2036,11 @@ public abstract class Mek extends Entity {
                 // normal right side hits
                 switch (roll) {
                     case 2:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(tac(table, side,
-                                    Mek.LOC_RT, cover, false));
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                            result.setUndoneLocation(tac(table, side, Mek.LOC_RT, cover, false));
                             return result;
                         } // if
                         return tac(table, side, Mek.LOC_RT, cover, false);
@@ -2111,14 +2054,14 @@ public abstract class Mek extends Entity {
                     case 7:
                         return new HitData(Mek.LOC_RT);
                     case 8:
-                        if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (game.getOptions()
+                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CT, true);
                         }
                         return new HitData(Mek.LOC_CT);
                     case 9:
-                        if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (game.getOptions()
+                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_LT, true);
                         }
                         return new HitData(Mek.LOC_LT);
@@ -2129,8 +2072,7 @@ public abstract class Mek extends Entity {
                     case 12:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -2138,19 +2080,15 @@ public abstract class Mek extends Entity {
                 }
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
-                if (game.getOptions().booleanOption(
-                        OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)
-                        && isProne()) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS) &&
+                          isProne()) {
                     switch (roll) {
                         case 2:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                    && !game.getOptions().booleanOption(
-                                            OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
+                                      !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
-                                HitData result = rollHitLocation(table, side,
-                                        aimedLocation, aimingMode, cover);
-                                result.setUndoneLocation(tac(table, side,
-                                        Mek.LOC_CT, cover, true));
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                                result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, true));
                                 return result;
                             } // if
                             return tac(table, side, Mek.LOC_CT, cover, true);
@@ -2173,10 +2111,8 @@ public abstract class Mek extends Entity {
                         case 12:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                                 getCrew().decreaseEdge();
-                                HitData result = rollHitLocation(table, side,
-                                        aimedLocation, aimingMode, cover);
-                                result.setUndoneLocation(new HitData(
-                                        Mek.LOC_HEAD, true));
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                                result.setUndoneLocation(new HitData(Mek.LOC_HEAD, true));
                                 return result;
                             } // if
                             return new HitData(Mek.LOC_HEAD, true);
@@ -2184,14 +2120,11 @@ public abstract class Mek extends Entity {
                 } else {
                     switch (roll) {
                         case 2:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                    && !game.getOptions().booleanOption(
-                                            OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
+                                      !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
-                                HitData result = rollHitLocation(table, side,
-                                        aimedLocation, aimingMode, cover);
-                                result.setUndoneLocation(tac(table, side,
-                                        Mek.LOC_CT, cover, true));
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                                result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, true));
                                 return result;
                             } // if
                             return tac(table, side, Mek.LOC_CT, cover, true);
@@ -2214,10 +2147,8 @@ public abstract class Mek extends Entity {
                         case 12:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                                 getCrew().decreaseEdge();
-                                HitData result = rollHitLocation(table, side,
-                                        aimedLocation, aimingMode, cover);
-                                result.setUndoneLocation(new HitData(
-                                        Mek.LOC_HEAD, true));
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                                result.setUndoneLocation(new HitData(Mek.LOC_HEAD, true));
                                 return result;
                             } // if
                             return new HitData(Mek.LOC_HEAD, true);
@@ -2228,8 +2159,7 @@ public abstract class Mek extends Entity {
         if (table == ToHitData.HIT_PUNCH) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                        .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -2257,8 +2187,7 @@ public abstract class Mek extends Entity {
                     case 6:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -2279,8 +2208,7 @@ public abstract class Mek extends Entity {
                     case 6:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -2301,8 +2229,7 @@ public abstract class Mek extends Entity {
                     case 6:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -2325,10 +2252,8 @@ public abstract class Mek extends Entity {
                     case 6:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(new HitData(Mek.LOC_HEAD,
-                                    true));
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                            result.setUndoneLocation(new HitData(Mek.LOC_HEAD, true));
                             return result;
                         } // if
                         return new HitData(Mek.LOC_HEAD, true);
@@ -2338,8 +2263,7 @@ public abstract class Mek extends Entity {
         if (table == ToHitData.HIT_KICK) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                        .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -2357,13 +2281,11 @@ public abstract class Mek extends Entity {
                     case 1:
                     case 2:
                     case 3:
-                        return new HitData(Mek.LOC_RLEG,
-                                (side == ToHitData.SIDE_REAR));
+                        return new HitData(Mek.LOC_RLEG, (side == ToHitData.SIDE_REAR));
                     case 4:
                     case 5:
                     case 6:
-                        return new HitData(Mek.LOC_LLEG,
-                                (side == ToHitData.SIDE_REAR));
+                        return new HitData(Mek.LOC_LLEG, (side == ToHitData.SIDE_REAR));
                 }
             }
             if (side == ToHitData.SIDE_LEFT) {
@@ -2375,8 +2297,7 @@ public abstract class Mek extends Entity {
                 return new HitData(Mek.LOC_RLEG);
             }
         }
-        if ((table == ToHitData.HIT_SWARM)
-                || (table == ToHitData.HIT_SWARM_CONVENTIONAL)) {
+        if ((table == ToHitData.HIT_SWARM) || (table == ToHitData.HIT_SWARM_CONVENTIONAL)) {
             roll = Compute.d6(2);
             int effects;
             if (table == ToHitData.HIT_SWARM_CONVENTIONAL) {
@@ -2385,8 +2306,7 @@ public abstract class Mek extends Entity {
                 effects = HitData.EFFECT_CRITICAL;
             }
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                        .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -2428,10 +2348,8 @@ public abstract class Mek extends Entity {
                 case 12:
                     if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
-                        HitData result = rollHitLocation(table, side,
-                                aimedLocation, aimingMode, cover);
-                        result.setUndoneLocation(new HitData(Mek.LOC_HEAD,
-                                false, effects));
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                        result.setUndoneLocation(new HitData(Mek.LOC_HEAD, false, effects));
                         return result;
                     } // if
                     return new HitData(Mek.LOC_HEAD, false, effects);
@@ -2440,8 +2358,7 @@ public abstract class Mek extends Entity {
         if (table == ToHitData.HIT_ABOVE) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                        .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -2467,21 +2384,17 @@ public abstract class Mek extends Entity {
                 case 6:
                     if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
-                        HitData result = rollHitLocation(table, side,
-                                aimedLocation, aimingMode, cover);
-                        result.setUndoneLocation(new HitData(Mek.LOC_HEAD,
-                                (side == ToHitData.SIDE_REAR)));
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                        result.setUndoneLocation(new HitData(Mek.LOC_HEAD, (side == ToHitData.SIDE_REAR)));
                         return result;
                     } // if
-                    return new HitData(Mek.LOC_HEAD,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mek.LOC_HEAD, (side == ToHitData.SIDE_REAR));
             }
         }
         if (table == ToHitData.HIT_BELOW) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                        .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -2510,12 +2423,10 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Called when a thru-armor-crit is rolled. Checks the game options and
-     * either returns no critical hit, rolls a floating crit, or returns a TAC
-     * in the specified location.
+     * Called when a thru-armor-crit is rolled. Checks the game options and either returns no critical hit, rolls a
+     * floating crit, or returns a TAC in the specified location.
      */
-    protected HitData tac(int table, int side, int location, int cover,
-            boolean rear) {
+    protected HitData tac(int table, int side, int location, int cover, boolean rear) {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
             return new HitData(location, rear);
         } else if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FLOATING_CRITS)) {
@@ -2523,13 +2434,11 @@ public abstract class Mek extends Entity {
             // check for cover and keep rolling until you get something without
             // cover
             int i = 0;
-            while (removePartialCoverHits(hd.getLocation(), cover, side)
-                    && (i < 500)) {
+            while (removePartialCoverHits(hd.getLocation(), cover, side) && (i < 500)) {
                 hd = rollHitLocation(table, side);
                 i++;
             }
-            return new HitData(hd.getLocation(), hd.isRear(),
-                    HitData.EFFECT_CRITICAL);
+            return new HitData(hd.getLocation(), hd.isRear(), HitData.EFFECT_CRITICAL);
         } else {
             return new HitData(location, rear, HitData.EFFECT_CRITICAL);
         }
@@ -2544,22 +2453,37 @@ public abstract class Mek extends Entity {
             case LOC_RT:
             case LOC_LT:
             case LOC_CLEG:
-                return new HitData(LOC_CT, hit.isRear(), hit.getEffect(),
-                        hit.hitAimedLocation(), hit.getSpecCritMod(),
-                        hit.getSpecCrit(), hit.isFromFront(),
-                        hit.getGeneralDamageType(), hit.glancingMod());
+                return new HitData(LOC_CT,
+                      hit.isRear(),
+                      hit.getEffect(),
+                      hit.hitAimedLocation(),
+                      hit.getSpecCritMod(),
+                      hit.getSpecCrit(),
+                      hit.isFromFront(),
+                      hit.getGeneralDamageType(),
+                      hit.glancingMod());
             case LOC_LLEG:
             case LOC_LARM:
-                return new HitData(LOC_LT, hit.isRear(), hit.getEffect(),
-                        hit.hitAimedLocation(), hit.getSpecCritMod(),
-                        hit.getSpecCrit(), hit.isFromFront(),
-                        hit.getGeneralDamageType(), hit.glancingMod());
+                return new HitData(LOC_LT,
+                      hit.isRear(),
+                      hit.getEffect(),
+                      hit.hitAimedLocation(),
+                      hit.getSpecCritMod(),
+                      hit.getSpecCrit(),
+                      hit.isFromFront(),
+                      hit.getGeneralDamageType(),
+                      hit.glancingMod());
             case LOC_RLEG:
             case LOC_RARM:
-                return new HitData(LOC_RT, hit.isRear(), hit.getEffect(),
-                        hit.hitAimedLocation(), hit.getSpecCritMod(),
-                        hit.getSpecCrit(), hit.isFromFront(),
-                        hit.getGeneralDamageType(), hit.glancingMod());
+                return new HitData(LOC_RT,
+                      hit.isRear(),
+                      hit.getEffect(),
+                      hit.hitAimedLocation(),
+                      hit.getSpecCritMod(),
+                      hit.getSpecCrit(),
+                      hit.isFromFront(),
+                      hit.getGeneralDamageType(),
+                      hit.glancingMod());
             case LOC_HEAD:
                 if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
                     return new HitData(LOC_NONE); // not destroyed by head loss
@@ -2595,22 +2519,16 @@ public abstract class Mek extends Entity {
     /**
      * Sets the internal structure for the Mek.
      *
-     * @param head
-     *             head
-     * @param ct
-     *             center torso
-     * @param t
-     *             right/left torso
-     * @param arm
-     *             right/left arm
-     * @param leg
-     *             right/left leg
+     * @param head head
+     * @param ct   center torso
+     * @param t    right/left torso
+     * @param arm  right/left arm
+     * @param leg  right/left leg
      */
     public abstract void setInternal(int head, int ct, int t, int arm, int leg);
 
     /**
-     * Set the internal structure to the appropriate value for the Mek's weight
-     * class
+     * Set the internal structure to the appropriate value for the Mek's weight class
      */
     @Override
     public void autoSetInternal() {
@@ -2747,8 +2665,7 @@ public abstract class Mek extends Entity {
         for (int i = 0; i < locations(); i++) {
             explosiveFound = false;
             for (Mounted<?> m : getEquipment()) {
-                if (m.getType().isExplosive(m, true)
-                        && ((m.getLocation() == i) || (m.getSecondLocation() == i))) {
+                if (m.getType().isExplosive(m, true) && ((m.getLocation() == i) || (m.getSecondLocation() == i))) {
                     explosiveFound = true;
                 }
             }
@@ -2763,12 +2680,11 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Adds equipment without adding slots for it.
-     * Specifically for targeting computers, which when loaded from a file don't
-     * have a correct size and get loaded slot by slot
+     * Adds equipment without adding slots for it. Specifically for targeting computers, which when loaded from a file
+     * don't have a correct size and get loaded slot by slot
      */
     public MiscMounted addTargCompWithoutSlots(MiscType etype, int loc, boolean omniPod, boolean armored)
-            throws LocationFullException {
+          throws LocationFullException {
         MiscMounted mounted = (MiscMounted) MiscMounted.createMounted(this, etype);
         mounted.setOmniPodMounted(omniPod);
         mounted.setArmored(armored);
@@ -2776,8 +2692,8 @@ public abstract class Mek extends Entity {
         return mounted;
     }
 
-    public Mounted<?> addEquipment(EquipmentType etype, EquipmentType etype2,
-            int loc, boolean omniPod, boolean armored) throws LocationFullException {
+    public Mounted<?> addEquipment(EquipmentType etype, EquipmentType etype2, int loc, boolean omniPod, boolean armored)
+          throws LocationFullException {
         Mounted<?> mounted = Mounted.createMounted(this, etype);
         Mounted<?> mounted2 = Mounted.createMounted(this, etype2);
         mounted.setOmniPodMounted(omniPod);
@@ -2786,11 +2702,17 @@ public abstract class Mek extends Entity {
         mounted2.setArmored(armored);
         // check criticals for space
         if (getEmptyCriticals(loc) < 1) {
-            throw new LocationFullException(mounted.getName() + " and "
-                    + mounted2.getName() + " do not fit in "
-                    + getLocationAbbr(loc) + " on " + getDisplayName()
-                    + "\n        free criticals in location: "
-                    + getEmptyCriticals(loc) + ", criticals needed: " + 1);
+            throw new LocationFullException(mounted.getName() +
+                                                  " and " +
+                                                  mounted2.getName() +
+                                                  " do not fit in " +
+                                                  getLocationAbbr(loc) +
+                                                  " on " +
+                                                  getDisplayName() +
+                                                  "\n        free criticals in location: " +
+                                                  getEmptyCriticals(loc) +
+                                                  ", criticals needed: " +
+                                                  1);
         }
         super.addEquipment(mounted, loc, false);
         super.addEquipment(mounted2, loc, false);
@@ -2804,8 +2726,7 @@ public abstract class Mek extends Entity {
      * Mounts the specified weapon in the specified location.
      */
     @Override
-    public void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted)
-            throws LocationFullException {
+    public void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted) throws LocationFullException {
         addEquipment(mounted, loc, rearMounted, -1);
     }
 
@@ -2814,11 +2735,10 @@ public abstract class Mek extends Entity {
      */
     @Override
     public void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted, int critSlot)
-            throws LocationFullException {
+          throws LocationFullException {
         // if there's no actual location or this is a LAM capital fighter weapons group,
         // or ammo for a LAM bomb weapon then don't add criticals
-        if ((loc == LOC_NONE) || mounted.isWeaponGroup()
-                || (mounted.getType() instanceof BombType)) {
+        if ((loc == LOC_NONE) || mounted.isWeaponGroup() || (mounted.getType() instanceof BombType)) {
             super.addEquipment(mounted, loc, rearMounted);
             return;
         }
@@ -2834,14 +2754,14 @@ public abstract class Mek extends Entity {
         }
         // gauss and AC weapons on omni arms means no arm actuators, so we
         // remove them
-        if (isOmni()
-                && (this instanceof BipedMek)
-                && ((loc == LOC_LARM) || (loc == LOC_RARM))
-                && ((mounted.getType() instanceof GaussWeapon)
-                        || (mounted.getType() instanceof ACWeapon)
-                        || (mounted.getType() instanceof UACWeapon)
-                        || (mounted.getType() instanceof LBXACWeapon) || (mounted
-                                .getType() instanceof PPCWeapon))) {
+        if (isOmni() &&
+                  (this instanceof BipedMek) &&
+                  ((loc == LOC_LARM) || (loc == LOC_RARM)) &&
+                  ((mounted.getType() instanceof GaussWeapon) ||
+                         (mounted.getType() instanceof ACWeapon) ||
+                         (mounted.getType() instanceof UACWeapon) ||
+                         (mounted.getType() instanceof LBXACWeapon) ||
+                         (mounted.getType() instanceof PPCWeapon))) {
             if (hasSystem(Mek.ACTUATOR_LOWER_ARM, loc)) {
                 setCritical(loc, 2, null);
             }
@@ -2852,12 +2772,15 @@ public abstract class Mek extends Entity {
 
         // check criticals for space
         if (getEmptyCriticals(loc) < reqSlots) {
-            throw new LocationFullException(mounted.getName()
-                    + " does not fit in " + getLocationAbbr(loc) + " on "
-                    + getDisplayName()
-                    + "\n        free criticals in location: "
-                    + getEmptyCriticals(loc) + ", criticals needed: "
-                    + reqSlots);
+            throw new LocationFullException(mounted.getName() +
+                                                  " does not fit in " +
+                                                  getLocationAbbr(loc) +
+                                                  " on " +
+                                                  getDisplayName() +
+                                                  "\n        free criticals in location: " +
+                                                  getEmptyCriticals(loc) +
+                                                  ", criticals needed: " +
+                                                  reqSlots);
         }
         // add it
         if (getEquipmentNum(mounted) == -1) {
@@ -2873,18 +2796,19 @@ public abstract class Mek extends Entity {
         } else {
             // Need to ensure that we have enough contiguous critical slots
             int iterations = 0;
-            while ((getContiguousNumberOfCrits(loc, critSlot) < reqSlots) &&
-                    (iterations < getNumberOfCriticals(loc))) {
+            while ((getContiguousNumberOfCrits(loc, critSlot) < reqSlots) && (iterations < getNumberOfCriticals(loc))) {
                 critSlot = (critSlot + 1) % getNumberOfCriticals(loc);
                 iterations++;
             }
             if (iterations >= getNumberOfCriticals(loc)) {
-                throw new LocationFullException(mounted.getName()
-                        + " does not fit in " + getLocationAbbr(loc) + " on "
-                        + getDisplayName()
-                        + "\n    needs "
-                        + getEmptyCriticals(loc)
-                        + " free contiguous criticals");
+                throw new LocationFullException(mounted.getName() +
+                                                      " does not fit in " +
+                                                      getLocationAbbr(loc) +
+                                                      " on " +
+                                                      getDisplayName() +
+                                                      "\n    needs " +
+                                                      getEmptyCriticals(loc) +
+                                                      " free contiguous criticals");
             }
             for (int i = 0; i < reqSlots; i++) {
                 CriticalSlot cs = new CriticalSlot(mounted);
@@ -2896,67 +2820,78 @@ public abstract class Mek extends Entity {
 
     // From IO pg 50
     public static TechAdvancement getTechAdvancement(long etype, boolean primitive, boolean industrial,
-            int weightClass) {
+          int weightClass) {
         if ((etype & ETYPE_TRIPOD_MEK) != 0) {
             if (weightClass != EntityWeightClass.WEIGHT_SUPER_HEAVY) {
-                return new TechAdvancement(TECH_BASE_IS)
-                        .setISAdvancement(2585, 2602).setISApproximate(true).setPrototypeFactions(F_TH)
-                        .setProductionFactions(F_TH).setTechRating(RATING_D)
-                        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
-                        .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                return new TechAdvancement(TECH_BASE_IS).setISAdvancement(2585, 2602)
+                             .setISApproximate(true)
+                             .setPrototypeFactions(F_TH)
+                             .setProductionFactions(F_TH)
+                             .setTechRating(RATING_D)
+                             .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
+                             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
             } else {
-                return new TechAdvancement(TECH_BASE_IS)
-                        .setISAdvancement(2930, 2940).setISApproximate(true).setPrototypeFactions(F_FW)
-                        .setProductionFactions(F_FW).setTechRating(RATING_D)
-                        .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
-                        .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                return new TechAdvancement(TECH_BASE_IS).setISAdvancement(2930, 2940)
+                             .setISApproximate(true)
+                             .setPrototypeFactions(F_FW)
+                             .setProductionFactions(F_FW)
+                             .setTechRating(RATING_D)
+                             .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+                             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
             }
         } else if (primitive && industrial) {
-            return new TechAdvancement(TECH_BASE_IS)
-                    .setISAdvancement(2300, 2350, 2425, 2520).setPrototypeFactions(F_TA)
-                    .setProductionFactions(F_TH).setTechRating(RATING_D)
-                    .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            return new TechAdvancement(TECH_BASE_IS).setISAdvancement(2300, 2350, 2425, 2520)
+                         .setPrototypeFactions(F_TA)
+                         .setProductionFactions(F_TH)
+                         .setTechRating(RATING_D)
+                         .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
+                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (primitive) {
-            return new TechAdvancement(TECH_BASE_IS)
-                    .setISAdvancement(2439, 2443, 2470, 2520).setPrototypeFactions(F_TH)
-                    .setProductionFactions(F_TH).setTechRating(RATING_C)
-                    .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            return new TechAdvancement(TECH_BASE_IS).setISAdvancement(2439, 2443, 2470, 2520)
+                         .setPrototypeFactions(F_TH)
+                         .setProductionFactions(F_TH)
+                         .setTechRating(RATING_C)
+                         .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F)
+                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (industrial && (EntityWeightClass.WEIGHT_SUPER_HEAVY == weightClass)) {
             // Superheavy industrialmeks don't have a separate entry on the tech advancement
             // table in IO, but the dates for the superheavy tripod are based on the
             // three-man digging machine, which is an industrialmek.
-            return new TechAdvancement(TECH_BASE_IS)
-                    .setAdvancement(2930, 2940).setPrototypeFactions(F_FW)
-                    .setProductionFactions(F_FW).setTechRating(RATING_D)
-                    .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            return new TechAdvancement(TECH_BASE_IS).setAdvancement(2930, 2940)
+                         .setPrototypeFactions(F_FW)
+                         .setProductionFactions(F_FW)
+                         .setTechRating(RATING_D)
+                         .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (industrial) {
-            return new TechAdvancement(TECH_BASE_ALL)
-                    .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
-                    .setProductionFactions(F_TH).setTechRating(RATING_C)
-                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
+            return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2500)
+                         .setPrototypeFactions(F_TH)
+                         .setProductionFactions(F_TH)
+                         .setTechRating(RATING_C)
+                         .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+                         .setStaticTechLevel(SimpleTechLevel.STANDARD);
         } else if (EntityWeightClass.WEIGHT_ULTRA_LIGHT == weightClass) {
-            return new TechAdvancement(TECH_BASE_ALL)
-                    .setAdvancement(2500, 2519, 3075).setPrototypeFactions(F_TH, F_FW)
-                    .setProductionFactions(F_FW).setApproximate(true, false, true)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2500, 2519, 3075)
+                         .setPrototypeFactions(F_TH, F_FW)
+                         .setProductionFactions(F_FW)
+                         .setApproximate(true, false, true)
+                         .setTechRating(RATING_D)
+                         .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (EntityWeightClass.WEIGHT_SUPER_HEAVY == weightClass) {
-            return new TechAdvancement(TECH_BASE_IS)
-                    .setISAdvancement(3077, 3078).setPrototypeFactions(F_WB)
-                    .setProductionFactions(F_WB).setTechRating(RATING_D)
-                    .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            return new TechAdvancement(TECH_BASE_IS).setISAdvancement(3077, 3078)
+                         .setPrototypeFactions(F_WB)
+                         .setProductionFactions(F_WB)
+                         .setTechRating(RATING_D)
+                         .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
+                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else {
-            return new TechAdvancement(TECH_BASE_ALL)
-                    .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
-                    .setProductionFactions(F_TH).setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
-                    .setStaticTechLevel(SimpleTechLevel.INTRO);
+            return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2500)
+                         .setPrototypeFactions(F_TH)
+                         .setProductionFactions(F_TH)
+                         .setTechRating(RATING_D)
+                         .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+                         .setStaticTechLevel(SimpleTechLevel.INTRO);
         }
     }
 
@@ -2966,137 +2901,190 @@ public abstract class Mek extends Entity {
     }
 
     private static final TechAdvancement[] GYRO_TA = {
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, 2505)
-                    .setApproximate(true, false, false).setPrototypeFactions(F_TA)
-                    .setProductionFactions(F_TH).setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                    .setStaticTechLevel(SimpleTechLevel.INTRO), // Standard
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3067, 3072)
-                    .setISApproximate(true, false, false).setPrototypeFactions(F_CS)
-                    .setProductionFactions(F_CS).setTechRating(RATING_E)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // XL
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3068, 3072)
-                    .setISApproximate(true, false, false).setPrototypeFactions(F_FS, F_LC)
-                    .setProductionFactions(F_FS, F_LC).setTechRating(RATING_E)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // Compact
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3067, 3072)
-                    .setISApproximate(true, false, false).setPrototypeFactions(F_DC)
-                    .setProductionFactions(F_DC).setTechRating(RATING_E)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // Heavy duty
-            new TechAdvancement(TECH_BASE_IS).setAdvancement(DATE_NONE)
-                    .setTechRating(RATING_A)
-                    .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // None (placeholder)
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2905, 2940)
-                    .setISApproximate(true, false).setPrototypeFactions(F_FW)
-                    .setProductionFactions(F_FW).setTechRating(RATING_D)
-                    .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy
+          new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, 2505)
+                .setApproximate(true, false, false)
+                .setPrototypeFactions(F_TA)
+                .setProductionFactions(F_TH)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C).setStaticTechLevel(SimpleTechLevel.INTRO),
+          // Standard
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3067, 3072)
+                .setISApproximate(true, false, false)
+                .setPrototypeFactions(F_CS)
+                .setProductionFactions(F_CS)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D).setStaticTechLevel(SimpleTechLevel.STANDARD),
+          // XL
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3068, 3072)
+                .setISApproximate(true, false, false)
+                .setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS, F_LC)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D).setStaticTechLevel(SimpleTechLevel.STANDARD),
+          // Compact
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3067, 3072)
+                .setISApproximate(true, false, false)
+                .setPrototypeFactions(F_DC)
+                .setProductionFactions(F_DC)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D).setStaticTechLevel(SimpleTechLevel.STANDARD),
+          // Heavy duty
+          new TechAdvancement(TECH_BASE_IS).setAdvancement(DATE_NONE)
+                .setTechRating(RATING_A)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // None (placeholder)
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(2905, 2940)
+                .setISApproximate(true, false)
+                .setPrototypeFactions(F_FW)
+                .setProductionFactions(F_FW)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Superheavy
     };
 
     private static final TechAdvancement[] COCKPIT_TA = {
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
-                    .setApproximate(true, false, false).setTechRating(RATING_D)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                    .setStaticTechLevel(SimpleTechLevel.INTRO), // Standard
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3060, 3067, 3080)
-                    .setISApproximate(true, false, false)
-                    .setClanAdvancement(DATE_NONE, 3080, 3080).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_FS).setProductionFactions(F_FS, F_CJF)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // Small
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
-                    .setISApproximate(true, false, false, true, true)
-                    .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setReintroductionFactions(F_FS).setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Cockpit command console
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3053, 3080, 3100)
-                    .setClanAdvancement(3055, 3080, 3100)
-                    .setPrototypeFactions(F_FS, F_LC, F_CSJ).setProductionFactions(F_LC)
-                    .setApproximate(false, true, false).setTechRating(RATING_D)
-                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // Torso mounted
-            // FIXME: Dual is unofficial; these are stats for standard
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
-                    .setApproximate(true, false, false).setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                    .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL), // Dual
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2469, 2470, 2490)
-                    .setApproximate(true, false, false).setTechRating(RATING_C)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setAvailability(RATING_B, RATING_C, RATING_C, RATING_B)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // Industrial
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2430, 2439)
-                    .setApproximate(true, false).setTechRating(RATING_D)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Primitive
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, DATE_NONE, 2520)
-                    .setApproximate(true, false, false).setTechRating(RATING_C)
-                    .setPrototypeFactions(F_TA).setProductionFactions(F_TH)
-                    .setAvailability(RATING_C, RATING_X, RATING_X, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Primitive industrial
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3060, 3076)
-                    .setISApproximate(true, false).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_WB).setProductionFactions(F_WB)
-                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3130, 3135)
-                    .setISApproximate(true, false).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_RS).setProductionFactions(F_RS)
-                    .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy tripod
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2590, 2702)
-                    .setISApproximate(true, false).setTechRating(RATING_F)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Tripod
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3074).setClanAdvancement(3083)
-                    .setApproximate(true).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_WB, F_CHH)
-                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // Cockpit interface
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3052, DATE_NONE, DATE_NONE, 3055)
-                    .setPrototypeFactions(F_FS, F_LC).setTechRating(RATING_E)
-                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
-                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // VRRP
-            new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3130, 3135)
-                    .setClanApproximate(true, false).setTechRating(RATING_F)
-                    .setPrototypeFactions(F_CHH).setProductionFactions(F_CHH)
-                    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // QuadVee
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2905, 2940)
-                    .setISApproximate(true, false).setTechRating(RATING_D)
-                    .setPrototypeFactions(F_FW).setProductionFactions(F_FW)
-                    .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy industrial
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3060, 3076)
-                    .setISApproximate(true, false).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_WB).setProductionFactions(F_WB)
-                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy command console
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3060, 3067, 3080)
-                    .setISApproximate(true, false, false)
-                    .setClanAdvancement(DATE_NONE, 3080, 3080).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_FS).setProductionFactions(F_FS, F_CJF)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Small Command Console
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3130, 3135)
-                    .setISApproximate(true, false).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_RS).setProductionFactions(F_RS)
-                    .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy tripod
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2590, 2702)
-                    .setISApproximate(true, false).setTechRating(RATING_F)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Tripod
+          new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
+                .setApproximate(true, false, false)
+                .setTechRating(RATING_D)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C).setStaticTechLevel(SimpleTechLevel.INTRO),
+          // Standard
+          new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3060, 3067, 3080)
+                .setISApproximate(true, false, false)
+                .setClanAdvancement(DATE_NONE, 3080, 3080)
+                .setTechRating(RATING_E)
+                .setPrototypeFactions(F_FS)
+                .setProductionFactions(F_FS, F_CJF)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D).setStaticTechLevel(SimpleTechLevel.STANDARD),
+          // Small
+          new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
+                .setISApproximate(true, false, false, true, true)
+                .setClanAdvancement(2625, 2631)
+                .setClanApproximate(true, false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setReintroductionFactions(F_FS)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Cockpit command console
+          new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3053, 3080, 3100)
+                .setClanAdvancement(3055, 3080, 3100)
+                .setPrototypeFactions(F_FS, F_LC, F_CSJ)
+                .setProductionFactions(F_LC)
+                .setApproximate(false, true, false)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_X,
+                      RATING_X,
+                      RATING_F,
+                      RATING_F).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // Torso mounted
+          // FIXME: Dual is unofficial; these are stats for standard
+          new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
+                .setApproximate(true, false, false)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C).setStaticTechLevel(SimpleTechLevel.UNOFFICIAL),
+          // Dual
+          new TechAdvancement(TECH_BASE_ALL).setAdvancement(2469, 2470, 2490)
+                .setApproximate(true, false, false)
+                .setTechRating(RATING_C)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setAvailability(RATING_B, RATING_C, RATING_C, RATING_B).setStaticTechLevel(SimpleTechLevel.STANDARD),
+          // Industrial
+          new TechAdvancement(TECH_BASE_ALL).setAdvancement(2430, 2439)
+                .setApproximate(true, false)
+                .setTechRating(RATING_D)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Primitive
+          new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, DATE_NONE, 2520)
+                .setApproximate(true, false, false)
+                .setTechRating(RATING_C)
+                .setPrototypeFactions(F_TA)
+                .setProductionFactions(F_TH)
+                .setAvailability(RATING_C, RATING_X, RATING_X, RATING_F).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Primitive industrial
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(3060, 3076)
+                .setISApproximate(true, false)
+                .setTechRating(RATING_E)
+                .setPrototypeFactions(F_WB)
+                .setProductionFactions(F_WB)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Superheavy
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(3130, 3135)
+                .setISApproximate(true, false)
+                .setTechRating(RATING_E)
+                .setPrototypeFactions(F_RS)
+                .setProductionFactions(F_RS)
+                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Superheavy tripod
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(2590, 2702)
+                .setISApproximate(true, false)
+                .setTechRating(RATING_F)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Tripod
+          new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3074)
+                .setClanAdvancement(3083)
+                .setApproximate(true)
+                .setTechRating(RATING_E)
+                .setPrototypeFactions(F_WB, F_CHH)
+                .setAvailability(RATING_X,
+                      RATING_X,
+                      RATING_F,
+                      RATING_F).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // Cockpit interface
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(3052, DATE_NONE, DATE_NONE, 3055)
+                .setPrototypeFactions(F_FS, F_LC)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X,
+                      RATING_X,
+                      RATING_F,
+                      RATING_X).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // VRRP
+          new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3130, 3135)
+                .setClanApproximate(true, false)
+                .setTechRating(RATING_F)
+                .setPrototypeFactions(F_CHH)
+                .setProductionFactions(F_CHH)
+                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // QuadVee
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(2905, 2940)
+                .setISApproximate(true, false)
+                .setTechRating(RATING_D)
+                .setPrototypeFactions(F_FW)
+                .setProductionFactions(F_FW)
+                .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Superheavy industrial
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(3060, 3076)
+                .setISApproximate(true, false)
+                .setTechRating(RATING_E)
+                .setPrototypeFactions(F_WB)
+                .setProductionFactions(F_WB)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Superheavy command console
+          new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3060, 3067, 3080)
+                .setISApproximate(true, false, false)
+                .setClanAdvancement(DATE_NONE, 3080, 3080)
+                .setTechRating(RATING_E)
+                .setPrototypeFactions(F_FS)
+                .setProductionFactions(F_FS, F_CJF)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Small Command Console
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(3130, 3135)
+                .setISApproximate(true, false)
+                .setTechRating(RATING_E)
+                .setPrototypeFactions(F_RS)
+                .setProductionFactions(F_RS)
+                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Superheavy tripod
+          new TechAdvancement(TECH_BASE_IS).setISAdvancement(2590, 2702)
+                .setISApproximate(true, false)
+                .setTechRating(RATING_F)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Tripod
     };
 
     // Advanced fire control for industrial Meks is implemented with a standard
@@ -3104,10 +3092,12 @@ public abstract class Mek extends Entity {
     // but the tech progression is different.
     public static TechAdvancement getIndustrialAdvFireConTA() {
         return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2469, 2470, 2491)
-                .setApproximate(true, false, false).setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TH).setTechRating(RATING_D)
-                .setAvailability(RATING_D, RATING_E, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                     .setApproximate(true, false, false)
+                     .setPrototypeFactions(F_TA)
+                     .setProductionFactions(F_TH)
+                     .setTechRating(RATING_D)
+                     .setAvailability(RATING_D, RATING_E, RATING_E, RATING_D)
+                     .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     public static TechAdvancement getCockpitTechAdvancement(int cockpitType) {
@@ -3133,23 +3123,27 @@ public abstract class Mek extends Entity {
     }
 
     public static TechAdvancement getFullHeadEjectAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL)
-                .setISAdvancement(DATE_NONE, 3020, 3023, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, true, false, false, false)
-                .setClanAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE).setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC, F_CWF).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3020, 3023, DATE_NONE, DATE_NONE)
+                     .setISApproximate(false, true, false, false, false)
+                     .setClanAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE)
+                     .setPrototypeFactions(F_LC)
+                     .setProductionFactions(F_LC, F_CWF)
+                     .setTechRating(RATING_D)
+                     .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                     .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     public static TechAdvancement getRiscHeatSinkOverrideKitAdvancement() {
-        return new TechAdvancement(ITechnology.TECH_BASE_IS)
-            .setAdvancement(3134, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setApproximate(false, false, false, false, false)
-            .setPrototypeFactions(F_RS)
-            .setTechRating(RATING_D)
-            .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        return new TechAdvancement(ITechnology.TECH_BASE_IS).setAdvancement(3134,
+                    DATE_NONE,
+                    DATE_NONE,
+                    DATE_NONE,
+                    DATE_NONE)
+                     .setApproximate(false, false, false, false, false)
+                     .setPrototypeFactions(F_RS)
+                     .setTechRating(RATING_D)
+                     .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+                     .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     @Override
@@ -3182,11 +3176,12 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * This method will return the number of contiguous criticals in the given
-     * location, starting at the given critical slot
+     * This method will return the number of contiguous criticals in the given location, starting at the given critical
+     * slot
      *
      * @param loc          The location on the unit to check slots on
      * @param startingSlot The critical slot to start at
+     *
      * @return
      */
     private int getContiguousNumberOfCrits(int loc, int startingSlot) {
@@ -3308,12 +3303,10 @@ public abstract class Mek extends Entity {
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         // gyro hit?
-        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                Mek.LOC_CT) > 0) {
+        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CT) > 0) {
 
             if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                        Mek.LOC_CT) == 1) {
+                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CT) == 1) {
                     roll.addModifier(1, "HD Gyro damaged once");
                 } else {
                     roll.addModifier(3, "HD Gyro damaged twice");
@@ -3329,28 +3322,22 @@ public abstract class Mek extends Entity {
         }
 
         // VDNI bonus?
-        if (hasAbility(OptionsConstants.MD_VDNI)
-                && !hasAbility(OptionsConstants.MD_BVDNI)) {
+        if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
             roll.addModifier(-1, "VDNI");
         }
 
         // Small/torso-mounted cockpit penalty?
-        if (((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE))
-                && (!hasAbility(OptionsConstants.MD_BVDNI)
-                        && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT))) {
+        if (((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE)) &&
+                  (!hasAbility(OptionsConstants.MD_BVDNI) && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT))) {
             roll.addModifier(1, "Small Cockpit");
         } else if (getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             roll.addModifier(1, "Torso-Mounted Cockpit");
-            int sensorHits = getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
-            int sensorHits2 = getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+            int sensorHits = getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+            int sensorHits2 = getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
-                roll.addModifier(4,
-                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                roll.addModifier(4, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
-                roll.addModifier(4,
-                        "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                roll.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         } else if (getCockpitType() == Mek.COCKPIT_DUAL) {
             // Dedicated pilot bonus is lost if pilot makes any attacks. Penalty for gunner
@@ -3382,8 +3369,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getMaxElevationChange() {
-        if (movementMode == EntityMovementMode.TRACKED
-                || movementMode == EntityMovementMode.WIGE) {
+        if (movementMode == EntityMovementMode.TRACKED || movementMode == EntityMovementMode.WIGE) {
             return 1;
         }
         return 2;
@@ -3398,14 +3384,13 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Determine if this unit has an active and working stealth system. (stealth
-     * can be active and not working when under ECCM)
+     * Determine if this unit has an active and working stealth system. (stealth can be active and not working when
+     * under ECCM)
      * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
-     *         currently active, <code>false</code> if there is no stealth
-     *         system or if it is inactive.
+     *       currently active, <code>false</code> if there is no stealth system or if it is inactive.
      */
     @Override
     public boolean isStealthActive() {
@@ -3414,8 +3399,7 @@ public abstract class Mek extends Entity {
             MiscType mtype = (MiscType) mEquip.getType();
             if (mtype.hasFlag(MiscType.F_STEALTH)) {
 
-                if (mEquip.curMode().equals("On")
-                        && hasActiveECM()) {
+                if (mEquip.curMode().equals("On") && hasActiveECM()) {
                     // Return true if the mode is "On" and ECM is working
                     return true;
                 }
@@ -3426,14 +3410,13 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Determine if this unit has an active and working stealth system. (stealth
-     * can be active and not working when under ECCM)
+     * Determine if this unit has an active and working stealth system. (stealth can be active and not working when
+     * under ECCM)
      * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
-     *         currently active, <code>false</code> if there is no stealth
-     *         system or if it is inactive.
+     *       currently active, <code>false</code> if there is no stealth system or if it is inactive.
      */
     @Override
     public boolean isStealthOn() {
@@ -3452,8 +3435,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Does the Mek have a functioning null signature system, or a void sig
-     * that is acting as a a null sig because of externally carried BA?
+     * Does the Mek have a functioning null signature system, or a void sig that is acting as a a null sig because of
+     * externally carried BA?
      */
     @Override
     public boolean isNullSigActive() {
@@ -3463,8 +3446,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_NULLSIG)
-                        && m.curMode().equals("On") && m.isReady()) {
+                if (type.hasFlag(MiscType.F_NULLSIG) && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
             }
@@ -3477,8 +3459,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_NULLSIG)
-                        && m.curMode().equals("On") && m.isReady()) {
+                if (type.hasFlag(MiscType.F_NULLSIG) && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
             }
@@ -3499,8 +3480,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_VOIDSIG)
-                        && m.curMode().equals("On") && m.isReady()) {
+                if (type.hasFlag(MiscType.F_VOIDSIG) && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
             }
@@ -3516,8 +3496,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_VOIDSIG)
-                        && m.curMode().equals("On") && m.isReady()) {
+                if (type.hasFlag(MiscType.F_VOIDSIG) && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
             }
@@ -3526,9 +3505,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Does the Mek have a functioning Chameleon Light Polarization Field? For
-     * a CLPS to be functioning it must be on and the unit can't have mounted
-     * mechanized BattleArmor.
+     * Does the Mek have a functioning Chameleon Light Polarization Field? For a CLPS to be functioning it must be on
+     * and the unit can't have mounted mechanized BattleArmor.
      */
     @Override
     public boolean isChameleonShieldActive() {
@@ -3541,8 +3519,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_CHAMELEON_SHIELD)
-                        && m.curMode().equals("On") && m.isReady()) {
+                if (type.hasFlag(MiscType.F_CHAMELEON_SHIELD) && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
             }
@@ -3551,17 +3528,15 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Does the Mek Chameleon Light Polarization Field turned on? This is used
-     * for heat generation purposes. A CLPS can be on and generating heat but
-     * not providing any benefit if the unit has mechanized BattleArmor.
+     * Does the Mek Chameleon Light Polarization Field turned on? This is used for heat generation purposes. A CLPS can
+     * be on and generating heat but not providing any benefit if the unit has mechanized BattleArmor.
      */
     @Override
     public boolean isChameleonShieldOn() {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_CHAMELEON_SHIELD)
-                        && m.curMode().equals("On") && m.isReady()) {
+                if (type.hasFlag(MiscType.F_CHAMELEON_SHIELD) && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
             }
@@ -3570,20 +3545,18 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Determine the stealth modifier for firing at this unit from the given
-     * range. If the value supplied for <code>range</code> is not one of the
+     * Determine the stealth modifier for firing at this unit from the given range. If the value supplied for
+     * <code>range</code> is not one of the
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown.
      * <p>
      * Sub-classes are encouraged to override this method.
      *
-     * @param range
-     *              - an <code>int</code> value that must match one of the
+     * @param range - an <code>int</code> value that must match one of the
      *              <code>Compute</code> class range constants.
-     * @param ae
-     *              - entity making the attack
-     * @return a <code>TargetRoll</code> value that contains the stealth
-     *         modifier for the given range.
+     * @param ae    - entity making the attack
+     *
+     * @return a <code>TargetRoll</code> value that contains the stealth modifier for the given range.
      */
     @Override
     public TargetRoll getStealthModifier(int range, Entity ae) {
@@ -3672,34 +3645,34 @@ public abstract class Mek extends Entity {
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
      *
-     * @return A <code>boolean</code> that is <code>true</code> if the unit can
-     *         be repaired (given enough time and parts); if this value is
-     *         <code>false</code>, the unit is only a source of spares.
+     * @return A <code>boolean</code> that is <code>true</code> if the unit can be repaired (given enough time and
+     *       parts); if this value is
+     *       <code>false</code>, the unit is only a source of spares.
+     *
      * @see Entity#isSalvage()
      */
     @Override
     public boolean isRepairable() {
         // A Mek is repairable if it is salvageable, and its CT internals are not gone.
         int loc_is = this.getInternal(Mek.LOC_CT);
-        return isSalvage() && (loc_is != IArmorState.ARMOR_DOOMED)
-                && (loc_is != IArmorState.ARMOR_DESTROYED);
+        return isSalvage() && (loc_is != IArmorState.ARMOR_DOOMED) && (loc_is != IArmorState.ARMOR_DESTROYED);
     }
 
     @Override
     public boolean canCharge() {
         // Meks can charge, unless they are Clan and the "no clan physicals" option is
         // set
-        return super.canCharge()
-                && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
-                        && getCrew().isClanPilot());
+        return super.canCharge() &&
+                     !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) &&
+                             getCrew().isClanPilot());
     }
 
     @Override
     public boolean canDFA() {
         // Meks can DFA, unless they are Clan and the "no clan physicals" option is set
-        return super.canDFA()
-                && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
-                        && getCrew().isClanPilot());
+        return super.canDFA() &&
+                     !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) &&
+                             getCrew().isClanPilot());
     }
 
     /**
@@ -3738,8 +3711,7 @@ public abstract class Mek extends Entity {
                 if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                     hasLaserHeatSinks = HAS_FALSE;
                     break;
-                } else if (mounted.getType()
-                        .hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+                } else if (mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                     hasLaserHeatSinks = HAS_TRUE;
                     break;
                 }
@@ -3782,8 +3754,7 @@ public abstract class Mek extends Entity {
         // Ejection Seat
         boolean result = true;
         // torso mounted cockpits don't have an ejection seat
-        if (getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED
-                || hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT)) {
+        if (getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED || hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT)) {
             result = false;
         }
         if (isIndustrial()) {
@@ -3806,8 +3777,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * @param autoEject
-     *                  The autoEject to set.
+     * @param autoEject The autoEject to set.
      */
     public void setAutoEject(boolean autoEject) {
         this.autoEject = autoEject;
@@ -3881,37 +3851,31 @@ public abstract class Mek extends Entity {
         }
 
         if (side == ToHitData.SIDE_FRONT) {
-            if (((cover & LosEffects.COVER_LOWRIGHT) != 0)
-                    && (location == Mek.LOC_LLEG)) {
+            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) && (location == Mek.LOC_LLEG)) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LOWLEFT) != 0)
-                    && (location == Mek.LOC_RLEG)) {
+            if (((cover & LosEffects.COVER_LOWLEFT) != 0) && (location == Mek.LOC_RLEG)) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_RIGHT) != 0)
-                    && ((location == Mek.LOC_LARM)
-                            || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG))) {
+            if (((cover & LosEffects.COVER_RIGHT) != 0) &&
+                      ((location == Mek.LOC_LARM) || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG))) {
                 return true;
             }
-            return ((cover & LosEffects.COVER_LEFT) != 0)
-                    && ((location == Mek.LOC_RARM) || (location == Mek.LOC_RT) || (location == Mek.LOC_RLEG));
+            return ((cover & LosEffects.COVER_LEFT) != 0) &&
+                         ((location == Mek.LOC_RARM) || (location == Mek.LOC_RT) || (location == Mek.LOC_RLEG));
         } else {
-            if (((cover & LosEffects.COVER_LOWLEFT) != 0)
-                    && (location == Mek.LOC_LLEG)) {
+            if (((cover & LosEffects.COVER_LOWLEFT) != 0) && (location == Mek.LOC_LLEG)) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LOWRIGHT) != 0)
-                    && (location == Mek.LOC_RLEG)) {
+            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) && (location == Mek.LOC_RLEG)) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LEFT) != 0)
-                    && ((location == Mek.LOC_LARM)
-                            || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG))) {
+            if (((cover & LosEffects.COVER_LEFT) != 0) &&
+                      ((location == Mek.LOC_LARM) || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG))) {
                 return true;
             }
-            return ((cover & LosEffects.COVER_RIGHT) != 0)
-                    && ((location == Mek.LOC_LARM) || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG));
+            return ((cover & LosEffects.COVER_RIGHT) != 0) &&
+                         ((location == Mek.LOC_LARM) || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG));
         }
     }
 
@@ -3950,8 +3914,7 @@ public abstract class Mek extends Entity {
         if (cockpitStatus == COCKPIT_OFF) {
             return false;
         }
-        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS,
-                Mek.LOC_HEAD) > 0) {
+        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD) > 0) {
             return false;
         }
         return super.hasActiveEiCockpit();
@@ -4042,8 +4005,7 @@ public abstract class Mek extends Entity {
             return GYRO_UNKNOWN;
         }
         for (int x = 0; x < GYRO_STRING.length; x++) {
-            if ((inType.equals(GYRO_STRING[x]))
-                    || (inType.equals(GYRO_SHORT_STRING[x]))) {
+            if ((inType.equals(GYRO_STRING[x])) || (inType.equals(GYRO_SHORT_STRING[x]))) {
                 return x;
             }
         }
@@ -4055,8 +4017,7 @@ public abstract class Mek extends Entity {
             return COCKPIT_UNKNOWN;
         }
         for (int x = 0; x < COCKPIT_STRING.length; x++) {
-            if ((inType.equals(COCKPIT_STRING[x]))
-                    || (inType.equals(COCKPIT_SHORT_STRING[x]))) {
+            if ((inType.equals(COCKPIT_STRING[x])) || (inType.equals(COCKPIT_SHORT_STRING[x]))) {
                 return x;
             }
         }
@@ -4182,11 +4143,11 @@ public abstract class Mek extends Entity {
     }
 
     public boolean hasAdvancedFireControl() {
-        return (cockpitType != COCKPIT_INDUSTRIAL)
-                && (cockpitType != COCKPIT_PRIMITIVE_INDUSTRIAL)
-                && (cockpitType != COCKPIT_SUPERHEAVY_INDUSTRIAL)
-                && (cockpitType != COCKPIT_TRIPOD_INDUSTRIAL)
-                && (cockpitType != COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL);
+        return (cockpitType != COCKPIT_INDUSTRIAL) &&
+                     (cockpitType != COCKPIT_PRIMITIVE_INDUSTRIAL) &&
+                     (cockpitType != COCKPIT_SUPERHEAVY_INDUSTRIAL) &&
+                     (cockpitType != COCKPIT_TRIPOD_INDUSTRIAL) &&
+                     (cockpitType != COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL);
     }
 
     @Override
@@ -4211,15 +4172,12 @@ public abstract class Mek extends Entity {
         // Additional restrictions for hidden units
         if (isHidden()) {
             // Can't deploy in paved hexes
-            if ((hex.containsTerrain(Terrains.PAVEMENT)
-                    || hex.containsTerrain(Terrains.ROAD))
-                    && (!hex.containsTerrain(Terrains.BUILDING)
-                            && !hex.containsTerrain(Terrains.RUBBLE))) {
+            if ((hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD)) &&
+                      (!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             // Can't deploy on a bridge
-            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
-                    && hex.containsTerrain(Terrains.BRIDGE)) {
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
             // Meks can deploy in water if the water covers them entirely
@@ -4236,51 +4194,54 @@ public abstract class Mek extends Entity {
         // restrictions and combat vehicles with the exception that QuadVees can enter
         // water hexes
         // except during conversion.
-        if (movementMode == EntityMovementMode.TRACKED
-                || (this instanceof QuadVee && convertingNow
-                        && ((QuadVee) this).getMotiveType() == QuadVee.MOTIVE_TRACK)) {
-            return (hex.terrainLevel(Terrains.WOODS) > 1)
-                    || ((hex.terrainLevel(Terrains.WATER) > 0)
-                            && !hex.containsTerrain(Terrains.ICE)
-                            && (!(this instanceof QuadVee) || convertingNow))
-                    || hex.containsTerrain(Terrains.JUNGLE)
-                    || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                    || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                    || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+        if (movementMode == EntityMovementMode.TRACKED ||
+                  (this instanceof QuadVee &&
+                         convertingNow &&
+                         ((QuadVee) this).getMotiveType() == QuadVee.MOTIVE_TRACK)) {
+            return (hex.terrainLevel(Terrains.WOODS) > 1) ||
+                         ((hex.terrainLevel(Terrains.WATER) > 0) &&
+                                !hex.containsTerrain(Terrains.ICE) &&
+                                (!(this instanceof QuadVee) || convertingNow)) ||
+                         hex.containsTerrain(Terrains.JUNGLE) ||
+                         (hex.terrainLevel(Terrains.MAGMA) > 1) ||
+                         (hex.terrainLevel(Terrains.ROUGH) > 1) ||
+                         (hex.terrainLevel(Terrains.RUBBLE) > 5);
         }
-        if (movementMode == EntityMovementMode.WHEELED
-                || (this instanceof QuadVee && convertingNow
-                        && ((QuadVee) this).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
-            return hex.containsTerrain(Terrains.WOODS)
-                    || hex.containsTerrain(Terrains.ROUGH)
-                    || hex.containsTerrain(Terrains.RUBBLE)
-                    || hex.containsTerrain(Terrains.MAGMA)
-                    || hex.containsTerrain(Terrains.JUNGLE)
-                    || (hex.terrainLevel(Terrains.SNOW) > 1)
-                    || (hex.terrainLevel(Terrains.GEYSER) == 2)
-                    || ((hex.terrainLevel(Terrains.WATER) > 0)
-                            && !hex.containsTerrain(Terrains.ICE)
-                            && convertingNow);
+        if (movementMode == EntityMovementMode.WHEELED ||
+                  (this instanceof QuadVee &&
+                         convertingNow &&
+                         ((QuadVee) this).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
+            return hex.containsTerrain(Terrains.WOODS) ||
+                         hex.containsTerrain(Terrains.ROUGH) ||
+                         hex.containsTerrain(Terrains.RUBBLE) ||
+                         hex.containsTerrain(Terrains.MAGMA) ||
+                         hex.containsTerrain(Terrains.JUNGLE) ||
+                         (hex.terrainLevel(Terrains.SNOW) > 1) ||
+                         (hex.terrainLevel(Terrains.GEYSER) == 2) ||
+                         ((hex.terrainLevel(Terrains.WATER) > 0) &&
+                                !hex.containsTerrain(Terrains.ICE) &&
+                                convertingNow);
         }
 
         // a swimming Mek (UMU) may not reach above the surface
-        if ((currElevation == -1) && hex.hasDepth1WaterOrDeeper()
-                && (hex.terrainLevel(Terrains.WATER) > 1) && !isProne()) {
+        if ((currElevation == -1) &&
+                  hex.hasDepth1WaterOrDeeper() &&
+                  (hex.terrainLevel(Terrains.WATER) > 1) &&
+                  !isProne()) {
             return true;
         }
 
-        return (hex.terrainLevel(Terrains.WOODS) > 2)
-                || (hex.terrainLevel(Terrains.JUNGLE) > 2);
+        return (hex.terrainLevel(Terrains.WOODS) > 2) || (hex.terrainLevel(Terrains.JUNGLE) > 2);
     }
 
     @Override
     public boolean isLocationDeadly(Coords c) {
         Hex hex = game.getBoard().getHex(c);
 
-        if (this.isIndustrial()
-                && !this.hasEnvironmentalSealing()
-                && (this.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                && hex.terrainLevel(Terrains.WATER) >= 2) {
+        if (this.isIndustrial() &&
+                  !this.hasEnvironmentalSealing() &&
+                  (this.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
+                  hex.terrainLevel(Terrains.WATER) >= 2) {
             return true;
         }
 
@@ -4288,18 +4249,22 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Get an '.mtf' file representation of the Mek. This string can be
-     * directly written to disk as a file and later loaded by the MtfFile class.
+     * Get an '.mtf' file representation of the Mek. This string can be directly written to disk as a file and later
+     * loaded by the MtfFile class.
      */
     public String getMtf() {
         StringBuilder sb = new StringBuilder();
         String newLine = "\n";
 
-        sb.append(MtfFile.GENERATOR).append(SuiteConstants.PROJECT_NAME)
-                .append(" ").append(SuiteConstants.VERSION).append(" on ").append(LocalDate.now()).append(newLine);
+        sb.append(MtfFile.GENERATOR)
+              .append(SuiteConstants.PROJECT_NAME)
+              .append(" ")
+              .append(SuiteConstants.VERSION)
+              .append(" on ")
+              .append(LocalDate.now())
+              .append(newLine);
 
-        boolean standard = (getCockpitType() == Mek.COCKPIT_STANDARD)
-                && (getGyroType() == Mek.GYRO_STANDARD);
+        boolean standard = (getCockpitType() == Mek.COCKPIT_STANDARD) && (getGyroType() == Mek.GYRO_STANDARD);
         sb.append(MtfFile.CHASSIS).append(chassis).append(newLine);
         if (!clanChassisName.isBlank()) {
             sb.append(MtfFile.CLAN_CHASSIS_NAME).append(clanChassisName).append(newLine);
@@ -4343,8 +4308,7 @@ public abstract class Mek extends Entity {
         if ((source != null) && !source.isBlank()) {
             sb.append(MtfFile.SOURCE).append(source).append(newLine);
         }
-        sb.append(MtfFile.RULES_LEVEL).append(
-                TechConstants.T_SIMPLE_LEVEL[techLevel]);
+        sb.append(MtfFile.RULES_LEVEL).append(TechConstants.T_SIMPLE_LEVEL[techLevel]);
         sb.append(newLine);
         if (hasRole()) {
             sb.append(MtfFile.ROLE).append(getRole().toString());
@@ -4352,17 +4316,23 @@ public abstract class Mek extends Entity {
         }
         sb.append(newLine);
 
-        getQuirks().getOptionsList().stream()
-                .filter(IOption::booleanValue)
-                .map(IBasicOption::getName)
-                .forEach(quirk -> sb.append(MtfFile.QUIRK).append(quirk).append(newLine));
+        getQuirks().getOptionsList()
+              .stream()
+              .filter(IOption::booleanValue)
+              .map(IBasicOption::getName)
+              .forEach(quirk -> sb.append(MtfFile.QUIRK).append(quirk).append(newLine));
 
         for (Mounted<?> equipment : getEquipment()) {
             for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
-                sb.append(MtfFile.WEAPON_QUIRK).append(weaponQuirk.getName()).append(":")
-                        .append(getLocationAbbr(equipment.getLocation())).append(":")
-                        .append(slotNumber(equipment)).append(":")
-                        .append(equipment.getType().getInternalName()).append(newLine);
+                sb.append(MtfFile.WEAPON_QUIRK)
+                      .append(weaponQuirk.getName())
+                      .append(":")
+                      .append(getLocationAbbr(equipment.getLocation()))
+                      .append(":")
+                      .append(slotNumber(equipment))
+                      .append(":")
+                      .append(equipment.getType().getInternalName())
+                      .append(newLine);
             }
         }
         sb.append(newLine);
@@ -4371,16 +4341,14 @@ public abstract class Mek extends Entity {
         sb.append(MtfFile.ENGINE);
         if (hasEngine()) {
             sb.append(getEngine().getEngineName())
-                    .append(" Engine")
-                    .append(!(getEngine().hasFlag(Engine.CLAN_ENGINE) && isMixedTech()) ? ("(IS)")
-                            : "");
+                  .append(" Engine")
+                  .append(!(getEngine().hasFlag(Engine.CLAN_ENGINE) && isMixedTech()) ? ("(IS)") : "");
         } else {
             sb.append("(none)");
         }
         sb.append(newLine);
         sb.append(MtfFile.STRUCTURE);
-        sb.append(EquipmentType.getStructureTypeName(getStructureType(),
-                TechConstants.isClan(structureTechLevel)));
+        sb.append(EquipmentType.getStructureTypeName(getStructureType(), TechConstants.isClan(structureTechLevel)));
         sb.append(newLine);
 
         sb.append(MtfFile.MYOMER);
@@ -4430,9 +4398,10 @@ public abstract class Mek extends Entity {
 
         sb.append(MtfFile.HEAT_SINKS).append(heatSinks()).append(" ");
         Optional<MiscType> heatSink = getMisc().stream()
-                .filter(m -> m.getType().hasFlag(MiscType.F_HEAT_SINK)
-                        || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK))
-                .map(Mounted::getType).findFirst();
+                                            .filter(m -> m.getType().hasFlag(MiscType.F_HEAT_SINK) ||
+                                                               m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK))
+                                            .map(Mounted::getType)
+                                            .findFirst();
         // If we didn't find any heat sinks we may have an ICE with no added sinks, or
         // prototype
         // doubles (which have a different flag). In the latter case, we want to put
@@ -4458,13 +4427,15 @@ public abstract class Mek extends Entity {
             sb.append(newLine);
         }
         for (Mounted<?> mounted : getMisc()) {
-            if ((mounted.getCriticals() == 0)
-                    && !mounted.getType().hasFlag(MiscType.F_CASE)
-                    && !EquipmentType.isArmorType(mounted.getType())
-                    && !EquipmentType.isStructureType(mounted.getType())) {
-                sb.append(MtfFile.NO_CRIT).append(mounted.getType().getInternalName())
-                        .append(":").append(getLocationAbbr(mounted.getLocation()))
-                        .append(newLine);
+            if ((mounted.getCriticals() == 0) &&
+                      !mounted.getType().hasFlag(MiscType.F_CASE) &&
+                      !EquipmentType.isArmorType(mounted.getType()) &&
+                      !EquipmentType.isStructureType(mounted.getType())) {
+                sb.append(MtfFile.NO_CRIT)
+                      .append(mounted.getType().getInternalName())
+                      .append(":")
+                      .append(getLocationAbbr(mounted.getLocation()))
+                      .append(newLine);
             }
         }
 
@@ -4475,8 +4446,11 @@ public abstract class Mek extends Entity {
         if (hasPatchworkArmor()) {
             sb.append(MtfFile.ARMOR).append(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK));
         } else {
-            sb.append(MtfFile.ARMOR).append(EquipmentType.getArmorTypeName(getArmorType(0)))
-                    .append("(").append(TechConstants.getTechName(getArmorTechLevel(0))).append(")");
+            sb.append(MtfFile.ARMOR)
+                  .append(EquipmentType.getArmorTypeName(getArmorType(0)))
+                  .append("(")
+                  .append(TechConstants.getTechName(getArmorTechLevel(0)))
+                  .append(")");
         }
         sb.append(newLine);
 
@@ -4486,9 +4460,11 @@ public abstract class Mek extends Entity {
             }
             sb.append(getLocationAbbr(element)).append(" ").append(MtfFile.ARMOR);
             if (hasPatchworkArmor()) {
-                sb.append(EquipmentType.getArmorTypeName(getArmorType(element), TechConstants.isClan(getArmorTechLevel(element))))
-                        .append('(').append(TechConstants.getTechName(getArmorTechLevel(element)))
-                        .append("):");
+                sb.append(EquipmentType.getArmorTypeName(getArmorType(element),
+                            TechConstants.isClan(getArmorTechLevel(element))))
+                      .append('(')
+                      .append(TechConstants.getTechName(getArmorTechLevel(element)))
+                      .append("):");
             }
             sb.append(getOArmor(element, false)).append(newLine);
         }
@@ -4500,8 +4476,7 @@ public abstract class Mek extends Entity {
 
         sb.append("Weapons:").append(weaponList.size()).append(newLine);
         for (Mounted<?> m : weaponList) {
-            sb.append(m.getName()).append(", ")
-                    .append(getLocationName(m.getLocation())).append(newLine);
+            sb.append(m.getName()).append(", ").append(getLocationName(m.getLocation())).append(newLine);
         }
         sb.append(newLine);
         for (int l : MtfFile.locationOrder) {
@@ -4513,8 +4488,7 @@ public abstract class Mek extends Entity {
             sb.append(newLine);
             for (int y = 0; y < 12; y++) {
                 if (y < getNumberOfCriticals(l)) {
-                    sb.append(decodeCritical(getCritical(l, y)))
-                            .append(newLine);
+                    sb.append(decodeCritical(getCritical(l, y))).append(newLine);
                 } else {
                     sb.append(MtfFile.EMPTY).append(newLine);
                 }
@@ -4612,10 +4586,10 @@ public abstract class Mek extends Entity {
 
         StringBuilder toReturn = new StringBuilder();
         if (type == CriticalSlot.TYPE_SYSTEM) {
-            if ((getRawSystemName(index).contains("Upper"))
-                    || (getRawSystemName(index).contains("Lower"))
-                    || (getRawSystemName(index).contains("Hand"))
-                    || (getRawSystemName(index).contains("Foot"))) {
+            if ((getRawSystemName(index).contains("Upper")) ||
+                      (getRawSystemName(index).contains("Lower")) ||
+                      (getRawSystemName(index).contains("Hand")) ||
+                      (getRawSystemName(index).contains("Foot"))) {
                 toReturn.append(getRawSystemName(index)).append(" Actuator");
             } else if (getRawSystemName(index).contains("Engine")) {
                 toReturn.append("Fusion ").append(getRawSystemName(index));
@@ -4629,8 +4603,7 @@ public abstract class Mek extends Entity {
             if (cs.getMount2() != null) {
                 toReturn.append("|").append(cs.getMount2().getType().getInternalName());
             }
-            if ((m.getType() instanceof WeaponType)
-                    && m.getType().hasFlag(WeaponType.F_VGL)) {
+            if ((m.getType() instanceof WeaponType) && m.getType().hasFlag(WeaponType.F_VGL)) {
                 switch (m.getFacing()) {
                     case 1:
                         toReturn.append(" (FR)");
@@ -4673,9 +4646,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Add the critical slots necessary for a standard cockpit. Note: This is
-     * part of the mek creation public API, and might not be referenced by any
-     * MegaMek code.
+     * Add the critical slots necessary for a standard cockpit. Note: This is part of the mek creation public API, and
+     * might not be referenced by any MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -4683,16 +4655,11 @@ public abstract class Mek extends Entity {
         if (getEmptyCriticals(LOC_HEAD) < 5) {
             return false;
         }
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         if (isSuperHeavy()) {
             if (this instanceof TripodMek) {
                 setCockpitType(isIndustrial() ? COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL : COCKPIT_SUPERHEAVY_TRIPOD);
@@ -4711,9 +4678,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Add the critical slots necessary for an industrial cockpit. Note: This is
-     * part of the mek creation public API, and might not be referenced by any
-     * MegaMek code.
+     * Add the critical slots necessary for an industrial cockpit. Note: This is part of the mek creation public API,
+     * and might not be referenced by any MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -4721,24 +4687,18 @@ public abstract class Mek extends Entity {
         if (getEmptyCriticals(LOC_HEAD) < 5) {
             return false;
         }
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         setCockpitType(COCKPIT_INDUSTRIAL);
         return true;
     }
 
     /**
-     * Add the critical slots necessary for an industrial cockpit. Note: This is
-     * part of the mek creation public API, and might not be referenced by any
-     * MegaMek code.
+     * Add the critical slots necessary for an industrial cockpit. Note: This is part of the mek creation public API,
+     * and might not be referenced by any MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -4746,24 +4706,18 @@ public abstract class Mek extends Entity {
         if (getEmptyCriticals(LOC_HEAD) < 5) {
             return false;
         }
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         setCockpitType(COCKPIT_PRIMITIVE);
         return true;
     }
 
     /**
-     * Add the critical slots necessary for an industrial primitive cockpit.
-     * Note: This is part of the mek creation public API, and might not be
-     * referenced by any MegaMek code.
+     * Add the critical slots necessary for an industrial primitive cockpit. Note: This is part of the mek creation
+     * public API, and might not be referenced by any MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -4771,24 +4725,18 @@ public abstract class Mek extends Entity {
         if (getEmptyCriticals(LOC_HEAD) < 5) {
             return false;
         }
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         setCockpitType(COCKPIT_PRIMITIVE_INDUSTRIAL);
         return true;
     }
 
     /**
-     * Add the critical slots necessary for a small cockpit. Note: This is part
-     * of the mek creation public API, and might not be referenced by any
-     * MegaMek code.
+     * Add the critical slots necessary for a small cockpit. Note: This is part of the mek creation public API, and
+     * might not be referenced by any MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -4796,22 +4744,17 @@ public abstract class Mek extends Entity {
         if (getEmptyCriticals(LOC_HEAD) < 4) {
             return false;
         }
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
         setCockpitType(COCKPIT_SMALL);
         return true;
     }
 
     /**
-     * Add the critical slots necessary for a small cockpit. Note: This is part
-     * of the mek creation public API, and might not be referenced by any
-     * MegaMek code.
+     * Add the critical slots necessary for a small cockpit. Note: This is part of the mek creation public API, and
+     * might not be referenced by any MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -4819,69 +4762,45 @@ public abstract class Mek extends Entity {
         if (getEmptyCriticals(LOC_HEAD) < 6) {
             return false;
         }
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         setCockpitType(COCKPIT_INTERFACE);
         return true;
     }
 
     public boolean addCommandConsole() {
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         setCockpitType(COCKPIT_COMMAND_CONSOLE);
         return true;
     }
 
     public boolean addQuadVeeCockpit() {
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         setCockpitType(COCKPIT_QUADVEE);
         return true;
     }
 
     public boolean addDualCockpit() {
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         setCockpitType(COCKPIT_DUAL);
         return true;
     }
@@ -4890,33 +4809,22 @@ public abstract class Mek extends Entity {
         if (getEmptyCriticals(LOC_HEAD) < 5) {
             return false;
         }
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         setCockpitType(COCKPIT_SUPERHEAVY_INDUSTRIAL);
         return true;
     }
 
     public boolean addSuperheavyCommandConsole() {
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         setCockpitType(COCKPIT_SUPERHEAVY_COMMAND_CONSOLE);
         return true;
     }
@@ -4927,26 +4835,21 @@ public abstract class Mek extends Entity {
         if (getEmptyCriticals(LOC_HEAD) < 5) {
             return false;
         }
-        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LIFE_SUPPORT));
-        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
-        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_COCKPIT));
-        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
         setCockpitType(COCKPIT_SMALL_COMMAND_CONSOLE);
         return true;
     }
 
     /**
-     * Add the critical slots necessary for a torso-mounted cockpit. Note: This
-     * is part of the mek creation public API, and might not be referenced by
-     * any MegaMek code.
+     * Add the critical slots necessary for a torso-mounted cockpit. Note: This is part of the mek creation public API,
+     * and might not be referenced by any MegaMek code.
      *
      * @param vrpp if this is a VRPP rather than a standard torso-mounted cockpit
+     *
      * @return false if insufficient critical space
      */
     public boolean addTorsoMountedCockpit(boolean vrpp) {
@@ -4954,34 +4857,30 @@ public abstract class Mek extends Entity {
         if (getEmptyCriticals(LOC_HEAD) < 2) {
             success = false;
         } else {
-            addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_SENSORS));
-            addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_SENSORS));
+            addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
         }
 
         if ((getEmptyCriticals(LOC_CT) < 2) || !success) {
             success = false;
         } else {
-            addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
-                    CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+            addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
             if (vrpp) {
-                addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+                addCritical(LOC_CT,
+                      getFirstEmptyCrit(LOC_CT),
+                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
             } else {
-                addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+                addCritical(LOC_CT,
+                      getFirstEmptyCrit(LOC_CT),
+                      new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
             }
         }
 
-        if ((getEmptyCriticals(LOC_LT) < 1) || (getEmptyCriticals(LOC_RT) < 1)
-                || !success) {
+        if ((getEmptyCriticals(LOC_LT) < 1) || (getEmptyCriticals(LOC_RT) < 1) || !success) {
             success = false;
         } else {
-            addCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_LIFE_SUPPORT));
-            addCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_LIFE_SUPPORT));
+            addCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            addCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         }
 
         if (success) {
@@ -5032,18 +4931,18 @@ public abstract class Mek extends Entity {
      * Determines which crew slot is associated with a particular cockpit critical.
      *
      * @param cs A cockpit critical slot
-     * @return The crew slot index associated with this critical slot, or -1 to
-     *         indicate the entire crew.
+     *
+     * @return The crew slot index associated with this critical slot, or -1 to indicate the entire crew.
      */
     public int getCrewForCockpitSlot(int loc, CriticalSlot cs) {
         // For those with split cockpits, count the cockpit criticals in the location
         // until we reach the correct
         // one.
-        if (getCockpitType() == COCKPIT_COMMAND_CONSOLE
-                || getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE
-                || getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE
-                || getCockpitType() == COCKPIT_DUAL
-                || getCockpitType() == COCKPIT_QUADVEE) {
+        if (getCockpitType() == COCKPIT_COMMAND_CONSOLE ||
+                  getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE ||
+                  getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE ||
+                  getCockpitType() == COCKPIT_DUAL ||
+                  getCockpitType() == COCKPIT_QUADVEE) {
             int crewSlot = 0;
             for (int i = 0; i < getNumberOfCriticals(loc); i++) {
                 if (getCritical(loc, i) == cs) {
@@ -5058,18 +4957,17 @@ public abstract class Mek extends Entity {
 
     @Override
     public boolean hasCommandConsoleBonus() {
-        return ((getCockpitType() == COCKPIT_COMMAND_CONSOLE)
-                || (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE)
-                || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE))
-                && getCrew().hasActiveCommandConsole()
-                && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
-                && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));
+        return ((getCockpitType() == COCKPIT_COMMAND_CONSOLE) ||
+                      (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) ||
+                      (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE)) &&
+                     getCrew().hasActiveCommandConsole() &&
+                     getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY &&
+                     (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));
     }
 
     /**
-     * Add the critical slots necessary for a standard gyro. Also set the gyro
-     * type variable. Note: This is part of the mek creation public API, and
-     * might not be referenced by any MegaMek code.
+     * Add the critical slots necessary for a standard gyro. Also set the gyro type variable. Note: This is part of the
+     * mek creation public API, and might not be referenced by any MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -5079,10 +4977,8 @@ public abstract class Mek extends Entity {
         }
         addCompactGyro();
         if (!isSuperHeavy()) {
-            addCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_GYRO));
-            addCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_GYRO));
+            addCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            addCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
             setGyroType(GYRO_STANDARD);
         } else {
             setGyroType(GYRO_SUPERHEAVY);
@@ -5091,9 +4987,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Add the critical slots necessary for a standard gyro. Also set the gyro
-     * type variable. Note: This is part of the mek creation public API, and
-     * might not be referenced by any MegaMek code.
+     * Add the critical slots necessary for a standard gyro. Also set the gyro type variable. Note: This is part of the
+     * mek creation public API, and might not be referenced by any MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -5101,23 +4996,19 @@ public abstract class Mek extends Entity {
         if (getEmptyCriticals(LOC_CT) < 2) {
             return false;
         }
-        addCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_GYRO));
+        addCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         if (getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
-            addCritical(LOC_CT, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_GYRO));
+            addCritical(LOC_CT, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         } else {
-            addCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_GYRO));
+            addCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         }
         setGyroType(GYRO_SUPERHEAVY);
         return true;
     }
 
     /**
-     * Add the critical slots necessary for a compact gyro. Also set the gyro
-     * type variable. Note: This is part of the mek creation public API, and
-     * might not be referenced by any MegaMek code.
+     * Add the critical slots necessary for a compact gyro. Also set the gyro type variable. Note: This is part of the
+     * mek creation public API, and might not be referenced by any MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -5125,18 +5016,15 @@ public abstract class Mek extends Entity {
         if (getEmptyCriticals(LOC_CT) < 2) {
             return false;
         }
-        addCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_GYRO));
-        addCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_GYRO));
+        addCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        addCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         setGyroType(GYRO_COMPACT);
         return true;
     }
 
     /**
-     * Add the critical slots necessary for an extra-light gyro. Also set the
-     * gyro type variable. Note: This is part of the mek creation public API,
-     * and might not be referenced by any MegaMek code.
+     * Add the critical slots necessary for an extra-light gyro. Also set the gyro type variable. Note: This is part of
+     * the mek creation public API, and might not be referenced by any MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -5146,10 +5034,8 @@ public abstract class Mek extends Entity {
         }
         clearEngineCrits();
         addGyro();
-        addCritical(LOC_CT, 7, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_GYRO));
-        addCritical(LOC_CT, 8, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_GYRO));
+        addCritical(LOC_CT, 7, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        addCritical(LOC_CT, 8, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         setGyroType(GYRO_XL);
         addEngineCrits();
 
@@ -5157,9 +5043,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Add the critical slots necessary for a heavy-duty gyro. Also set the gyro
-     * type variable. Note: This is part of the mek creation public API, and
-     * might not be referenced by any MegaMek code.
+     * Add the critical slots necessary for a heavy-duty gyro. Also set the gyro type variable. Note: This is part of
+     * the mek creation public API, and might not be referenced by any MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -5172,10 +5057,9 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Add the critical slots necessary for the mek's engine. Calling this
-     * method before setting a mek's engine object will result in a NPE. Note:
-     * This is part of the mek creation public API, and might not be referenced
-     * by any MegaMek code.
+     * Add the critical slots necessary for the mek's engine. Calling this method before setting a mek's engine object
+     * will result in a NPE. Note: This is part of the mek creation public API, and might not be referenced by any
+     * MegaMek code.
      *
      * @return false if insufficient critical space
      */
@@ -5190,20 +5074,18 @@ public abstract class Mek extends Entity {
             success = false;
         } else {
             for (int centerSlot : centerSlots) {
-                addCritical(LOC_CT, centerSlot, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+                addCritical(LOC_CT, centerSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
             }
         }
         int[] sideSlots = getEngine().getSideTorsoCriticalSlots();
-        if ((getEmptyCriticals(LOC_LT) < sideSlots.length)
-                || (getEmptyCriticals(LOC_RT) < sideSlots.length) || !success) {
+        if ((getEmptyCriticals(LOC_LT) < sideSlots.length) ||
+                  (getEmptyCriticals(LOC_RT) < sideSlots.length) ||
+                  !success) {
             success = false;
         } else {
             for (int sideSlot : sideSlots) {
-                addCritical(LOC_LT, sideSlot, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-                addCritical(LOC_RT, sideSlot, new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+                addCritical(LOC_LT, sideSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+                addCritical(LOC_RT, sideSlot, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
             }
         }
 
@@ -5211,8 +5093,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Remove all engine critical slots from the mek. Note: This is part of the
-     * mek creation public API, and might not be referenced by any MegaMek code.
+     * Remove all engine critical slots from the mek. Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
      */
     public void clearEngineCrits() {
         for (int i = 0; i < locations(); i++) {
@@ -5221,8 +5103,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Remove all cockpit critical slots from the mek. Note: This is part of the
-     * mek creation public API, and might not be referenced by any MegaMek code.
+     * Remove all cockpit critical slots from the mek. Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
      */
     public void clearCockpitCrits() {
         for (int i = 0; i < locations(); i++) {
@@ -5233,13 +5115,12 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Remove all gyro critical slots from the mek. Note: This is part of the
-     * mek creation public API, and might not be referenced by any MegaMek code.
+     * Remove all gyro critical slots from the mek. Note: This is part of the mek creation public API, and might not be
+     * referenced by any MegaMek code.
      */
     public void clearGyroCrits() {
         for (int i = 0; i < locations(); i++) {
-            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_GYRO));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         }
     }
 
@@ -5250,26 +5131,22 @@ public abstract class Mek extends Entity {
                 case Mek.LOC_CT:
                 case Mek.LOC_HEAD:
                     if (hasActiveShield(Mek.LOC_RARM)) {
-                        damageAbsorption = getAbsorptionRate(Mek.LOC_RARM,
-                                damageAbsorption);
+                        damageAbsorption = getAbsorptionRate(Mek.LOC_RARM, damageAbsorption);
                     }
                     if (hasActiveShield(Mek.LOC_LARM)) {
-                        damageAbsorption = getAbsorptionRate(Mek.LOC_LARM,
-                                damageAbsorption);
+                        damageAbsorption = getAbsorptionRate(Mek.LOC_LARM, damageAbsorption);
                     }
                     break;
                 case Mek.LOC_LARM:
                 case Mek.LOC_LT:
                 case Mek.LOC_LLEG:
                     if (hasActiveShield(Mek.LOC_LARM)) {
-                        damageAbsorption = getAbsorptionRate(Mek.LOC_LARM,
-                                damageAbsorption);
+                        damageAbsorption = getAbsorptionRate(Mek.LOC_LARM, damageAbsorption);
                     }
                     break;
                 default:
                     if (hasActiveShield(Mek.LOC_RARM)) {
-                        damageAbsorption = getAbsorptionRate(Mek.LOC_RARM,
-                                damageAbsorption);
+                        damageAbsorption = getAbsorptionRate(Mek.LOC_RARM, damageAbsorption);
                     }
                     break;
             }
@@ -5280,15 +5157,13 @@ public abstract class Mek extends Entity {
                 case Mek.LOC_LARM:
                 case Mek.LOC_LT:
                     if (hasPassiveShield(Mek.LOC_LARM)) {
-                        damageAbsorption = getAbsorptionRate(Mek.LOC_LARM,
-                                damageAbsorption);
+                        damageAbsorption = getAbsorptionRate(Mek.LOC_LARM, damageAbsorption);
                     }
                     break;
                 case Mek.LOC_RARM:
                 case Mek.LOC_RT:
                     if (hasPassiveShield(Mek.LOC_RARM)) {
-                        damageAbsorption = getAbsorptionRate(Mek.LOC_RARM,
-                                damageAbsorption);
+                        damageAbsorption = getAbsorptionRate(Mek.LOC_RARM, damageAbsorption);
                     }
                     break;
                 default:
@@ -5299,14 +5174,12 @@ public abstract class Mek extends Entity {
             switch (location) {
                 case Mek.LOC_LARM:
                     if (hasNoDefenseShield(Mek.LOC_LARM)) {
-                        damageAbsorption = getAbsorptionRate(Mek.LOC_LARM,
-                                damageAbsorption);
+                        damageAbsorption = getAbsorptionRate(Mek.LOC_LARM, damageAbsorption);
                     }
                     break;
                 case Mek.LOC_RARM:
                     if (hasNoDefenseShield(Mek.LOC_RARM)) {
-                        damageAbsorption = getAbsorptionRate(Mek.LOC_RARM,
-                                damageAbsorption);
+                        damageAbsorption = getAbsorptionRate(Mek.LOC_RARM, damageAbsorption);
                     }
                     break;
                 default:
@@ -5357,14 +5230,15 @@ public abstract class Mek extends Entity {
     /**
      * Does this Mek have an undamaged HarJel system in this location?
      *
-     * @param loc
-     *            the <code>int</code> location to check
+     * @param loc the <code>int</code> location to check
+     *
      * @return a <code>boolean</code> value indicating a present HarJel system
      */
     public boolean hasHarJelIIIn(int loc) {
         for (Mounted<?> mounted : getMisc()) {
-            if ((mounted.getLocation() == loc) && mounted.isReady()
-                    && (mounted.getType().hasFlag(MiscType.F_HARJEL_II))) {
+            if ((mounted.getLocation() == loc) &&
+                      mounted.isReady() &&
+                      (mounted.getType().hasFlag(MiscType.F_HARJEL_II))) {
                 return true;
             }
         }
@@ -5374,14 +5248,15 @@ public abstract class Mek extends Entity {
     /**
      * Does this Mek have an undamaged HarJel system in this location?
      *
-     * @param loc
-     *            the <code>int</code> location to check
+     * @param loc the <code>int</code> location to check
+     *
      * @return a <code>boolean</code> value indicating a present HarJel system
      */
     public boolean hasHarJelIIIIn(int loc) {
         for (Mounted<?> mounted : getMisc()) {
-            if ((mounted.getLocation() == loc) && mounted.isReady()
-                    && (mounted.getType().hasFlag(MiscType.F_HARJEL_III))) {
+            if ((mounted.getLocation() == loc) &&
+                      mounted.isReady() &&
+                      (mounted.getType().hasFlag(MiscType.F_HARJEL_III))) {
                 return true;
             }
         }
@@ -5419,8 +5294,7 @@ public abstract class Mek extends Entity {
         // For normal grapples, neither unit can move
         // If the grapple is caused by a chain whip, then the attacker can move
         // (this breaks the grapple), TO pg 289
-        if ((grappled_id != Entity.NONE)
-                && (!isChainWhipGrappled() || !isGrappleAttacker())) {
+        if ((grappled_id != Entity.NONE) && (!isChainWhipGrappled() || !isGrappleAttacker())) {
             return false;
         }
         return super.isEligibleForMovement();
@@ -5449,8 +5323,7 @@ public abstract class Mek extends Entity {
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
         if (game != null && locationIsLeg(loc) && canFall()) {
-            game.addPSR(new PilotingRollData(getId(),
-                    TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
+            game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }
     }
 
@@ -5470,9 +5343,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * How many times TacOps coolant failure has occurred, which is also the
-     * reduction in heat
-     * sinking capacity
+     * How many times TacOps coolant failure has occurred, which is also the reduction in heat sinking capacity
      */
     @Override
     public int getCoolantFailureAmount() {
@@ -5522,8 +5393,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * set if this Mek just moved into water that would kill it because of the
-     * lack of environmental sealing
+     * set if this Mek just moved into water that would kill it because of the lack of environmental sealing
      *
      * @param moved
      */
@@ -5532,8 +5402,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * did this Mek just moved into water that would kill it because we lack
-     * environmental sealing?
+     * did this Mek just moved into water that would kill it because we lack environmental sealing?
      *
      * @return
      */
@@ -5542,9 +5411,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * should this Mek die at the end of turn because it's an IndustrialMek
-     * without environmental sealing that moved into water last round and stayed
-     * there?
+     * should this Mek die at the end of turn because it's an IndustrialMek without environmental sealing that moved
+     * into water last round and stayed there?
      *
      * @return
      */
@@ -5553,9 +5421,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * set if this Mek should die at the end of turn because it's an IndustrialMek
-     * without environmental sealing that moved into water last round and stayed
-     * there?
+     * set if this Mek should die at the end of turn because it's an IndustrialMek without environmental sealing that
+     * moved into water last round and stayed there?
      *
      * @param moved
      */
@@ -5564,8 +5431,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Set if this Mek's ICE Engine is stalled or not should only be used for
-     * industrial Meks carrying an ICE engine
+     * Set if this Mek's ICE Engine is stalled or not should only be used for industrial Meks carrying an ICE engine
      *
      * @param stalled
      */
@@ -5587,8 +5453,10 @@ public abstract class Mek extends Entity {
     @Override
     public Vector<Report> doCheckEngineStallRoll(Vector<Report> vPhaseReport) {
         if (hasEngine() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
-            vPhaseReport
-                    .add(Report.subjectReport(2280, getId()).addDesc(this).add(1).add("ICE-Engine Mek failed a PSR"));
+            vPhaseReport.add(Report.subjectReport(2280, getId())
+                                   .addDesc(this)
+                                   .add(1)
+                                   .add("ICE-Engine Mek failed a PSR"));
 
             // Stall check is made against unmodified Piloting skill...
             PilotingRollData psr = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
@@ -5618,8 +5486,10 @@ public abstract class Mek extends Entity {
     @Override
     public void checkUnstall(Vector<Report> vPhaseReport) {
         if (stalled && !stalledThisTurn && hasEngine() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
-            vPhaseReport
-                    .add(Report.subjectReport(2280, getId()).addDesc(this).add(1).add("unstall stalled ICE engine"));
+            vPhaseReport.add(Report.subjectReport(2280, getId())
+                                   .addDesc(this)
+                                   .add(1)
+                                   .add("unstall stalled ICE engine"));
 
             // Unstall check is made against unmodified Piloting skill...
             PilotingRollData psr = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
@@ -5648,8 +5518,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public boolean isPrimitive() {
-        return (getCockpitType() == Mek.COCKPIT_PRIMITIVE)
-                || (getCockpitType() == Mek.COCKPIT_PRIMITIVE_INDUSTRIAL);
+        return (getCockpitType() == Mek.COCKPIT_PRIMITIVE) || (getCockpitType() == Mek.COCKPIT_PRIMITIVE_INDUSTRIAL);
     }
 
     private int getFirstEmptyCrit(int Location) {
@@ -5663,13 +5532,11 @@ public abstract class Mek extends Entity {
 
     public boolean hasArmoredCockpit() {
 
-        int location = getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED ? Mek.LOC_CT
-                : Mek.LOC_HEAD;
+        int location = getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED ? Mek.LOC_CT : Mek.LOC_HEAD;
 
         for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
             CriticalSlot cs = getCritical(location, slot);
-            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                    && (cs.getIndex() == Mek.SYSTEM_COCKPIT)) {
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mek.SYSTEM_COCKPIT)) {
                 return cs.isArmored();
             }
         }
@@ -5680,8 +5547,7 @@ public abstract class Mek extends Entity {
     public boolean hasArmoredGyro() {
         for (int slot = 0; slot < getNumberOfCriticals(LOC_CT); slot++) {
             CriticalSlot cs = getCritical(LOC_CT, slot);
-            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                    && (cs.getIndex() == Mek.SYSTEM_GYRO)) {
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mek.SYSTEM_GYRO)) {
                 return cs.isArmored();
             }
         }
@@ -5693,8 +5559,7 @@ public abstract class Mek extends Entity {
     public boolean hasArmoredEngine() {
         for (int slot = 0; slot < getNumberOfCriticals(LOC_CT); slot++) {
             CriticalSlot cs = getCritical(LOC_CT, slot);
-            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                    && (cs.getIndex() == Mek.SYSTEM_ENGINE)) {
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mek.SYSTEM_ENGINE)) {
                 return cs.isArmored();
             }
         }
@@ -5702,9 +5567,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * should this Mek check for a critical hit at the end of turn due to being
-     * an industrial Mek and having been the target of a successful physical
-     * attack or for falling
+     * should this Mek check for a critical hit at the end of turn due to being an industrial Mek and having been the
+     * target of a successful physical attack or for falling
      */
     public boolean isCheckForCrit() {
         return checkForCrit;
@@ -5731,6 +5595,7 @@ public abstract class Mek extends Entity {
      * Is the passed in location an arm?
      *
      * @param loc
+     *
      * @return
      */
     public boolean isArm(int loc) {
@@ -5743,15 +5608,13 @@ public abstract class Mek extends Entity {
         // all equipment gets 5% of BV cost per slot, or a flat +5 per slot
         // if BV is 0
         for (Mounted<?> mount : getEquipment()) {
-            if (!mount.isArmored()
-                    || ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PPC_CAPACITOR))) {
+            if (!mount.isArmored() ||
+                      ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PPC_CAPACITOR))) {
                 continue;
             }
             double mountBv = mount.getType().getBV(this);
-            if ((mount.getType() instanceof PPCWeapon)
-                    && (mount.getLinkedBy() != null)) {
-                mountBv += ((MiscType) mount.getLinkedBy().getType()).getBV(
-                        this, mount);
+            if ((mount.getType() instanceof PPCWeapon) && (mount.getLinkedBy() != null)) {
+                mountBv += ((MiscType) mount.getLinkedBy().getType()).getBV(this, mount);
                 bv += mountBv * 0.05 * (mount.getCriticals() + 1);
             } else if (mountBv > 0) {
                 bv += mountBv * 0.05 * mount.getCriticals();
@@ -5763,8 +5626,7 @@ public abstract class Mek extends Entity {
         for (int location = 0; location < locations(); location++) {
             for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
                 CriticalSlot cs = getCritical(location, slot);
-                if ((cs != null) && cs.isArmored()
-                        && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                if ((cs != null) && cs.isArmored() && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     // gyro is the only system that has it's own BV
                     if ((cs.getIndex() == Mek.SYSTEM_GYRO)) {
                         bv += getWeight() * getGyroMultiplier() * 0.05;
@@ -5808,8 +5670,7 @@ public abstract class Mek extends Entity {
     public abstract boolean hasMPReducingHardenedArmor();
 
     /**
-     * @return The MP reduction due to hardened armor on this unit; 1 if it has HA,
-     *         0 if not.
+     * @return The MP reduction due to hardened armor on this unit; 1 if it has HA, 0 if not.
      */
     protected int hardenedArmorMPReduction() {
         return hasMPReducingHardenedArmor() ? 1 : 0;
@@ -5818,18 +5679,14 @@ public abstract class Mek extends Entity {
     @Override
     public int getEngineHits() {
         int engineHits = 0;
-        engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                Mek.SYSTEM_ENGINE, Mek.LOC_CT);
-        engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                Mek.SYSTEM_ENGINE, Mek.LOC_RT);
-        engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                Mek.SYSTEM_ENGINE, Mek.LOC_LT);
+        engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_CT);
+        engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_RT);
+        engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_LT);
         return engineHits;
     }
 
     public int getGyroHits() {
-        return getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                Mek.LOC_CT);
+        return getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CT);
     }
 
     @Override
@@ -5862,9 +5719,8 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if (hasSystem(SYSTEM_LIFE_SUPPORT, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        SYSTEM_LIFE_SUPPORT, loc) > 0)) {
+        if (hasSystem(SYSTEM_LIFE_SUPPORT, loc) &&
+                  (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5872,9 +5728,8 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if (hasSystem(SYSTEM_SENSORS, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        SYSTEM_SENSORS, loc) > 0)) {
+        if (hasSystem(SYSTEM_SENSORS, loc) &&
+                  (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5882,9 +5737,8 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if (hasSystem(SYSTEM_COCKPIT, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        SYSTEM_COCKPIT, loc) > 0)) {
+        if (hasSystem(SYSTEM_COCKPIT, loc) &&
+                  (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5892,9 +5746,8 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if (hasSystem(ACTUATOR_SHOULDER, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        ACTUATOR_SHOULDER, loc) > 0)) {
+        if (hasSystem(ACTUATOR_SHOULDER, loc) &&
+                  (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5902,9 +5755,8 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if (hasSystem(ACTUATOR_UPPER_ARM, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        ACTUATOR_UPPER_ARM, loc) > 0)) {
+        if (hasSystem(ACTUATOR_UPPER_ARM, loc) &&
+                  (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5912,9 +5764,8 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if (hasSystem(ACTUATOR_LOWER_ARM, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        ACTUATOR_LOWER_ARM, loc) > 0)) {
+        if (hasSystem(ACTUATOR_LOWER_ARM, loc) &&
+                  (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5922,9 +5773,7 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if (hasSystem(ACTUATOR_HAND, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        ACTUATOR_HAND, loc) > 0)) {
+        if (hasSystem(ACTUATOR_HAND, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5932,9 +5781,7 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if (hasSystem(ACTUATOR_HIP, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP,
-                        loc) > 0)) {
+        if (hasSystem(ACTUATOR_HIP, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5942,9 +5789,8 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if (hasSystem(ACTUATOR_UPPER_LEG, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        ACTUATOR_UPPER_LEG, loc) > 0)) {
+        if (hasSystem(ACTUATOR_UPPER_LEG, loc) &&
+                  (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5952,9 +5798,8 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if (hasSystem(ACTUATOR_LOWER_LEG, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        ACTUATOR_LOWER_LEG, loc) > 0)) {
+        if (hasSystem(ACTUATOR_LOWER_LEG, loc) &&
+                  (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5962,9 +5807,7 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if (hasSystem(ACTUATOR_FOOT, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        ACTUATOR_FOOT, loc) > 0)) {
+        if (hasSystem(ACTUATOR_FOOT, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5972,10 +5815,9 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if ((getEntityType() & ETYPE_QUADVEE) != 0
-                && hasSystem(QuadVee.SYSTEM_CONVERSION_GEAR, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        QuadVee.SYSTEM_CONVERSION_GEAR, loc) > 0)) {
+        if ((getEntityType() & ETYPE_QUADVEE) != 0 &&
+                  hasSystem(QuadVee.SYSTEM_CONVERSION_GEAR, loc) &&
+                  (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, QuadVee.SYSTEM_CONVERSION_GEAR, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5983,10 +5825,9 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if ((getEntityType() & ETYPE_LAND_AIR_MEK) != 0
-                && hasSystem(LandAirMek.LAM_AVIONICS, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        LandAirMek.LAM_AVIONICS, loc) > 0)) {
+        if ((getEntityType() & ETYPE_LAND_AIR_MEK) != 0 &&
+                  hasSystem(LandAirMek.LAM_AVIONICS, loc) &&
+                  (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -5994,10 +5835,9 @@ public abstract class Mek extends Entity {
             first = false;
         }
 
-        if ((getEntityType() & ETYPE_LAND_AIR_MEK) != 0
-                && hasSystem(LandAirMek.LAM_LANDING_GEAR, loc)
-                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        LandAirMek.LAM_LANDING_GEAR, loc) > 0)) {
+        if ((getEntityType() & ETYPE_LAND_AIR_MEK) != 0 &&
+                  hasSystem(LandAirMek.LAM_LANDING_GEAR, loc) &&
+                  (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
@@ -6048,9 +5888,8 @@ public abstract class Mek extends Entity {
         if (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, LOC_HEAD) > 1) {
             // If the cockpit isn't torso-mounted, we're done; if it is, we
             // need to look at the CT sensor slot as well.
-            if ((getCockpitType() != COCKPIT_TORSO_MOUNTED)
-                    || (getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                            SYSTEM_SENSORS, LOC_CT) > 0)) {
+            if ((getCockpitType() != COCKPIT_TORSO_MOUNTED) ||
+                      (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, LOC_CT) > 0)) {
                 logger.debug(getDisplayName() + " CRIPPLED: Sensors destroyed.");
                 return true;
             }
@@ -6083,16 +5922,13 @@ public abstract class Mek extends Entity {
 
     private int countInternalDamagedTorsos() {
         int count = 0;
-        if ((getOInternal(LOC_CT) > getInternal(LOC_CT))
-                && (getArmor(LOC_CT) < 1)) {
+        if ((getOInternal(LOC_CT) > getInternal(LOC_CT)) && (getArmor(LOC_CT) < 1)) {
             count++;
         }
-        if ((getOInternal(LOC_LT) > getInternal(LOC_LT))
-                && (getArmor(LOC_LT) < 1)) {
+        if ((getOInternal(LOC_LT) > getInternal(LOC_LT)) && (getArmor(LOC_LT) < 1)) {
             count++;
         }
-        if ((getOInternal(LOC_RT) > getInternal(LOC_RT))
-                && (getArmor(LOC_RT) < 1)) {
+        if ((getOInternal(LOC_RT) > getInternal(LOC_RT)) && (getArmor(LOC_RT) < 1)) {
             count++;
         }
         return count;
@@ -6135,8 +5971,7 @@ public abstract class Mek extends Entity {
         // escapable, although technically they still have as much MP as foot infantry
         // which
         // can escape. We could also consider creating options to control this.
-        if (((this instanceof BipedMek) && (legsDestroyed > 0))
-                || (legsDestroyed > 1) || (hipHits > 0)) {
+        if (((this instanceof BipedMek) && (legsDestroyed > 0)) || (legsDestroyed > 1) || (hipHits > 0)) {
             return false;
         }
         return super.canEscape();
@@ -6310,8 +6145,7 @@ public abstract class Mek extends Entity {
     @Override
     public int getInternal(int loc) {
         if (isLocationBlownOff(loc)) {
-            return isLocationBlownOffThisPhase(loc) ? IArmorState.ARMOR_DOOMED
-                    : IArmorState.ARMOR_DESTROYED;
+            return isLocationBlownOffThisPhase(loc) ? IArmorState.ARMOR_DOOMED : IArmorState.ARMOR_DESTROYED;
         }
         return super.getInternal(loc);
     }
@@ -6328,15 +6162,16 @@ public abstract class Mek extends Entity {
 
     @Override
     public boolean isEjectionPossible() {
-        return (getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)
-                && getCrew().isActive() && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+        return (getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) &&
+                     getCrew().isActive() &&
+                     !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 
     /**
      * Check to see if a Mek has a claw in one of its arms
      *
-     * @param location
-     *                 (LOC_RARM or LOC_LARM)
+     * @param location (LOC_RARM or LOC_LARM)
+     *
      * @return True/False
      */
     public boolean hasClaw(int location) {
@@ -6355,9 +6190,9 @@ public abstract class Mek extends Entity {
             }
             Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType)
-                    && type.hasFlag(MiscType.F_HAND_WEAPON)
-                    && type.hasSubType(MiscType.S_CLAW)) {
+            if ((type instanceof MiscType) &&
+                      type.hasFlag(MiscType.F_HAND_WEAPON) &&
+                      type.hasSubType(MiscType.S_CLAW)) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
         }
@@ -6365,15 +6200,14 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Check whether a Mek has intact heat-dissipating armor in every location
-     * thus protecting it from external heat sources like fires or magma
+     * Check whether a Mek has intact heat-dissipating armor in every location thus protecting it from external heat
+     * sources like fires or magma
      *
      * @return True/False
      */
     public boolean hasIntactHeatDissipatingArmor() {
         for (int loc = 0; loc < locations(); ++loc) {
-            if ((getArmor(loc) < 1)
-                    || (getArmorType(loc) != EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
+            if ((getArmor(loc) < 1) || (getArmorType(loc) != EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                 return false;
             }
         }
@@ -6385,14 +6219,14 @@ public abstract class Mek extends Entity {
      *
      * @param vDesc
      * @param vCriticals
+     *
      * @return
      */
     public boolean doRISCEmergencyCoolantCheckFor(Vector<Report> vDesc,
-            HashMap<Integer, List<CriticalSlot>> vCriticals) {
+          HashMap<Integer, List<CriticalSlot>> vCriticals) {
         Mounted<?> coolantSystem = null;
         for (Mounted<?> misc : getMisc()) {
-            if (misc.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)
-                    && !misc.isInoperable()) {
+            if (misc.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM) && !misc.isInoperable()) {
                 coolantSystem = misc;
             }
         }
@@ -6419,9 +6253,10 @@ public abstract class Mek extends Entity {
                 boolean found = false;
                 for (int i = 0; i < getNumberOfCriticals(loc); i++) {
                     CriticalSlot crit = getCritical(loc, i);
-                    if ((crit != null) && crit.isHittable()
-                            && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
-                            && (crit.getIndex() == Mek.SYSTEM_ENGINE)) {
+                    if ((crit != null) &&
+                              crit.isHittable() &&
+                              (crit.getType() == CriticalSlot.TYPE_SYSTEM) &&
+                              (crit.getIndex() == Mek.SYSTEM_ENGINE)) {
                         vCriticals.put(loc, new LinkedList<>());
                         vCriticals.get(loc).add(crit);
                         found = true;
@@ -6432,9 +6267,10 @@ public abstract class Mek extends Entity {
                     loc = this.getTransferLocation(loc);
                     for (int i = 0; i < getNumberOfCriticals(loc); i++) {
                         CriticalSlot crit = getCritical(loc, i);
-                        if ((crit != null) && crit.isHittable()
-                                && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
-                                && (crit.getIndex() == Mek.SYSTEM_ENGINE)) {
+                        if ((crit != null) &&
+                                  crit.isHittable() &&
+                                  (crit.getType() == CriticalSlot.TYPE_SYSTEM) &&
+                                  (crit.getIndex() == Mek.SYSTEM_ENGINE)) {
                             vCriticals.put(loc, new LinkedList<>());
                             vCriticals.get(loc).add(crit);
                             break;
@@ -6532,7 +6368,8 @@ public abstract class Mek extends Entity {
     public boolean hasFunctionalLegAES() {
         Set<Integer> aesLegLocations = new HashSet<>();
         for (MiscMounted mounted : getMisc()) {
-            if (locationIsLeg(mounted.getLocation()) && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+            if (locationIsLeg(mounted.getLocation()) &&
+                      mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
                 if (mounted.isInoperable()) {
                     // a leg AES is destroyed, therefore AES cannot be used at all; shortcut out of the method
                     return false;

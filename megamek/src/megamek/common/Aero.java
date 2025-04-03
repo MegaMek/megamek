@@ -687,8 +687,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-     * Set the starting Structural Integrity of this unit.
-     * Also sets the current SI as if by {@link #setSI(int)}.
+     * Set the starting Structural Integrity of this unit. Also sets the current SI as if by {@link #setSI(int)}.
+     *
      * @param si The new value for SI
      */
     public void setOSI(int si) {
@@ -1085,8 +1085,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      * Returns the name of the type of movement used. This is tank-specific.
      */
     @Override
-    public String getMovementString(EntityMovementType entityMovementType) {
-        return switch (entityMovementType) {
+    public String getMovementString(EntityMovementType entityMovementTYpe) {
+        return switch (entityMovementTYpe) {
             case MOVE_SKID -> "Skidded";
             case MOVE_NONE -> "None";
             case MOVE_WALK -> "Cruised";
@@ -1101,8 +1101,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      * Returns the name of the type of movement used. This is tank-specific.
      */
     @Override
-    public String getMovementAbbr(EntityMovementType entityMovementType) {
-        return switch (entityMovementType) {
+    public String getMovementAbbr(EntityMovementType entityMovementTYpe) {
+        return switch (entityMovementTYpe) {
             case MOVE_NONE -> "N";
             case MOVE_SAFE_THRUST -> "S";
             case MOVE_OVER_THRUST -> "O";

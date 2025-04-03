@@ -458,8 +458,8 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public String getMovementString(EntityMovementType mtype) {
-        return switch (mtype) {
+    public String getMovementString(EntityMovementType entityMovementTYpe) {
+        return switch (entityMovementTYpe) {
             case MOVE_NONE -> "None";
             case MOVE_WALK, MOVE_VTOL_WALK -> "Walked";
             case MOVE_VTOL_RUN, MOVE_RUN -> "Ran";
@@ -469,8 +469,8 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public String getMovementAbbr(EntityMovementType mtype) {
-        return switch (mtype) {
+    public String getMovementAbbr(EntityMovementType entityMovementTYpe) {
+        return switch (entityMovementTYpe) {
             case MOVE_NONE -> "N";
             case MOVE_WALK, MOVE_VTOL_WALK -> "W";
             case MOVE_RUN, MOVE_VTOL_RUN -> "R";
@@ -1125,7 +1125,9 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
+    public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
+          MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+          boolean isInfantry, int distance) {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE, "ProtoMeks can't skid");
     }
 

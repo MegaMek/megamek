@@ -588,8 +588,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     @Override
-    public String getMovementString(EntityMovementType mtype) {
-        switch (mtype) {
+    public String getMovementString(EntityMovementType entityMovementTYpe) {
+        switch (entityMovementTYpe) {
             case MOVE_WALK:
                 if (getConversionMode() == CONV_MODE_FIGHTER) {
                     return "Cruised";
@@ -611,13 +611,13 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             case MOVE_OVER_THRUST:
                 return "Over Thrust";
             default:
-                return super.getMovementString(mtype);
+                return super.getMovementString(entityMovementTYpe);
         }
     }
 
     @Override
-    public String getMovementAbbr(EntityMovementType mtype) {
-        switch (mtype) {
+    public String getMovementAbbr(EntityMovementType entityMovementTYpe) {
+        switch (entityMovementTYpe) {
             case MOVE_WALK:
                 if (getConversionMode() == CONV_MODE_FIGHTER) {
                     return "C";
@@ -641,7 +641,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             case MOVE_OVER_THRUST:
                 return "O";
             default:
-                return super.getMovementAbbr(mtype);
+                return super.getMovementAbbr(entityMovementTYpe);
         }
     }
 

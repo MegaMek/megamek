@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import megamek.client.generator.RandomGenderGenerator;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -142,6 +143,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         load();
     }
 
+    @Override
     public ScenarioV1 clone() {
         try {
             ScenarioV1 scenarioV1 = (ScenarioV1) super.clone();
@@ -235,6 +237,16 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     public int getNumValues(String key) {
         Collection<String> values = get(key);
         return (values == null) ? 0 : values.size();
+    }
+
+    public int getIntValue(String key) {
+        String value = getString(key);
+
+        if (value == null) {
+            return 0;
+        }
+
+        return MathUtility.parseInt(value);
     }
 
     @Override
@@ -937,9 +949,9 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 String[] mines = minefields.split(SEPARATOR_COMMA, -1);
                 if (mines.length >= 3) {
                     try {
-                        int minesConventional = Integer.parseInt(mines[0]);
-                        int minesCommand = Integer.parseInt(mines[1]);
-                        int minesVibra = Integer.parseInt(mines[2]);
+                        int minesConventional = MathUtility.parseInt(mines[0]);
+                        int minesCommand = MathUtility.parseInt(mines[1]);
+                        int minesVibra = MathUtility.parseInt(mines[2]);
                         player.setNbrMFConventional(minesConventional);
                         player.setNbrMFCommand(minesCommand);
                         player.setNbrMFVibra(minesVibra);
@@ -961,26 +973,26 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         if (scenarioV1.getString(PARAM_MAP_WIDTH) == null) {
             LOGGER.info("No map width specified; using {}", mapWidth);
         } else {
-            mapWidth = Integer.parseInt(scenarioV1.getString(PARAM_MAP_WIDTH));
+            mapWidth = scenarioV1.getIntValue(PARAM_MAP_WIDTH);
         }
 
         if (scenarioV1.getString(PARAM_MAP_HEIGHT) == null) {
             LOGGER.info("No map height specified; using {}", mapHeight);
         } else {
-            mapHeight = Integer.parseInt(scenarioV1.getString(PARAM_MAP_HEIGHT));
+            mapHeight = scenarioV1.getIntValue(PARAM_MAP_HEIGHT);
         }
 
         int nWidth = 1, nHeight = 1;
         if (scenarioV1.getString(PARAM_BOARD_WIDTH) == null) {
             LOGGER.info("No board width specified; using {}", nWidth);
         } else {
-            nWidth = Integer.parseInt(scenarioV1.getString(PARAM_BOARD_WIDTH));
+            nWidth = scenarioV1.getIntValue(PARAM_BOARD_WIDTH);
         }
 
         if (scenarioV1.getString(PARAM_BOARD_HEIGHT) == null) {
             LOGGER.info("No board height specified; using {}", nHeight);
         } else {
-            nHeight = Integer.parseInt(scenarioV1.getString(PARAM_BOARD_HEIGHT));
+            nHeight = scenarioV1.getIntValue(PARAM_BOARD_HEIGHT);
         }
 
         LOGGER.debug("Map sheets are {} by {} hexes.", mapWidth, mapHeight);
@@ -989,7 +1001,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         if (scenarioV1.getString(PARAM_BRIDGE_CF) == null) {
             LOGGER.debug("No CF for bridges defined. Using map file defaults.");
         } else {
-            constructionFactor = Integer.parseInt(scenarioV1.getString(PARAM_BRIDGE_CF));
+            constructionFactor = scenarioV1.getIntValue(PARAM_BRIDGE_CF);
             LOGGER.debug("Overriding map-defined bridge CFs with {}", constructionFactor);
         }
         // load available boards
@@ -1078,9 +1090,11 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     private int parseExternalGameId(ScenarioV1 scenarioV1) {
         String sExternalId = scenarioV1.getString(PARAM_GAME_EXTERNAL_ID);
         int ExternalGameId = 0;
+
         if (sExternalId != null) {
-            ExternalGameId = Integer.parseInt(sExternalId);
+            ExternalGameId = MathUtility.parseInt(sExternalId);
         }
+
         return ExternalGameId;
     }
 
@@ -1126,8 +1140,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
 
         public void addCriticalHits(String s) {
             int ewSpot = s.indexOf(':');
-            int loc = Integer.parseInt(s.substring(0, ewSpot));
-            int slot = Integer.parseInt(s.substring(ewSpot + 1));
+            int loc = MathUtility.parseInt(s.substring(0, ewSpot));
+            int slot = MathUtility.parseInt(s.substring(ewSpot + 1));
 
             criticalHits.add(new CriticalHit(loc, slot - 1));
         }
@@ -1158,29 +1172,33 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         /**
          * Converts 2:1-34 to Location 2 Slot 1 set Ammo to 34
          */
-        public void addSetAmmoTo(String s) {
-            int ewSpot = s.indexOf(':');
-            int amSpot = s.indexOf('-');
-            if (s.isEmpty() || (ewSpot < 1) || (amSpot < ewSpot)) {
+        public void addSetAmmoTo(String string) {
+            int equipmentSlot = string.indexOf(':');
+            int ammoSpot = string.indexOf('-');
+
+            if (string.isEmpty() || (equipmentSlot < 1) || (ammoSpot < equipmentSlot)) {
                 return;
             }
-            int loc = Integer.parseInt(s.substring(0, ewSpot));
-            int slot = Integer.parseInt(s.substring(ewSpot + 1, amSpot));
-            int setTo = Integer.parseInt(s.substring(amSpot + 1));
+
+            int loc = MathUtility.parseInt(string.substring(0, equipmentSlot));
+            int slot = MathUtility.parseInt(string.substring(equipmentSlot + 1, ammoSpot));
+            int setTo = MathUtility.parseInt(string.substring(ammoSpot + 1));
 
             ammoSetTo.add(new SetAmmoTo(loc, slot - 1, setTo));
         }
 
         public void addSetAmmoType(String s) {
-            int ewSpot = s.indexOf(':');
-            int atSpot = s.indexOf('-');
-            if (s.isEmpty() || (ewSpot < 1) || (atSpot < ewSpot)) {
+            int equipmentSlot = s.indexOf(':');
+            int ammoTypeSpot = s.indexOf('-');
+
+            if (s.isEmpty() || (equipmentSlot < 1) || (ammoTypeSpot < equipmentSlot)) {
                 return;
             }
-            int loc = Integer.parseInt(s.substring(0, ewSpot));
-            int slot = Integer.parseInt(s.substring(ewSpot + 1, atSpot));
 
-            ammoSetType.add(new SetAmmoType(loc, slot - 1, s.substring(atSpot + 1)));
+            int loc = MathUtility.parseInt(s.substring(0, equipmentSlot));
+            int slot = MathUtility.parseInt(s.substring(equipmentSlot + 1, ammoTypeSpot));
+
+            ammoSetType.add(new SetAmmoType(loc, slot - 1, s.substring(ammoTypeSpot + 1)));
         }
     }
 
@@ -1228,8 +1246,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             if (s.isEmpty() || (ewSpot < 1)) {
                 return;
             }
-            int loc = Integer.parseInt(s.substring(1, ewSpot));
-            int setTo = Integer.parseInt(s.substring(ewSpot + 1));
+            int loc = MathUtility.parseInt(s.substring(1, ewSpot));
+            int setTo = MathUtility.parseInt(s.substring(ewSpot + 1));
             boolean rear = (s.charAt(0) == 'R');
             boolean internal = (s.charAt(0) == 'I');
 

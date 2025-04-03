@@ -39,6 +39,7 @@ import javax.swing.border.TitledBorder;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.MiscMounted;
@@ -391,7 +392,7 @@ public class EquipChoicePanel extends JPanel {
             if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES &&
                       ((chosen == null) || entity.getC3MasterId() != chosen.getId())) {
                 entity.setC3Master(chosen, true);
-            } else if (entity.getC3MasterId() != chosen.getId()) {
+            } else if ((chosen != null) && entity.getC3MasterId() != chosen.getId()) {
                 String message = Messages.getString("CustomMekDialog.NetworkTooBig.message",
                       entity.getShortName(),
                       chosen.getShortName(),
@@ -762,7 +763,7 @@ public class EquipChoicePanel extends JPanel {
      *
      * @author arlith
      */
-    class APWeaponChoicePanel extends JPanel {
+    static class APWeaponChoicePanel extends JPanel {
         @Serial
         private static final long serialVersionUID = 6189888202192403704L;
 
@@ -868,7 +869,7 @@ public class EquipChoicePanel extends JPanel {
      *
      * @author arlith
      */
-    class MEAChoicePanel extends JPanel {
+    static class MEAChoicePanel extends JPanel {
         @Serial
         private static final long serialVersionUID = 6189888202192403704L;
 
@@ -1036,7 +1037,7 @@ public class EquipChoicePanel extends JPanel {
                 int currShots = 0;
 
                 if (m_num_shots.getSelectedItem() instanceof String value) {
-                    currShots = Integer.parseInt(value);
+                    currShots = MathUtility.parseInt(value);
                 }
 
                 m_num_shots.removeAllItems();
@@ -1110,7 +1111,7 @@ public class EquipChoicePanel extends JPanel {
 
             // set # shots only for non-one shot weapons
             if (m_mounted.getLocation() != Entity.LOC_NONE && m_num_shots.getSelectedItem() instanceof String value) {
-                m_mounted.setShotsLeft(Integer.parseInt(value));
+                m_mounted.setShotsLeft(MathUtility.parseInt(value));
             }
 
             if (chDump.isSelected()) {

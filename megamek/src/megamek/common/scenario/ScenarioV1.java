@@ -243,6 +243,25 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         return MathUtility.parseInt(value, defaultValue);
     }
 
+    public float parseFloat(String key, float defaultValue) {
+        String value = getString(key);
+        return MathUtility.parseFloat(value, defaultValue);
+    }
+
+    /**
+     * Parses a boolean value. When the key is not present, returns the given defaultValue. When the key is present,
+     * interprets "true" and "on" and "1" as true and everything else as false.
+     */
+    private boolean parseBoolean(String key, boolean defaultValue) {
+        if (containsKey(key)) {
+            return getString(key).equalsIgnoreCase("true") ||
+                         getString(key).equalsIgnoreCase("on") ||
+                         getString(key).equalsIgnoreCase("1");
+        }
+
+        return defaultValue;
+    }
+
     @Override
     public Collection<String> get(Object key) {
         return super.get(key);
@@ -300,20 +319,6 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         game.setVictoryContext(new HashMap<>());
         game.createVictoryConditions();
         return game;
-    }
-
-    /**
-     * Parses a boolean value. When the key is not present, returns the given defaultValue. When the key is present,
-     * interprets "true" and "on" and "1" as true and everything else as false.
-     */
-    private boolean parseBoolean(String key, boolean defaultValue) {
-        if (containsKey(key)) {
-            return getString(key).equalsIgnoreCase("true") ||
-                         getString(key).equalsIgnoreCase("on") ||
-                         getString(key).equalsIgnoreCase("1");
-        }
-
-        return defaultValue;
     }
 
     // TODO : legal/valid ammo type handling and game options, since they are set at this point
@@ -570,8 +575,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_GRAV)) {
-            game.getPlanetaryConditions()
-                  .setGravity(Float.parseFloat(scenarioV1.getString(PARAM_PLANET_CONDITIONS_GRAV)));
+            game.getPlanetaryConditions().setGravity(parseFloat(PARAM_PLANET_CONDITIONS_GRAV, 0.0f));
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_FOG)) {
@@ -703,7 +707,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                         ammoPlans.add(setAmmoPlanType);
                         break;
                     case PARAM_PILOT_HITS:
-                        int hits = Integer.parseInt(scenarioV1.getString(key));
+                        int hits = parseInt(scenarioV1.getString(key), 0);
                         entity.getCrew().setHits(Math.min(hits, 5), 0);
                         break;
                     case PARAM_EXTERNAL_ID:
@@ -719,7 +723,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                         parseCommander(entity, scenarioV1.getString(key));
                         break;
                     case PARAM_DEPLOYMENT_ROUND:
-                        int round = Integer.parseInt(scenarioV1.getString(key));
+                        int round = parseInt(scenarioV1.getString(key), 0);
                         if (round > 0) {
                             LOGGER.debug("{} will be deployed before round {}", entity.getDisplayName(), round);
                             entity.setDeployRound(round);
@@ -735,7 +739,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                         }
                         break;
                     case PARAM_ALTITUDE:
-                        int altitude = Math.min(Integer.parseInt(scenarioV1.getString(key)), 10);
+                        int altitude = Math.min(parseInt(scenarioV1.getString(key), 0), 10);
                         if (entity.isAero()) {
                             entity.setAltitude(altitude);
                             if (altitude <= 0) {

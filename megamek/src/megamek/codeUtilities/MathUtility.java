@@ -140,22 +140,46 @@ public class MathUtility {
 
     /**
      * Utility function to handle parsing strings into Integers and to handle the possible NumberFormatException with
-     * logging and to return a default value of 0.
+     * logging and to return defaultValue.
      *
-     * @param value String value to parse.
+     * @param value        String value to parse.
+     * @param defaultValue Default value to set if failed to parse.
      *
-     * @return The <code>int</code> value or 0.
+     * @return The <code>int</code> value or defaultValue.
      */
-    public static int parseInt(final String value) {
+    public static int parseInt(final String value, int defaultValue) {
         if (value == null || value.isEmpty()) {
-            return 0;
+            return defaultValue;
         }
 
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
             LOGGER.warn("Can't parse String `{}` into an Integer due to {}", value, e.getMessage());
-            return 0;
+            return defaultValue;
         }
     }
+
+    /**
+     * Utility function to handle parsing strings into Doubles and to handle the possible NumberFormatException with
+     * logging and to return defaultValue.
+     *
+     * @param value        String value to parse.
+     * @param defaultValue Default value to set if failed to parse.
+     *
+     * @return The <code>double</code> value or defaultValue.
+     */
+    public static double parseDouble(final String value, double defaultValue) {
+        if (value == null || value.isEmpty()) {
+            return defaultValue;
+        }
+
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            LOGGER.warn("Can't parse String `{}` into an Double due to {}", value, e.getMessage());
+            return defaultValue;
+        }
+    }
+
 }

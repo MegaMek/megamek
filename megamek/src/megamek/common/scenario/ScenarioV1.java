@@ -240,12 +240,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
 
     public int parseInt(String key, int defaultValue) {
         String value = getString(key);
-
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
+        return MathUtility.parseInt(value, defaultValue);
     }
 
     @Override
@@ -937,9 +932,9 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 String[] mines = minefields.split(SEPARATOR_COMMA, -1);
                 if (mines.length >= 3) {
                     try {
-                        int minesConventional = MathUtility.parseInt(mines[0]);
-                        int minesCommand = MathUtility.parseInt(mines[1]);
-                        int minesVibra = MathUtility.parseInt(mines[2]);
+                        int minesConventional = MathUtility.parseInt(mines[0], 0);
+                        int minesCommand = MathUtility.parseInt(mines[1], 0);
+                        int minesVibra = MathUtility.parseInt(mines[2], 0);
                         player.setNbrMFConventional(minesConventional);
                         player.setNbrMFCommand(minesCommand);
                         player.setNbrMFVibra(minesVibra);
@@ -1080,7 +1075,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         int ExternalGameId = 0;
 
         if (sExternalId != null) {
-            ExternalGameId = MathUtility.parseInt(sExternalId);
+            ExternalGameId = MathUtility.parseInt(sExternalId, 0);
         }
 
         return ExternalGameId;
@@ -1128,8 +1123,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
 
         public void addCriticalHits(String s) {
             int ewSpot = s.indexOf(':');
-            int loc = MathUtility.parseInt(s.substring(0, ewSpot));
-            int slot = MathUtility.parseInt(s.substring(ewSpot + 1));
+            int loc = MathUtility.parseInt(s.substring(0, ewSpot), 0);
+            int slot = MathUtility.parseInt(s.substring(ewSpot + 1), 0);
 
             criticalHits.add(new CriticalHit(loc, slot - 1));
         }
@@ -1168,9 +1163,9 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 return;
             }
 
-            int loc = MathUtility.parseInt(string.substring(0, equipmentSlot));
-            int slot = MathUtility.parseInt(string.substring(equipmentSlot + 1, ammoSpot));
-            int setTo = MathUtility.parseInt(string.substring(ammoSpot + 1));
+            int loc = MathUtility.parseInt(string.substring(0, equipmentSlot), 0);
+            int slot = MathUtility.parseInt(string.substring(equipmentSlot + 1, ammoSpot), 0);
+            int setTo = MathUtility.parseInt(string.substring(ammoSpot + 1), 0);
 
             ammoSetTo.add(new SetAmmoTo(loc, slot - 1, setTo));
         }
@@ -1183,8 +1178,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 return;
             }
 
-            int loc = MathUtility.parseInt(s.substring(0, equipmentSlot));
-            int slot = MathUtility.parseInt(s.substring(equipmentSlot + 1, ammoTypeSpot));
+            int loc = MathUtility.parseInt(s.substring(0, equipmentSlot), 0);
+            int slot = MathUtility.parseInt(s.substring(equipmentSlot + 1, ammoTypeSpot), 0);
 
             ammoSetType.add(new SetAmmoType(loc, slot - 1, s.substring(ammoTypeSpot + 1)));
         }
@@ -1234,8 +1229,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             if (s.isEmpty() || (ewSpot < 1)) {
                 return;
             }
-            int loc = MathUtility.parseInt(s.substring(1, ewSpot));
-            int setTo = MathUtility.parseInt(s.substring(ewSpot + 1));
+            int loc = MathUtility.parseInt(s.substring(1, ewSpot), 0);
+            int setTo = MathUtility.parseInt(s.substring(ewSpot + 1), 0);
             boolean rear = (s.charAt(0) == 'R');
             boolean internal = (s.charAt(0) == 'I');
 

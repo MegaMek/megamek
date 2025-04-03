@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.Infantry;
@@ -156,7 +157,7 @@ public class InfantryArmorPanel extends JPanel {
             infantry.setArmorKit(armorKits.get(cbArmorKit.getSelectedIndex() - 1));
         } else {
             infantry.setArmorKit(null);
-            infantry.setArmorDamageDivisor(Double.parseDouble(fldDivisor.getText()));
+            infantry.setArmorDamageDivisor(MathUtility.parseDouble(fldDivisor.getText(), 0.0));
             infantry.setArmorEncumbering(chEncumber.isSelected());
             infantry.setSpaceSuit(chSpaceSuit.isSelected());
             infantry.setDEST(chDEST.isSelected());

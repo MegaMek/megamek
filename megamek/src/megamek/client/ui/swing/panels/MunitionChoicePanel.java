@@ -1,3 +1,30 @@
+/*
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ */
 package megamek.client.ui.swing.panels;
 
 import java.awt.GridBagLayout;
@@ -28,18 +55,15 @@ public class MunitionChoicePanel extends JPanel {
     @Serial
     private static final long serialVersionUID = 3401106035583965326L;
 
-    private final List<AmmoType> m_vTypes;
+    private final List<AmmoType> ammoTypes;
 
-    private final JComboBox<AmmoType> m_choice;
+    private final JComboBox<AmmoType> comboAmmoTypes;
 
-    private final JComboBox<String> m_num_shots;
+    private final JComboBox<String> comboNumberOfShots;
     private final ItemListener numShotsListener;
-
+    private final GameOptions gameOptions;
+    private final AmmoMounted ammoMounted;
     boolean numShotsChanged = false;
-
-    private final GameOptions m_gameOptions;
-
-    private final AmmoMounted m_mounted;
 
     JLabel labDump = new JLabel(Messages.getString("CustomMekDialog.labDump"));
 
@@ -51,135 +75,148 @@ public class MunitionChoicePanel extends JPanel {
 
     public MunitionChoicePanel(AmmoMounted ammoMounted, ArrayList<AmmoType> vTypes,
           List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels, Entity entity, ClientGUI clientGUI) {
-        m_vTypes = vTypes;
-        m_mounted = ammoMounted;
-        m_gameOptions = clientGUI.getClient().getGame().getOptions();
+        ammoTypes = vTypes;
+        this.ammoMounted = ammoMounted;
+        gameOptions = clientGUI.getClient().getGame().getOptions();
 
-        AmmoType curType = ammoMounted.getType();
-        m_choice = new JComboBox<>();
-        Iterator<AmmoType> e = m_vTypes.iterator();
+        AmmoType ammoType = ammoMounted.getType();
+        comboAmmoTypes = new JComboBox<>();
+
+        Iterator<AmmoType> e = ammoTypes.iterator();
         for (int x = 0; e.hasNext(); x++) {
             AmmoType at = e.next();
-            m_choice.addItem(at);
-            if (at.equals(curType)) {
-                m_choice.setSelectedIndex(x);
+            comboAmmoTypes.addItem(at);
+            if (at.equals(ammoType)) {
+                comboAmmoTypes.setSelectedIndex(x);
             }
         }
 
         numShotsListener = evt -> numShotsChanged = true;
-        m_num_shots = new JComboBox<>();
-        int shotsPerTon = curType.getShots();
+        comboNumberOfShots = new JComboBox<>();
+
+        int shotsPerTon = ammoType.getShots();
         // BattleArmor always have a certain number of shots per slot
         int stepSize = 1;
         // ProtoMeks and BattleArmor are limited to the number of shots allocated in construction
         if ((entity instanceof BattleArmor) || (entity instanceof ProtoMek)) {
             shotsPerTon = ammoMounted.getOriginalShots();
             // BA tube artillery always comes in pairs
-            if (curType.getAmmoType() == AmmoType.T_BA_TUBE) {
+            if (ammoType.getAmmoType() == AmmoType.T_BA_TUBE) {
                 stepSize = 2;
             }
         }
-        for (int i = 0; i <= shotsPerTon; i += stepSize) {
-            m_num_shots.addItem(String.valueOf(i));
-        }
-        m_num_shots.setSelectedItem(m_mounted.getBaseShotsLeft());
-        m_num_shots.addItemListener(numShotsListener);
 
-        m_choice.addItemListener(evt -> {
-            m_num_shots.removeItemListener(numShotsListener);
+        for (int i = 0; i <= shotsPerTon; i += stepSize) {
+            comboNumberOfShots.addItem(String.valueOf(i));
+        }
+
+        comboNumberOfShots.setSelectedItem(this.ammoMounted.getBaseShotsLeft());
+        comboNumberOfShots.addItemListener(numShotsListener);
+
+        comboAmmoTypes.addItemListener(evt -> {
+            comboNumberOfShots.removeItemListener(numShotsListener);
 
             int currShots = 0;
 
-            if (m_num_shots.getSelectedItem() instanceof String value) {
+            if (comboNumberOfShots.getSelectedItem() instanceof String value) {
                 currShots = MathUtility.parseInt(value, currShots);
             }
 
-            m_num_shots.removeAllItems();
-            int numberOfShotsPerTon = m_vTypes.get(m_choice.getSelectedIndex()).getShots();
+            comboNumberOfShots.removeAllItems();
+            int numberOfShotsPerTon = ammoTypes.get(comboAmmoTypes.getSelectedIndex()).getShots();
 
             // ProtoMeks are limited to number of shots added during construction
             if ((entity instanceof BattleArmor) || (entity instanceof ProtoMek)) {
                 numberOfShotsPerTon = ammoMounted.getOriginalShots();
             }
+
             for (int i = 0; i <= numberOfShotsPerTon; i++) {
-                m_num_shots.addItem(String.valueOf(i));
+                comboNumberOfShots.addItem(String.valueOf(i));
             }
-            // If the shots selection was changed, try to set that value, unless it's too
-            // large
+
+            // If the shots selection was changed, try to set that value, unless it's too large
             if (numShotsChanged && currShots <= numberOfShotsPerTon) {
-                m_num_shots.setSelectedItem(currShots);
+                comboNumberOfShots.setSelectedItem(currShots);
             } else {
-                m_num_shots.setSelectedItem(numberOfShotsPerTon);
+                comboNumberOfShots.setSelectedItem(numberOfShotsPerTon);
             }
 
             for (WeaponAmmoChoicePanel weaponAmmoChoicePanel : weaponAmmoChoicePanels) {
-                weaponAmmoChoicePanel.refreshAmmoBinName(m_mounted, m_vTypes.get(m_choice.getSelectedIndex()));
+                weaponAmmoChoicePanel.refreshAmmoBinName(this.ammoMounted,
+                      ammoTypes.get(comboAmmoTypes.getSelectedIndex()));
             }
 
-            m_num_shots.addItemListener(numShotsListener);
+            comboNumberOfShots.addItemListener(numShotsListener);
         });
 
-        int loc = ammoMounted.getLocation();
+        int ammoMountedLocation = ammoMounted.getLocation();
         boolean isOneShot = false;
-        if (loc == Entity.LOC_NONE) {
-            // one shot weapons don't have a location of their own some weapons (e.g. fusillade) use the one-shot
+
+        if (ammoMountedLocation == Entity.LOC_NONE) {
+            // one shot weapons don't have a location of their own some weapons (e.gridBagLayout. fusillade) use the one-shot
             // mechanic but have an extra reload which is chained to the first
             Mounted<?> linkedBy = ammoMounted.getLinkedBy();
+
             while (linkedBy.getLinkedBy() != null) {
                 linkedBy = linkedBy.getLinkedBy();
             }
-            loc = linkedBy.getLocation();
+
+            ammoMountedLocation = linkedBy.getLocation();
             isOneShot = linkedBy.isOneShot();
         } else {
-            loc = ammoMounted.getLocation();
+            ammoMountedLocation = ammoMounted.getLocation();
         }
-        m_num_shots.setVisible(!isOneShot);
-        String sDesc = '(' + entity.getLocationAbbr(loc) + ')';
-        JLabel lLoc = new JLabel(sDesc);
-        GridBagLayout g = new GridBagLayout();
-        setLayout(g);
-        add(lLoc, GBC.std());
-        add(m_choice, GBC.std());
-        add(m_num_shots, GBC.eol());
-        chHotLoad.setSelected(m_mounted.isHotLoaded());
-        if (m_gameOptions.booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP)) {
+
+        comboNumberOfShots.setVisible(!isOneShot);
+        String stringDescription = '(' + entity.getLocationAbbr(ammoMountedLocation) + ')';
+        JLabel labelLocation = new JLabel(stringDescription);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        setLayout(gridBagLayout);
+        add(labelLocation, GBC.std());
+        add(comboAmmoTypes, GBC.std());
+        add(comboNumberOfShots, GBC.eol());
+        chHotLoad.setSelected(this.ammoMounted.isHotLoaded());
+
+        if (gameOptions.booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP)) {
             add(labDump, GBC.std());
             add(chDump, GBC.eol());
         }
 
-        if (m_gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD) &&
-                  curType.hasFlag(AmmoType.F_HOTLOAD)) {
+        if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD) &&
+                  ammoType.hasFlag(AmmoType.F_HOTLOAD)) {
             add(labHotLoad, GBC.std());
             add(chHotLoad, GBC.eol());
         }
     }
 
     public void applyChoice() {
-        int n = m_choice.getSelectedIndex();
+        int selectedIndex = comboAmmoTypes.getSelectedIndex();
+
         // If there's no selection, there's nothing we can do
-        if (n == -1) {
+        if (selectedIndex == -1) {
             return;
         }
-        AmmoType at = m_vTypes.get(n);
-        m_mounted.changeAmmoType(at);
+
+        AmmoType ammoType = ammoTypes.get(selectedIndex);
+        ammoMounted.changeAmmoType(ammoType);
 
         // set # shots only for non-one shot weapons
-        if (m_mounted.getLocation() != Entity.LOC_NONE && m_num_shots.getSelectedItem() instanceof String value) {
-            m_mounted.setShotsLeft(MathUtility.parseInt(value, 0));
+        if (ammoMounted.getLocation() != Entity.LOC_NONE &&
+                  comboNumberOfShots.getSelectedItem() instanceof String value) {
+            ammoMounted.setShotsLeft(MathUtility.parseInt(value, 0));
         }
 
         if (chDump.isSelected()) {
-            m_mounted.setShotsLeft(0);
+            ammoMounted.setShotsLeft(0);
         }
 
-        if (m_gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
-            if (chHotLoad.isSelected() != m_mounted.isHotLoaded()) {
-                m_mounted.setHotLoad(chHotLoad.isSelected());
+        if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
+            if (chHotLoad.isSelected() != ammoMounted.isHotLoaded()) {
+                ammoMounted.setHotLoad(chHotLoad.isSelected());
                 // Set the mode too, so vehicles can switch back
-                int numModes = m_mounted.getModesCount();
-                for (int m = 0; m < numModes; m++) {
-                    if (m_mounted.getType().getMode(m).getName().equals("HotLoad")) {
-                        m_mounted.setMode(m);
+                for (int mode = 0; mode < ammoMounted.getModesCount(); mode++) {
+                    if (ammoMounted.getType().getMode(mode).getName().equals("HotLoad")) {
+                        ammoMounted.setMode(mode);
                     }
                 }
             }
@@ -188,7 +225,7 @@ public class MunitionChoicePanel extends JPanel {
 
     @Override
     public void setEnabled(boolean enabled) {
-        m_choice.setEnabled(enabled);
+        comboAmmoTypes.setEnabled(enabled);
     }
 
     /**
@@ -200,7 +237,7 @@ public class MunitionChoicePanel extends JPanel {
      */
     @Deprecated(since = "0.50.05", forRemoval = true)
     int getShotsLeft() {
-        return m_mounted.getBaseShotsLeft();
+        return ammoMounted.getBaseShotsLeft();
     }
 
     /**
@@ -212,6 +249,6 @@ public class MunitionChoicePanel extends JPanel {
      */
     @Deprecated(since = "0.50.05", forRemoval = true)
     void setShotsLeft(int shots) {
-        m_mounted.setShotsLeft(shots);
+        ammoMounted.setShotsLeft(shots);
     }
 }

@@ -1,15 +1,30 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.client.ui.swing;
 
@@ -64,66 +79,47 @@ public class EquipChoicePanel extends JPanel {
     private static final long serialVersionUID = 672299770230285567L;
 
     private final Entity entity;
-
-    private int[] entityCorrespondence;
-
     private final List<MunitionChoicePanel> m_vMunitions = new ArrayList<>();
     private final List<WeaponAmmoChoicePanel> m_vWeaponAmmoChoice = new ArrayList<>();
-
     /**
      * An <code>ArrayList</code> to keep track of all of the
      * <code>APWeaponChoicePanels</code> that were added, so we can apply
      * their choices when the dialog is closed.
      */
     private final ArrayList<APWeaponChoicePanel> m_vAPMounts = new ArrayList<>();
-
     /**
      * An <code>ArrayList</code> to keep track of all of the
      * <code>MEAChoicePanels</code> that were added, so we can apply
      * their choices when the dialog is closed.
      */
     private final ArrayList<MEAChoicePanel> m_vMEAdaptors = new ArrayList<>();
-
     /**
      * Panel for adding components related to selecting which anti-personnel weapons are mounted in an AP Mount (armored
      * gloves are also considered AP mounts)
      **/
     private final JPanel panAPMounts = new JPanel();
     private final JPanel panMEAdaptors = new JPanel();
-    private JPanel panMunitions = new JPanel();
     private final JPanel panWeaponAmmoSelector = new JPanel();
-
     private final ArrayList<RapidFireMGPanel> m_vMGs = new ArrayList<>();
     private final JPanel panRapidFireMGs = new JPanel();
-
-    private InfantryArmorPanel panInfArmor;
-
     private final ArrayList<MineChoicePanel> m_vMines = new ArrayList<>();
     private final JPanel panMines = new JPanel();
-
-    private BombChoicePanel m_bombs;
     private final JPanel panBombs = new JPanel();
-
     private final JCheckBox chAutoEject = new JCheckBox();
-
     private final JCheckBox chCondEjectAmmo = new JCheckBox();
-
     private final JCheckBox chCondEjectEngine = new JCheckBox();
-
     private final JCheckBox chCondEjectCTDest = new JCheckBox();
-
     private final JCheckBox chCondEjectHeadshot = new JCheckBox();
-
     private final JCheckBox chCondEjectFuel = new JCheckBox();
-
     private final JCheckBox chCondEjectSIDest = new JCheckBox();
-
     private final JCheckBox chSearchlight = new JCheckBox();
-
     private final JComboBox<String> choC3 = new JComboBox<>();
-
     ClientGUI clientgui;
     Client client;
+    private int[] entityCorrespondence;
+    private JPanel panMunitions = new JPanel();
+    private InfantryArmorPanel panInfArmor;
+    private BombChoicePanel m_bombs;
 
     public EquipChoicePanel(Entity entity, ClientGUI clientgui, Client client) {
         this.entity = entity;
@@ -271,7 +267,7 @@ public class EquipChoicePanel extends JPanel {
 
         // set up infantry armor
         if (entity.isConventionalInfantry()) {
-            panInfArmor = new InfantryArmorPanel(entity, client);
+            panInfArmor = new InfantryArmorPanel(entity);
             add(panInfArmor, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
@@ -292,207 +288,109 @@ public class EquipChoicePanel extends JPanel {
         add(panMines, GBC.eop().anchor(GridBagConstraints.CENTER));
     }
 
-    public void initialize() {
-        choC3.setEnabled(false);
-        chAutoEject.setEnabled(false);
-        chSearchlight.setEnabled(false);
-        if (m_bombs != null) {
-            m_bombs.setEnabled(false);
-        }
-        disableMunitionEditing();
-        disableAPMEditing();
-        disableMEAEditing();
-        disableMGSetting();
-        disableMineSetting();
-        panInfArmor.setEnabled(false);
-    }
+    private void refreshC3() {
+        choC3.removeAllItems();
+        int listIndex = 0;
+        entityCorrespondence = new int[client.getGame().getNoOfEntities() + 2];
 
-    public void applyChoices() {
-        // Auto ejection Options
-        boolean autoEject = chAutoEject.isSelected();
-        boolean condEjectAmmo = chCondEjectAmmo.isSelected();
-        // Meks and LAMs Only
-        boolean condEjectEngine = chCondEjectEngine.isSelected();
-        boolean condEjectCTDest = chCondEjectCTDest.isSelected();
-        boolean condEjectHeadshot = chCondEjectHeadshot.isSelected();
-        // Aerospace Only
-        boolean condEjectFuel = chCondEjectFuel.isSelected();
-        boolean condEjectSIDest = chCondEjectSIDest.isSelected();
-
-        if (entity instanceof Mek mek) {
-            mek.setAutoEject(!autoEject);
-            mek.setCondEjectAmmo(condEjectAmmo);
-            mek.setCondEjectEngine(condEjectEngine);
-            mek.setCondEjectCTDest(condEjectCTDest);
-            mek.setCondEjectHeadshot(condEjectHeadshot);
-        } else if (entity.isFighter()) {
-            Aero aero = (Aero) entity;
-            aero.setAutoEject(!autoEject);
-            aero.setCondEjectAmmo(condEjectAmmo);
-            aero.setCondEjectFuel(condEjectFuel);
-            aero.setCondEjectSIDest(condEjectSIDest);
-        }
-
-        // update AP weapon selections
-        for (APWeaponChoicePanel apChoicePanel : m_vAPMounts) {
-            apChoicePanel.applyChoice();
-        }
-
-        // update modular equipment adaptor selections
-        for (MEAChoicePanel meaChoicePanel : m_vMEAdaptors) {
-            meaChoicePanel.applyChoice();
-        }
-
-        // update munitions selections
-        for (final MunitionChoicePanel munitions : m_vMunitions) {
-            munitions.applyChoice();
-        }
-        if (panMunitions instanceof BayMunitionsChoicePanel) {
-            ((BayMunitionsChoicePanel) panMunitions).apply();
-        } else {
-            if (panMunitions instanceof SmallSVMunitionsChoicePanel) {
-                ((SmallSVMunitionsChoicePanel) panMunitions).apply();
+        if (entity.hasC3i() || entity.hasNavalC3()) {
+            choC3.addItem(Messages.getString("CustomMekDialog.CreateNewNetwork"));
+            if (entity.getC3Master() == null) {
+                choC3.setSelectedIndex(listIndex);
             }
-            // update ammo names for weapon ammo choice selectors
-            for (WeaponAmmoChoicePanel wacPanel : m_vWeaponAmmoChoice) {
-                wacPanel.applyChoice();
-            }
+            entityCorrespondence[listIndex++] = entity.getId();
+        } else if (entity.hasC3MM()) {
+            int mNodes = entity.calculateFreeC3MNodes();
+            int sNodes = entity.calculateFreeC3Nodes();
+
+            choC3.addItem(Messages.getString("CustomMekDialog.setCompanyMaster", mNodes, sNodes));
+
+            listIndex = getListIndex(listIndex, sNodes);
+
+        } else if (entity.hasC3M()) {
+            int nodes = entity.calculateFreeC3Nodes();
+
+            choC3.addItem(Messages.getString("CustomMekDialog.setCompanyMaster1", nodes));
+            listIndex = getListIndex(listIndex, nodes);
+
         }
-
-        // update MG rapid fire settings
-        for (final RapidFireMGPanel rapidfireMGPanel : m_vMGs) {
-            rapidfireMGPanel.applyChoice();
-        }
-        // update mines setting
-        for (final MineChoicePanel mineChoicePanel : m_vMines) {
-            mineChoicePanel.applyChoice();
-        }
-        // update bomb setting
-        if (null != m_bombs) {
-            m_bombs.applyChoice();
-        }
-        if (entity.isConventionalInfantry()) {
-            panInfArmor.applyChoice();
-        }
-
-        // update searchlight setting
-        if (!entity.getsAutoExternalSearchlight()) {
-            entity.setExternalSearchlight(chSearchlight.isSelected());
-            entity.setSearchlightState(chSearchlight.isSelected());
-        }
-
-        if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
-            Entity chosen = client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]);
-            int entC3nodeCount = client.getGame().getC3SubNetworkMembers(entity).size();
-            int choC3nodeCount = client.getGame().getC3NetworkMembers(chosen).size();
-
-            if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES &&
-                      ((chosen == null) || entity.getC3MasterId() != chosen.getId())) {
-                entity.setC3Master(chosen, true);
-            } else if ((chosen != null) && entity.getC3MasterId() != chosen.getId()) {
-                String message = Messages.getString("CustomMekDialog.NetworkTooBig.message",
-                      entity.getShortName(),
-                      chosen.getShortName(),
-                      entC3nodeCount,
-                      choC3nodeCount,
-                      Entity.MAX_C3_NODES);
-                clientgui.doAlertDialog(Messages.getString("CustomMekDialog.NetworkTooBig.title"), message);
-                refreshC3();
-            }
-        } else if (entity.hasC3i() && (choC3.getSelectedIndex() > -1)) {
-            entity.setC3NetId(client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]));
-        } else if (entity.hasNavalC3() && (choC3.getSelectedIndex() > -1)) {
-            entity.setC3NetId(client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]));
-        }
-    }
-
-    private void setupBombs() {
-        GridBagLayout gbl = new GridBagLayout();
-        panBombs.setLayout(gbl);
-
-        int techLevel = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES,
-              client.getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
-        boolean allowNukes = client.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
-        m_bombs = new BombChoicePanel((IBomber) entity, allowNukes, techLevel >= TechConstants.T_SIMPLE_ADVANCED);
-        panBombs.add(m_bombs, GBC.std());
-    }
-
-    private void setupRapidFireMGs() {
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        panRapidFireMGs.setLayout(gridBagLayout);
-        for (Mounted<?> mounted : entity.getWeaponList()) {
-            WeaponType weaponType = (WeaponType) mounted.getType();
-
-            if (!weaponType.hasFlag(WeaponType.F_MG)) {
+        for (Entity e : client.getEntitiesVector()) {
+            // ignore enemies or self
+            if (entity.isEnemyOf(e) || entity.equals(e)) {
                 continue;
             }
-
-            RapidFireMGPanel rapidFireMGPanel = new RapidFireMGPanel(mounted, entity);
-            panRapidFireMGs.add(rapidFireMGPanel, GBC.eol());
-            m_vMGs.add(rapidFireMGPanel);
-        }
-    }
-
-    private void setupMines() {
-        GridBagLayout gbl = new GridBagLayout();
-        panMines.setLayout(gbl);
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        int row = 0;
-        for (MiscMounted miscMounted : entity.getMisc()) {
-            if (!miscMounted.getType().hasFlag((MiscType.F_MINE)) &&
-                      !miscMounted.getType().hasFlag((MiscType.F_VEHICLE_MINE_DISPENSER))) {
+            // c3i only links with c3i
+            if (entity.hasC3i() != e.hasC3i()) {
                 continue;
             }
-
-            gbc.gridy = row++;
-            MineChoicePanel mcp = new MineChoicePanel(miscMounted, entity);
-            gbl.setConstraints(mcp, gbc);
-            panMines.add(mcp);
-            m_vMines.add(mcp);
-        }
-    }
-
-    /**
-     * Set up the layout of <code>panMEAdaptors</code>, which contains components for selecting which manipulators are
-     * mounted in a modular equipment adaptor
-     */
-    private void setupMEAdaptors(String freeWeight) {
-        GridBagLayout gbl = new GridBagLayout();
-        panMEAdaptors.setLayout(gbl);
-
-        JLabel lblFreeWeight = new JLabel(freeWeight);
-        panMEAdaptors.add(lblFreeWeight, GBC.eol().anchor(GridBagConstraints.CENTER));
-
-        ArrayList<MiscType> manipulatorTypes = new ArrayList<>();
-
-        for (String manipulatorTypeName : BattleArmor.MANIPULATOR_TYPE_STRINGS) {
-            // Ignore the "None" option
-            if (manipulatorTypeName.equals(BattleArmor.MANIPULATOR_TYPE_STRINGS[0])) {
+            // NC3 only links with NC3
+            if (entity.hasNavalC3() != e.hasNavalC3()) {
                 continue;
             }
-            MiscType miscType = (MiscType) EquipmentType.get(manipulatorTypeName);
-            manipulatorTypes.add(miscType);
-        }
-
-        for (Mounted<?> m : entity.getMisc()) {
-            if (!m.getType().hasFlag(MiscType.F_BA_MEA)) {
+            // likewise can't connect c3 to nova
+            if (entity.hasNovaCEWS() != e.hasNovaCEWS()) {
                 continue;
             }
-            Mounted<?> currentManipulator;
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
-                currentManipulator = ((BattleArmor) entity).getLeftManipulator();
-            } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
-                currentManipulator = ((BattleArmor) entity).getRightManipulator();
+            // maximum depth of a c3 network is 2 levels.
+            Entity eCompanyMaster = e.getC3Master();
+            if ((eCompanyMaster != null) && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
+                continue;
+            }
+            int nodes = e.calculateFreeC3Nodes();
+            if (e.hasC3MM() && entity.hasC3M() && e.C3MasterIs(e)) {
+                nodes = e.calculateFreeC3MNodes();
+            }
+            if (entity.C3MasterIs(e) && !entity.equals(e)) {
+                nodes++;
+            }
+            if ((entity.hasC3i() || entity.hasNavalC3()) && (entity.onSameC3NetworkAs(e) || entity.equals(e))) {
+                nodes++;
+            }
+            if (nodes == 0) {
+                continue;
+            }
+            if (e.hasC3i() || e.hasNavalC3()) {
+                if (entity.onSameC3NetworkAs(e)) {
+                    choC3.addItem(Messages.getString("CustomMekDialog.join1",
+                          e.getDisplayName(),
+                          e.getC3NetId(),
+                          nodes - 1));
+                    choC3.setSelectedIndex(listIndex);
+                } else {
+                    choC3.addItem(Messages.getString("CustomMekDialog.join2",
+                          e.getDisplayName(),
+                          e.getC3NetId(),
+                          nodes));
+                }
+                entityCorrespondence[listIndex++] = e.getId();
+            } else if (e.C3MasterIs(e) && e.hasC3MM()) {
+                // Company masters with 2 computers can have *both* sub-masters AND slave units.
+                choC3.addItem(Messages.getString("CustomMekDialog.connect2",
+                      e.getDisplayName(),
+                      e.getC3NetId(),
+                      nodes));
+                entityCorrespondence[listIndex] = e.getId();
+                if (entity.C3MasterIs(e)) {
+                    choC3.setSelectedIndex(listIndex);
+                }
+                listIndex++;
+            } else if (e.C3MasterIs(e) != entity.hasC3M()) {
+                // If we're a slave-unit, we can only connect to sub-masters, not main masters likewise, if we're a
+                // master unit, we can only connect to main master units, not sub-masters.
+            } else if (entity.C3MasterIs(e)) {
+                choC3.addItem(Messages.getString("CustomMekDialog.connect1",
+                      e.getDisplayName(),
+                      e.getC3NetId(),
+                      nodes - 1));
+                choC3.setSelectedIndex(listIndex);
+                entityCorrespondence[listIndex++] = e.getId();
             } else {
-                // We can only have MEA's in an arm
-                continue;
+                choC3.addItem(Messages.getString("CustomMekDialog.connect2",
+                      e.getDisplayName(),
+                      e.getC3NetId(),
+                      nodes));
+                entityCorrespondence[listIndex++] = e.getId();
             }
-            MEAChoicePanel meaChoicePanel;
-            meaChoicePanel = new MEAChoicePanel(entity, m.getBaMountLoc(), currentManipulator, manipulatorTypes);
-
-            panMEAdaptors.add(meaChoicePanel, GBC.eol());
-            m_vMEAdaptors.add(meaChoicePanel);
         }
     }
 
@@ -564,8 +462,8 @@ public class EquipChoicePanel extends JPanel {
             }
         }
 
-        // If there is an armored glove with a weapon already mounted, we need
-        // to ensure that that glove is displayed, and not the empty glove
+        // If there is an armored glove with a weapon already mounted, we need to ensure that that glove is
+        // displayed, and not the empty glove
         Mounted<?> aGlove = null;
         for (Mounted<?> ag : armoredGloves) {
             if (aGlove == null) {
@@ -579,6 +477,49 @@ public class EquipChoicePanel extends JPanel {
             APWeaponChoicePanel apWeaponChoicePanel = new APWeaponChoicePanel(entity, aGlove, agWeaponTypes);
             panAPMounts.add(apWeaponChoicePanel, GBC.eol());
             m_vAPMounts.add(apWeaponChoicePanel);
+        }
+    }
+
+    /**
+     * Set up the layout of <code>panMEAdaptors</code>, which contains components for selecting which manipulators are
+     * mounted in a modular equipment adaptor
+     */
+    private void setupMEAdaptors(String freeWeight) {
+        GridBagLayout gbl = new GridBagLayout();
+        panMEAdaptors.setLayout(gbl);
+
+        JLabel lblFreeWeight = new JLabel(freeWeight);
+        panMEAdaptors.add(lblFreeWeight, GBC.eol().anchor(GridBagConstraints.CENTER));
+
+        ArrayList<MiscType> manipulatorTypes = new ArrayList<>();
+
+        for (String manipulatorTypeName : BattleArmor.MANIPULATOR_TYPE_STRINGS) {
+            // Ignore the "None" option
+            if (manipulatorTypeName.equals(BattleArmor.MANIPULATOR_TYPE_STRINGS[0])) {
+                continue;
+            }
+            MiscType miscType = (MiscType) EquipmentType.get(manipulatorTypeName);
+            manipulatorTypes.add(miscType);
+        }
+
+        for (Mounted<?> m : entity.getMisc()) {
+            if (!m.getType().hasFlag(MiscType.F_BA_MEA)) {
+                continue;
+            }
+            Mounted<?> currentManipulator;
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
+                currentManipulator = ((BattleArmor) entity).getLeftManipulator();
+            } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
+                currentManipulator = ((BattleArmor) entity).getRightManipulator();
+            } else {
+                // We can only have MEA's in an arm
+                continue;
+            }
+            MEAChoicePanel meaChoicePanel;
+            meaChoicePanel = new MEAChoicePanel(entity, m.getBaMountLoc(), currentManipulator, manipulatorTypes);
+
+            panMEAdaptors.add(meaChoicePanel, GBC.eol());
+            m_vMEAdaptors.add(meaChoicePanel);
         }
     }
 
@@ -719,6 +660,82 @@ public class EquipChoicePanel extends JPanel {
         }
     }
 
+    private void setupBombs() {
+        GridBagLayout gbl = new GridBagLayout();
+        panBombs.setLayout(gbl);
+
+        int techLevel = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES,
+              client.getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        boolean allowNukes = client.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
+        m_bombs = new BombChoicePanel((IBomber) entity, allowNukes, techLevel >= TechConstants.T_SIMPLE_ADVANCED);
+        panBombs.add(m_bombs, GBC.std());
+    }
+
+    private void setupRapidFireMGs() {
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        panRapidFireMGs.setLayout(gridBagLayout);
+        for (Mounted<?> mounted : entity.getWeaponList()) {
+            WeaponType weaponType = (WeaponType) mounted.getType();
+
+            if (!weaponType.hasFlag(WeaponType.F_MG)) {
+                continue;
+            }
+
+            RapidFireMGPanel rapidFireMGPanel = new RapidFireMGPanel(mounted, entity);
+            panRapidFireMGs.add(rapidFireMGPanel, GBC.eol());
+            m_vMGs.add(rapidFireMGPanel);
+        }
+    }
+
+    private void setupMines() {
+        GridBagLayout gbl = new GridBagLayout();
+        panMines.setLayout(gbl);
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        int row = 0;
+        for (MiscMounted miscMounted : entity.getMisc()) {
+            if (!miscMounted.getType().hasFlag((MiscType.F_MINE)) &&
+                      !miscMounted.getType().hasFlag((MiscType.F_VEHICLE_MINE_DISPENSER))) {
+                continue;
+            }
+
+            gbc.gridy = row++;
+            MineChoicePanel mcp = new MineChoicePanel(miscMounted, entity);
+            gbl.setConstraints(mcp, gbc);
+            panMines.add(mcp);
+            m_vMines.add(mcp);
+        }
+    }
+
+    private int getListIndex(int listIndex, int sNodes) {
+        if (entity.C3MasterIs(entity)) {
+            choC3.setSelectedIndex(listIndex);
+        }
+        entityCorrespondence[listIndex++] = entity.getId();
+
+        choC3.addItem(Messages.getString("CustomMekDialog.setIndependentMaster", sNodes));
+        if (entity.getC3Master() == null) {
+            choC3.setSelectedIndex(listIndex);
+        }
+        entityCorrespondence[listIndex++] = -1;
+        return listIndex;
+    }
+
+    public void initialize() {
+        choC3.setEnabled(false);
+        chAutoEject.setEnabled(false);
+        chSearchlight.setEnabled(false);
+        if (m_bombs != null) {
+            m_bombs.setEnabled(false);
+        }
+        disableMunitionEditing();
+        disableAPMEditing();
+        disableMEAEditing();
+        disableMGSetting();
+        disableMineSetting();
+        panInfArmor.setEnabled(false);
+    }
+
     private void disableMunitionEditing() {
         for (MunitionChoicePanel mVMunition : m_vMunitions) {
             mVMunition.setEnabled(false);
@@ -749,123 +766,102 @@ public class EquipChoicePanel extends JPanel {
         }
     }
 
-    private void refreshC3() {
-        choC3.removeAllItems();
-        int listIndex = 0;
-        entityCorrespondence = new int[client.getGame().getNoOfEntities() + 2];
+    public void applyChoices() {
+        // Auto ejection Options
+        boolean autoEject = chAutoEject.isSelected();
+        boolean condEjectAmmo = chCondEjectAmmo.isSelected();
+        // Meks and LAMs Only
+        boolean condEjectEngine = chCondEjectEngine.isSelected();
+        boolean condEjectCTDest = chCondEjectCTDest.isSelected();
+        boolean condEjectHeadshot = chCondEjectHeadshot.isSelected();
+        // Aerospace Only
+        boolean condEjectFuel = chCondEjectFuel.isSelected();
+        boolean condEjectSIDest = chCondEjectSIDest.isSelected();
 
-        if (entity.hasC3i() || entity.hasNavalC3()) {
-            choC3.addItem(Messages.getString("CustomMekDialog.CreateNewNetwork"));
-            if (entity.getC3Master() == null) {
-                choC3.setSelectedIndex(listIndex);
-            }
-            entityCorrespondence[listIndex++] = entity.getId();
-        } else if (entity.hasC3MM()) {
-            int mNodes = entity.calculateFreeC3MNodes();
-            int sNodes = entity.calculateFreeC3Nodes();
-
-            choC3.addItem(Messages.getString("CustomMekDialog.setCompanyMaster", mNodes, sNodes));
-
-            listIndex = getListIndex(listIndex, sNodes);
-
-        } else if (entity.hasC3M()) {
-            int nodes = entity.calculateFreeC3Nodes();
-
-            choC3.addItem(Messages.getString("CustomMekDialog.setCompanyMaster1", nodes));
-            listIndex = getListIndex(listIndex, nodes);
-
+        if (entity instanceof Mek mek) {
+            mek.setAutoEject(!autoEject);
+            mek.setCondEjectAmmo(condEjectAmmo);
+            mek.setCondEjectEngine(condEjectEngine);
+            mek.setCondEjectCTDest(condEjectCTDest);
+            mek.setCondEjectHeadshot(condEjectHeadshot);
+        } else if (entity.isFighter()) {
+            Aero aero = (Aero) entity;
+            aero.setAutoEject(!autoEject);
+            aero.setCondEjectAmmo(condEjectAmmo);
+            aero.setCondEjectFuel(condEjectFuel);
+            aero.setCondEjectSIDest(condEjectSIDest);
         }
-        for (Entity e : client.getEntitiesVector()) {
-            // ignore enemies or self
-            if (entity.isEnemyOf(e) || entity.equals(e)) {
-                continue;
+
+        // update AP weapon selections
+        for (APWeaponChoicePanel apChoicePanel : m_vAPMounts) {
+            apChoicePanel.applyChoice();
+        }
+
+        // update modular equipment adaptor selections
+        for (MEAChoicePanel meaChoicePanel : m_vMEAdaptors) {
+            meaChoicePanel.applyChoice();
+        }
+
+        // update munitions selections
+        for (final MunitionChoicePanel munitions : m_vMunitions) {
+            munitions.applyChoice();
+        }
+        if (panMunitions instanceof BayMunitionsChoicePanel) {
+            ((BayMunitionsChoicePanel) panMunitions).apply();
+        } else {
+            if (panMunitions instanceof SmallSVMunitionsChoicePanel) {
+                ((SmallSVMunitionsChoicePanel) panMunitions).apply();
             }
-            // c3i only links with c3i
-            if (entity.hasC3i() != e.hasC3i()) {
-                continue;
-            }
-            // NC3 only links with NC3
-            if (entity.hasNavalC3() != e.hasNavalC3()) {
-                continue;
-            }
-            // likewise can't connect c3 to nova
-            if (entity.hasNovaCEWS() != e.hasNovaCEWS()) {
-                continue;
-            }
-            // maximum depth of a c3 network is 2 levels.
-            Entity eCompanyMaster = e.getC3Master();
-            if ((eCompanyMaster != null) && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
-                continue;
-            }
-            int nodes = e.calculateFreeC3Nodes();
-            if (e.hasC3MM() && entity.hasC3M() && e.C3MasterIs(e)) {
-                nodes = e.calculateFreeC3MNodes();
-            }
-            if (entity.C3MasterIs(e) && !entity.equals(e)) {
-                nodes++;
-            }
-            if ((entity.hasC3i() || entity.hasNavalC3()) && (entity.onSameC3NetworkAs(e) || entity.equals(e))) {
-                nodes++;
-            }
-            if (nodes == 0) {
-                continue;
-            }
-            if (e.hasC3i() || e.hasNavalC3()) {
-                if (entity.onSameC3NetworkAs(e)) {
-                    choC3.addItem(Messages.getString("CustomMekDialog.join1",
-                          e.getDisplayName(),
-                          e.getC3NetId(),
-                          nodes - 1));
-                    choC3.setSelectedIndex(listIndex);
-                } else {
-                    choC3.addItem(Messages.getString("CustomMekDialog.join2",
-                          e.getDisplayName(),
-                          e.getC3NetId(),
-                          nodes));
-                }
-                entityCorrespondence[listIndex++] = e.getId();
-            } else if (e.C3MasterIs(e) && e.hasC3MM()) {
-                // Company masters with 2 computers can have *both* sub-masters AND slave units.
-                choC3.addItem(Messages.getString("CustomMekDialog.connect2",
-                      e.getDisplayName(),
-                      e.getC3NetId(),
-                      nodes));
-                entityCorrespondence[listIndex] = e.getId();
-                if (entity.C3MasterIs(e)) {
-                    choC3.setSelectedIndex(listIndex);
-                }
-                listIndex++;
-            } else if (e.C3MasterIs(e) != entity.hasC3M()) {
-                // If we're a slave-unit, we can only connect to sub-masters, not main masters likewise, if we're a
-                // master unit, we can only connect to main master units, not sub-masters.
-            } else if (entity.C3MasterIs(e)) {
-                choC3.addItem(Messages.getString("CustomMekDialog.connect1",
-                      e.getDisplayName(),
-                      e.getC3NetId(),
-                      nodes - 1));
-                choC3.setSelectedIndex(listIndex);
-                entityCorrespondence[listIndex++] = e.getId();
-            } else {
-                choC3.addItem(Messages.getString("CustomMekDialog.connect2",
-                      e.getDisplayName(),
-                      e.getC3NetId(),
-                      nodes));
-                entityCorrespondence[listIndex++] = e.getId();
+            // update ammo names for weapon ammo choice selectors
+            for (WeaponAmmoChoicePanel wacPanel : m_vWeaponAmmoChoice) {
+                wacPanel.applyChoice();
             }
         }
-    }
 
-    private int getListIndex(int listIndex, int sNodes) {
-        if (entity.C3MasterIs(entity)) {
-            choC3.setSelectedIndex(listIndex);
+        // update MG rapid fire settings
+        for (final RapidFireMGPanel rapidfireMGPanel : m_vMGs) {
+            rapidfireMGPanel.applyChoice();
         }
-        entityCorrespondence[listIndex++] = entity.getId();
+        // update mines setting
+        for (final MineChoicePanel mineChoicePanel : m_vMines) {
+            mineChoicePanel.applyChoice();
+        }
+        // update bomb setting
+        if (null != m_bombs) {
+            m_bombs.applyChoice();
+        }
+        if (entity.isConventionalInfantry()) {
+            panInfArmor.applyChoice();
+        }
 
-        choC3.addItem(Messages.getString("CustomMekDialog.setIndependentMaster", sNodes));
-        if (entity.getC3Master() == null) {
-            choC3.setSelectedIndex(listIndex);
+        // update searchlight setting
+        if (!entity.getsAutoExternalSearchlight()) {
+            entity.setExternalSearchlight(chSearchlight.isSelected());
+            entity.setSearchlightState(chSearchlight.isSelected());
         }
-        entityCorrespondence[listIndex++] = -1;
-        return listIndex;
+
+        if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
+            Entity chosen = client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]);
+            int entC3nodeCount = client.getGame().getC3SubNetworkMembers(entity).size();
+            int choC3nodeCount = client.getGame().getC3NetworkMembers(chosen).size();
+
+            if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES &&
+                      ((chosen == null) || entity.getC3MasterId() != chosen.getId())) {
+                entity.setC3Master(chosen, true);
+            } else if ((chosen != null) && entity.getC3MasterId() != chosen.getId()) {
+                String message = Messages.getString("CustomMekDialog.NetworkTooBig.message",
+                      entity.getShortName(),
+                      chosen.getShortName(),
+                      entC3nodeCount,
+                      choC3nodeCount,
+                      Entity.MAX_C3_NODES);
+                clientgui.doAlertDialog(Messages.getString("CustomMekDialog.NetworkTooBig.title"), message);
+                refreshC3();
+            }
+        } else if (entity.hasC3i() && (choC3.getSelectedIndex() > -1)) {
+            entity.setC3NetId(client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]));
+        } else if (entity.hasNavalC3() && (choC3.getSelectedIndex() > -1)) {
+            entity.setC3NetId(client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]));
+        }
     }
 }

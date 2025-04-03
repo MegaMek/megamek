@@ -1,3 +1,30 @@
+/*
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ */
 package megamek.client.ui.swing.panels;
 
 import java.awt.GridBagLayout;
@@ -34,100 +61,107 @@ public class APWeaponChoicePanel extends JPanel {
 
     private final Entity entity;
 
-    private final ArrayList<WeaponType> m_APWeapons;
+    private final ArrayList<WeaponType> weaponTypes;
 
-    private final JComboBox<String> m_choice;
+    private final JComboBox<String> comboChoices;
 
-    private final Mounted<?> m_APmounted;
+    private final Mounted<?> apMounted;
 
     public APWeaponChoicePanel(Entity entity, Mounted<?> mounted, ArrayList<WeaponType> weapons) {
         this.entity = entity;
-        m_APWeapons = weapons;
-        m_APmounted = mounted;
-        EquipmentType curType = null;
+        weaponTypes = weapons;
+        apMounted = mounted;
+        EquipmentType equipmentType = null;
+
         if ((mounted != null) && (mounted.getLinked() != null)) {
-            curType = mounted.getLinked().getType();
+            equipmentType = mounted.getLinked().getType();
         }
-        m_choice = new JComboBox<>();
-        m_choice.addItem("None");
-        m_choice.setSelectedIndex(0);
-        Iterator<WeaponType> it = m_APWeapons.iterator();
+
+        comboChoices = new JComboBox<>();
+        comboChoices.addItem("None");
+        comboChoices.setSelectedIndex(0);
+
+        Iterator<WeaponType> it = weaponTypes.iterator();
         for (int x = 1; it.hasNext(); x++) {
             WeaponType weaponType = it.next();
-            m_choice.addItem(weaponType.getName());
-            if ((curType != null) && Objects.equals(weaponType.getInternalName(), curType.getInternalName())) {
-                m_choice.setSelectedIndex(x);
+            comboChoices.addItem(weaponType.getName());
+            if ((equipmentType != null) &&
+                      Objects.equals(weaponType.getInternalName(), equipmentType.getInternalName())) {
+                comboChoices.setSelectedIndex(x);
             }
         }
 
-        String sDesc = "";
+        String labelDescription = "";
         if ((mounted != null) && (mounted.getBaMountLoc() != BattleArmor.MOUNT_LOC_NONE)) {
-            sDesc += " (" + BattleArmor.MOUNT_LOC_NAMES[mounted.getBaMountLoc()] + ')';
+            labelDescription += " (" + BattleArmor.MOUNT_LOC_NAMES[mounted.getBaMountLoc()] + ')';
         } else {
-            sDesc = "None";
+            labelDescription = "None";
         }
-        JLabel lLoc = new JLabel(sDesc);
-        GridBagLayout g = new GridBagLayout();
-        setLayout(g);
-        add(lLoc, GBC.std());
-        add(m_choice, GBC.std());
+        JLabel labelLocation = new JLabel(labelDescription);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        setLayout(gridBagLayout);
+        add(labelLocation, GBC.std());
+        add(comboChoices, GBC.std());
     }
 
     public void applyChoice() {
-        int n = m_choice.getSelectedIndex();
+        int selectedIndex = comboChoices.getSelectedIndex();
         // If there's no selection, there's nothing we can do
-        if (n == -1) {
+        if (selectedIndex == -1) {
             return;
         }
-        WeaponType apType = null;
-        if ((n > 0) && (n <= m_APWeapons.size())) {
+
+        WeaponType weaponType = null;
+        if ((selectedIndex > 0) && (selectedIndex <= weaponTypes.size())) {
             // Need to account for the "None" selection
-            apType = m_APWeapons.get(n - 1);
+            weaponType = weaponTypes.get(selectedIndex - 1);
         }
 
         // Remove any currently mounted AP weapon
-        if (m_APmounted.getLinked() != null && m_APmounted.getLinked().getType() != apType) {
-            Mounted<?> apWeapon = m_APmounted.getLinked();
-            entity.getEquipment().remove(apWeapon);
+        if (apMounted.getLinked() != null && apMounted.getLinked().getType() != weaponType) {
+            Mounted<?> mAPMountedLinked = apMounted.getLinked();
+            entity.getEquipment().remove(mAPMountedLinked);
 
-            if (apWeapon instanceof WeaponMounted weaponMounted) {
+            if (mAPMountedLinked instanceof WeaponMounted weaponMounted) {
                 entity.getWeaponList().remove(weaponMounted);
                 entity.getTotalWeaponList().remove(weaponMounted);
             }
 
             // We need to make sure that the weapon has been removed from the critical slots, otherwise it can cause
             // issues
-            for (int loc = 0; loc < entity.locations(); loc++) {
-                for (int c = 0; c < entity.getNumberOfCriticals(loc); c++) {
-                    CriticalSlot criticalSlot = entity.getCritical(loc, c);
+            for (int location = 0; location < entity.locations(); location++) {
+                for (int locationCritical = 0;
+                      locationCritical < entity.getNumberOfCriticals(location);
+                      locationCritical++) {
+                    CriticalSlot criticalSlot = entity.getCritical(location, locationCritical);
                     if (criticalSlot != null &&
                               criticalSlot.getMount() != null &&
-                              criticalSlot.getMount().equals(apWeapon)) {
-                        entity.setCritical(loc, c, null);
+                              criticalSlot.getMount().equals(mAPMountedLinked)) {
+                        entity.setCritical(location, locationCritical, null);
                     }
                 }
             }
         }
 
         // Did the selection not change, or no weapon was selected
-        if ((m_APmounted.getLinked() != null && m_APmounted.getLinked().getType() == apType) || n == 0) {
+        if ((apMounted.getLinked() != null && apMounted.getLinked().getType() == weaponType) || selectedIndex == 0) {
             return;
         }
 
         // Add the newly mounted weapon
         try {
-            Mounted<?> newWeapon = entity.addEquipment(apType, m_APmounted.getLocation());
-            m_APmounted.setLinked(newWeapon);
-            newWeapon.setLinked(m_APmounted);
+            Mounted<?> newWeapon = entity.addEquipment(weaponType, apMounted.getLocation());
+            apMounted.setLinked(newWeapon);
+            newWeapon.setLinked(apMounted);
             newWeapon.setAPMMounted(true);
         } catch (LocationFullException ex) {
             // This shouldn't happen for BA...
-            LOGGER.error(ex, "");
+            LOGGER.error(ex, "Location Full");
         }
     }
 
     @Override
     public void setEnabled(boolean enabled) {
-        m_choice.setEnabled(enabled);
+        comboChoices.setEnabled(enabled);
     }
 }

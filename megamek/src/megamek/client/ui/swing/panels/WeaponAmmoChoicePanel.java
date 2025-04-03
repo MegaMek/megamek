@@ -1,3 +1,30 @@
+/*
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ */
 package megamek.client.ui.swing.panels;
 
 import java.awt.GridBagLayout;
@@ -24,10 +51,9 @@ public class WeaponAmmoChoicePanel extends JPanel {
     @Serial
     private static final long serialVersionUID = 604670659251519188L;
     // the weapon being displayed in this row
-    private final WeaponMounted m_mounted;
-    private final ArrayList<AmmoMounted> matchingAmmoBins;
-
-    private final JComboBox<String> ammoBins;
+    private final WeaponMounted weaponMounted;
+    private final ArrayList<AmmoMounted> matchingAmmoBins = new ArrayList<>();
+    private final JComboBox<String> comboAmmoBins = new JComboBox<>();
 
     private final Entity entity;
 
@@ -38,22 +64,20 @@ public class WeaponAmmoChoicePanel extends JPanel {
      */
     public WeaponAmmoChoicePanel(WeaponMounted weapon, Entity entity) {
         this.entity = entity;
-        m_mounted = weapon;
+        weaponMounted = weapon;
 
         this.setLayout(new GridBagLayout());
-
-        ammoBins = new JComboBox<>();
-        matchingAmmoBins = new ArrayList<>();
-
-        if (m_mounted.isOneShot() || (entity.isSupportVehicle() && (m_mounted.getType() instanceof InfantryWeapon))) {
+        
+        if (weaponMounted.isOneShot() ||
+                  (entity.isSupportVehicle() && (weaponMounted.getType() instanceof InfantryWeapon))) {
             // One-shot weapons can only access their own bin
-            matchingAmmoBins.add(m_mounted.getLinkedAmmo());
-            // Fusillade and some small SV weapons are treated like one-shot weapons but may have a second
-            // munition type available.
-            if ((m_mounted.getLinked().getLinked() != null) &&
-                      (((AmmoType) m_mounted.getLinked().getType()).getMunitionType() !=
-                             (((AmmoType) m_mounted.getLinked().getLinked().getType()).getMunitionType()))) {
-                matchingAmmoBins.add((AmmoMounted) m_mounted.getLinked().getLinked());
+            matchingAmmoBins.add(weaponMounted.getLinkedAmmo());
+            // Fusillade and some small SV weapons are treated like one-shot weapons but may have a second munition
+            // type available.
+            if ((weaponMounted.getLinked().getLinked() != null) &&
+                      (((AmmoType) weaponMounted.getLinked().getType()).getMunitionType() !=
+                             (((AmmoType) weaponMounted.getLinked().getLinked().getType()).getMunitionType()))) {
+                matchingAmmoBins.add((AmmoMounted) weaponMounted.getLinked().getLinked());
             }
         } else {
             for (AmmoMounted ammoBin : weapon.getEntity().getAmmo()) {
@@ -72,7 +96,7 @@ public class WeaponAmmoChoicePanel extends JPanel {
         weaponName.setText("(" + weapon.getEntity().getLocationAbbr(weapon.getLocation()) + ") " + weapon.getName());
         add(weaponName, GBC.std());
 
-        add(ammoBins, GBC.eol());
+        add(comboAmmoBins, GBC.eol());
         refreshAmmoBinNames();
     }
 
@@ -80,16 +104,16 @@ public class WeaponAmmoChoicePanel extends JPanel {
      * Worker function that refreshes the combo box with "up-to-date" ammo names.
      */
     public void refreshAmmoBinNames() {
-        int selectedIndex = ammoBins.getSelectedIndex();
-        ammoBins.removeAllItems();
+        int selectedIndex = comboAmmoBins.getSelectedIndex();
+        comboAmmoBins.removeAllItems();
 
         int currentIndex = 0;
         for (Mounted<?> ammoBin : matchingAmmoBins) {
-            ammoBins.addItem("(" +
-                                   ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) +
-                                   ") " +
-                                   ammoBin.getName());
-            if (m_mounted.getLinked() == ammoBin) {
+            comboAmmoBins.addItem("(" +
+                                        ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) +
+                                        ") " +
+                                        ammoBin.getName());
+            if (weaponMounted.getLinked() == ammoBin) {
                 selectedIndex = currentIndex;
             }
 
@@ -97,7 +121,7 @@ public class WeaponAmmoChoicePanel extends JPanel {
         }
 
         if (selectedIndex >= 0) {
-            ammoBins.setSelectedIndex(selectedIndex);
+            comboAmmoBins.setSelectedIndex(selectedIndex);
         }
 
         validate();
@@ -122,16 +146,16 @@ public class WeaponAmmoChoicePanel extends JPanel {
         }
 
         if (matchFound) {
-            int currentBinIndex = ammoBins.getSelectedIndex();
+            int currentBinIndex = comboAmmoBins.getSelectedIndex();
 
-            ammoBins.removeItemAt(index);
-            ammoBins.insertItemAt("(" +
-                                        ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) +
-                                        ") " +
-                                        selectedAmmoType.getName(), index);
+            comboAmmoBins.removeItemAt(index);
+            comboAmmoBins.insertItemAt("(" +
+                                             ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) +
+                                             ") " +
+                                             selectedAmmoType.getName(), index);
 
             if (currentBinIndex == index) {
-                ammoBins.setSelectedIndex(index);
+                comboAmmoBins.setSelectedIndex(index);
             }
 
             validate();
@@ -142,9 +166,9 @@ public class WeaponAmmoChoicePanel extends JPanel {
      * Common functionality that applies the panel's current ammo bin choice to the panel's weapon.
      */
     public void applyChoice() {
-        int selectedIndex = ammoBins.getSelectedIndex();
+        int selectedIndex = comboAmmoBins.getSelectedIndex();
         if ((selectedIndex >= 0) && (selectedIndex < matchingAmmoBins.size())) {
-            entity.loadWeapon(m_mounted, matchingAmmoBins.get(selectedIndex));
+            entity.loadWeapon(weaponMounted, matchingAmmoBins.get(selectedIndex));
         }
     }
 }

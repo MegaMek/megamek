@@ -18,6 +18,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6796: feat: add a callsign to princess instead of numbers
 + PR #6806: Added Method for Variable Cost Check in MiscType
 + Fix #6807: Auto-set SI in ASFs
++ PR #6816 parse mek/blk from string
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

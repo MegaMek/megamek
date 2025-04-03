@@ -59,10 +59,10 @@ import megamek.common.enums.GamePhase;
  * @author Luana Coppio
  */
 public record UnitState(int id, GamePhase phase, int teamId, int round, int playerId, String chassis, String model, String type,
-                        UnitRole role, int x, int y, int facing, double mp, double heat, boolean prone, boolean airborne,
-                        boolean offBoard, boolean crippled, boolean destroyed, double armorP,
-                        double internalP, boolean done, int maxRange, int totalDamage, int armor, int internal, int bv,
-                        Entity entity) {
+      UnitRole role, int x, int y, int facing, double mp, double heat, boolean prone, boolean airborne,
+      boolean offBoard, boolean crippled, boolean destroyed, double armorP,
+      double internalP, boolean done, int maxRange, int totalDamage, int armor, int internal, int bv,
+      Entity entity) {
 
     /**
      * Creates a UnitState from an {@code entity}.
@@ -72,34 +72,34 @@ public record UnitState(int id, GamePhase phase, int teamId, int round, int play
      */
     public static UnitState fromEntity(Entity entity, Game game) {
         return new UnitState(
-            entity.getId(),
-            game.getPhase(),
-            entity.getOwner().getTeam(),
-            game.getCurrentRound(),
-            entity.getOwner().getId(),
-            entity.getChassis(),
-            entity.getModel(),
-            entity.getClass().getSimpleName(),
-            entity.getRole(),
-            entity.getPosition() == null ? -1 : entity.getPosition().getX(),
-            entity.getPosition() == null ? -1 : entity.getPosition().getY(),
-            entity.getFacing(),
-            entity.getMpUsedLastRound(),
-            entity.getHeat(),
-            entity.isProne(),
-            entity.isAirborne(),
-            entity.isOffBoard(),
-            entity.isCrippled(),
-            entity.isDestroyed(),
-            entity.getArmorRemainingPercent(),
-            entity.getInternalRemainingPercent(),
-            entity.isDone(),
-            entity.getMaxWeaponRange(),
-            Compute.computeTotalDamage(entity.getWeaponList()),
-            entity.getTotalArmor(),
-            entity instanceof IAero aero ? aero.getSI() : entity.getTotalInternal(),
-            entity.getInitialBV(),
-            entity);
+              entity.getId(),
+              game.getPhase(),
+              entity.getOwner().getTeam(),
+              game.getCurrentRound(),
+              entity.getOwner().getId(),
+              entity.getChassis(),
+              entity.getModel(),
+              entity.getClass().getSimpleName(),
+              entity.getRole(),
+              entity.getPosition() == null ? -1 : entity.getPosition().getX(),
+              entity.getPosition() == null ? -1 : entity.getPosition().getY(),
+              entity.getFacing(),
+              entity.getMpUsedLastRound(),
+              entity.getHeat(),
+              entity.isProne(),
+              entity.isAirborne(),
+              entity.isOffBoard(),
+              entity.isCrippled(),
+              entity.isDestroyed(),
+              entity.getArmorRemainingPercent(),
+              entity.getInternalRemainingPercent(),
+              entity.isDone(),
+              entity.getMaxWeaponRange(),
+              Compute.computeTotalDamage(entity.getWeaponList()),
+              entity.getTotalArmor(),
+              entity instanceof IAero aero ? aero.getSI() : entity.getTotalInternal(),
+              entity.getInitialBV(),
+              entity);
     }
 
     /**

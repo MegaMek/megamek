@@ -71,8 +71,8 @@ public enum UnitActionField {
      */
     public static String getHeaderLine() {
         return Arrays.stream(values())
-            .map(UnitActionField::getHeaderName)
-            .collect(Collectors.joining("\t"));
+                     .map(UnitActionField::getHeaderName)
+                     .collect(Collectors.joining("\t"));
     }
 
     /**
@@ -80,9 +80,9 @@ public enum UnitActionField {
      */
     public static String getPartialHeaderLine(int startsAt, int endsAt) {
         return Arrays.stream(values())
-            .skip(startsAt)
-            .limit(endsAt - startsAt)
-            .map(UnitActionField::getHeaderName)
-            .collect(Collectors.joining("\t"));
+                     .skip(startsAt)
+                     .limit(endsAt - startsAt)
+                     .map(UnitActionField::getHeaderName)
+                     .collect(Collectors.joining("\t"));
     }
 }

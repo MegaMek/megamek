@@ -28,6 +28,8 @@
 package megamek.ai.dataset;
 
 
+import megamek.common.Entity;
+
 import java.util.List;
 
 /**
@@ -37,4 +39,9 @@ import java.util.List;
  * @param boardUnitState state of the board when the action is performed
  * @author Luana Coppio
  */
-public record ActionAndState(int round, UnitAction unitAction, List<UnitState> boardUnitState){}
+public record ActionAndState(int round, UnitAction unitAction, List<UnitState> boardUnitState) {
+    public Entity getEntity() {
+        var unitStateOpt = boardUnitState.stream().filter(unitState -> unitState.id() == unitAction.id()).findFirst();
+        return unitStateOpt.map(UnitState::entity).orElse(null);
+    }
+}

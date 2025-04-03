@@ -518,15 +518,6 @@ public class MekFileParser {
                 throw new EntityLoadingException("Unable to load harjel in head for " + ent.getShortName());
             }
 
-            if (m.getType().hasFlag(MiscType.F_MASS) &&
-                      ((m.getLocation() != Mek.LOC_HEAD) ||
-                             ((ent instanceof Mek && ((Mek) ent).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) &&
-                                    (m.getLocation() != Mek.LOC_CT)))) {
-                throw new EntityLoadingException("Unable to load MASS for " +
-                                                       ent.getShortName() +
-                                                       "!  Must be located in the same location as the cockpit.");
-            }
-
             if (m.getType().hasFlag(MiscType.F_MODULAR_ARMOR) &&
                       (((ent instanceof Mek) && (m.getLocation() == Mek.LOC_HEAD)) ||
                              ((ent instanceof VTOL) && (m.getLocation() == VTOL.LOC_ROTOR)))) {

@@ -52,6 +52,14 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         wasRollReplaced.removeAllElements();
     }
 
+    /**
+     * @deprecated use {@link #addRoll(int, String)} instead.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
+    public void addRoll(int bonus) {
+        addRoll(bonus, "");
+    }
+
     public void addRoll(int bonus, String initiativeAptitudeSPA) {
         int roll = getInitiativeRoll(initiativeAptitudeSPA);
 
@@ -69,6 +77,15 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         originalRolls.addElement(-1);
         bonuses.addElement(0);
         wasRollReplaced.addElement(Boolean.FALSE);
+    }
+
+
+    /**
+     * @deprecated use {@link #replaceRoll(int, String)} instead.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
+    public void replaceRoll(int bonus) {
+        replaceRoll(bonus, "");
     }
 
     /**

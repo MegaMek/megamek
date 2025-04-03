@@ -276,6 +276,14 @@ public abstract class TurnOrdered implements ITurnOrdered {
         getInitiative().clear();
     }
 
+    /**
+     * @deprecated use {@link #rollInitiative(List, boolean, Map)} instead.
+     */
+    @Deprecated(since = "0.50.5", forRemoval = true)
+    public static void rollInitiative(List<? extends ITurnOrdered> v, boolean bUseInitiativeCompensation) {
+        rollInitiative(v, bUseInitiativeCompensation, new HashMap<>());
+    }
+
     public static void rollInitiative(List<? extends ITurnOrdered> initiativeCandidates,
                                       boolean bUseInitiativeCompensation, Map<Team, Integer> initiativeAptitude) {
         // Clear all rolls
@@ -336,6 +344,15 @@ public abstract class TurnOrdered implements ITurnOrdered {
             }
             lastRoundInitWinner = winningElement;
         }
+    }
+
+    /**
+     * @deprecated use {@link #rollInitAndResolveTies(List, List, boolean, Map)} instead.
+     */
+    @Deprecated(since = "0.50.5", forRemoval = true)
+    public static void rollInitAndResolveTies(List<? extends ITurnOrdered> v,
+                                              List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus) {
+        rollInitAndResolveTies(v, rerollRequests, bInitCompBonus, new HashMap<>());
     }
 
     /**

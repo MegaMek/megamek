@@ -295,9 +295,9 @@ public class SwarmContext {
 
             for (Entity unit : members) {
                 CubeCoords cube = unit.getPosition().toCube();
-                qSum += cube.q;
-                rSum += cube.r;
-                sSum += cube.s;
+                qSum += cube.q();
+                rSum += cube.r();
+                sSum += cube.s();
                 count ++;
             }
 

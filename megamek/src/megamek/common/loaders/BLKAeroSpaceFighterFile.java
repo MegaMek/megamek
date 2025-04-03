@@ -158,7 +158,6 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();
-        a.autoSetSI();
         // This is not working right for arrays for some reason
         a.autoSetThresh();
 
@@ -175,10 +174,6 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
         if (dataFile.exists("omni")) {
             a.setOmni(true);
         }
-
-        // how many bombs can it carry; dependent on transport bays as well as total
-        // mass.
-        a.autoSetMaxBombPoints();
 
         a.setArmorTonnage(a.getArmorWeight());
         loadQuirks(a);

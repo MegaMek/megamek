@@ -827,7 +827,7 @@ public class MekView {
         List<ViewElement> retVal = new ArrayList<>();
 
         retVal.add(new LabeledElement(Messages.getString("MekView.SI"),
-                renderArmor(a.getSI(), a.get0SI(), formatting)));
+                renderArmor(a.getSI(), a.getOSI(), formatting)));
 
         // if it is a jumpship get sail and KF integrity
         if (isJumpship) {

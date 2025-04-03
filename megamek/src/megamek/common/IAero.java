@@ -110,7 +110,7 @@ public interface IAero {
 
     int getSI();
 
-    int get0SI();
+    int getOSI();
 
     int getAvionicsHits();
 

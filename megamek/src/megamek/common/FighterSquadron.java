@@ -90,9 +90,9 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     @Override
-    public int get0SI() {
+    public int getOSI() {
         return getActiveSubEntities().stream()
-                .mapToInt(ent -> ((IAero) ent).get0SI())
+                .mapToInt(ent -> ((IAero) ent).getOSI())
                 .min()
                 .orElse(0);
     }

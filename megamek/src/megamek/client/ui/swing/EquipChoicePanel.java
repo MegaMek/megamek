@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemListener;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -25,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
@@ -61,85 +61,84 @@ import megamek.logging.MMLogger;
 public class EquipChoicePanel extends JPanel {
     private final static MMLogger logger = MMLogger.create(EquipChoicePanel.class);
 
+    @Serial
     private static final long serialVersionUID = 672299770230285567L;
 
     private final Entity entity;
 
-    private int[] entityCorrespondance;
+    private int[] entityCorrespondence;
 
-    private List<MunitionChoicePanel> m_vMunitions = new ArrayList<>();
-    private List<WeaponAmmoChoicePanel> m_vWeaponAmmoChoice = new ArrayList<>();
+    private final List<MunitionChoicePanel> m_vMunitions = new ArrayList<>();
+    private final List<WeaponAmmoChoicePanel> m_vWeaponAmmoChoice = new ArrayList<>();
 
     /**
      * An <code>ArrayList</code> to keep track of all of the
      * <code>APWeaponChoicePanels</code> that were added, so we can apply
      * their choices when the dialog is closed.
      */
-    private ArrayList<APWeaponChoicePanel> m_vAPMounts = new ArrayList<>();
+    private final ArrayList<APWeaponChoicePanel> m_vAPMounts = new ArrayList<>();
 
     /**
      * An <code>ArrayList</code> to keep track of all of the
      * <code>MEAChoicePanels</code> that were added, so we can apply
      * their choices when the dialog is closed.
      */
-    private ArrayList<MEAChoicePanel> m_vMEAdaptors = new ArrayList<>();
+    private final ArrayList<MEAChoicePanel> m_vMEAdaptors = new ArrayList<>();
 
     /**
-     * Panel for adding components related to selecting which anti-personnel
-     * weapons are mounted in an AP Mount (armored gloves are also considered
-     * AP mounts)
+     * Panel for adding components related to selecting which anti-personnel weapons are mounted in an AP Mount (armored
+     * gloves are also considered AP mounts)
      **/
-    private JPanel panAPMounts = new JPanel();
-    private JPanel panMEAdaptors = new JPanel();
+    private final JPanel panAPMounts = new JPanel();
+    private final JPanel panMEAdaptors = new JPanel();
     private JPanel panMunitions = new JPanel();
-    private JPanel panWeaponAmmoSelector = new JPanel();
+    private final JPanel panWeaponAmmoSelector = new JPanel();
 
-    private ArrayList<RapidfireMGPanel> m_vMGs = new ArrayList<>();
-    private JPanel panRapidfireMGs = new JPanel();
+    private final ArrayList<RapidFireMGPanel> m_vMGs = new ArrayList<>();
+    private final JPanel panRapidFireMGs = new JPanel();
 
-    private InfantryArmorPanel panInfArmor = new InfantryArmorPanel();
+    private final InfantryArmorPanel panInfArmor = new InfantryArmorPanel();
 
-    private ArrayList<MineChoicePanel> m_vMines = new ArrayList<>();
-    private JPanel panMines = new JPanel();
+    private final ArrayList<MineChoicePanel> m_vMines = new ArrayList<>();
+    private final JPanel panMines = new JPanel();
 
     private BombChoicePanel m_bombs;
-    private JPanel panBombs = new JPanel();
+    private final JPanel panBombs = new JPanel();
 
-    private JLabel labAutoEject = new JLabel(
-            Messages.getString("CustomMekDialog.labAutoEject"), SwingConstants.RIGHT);
-    private JCheckBox chAutoEject = new JCheckBox();
+    private final JLabel labAutoEject = new JLabel(Messages.getString("CustomMekDialog.labAutoEject"),
+          SwingConstants.RIGHT);
+    private final JCheckBox chAutoEject = new JCheckBox();
 
-    private JLabel labCondEjectAmmo = new JLabel(
-            Messages.getString("CustomMekDialog.labConditional_Ejection_Ammo"), SwingConstants.RIGHT);
-    private JCheckBox chCondEjectAmmo = new JCheckBox();
+    private final JLabel labCondEjectAmmo = new JLabel(Messages.getString("CustomMekDialog.labConditional_Ejection_Ammo"),
+          SwingConstants.RIGHT);
+    private final JCheckBox chCondEjectAmmo = new JCheckBox();
 
-    private JLabel labCondEjectEngine = new JLabel(
-            Messages.getString("CustomMekDialog.labConditional_Ejection_Engine"), SwingConstants.RIGHT);
-    private JCheckBox chCondEjectEngine = new JCheckBox();
+    private final JLabel labCondEjectEngine = new JLabel(Messages.getString(
+          "CustomMekDialog.labConditional_Ejection_Engine"), SwingConstants.RIGHT);
+    private final JCheckBox chCondEjectEngine = new JCheckBox();
 
-    private JLabel labCondEjectCTDest = new JLabel(
-            Messages.getString("CustomMekDialog.labConditional_Ejection_CT_Destroyed"), SwingConstants.RIGHT);
-    private JCheckBox chCondEjectCTDest = new JCheckBox();
+    private final JLabel labCondEjectCTDest = new JLabel(Messages.getString(
+          "CustomMekDialog.labConditional_Ejection_CT_Destroyed"), SwingConstants.RIGHT);
+    private final JCheckBox chCondEjectCTDest = new JCheckBox();
 
-    private JLabel labCondEjectHeadshot = new JLabel(
-            Messages.getString("CustomMekDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT);
-    private JCheckBox chCondEjectHeadshot = new JCheckBox();
+    private final JLabel labCondEjectHeadshot = new JLabel(Messages.getString(
+          "CustomMekDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT);
+    private final JCheckBox chCondEjectHeadshot = new JCheckBox();
 
-    private JLabel labCondEjectFuel = new JLabel(
-            Messages.getString("CustomMekDialog.labConditional_Ejection_Fuel"), SwingConstants.RIGHT);
-    private JCheckBox chCondEjectFuel = new JCheckBox();
+    private final JLabel labCondEjectFuel = new JLabel(Messages.getString("CustomMekDialog.labConditional_Ejection_Fuel"),
+          SwingConstants.RIGHT);
+    private final JCheckBox chCondEjectFuel = new JCheckBox();
 
-    private JLabel labCondEjectSIDest = new JLabel(
-            Messages.getString("CustomMekDialog.labConditional_Ejection_SI_Destroyed"), SwingConstants.RIGHT);
-    private JCheckBox chCondEjectSIDest = new JCheckBox();
+    private final JLabel labCondEjectSIDest = new JLabel(Messages.getString(
+          "CustomMekDialog.labConditional_Ejection_SI_Destroyed"), SwingConstants.RIGHT);
+    private final JCheckBox chCondEjectSIDest = new JCheckBox();
 
-    private JLabel labSearchlight = new JLabel(
-            Messages.getString("CustomMekDialog.labSearchlight"), SwingConstants.RIGHT);
-    private JCheckBox chSearchlight = new JCheckBox();
+    private final JLabel labSearchlight = new JLabel(Messages.getString("CustomMekDialog.labSearchlight"),
+          SwingConstants.RIGHT);
+    private final JCheckBox chSearchlight = new JCheckBox();
 
-    private JLabel labC3 = new JLabel(
-            Messages.getString("CustomMekDialog.labC3"), SwingConstants.RIGHT);
-    private JComboBox<String> choC3 = new JComboBox<>();
+    private final JLabel labC3 = new JLabel(Messages.getString("CustomMekDialog.labC3"), SwingConstants.RIGHT);
+    private final JComboBox<String> choC3 = new JComboBox<>();
 
     ClientGUI clientgui;
     Client client;
@@ -154,9 +153,7 @@ public class EquipChoicePanel extends JPanel {
 
         // **EQUIPMENT TAB**//
         // Auto-eject checkbox and conditional ejections.
-        if (entity instanceof Mek) {
-            Mek mek = (Mek) entity;
-
+        if (entity instanceof Mek mek) {
             if (mek.hasEjectSeat()) {
                 add(labAutoEject, GBC.std());
                 add(chAutoEject, GBC.eol());
@@ -164,8 +161,8 @@ public class EquipChoicePanel extends JPanel {
             }
 
             // Conditional Ejections
-            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                    && mek.hasEjectSeat()) {
+            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                      mek.hasEjectSeat()) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(mek.isCondEjectAmmo());
@@ -190,8 +187,8 @@ public class EquipChoicePanel extends JPanel {
             }
 
             // Conditional Ejections
-            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                    && aero.hasEjectSeat()) {
+            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                      aero.hasEjectSeat()) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(aero.isCondEjectAmmo());
@@ -214,52 +211,53 @@ public class EquipChoicePanel extends JPanel {
         if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(MiscType.F_AP_MOUNT)) {
             setupAPMounts();
             panAPMounts.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
-                    Messages.getString("CustomMekDialog.APMountPanelTitle"),
-                    TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
+                  Messages.getString("CustomMekDialog.APMountPanelTitle"),
+                  TitledBorder.TOP,
+                  TitledBorder.DEFAULT_POSITION));
 
             add(panAPMounts, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(MiscType.F_BA_MEA)) {
+        if ((entity instanceof BattleArmor battleArmor) && entity.hasWorkingMisc(MiscType.F_BA_MEA)) {
             panMEAdaptors.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
-                    Messages.getString("CustomMekDialog.MEAPanelTitle"),
-                    TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
-            // We need to determine how much weight is free, so the user can
-            // pick legal combinations of manipulators
-            BattleArmor ba = (BattleArmor) entity;
-            EntityVerifier verifier = EntityVerifier.getInstance(
-                    new MegaMekFile(Configuration.unitsDir(),
-                            EntityVerifier.CONFIG_FILENAME).getFile());
-            TestBattleArmor testBA = new TestBattleArmor(ba,
-                    verifier.baOption, null);
+                  Messages.getString("CustomMekDialog.MEAPanelTitle"),
+                  TitledBorder.TOP,
+                  TitledBorder.DEFAULT_POSITION));
+            // We need to determine how much weight is free, so the user can pick legal combinations of manipulators
+            EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(Configuration.unitsDir(),
+                  EntityVerifier.CONFIG_FILENAME).getFile());
+            TestBattleArmor testBA = new TestBattleArmor(battleArmor, verifier.baOption, null);
             double maxTrooperWeight = 0;
-            for (int i = 1; i < ba.getTroopers(); i++) {
+            for (int i = 1; i < battleArmor.getTroopers(); i++) {
                 double trooperWeight = testBA.calculateWeight(i);
                 if (trooperWeight > maxTrooperWeight) {
                     maxTrooperWeight = trooperWeight;
                 }
             }
-            String freeWeight = Messages.getString("CustomMekDialog.freeWeight")
-                    + String.format(": %1$.3f/%2$.3f", maxTrooperWeight, ba.getTrooperWeight());
+            String freeWeight = Messages.getString("CustomMekDialog.freeWeight") +
+                                      String.format(": %1$.3f/%2$.3f",
+                                            maxTrooperWeight,
+                                            battleArmor.getTrooperWeight());
 
             setupMEAdaptors(freeWeight);
             add(panMEAdaptors, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
         // Can't set up munitions on infantry.
-        if (!((entity instanceof Infantry) && !((Infantry) entity)
-                .hasFieldWeapon()) || (entity instanceof BattleArmor)) {
+        if (!((entity instanceof Infantry) && !((Infantry) entity).hasFieldWeapon()) ||
+                  (entity instanceof BattleArmor)) {
             setupMunitions();
             panMunitions.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
-                    Messages.getString("CustomMekDialog.MunitionsPanelTitle"),
-                    TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
-            add(panMunitions,
-                    GBC.eop().anchor(GridBagConstraints.CENTER));
+                  Messages.getString("CustomMekDialog.MunitionsPanelTitle"),
+                  TitledBorder.TOP,
+                  TitledBorder.DEFAULT_POSITION));
+            add(panMunitions, GBC.eop().anchor(GridBagConstraints.CENTER));
 
             setupWeaponAmmoChoice();
             panWeaponAmmoSelector.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
-                    Messages.getString("CustomMekDialog.WeaponSelectionTitle"),
-                    TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
+                  Messages.getString("CustomMekDialog.WeaponSelectionTitle"),
+                  TitledBorder.TOP,
+                  TitledBorder.DEFAULT_POSITION));
             add(panWeaponAmmoSelector, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
@@ -268,11 +266,11 @@ public class EquipChoicePanel extends JPanel {
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        // Set up rapidfire mg; per errata infantry of any kind cannot use them
+        // Set up rapid fire mg; per errata infantry of any kind cannot use them
         if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST) &&
-                !(entity instanceof Infantry)) {
-            setupRapidfireMGs();
-            add(panRapidfireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
+                  !(entity instanceof Infantry)) {
+            setupRapidFireMGs();
+            add(panRapidFireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
         // set up infantry armor
@@ -282,12 +280,12 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // Set up searchlight
-        if (!entity.getsAutoExternalSearchlight()
-                && client.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
+        if (!entity.getsAutoExternalSearchlight() &&
+                  client.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
-            chSearchlight.setSelected(entity.hasSearchlight()
-                    || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
+            chSearchlight.setSelected(entity.hasSearchlight() ||
+                                            entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             chSearchlight.setEnabled(!entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
         }
 
@@ -312,14 +310,14 @@ public class EquipChoicePanel extends JPanel {
     }
 
     public void applyChoices() {
-        // Autoejection Options
+        // Auto ejection Options
         boolean autoEject = chAutoEject.isSelected();
         boolean condEjectAmmo = chCondEjectAmmo.isSelected();
         // Meks and LAMs Only
         boolean condEjectEngine = chCondEjectEngine.isSelected();
         boolean condEjectCTDest = chCondEjectCTDest.isSelected();
         boolean condEjectHeadshot = chCondEjectHeadshot.isSelected();
-        // Aeros Only
+        // Aerospace Only
         boolean condEjectFuel = chCondEjectFuel.isSelected();
         boolean condEjectSIDest = chCondEjectSIDest.isSelected();
 
@@ -364,7 +362,7 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // update MG rapid fire settings
-        for (final RapidfireMGPanel rapidfireMGPanel : m_vMGs) {
+        for (final RapidFireMGPanel rapidfireMGPanel : m_vMGs) {
             rapidfireMGPanel.applyChoice();
         }
         // update mines setting
@@ -386,25 +384,27 @@ public class EquipChoicePanel extends JPanel {
         }
 
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
-            Entity chosen = client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]);
+            Entity chosen = client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]);
             int entC3nodeCount = client.getGame().getC3SubNetworkMembers(entity).size();
             int choC3nodeCount = client.getGame().getC3NetworkMembers(chosen).size();
 
-            if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES
-                    && ((chosen == null) || entity.getC3MasterId() != chosen.getId())) {
+            if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES &&
+                      ((chosen == null) || entity.getC3MasterId() != chosen.getId())) {
                 entity.setC3Master(chosen, true);
             } else if (entity.getC3MasterId() != chosen.getId()) {
                 String message = Messages.getString("CustomMekDialog.NetworkTooBig.message",
-                        entity.getShortName(), chosen.getShortName(), entC3nodeCount,
-                        choC3nodeCount, Entity.MAX_C3_NODES);
-                clientgui.doAlertDialog(Messages.getString("CustomMekDialog.NetworkTooBig.title"),
-                        message);
+                      entity.getShortName(),
+                      chosen.getShortName(),
+                      entC3nodeCount,
+                      choC3nodeCount,
+                      Entity.MAX_C3_NODES);
+                clientgui.doAlertDialog(Messages.getString("CustomMekDialog.NetworkTooBig.title"), message);
                 refreshC3();
             }
         } else if (entity.hasC3i() && (choC3.getSelectedIndex() > -1)) {
-            entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
+            entity.setC3NetId(client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]));
         } else if (entity.hasNavalC3() && (choC3.getSelectedIndex() > -1)) {
-            entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
+            entity.setC3NetId(client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]));
         }
     }
 
@@ -412,24 +412,23 @@ public class EquipChoicePanel extends JPanel {
         GridBagLayout gbl = new GridBagLayout();
         panBombs.setLayout(gbl);
 
-        int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES,
-                client.getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        int techLevel = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES,
+              client.getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
         boolean allowNukes = client.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
-        m_bombs = new BombChoicePanel((IBomber) entity, allowNukes,
-                techlvl >= TechConstants.T_SIMPLE_ADVANCED);
+        m_bombs = new BombChoicePanel((IBomber) entity, allowNukes, techLevel >= TechConstants.T_SIMPLE_ADVANCED);
         panBombs.add(m_bombs, GBC.std());
     }
 
-    private void setupRapidfireMGs() {
+    private void setupRapidFireMGs() {
         GridBagLayout gbl = new GridBagLayout();
-        panRapidfireMGs.setLayout(gbl);
+        panRapidFireMGs.setLayout(gbl);
         for (Mounted<?> m : entity.getWeaponList()) {
-            WeaponType wtype = (WeaponType) m.getType();
-            if (!wtype.hasFlag(WeaponType.F_MG)) {
+            WeaponType weaponType = (WeaponType) m.getType();
+            if (!weaponType.hasFlag(WeaponType.F_MG)) {
                 continue;
             }
-            RapidfireMGPanel rmp = new RapidfireMGPanel(m);
-            panRapidfireMGs.add(rmp, GBC.eol());
+            RapidFireMGPanel rmp = new RapidFireMGPanel(m);
+            panRapidFireMGs.add(rmp, GBC.eol());
             m_vMGs.add(rmp);
         }
     }
@@ -441,8 +440,7 @@ public class EquipChoicePanel extends JPanel {
 
         int row = 0;
         for (MiscMounted m : entity.getMisc()) {
-            if (!m.getType().hasFlag((MiscType.F_MINE)) &&
-                    !m.getType().hasFlag((MiscType.F_VEHICLE_MINE_DISPENSER))) {
+            if (!m.getType().hasFlag((MiscType.F_MINE)) && !m.getType().hasFlag((MiscType.F_VEHICLE_MINE_DISPENSER))) {
                 continue;
             }
 
@@ -455,9 +453,8 @@ public class EquipChoicePanel extends JPanel {
     }
 
     /**
-     * Setup the layout of <code>panMEAdaptors</code>, which contains components
-     * for selecting which manipulators are mounted in a modular equipment
-     * adaptor
+     * Set up the layout of <code>panMEAdaptors</code>, which contains components for selecting which manipulators are
+     * mounted in a modular equipment adaptor
      */
     private void setupMEAdaptors(String freeWeight) {
         GridBagLayout gbl = new GridBagLayout();
@@ -466,50 +463,50 @@ public class EquipChoicePanel extends JPanel {
         JLabel lblFreeWeight = new JLabel(freeWeight);
         panMEAdaptors.add(lblFreeWeight, GBC.eol().anchor(GridBagConstraints.CENTER));
 
-        ArrayList<MiscType> manipTypes = new ArrayList<>();
+        ArrayList<MiscType> manipulatorTypes = new ArrayList<>();
 
-        for (String manipTypeName : BattleArmor.MANIPULATOR_TYPE_STRINGS) {
+        for (String manipulatorTypeName : BattleArmor.MANIPULATOR_TYPE_STRINGS) {
             // Ignore the "None" option
-            if (manipTypeName.equals(BattleArmor.MANIPULATOR_TYPE_STRINGS[0])) {
+            if (manipulatorTypeName.equals(BattleArmor.MANIPULATOR_TYPE_STRINGS[0])) {
                 continue;
             }
-            MiscType mType = (MiscType) EquipmentType.get(manipTypeName);
-            manipTypes.add(mType);
+            MiscType miscType = (MiscType) EquipmentType.get(manipulatorTypeName);
+            manipulatorTypes.add(miscType);
         }
 
         for (Mounted<?> m : entity.getMisc()) {
             if (!m.getType().hasFlag(MiscType.F_BA_MEA)) {
                 continue;
             }
-            Mounted<?> currentManip = null;
+            Mounted<?> currentManipulator;
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
-                currentManip = ((BattleArmor) entity).getLeftManipulator();
+                currentManipulator = ((BattleArmor) entity).getLeftManipulator();
             } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
-                currentManip = ((BattleArmor) entity).getRightManipulator();
+                currentManipulator = ((BattleArmor) entity).getRightManipulator();
             } else {
                 // We can only have MEA's in an arm
                 continue;
             }
-            MEAChoicePanel meacp;
-            meacp = new MEAChoicePanel(entity, m.getBaMountLoc(), currentManip, manipTypes);
+            MEAChoicePanel meaChoicePanel;
+            meaChoicePanel = new MEAChoicePanel(entity, m.getBaMountLoc(), currentManipulator, manipulatorTypes);
 
-            panMEAdaptors.add(meacp, GBC.eol());
-            m_vMEAdaptors.add(meacp);
+            panMEAdaptors.add(meaChoicePanel, GBC.eol());
+            m_vMEAdaptors.add(meaChoicePanel);
         }
     }
 
     /**
-     * Setup the layout of <code>panAPMounts</code>, which contains components
-     * for selecting which anti-personnel weapons are mounted in an AP mount.
+     * Set up the layout of <code>panAPMounts</code>, which contains components for selecting which anti-personnel
+     * weapons are mounted in an AP mount.
      */
     private void setupAPMounts() {
         GridBagLayout gbl = new GridBagLayout();
         panAPMounts.setLayout(gbl);
 
         // Weapons that can be used in an AP Mount
-        ArrayList<WeaponType> apWeapTypes = new ArrayList<>(100);
+        ArrayList<WeaponType> apWeaponTypes = new ArrayList<>(100);
         // Weapons that can be used in an Armored Glove
-        ArrayList<WeaponType> agWeapTypes = new ArrayList<>(100);
+        ArrayList<WeaponType> agWeaponTypes = new ArrayList<>(100);
         Enumeration<EquipmentType> allTypes = EquipmentType.getAllTypes();
         int gameYear = clientgui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(clientgui.getClient().getGame());
@@ -517,50 +514,52 @@ public class EquipChoicePanel extends JPanel {
             EquipmentType eq = allTypes.nextElement();
 
             // If it's not an infantry weapon, we don't care
-            if (!(eq instanceof InfantryWeapon)) {
+            if (!(eq instanceof InfantryWeapon infantryWeapon)) {
                 continue;
             }
 
             // Check to see if the tech level of the equipment is legal
-            if (!eq.isLegal(gameYear, legalLevel, entity.isClan(), entity.isMixedTech(),
-                    entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
+            if (!eq.isLegal(gameYear,
+                  legalLevel,
+                  entity.isClan(),
+                  entity.isMixedTech(),
+                  entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                 continue;
             }
 
             // Check to see if we've got a valid infantry weapon
-            InfantryWeapon infWeap = (InfantryWeapon) eq;
-            if (infWeap.hasFlag(WeaponType.F_INFANTRY)
-                    && !infWeap.hasFlag(WeaponType.F_INF_POINT_BLANK)
-                    && !infWeap.hasFlag(WeaponType.F_INF_ARCHAIC)
-                    && !infWeap.hasFlag(WeaponType.F_INF_SUPPORT)) {
-                apWeapTypes.add(infWeap);
+            if (infantryWeapon.hasFlag(WeaponType.F_INFANTRY) &&
+                      !infantryWeapon.hasFlag(WeaponType.F_INF_POINT_BLANK) &&
+                      !infantryWeapon.hasFlag(WeaponType.F_INF_ARCHAIC) &&
+                      !infantryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
+                apWeaponTypes.add(infantryWeapon);
             }
-            if (infWeap.hasFlag(WeaponType.F_INFANTRY)
-                    && !infWeap.hasFlag(WeaponType.F_INF_POINT_BLANK)
-                    && !infWeap.hasFlag(WeaponType.F_INF_ARCHAIC)
-                    && (infWeap.getCrew() < 2)) {
-                agWeapTypes.add(infWeap);
+            if (infantryWeapon.hasFlag(WeaponType.F_INFANTRY) &&
+                      !infantryWeapon.hasFlag(WeaponType.F_INF_POINT_BLANK) &&
+                      !infantryWeapon.hasFlag(WeaponType.F_INF_ARCHAIC) &&
+                      (infantryWeapon.getCrew() < 2)) {
+                agWeaponTypes.add(infantryWeapon);
             }
         }
-        apWeapTypes.sort(Comparator.comparing(EquipmentType::getName));
-        agWeapTypes.sort(Comparator.comparing(EquipmentType::getName));
+        apWeaponTypes.sort(Comparator.comparing(EquipmentType::getName));
+        agWeaponTypes.sort(Comparator.comparing(EquipmentType::getName));
 
         ArrayList<Mounted<?>> armoredGloves = new ArrayList<>(2);
         for (Mounted<?> m : entity.getMisc()) {
             if (!m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
                 continue;
             }
-            APWeaponChoicePanel apcp = null;
+            APWeaponChoicePanel apWeaponChoicePanel = null;
             // Armored gloves need to be treated slightly differently, since
             // 1 or 2 armored gloves allow 1 additional AP weapon
             if (m.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
                 armoredGloves.add(m);
             } else {
-                apcp = new APWeaponChoicePanel(entity, m, apWeapTypes);
+                apWeaponChoicePanel = new APWeaponChoicePanel(entity, m, apWeaponTypes);
             }
-            if (apcp != null) {
-                panAPMounts.add(apcp, GBC.eol());
-                m_vAPMounts.add(apcp);
+            if (apWeaponChoicePanel != null) {
+                panAPMounts.add(apWeaponChoicePanel, GBC.eol());
+                m_vAPMounts.add(apWeaponChoicePanel);
             }
         }
 
@@ -576,9 +575,9 @@ public class EquipChoicePanel extends JPanel {
             // If both are linked, TestBattleArmor will mark unit as invalid
         }
         if (aGlove != null) {
-            APWeaponChoicePanel apcp = new APWeaponChoicePanel(entity, aGlove, agWeapTypes);
-            panAPMounts.add(apcp, GBC.eol());
-            m_vAPMounts.add(apcp);
+            APWeaponChoicePanel apWeaponChoicePanel = new APWeaponChoicePanel(entity, aGlove, agWeaponTypes);
+            panAPMounts.add(apWeaponChoicePanel, GBC.eol());
+            m_vAPMounts.add(apWeaponChoicePanel);
         }
     }
 
@@ -612,103 +611,88 @@ public class EquipChoicePanel extends JPanel {
                 continue;
             }
 
-            // don't allow ammo switching of most things for Aeros
-            // allow only MML, ATM, and NARC. LRM/SRM can switch between Artemis and
-            // standard,
-            // but not other munitions. Same with MRM.
-            if ((entity instanceof Aero)
-                    && !((at.getAmmoType() == AmmoType.T_MML)
-                            || (at.getAmmoType() == AmmoType.T_SRM)
-                            || (at.getAmmoType() == AmmoType.T_LRM)
-                            || (at.getAmmoType() == AmmoType.T_MRM)
-                            || (at.getAmmoType() == AmmoType.T_ATM)
-                            || (at.getAmmoType() == AmmoType.T_IATM))) {
+            // don't allow ammo switching of most things for Aerospace allow only MML, ATM, and NARC. LRM/SRM can
+            // switch between Artemis and standard, but not other munitions. Same with MRM.
+            if ((entity instanceof Aero) &&
+                      !((at.getAmmoType() == AmmoType.T_MML) ||
+                              (at.getAmmoType() == AmmoType.T_SRM) ||
+                              (at.getAmmoType() == AmmoType.T_LRM) ||
+                              (at.getAmmoType() == AmmoType.T_MRM) ||
+                              (at.getAmmoType() == AmmoType.T_ATM) ||
+                              (at.getAmmoType() == AmmoType.T_IATM))) {
                 continue;
             }
 
             for (AmmoType atCheck : vAllTypes) {
-                if (entity.hasETypeFlag(Entity.ETYPE_AERO)
-                        && !atCheck.canAeroUse(game.getOptions()
-                                .booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
+                if (entity.hasETypeFlag(Entity.ETYPE_AERO) &&
+                          !atCheck.canAeroUse(game.getOptions()
+                                                    .booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
                     continue;
                 }
                 SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(game);
-                boolean bTechMatch = false;
+                boolean bTechMatch;
                 if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED)) {
-                    bTechMatch = atCheck.isLegal(gameYear, legalLevel, entity.isClan(),
-                            entity.isMixedTech(),
-                            game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT));
+                    bTechMatch = atCheck.isLegal(gameYear,
+                          legalLevel,
+                          entity.isClan(),
+                          entity.isMixedTech(),
+                          game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT));
                 } else {
                     bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal();
                 }
 
-                // If clan_ignore_eq_limits is unchecked,
-                // do NOT allow Clans to use IS-only ammo.
+                // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo.
                 // "Incendiary" munition type gets removed here for reasons unknown.
-                EnumSet<AmmoType.Munitions> muniType = atCheck.getMunitionType();
-                muniType.remove(AmmoType.Munitions.M_INCENDIARY_LRM);
-                if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS)
-                        && entity.isClan()
-                        && ((muniType.contains(AmmoType.Munitions.M_SEMIGUIDED))
-                                || (muniType.contains(AmmoType.Munitions.M_SWARM_I))
-                                || (muniType.contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))
-                                || (muniType.contains(AmmoType.Munitions.M_THUNDER_INFERNO))
-                                || (muniType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))
-                                || (muniType.contains(AmmoType.Munitions.M_THUNDER_ACTIVE))
-                                || (muniType.contains(AmmoType.Munitions.M_INFERNO_IV))
-                                || (muniType.contains(AmmoType.Munitions.M_VIBRABOMB_IV))
-                                || (muniType.contains(AmmoType.Munitions.M_LISTEN_KILL))
-                                || (muniType.contains(AmmoType.Munitions.M_ANTI_TSM))
-                                || (muniType.contains(AmmoType.Munitions.M_DEAD_FIRE))
-                                || (muniType.contains(AmmoType.Munitions.M_MINE_CLEARANCE)))) {
+                EnumSet<AmmoType.Munitions> munitionsTypes = atCheck.getMunitionType();
+                munitionsTypes.remove(AmmoType.Munitions.M_INCENDIARY_LRM);
+                if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS) &&
+                          entity.isClan() &&
+                          atCheck.notAllowedByClanRules()) {
                     bTechMatch = false;
                 }
 
-                if ((muniType.contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))
-                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS)
-                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
+                if ((munitionsTypes.contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) &&
+                          !entity.hasWorkingMisc(MiscType.F_ARTEMIS) &&
+                          !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
                     continue;
                 }
-                if ((muniType.contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))
-                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_V)
-                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
+                if ((munitionsTypes.contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)) &&
+                          !entity.hasWorkingMisc(MiscType.F_ARTEMIS_V) &&
+                          !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
                     continue;
                 }
 
                 if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) &&
-                        AmmoType.canDeliverMinefield(atCheck)) {
+                          AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }
 
-                // Only Protos can use Proto-specific ammo
-                if (atCheck.hasFlag(AmmoType.F_PROTOMEK)
-                        && !(entity instanceof ProtoMek)) {
+                // Only ProtoMeks can use Proto-specific ammo
+                if (atCheck.hasFlag(AmmoType.F_PROTOMEK) && !(entity instanceof ProtoMek)) {
                     continue;
                 }
 
-                // When dealing with machine guns, Protos can only
+                // When dealing with machine guns, ProtoMeks can only
                 // use proto-specific machine gun ammo
-                if ((entity instanceof ProtoMek)
-                        && atCheck.hasFlag(AmmoType.F_MG)
-                        && !atCheck.hasFlag(AmmoType.F_PROTOMEK)) {
+                if ((entity instanceof ProtoMek) &&
+                          atCheck.hasFlag(AmmoType.F_MG) &&
+                          !atCheck.hasFlag(AmmoType.F_PROTOMEK)) {
                     continue;
                 }
 
                 // Battle Armor ammo can't be selected at all.
                 // All other ammo types need to match on rack size and tech.
-                if (bTechMatch
-                        && (atCheck.getRackSize() == at.getRackSize())
-                        && (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at
-                                .hasFlag(AmmoType.F_BATTLEARMOR))
-                        && (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at
-                                .hasFlag(AmmoType.F_ENCUMBERING))
-                        && (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
+                if (bTechMatch &&
+                          (atCheck.getRackSize() == at.getRackSize()) &&
+                          (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at.hasFlag(AmmoType.F_BATTLEARMOR)) &&
+                          (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at.hasFlag(AmmoType.F_ENCUMBERING)) &&
+                          (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
                     vTypes.add(atCheck);
                 }
             }
-            if ((vTypes.size() < 1)
-                    && !client.getGame().getOptions().booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP)
-                    && !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
+            if ((vTypes.isEmpty()) &&
+                      !client.getGame().getOptions().booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP) &&
+                      !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
                 continue;
             }
             MunitionChoicePanel mcp;
@@ -719,9 +703,8 @@ public class EquipChoicePanel extends JPanel {
     }
 
     /**
-     * Worker function that creates a series of weapon ammo choice panels that allow
-     * the user to pick a particular ammo bin for an
-     * ammo-using weapon with matching ammo.
+     * Worker function that creates a series of weapon ammo choice panels that allow the user to pick a particular ammo
+     * bin for an ammo-using weapon with matching ammo.
      */
     private void setupWeaponAmmoChoice() {
         GridBagLayout gbl = new GridBagLayout();
@@ -740,11 +723,12 @@ public class EquipChoicePanel extends JPanel {
     }
 
     class MineChoicePanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = -1868675102440527538L;
 
-        private JComboBox<String> m_choice;
+        private final JComboBox<String> m_choice;
 
-        private MiscMounted m_mounted;
+        private final MiscMounted m_mounted;
 
         MineChoicePanel(MiscMounted m) {
             m_mounted = m;
@@ -773,46 +757,46 @@ public class EquipChoicePanel extends JPanel {
     }
 
     /**
-     * A panel that houses a label and a combo box that allows for selecting
-     * which anti-personnel weapon is mounted in an AP mount.
+     * A panel that houses a label and a combo box that allows for selecting which anti-personnel weapon is mounted in
+     * an AP mount.
      *
      * @author arlith
      */
     class APWeaponChoicePanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = 6189888202192403704L;
 
-        private Entity entity;
+        private final Entity entity;
 
-        private ArrayList<WeaponType> m_APWeaps;
+        private final ArrayList<WeaponType> m_APWeapons;
 
-        private JComboBox<String> m_choice;
+        private final JComboBox<String> m_choice;
 
-        private Mounted<?> m_APmounted;
+        private final Mounted<?> m_APmounted;
 
-        APWeaponChoicePanel(Entity e, Mounted<?> m, ArrayList<WeaponType> weapons) {
-            entity = e;
-            m_APWeaps = weapons;
-            m_APmounted = m;
+        APWeaponChoicePanel(Entity entity, Mounted<?> mounted, ArrayList<WeaponType> weapons) {
+            this.entity = entity;
+            m_APWeapons = weapons;
+            m_APmounted = mounted;
             EquipmentType curType = null;
-            if ((m != null) && (m.getLinked() != null)) {
-                curType = m.getLinked().getType();
+            if ((mounted != null) && (mounted.getLinked() != null)) {
+                curType = mounted.getLinked().getType();
             }
             m_choice = new JComboBox<>();
             m_choice.addItem("None");
             m_choice.setSelectedIndex(0);
-            Iterator<WeaponType> it = m_APWeaps.iterator();
+            Iterator<WeaponType> it = m_APWeapons.iterator();
             for (int x = 1; it.hasNext(); x++) {
-                WeaponType weap = it.next();
-                m_choice.addItem(weap.getName());
-                if ((curType != null)
-                        && Objects.equals(weap.getInternalName(), curType.getInternalName())) {
+                WeaponType weaponType = it.next();
+                m_choice.addItem(weaponType.getName());
+                if ((curType != null) && Objects.equals(weaponType.getInternalName(), curType.getInternalName())) {
                     m_choice.setSelectedIndex(x);
                 }
             }
 
             String sDesc = "";
-            if ((m != null) && (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_NONE)) {
-                sDesc += " (" + BattleArmor.MOUNT_LOC_NAMES[m.getBaMountLoc()] + ')';
+            if ((mounted != null) && (mounted.getBaMountLoc() != BattleArmor.MOUNT_LOC_NONE)) {
+                sDesc += " (" + BattleArmor.MOUNT_LOC_NAMES[mounted.getBaMountLoc()] + ')';
             } else {
                 sDesc = "None";
             }
@@ -821,7 +805,6 @@ public class EquipChoicePanel extends JPanel {
             setLayout(g);
             add(lLoc, GBC.std());
             add(m_choice, GBC.std());
-
         }
 
         public void applyChoice() {
@@ -831,25 +814,25 @@ public class EquipChoicePanel extends JPanel {
                 return;
             }
             WeaponType apType = null;
-            if ((n > 0) && (n <= m_APWeaps.size())) {
+            if ((n > 0) && (n <= m_APWeapons.size())) {
                 // Need to account for the "None" selection
-                apType = m_APWeaps.get(n - 1);
+                apType = m_APWeapons.get(n - 1);
             }
 
             // Remove any currently mounted AP weapon
-            if (m_APmounted.getLinked() != null
-                    && m_APmounted.getLinked().getType() != apType) {
+            if (m_APmounted.getLinked() != null && m_APmounted.getLinked().getType() != apType) {
                 Mounted<?> apWeapon = m_APmounted.getLinked();
                 entity.getEquipment().remove(apWeapon);
                 entity.getWeaponList().remove(apWeapon);
                 entity.getTotalWeaponList().remove(apWeapon);
-                // We need to make sure that the weapon has been removed
-                // from the criticals, otherwise it can cause issues
+                // We need to make sure that the weapon has been removed from the critical slots, otherwise it can
+                // cause issues
                 for (int loc = 0; loc < entity.locations(); loc++) {
                     for (int c = 0; c < entity.getNumberOfCriticals(loc); c++) {
-                        CriticalSlot crit = entity.getCritical(loc, c);
-                        if (crit != null && crit.getMount() != null
-                                && crit.getMount().equals(apWeapon)) {
+                        CriticalSlot criticalSlot = entity.getCritical(loc, c);
+                        if (criticalSlot != null &&
+                                  criticalSlot.getMount() != null &&
+                                  criticalSlot.getMount().equals(apWeapon)) {
                             entity.setCritical(loc, c, null);
                         }
                     }
@@ -857,18 +840,16 @@ public class EquipChoicePanel extends JPanel {
             }
 
             // Did the selection not change, or no weapon was selected
-            if ((m_APmounted.getLinked() != null
-                    && m_APmounted.getLinked().getType() == apType)
-                    || n == 0) {
+            if ((m_APmounted.getLinked() != null && m_APmounted.getLinked().getType() == apType) || n == 0) {
                 return;
             }
 
             // Add the newly mounted weapon
             try {
-                Mounted<?> newWeap = entity.addEquipment(apType, m_APmounted.getLocation());
-                m_APmounted.setLinked(newWeap);
-                newWeap.setLinked(m_APmounted);
-                newWeap.setAPMMounted(true);
+                Mounted<?> newWeapon = entity.addEquipment(apType, m_APmounted.getLocation());
+                m_APmounted.setLinked(newWeapon);
+                newWeapon.setLinked(m_APmounted);
+                newWeapon.setAPMMounted(true);
             } catch (LocationFullException ex) {
                 // This shouldn't happen for BA...
                 logger.error(ex, "");
@@ -882,63 +863,62 @@ public class EquipChoicePanel extends JPanel {
     }
 
     /**
-     * A panel that houses a label and a combo box that allows for selecting
-     * which manipulator is mounted in a modular equipment adaptor.
+     * A panel that houses a label and a combo box that allows for selecting which manipulator is mounted in a modular
+     * equipment adaptor.
      *
      * @author arlith
      */
     class MEAChoicePanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = 6189888202192403704L;
 
-        private Entity entity;
+        private final Entity entity;
 
-        private ArrayList<MiscType> m_Manipulators;
+        private final ArrayList<MiscType> m_Manipulators;
 
-        private JComboBox<String> m_choice;
+        private final JComboBox<String> m_choice;
 
         /**
          * The manipulator currently mounted by a modular equipment adaptor.
          */
-        private Mounted<?> m_Manipmounted;
+        private Mounted<?> m_ManipulatorMounted;
 
         /**
          * The BattleArmor mount location of the modular equipment adaptor.
          */
-        private int baMountLoc;
+        private final int baMountLoc;
 
-        MEAChoicePanel(Entity e, int mountLoc, Mounted<?> m,
-                ArrayList<MiscType> manips) {
-            entity = e;
-            m_Manipulators = manips;
-            m_Manipmounted = m;
+        MEAChoicePanel(Entity entity, int mountLoc, Mounted<?> mounted, ArrayList<MiscType> manipulators) {
+            this.entity = entity;
+            m_Manipulators = manipulators;
+            m_ManipulatorMounted = mounted;
             baMountLoc = mountLoc;
             EquipmentType curType = null;
-            if (m != null) {
-                curType = m.getType();
+
+            if (mounted != null) {
+                curType = mounted.getType();
             }
+
             m_choice = new JComboBox<>();
             m_choice.addItem("None");
             m_choice.setSelectedIndex(0);
             Iterator<MiscType> it = m_Manipulators.iterator();
             for (int x = 1; it.hasNext(); x++) {
-                MiscType manip = it.next();
-                String manipName = manip.getName() + " ("
-                        + manip.getTonnage(entity) + "kg)";
-                m_choice.addItem(manipName);
-                if (curType != null &&
-                        manip.getInternalName() == curType.getInternalName()) {
+                MiscType manipulator = it.next();
+                String manipulatorName = manipulator.getName() + " (" + manipulator.getTonnage(this.entity) + "kg)";
+                m_choice.addItem(manipulatorName);
+                if (curType != null && Objects.equals(manipulator.getInternalName(), curType.getInternalName())) {
                     m_choice.setSelectedIndex(x);
                 }
             }
 
             String sDesc = "";
             if (baMountLoc != BattleArmor.MOUNT_LOC_NONE) {
-                sDesc += " ("
-                        + BattleArmor.MOUNT_LOC_NAMES[baMountLoc]
-                        + ')';
+                sDesc += " (" + BattleArmor.MOUNT_LOC_NAMES[baMountLoc] + ')';
             } else {
                 sDesc = "None";
             }
+
             JLabel lLoc = new JLabel(sDesc);
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
@@ -949,19 +929,24 @@ public class EquipChoicePanel extends JPanel {
 
         public void applyChoice() {
             int n = m_choice.getSelectedIndex();
+
             // If there's no selection, there's nothing we can do
             if (n == -1) {
                 return;
             }
-            MiscType manipType = null;
+
+            MiscType manipulatorType = null;
             if (n > 0 && n <= m_Manipulators.size()) {
                 // Need to account for the "None" selection
-                manipType = m_Manipulators.get(n - 1);
+                manipulatorType = m_Manipulators.get(n - 1);
             }
 
-            if (m_Manipmounted != null) {
-                entity.getEquipment().remove(m_Manipmounted);
-                entity.getMisc().remove(m_Manipmounted);
+            int location = 0;
+
+            if (m_ManipulatorMounted != null) {
+                location = m_ManipulatorMounted.getLocation();
+                entity.getEquipment().remove(m_ManipulatorMounted);
+                entity.getMisc().remove(m_ManipulatorMounted);
             }
 
             // Was no manipulator selected?
@@ -970,9 +955,11 @@ public class EquipChoicePanel extends JPanel {
             }
 
             // Add the newly mounted manipulator
+            // Adjusts to use the location variable with a default of a location of 0 to account for when the
+            // m_ManipulatorMounted is null at this point.
             try {
-                m_Manipmounted = entity.addEquipment(manipType, m_Manipmounted.getLocation());
-                m_Manipmounted.setBaMountLoc(baMountLoc);
+                m_ManipulatorMounted = entity.addEquipment(manipulatorType, location);
+                m_ManipulatorMounted.setBaMountLoc(baMountLoc);
             } catch (LocationFullException ex) {
                 // This shouldn't happen for BA...
                 logger.error(ex, "");
@@ -986,19 +973,19 @@ public class EquipChoicePanel extends JPanel {
     }
 
     class MunitionChoicePanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = 3401106035583965326L;
 
-        private List<AmmoType> m_vTypes;
+        private final List<AmmoType> m_vTypes;
 
-        private JComboBox<AmmoType> m_choice;
+        private final JComboBox<AmmoType> m_choice;
 
-        @SuppressWarnings("rawtypes")
-        private JComboBox m_num_shots;
-        private ItemListener numShotsListener;
+        private final JComboBox<String> m_num_shots;
+        private final ItemListener numShotsListener;
 
         boolean numShotsChanged = false;
 
-        private AmmoMounted m_mounted;
+        private final AmmoMounted m_mounted;
 
         JLabel labDump = new JLabel(Messages.getString("CustomMekDialog.labDump"));
 
@@ -1008,13 +995,12 @@ public class EquipChoicePanel extends JPanel {
 
         JCheckBox chHotLoad = new JCheckBox();
 
-        @SuppressWarnings("unchecked")
         MunitionChoicePanel(AmmoMounted m, ArrayList<AmmoType> vTypes,
-                List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels) {
+              List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels) {
             m_vTypes = vTypes;
             m_mounted = m;
 
-            AmmoType curType = (AmmoType) m.getType();
+            AmmoType curType = m.getType();
             m_choice = new JComboBox<>();
             Iterator<AmmoType> e = m_vTypes.iterator();
             for (int x = 0; e.hasNext(); x++) {
@@ -1026,12 +1012,11 @@ public class EquipChoicePanel extends JPanel {
             }
 
             numShotsListener = evt -> numShotsChanged = true;
-            m_num_shots = new JComboBox<String>();
+            m_num_shots = new JComboBox<>();
             int shotsPerTon = curType.getShots();
             // BattleArmor always have a certain number of shots per slot
             int stepSize = 1;
-            // ProtoMeks and BattleArmor are limited to the number of shots allocated in
-            // construction
+            // ProtoMeks and BattleArmor are limited to the number of shots allocated in construction
             if ((entity instanceof BattleArmor) || (entity instanceof ProtoMek)) {
                 shotsPerTon = m.getOriginalShots();
                 // BA tube artillery always comes in pairs
@@ -1040,14 +1025,20 @@ public class EquipChoicePanel extends JPanel {
                 }
             }
             for (int i = 0; i <= shotsPerTon; i += stepSize) {
-                m_num_shots.addItem(i);
+                m_num_shots.addItem(String.valueOf(i));
             }
             m_num_shots.setSelectedItem(m_mounted.getBaseShotsLeft());
             m_num_shots.addItemListener(numShotsListener);
 
             m_choice.addItemListener(evt -> {
                 m_num_shots.removeItemListener(numShotsListener);
-                int currShots = (Integer) m_num_shots.getSelectedItem();
+
+                int currShots = 0;
+
+                if (m_num_shots.getSelectedItem() instanceof String value) {
+                    currShots = Integer.parseInt(value);
+                }
+
                 m_num_shots.removeAllItems();
                 int numberOfShotsPerTon = m_vTypes.get(m_choice.getSelectedIndex()).getShots();
 
@@ -1056,7 +1047,7 @@ public class EquipChoicePanel extends JPanel {
                     numberOfShotsPerTon = m.getOriginalShots();
                 }
                 for (int i = 0; i <= numberOfShotsPerTon; i++) {
-                    m_num_shots.addItem(i);
+                    m_num_shots.addItem(String.valueOf(i));
                 }
                 // If the shots selection was changed, try to set that value, unless it's too
                 // large
@@ -1076,10 +1067,8 @@ public class EquipChoicePanel extends JPanel {
             int loc = m.getLocation();
             boolean isOneShot = false;
             if (loc == Entity.LOC_NONE) {
-                // oneshot weapons don't have a location of their own
-                // some weapons (e.g. fusillade) use the one-shot mechanic but have an extra
-                // reload
-                // which is chained to the first
+                // one shot weapons don't have a location of their own some weapons (e.g. fusillade) use the one-shot
+                // mechanic but have an extra reload which is chained to the first
                 Mounted<?> linkedBy = m.getLinkedBy();
                 while (linkedBy.getLinkedBy() != null) {
                     linkedBy = linkedBy.getLinkedBy();
@@ -1098,19 +1087,13 @@ public class EquipChoicePanel extends JPanel {
             add(m_choice, GBC.std());
             add(m_num_shots, GBC.eol());
             chHotLoad.setSelected(m_mounted.isHotLoaded());
-            if (clientgui.getClient().getGame().getOptions().booleanOption(
-                    OptionsConstants.BASE_LOBBY_AMMO_DUMP)) {
+            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP)) {
                 add(labDump, GBC.std());
                 add(chDump, GBC.eol());
-                if (clientgui.getClient().getGame().getOptions().booleanOption(
-                        OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
-                        && curType.hasFlag(AmmoType.F_HOTLOAD)) {
-                    add(labHotLoad, GBC.std());
-                    add(chHotLoad, GBC.eol());
-                }
-            } else if (clientgui.getClient().getGame().getOptions().booleanOption(
-                    OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
-                    && curType.hasFlag(AmmoType.F_HOTLOAD)) {
+            }
+
+            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD) &&
+                      curType.hasFlag(AmmoType.F_HOTLOAD)) {
                 add(labHotLoad, GBC.std());
                 add(chHotLoad, GBC.eol());
             }
@@ -1126,22 +1109,21 @@ public class EquipChoicePanel extends JPanel {
             m_mounted.changeAmmoType(at);
 
             // set # shots only for non-one shot weapons
-            if (m_mounted.getLocation() != Entity.LOC_NONE) {
-                m_mounted.setShotsLeft((Integer) m_num_shots.getSelectedItem());
+            if (m_mounted.getLocation() != Entity.LOC_NONE && m_num_shots.getSelectedItem() instanceof String value) {
+                m_mounted.setShotsLeft(Integer.parseInt(value));
             }
 
             if (chDump.isSelected()) {
                 m_mounted.setShotsLeft(0);
             }
-            if (clientgui.getClient().getGame().getOptions().booleanOption(
-                    OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
+
+            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
                 if (chHotLoad.isSelected() != m_mounted.isHotLoaded()) {
                     m_mounted.setHotLoad(chHotLoad.isSelected());
                     // Set the mode too, so vehicles can switch back
                     int numModes = m_mounted.getModesCount();
                     for (int m = 0; m < numModes; m++) {
-                        if (m_mounted.getType().getMode(m).getName()
-                                .equals("HotLoad")) {
+                        if (m_mounted.getType().getMode(m).getName().equals("HotLoad")) {
                             m_mounted.setMode(m);
                         }
                     }
@@ -1158,7 +1140,10 @@ public class EquipChoicePanel extends JPanel {
          * Get the number of shots in the mount.
          *
          * @return the <code>int</code> number of shots in the mount.
+         *
+         * @deprecated no indicated uses.
          */
+        @Deprecated(since = "0.50.05", forRemoval = true)
         int getShotsLeft() {
             return m_mounted.getBaseShotsLeft();
         }
@@ -1166,27 +1151,29 @@ public class EquipChoicePanel extends JPanel {
         /**
          * Set the number of shots in the mount.
          *
-         * @param shots
-         *              the <code>int</code> number of shots for the mount.
+         * @param shots the <code>int</code> number of shots for the mount.
+         *
+         * @deprecated no indicated uses.
          */
+        @Deprecated(since = "0.50.05", forRemoval = true)
         void setShotsLeft(int shots) {
             m_mounted.setShotsLeft(shots);
         }
     }
 
     /**
-     * A panel representing the option to choose a particular ammo bin for an
-     * individual weapon.
+     * A panel representing the option to choose a particular ammo bin for an individual weapon.
      *
      * @author NickAragua
      */
     class WeaponAmmoChoicePanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = 604670659251519188L;
         // the weapon being displayed in this row
-        private WeaponMounted m_mounted;
-        private ArrayList<AmmoMounted> matchingAmmoBins;
+        private final WeaponMounted m_mounted;
+        private final ArrayList<AmmoMounted> matchingAmmoBins;
 
-        private JComboBox<String> ammoBins;
+        private final JComboBox<String> ammoBins;
 
         /**
          * Constructor
@@ -1201,22 +1188,21 @@ public class EquipChoicePanel extends JPanel {
             ammoBins = new JComboBox<>();
             matchingAmmoBins = new ArrayList<>();
 
-            if (m_mounted.isOneShot() || (entity.isSupportVehicle()
-                    && (m_mounted.getType() instanceof InfantryWeapon))) {
+            if (m_mounted.isOneShot() ||
+                      (entity.isSupportVehicle() && (m_mounted.getType() instanceof InfantryWeapon))) {
                 // One-shot weapons can only access their own bin
                 matchingAmmoBins.add(m_mounted.getLinkedAmmo());
-                // Fusillade and some small SV weapons are treated like one-shot
-                // weapons but may have a second munition type available.
-                if ((m_mounted.getLinked().getLinked() != null)
-                        && (((AmmoType) m_mounted.getLinked().getType())
-                                .getMunitionType() != (((AmmoType) m_mounted.getLinked().getLinked().getType())
-                                        .getMunitionType()))) {
+                // Fusillade and some small SV weapons are treated like one-shot weapons but may have a second
+                // munition type available.
+                if ((m_mounted.getLinked().getLinked() != null) &&
+                          (((AmmoType) m_mounted.getLinked().getType()).getMunitionType() !=
+                                 (((AmmoType) m_mounted.getLinked().getLinked().getType()).getMunitionType()))) {
                     matchingAmmoBins.add((AmmoMounted) m_mounted.getLinked().getLinked());
                 }
             } else {
                 for (AmmoMounted ammoBin : weapon.getEntity().getAmmo()) {
-                    if ((ammoBin.getLocation() != Entity.LOC_NONE)
-                            && AmmoType.canSwitchToAmmo(weapon, ammoBin.getType())) {
+                    if ((ammoBin.getLocation() != Entity.LOC_NONE) &&
+                              AmmoType.canSwitchToAmmo(weapon, ammoBin.getType())) {
                         matchingAmmoBins.add(ammoBin);
                     }
                 }
@@ -1228,8 +1214,10 @@ public class EquipChoicePanel extends JPanel {
             }
 
             JLabel weaponName = new JLabel();
-            weaponName
-                    .setText("(" + weapon.getEntity().getLocationAbbr(weapon.getLocation()) + ") " + weapon.getName());
+            weaponName.setText("(" +
+                                     weapon.getEntity().getLocationAbbr(weapon.getLocation()) +
+                                     ") " +
+                                     weapon.getName());
             add(weaponName, GBC.std());
 
             add(ammoBins, GBC.eol());
@@ -1245,8 +1233,10 @@ public class EquipChoicePanel extends JPanel {
 
             int currentIndex = 0;
             for (Mounted<?> ammoBin : matchingAmmoBins) {
-                ammoBins.addItem(
-                        "(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") " + ammoBin.getName());
+                ammoBins.addItem("(" +
+                                       ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) +
+                                       ") " +
+                                       ammoBin.getName());
                 if (m_mounted.getLinked() == ammoBin) {
                     selectedIndex = currentIndex;
                 }
@@ -1262,16 +1252,14 @@ public class EquipChoicePanel extends JPanel {
         }
 
         /**
-         * Refreshes a single item in the ammo type combo box to display the correct
-         * ammo type name.
-         * Because the underlying ammo bin hasn't been updated yet, we carry out the
-         * name swap "in-place".
+         * Refreshes a single item in the ammo type combo box to display the correct ammo type name. Because the
+         * underlying ammo bin hasn't been updated yet, we carry out the name swap "in-place".
          *
          * @param ammoBin          The ammo bin whose ammo type has probably changed.
          * @param selectedAmmoType The new ammo type.
          */
         public void refreshAmmoBinName(Mounted<?> ammoBin, AmmoType selectedAmmoType) {
-            int index = 0;
+            int index;
             boolean matchFound = false;
 
             for (index = 0; index < matchingAmmoBins.size(); index++) {
@@ -1285,8 +1273,10 @@ public class EquipChoicePanel extends JPanel {
                 int currentBinIndex = ammoBins.getSelectedIndex();
 
                 ammoBins.removeItemAt(index);
-                ammoBins.insertItemAt("(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") "
-                        + selectedAmmoType.getName(), index);
+                ammoBins.insertItemAt("(" +
+                                            ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) +
+                                            ") " +
+                                            selectedAmmoType.getName(), index);
 
                 if (currentBinIndex == index) {
                     ammoBins.setSelectedIndex(index);
@@ -1297,8 +1287,7 @@ public class EquipChoicePanel extends JPanel {
         }
 
         /**
-         * Common functionality that applies the panel's current ammo bin choice to the
-         * panel's weapon.
+         * Common functionality that applies the panel's current ammo bin choice to the panel's weapon.
          */
         public void applyChoice() {
             int selectedIndex = ammoBins.getSelectedIndex();
@@ -1308,23 +1297,23 @@ public class EquipChoicePanel extends JPanel {
         }
     }
 
-    class RapidfireMGPanel extends JPanel {
+    class RapidFireMGPanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = 5261919826318225201L;
 
-        private Mounted<?> m_mounted;
+        private final Mounted<?> m_mounted;
 
         JCheckBox chRapid = new JCheckBox();
 
-        RapidfireMGPanel(Mounted<?> m) {
-            m_mounted = m;
-            int loc = m.getLocation();
-            String sDesc = Messages.getString("CustomMekDialog.switchToRapidFire",
-                    entity.getLocationAbbr(loc));
+        RapidFireMGPanel(Mounted<?> mounted) {
+            m_mounted = mounted;
+            int loc = mounted.getLocation();
+            String sDesc = Messages.getString("CustomMekDialog.switchToRapidFire", entity.getLocationAbbr(loc));
             JLabel labRapid = new JLabel(sDesc);
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
             add(labRapid, GBC.std().anchor(GridBagConstraints.EAST));
-            chRapid.setSelected(m.isRapidfire());
+            chRapid.setSelected(mounted.isRapidfire());
             add(chRapid, GBC.eol());
         }
 
@@ -1340,6 +1329,7 @@ public class EquipChoicePanel extends JPanel {
     }
 
     class InfantryArmorPanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = -909995917737642853L;
 
         private Infantry inf;
@@ -1352,8 +1342,8 @@ public class EquipChoicePanel extends JPanel {
         JLabel labSneakIR = new JLabel(Messages.getString("CustomMekDialog.labSneakIR"));
         JLabel labSneakECM = new JLabel(Messages.getString("CustomMekDialog.labSneakECM"));
         JLabel labSpec = new JLabel(Messages.getString("CustomMekDialog.labInfSpec"));
-        private JComboBox<String> cbArmorKit = new JComboBox<>();
-        private JTextField fldDivisor = new JTextField(3);
+        private final JComboBox<String> cbArmorKit = new JComboBox<>();
+        private final JTextField fldDivisor = new JTextField(3);
         JCheckBox chEncumber = new JCheckBox();
         JCheckBox chSpaceSuit = new JCheckBox();
         JCheckBox chDEST = new JCheckBox();
@@ -1403,10 +1393,13 @@ public class EquipChoicePanel extends JPanel {
 
             SimpleTechLevel gameTechLevel = SimpleTechLevel.getGameTechLevel(client.getGame());
             int year = client.getGame().getOptions().intOption("year");
-            for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements();) {
+            for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements(); ) {
                 final EquipmentType et = e.nextElement();
-                if (et.hasFlag(MiscType.F_ARMOR_KIT)
-                        && et.isLegal(year, gameTechLevel, entity.isClan(), entity.isMixedTech(),
+                if (et.hasFlag(MiscType.F_ARMOR_KIT) &&
+                          et.isLegal(year,
+                                gameTechLevel,
+                                entity.isClan(),
+                                entity.isMixedTech(),
                                 entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                     armorKits.add(et);
                 }
@@ -1446,12 +1439,9 @@ public class EquipChoicePanel extends JPanel {
             chEncumber.setEnabled(cbArmorKit.getSelectedIndex() == 0);
             chSpaceSuit.setEnabled(cbArmorKit.getSelectedIndex() == 0);
             chDEST.setEnabled(cbArmorKit.getSelectedIndex() == 0);
-            chSneakCamo.setEnabled(cbArmorKit.getSelectedIndex() == 0
-                    && !chDEST.isSelected());
-            chSneakIR.setEnabled(cbArmorKit.getSelectedIndex() == 0
-                    && !chDEST.isSelected());
-            chSneakECM.setEnabled(cbArmorKit.getSelectedIndex() == 0
-                    && !chDEST.isSelected());
+            chSneakCamo.setEnabled(cbArmorKit.getSelectedIndex() == 0 && !chDEST.isSelected());
+            chSneakIR.setEnabled(cbArmorKit.getSelectedIndex() == 0 && !chDEST.isSelected());
+            chSneakECM.setEnabled(cbArmorKit.getSelectedIndex() == 0 && !chDEST.isSelected());
         }
 
         public void updateArmorValues() {
@@ -1497,13 +1487,13 @@ public class EquipChoicePanel extends JPanel {
             if (enabled) {
                 armorStateChanged();
             } else {
-                fldDivisor.setEnabled(enabled);
-                chEncumber.setEnabled(enabled);
-                chSpaceSuit.setEnabled(enabled);
-                chDEST.setEnabled(enabled);
-                chSneakCamo.setEnabled(enabled);
-                chSneakIR.setEnabled(enabled);
-                chSneakECM.setEnabled(enabled);
+                fldDivisor.setEnabled(false);
+                chEncumber.setEnabled(false);
+                chSpaceSuit.setEnabled(false);
+                chDEST.setEnabled(false);
+                chSneakCamo.setEnabled(false);
+                chSneakIR.setEnabled(false);
+                chSneakECM.setEnabled(false);
             }
             for (JCheckBox spec : chSpecs) {
                 spec.setEnabled(enabled);
@@ -1512,46 +1502,46 @@ public class EquipChoicePanel extends JPanel {
     }
 
     private void disableMunitionEditing() {
-        for (int i = 0; i < m_vMunitions.size(); i++) {
-            m_vMunitions.get(i).setEnabled(false);
+        for (MunitionChoicePanel mVMunition : m_vMunitions) {
+            mVMunition.setEnabled(false);
         }
     }
 
     private void disableAPMEditing() {
-        for (int i = 0; i < m_vAPMounts.size(); i++) {
-            m_vAPMounts.get(i).setEnabled(false);
+        for (APWeaponChoicePanel mVAPMount : m_vAPMounts) {
+            mVAPMount.setEnabled(false);
         }
     }
 
     private void disableMEAEditing() {
-        for (int i = 0; i < m_vMEAdaptors.size(); i++) {
-            m_vMEAdaptors.get(i).setEnabled(false);
+        for (MEAChoicePanel mVMEAdaptor : m_vMEAdaptors) {
+            mVMEAdaptor.setEnabled(false);
         }
     }
 
     private void disableMGSetting() {
-        for (int i = 0; i < m_vMGs.size(); i++) {
-            m_vMGs.get(i).setEnabled(false);
+        for (RapidFireMGPanel mVMG : m_vMGs) {
+            mVMG.setEnabled(false);
         }
     }
 
     private void disableMineSetting() {
-        for (int i = 0; i < m_vMines.size(); i++) {
-            m_vMines.get(i).setEnabled(false);
+        for (MineChoicePanel mVMine : m_vMines) {
+            mVMine.setEnabled(false);
         }
     }
 
     private void refreshC3() {
         choC3.removeAllItems();
         int listIndex = 0;
-        entityCorrespondance = new int[client.getGame().getNoOfEntities() + 2];
+        entityCorrespondence = new int[client.getGame().getNoOfEntities() + 2];
 
         if (entity.hasC3i() || entity.hasNavalC3()) {
             choC3.addItem(Messages.getString("CustomMekDialog.CreateNewNetwork"));
             if (entity.getC3Master() == null) {
                 choC3.setSelectedIndex(listIndex);
             }
-            entityCorrespondance[listIndex++] = entity.getId();
+            entityCorrespondence[listIndex++] = entity.getId();
         } else if (entity.hasC3MM()) {
             int mNodes = entity.calculateFreeC3MNodes();
             int sNodes = entity.calculateFreeC3Nodes();
@@ -1561,13 +1551,13 @@ public class EquipChoicePanel extends JPanel {
             if (entity.C3MasterIs(entity)) {
                 choC3.setSelectedIndex(listIndex);
             }
-            entityCorrespondance[listIndex++] = entity.getId();
+            entityCorrespondence[listIndex++] = entity.getId();
 
             choC3.addItem(Messages.getString("CustomMekDialog.setIndependentMaster", sNodes));
             if (entity.getC3Master() == null) {
                 choC3.setSelectedIndex(listIndex);
             }
-            entityCorrespondance[listIndex++] = -1;
+            entityCorrespondence[listIndex++] = -1;
 
         } else if (entity.hasC3M()) {
             int nodes = entity.calculateFreeC3Nodes();
@@ -1576,13 +1566,13 @@ public class EquipChoicePanel extends JPanel {
             if (entity.C3MasterIs(entity)) {
                 choC3.setSelectedIndex(listIndex);
             }
-            entityCorrespondance[listIndex++] = entity.getId();
+            entityCorrespondence[listIndex++] = entity.getId();
 
             choC3.addItem(Messages.getString("CustomMekDialog.setIndependentMaster", nodes));
             if (entity.getC3Master() == null) {
                 choC3.setSelectedIndex(listIndex);
             }
-            entityCorrespondance[listIndex++] = -1;
+            entityCorrespondence[listIndex++] = -1;
 
         }
         for (Entity e : client.getEntitiesVector()) {
@@ -1604,8 +1594,7 @@ public class EquipChoicePanel extends JPanel {
             }
             // maximum depth of a c3 network is 2 levels.
             Entity eCompanyMaster = e.getC3Master();
-            if ((eCompanyMaster != null)
-                    && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
+            if ((eCompanyMaster != null) && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
                 continue;
             }
             int nodes = e.calculateFreeC3Nodes();
@@ -1615,8 +1604,7 @@ public class EquipChoicePanel extends JPanel {
             if (entity.C3MasterIs(e) && !entity.equals(e)) {
                 nodes++;
             }
-            if ((entity.hasC3i() || entity.hasNavalC3())
-                    && (entity.onSameC3NetworkAs(e) || entity.equals(e))) {
+            if ((entity.hasC3i() || entity.hasNavalC3()) && (entity.onSameC3NetworkAs(e) || entity.equals(e))) {
                 nodes++;
             }
             if (nodes == 0) {
@@ -1625,36 +1613,44 @@ public class EquipChoicePanel extends JPanel {
             if (e.hasC3i() || e.hasNavalC3()) {
                 if (entity.onSameC3NetworkAs(e)) {
                     choC3.addItem(Messages.getString("CustomMekDialog.join1",
-                            e.getDisplayName(), e.getC3NetId(), nodes - 1));
+                          e.getDisplayName(),
+                          e.getC3NetId(),
+                          nodes - 1));
                     choC3.setSelectedIndex(listIndex);
                 } else {
                     choC3.addItem(Messages.getString("CustomMekDialog.join2",
-                            e.getDisplayName(), e.getC3NetId(), nodes));
+                          e.getDisplayName(),
+                          e.getC3NetId(),
+                          nodes));
                 }
-                entityCorrespondance[listIndex++] = e.getId();
+                entityCorrespondence[listIndex++] = e.getId();
             } else if (e.C3MasterIs(e) && e.hasC3MM()) {
-                // Company masters with 2 computers can have
-                // *both* sub-masters AND slave units.
+                // Company masters with 2 computers can have *both* sub-masters AND slave units.
                 choC3.addItem(Messages.getString("CustomMekDialog.connect2",
-                        e.getDisplayName(), e.getC3NetId(), nodes));
-                entityCorrespondance[listIndex] = e.getId();
+                      e.getDisplayName(),
+                      e.getC3NetId(),
+                      nodes));
+                entityCorrespondence[listIndex] = e.getId();
                 if (entity.C3MasterIs(e)) {
                     choC3.setSelectedIndex(listIndex);
                 }
                 listIndex++;
             } else if (e.C3MasterIs(e) != entity.hasC3M()) {
-                // If we're a slave-unit, we can only connect to sub-masters,
-                // not main masters likewise, if we're a master unit, we can
-                // only connect to main master units, not sub-masters.
+                // If we're a slave-unit, we can only connect to sub-masters, not main masters likewise, if we're a
+                // master unit, we can only connect to main master units, not sub-masters.
             } else if (entity.C3MasterIs(e)) {
                 choC3.addItem(Messages.getString("CustomMekDialog.connect1",
-                        e.getDisplayName(), e.getC3NetId(), nodes - 1));
+                      e.getDisplayName(),
+                      e.getC3NetId(),
+                      nodes - 1));
                 choC3.setSelectedIndex(listIndex);
-                entityCorrespondance[listIndex++] = e.getId();
+                entityCorrespondence[listIndex++] = e.getId();
             } else {
                 choC3.addItem(Messages.getString("CustomMekDialog.connect2",
-                        e.getDisplayName(), e.getC3NetId(), nodes));
-                entityCorrespondance[listIndex++] = e.getId();
+                      e.getDisplayName(),
+                      e.getC3NetId(),
+                      nodes));
+                entityCorrespondence[listIndex++] = e.getId();
             }
         }
     }

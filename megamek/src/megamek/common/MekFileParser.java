@@ -98,6 +98,18 @@ public class MekFileParser {
         }
     }
 
+    public MekFileParser(String content) throws EntityLoadingException {
+        try {
+            parse(content);
+        } catch (EntityLoadingException ex) {
+            LOGGER.error("", ex);
+            throw new EntityLoadingException(ex.getMessage());
+        } catch (Exception ex) {
+            LOGGER.error("", ex);
+            throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
+        }
+    }
+
     public static void initCanonUnitNames() {
         initCanonUnitNames(Configuration.docsDir(), FILENAME_OFFICIAL_UNITS);
     }
@@ -188,6 +200,17 @@ public class MekFileParser {
         m_entity = loader.getEntity();
 
         MekFileParser.postLoadInit(m_entity);
+    }
+
+    /**
+     * Parse a string containing the representation of a unit.
+     * 
+     * @param content String containing the unit representation
+     * @throws Exception
+     */
+    public void parse(String content) throws Exception {
+        final boolean isBlk = content.contains("<BlockVersion>") || content.contains("<UnitType>");
+        parse(new ByteArrayInputStream(content.getBytes()), isBlk ? ".blk" : ".mtf");
     }
 
     /**

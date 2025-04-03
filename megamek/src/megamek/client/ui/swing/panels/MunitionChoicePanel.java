@@ -91,7 +91,7 @@ public class MunitionChoicePanel extends JPanel {
             int currShots = 0;
 
             if (m_num_shots.getSelectedItem() instanceof String value) {
-                currShots = MathUtility.parseInt(value);
+                currShots = MathUtility.parseInt(value, currShots);
             }
 
             m_num_shots.removeAllItems();
@@ -165,7 +165,7 @@ public class MunitionChoicePanel extends JPanel {
 
         // set # shots only for non-one shot weapons
         if (m_mounted.getLocation() != Entity.LOC_NONE && m_num_shots.getSelectedItem() instanceof String value) {
-            m_mounted.setShotsLeft(MathUtility.parseInt(value));
+            m_mounted.setShotsLeft(MathUtility.parseInt(value, 0));
         }
 
         if (chDump.isSelected()) {

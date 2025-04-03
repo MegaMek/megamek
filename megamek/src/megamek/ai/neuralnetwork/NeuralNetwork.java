@@ -61,13 +61,13 @@ public class NeuralNetwork {
     private final float[] inputNormalizationMaxValues;
     private final int outputAxisLength;
 
-    public NeuralNetwork(
-          BrainRegistry brainRegistry,
+    private NeuralNetwork(
+          int outputAxisLength,
           SavedModelBundle model,
           InputNormalizationValues inputNormalizationValues)
     {
         this.model = model;
-        this.outputAxisLength = brainRegistry.outputAxisLength();
+        this.outputAxisLength = outputAxisLength;
         this.session = model.session();
 
         SignatureDef sigDef = model.metaGraphDef().getSignatureDefMap().get("serving_default");
@@ -98,36 +98,9 @@ public class NeuralNetwork {
      */
     public static NeuralNetwork loadBrain(BrainRegistry brainRegistry) {
         Path path = Path.of("data", "ai","brains", brainRegistry.name());
-        try {
-            // Initialize normalization values
-            // the normalization values are on a file named min_max_feature_normalization.csv inside the modelPath
-            Path normalizationFilePath = Path.of("data", "ai","brains", brainRegistry.name(),
-                  "min_max_feature_normalization.csv");
-            InputNormalizationValues inputNormalizationValues =
-                  new InputNormalizationValues(new float[brainRegistry.inputAxisLength()], new float[brainRegistry.inputAxisLength()]);
-            try (var reader = new BufferedReader(new FileReader(normalizationFilePath.toFile()))) {
-                String line;
-                int index;
-                while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("feature,")) {
-                        continue;
-                    }
-                    String[] values = line.split(",");
-                    index = Integer.parseInt(values[0]);
-                    inputNormalizationValues.minValues()[index] = Float.parseFloat(values[1]);
-                    inputNormalizationValues.maxValues()[index] = Float.parseFloat(values[2]);
-                }
-            } catch (IOException e) {
-                logger.warn("Normalization file not found: " + e.getMessage(), e);
-                throw new RuntimeException("Failed to load TensorFlow model: " + e.getMessage(), e);
-            }
-
-            return new NeuralNetwork(brainRegistry, SavedModelBundle.load(path.toString(), "serve"),
-                  inputNormalizationValues);
-        } catch (Exception e) {
-            logger.error("Failed to load model", e);
-            throw new RuntimeException("Failed to load TensorFlow model: " + e.getMessage(), e);
-        }
+        SavedModelBundle model = SavedModelBundle.load(path.toString(), "serve");
+        InputNormalizationValues inputNormalizationValues = InputNormalizationValues.loadFile(path);
+        return new NeuralNetwork(brainRegistry.outputAxisLength(), model, inputNormalizationValues);
     }
 
     /**

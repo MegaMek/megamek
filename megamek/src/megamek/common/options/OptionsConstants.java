@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -60,8 +61,8 @@ public class OptionsConstants {
     public static final String QUIRK_POS_POWER_REVERSE = "power_reverse";
     public static final String QUIRK_POS_PRO_ACTUATOR = "pro_actuator";
     public static final String QUIRK_POS_REINFORCED_LEGS = "reinforced_legs";
-    public static final String QUIRK_POS_RUGGED_1 = "rugged_1" ;
-    public static final String QUIRK_POS_RUGGED_2 = "rugged_2" ;
+    public static final String QUIRK_POS_RUGGED_1 = "rugged_1";
+    public static final String QUIRK_POS_RUGGED_2 = "rugged_2";
     public static final String QUIRK_POS_RUMBLE_SEAT = "rumble_seat";
     public static final String QUIRK_POS_SCOUT_BIKE = "scout_bike";
     public static final String QUIRK_POS_SEARCHLIGHT = "searchlight";
@@ -201,6 +202,8 @@ public class OptionsConstants {
     public static final String MISC_IRON_MAN = "iron_man";
     public static final String MISC_PAIN_RESISTANCE = "pain_resistance";
     public static final String MISC_TACTICAL_GENIUS = "tactical_genius";
+    public static final String ATOW_COMBAT_SENSE = "atow_combat_sense";
+    public static final String ATOW_COMBAT_PARALYSIS = "atow_combat_paralysis";
 
     // INFANTRY ABILITIES
     public static final String INFANTRY_FOOT_CAV = "foot_cav";
@@ -332,8 +335,8 @@ public class OptionsConstants {
     public static final String ALLOWED_REALLY_ALLOW_NUKES = "really_allow_nukes";
     public static final String ADVANCED_MINEFIELDS = "minefields";
     public static final String ADVANCED_HIDDEN_UNITS = "hidden_units";
-    public static final String ADVANCED_BLACK_ICE= "black_ice";
-    public static final String ADVANCED_LIGHTNING_STORM_TARGETS_UNITS= "lightning_storm_targets_units";
+    public static final String ADVANCED_BLACK_ICE = "black_ice";
+    public static final String ADVANCED_LIGHTNING_STORM_TARGETS_UNITS = "lightning_storm_targets_units";
     public static final String ADVANCED_DOUBLE_BLIND = "double_blind";
     public static final String ADVANCED_SINGLE_BLIND_BOTS = "single_blind_bots";
     public static final String ADVANCED_TACOPS_SENSORS = "tacops_sensors";
@@ -528,5 +531,6 @@ public class OptionsConstants {
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
 
-    private OptionsConstants() { }
+    private OptionsConstants() {
+    }
 }

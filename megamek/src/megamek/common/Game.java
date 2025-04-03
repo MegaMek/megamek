@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -16,6 +16,8 @@
 package megamek.common;
 
 import static java.util.stream.Collectors.toList;
+import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
+import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -54,6 +56,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     @Serial
     private static final long serialVersionUID = 8376320092671792532L;
+
+    public static final int TEAM_HAS_COMBAT_SENSE = 1;
+    public static final int TEAM_HAS_NO_INITIATIVE_APTITUDE = 0;
+    public static final int TEAM_HAS_COMBAT_PARALYSIS = -1;
 
     /**
      * A UUID to identify this game instance.
@@ -551,6 +557,73 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public boolean hasTacticalGenius(Player player) {
         for (Entity entity : inGameTWEntities()) {
             if (entity.hasAbility(OptionsConstants.MISC_TACTICAL_GENIUS) &&
+                      entity.getOwner().equals(player) &&
+                      !entity.isDestroyed() &&
+                      entity.isDeployed() &&
+                      !entity.isCarcass() &&
+                      !entity.getCrew().isUnconscious()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the specified player has a valid unit with the "Combat Sense" pilot special ability.
+     *
+     * <p>A unit is considered valid if it:
+     * <ul>
+     *   <li>Has the {@code Combat Sense} special ability ({@code ATOW_COMBAT_SENSE}).</li>
+     *   <li>Is marked as the commander unit.</li>
+     *   <li>Belongs to the specified player.</li>
+     *   <li>Is not destroyed.</li>
+     *   <li>Is deployed in the current scenario.</li>
+     *   <li>Is not a carcass (remains of a destroyed unit).</li>
+     *   <li>Has a conscious crew member.</li>
+     * </ul>
+     *
+     * @param player The player whose units will be checked.
+     *
+     * @return {@code true} if the player has a valid unit with the "Combat Sense" ability, {@code false} otherwise.
+     */
+    public boolean commanderHasCombatSense(Player player) {
+        for (Entity entity : inGameTWEntities()) {
+            if (entity.hasAbility(ATOW_COMBAT_SENSE) &&
+                      entity.isCommander() &&
+                      entity.getOwner().equals(player) &&
+                      !entity.isDestroyed() &&
+                      entity.isDeployed() &&
+                      !entity.isCarcass() &&
+                      !entity.getCrew().isUnconscious()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the commander unit of the specified player has the "Combat Paralysis" special ability.
+     *
+     * <p>A commander is considered valid for this check if it:
+     * <ul>
+     *   <li>Has the {@code Combat Paralysis} special ability ({@code ATOW_COMBAT_PARALYSIS}).</li>
+     *   <li>Is marked as the commander unit.</li>
+     *   <li>Belongs to the specified player.</li>
+     *   <li>Is not destroyed.</li>
+     *   <li>Is currently deployed in the scenario.</li>
+     *   <li>Is not a carcass (remains of a destroyed unit).</li>
+     *   <li>Has a conscious crew member.</li>
+     * </ul>
+     *
+     * @param player The player whose commander will be checked.
+     *
+     * @return {@code true} if the player's commander has the "Combat Paralysis" special ability and meets all
+     *       conditions, {@code false} otherwise.
+     */
+    public boolean commanderHasCombatParalysis(Player player) {
+        for (Entity entity : inGameTWEntities()) {
+            if (entity.hasAbility(ATOW_COMBAT_PARALYSIS) &&
+                      entity.isCommander() &&
                       entity.getOwner().equals(player) &&
                       !entity.isDestroyed() &&
                       entity.isDeployed() &&
@@ -2155,7 +2228,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
             turnVector.removeAll(turnsToRemove);
         }
-        
+
         return turnsToRemove.size();
     }
 
@@ -2220,11 +2293,40 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     vRerolls.add(e);
                 }
             }
-            TurnOrdered.rollInitAndResolveTies(getEntitiesVector(), vRerolls, false);
+
+            // For individual initative we can check on an Entity-basis, so don't need the hashmap
+            TurnOrdered.rollInitAndResolveTies(getEntitiesVector(), vRerolls, false, new HashMap<>());
         } else {
+            Map<Team, Integer> initiativeAptitude = new HashMap<>();
+            for (Team team : getTeams()) {
+                boolean commanderHasCombatSense = false;
+                boolean commanderHasCombatParalysis = false;
+
+                for (Player player : team.players()) {
+                    if (commanderHasCombatSense(player)) {
+                        commanderHasCombatSense = true;
+                        break;
+                    }
+
+                    if (commanderHasCombatParalysis(player)) {
+                        commanderHasCombatParalysis = true;
+                        break;
+                    }
+                }
+
+                if (commanderHasCombatSense) {
+                    initiativeAptitude.put(team, TEAM_HAS_COMBAT_SENSE);
+                } else if (commanderHasCombatParalysis) {
+                    initiativeAptitude.put(team, TEAM_HAS_COMBAT_PARALYSIS);
+                } else {
+                    initiativeAptitude.put(team, TEAM_HAS_NO_INITIATIVE_APTITUDE);
+                }
+            }
+
             TurnOrdered.rollInitAndResolveTies(teams,
                   initiativeRerollRequests,
-                  getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
+                  getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION),
+                  initiativeAptitude);
         }
         initiativeRerollRequests.removeAllElements();
 

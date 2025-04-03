@@ -20,6 +20,7 @@ package megamek.client.ui.swing.boardview;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.image.ImageObserver;
@@ -74,8 +75,10 @@ class VTOLAttackSprite extends Sprite {
             }
         }
         Shape hex = HexDrawUtilities.getHexFullBorderArea(3);
-        bounds = new Rectangle(x1 - 1, y1 - 1, x2 + (int) hex.getBounds().getWidth() + 1,
-                y2 + (int) hex.getBounds().getHeight() + 1);
+        bounds = new Rectangle(x1 - 1,
+              y1 - 1,
+              x2 + (int) hex.getBounds().getWidth() + 1,
+              y2 + (int) hex.getBounds().getHeight() + 1);
     }
 
     @Override
@@ -85,8 +88,10 @@ class VTOLAttackSprite extends Sprite {
 
     @Override
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
-        for (Coords c : targets) {
-            bv.drawHexBorder(g, bv.getHexLocation(c), spriteColor, 0, 3);
+        if (g instanceof Graphics2D graphics2D) {
+            for (Coords c : targets) {
+                bv.drawHexBorder(graphics2D, bv.getHexLocation(c), spriteColor, 0, 3);
+            }
         }
     }
 

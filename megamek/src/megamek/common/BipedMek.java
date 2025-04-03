@@ -29,8 +29,8 @@ public class BipedMek extends MekWithArms {
     @Serial
     private static final long serialVersionUID = 4166375446709772785L;
 
-    private static final String[] LOCATION_NAMES =
-            { "Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm", "Left Arm", "Right Leg", "Left Leg" };
+    private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm",
+                                                     "Left Arm", "Right Leg", "Left Leg" };
 
     private static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL" };
 
@@ -84,7 +84,8 @@ public class BipedMek extends MekWithArms {
                     if (!isLocationBad(i)) {
                         if (legHasHipCrit(i)) {
                             hipHits++;
-                            if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                            if ((game == null) ||
+                                      !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                                 continue;
                             }
                         }
@@ -100,7 +101,8 @@ public class BipedMek extends MekWithArms {
                 mp = (legsDestroyed == 1) ? 1 : 0;
             } else {
                 if (hipHits > 0) {
-                    if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                    if ((game != null) &&
+                              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                         mp = mp - 2 * hipHits;
                     } else {
                         mp = (hipHits == 1) ? (int) Math.ceil(mp / 2.0) : 0;
@@ -145,8 +147,10 @@ public class BipedMek extends MekWithArms {
         }
 
         // TSM negates some heat, but provides no benefit when using tracks.
-        if (((heat >= 9) || mpCalculationSetting.forceTSM) && hasTSM(false)
-                && (legsDestroyed == 0) && !movementMode.isTracked()) {
+        if (((heat >= 9) || mpCalculationSetting.forceTSM) &&
+                  hasTSM(false) &&
+                  (legsDestroyed == 0) &&
+                  !movementMode.isTracked()) {
             if (mpCalculationSetting.forceTSM && mpCalculationSetting.ignoreHeat) {
                 // When forcing TSM but ignoring heat we must assume heat to be 9 to activate TSM, this adds -1 MP!
                 mp += 1;
@@ -164,9 +168,9 @@ public class BipedMek extends MekWithArms {
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.getWeather().isClear()
-                    && conditions.getWind().isTornadoF1ToF3()) {
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
+                      conditions.getWeather().isClear() &&
+                      conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }
         }
@@ -267,10 +271,13 @@ public class BipedMek extends MekWithArms {
 
     @Override
     public boolean canGoHullDown() {
-        return (game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)
-            && ((!isLocationBad(Mek.LOC_LLEG) && !isLocationBad(Mek.LOC_RLEG)
-            && !isLocationDoomed(Mek.LOC_LLEG) && !isLocationDoomed(Mek.LOC_RLEG)))
-            && !isGyroDestroyed();
+        return (game != null) &&
+                     game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN) &&
+                     ((!isLocationBad(Mek.LOC_LLEG) &&
+                             !isLocationBad(Mek.LOC_RLEG) &&
+                             !isLocationDoomed(Mek.LOC_LLEG) &&
+                             !isLocationDoomed(Mek.LOC_RLEG))) &&
+                     !isGyroDestroyed();
     }
 
     @Override
@@ -280,8 +287,8 @@ public class BipedMek extends MekWithArms {
 
     @Override
     public boolean hasMPReducingHardenedArmor() {
-        return (armorType[LOC_LLEG] == EquipmentType.T_ARMOR_HARDENED)
-               || (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED);
+        return (armorType[LOC_LLEG] == EquipmentType.T_ARMOR_HARDENED) ||
+                     (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED);
     }
 
     @Override
@@ -293,14 +300,19 @@ public class BipedMek extends MekWithArms {
      * @return True if this unit is capable of Zweihandering (weapon attack using both hands)
      */
     public boolean canZweihander() {
-        return (getCrew() != null)
-                && hasAbility(OptionsConstants.PILOT_ZWEIHANDER)
-                && hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)
-                && hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)
-                && !isLocationBad(Mek.LOC_RARM)
-                && !isLocationBad(Mek.LOC_LARM)
-                && !weaponFiredFrom(Mek.LOC_LARM)
-                && !weaponFiredFrom(Mek.LOC_RARM)
-                && !isProne();
+        return (getCrew() != null) &&
+                     hasAbility(OptionsConstants.PILOT_ZWEIHANDER) &&
+                     hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) &&
+                     hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) &&
+                     !isLocationBad(Mek.LOC_RARM) &&
+                     !isLocationBad(Mek.LOC_LARM) &&
+                     !weaponFiredFrom(Mek.LOC_LARM) &&
+                     !weaponFiredFrom(Mek.LOC_RARM) &&
+                     !isProne();
+    }
+
+    @Override
+    public void clearInitiative(boolean bUseInitComp) {
+
     }
 }

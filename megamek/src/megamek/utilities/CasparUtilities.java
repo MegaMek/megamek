@@ -41,9 +41,7 @@ public class CasparUtilities {
 
     public static void main(String[] args) throws IOException {
         NeuralNetwork.testTensorFlow();
-        NeuralNetwork neuralNetwork = new NeuralNetwork();
-
-        neuralNetwork.loadModel(new BrainRegistry("default", 55, 3));
+        NeuralNetwork neuralNetwork = NeuralNetwork.loadBrain(new BrainRegistry("default", 55, 3));
         float[] x_test = new float[entry.length];
         for (int i = 0; i < entry.length; i++) {
             x_test[i] = (float) entry[i];
@@ -51,5 +49,6 @@ public class CasparUtilities {
         ClassificationScore result = ClassificationScore.fromPrediction(neuralNetwork.predict(x_test));
         System.out.println("Prediction result: " + result);
         System.out.println("Expected result: " + Arrays.toString(y_test));
+        neuralNetwork.close();
     }
 }

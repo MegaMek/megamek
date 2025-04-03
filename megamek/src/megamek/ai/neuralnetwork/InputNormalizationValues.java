@@ -27,12 +27,5 @@
  */
 package megamek.ai.neuralnetwork;
 
-/**
- * BrainRegistry is a record that holds the brain name, input axis length, and output axis length.
- * @param name The name of the brain
- * @param inputAxisLength The length of the input axis
- * @param outputAxisLength The length of the output axis
- * @author Luana Coppio
- */
-public record BrainRegistry(String name, int inputAxisLength, int outputAxisLength) {
+public record InputNormalizationValues(float[] minValues, float[] maxValues) {
 }

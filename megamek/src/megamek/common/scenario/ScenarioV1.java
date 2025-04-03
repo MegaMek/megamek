@@ -46,7 +46,6 @@ import megamek.common.planetaryconditions.Weather;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.planetaryconditions.WindDirection;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
@@ -239,14 +238,14 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         return (values == null) ? 0 : values.size();
     }
 
-    public int getIntValue(String key) {
+    public int parseInt(String key, int defaultValue) {
         String value = getString(key);
 
-        if (value == null) {
-            return 0;
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
         }
-
-        return MathUtility.parseInt(value);
     }
 
     @Override
@@ -572,8 +571,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
 
     private void parsePlanetaryConditions(Game game, ScenarioV1 scenarioV1) {
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_TEMP)) {
-            game.getPlanetaryConditions()
-                  .setTemperature(Integer.parseInt(scenarioV1.getString(PARAM_PLANET_CONDITIONS_TEMP)));
+            game.getPlanetaryConditions().setTemperature(parseInt(PARAM_PLANET_CONDITIONS_TEMP, 0));
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_GRAV)) {
@@ -582,36 +580,30 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_FOG)) {
-            game.getPlanetaryConditions()
-                  .setFog(Fog.getFog(StringUtil.toInt(scenarioV1.getString(PARAM_PLANET_CONDITIONS_FOG), 0)));
+            game.getPlanetaryConditions().setFog(Fog.getFog(parseInt(PARAM_PLANET_CONDITIONS_FOG, 0)));
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_ATMOSPHERE)) {
             game.getPlanetaryConditions()
-                  .setAtmosphere(Atmosphere.getAtmosphere(StringUtil.toInt(scenarioV1.getString(
-                        PARAM_PLANET_CONDITIONS_ATMOSPHERE), 0)));
+                  .setAtmosphere(Atmosphere.getAtmosphere(parseInt(PARAM_PLANET_CONDITIONS_ATMOSPHERE, 0)));
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_LIGHT)) {
-            game.getPlanetaryConditions()
-                  .setLight(Light.getLight(StringUtil.toInt(scenarioV1.getString(PARAM_PLANET_CONDITIONS_LIGHT), 0)));
+            game.getPlanetaryConditions().setLight(Light.getLight(parseInt(PARAM_PLANET_CONDITIONS_LIGHT, 0)));
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WEATHER)) {
-            game.getPlanetaryConditions()
-                  .setWeather(Weather.getWeather(StringUtil.toInt(scenarioV1.getString(PARAM_PLANET_CONDITIONS_WEATHER),
-                        0)));
+            game.getPlanetaryConditions().setWeather(Weather.getWeather(parseInt(PARAM_PLANET_CONDITIONS_WEATHER, 0)));
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WIND)) {
-            game.getPlanetaryConditions()
-                  .setWind(Wind.getWind(StringUtil.toInt(scenarioV1.getString(PARAM_PLANET_CONDITIONS_WIND), 0)));
+            game.getPlanetaryConditions().setWind(Wind.getWind(parseInt(PARAM_PLANET_CONDITIONS_WIND, 0)));
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WIND_DIRECTION)) {
             game.getPlanetaryConditions()
-                  .setWindDirection(WindDirection.getWindDirection(StringUtil.toInt(scenarioV1.getString(
-                        PARAM_PLANET_CONDITIONS_WIND_DIRECTION), 0)));
+                  .setWindDirection(WindDirection.getWindDirection(parseInt(PARAM_PLANET_CONDITIONS_WIND_DIRECTION,
+                        0)));
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WIND_SHIFTING_DIRECTION)) {
@@ -625,15 +617,11 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WIND_MIN)) {
-            game.getPlanetaryConditions()
-                  .setWindMin(Wind.getWind(StringUtil.toInt(scenarioV1.getString(PARAM_PLANET_CONDITIONS_WIND_MIN),
-                        0)));
+            game.getPlanetaryConditions().setWindMin(Wind.getWind(parseInt(PARAM_PLANET_CONDITIONS_WIND_MIN, 0)));
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WIND_MAX)) {
-            game.getPlanetaryConditions()
-                  .setWindMax(Wind.getWind(StringUtil.toInt(scenarioV1.getString(PARAM_PLANET_CONDITIONS_WIND_MAX),
-                        0)));
+            game.getPlanetaryConditions().setWindMax(Wind.getWind(parseInt(PARAM_PLANET_CONDITIONS_WIND_MAX, 0)));
         }
 
         if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_EMI)) {
@@ -973,26 +961,26 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         if (scenarioV1.getString(PARAM_MAP_WIDTH) == null) {
             LOGGER.info("No map width specified; using {}", mapWidth);
         } else {
-            mapWidth = scenarioV1.getIntValue(PARAM_MAP_WIDTH);
+            mapWidth = parseInt(PARAM_MAP_WIDTH, mapWidth);
         }
 
         if (scenarioV1.getString(PARAM_MAP_HEIGHT) == null) {
             LOGGER.info("No map height specified; using {}", mapHeight);
         } else {
-            mapHeight = scenarioV1.getIntValue(PARAM_MAP_HEIGHT);
+            mapHeight = scenarioV1.parseInt(PARAM_MAP_HEIGHT, mapHeight);
         }
 
         int nWidth = 1, nHeight = 1;
         if (scenarioV1.getString(PARAM_BOARD_WIDTH) == null) {
             LOGGER.info("No board width specified; using {}", nWidth);
         } else {
-            nWidth = scenarioV1.getIntValue(PARAM_BOARD_WIDTH);
+            nWidth = parseInt(PARAM_BOARD_WIDTH, nWidth);
         }
 
         if (scenarioV1.getString(PARAM_BOARD_HEIGHT) == null) {
             LOGGER.info("No board height specified; using {}", nHeight);
         } else {
-            nHeight = scenarioV1.getIntValue(PARAM_BOARD_HEIGHT);
+            nHeight = parseInt(PARAM_BOARD_HEIGHT, nHeight);
         }
 
         LOGGER.debug("Map sheets are {} by {} hexes.", mapWidth, mapHeight);
@@ -1001,7 +989,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         if (scenarioV1.getString(PARAM_BRIDGE_CF) == null) {
             LOGGER.debug("No CF for bridges defined. Using map file defaults.");
         } else {
-            constructionFactor = scenarioV1.getIntValue(PARAM_BRIDGE_CF);
+            constructionFactor = parseInt(PARAM_BRIDGE_CF, constructionFactor);
             LOGGER.debug("Overriding map-defined bridge CFs with {}", constructionFactor);
         }
         // load available boards

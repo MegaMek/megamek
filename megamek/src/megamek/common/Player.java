@@ -106,12 +106,15 @@ public final class Player extends TurnOrdered {
     private transient boolean votedToAllowGameMaster = false;
 
     private HexArea fleeArea = new BorderHexArea(true, true, true, true);
+    private PlayerStats stats;
+    
     //endregion Variable Declarations
 
     //region Constructors
     public Player(int id, String name) {
         this.name = name;
         this.id = id;
+        this.stats = new PlayerStats(this, game);
     }
     //endregion Constructors
 
@@ -549,12 +552,7 @@ public final class Player extends TurnOrdered {
      *
      * @return The combined strength (BV/PV) of all the player's assets
      */
-    public int getBV() {
-        return game.getInGameObjects().stream()
-              .filter(this::isMyUnit)
-              .filter(InGameObject::countForStrengthSum)
-              .mapToInt(InGameObject::getStrength).sum();
-    }
+    public int getBV() { return stats.getBV(); }
 
     /**
      * Returns true when the given unit belongs to this Player.

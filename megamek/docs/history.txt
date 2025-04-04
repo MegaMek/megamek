@@ -21,6 +21,11 @@ MEGAMEK VERSION HISTORY:
 + PR #6816 parse mek/blk from string
 + PR #6824: Don't fail loading unit with MASS in wrong location
 + PR #6823: Added Combat Sense and Combat Paralysis SPAs
++ PR #6790: Data updates - Throw the freebirths a bone, quiaff? Clan conventional infantry
++ PR #6762: Update Stalker STK-8S.mtf
++ PR #6761: Stalker Jamison TechBase Fix: Mixed >>> Clan
++ PR #6760: Update Tomahawk II (Prime).mtf 
++ PR #6759: Update Mackie MSK-6S introduction date 
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

@@ -25,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.*;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -396,9 +395,6 @@ public abstract class BotClient extends Client {
                 case LOUNGE:
                     sendChat(Messages.getString("BotClient.Hi"));
                     break;
-                case DEPLOY_MINEFIELDS:
-                    deployMinefields();
-                    break;
                 case DEPLOYMENT:
                     initialize();
                     break;
@@ -596,12 +592,7 @@ public abstract class BotClient extends Client {
             } else if (game.getPhase().isDeployment()) {
                 calculateDeployment();
             } else if (game.getPhase().isDeployMinefields()) {
-                Vector<Minefield> mines = calculateMinefieldDeployment();
-                for (Minefield mine : mines) {
-                    game.addMinefield(mine);
-                }
-                sendDeployMinefields(mines);
-                sendPlayerInfo();
+                deployMinefields();
             } else if (game.getPhase().isSetArtilleryAutohitHexes()) {
                 // For now, declare no auto hit hexes.
                 Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();

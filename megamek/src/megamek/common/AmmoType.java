@@ -1444,40 +1444,22 @@ public class AmmoType extends EquipmentType {
         clanMortarAmmos.add(base);
 
         // Create the munition types for IS Mek mortars
-        munitions.add(new MunitionMutator("Airburst", 1, Munitions.M_AIRBURST,
-                new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false)
-                        .setTechRating(RATING_C)
-                        .setAvailability(RATING_B, RATING_D, RATING_C, RATING_D)
-                        .setISAdvancement(2540, 2544, DATE_NONE, 2819, 3043)
-                        .setISApproximate(true, false, false, false, false)
-                        .setPrototypeFactions(F_TH)
-                        .setProductionFactions(F_TH)
-                        .setStaticTechLevel(SimpleTechLevel.ADVANCED),
-                "373, TO"));
+        addISMunition(munitions, "Airburst", Munitions.M_AIRBURST, RATING_C,
+        new int[]{RATING_B, RATING_D, RATING_C, RATING_D},
+        new int[]{2540, 2544, DATE_NONE, 2819, 3043, 1, 0, 0, 0, 0},
+        "F_TH", "373, TO");
 
-        munitions.add(new MunitionMutator("Anti-personnel", 1, Munitions.M_ANTI_PERSONNEL,
-                new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false)
-                        .setTechRating(RATING_B)
-                        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-                        .setISAdvancement(2526, 2531, 3052, 2819, 3043)
-                        .setISApproximate(true, false, false, false, false)
-                        .setPrototypeFactions(F_TH)
-                        .setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_LC)
-                        .setStaticTechLevel(SimpleTechLevel.ADVANCED),
-                "373, TO"));
+        addISMunition(munitions, "Anti-personnel", Munitions.M_ANTI_PERSONNEL, RATING_B,
+        new int[]{RATING_B, RATING_B, RATING_B, RATING_B},
+        new int[]{2526, 2531, 3052, 2819, 3043, 1, 0, 0, 0, 0},
+        "F_TH,F_FS,F_LC", "373, TO");
 
         // Armor Piercing is the base ammo type see further down.
 
-        munitions.add(new MunitionMutator("Flare", 1, Munitions.M_FLARE,
-                new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
-                        .setUnofficial(false).setTechRating(RATING_B)
-                        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                        .setISAdvancement(2533, 2536, DATE_NONE, 2819, 3043)
-                        .setISApproximate(true, false, false, false, false)
-                        .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                        .setReintroductionFactions(F_FS, F_LC)
-                        .setStaticTechLevel(SimpleTechLevel.ADVANCED),
-                "374, TO"));
+        addISMunition(munitions, "Flare", Munitions.M_FLARE, RATING_B,
+        new int[]{RATING_A, RATING_A, RATING_A, RATING_A},
+        new int[]{2533, 2536, DATE_NONE, 2819, 3043, 1, 0, 0, 0, 0},
+        "F_TH,F_FS,F_LC", "374, TO");
 
         munitions.add(new MunitionMutator("Semi-Guided", 1, Munitions.M_SEMIGUIDED,
                 new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false)
@@ -14481,4 +14463,35 @@ public class AmmoType extends EquipmentType {
         // Coolant pods are implemented as ammo, but are not ammo bins for rules purposes
         return getAmmoType() == AmmoType.T_COOLANT_POD;
     }
+
+
+    private static void addISMunition(List<MunitionMutator> munitions, String name, Munitions type, 
+    int techRating, int[] availability, int[] advancement, 
+    String factions, String reference) {
+
+                TechAdvancement techAdv = new TechAdvancement(TECH_BASE_IS)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(techRating)
+                .setAvailability(availability[0], availability[1], availability[2], availability[3])
+                .setISAdvancement(advancement[0], advancement[1], advancement[2], advancement[3], advancement[4])
+                .setISApproximate(advancement[5] == 1, advancement[6] == 1, advancement[7] == 1, 
+                advancement[8] == 1, advancement[9] == 1);
+
+                // Gestion des factions
+                if (factions.contains("F_TH")) {
+                techAdv.setPrototypeFactions(F_TH);
+                techAdv.setProductionFactions(F_TH);
+                }
+                if (factions.contains("F_FS")) {
+                techAdv.setReintroductionFactions(F_FS);
+                }
+                if (factions.contains("F_LC")) {
+                techAdv.setReintroductionFactions(F_LC);
+                }
+
+                techAdv.setStaticTechLevel(SimpleTechLevel.ADVANCED);
+
+                munitions.add(new MunitionMutator(name, 1, type, techAdv, reference));
+        }
 }

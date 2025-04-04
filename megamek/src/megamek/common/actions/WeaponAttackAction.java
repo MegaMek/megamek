@@ -1760,7 +1760,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Only bearings-only capital missiles and indirect fire artillery can be fired
         // in the targeting phase
-        if (game.getPhase().isTargeting() && (!(isArtilleryIndirect || isBearingsOnlyMissile))) {
+        if (game.getPhase().isTargeting() && (isArtilleryFLAK || !(isArtilleryIndirect || isBearingsOnlyMissile))) {
             return Messages.getString("WeaponAttackAction.NotValidForTargPhase");
         }
         // Only TAG can be fired in the offboard phase
@@ -2308,7 +2308,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         return Messages.getString("WeaponAttackAction.TooShortForDirectArty");
                     }
                     // ...or more than 17 hexes
-                    if (distance > Board.DEFAULT_BOARD_HEIGHT) {
+                    if (!(target.isAirborne()) && distance > Board.DEFAULT_BOARD_HEIGHT) {
+                        return Messages.getString("WeaponAttackAction.TooLongForDirectArty");
+                    }
+                    // Artillery Flak targeting Aerospace ignores altitude when computing range
+                    if (target.isAirborne() && ae.getPosition().distance(target.getPosition()) > Board.DEFAULT_BOARD_HEIGHT) {
                         return Messages.getString("WeaponAttackAction.TooLongForDirectArty");
                     }
                 }
@@ -2322,6 +2326,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // Indirect artillery attacks
             if (isArtilleryIndirect) {
+                // Cannot make Indirect Flak attacks
+                if (isArtilleryFLAK) {
+                    return Messages.getString("WeaponAttackAction.FlakIndirect");
+                }
+
                 int boardRange = (int) Math.ceil(distance / 17f);
                 int maxRange = wtype.getLongRange();
                 // Capital/subcapital missiles have a board range equal to their max space hex
@@ -2340,6 +2349,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         maxRange = 12;
                     }
                 }
+
+                // Apply gravity mod here, per TO: AR pg 155
+                maxRange =
+                      (int) (Math.floor((double) (maxRange * Board.DEFAULT_BOARD_HEIGHT) / game.getPlanetaryConditions().getGravity()) / 17f);
+
                 // Maximum range is measured in mapsheets
                 if (boardRange > maxRange) {
                     return Messages.getString("WeaponAttackAction.OutOfRange");
@@ -5500,7 +5514,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Per TW pg 114, all other mods _should_ be included.
 
             // Special range calc
-            int distance = Compute.effectiveDistance(game, ae, target);
+            int distance = ae.getPosition().distance(target.getPosition());
             toHit.addModifier(Compute.getADARangeModifier(distance),
                   Messages.getString("WeaponAttackAction.ADARangeBracket"));
 
@@ -5523,6 +5537,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Grounded/destroyed/landed/wrecked ASF/VTOL/WiGE should be treated as normal.
         if ((isArtilleryFLAK || (atype.countsAsFlak())) && te != null) {
             if (te.isAirborne() || te.isAirborneVTOLorWIGE()) {
+                srt.setSpecialResolution(true);
+                if (losMods.cannotSucceed()) {
+                    // Direct fire requires LOS
+                    toHit.addModifier(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.FlakIndirect"));
+                    return toHit;
+                }
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
                 if (te.getAltitude() > 3) {
@@ -5534,7 +5554,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeroTeAlt46"));
                     }
                 }
-                srt.setSpecialResolution(true);
                 return toHit;
             }
         }

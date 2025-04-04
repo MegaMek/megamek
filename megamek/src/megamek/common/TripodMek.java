@@ -1,21 +1,19 @@
 /**
- * MegaMek - Copyright (C) 2013 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024, 2025 - The MegaMek Team. All Rights Reserved.
- *
+ * MegaMek - Copyright (C) 2013 Ben Mazur (bmazur@sev.org) Copyright (c) 2024, 2025 - The MegaMek Team. All Rights
+ * Reserved. Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * <p>
  * This file is part of MegaMek.
- *
- * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * MegaMek is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * <p>
+ * MegaMek is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * <p>
+ * You should have received a copy of the GNU General Public License along with MegaMek. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
@@ -34,12 +32,10 @@ public class TripodMek extends MekWithArms {
     private static final long serialVersionUID = 4166375446709772785L;
     private static final MMLogger logger = MMLogger.create(TripodMek.class);
 
-    private static final String[] LOCATION_NAMES = { "Head", "Center Torso",
-            "Right Torso", "Left Torso", "Right Arm", "Left Arm", "Right Leg",
-            "Left Leg", "Center Leg" };
+    private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm",
+                                                     "Left Arm", "Right Leg", "Left Leg", "Center Leg" };
 
-    private static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT",
-            "RA", "LA", "RL", "LL", "CL" };
+    private static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL", "CL" };
 
     private static final int[] NUM_OF_SLOTS = { 6, 12, 12, 12, 12, 12, 6, 6, 6 };
 
@@ -117,9 +113,8 @@ public class TripodMek extends MekWithArms {
                     if (!isLocationBad(i)) {
                         if (legHasHipCrit(i)) {
                             hipHits++;
-                            if ((game == null)
-                                    || !game.getOptions().booleanOption(
-                                            OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                            if ((game == null) ||
+                                      !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                                 continue;
                             }
                         }
@@ -135,8 +130,8 @@ public class TripodMek extends MekWithArms {
                 mp = (legsDestroyed == 1) ? 1 : 0;
             } else {
                 if (hipHits > 0) {
-                    if ((game != null)
-                            && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                    if ((game != null) &&
+                              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                         mp = mp - 2 * hipHits;
                     } else {
                         mp = (hipHits == 1) ? (int) Math.ceil(mp / 2.0) : 0;
@@ -161,8 +156,7 @@ public class TripodMek extends MekWithArms {
 
         if (!mpCalculationSetting.ignoreHeat) {
             // factor in heat
-            if ((game != null)
-                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 if (heat < 30) {
                     mp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -193,9 +187,9 @@ public class TripodMek extends MekWithArms {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.getWeather().isClear()
-                    && conditions.getWind().isTornadoF1ToF3()) {
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
+                      conditions.getWeather().isClear() &&
+                      conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }
         }
@@ -292,8 +286,7 @@ public class TripodMek extends MekWithArms {
                 if (rear) {
                     return false;
                 }
-                if (hasActiveShield(Mek.LOC_LARM)
-                        || hasActiveShield(Mek.LOC_RARM)) {
+                if (hasActiveShield(Mek.LOC_LARM) || hasActiveShield(Mek.LOC_RARM)) {
                     return true;
                 }
                 // else
@@ -309,10 +302,14 @@ public class TripodMek extends MekWithArms {
 
     @Override
     public boolean canGoHullDown() {
-        return (game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)
-            && ((!isLocationBad(Mek.LOC_LLEG) && !isLocationBad(Mek.LOC_RLEG) && !isLocationBad(LOC_CLEG)
-            && !isLocationDoomed(Mek.LOC_LLEG) && !isLocationDoomed(Mek.LOC_RLEG)) && !isLocationDoomed(LOC_CLEG))
-            && !isGyroDestroyed();
+        return (game != null) &&
+                     game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN) &&
+                     ((!isLocationBad(Mek.LOC_LLEG) &&
+                             !isLocationBad(Mek.LOC_RLEG) &&
+                             !isLocationBad(LOC_CLEG) &&
+                             !isLocationDoomed(Mek.LOC_LLEG) &&
+                             !isLocationDoomed(Mek.LOC_RLEG)) && !isLocationDoomed(LOC_CLEG)) &&
+                     !isGyroDestroyed();
     }
 
     @Override
@@ -322,9 +319,9 @@ public class TripodMek extends MekWithArms {
 
     @Override
     public boolean hasMPReducingHardenedArmor() {
-        return (armorType[LOC_LLEG] == EquipmentType.T_ARMOR_HARDENED)
-                || (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED)
-                || (armorType[LOC_CLEG] == EquipmentType.T_ARMOR_HARDENED);
+        return (armorType[LOC_LLEG] == EquipmentType.T_ARMOR_HARDENED) ||
+                     (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED) ||
+                     (armorType[LOC_CLEG] == EquipmentType.T_ARMOR_HARDENED);
     }
 
     @Override
@@ -355,12 +352,10 @@ public class TripodMek extends MekWithArms {
             }
         }
 
-        if ((table == ToHitData.HIT_NORMAL)
-                || (table == ToHitData.HIT_PARTIAL_COVER)) {
+        if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
             roll = Compute.d6(2);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                        .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -376,13 +371,11 @@ public class TripodMek extends MekWithArms {
                 // normal front hits
                 switch (roll) {
                     case 2:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(tac(table, side,
-                                    Mek.LOC_CT, cover, false));
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                            result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, false));
                             return result;
                         } // if
                         return tac(table, side, Mek.LOC_CT, cover, false);
@@ -411,8 +404,7 @@ public class TripodMek extends MekWithArms {
                     case 12:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -422,13 +414,11 @@ public class TripodMek extends MekWithArms {
                 // normal left side hits
                 switch (roll) {
                     case 2:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(tac(table, side,
-                                    Mek.LOC_LT, cover, false));
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                            result.setUndoneLocation(tac(table, side, Mek.LOC_LT, cover, false));
                             return result;
                         } // if
                         return tac(table, side, Mek.LOC_LT, cover, false);
@@ -449,14 +439,14 @@ public class TripodMek extends MekWithArms {
                     case 7:
                         return new HitData(Mek.LOC_LT);
                     case 8:
-                        if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (game.getOptions()
+                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CT, true);
                         }
                         return new HitData(Mek.LOC_CT);
                     case 9:
-                        if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (game.getOptions()
+                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_RT, true);
                         }
                         return new HitData(Mek.LOC_RT);
@@ -465,8 +455,7 @@ public class TripodMek extends MekWithArms {
                     case 12:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -476,13 +465,11 @@ public class TripodMek extends MekWithArms {
                 // normal right side hits
                 switch (roll) {
                     case 2:
-                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                        if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(tac(table, side,
-                                    Mek.LOC_RT, cover, false));
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                            result.setUndoneLocation(tac(table, side, Mek.LOC_RT, cover, false));
                             return result;
                         } // if
                         return tac(table, side, Mek.LOC_RT, cover, false);
@@ -503,14 +490,14 @@ public class TripodMek extends MekWithArms {
                     case 7:
                         return new HitData(Mek.LOC_RT);
                     case 8:
-                        if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (game.getOptions()
+                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CT, true);
                         }
                         return new HitData(Mek.LOC_CT);
                     case 9:
-                        if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (game.getOptions()
+                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_LT, true);
                         }
                         return new HitData(Mek.LOC_LT);
@@ -519,8 +506,7 @@ public class TripodMek extends MekWithArms {
                     case 12:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -528,19 +514,15 @@ public class TripodMek extends MekWithArms {
                 }
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
-                if (game.getOptions().booleanOption(
-                        OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)
-                        && isProne()) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS) &&
+                          isProne()) {
                     switch (roll) {
                         case 2:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                    && !game.getOptions().booleanOption(
-                                            OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
+                                      !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
-                                HitData result = rollHitLocation(table, side,
-                                        aimedLocation, aimingMode, cover);
-                                result.setUndoneLocation(tac(table, side,
-                                        Mek.LOC_CT, cover, true));
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                                result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, true));
                                 return result;
                             } // if
                             return tac(table, side, Mek.LOC_CT, cover, true);
@@ -569,10 +551,8 @@ public class TripodMek extends MekWithArms {
                         case 12:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                                 getCrew().decreaseEdge();
-                                HitData result = rollHitLocation(table, side,
-                                        aimedLocation, aimingMode, cover);
-                                result.setUndoneLocation(new HitData(
-                                        Mek.LOC_HEAD, true));
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                                result.setUndoneLocation(new HitData(Mek.LOC_HEAD, true));
                                 return result;
                             } // if
                             return new HitData(Mek.LOC_HEAD, true);
@@ -580,14 +560,11 @@ public class TripodMek extends MekWithArms {
                 } else {
                     switch (roll) {
                         case 2:
-                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC)
-                                    && !game.getOptions().booleanOption(
-                                            OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
+                                      !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
-                                HitData result = rollHitLocation(table, side,
-                                        aimedLocation, aimingMode, cover);
-                                result.setUndoneLocation(tac(table, side,
-                                        Mek.LOC_CT, cover, true));
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                                result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, true));
                                 return result;
                             } // if
                             return tac(table, side, Mek.LOC_CT, cover, true);
@@ -616,10 +593,8 @@ public class TripodMek extends MekWithArms {
                         case 12:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                                 getCrew().decreaseEdge();
-                                HitData result = rollHitLocation(table, side,
-                                        aimedLocation, aimingMode, cover);
-                                result.setUndoneLocation(new HitData(
-                                        Mek.LOC_HEAD, true));
+                                HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                                result.setUndoneLocation(new HitData(Mek.LOC_HEAD, true));
                                 return result;
                             } // if
                             return new HitData(Mek.LOC_HEAD, true);
@@ -630,8 +605,7 @@ public class TripodMek extends MekWithArms {
         if (table == ToHitData.HIT_PUNCH) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                        .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -659,8 +633,7 @@ public class TripodMek extends MekWithArms {
                     case 6:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -681,8 +654,7 @@ public class TripodMek extends MekWithArms {
                     case 6:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -703,8 +675,7 @@ public class TripodMek extends MekWithArms {
                     case 6:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
                             return result;
                         } // if
@@ -727,10 +698,8 @@ public class TripodMek extends MekWithArms {
                     case 6:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(new HitData(Mek.LOC_HEAD,
-                                    true));
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                            result.setUndoneLocation(new HitData(Mek.LOC_HEAD, true));
                             return result;
                         } // if
                         return new HitData(Mek.LOC_HEAD, true);
@@ -740,8 +709,7 @@ public class TripodMek extends MekWithArms {
         if (table == ToHitData.HIT_KICK) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                        .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -788,8 +756,7 @@ public class TripodMek extends MekWithArms {
                 }
             }
         }
-        if ((table == ToHitData.HIT_SWARM)
-                || (table == ToHitData.HIT_SWARM_CONVENTIONAL)) {
+        if ((table == ToHitData.HIT_SWARM) || (table == ToHitData.HIT_SWARM_CONVENTIONAL)) {
             roll = Compute.d6(2);
             int effects;
             if (table == ToHitData.HIT_SWARM_CONVENTIONAL) {
@@ -798,8 +765,7 @@ public class TripodMek extends MekWithArms {
                 effects = HitData.EFFECT_CRITICAL;
             }
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                        .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -815,10 +781,8 @@ public class TripodMek extends MekWithArms {
                 case 2:
                     if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
-                        HitData result = rollHitLocation(table, side,
-                                aimedLocation, aimingMode, cover);
-                        result.setUndoneLocation(new HitData(Mek.LOC_HEAD,
-                                false, effects));
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                        result.setUndoneLocation(new HitData(Mek.LOC_HEAD, false, effects));
                         return result;
                     } // if
                     return new HitData(Mek.LOC_HEAD, false, effects);
@@ -843,10 +807,8 @@ public class TripodMek extends MekWithArms {
                 case 12:
                     if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
-                        HitData result = rollHitLocation(table, side,
-                                aimedLocation, aimingMode, cover);
-                        result.setUndoneLocation(new HitData(Mek.LOC_HEAD,
-                                false, effects));
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                        result.setUndoneLocation(new HitData(Mek.LOC_HEAD, false, effects));
                         return result;
                     } // if
                     return new HitData(Mek.LOC_HEAD, false, effects);
@@ -855,8 +817,7 @@ public class TripodMek extends MekWithArms {
         if (table == ToHitData.HIT_ABOVE) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                        .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -882,14 +843,11 @@ public class TripodMek extends MekWithArms {
                 case 6:
                     if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
-                        HitData result = rollHitLocation(table, side,
-                                aimedLocation, aimingMode, cover);
-                        result.setUndoneLocation(new HitData(Mek.LOC_HEAD,
-                                (side == ToHitData.SIDE_REAR)));
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                        result.setUndoneLocation(new HitData(Mek.LOC_HEAD, (side == ToHitData.SIDE_REAR)));
                         return result;
                     } // if
-                    return new HitData(Mek.LOC_HEAD,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mek.LOC_HEAD, (side == ToHitData.SIDE_REAR));
             }
         }
         if (table == ToHitData.HIT_BELOW) {
@@ -937,5 +895,10 @@ public class TripodMek extends MekWithArms {
     @Override
     protected int legCount() {
         return 3;
+    }
+
+    @Override
+    public void clearInitiative(boolean bUseInitComp) {
+
     }
 }

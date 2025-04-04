@@ -302,9 +302,19 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
 
-        int altitude = 0;
-        if (isFlak) {
-            altitude = target.getElevation();
+        // Absolute level / altitude, for blast calculations
+        int height = 0;
+        Hex finalHex = game.getBoard().getHex(finalPos);
+        if (finalHex != null) {
+            if (targetIsEntity) {
+                if (!isFlak && !bMissed) {
+                    height = finalHex.getLevel() + target.getElevation();
+                } else if (isFlak) {
+                    height = (asfFlak) ? target.getAltitude() : finalHex.getLevel() + target.getElevation();
+                }
+            } else {
+                height = finalHex.getLevel();
+            }
         }
 
         // if attacker is an off-board artillery piece, check to see if we need to set
@@ -322,11 +332,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
 
         if (atype.getMunitionType().contains(Munitions.M_FAE)) {
-            Hex finalHex = game.getBoard().getHex(finalPos);
-            altitude = (finalHex != null) ? finalHex.getLevel() : altitude;
             handleArtilleryDriftMarker(targetPos, finalPos, aaa,
                     AreaEffectHelper.processFuelAirDamage(
-                            finalPos, altitude, atype, aaa.getEntity(game), vPhaseReport, gameManager));
+                            finalPos, height, atype, aaa.getEntity(game), vPhaseReport, gameManager));
             return false;
         }
 
@@ -404,10 +412,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         Targetable updatedTarget = aaa.getTarget(game);
 
-        // the attack's target may have been destroyed or fled since the attack was
-        // generated
-        // so we need to carry out offboard/null checks against the "current" version of
-        // the target.
+        // the attack's target may have been destroyed or fled since the attack was generated
+        // so we need to carry out offboard/null checks against the "current" version of the target.
+        // Note: currently this only damages the target and does not deal blast damage to "nearby" off-board units.
         if ((updatedTarget != null) && updatedTarget.isOffBoard()) {
             // Calculate blast damage falloff and shape
             DamageFalloff df = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
@@ -427,7 +434,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         } else {
             handleArtilleryDriftMarker(targetPos, finalPos, aaa,
                     gameManager.artilleryDamageArea(finalPos, aaa.getCoords(), atype,
-                            subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
+                            subjectId, ae, isFlak, height, mineClear, vPhaseReport,
                             asfFlak));
         }
 

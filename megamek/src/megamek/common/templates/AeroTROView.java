@@ -82,7 +82,7 @@ public class AeroTROView extends TROView {
         }
         setModelData("safeThrust", aero.getWalkMP());
         setModelData("maxThrust", aero.getRunMP());
-        setModelData("si", aero.get0SI());
+        setModelData("si", aero.getOSI());
         if (!(aero instanceof FighterSquadron)) {
             setModelData("vstolMass", testAero.getWeightMisc());
             setModelData("hsCount",

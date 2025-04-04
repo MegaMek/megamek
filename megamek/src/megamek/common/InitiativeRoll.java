@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -13,8 +14,15 @@
  */
 package megamek.common;
 
+import static megamek.common.Compute.d6;
+import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
+import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
+
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -44,8 +52,17 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         wasRollReplaced.removeAllElements();
     }
 
+    /**
+     * @deprecated use {@link #addRoll(int, String)} instead.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public void addRoll(int bonus) {
-        int roll = Compute.d6(2);
+        addRoll(bonus, "");
+    }
+
+    public void addRoll(int bonus, String initiativeAptitudeSPA) {
+        int roll = getInitiativeRoll(initiativeAptitudeSPA);
+
         rolls.addElement(roll);
         originalRolls.addElement(roll);
         bonuses.addElement(bonus);
@@ -62,15 +79,44 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         wasRollReplaced.addElement(Boolean.FALSE);
     }
 
+
+    /**
+     * @deprecated use {@link #replaceRoll(int, String)} instead.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
+    public void replaceRoll(int bonus) {
+        replaceRoll(bonus, "");
+    }
+
     /**
      * Replace the previous init roll with a new one, and make a note that it was replaced. Used for Tactical Genius
      * special pilot ability (lvl 3).
      */
-    public void replaceRoll(int bonus) {
-        int roll = Compute.d6(2);
+    public void replaceRoll(int bonus, String initiativeAptitudeSPA) {
+        int roll = getInitiativeRoll(initiativeAptitudeSPA);
+
         rolls.setElementAt(roll, size() - 1);
         bonuses.setElementAt(bonus, size() - 1);
         wasRollReplaced.setElementAt(Boolean.TRUE, size() - 1);
+    }
+
+    private int getInitiativeRoll(String initiativeAptitudeSPA) {
+        int roll = d6(2);
+        if (!initiativeAptitudeSPA.isBlank()) {
+            List<Integer> rolls = Arrays.asList(d6(), d6(), d6());
+
+            if (initiativeAptitudeSPA.equals(ATOW_COMBAT_SENSE)) {
+                // Sort from highest to lowest
+                rolls.sort(Comparator.reverseOrder());
+            } else if (initiativeAptitudeSPA.equals(ATOW_COMBAT_PARALYSIS)) {
+                // Sort from lowest to highest
+                rolls.sort(Comparator.naturalOrder());
+            }
+
+            return rolls.get(0) + rolls.get(1);
+        }
+
+        return roll;
     }
 
     public int size() {

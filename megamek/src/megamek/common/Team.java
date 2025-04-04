@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,21 +19,23 @@
  */
 package megamek.common;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.common.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import static java.util.stream.Collectors.toList;
-
 /**
- * The Team class holds information about a team. It holds the initiative for the team, and contains a
- * list of players on that team.
- *
- * Note that Team should be usable for any type of game (TW, AS, BF, SBF) and therefore should not
- * make any direct use of Game, Entity, AlphaStrikeElement etc., instead using IGame and InGameObject if necessary.
+ * The Team class holds information about a team. It holds the initiative for the team, and contains a list of players
+ * on that team.
+ * <p>
+ * Note that Team should be usable for any type of game (TW, AS, BF, SBF) and therefore should not make any direct use
+ * of Game, Entity, AlphaStrikeElement etc., instead using IGame and InGameObject if necessary.
  */
 public final class Team extends TurnOrdered {
 
@@ -105,9 +107,9 @@ public final class Team extends TurnOrdered {
     }
 
     @Override
-    public void clearInitiative(boolean bUseInitComp) {
+    public void clearInitiative(boolean bUseInitComp, Map<Team, Integer> initiativeAptitude) {
         getInitiative().clear();
-        TurnOrdered.rollInitiative(players, bUseInitComp);
+        TurnOrdered.rollInitiative(players, bUseInitComp, initiativeAptitude);
     }
 
     public TurnVectors determineTeamOrder(Game game) {
@@ -125,13 +127,11 @@ public final class Team extends TurnOrdered {
     }
 
     /**
-     * Return the number of "normal" turns that this item requires. This is
-     * normally the sum of multi-unit turns and the other turns. A team without
-     * any "normal" turns must return it's number of even turns to produce a
-     * fair distribution of moves.
+     * Return the number of "normal" turns that this item requires. This is normally the sum of multi-unit turns and the
+     * other turns. A team without any "normal" turns must return it's number of even turns to produce a fair
+     * distribution of moves.
      *
-     * @return the <code>int</code> number of "normal" turns this item should
-     *         take in a phase.
+     * @return the <code>int</code> number of "normal" turns this item should take in a phase.
      */
     @Override
     public int getNormalTurns(IGame game) {
@@ -187,6 +187,11 @@ public final class Team extends TurnOrdered {
     @Override
     public int getAeroTurns() {
         return players.stream().mapToInt(Player::getAeroTurns).sum();
+    }
+
+    @Override
+    public void clearInitiative(boolean bUseInitComp) {
+        clearInitiative(bUseInitComp, new HashMap<>());
     }
 
     /** Two teams are equal if their ids and players are equal. */
@@ -256,7 +261,9 @@ public final class Team extends TurnOrdered {
 
     /**
      * Determine if another team is an enemy of this team
+     *
      * @param t
+     *
      * @return
      */
     public boolean isEnemyOf(Team t) {

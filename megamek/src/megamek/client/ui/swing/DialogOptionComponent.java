@@ -285,6 +285,15 @@ public class DialogOptionComponent extends FixedYPanel
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DialogOptionComponent dialogOptionComponent) {
+            return dialogOptionComponent.option.getDisplayableName().equals(option.getDisplayableName());
+        }
+
+        return false;
+    }
+
+    @Override
     public String toString() {
         return option.getDisplayableName();
     }

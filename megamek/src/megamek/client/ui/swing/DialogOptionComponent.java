@@ -294,6 +294,11 @@ public class DialogOptionComponent extends FixedYPanel
     }
 
     @Override
+    public int hashCode() {
+        return option.getDisplayableName().hashCode();
+    }
+
+    @Override
     public String toString() {
         return option.getDisplayableName();
     }

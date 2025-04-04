@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3075-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='AB'>
 			<omniMargin>1</omniMargin>
@@ -4179,114 +4176,352 @@
 				<availability>FWL:6,WOB:6</availability>
 			</model>
 		</chassis>
-		<chassis name='Clan Foot Point' unitType='Infantry'>
-			<availability>CLAN:10,BAN:10</availability>
-			<model name='(Flamer)'>
-				<availability>CLAN:4</availability>
-			</model>
-			<model name='(Laser)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(MG)'>
-				<availability>CLAN:4</availability>
-			</model>
-			<model name='(Rifle)'>
-				<availability>CLAN:9-</availability>
-			</model>
-			<model name='(SRM)'>
-				<availability>CLAN:2</availability>
-			</model>
-		</chassis>
-		<chassis name='Clan Jump Point' unitType='Infantry'>
-			<availability>CLAN:8,BAN:6</availability>
-			<model name='(Flamer)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(LRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-			<model name='(Laser)'>
-				<availability>CLAN:6</availability>
-			</model>
-			<model name='(MG)'>
-				<availability>CLAN:7</availability>
-			</model>
-			<model name='(Rifle)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(SRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-		</chassis>
-		<chassis name='Clan Mechanized Hover Point' unitType='Infantry'>
-			<availability>CLAN:6,BAN:3</availability>
-			<model name='(Flamer)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(LRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-			<model name='(Laser)'>
-				<availability>CLAN:6</availability>
-			</model>
-			<model name='(MG)'>
-				<availability>CLAN:7</availability>
-			</model>
-			<model name='(Rifle)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(SRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-		</chassis>
-		<chassis name='Clan Mechanized Tracked Point' unitType='Infantry'>
-			<availability>CLAN:7,BAN:4</availability>
-			<model name='(Flamer)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(LRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-			<model name='(Laser)'>
-				<availability>CLAN:6</availability>
-			</model>
-			<model name='(MG)'>
-				<availability>CLAN:7</availability>
-			</model>
-			<model name='(Rifle)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(SRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-		</chassis>
-		<chassis name='Clan Mechanized Wheeled Point' unitType='Infantry'>
-			<availability>CLAN:7,BAN:5</availability>
-			<model name='(Flamer)'>
+        <chassis name='Clan Field Artillery Point' unitType='Infantry'>
+            <availability>CLAN.IS!Second Line:1!Solahma:1,CBS!Second Line:1!Solahma:1,CHH!Keshik:2!Front Line:1!Second Line:3!Solahma:2!Provisional Garrison:1,CSL!Keshik:2!Front Line:1!Second Line:3!Solahma:2!Provisional Garrison:1,CNC:0,CWIE:1,BAN:0</availability>
+            <model name='(Tracked Arrow IV)'>
+                <roles>mixed_artillery</roles>
+                <availability>CHH!Keshik:2!Front Line:1!Second Line:4!Solahma:1,CSL!Keshik:2!Front Line:1!Second Line:4!Solahma:1</availability>
+            </model>
+            <model name='(Tracked Sniper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN.IS!Second Line:5!Solahma:5,CBS!Second Line:5!Solahma:6,CHH!Second Line:5!Solahma:6!Provisional Garrison:4,CSL!Second Line:5!Solahma:6!Provisional Garrison:4,CWIE:5</availability>
+            </model>
+            <model name='(Tracked Thumper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN.IS!Second Line:6!Solahma:6,CBS!Second Line:6!Solahma:7,CHH!Second Line:6!Solahma:7!Provisional Garrison:5,CSL!Second Line:6!Solahma:7!Provisional Garrison:5,CWIE:6</availability>
+            </model>
+            <model name='(Wheeled Arrow IV)'>
+                <roles>mixed_artillery</roles>
+                <availability>CHH!Keshik:1!Front Line:1!Second Line:5!Solahma:2,CSL!Keshik:1!Front Line:1!Second Line:5!Solahma:2</availability>
+            </model>
+            <model name='(Wheeled Sniper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN.IS!Second Line:6!Solahma:6,CBS!Second Line:6!Solahma:7,CHH!Second Line:6!Solahma:7!Provisional Garrison:7,CSL!Second Line:6!Solahma:7!Provisional Garrison:7,CWIE:6</availability>
+            </model>
+            <model name='(Wheeled Thumper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN.IS!Second Line:7!Solahma:7,CBS!Second Line:7!Solahma:8,CHH!Second Line:7!Solahma:8!Provisional Garrison:8,CSL!Second Line:7!Solahma:8!Provisional Garrison:8,CWIE:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Clan Field Gun Point' unitType='Infantry'>
+            <availability>CLAN.HW:3+,CLAN.IS:3+,CHH!Keshik:5!Front Line:5!Second Line:4!Solahma:1!Provisional Garrison:1,CSL!Keshik:5!Front Line:5!Second Line:4!Solahma:1!Provisional Garrison:1,CNC!Keshik:2!Front Line:2!Second Line:1,CWIE:3+,BAN!Keshik:2!Front Line:1,SOC!Keshik:3</availability>
+            <model name='(Motorized AC2 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN.HW!Front Line:1!Second Line:7,CLAN.IS!Front Line:1!Second Line:7,CBS!Second Line:7,CHH!Solahma:2!Provisional Garrison:8,CIH!Second Line:2,CNC:0,CWIE:0,BAN!Keshik:6!Front Line:3,SOC!Keshik:4</availability>
+            </model>
+            <model name='(Motorized AC5 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN.HW!Front Line:2!Second Line:5,CLAN.IS!Front Line:2!Second Line:5,CBS!Second Line:5,CHH!Solahma:1!Provisional Garrison:6,CIH!Second Line:1,CNC:0,CWIE:0,BAN!Keshik:8!Front Line:4,SOC!Keshik:5</availability>
+            </model>
+            <model name='(Motorized AP Gauss Advanced)'>
+                <roles>anti_infantry,field_gun</roles>
+                <availability>CJF!Keshik:2</availability>
+            </model>
+            <model name='(Motorized PAC2 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN.HW!Second Line:3,CBS!Second Line:6,CJF!Second Line:2,BAN!Keshik:1,SOC!Keshik:8</availability>
+            </model>
+            <model name='(Motorized PAC4 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN.HW!Second Line:2,CBS!Second Line:5,CJF!Second Line:1,BAN!Keshik:1,SOC!Keshik:6</availability>
+            </model>
+            <model name='(Motorized PAC8 Advanced)'>
+                <roles>field_gun</roles>
+                <availability>CLAN.HW!Second Line:2,CBS!Second Line:5,CJF!Second Line:1,BAN!Keshik:1,SOC!Keshik:6</availability>
+            </model>
+            <model name='(Tracked AC10 Advanced)'>
+                <roles>field_gun</roles>
+                <availability>CGB!Second Line:8,CHH!Front Line:3!Second Line:1,CNC!Keshik:5!Front Line:1,CWIE:4+,BAN!Keshik:1</availability>
+            </model>
+            <model name='(Tracked AC2 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CHH!Front Line:2!Second Line:1!Solahma:1,BAN:2+</availability>
+            </model>
+            <model name='(Tracked AC20 Advanced)'>
+                <roles>field_gun</roles>
+                <availability>CHH!Front Line:1!Second Line:1</availability>
+            </model>
+            <model name='(Tracked AC5 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN.IS!Front Line:5!Second Line:3,CGB!Second Line:6,CHH!Front Line:4!Second Line:2!Solahma:1,CNC!Keshik:8!Front Line:3!Solahma:1,CWIE:6+,BAN:3+</availability>
+            </model>
+            <model name='(Tracked CLBX10 Advanced)'>
+                <roles>anti_aircraft,field_gun</roles>
+                <availability>CLAN.HW!Keshik:6!Front Line:3,CLAN.IS!Keshik:6!Front Line:3,CIH!Keshik:3!Front Line:1,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Tracked CLBX2 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN.HW!Keshik:4!Front Line:2,CLAN.IS!Keshik:4!Front Line:2,CBS!Keshik:4!Front Line:2!Second Line:2,CGB!Keshik:1,CIH!Keshik:4!Front Line:1,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Tracked CLBX20 Advanced)'>
+                <roles>field_gun</roles>
+                <availability>CGB!Keshik:2!Front Line:1,CHH!Keshik:1,CSL!Keshik:1</availability>
+            </model>
+            <model name='(Tracked CLBX5 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN.HW!Keshik:5!Front Line:3!Second Line:1,CLAN.IS!Keshik:5!Front Line:3!Second Line:1,CBS!Keshik:5!Front Line:3!Second Line:3,CGB!Keshik:3,CIH!Keshik:5!Front Line:2,CNC:0,CWIE:0,BAN:0,SOC!Keshik:3</availability>
+            </model>
+            <model name='(Tracked CUAC10 Advanced)'>
+                <roles>field_gun</roles>
+                <availability>CLAN.HW!Keshik:5!Front Line:2,CLAN.IS!Keshik:5!Front Line:2,CIH:0,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Tracked CUAC2 Advanced)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>CLAN.HW!Keshik:4!Front Line:2!Second Line:1,CLAN.IS!Keshik:4!Front Line:2!Second Line:1,CGB!Keshik:1,CIH!Keshik:4!Front Line:1,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Tracked CUAC20 Advanced)'>
+                <roles>field_gun</roles>
+                <availability>CGB!Keshik:2!Front Line:1,CHH!Keshik:1,CSL!Keshik:1</availability>
+            </model>
+            <model name='(Tracked CUAC5 Advanced)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>CLAN.HW!Keshik:6!Front Line:3!Second Line:1,CLAN.IS!Keshik:6!Front Line:3!Second Line:1,CGB!Keshik:3,CIH!Keshik:5!Front Line:2,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Tracked PAC2 Advanced)'>
+                <roles>anti_aircraft,field gun,fire_support</roles>
+                <availability>CLAN.HW!Front Line:3,CBS!Front Line:2,CSA!Front Line:2!Second Line:5,SOC!Keshik:4</availability>
+            </model>
+            <model name='(Tracked PAC4 Advanced)'>
+                <roles>anti_aircraft,field gun,fire_support</roles>
+                <availability>CLAN.HW!Front Line:2,CBS!Front Line:1,CSA!Front Line:2!Second Line:3,SOC!Keshik:4</availability>
+            </model>
+            <model name='(Tracked PAC8 Advanced)'>
+                <roles>field gun</roles>
+                <availability>CLAN.HW!Front Line:2,CBS!Front Line:1,CSA!Front Line:2!Second Line:3,SOC!Keshik:4</availability>
+            </model>
+            <model name='(Wheeled AC10 Advanced)'>
+                <roles>field_gun,urban</roles>
+                <availability>CGB!Second Line:8,CHH!Second Line:4!Solahma:1,CWIE!Keshik:8!Front Line:5,BAN:2+</availability>
+            </model>
+            <model name='(Wheeled AC10 Basic)'>
+                <roles>field_gun,urban</roles>
+                <availability>CNC!Keshik:6!Front Line:5!Second Line:1</availability>
+            </model>
+            <model name='(Wheeled AC2 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CBS!Second Line:1,CHH!Second Line:1!Solahma:1,CNC!Front Line:4!Second Line:4,CWIE!Front Line:6!Second Line:6,BAN:2+</availability>
+            </model>
+            <model name='(Wheeled AC20 Advanced)'>
+                <roles>field_gun,urban</roles>
+                <availability>CGB!Second Line:2,CHH!Second Line:2</availability>
+            </model>
+            <model name='(Wheeled AC5 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN.HW!Second Line:1,CLAN.IS!Second Line:5,CHH!Second Line:6!Solahma:4,CIH:0,CJF!Second Line:1,CNC!Keshik:5!Front Line:8!Second Line:5,CW!Second Line:1,CWIE!Keshik:5!Front Line:8!Second Line:5,BAN:3+</availability>
+            </model>
+            <model name='(Wheeled CLBX10 Advanced)'>
+                <roles>anti_aircraft,field_gun,urban</roles>
+                <availability>CLAN.HW!Keshik:6!Front Line:3,CLAN.IS!Keshik:6!Front Line:3,CIH!Keshik:7!Front Line:2,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Wheeled CLBX2 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN.HW!Keshik:3!Front Line:1,CLAN.IS!Keshik:3!Front Line:1,CGB!Keshik:1,CIH!Keshik:6!Front Line:1,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Wheeled CLBX20 Advanced)'>
+                <roles>field_gun,urban</roles>
+                <availability>CGB!Keshik:2!Front Line:1,CHH!Keshik:2,CSL!Keshik:2,SOC!Keshik:2</availability>
+            </model>
+            <model name='(Wheeled CLBX5 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN.HW!Keshik:5!Front Line:3!Second Line:1,CLAN.IS!Keshik:5!Front Line:3!Second Line:1,CGB!Keshik:3,CHH!Keshik:5!Front Line:3,CIH!Keshik:7!Front Line:2,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Wheeled CUAC10 Advanced)'>
+                <roles>field_gun,urban</roles>
+                <availability>CLAN.HW!Keshik:5!Front Line:2,CLAN.IS!Keshik:5!Front Line:2,CHH!Keshik:5!Front Line:2!Second Line:1,CIH!Keshik:6!Front Line:1,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Wheeled CUAC2 Advanced)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>CLAN.HW!Keshik:3!Front Line:1,CLAN.IS!Keshik:3!Front Line:1,CGB!Keshik:1,CHH!Keshik:2!Front Line:1,CIH!Keshik:4!Front Line:2,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Wheeled CUAC20 Advanced)'>
+                <roles>field_gun,urban</roles>
+                <availability>CGB!Keshik:2!Front Line:1,CHH!Keshik:2!Front Line:1,CSL!Keshik:2!Front Line:1</availability>
+            </model>
+            <model name='(Wheeled CUAC5 Advanced)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>CLAN.HW!Keshik:6!Front Line:3!Second Line:1,CLAN.IS!Keshik:6!Front Line:3!Second Line:1,CBS!Keshik:6!Front Line:3!Second Line:3,CGB!Keshik:3,CHH!Keshik:6!Front Line:3,CIH!Keshik:8!Front Line:2,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Wheeled PAC2 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support,urban</roles>
+                <availability>CLAN.HW!Front Line:3,CBS!Front Line:2,CJF!Second Line:4,CSA!Front Line:2!Second Line:3,SOC!Keshik:6</availability>
+            </model>
+            <model name='(Wheeled PAC4 Advanced)'>
+                <roles>anti_aircraft,field_gun,fire_support,urban</roles>
+                <availability>CLAN.HW!Front Line:2,CBS!Front Line:2,CJF!Second Line:3,CSA!Front Line:2!Second Line:3,SOC!Keshik:6</availability>
+            </model>
+            <model name='(Wheeled PAC8 Advanced)'>
+                <roles>field_gun,urban</roles>
+                <availability>CLAN.HW!Front Line:2,CBS!Front Line:2,CJF!Second Line:3,CSA!Front Line:2!Second Line:3,SOC!Keshik:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Clan Foot Point' unitType='Infantry'>
+            <availability>CLAN.HW:7,CLAN.IS:7,CHH!Keshik:6!Front Line:6!Second Line:7!Solahma:7!Provisional Garrison:8,CSL!Keshik:6!Front Line:6!Second Line:7!Solahma:7!Provisional Garrison:8,CIH!Keshik:6!Front Line:6!Second Line:7!Solahma:7!Provisional Garrison:8,CWIE:7,BAN:7,SOC:8</availability>
+            <model name='(Flamer Advanced)'>
                 <roles>urban</roles>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(LRM)'>
+                <availability>CLAN.HW:3-,CLAN.IS:3-,CIH:4-,CNC:3-,CWIE:3-,BAN:3,SOC:3</availability>
+            </model>
+            <model name='(Laser Advanced)'>
+                <availability>CLAN.HW!Keshik:6!Front Line:3!Second Line:1,CLAN.IS!Keshik:5!Front Line:4!Second Line:3!Solahma:1,CHH!Keshik:6!Front Line:5!Second Line:4,CSL!Keshik:6!Front Line:5!Second Line:4,CIH!Keshik:6!Front Line:5!Second Line:4,CNC:3+,CWIE:3+,BAN!Keshik:4!Front Line:3!Second Line:2,SOC:2+</availability>
+            </model>
+            <model name='(LRM Advanced)'>
+                <roles>fire_support</roles>
+                <availability>CLAN.IS:3+,CJF:4+</availability>
+            </model>
+            <model name='(MG Advanced)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN.HW!Keshik:4!Front Line:4!Second Line:3!Solahma:1,CLAN.IS:4,CIH!Keshik:4!Front Line:4!Second Line:4!Solahma:3!Provisional Garrison:2,CNC:3,CWIE:3,BAN!Keshik:4!Front Line:4!Second Line:4!Solahma:3!Provisional Garrison:1,SOC:3</availability>
+            </model>
+            <model name='(Rifle AA Advanced)'>
+                <roles>anti_aircraft</roles>
+                <availability>CGB!Keshik:1,CHH!Keshik:1!Front Line:1,SOC:1</availability>
+            </model>
+            <model name='(Rifle Advanced)'>
+                <availability>CLAN.HW!Keshik:7!Front Line:7!Second Line:7!Solahma:5!Provisional Garrison:2,CLAN.IS!Keshik:7!Front Line:7!Second Line:7!Solahma:7!Provisional Garrison:5,CHH:7,CNC:7,CWIE:7,BAN!Keshik:5!Front Line:5!Second Line:3!Solahma:3!Provisional Garrison:2,SOC!Keshik:7!Front Line:7!Second Line:7!Solahma:6!Provisional Garrison:1</availability>
+            </model>
+            <model name='(Rifle Light)'>
                 <roles>urban</roles>
-				<availability>CLAN:5</availability>
-			</model>
-			<model name='(Laser)'>
+                <availability>CLAN.HW!Second Line:1!Solahma:4!Provisional Garrison:7,CLAN.IS:2-,CHH!Solahma:4!Provisional Garrison:7,CSL!Solahma:4!Provisional Garrison:7,CIH!Solahma:4!Provisional Garrison:7,CWIE:2-,BAN:8-,SOC:5</availability>
+            </model>
+            <model name='(SRM Advanced)'>
+                <availability>CLAN.HW!Keshik:5!Front Line:3!Second Line:1,CLAN.IS!Keshik:5!Front Line:4!Second Line:3!Solahma:1,CHH!Keshik:5!Front Line:4!Second Line:2!Solahma:1,CSL!Keshik:5!Front Line:4!Second Line:2!Solahma:1,CNC:4+,CWIE:5+,BAN:4+,SOC:3+</availability>
+            </model>
+            <model name='(Watch Detachment Advanced)'>
+                <availability>CLAN.IS:2-,CHH!Provisional Garrison:1,CJF:3-,CNC!Provisional Garrison:1,CWIE:2-</availability>
+            </model>
+        </chassis>
+        <chassis name='Clan Jump Point' unitType='Infantry'>
+            <availability>CLAN!Keshik:7!Front Line:4!Second Line:1,CBS!Keshik:7!Front Line:6!Second Line:3!Solahma:1,CGB!Keshik:4!Front Line:3!Second Line:1,CHH!Keshik:7!Front Line:7!Second Line:5!Solahma:1,CSL!Keshik:7!Front Line:7!Second Line:5!Solahma:1,CIH!Keshik:7!Front Line:7!Second Line:4!Solahma:1,CNC!Keshik:5!Front Line:3!Second Line:1,CWIE!Keshik:5!Front Line:3!Second Line:1,BAN:4+,SOC!Keshik:3</availability>
+            <model name='(ER Laser Advanced)'>
+                <availability>CLAN.HW!Keshik:1,CLAN.IS!Keshik:1,CSA!Keshik:4!Front Line:1,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Flamer Advanced)'>
                 <roles>urban</roles>
-				<availability>CLAN:6</availability>
-			</model>
-			<model name='(MG)'>
+                <availability>CLAN.HW:3-,CLAN.IS:3-,CIH:4-,CNC:4-,CWIE:4-,BAN:4-,SOC!Keshik:3</availability>
+            </model>
+            <model name='(Laser Advanced)'>
+                <availability>CLAN.HW:6+,CLAN.IS:6+,CIH!Keshik:6!Front Line:5!Second Line:1,CSA!Keshik:5!Front Line:4!Second Line:1,CWIE:6+,BAN!Keshik:4!Front Line:3!Second Line:2,SOC!Keshik:7</availability>
+            </model>
+            <model name='(LRM Advanced)'>
+                <roles>fire_support</roles>
+                <availability>CLAN.IS:2+</availability>
+            </model>
+            <model name='(Mauser IIC Advanced)'>
+                <availability>CLAN.HW!Keshik:1,CLAN.IS!Keshik:1,CGB:2+,CHH!Keshik:4!Front Line:2,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(MG Advanced)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN.HW:4,CLAN.IS:4,CWIE:4,BAN!Keshik:4!Front Line:4!Second Line:4!Solahma:3,SOC:3</availability>
+            </model>
+            <model name='(Rifle Advanced)'>
+                <availability>CLAN.HW:6,CLAN.IS:6,CWIE:6,BAN:7,SOC:5</availability>
+            </model>
+            <model name='(SRM Advanced)'>
+                <availability>CLAN.HW!Keshik:5!Front Line:3!Second Line:1,CLAN.IS:5+,CBS:5+,CHH:5+,CIH!Keshik:5!Front Line:4!Second Line:1,CWIE:5+,BAN:3+,SOC!Keshik:4</availability>
+            </model>
+        </chassis>
+        <chassis name='Clan Mechanized Hover Point' unitType='Infantry'>
+            <availability>CLAN!Keshik:4!Front Line:2!Second Line:1,CHH!Keshik:5!Front Line:4!Second Line:1,CSL!Keshik:5!Front Line:4!Second Line:1,CIH!Keshik:7!Front Line:4!Second Line:1,CNC:3+,CWIE:3+,BAN:3+,SOC:3+</availability>
+            <model name='(ER Laser Advanced)'>
+                <roles>recon</roles>
+                <availability>CLAN.HW!Keshik:1,CLAN.IS!Keshik:1,CIH:2+,CSA!Keshik:4!Front Line:1,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Flamer Advanced)'>
                 <roles>urban</roles>
-				<availability>CLAN:7</availability>
-			</model>
-			<model name='(Rifle)'>
+                <availability>CLAN.HW!Second Line:1,CLAN.IS!Second Line:1,CNC:4-,CWIE:4-,BAN!Second Line:1</availability>
+            </model>
+            <model name='(Laser Advanced)'>
+                <roles>recon</roles>
+                <availability>CLAN.HW!Keshik:6!Front Line:3!Second Line:1,CLAN.IS:6+,CHH:6+,CSL:6+,CIH!Keshik:6!Front Line:5!Second Line:1,CNC:5+,CWIE:5+,BAN!Keshik:4!Front Line:3!Second Line:2,SOC:3+</availability>
+            </model>
+            <model name='(LRM Advanced)'>
+                <roles>fire_support</roles>
+                <availability>CLAN.IS:3+,CWIE:3+</availability>
+            </model>
+            <model name='(Mauser IIC Advanced)'>
+                <roles>recon</roles>
+                <availability>CLAN.HW!Keshik:1,CLAN.IS!Keshik:1,CHH!Keshik:4!Front Line:1,CIH:2+,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(MG Advanced)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN.HW:4,CLAN.IS:4,CNC:3,CWIE:3,BAN:3+,SOC:3</availability>
+            </model>
+            <model name='(Rifle Advanced)'>
+                <roles>recon</roles>
+                <availability>CLAN.HW:7,CLAN.IS:7,CNC:6,CWIE:6,BAN:7,SOC:6</availability>
+            </model>
+            <model name='(SRM Advanced)'>
+                <availability>CLAN.HW!Keshik:5!Front Line:3!Second Line:1,CLAN.IS:5+,CBS:5+,CHH:5+,CSL:5+,CIH!Keshik:5!Front Line:4!Second Line:1,CNC:4+,CWIE:4+,BAN!Keshik:4!Front Line:3!Second Line:2,SOC:2+</availability>
+            </model>
+        </chassis>
+        <chassis name='Clan Mechanized Tracked Point' unitType='Infantry'>
+            <availability>CLAN.HW:3+,CLAN.IS:3+,CGB!Keshik:5!Front Line:4!Second Line:3!Solahma:1,CHH!Keshik:5!Front Line:5!Second Line:3!Solahma:1,CSL!Keshik:5!Front Line:5!Second Line:3!Solahma:1,CIH!Keshik:2!Front Line:2!Second Line:1,CNC:3+,CWIE:3+,BAN!Keshik:2!Front Line:2!Second Line:1,SOC:3+</availability>
+            <model name='(ER Laser Advanced)'>
+                <availability>CLAN.HW!Keshik:1,CLAN.IS!Keshik:1,CGB!Keshik:4!Front Line:1,CNC:0,CSA!Keshik:4!Front Line:1,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(Flamer Advanced)'>
                 <roles>urban</roles>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(SRM)'>
+                <availability>CLAN.HW:3-,CLAN.IS:3-,CNC:4-,CWIE:4-,BAN:5-,SOC:3</availability>
+            </model>
+            <model name='(Laser Advanced)'>
+                <availability>CLAN.HW!Keshik:6!Front Line:3!Second Line:1,CLAN.IS:6+,CHH!Keshik:6!Front Line:5!Second Line:1!Solahma:1,CSL!Keshik:6!Front Line:5!Second Line:1!Solahma:1,CIH!Keshik:6!Front Line:5!Second Line:1,CNC:3+,CWIE:3+,BAN:6+,SOC:2+</availability>
+            </model>
+            <model name='(LRM Advanced)'>
+                <roles>fire_support</roles>
+                <availability>CLAN.IS:4+</availability>
+            </model>
+            <model name='(Mauser IIC Advanced)'>
+                <availability>CLAN.HW!Keshik:1,CLAN.IS!Keshik:1,CGB:2+,CHH!Keshik:4!Front Line:1,CNC:0,CW:2+,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(MG Advanced)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN.HW!Keshik:4!Front Line:4!Second Line:3,CLAN.IS:4,CWIE:4,BAN!Keshik:4!Front Line:3!Second Line:2,SOC:4</availability>
+            </model>
+            <model name='(Rifle AA Advanced)'>
+                <roles>anti_aircraft</roles>
+                <availability>CGB!Keshik:1,CHH:2+,SOC:1</availability>
+            </model>
+            <model name='(Rifle Advanced)'>
+                <availability>CLAN.HW:7,CLAN.IS:7,CWIE:7,BAN:6,SOC:7</availability>
+            </model>
+            <model name='(SRM Advanced)'>
+                <availability>CLAN.HW!Keshik:5!Front Line:3!Second Line:1,CLAN.IS:5+,CHH:5+,CSL:5+,CIH!Keshik:5!Front Line:4!Second Line:1,CWIE:5+,BAN!Keshik:5!Front Line:4!Second Line:3,SOC:3+</availability>
+            </model>
+        </chassis>
+        <chassis name='Clan Mechanized Wheeled Point' unitType='Infantry'>
+            <availability>CLAN.HW:3+,CLAN.IS!Keshik:3!Front Line:2!Second Line:1!Solahma:1,CGB!Keshik:6!Front Line:5!Second Line:3!Solahma:1,CHH:6+,CSL:6+,CNC:4+,CWIE:4+,BAN!Keshik:3!Front Line:3!Second Line:2,SOC:4+</availability>
+            <model name='(Flamer Advanced)'>
                 <roles>urban</roles>
-				<availability>CLAN:5</availability>
-			</model>
-		</chassis>
+                <availability>CLAN.HW:3-,CLAN.IS:3-,CNC:4-,CWIE:4-,BAN:5-,SOC:4</availability>
+            </model>
+            <model name='(Laser Advanced)'>
+                <roles>urban</roles>
+                <availability>CLAN!Keshik:5!Front Line:3!Second Line:1,CLAN.IS:5+,CHH:5+,CSL:5+,CIH!Keshik:5!Front Line:4!Second Line:1,CNC:3+,CWIE:3+,BAN!Keshik:5!Front Line:4!Second Line:3,SOC:2+</availability>
+            </model>
+            <model name='(LRM Advanced)'>
+                <roles>fire_support</roles>
+                <availability>CLAN.IS:3+</availability>
+            </model>
+            <model name='(Mauser IIC Advanced)'>
+                <roles>urban</roles>
+                <availability>CLAN.HW!Keshik:1,CLAN.IS!Keshik:1,CHH!Keshik:4!Front Line:1,CNC:0,CWIE:0,BAN:0</availability>
+            </model>
+            <model name='(MG Advanced)'>
+                <roles>anti_infantry,urban</roles>
+                <availability>CLAN.HW!Keshik:4!Front Line:4!Second Line:3,CLAN.IS:4,CHH:4,CWIE:4,BAN!Keshik:4!Front Line:3!Second Line:2,SOC:4</availability>
+            </model>
+            <model name='(Rifle AA Advanced)'>
+                <roles>anti_aircraft,urban</roles>
+                <availability>CGB!Keshik:1,CHH!Keshik:1,SOC:1</availability>
+            </model>
+            <model name='(Rifle Advanced)'>
+                <roles>urban</roles>
+                <availability>CLAN.HW:7,CLAN.IS:7,CWIE:7,BAN:7,SOC:6</availability>
+            </model>
+            <model name='(SRM Advanced)'>
+                <roles>urban</roles>
+                <availability>CLAN.HW!Keshik:5!Front Line:3!Second Line:1,CLAN.IS:5+,CHH:5+,CSL:5+,CIH!Keshik:5!Front Line:4!Second Line:1,CNC:4+,CWIE:4+,BAN!Keshik:5!Front Line:4!Second Line:3,SOC:2+</availability>
+            </model>
+        </chassis>
 		<chassis name='Clan Medium Battle Armor' unitType='BattleArmor'>
 			<availability>CDS:4,CW:4-,CNC:6,CLAN.IS:3-,CGB:5-,CWIE:5</availability>
 			<model name='(Laser) &apos;Volk&apos; (Sqd5)' mechanized='true'>
@@ -4303,27 +4538,38 @@
 				<availability>CLAN.IS:6:3077</availability>
 			</model>
 		</chassis>
-		<chassis name='Clan Motorized Point' unitType='Infantry'>
-			<availability>CLAN:9,BAN:7</availability>
-			<model name='(Flamer)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(LRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-			<model name='(Laser)'>
-				<availability>CLAN:6</availability>
-			</model>
-			<model name='(MG)'>
-				<availability>CLAN:7</availability>
-			</model>
-			<model name='(Rifle)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(SRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-		</chassis>
+        <chassis name='Clan Motorized Point' unitType='Infantry'>
+            <availability>CLAN!Keshik:4!Front Line:4!Second Line:4!Solahma:5!Provisional Garrison:5,CGB!Keshik:4!Front Line:4!Second Line:4!Solahma:5!Provisional Garrison:6,CHH!Keshik:4!Front Line:4!Second Line:4!Solahma:5!Provisional Garrison:6,CIH!Keshik:5!Front Line:4!Second Line:4!Solahma:4!Provisional Garrison:4,CWIE!Keshik:4!Front Line:4!Second Line:4!Solahma:5!Provisional Garrison:5,BAN:8+,SOC:6</availability>
+            <model name='(Bearhunter Advanced)'>
+                <roles>anti_infantry,urban</roles>
+                <availability>CGB:2+,CHH:3+</availability>
+            </model>
+            <model name='(Flamer Advanced)'>
+                <roles>urban</roles>
+                <availability>CLAN.HW!Front Line:1!Second Line:2,CLAN.IS!Front Line:1!Second Line:2!Solahma:3,CBS:3-,CGB:3-,CHH:3-,CSL:3-,CIH!Front Line:1!Second Line:1,CNC:3-,CWIE:3-,BAN:4-,SOC:3</availability>
+            </model>
+            <model name='(Laser Advanced)'>
+                <availability>CLAN.HW:3+,CLAN.IS:3+,CIH!Keshik:3!Front Line:2,CNC:4+,CWIE:4+,BAN:4+,SOC:1+</availability>
+            </model>
+            <model name='(LRM Advanced)'>
+                <roles>fire_support</roles>
+                <availability>CLAN.IS:3+,CNC:4+</availability>
+            </model>
+            <model name='(MG Advanced)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN.HW!Keshik:3!Front Line:3!Second Line:3!Solahma:2!Provisional Garrison:1,CLAN.IS:3,CHH:3,CSL:3,CIH!Keshik:3!Front Line:3!Second Line:3!Solahma:1,CNC:4,CWIE:4,BAN:4+,SOC:3</availability>
+            </model>
+            <model name='(Rifle Advanced)'>
+                <availability>CLAN.HW!Keshik:5!Front Line:3!Second Line:1,CLAN.IS:5+,CGB:5,CHH!Keshik:8!Front Line:8!Second Line:8!Solahma:6!Provisional Garrison:1,CSL!Keshik:8!Front Line:8!Second Line:8!Solahma:6!Provisional Garrison:1,CIH!Keshik:8!Front Line:8!Second Line:8!Solahma:6!Provisional Garrison:1,CNC:7,CWIE:7,BAN:7+,SOC!Keshik:7!Front Line:7!Second Line:7!Solahma:5!Provisional Garrison:2</availability>
+            </model>
+            <model name='(Rifle Light)'>
+                <roles>urban</roles>
+                <availability>CLAN.HW!Keshik:2!Front Line:2!Second Line:3!Solahma:4!Provisional Garrison:8,CLAN.IS!Keshik:2!Front Line:2!Second Line:3!Solahma:4!Provisional Garrison:8,CGB:3-,CHH!Solahma:1!Provisional Garrison:8,CSL!Solahma:1!Provisional Garrison:8,CIH!Solahma:1!Provisional Garrison:8,CNC:2-,CWIE:2-,BAN:8-,SOC!Keshik:5!Front Line:5!Second Line:5!Solahma:5!Provisional Garrison:8</availability>
+            </model>
+            <model name='(SRM Advanced)'>
+                <availability>CLAN.HW!Keshik:4!Front Line:2!Second Line:1,CLAN.IS:4+,CBS:4+,CHH:4+,CIH!Keshik:4!Front Line:3!Second Line:1,CNC:4+,CWIE:4+,BAN!Keshik:4!Front Line:3!Second Line:2!Solahma:1,SOC:2+</availability>
+            </model>
+        </chassis>
 		<chassis name='Claymore' unitType='Dropship'>
 			<availability>LA:4,FS:3</availability>
 			<model name='(3054)'>

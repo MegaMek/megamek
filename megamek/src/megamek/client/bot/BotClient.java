@@ -25,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.*;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -276,6 +275,10 @@ public abstract class BotClient extends Client {
      */
     protected abstract MovePath continueMovementFor(Entity entity);
 
+    /**
+     * @deprecated, consider {@link BotClient#deployMinefields()}
+     */
+    @Deprecated (since = "0.50.05")
     protected abstract Vector<Minefield> calculateMinefieldDeployment();
 
     protected abstract Vector<BoardLocation> calculateArtyAutoHitHexes();
@@ -395,9 +398,6 @@ public abstract class BotClient extends Client {
             switch (phase) {
                 case LOUNGE:
                     sendChat(Messages.getString("BotClient.Hi"));
-                    break;
-                case DEPLOY_MINEFIELDS:
-                    deployMinefields();
                     break;
                 case DEPLOYMENT:
                     initialize();
@@ -596,12 +596,7 @@ public abstract class BotClient extends Client {
             } else if (game.getPhase().isDeployment()) {
                 calculateDeployment();
             } else if (game.getPhase().isDeployMinefields()) {
-                Vector<Minefield> mines = calculateMinefieldDeployment();
-                for (Minefield mine : mines) {
-                    game.addMinefield(mine);
-                }
-                sendDeployMinefields(mines);
-                sendPlayerInfo();
+                deployMinefields();
             } else if (game.getPhase().isSetArtilleryAutohitHexes()) {
                 // For now, declare no auto hit hexes.
                 Vector<BoardLocation> autoHitHexes = calculateArtyAutoHitHexes();

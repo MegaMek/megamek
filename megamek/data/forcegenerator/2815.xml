@@ -1072,134 +1072,309 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Clan Field Artillery Point' unitType='Infantry'>
+            <availability>CLAN!Keshik:1!Second Line:4!Solahma:3!Provisional Garrison:2,CHH!Keshik:2!Front Line:1!Second Line:4!Solahma:3!Provisional Garrison:2,CIH!Second Line:4!Solahma:3!Provisional Garrison:2</availability>
+            <model name='(Tracked Arrow IV)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Keshik:2!Second Line:4!Solahma:1,CHH!Keshik:2!Front Line:1!Second Line:4!Solahma:1</availability>
+            </model>
+            <model name='(Tracked Sniper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Second Line:5!Solahma:6!Provisional Garrison:4</availability>
+            </model>
+            <model name='(Tracked Thumper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Second Line:6!Solahma:7!Provisional Garrison:5</availability>
+            </model>
+            <model name='(Wheeled Arrow IV)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Keshik:1!Second Line:5!Solahma:2,CHH!Keshik:1!Front Line:1!Second Line:5!Solahma:2</availability>
+            </model>
+            <model name='(Wheeled Sniper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Second Line:6!Solahma:7!Provisional Garrison:7</availability>
+            </model>
+            <model name='(Wheeled Thumper)'>
+                <roles>mixed_artillery</roles>
+                <availability>CLAN!Second Line:7!Solahma:8!Provisional Garrison:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Clan Field Gun Point' unitType='Infantry'>
+            <availability>CLAN!Keshik:5!Front Line:5!Second Line:4!Solahma:1!Provisional Garrison:1,CIH!Keshik:4!Front Line:3!Second Line:2!Solahma:1!Provisional Garrison:1</availability>
+            <model name='(Motorized AC2 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Solahma:2!Provisional Garrison:8</availability>
+            </model>
+            <model name='(Motorized AC5 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Solahma:1!Provisional Garrison:6</availability>
+            </model>
+            <model name='(Tracked AC10 Basic)'>
+                <roles>field_gun</roles>
+                <availability>CLAN!Keshik:6!Front Line:5!Second Line:2,CGB:7+,CIH!Keshik:7!Front Line:5!Second Line:2</availability>
+            </model>
+            <model name='(Tracked AC2 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:3!Front Line:4!Second Line:3!Solahma:2,CGB:3+,CIH!Keshik:4!Front Line:4!Second Line:3!Solahma:2</availability>
+            </model>
+            <model name='(Tracked AC20 Basic)'>
+                <roles>field_gun</roles>
+                <availability>CLAN!Keshik:4!Front Line:2!Second Line:1,CGB:4+,CIH:0</availability>
+            </model>
+            <model name='(Tracked AC5 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:7!Front Line:6!Second Line:3!Solahma:2,CGB:6+,CIH!Keshik:8!Front Line:6!Second Line:3!Solahma:2</availability>
+            </model>
+            <model name='(Tracked CLBX10 Basic)'>
+                <roles>anti_aircraft,field_gun</roles>
+                <availability>CLAN!Keshik:2,CIH!Keshik:1</availability>
+            </model>
+            <model name='(Tracked CLBX2 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:1</availability>
+            </model>
+            <model name='(Tracked CLBX20 Basic)'>
+                <roles>field_gun</roles>
+                <availability>CLAN!Keshik:1,CGB!Keshik:2,CIH:0</availability>
+            </model>
+            <model name='(Tracked CLBX5 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:2,CGB!Keshik:1</availability>
+            </model>
+            <model name='(Tracked CUAC10 Basic)'>
+                <roles>field_gun</roles>
+                <availability>CLAN!Keshik:1,CIH:0</availability>
+            </model>
+            <model name='(Tracked CUAC2 Basic)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:1,CIH!Keshik:2</availability>
+            </model>
+            <model name='(Tracked CUAC20 Basic)'>
+                <roles>field_gun</roles>
+                <availability>CLAN!Keshik:1,CGB!Keshik:2,CIH:0</availability>
+            </model>
+            <model name='(Tracked CUAC5 Basic)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:2,CGB!Keshik:1,CIH!Keshik:1</availability>
+            </model>
+            <model name='(Tracked LBX10 Basic)'>
+                <roles>anti_aircraft,field_gun</roles>
+                <availability>CLAN!Keshik:5!Front Line:1</availability>
+            </model>
+            <model name='(Tracked UAC5 Basic)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:4!Front Line:1</availability>
+            </model>
+            <model name='(Wheeled AC10 Basic)'>
+                <roles>field_gun,urban</roles>
+                <availability>CLAN!Second Line:6!Solahma:1,CGB!Second Line:8!Solahma:1</availability>
+            </model>
+            <model name='(Wheeled AC2 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Second Line:5!Solahma:5</availability>
+            </model>
+            <model name='(Wheeled AC20 Basic)'>
+                <roles>field_gun,urban</roles>
+                <availability>CLAN!Second Line:1,CGB!Front Line:1!Second Line:2,CIH:0</availability>
+            </model>
+            <model name='(Wheeled AC5 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Second Line:8!Solahma:6,CGB!Second Line:6!Solahma:6</availability>
+            </model>
+            <model name='(Wheeled CLBX10 Basic)'>
+                <roles>anti_aircraft,field_gun,urban</roles>
+                <availability>CLAN!Keshik:3,CIH!Keshik:1</availability>
+            </model>
+            <model name='(Wheeled CLBX2 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:2,CGB!Keshik:1</availability>
+            </model>
+            <model name='(Wheeled CLBX20 Basic)'>
+                <roles>field_gun,urban</roles>
+                <availability>CLAN!Keshik:1,CGB!Keshik:2</availability>
+            </model>
+            <model name='(Wheeled CLBX5 Basic)'>
+                <roles>anti_aircraft,field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:2,CGB!Keshik:1</availability>
+            </model>
+            <model name='(Wheeled CUAC10 Basic)'>
+                <roles>field_gun,urban</roles>
+                <availability>CLAN!Keshik:1,CGB!Keshik:2</availability>
+            </model>
+            <model name='(Wheeled CUAC2 Basic)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:1,CIH!Keshik:2</availability>
+            </model>
+            <model name='(Wheeled CUAC20 Basic)'>
+                <roles>field_gun,urban</roles>
+                <availability>CLAN!Keshik:1,CGB!Keshik:2</availability>
+            </model>
+            <model name='(Wheeled CUAC5 Basic)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>CLAN!Keshik:2,CGB!Keshik:1,CIH!Keshik:1</availability>
+            </model>
+            <model name='(Wheeled LBX10 Basic)'>
+                <roles>anti_aircraft,field_gun,urban</roles>
+                <availability>CLAN!Front Line:3!Second Line:4</availability>
+            </model>
+            <model name='(Wheeled UAC5 Basic)'>
+                <roles>field_gun,fire_support,urban</roles>
+                <availability>CLAN!Front Line:2!Second Line:3</availability>
+            </model>
+        </chassis>
 		<chassis name='Clan Foot Point' unitType='Infantry'>
-			<availability>CIH:5,CLAN:10</availability>
-			<model name='(Flamer)'>
-				<availability>CLAN:4</availability>
-			</model>
-			<model name='(Laser)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(MG)'>
-				<availability>CLAN:4</availability>
-			</model>
-			<model name='(Rifle)'>
-				<availability>CLAN:9-</availability>
-			</model>
-			<model name='(SRM)'>
-				<availability>CLAN:2</availability>
-			</model>
+			<availability>CLAN!Keshik:6!Front Line:6!Second Line:7!Solahma:7!Provisional Garrison:8</availability>
+            <model name='(Flamer Basic)'>
+                <roles>urban</roles>
+                <availability>CLAN:3-</availability>
+            </model>
+            <model name='(Laser Basic)'>
+                <availability>CLAN!Keshik:6!Front Line:5!Second Line:4</availability>
+            </model>
+            <model name='(Mauser 960 Basic)'>
+                <availability>CHH!Keshik:5!Front Line:1</availability>
+            </model>
+            <model name='(MG Basic)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN:4</availability>
+            </model>
+            <model name='(Rifle AA Basic)'>
+                <roles>anti_aircraft</roles>
+                <availability>CLAN!Keshik:1!Front Line:1!Second Line:1</availability>
+            </model>
+            <model name='(Rifle Basic)'>
+                <availability>CLAN!Keshik:7!Front Line:7!Second Line:7!Solahma:5!Provisional Garrison:2</availability>
+            </model>
+            <model name='(Rifle Light)'>
+                <roles>urban</roles>
+                <availability>CLAN!Solahma:4!Provisional Garrison:7</availability>
+            </model>
+            <model name='(SRM Basic)'>
+                <availability>CLAN!Keshik:5!Front Line:4!Second Line:2!Solahma:1</availability>
+            </model>
 		</chassis>
 		<chassis name='Clan Jump Point' unitType='Infantry'>
-			<availability>CLAN:8</availability>
-			<model name='(Flamer)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(LRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-			<model name='(Laser)'>
-				<availability>CLAN:6</availability>
-			</model>
-			<model name='(MG)'>
-				<availability>CLAN:7</availability>
-			</model>
-			<model name='(Rifle)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(SRM)'>
-				<availability>CLAN:5</availability>
-			</model>
+			<availability>CLAN!Keshik:8!Front Line:7!Second Line:5!Solahma:1,CGB!Keshik:5!Front Line:5!Second Line:5!Solahma:1</availability>
+            <model name='(Flamer Basic)'>
+                <roles>urban</roles>
+                <availability>CLAN:3-</availability>
+            </model>
+            <model name='(Laser Basic)'>
+                <availability>CLAN:6+</availability>
+            </model>
+            <model name='(Mauser 960 Basic)'>
+                <availability>CLAN!Keshik:3,CHH!Keshik:5!Front Line:1</availability>
+            </model>
+            <model name='(MG Basic)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN:4</availability>
+            </model>
+            <model name='(Rifle Basic)'>
+                <availability>CLAN:6</availability>
+            </model>
+            <model name='(SRM Basic)'>
+                <availability>CLAN:5+</availability>
+            </model>
 		</chassis>
 		<chassis name='Clan Mechanized Hover Point' unitType='Infantry'>
-			<availability>CIH:7,CLAN:6</availability>
-			<model name='(Flamer)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(LRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-			<model name='(Laser)'>
-				<availability>CLAN:6</availability>
-			</model>
-			<model name='(MG)'>
-				<availability>CLAN:7</availability>
-			</model>
-			<model name='(Rifle)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(SRM)'>
-				<availability>CLAN:5</availability>
-			</model>
+			<availability>CLAN!Keshik:5!Front Line:4!Second Line:1,CIH!Keshik:7!Front Line:4!Second Line:1</availability>
+            <model name='(Flamer Basic)'>
+                <roles>urban</roles>
+                <availability>CLAN:2-</availability>
+            </model>
+            <model name='(Laser Basic)'>
+                <roles>recon</roles>
+                <availability>CLAN:6+</availability>
+            </model>
+            <model name='(MG Basic)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN:4</availability>
+            </model>
+            <model name='(Rifle Basic)'>
+                <roles>recon</roles>
+                <availability>CLAN:7</availability>
+            </model>
+            <model name='(SRM Basic)'>
+                <availability>CLAN:5+</availability>
+            </model>
 		</chassis>
 		<chassis name='Clan Mechanized Tracked Point' unitType='Infantry'>
-			<availability>CIH:8,CLAN:7</availability>
-			<model name='(Flamer)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(LRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-			<model name='(Laser)'>
-				<availability>CLAN:6</availability>
-			</model>
-			<model name='(MG)'>
-				<availability>CLAN:7</availability>
-			</model>
-			<model name='(Rifle)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(SRM)'>
-				<availability>CLAN:5</availability>
-			</model>
+			<availability>CLAN!Keshik:5!Front Line:5!Second Line:3!Solahma:1,CGB!Keshik:8!Front Line:7!Second Line:4!Solahma:1,CIH!Keshik:3!Front Line:2!Second Line:2!Solahma:2</availability>
+            <model name='(Flamer Basic)'>
+                <roles>urban</roles>
+                <availability>CLAN:3-</availability>
+            </model>
+            <model name='(Laser Basic)'>
+                <availability>CLAN!Keshik:6!Front Line:5!Second Line:4</availability>
+            </model>
+            <model name='(Mauser 960 Basic)'>
+                <availability>CGB:2+,CHH:1+</availability>
+            </model>
+            <model name='(MG Basic)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN:4</availability>
+            </model>
+            <model name='(Rifle AA Basic)'>
+                <roles>anti_aircraft</roles>
+                <availability>CLAN!Keshik:1,CHH!Keshik:2!Front Line:1</availability>
+            </model>
+            <model name='(Rifle Basic)'>
+                <availability>CLAN:7</availability>
+            </model>
+            <model name='(SRM Basic)'>
+                <availability>CLAN:5+</availability>
+            </model>
 		</chassis>
 		<chassis name='Clan Mechanized Wheeled Point' unitType='Infantry'>
-			<availability>CIH:8,CLAN:7</availability>
-			<model name='(Flamer)'>
+			<availability>CLAN:6+,CIH!Keshik:4!Front Line:3!Second Line:3!Solahma:3!Provisional Garrison:2</availability>
+            <model name='(Flamer Basic)'>
                 <roles>urban</roles>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(LRM)'>
+                <availability>CLAN:3-</availability>
+            </model>
+            <model name='(Laser Basic)'>
                 <roles>urban</roles>
-				<availability>CLAN:5</availability>
-			</model>
-			<model name='(Laser)'>
+                <availability>CLAN!Keshik:5!Front Line:4!Second Line:3</availability>
+            </model>
+            <model name='(MG Basic)'>
+                <roles>anti_infantry,urban</roles>
+                <availability>CLAN:4</availability>
+            </model>
+            <model name='(Rifle AA Basic)'>
+                <roles>anti_aircraft,urban</roles>
+                <availability>CLAN!Keshik:1</availability>
+            </model>
+            <model name='(Rifle Basic)'>
                 <roles>urban</roles>
-				<availability>CLAN:6</availability>
-			</model>
-			<model name='(MG)'>
+                <availability>CLAN:7</availability>
+            </model>
+            <model name='(SRM Basic)'>
                 <roles>urban</roles>
-				<availability>CLAN:7</availability>
-			</model>
-			<model name='(Rifle)'>
-                <roles>urban</roles>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(SRM)'>
-                <roles>urban</roles>
-				<availability>CLAN:5</availability>
-			</model>
+                <availability>CLAN:5+</availability>
+            </model>
 		</chassis>
 		<chassis name='Clan Motorized Point' unitType='Infantry'>
-			<availability>CIH:6,CLAN:9</availability>
-			<model name='(Flamer)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(LRM)'>
-				<availability>CLAN:5</availability>
-			</model>
-			<model name='(Laser)'>
-				<availability>CLAN:6</availability>
-			</model>
-			<model name='(MG)'>
-				<availability>CLAN:7</availability>
-			</model>
-			<model name='(Rifle)'>
-				<availability>CLAN:8</availability>
-			</model>
-			<model name='(SRM)'>
-				<availability>CLAN:5</availability>
-			</model>
+			<availability>CLAN!Keshik:4!Front Line:4!Second Line:4!Solahma:5!Provisional Garrison:6,CIH!Keshik:5!Front Line:4!Second Line:4!Solahma:4!Provisional Garrison:4</availability>
+            <model name='(Flamer Basic)'>
+                <roles>urban</roles>
+                <availability>CLAN:3-</availability>
+            </model>
+            <model name='(Laser Basic)'>
+                <availability>CLAN:3+</availability>
+            </model>
+            <model name='(MG Basic)'>
+                <roles>anti_infantry</roles>
+                <availability>CLAN:3</availability>
+            </model>
+            <model name='(Rifle Basic)'>
+                <availability>CLAN!Keshik:8!Front Line:8!Second Line:8!Solahma:6!Provisional Garrison:1</availability>
+            </model>
+            <model name='(Rifle Light)'>
+                <roles>urban</roles>
+                <availability>CLAN!Solahma:1!Provisional Garrison:8</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>CLAN:4+</availability>
+            </model>
 		</chassis>
 		<chassis name='Clint' unitType='Mek'>
 			<availability>PP:3,CC:7,MOC:4,CLAN:3-,IS:5,FS:7,MERC:5,CS:3-,OA:4,FWL:5,NIOPS:3-</availability>
@@ -1929,10 +2104,10 @@
 			</model>
 		</chassis>
 		<chassis name='Foot Platoon' unitType='Infantry'>
-			<availability>CLAN:6-,PP:10,IS:10,Periphery:10,TC:3-,Periphery.Deep:10</availability>
+			<availability>PP:10,IS:10,Periphery:10,TC:3-,Periphery.Deep:10</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
-                <availability>CLAN:7,PP:7,IS:8,Periphery:8,TC:6-,Periphery.Deep:8</availability>
+                <availability>PP:7,IS:8,Periphery:8,TC:6-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM Heavy)'>
 				<availability>IS:2,MERC:3</availability>
@@ -1949,21 +2124,21 @@
 				<availability>General:3,TC:4</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>CLAN:3+,PP:5+,IS:6,Periphery:5,TC:3+,Periphery.Deep:5</availability>
+				<availability>PP:5+,IS:6,Periphery:5,TC:3+,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Light Scout)'>
 				<roles>recon</roles>
-				<availability>CLAN:4-,PP:6-,IS:5-,Periphery:7-,TC:7-</availability>
+				<availability>PP:6-,IS:5-,Periphery:7-,TC:7-</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>CLAN:5,PP:6,IS:7,Periphery:7,TC:5,Periphery.Deep:5</availability>
+				<availability>PP:6,IS:7,Periphery:7,TC:5,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Rifle AA)'>
 				<roles>anti_aircraft</roles>
 				<availability>IS:6,Periphery:5+,TC:3+,Periphery.Deep:0</availability>
 			</model>
 			<model name='(Rifle Light)'>
-				<availability>CLAN:6,PP:6,IS:5,Periphery:7-,TC:8,Periphery.Deep:7</availability>
+				<availability>PP:6,IS:5,Periphery:7-,TC:8,Periphery.Deep:7</availability>
 			</model>
 			<model name='(Rifle Mountain)'>
 				<roles>mountaineer</roles>
@@ -1971,13 +2146,13 @@
 			</model>
 			<model name='(Rifle Paratrooper)'>
 				<roles>paratrooper</roles>
-				<availability>CLAN:2,IS:3,Periphery:2,TC:0</availability>
+				<availability>IS:3,Periphery:2,TC:0</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>CLAN:8,PP:7,IS:8,Periphery:8,TC:6,Periphery.Deep:6</availability>
+				<availability>PP:7,IS:8,Periphery:8,TC:6,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>CLAN:5+,PP:4+,IS:5,Periphery:5,TC:3+,Periphery.Deep:5+</availability>
+				<availability>PP:4+,IS:5,Periphery:5,TC:3+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
         <chassis name='Foot Platoon (Taurian)' unitType='Infantry'>
@@ -2008,10 +2183,10 @@
 			</model>
 		</chassis>
 		<chassis name='Foot Stealth Squad' unitType='Infantry'>
-			<availability>General:1+</availability>
+			<availability>IS:1+,PP:1+,Periphery:1+</availability>
 			<model name='(Sniper Paratrooper)'>
 				<roles>recon,specops,paratrooper</roles>
-				<availability>General:8</availability>
+				<availability>IS:8,PP:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Fortress' unitType='Dropship'>
@@ -2654,26 +2829,26 @@
 			</model>
 		</chassis>
 		<chassis name='Jump Platoon' unitType='Infantry'>
-			<availability>CLAN:6-,PP:6+,IS:8,Periphery:7,TC:2-,Periphery.Deep:5+</availability>
+			<availability>PP:6+,IS:8,Periphery:7,TC:2-,Periphery.Deep:5+</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
-				<availability>CLAN:6,PP:8,IS:8,Periphery:8,TC:3-,Periphery.Deep:8</availability>
+				<availability>PP:8,IS:8,Periphery:8,TC:3-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>CLAN:6,PP:8,IS:6,Periphery:5,TC:5+,Periphery.Deep:6+</availability>
+				<availability>PP:8,IS:6,Periphery:5,TC:5+,Periphery.Deep:6+</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
-				<availability>CLAN:7,PP:7,IS:7,Periphery:7,TC:5,Periphery.Deep:4</availability>
+				<availability>PP:7,IS:7,Periphery:7,TC:5,Periphery.Deep:4</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>CLAN:5-,PP:8,IS:8,Periphery:8,TC:3,Periphery.Deep:6</availability>
+				<availability>PP:8,IS:8,Periphery:8,TC:3,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>CLAN:5+,PP:4+,IS:5,Periphery:5,TC:4+,Periphery.Deep:4+</availability>
+				<availability>PP:4+,IS:5,Periphery:5,TC:4+,Periphery.Deep:4+</availability>
 			</model>
 		</chassis>
         <chassis name='Jump Platoon (Taurian)' unitType='Infantry'>
@@ -3197,31 +3372,31 @@
 			</model>
 		</chassis>
 		<chassis name='Mechanized Hover Platoon' unitType='Infantry'>
-			<availability>CLAN:4-,PP:3+,IS:5,Periphery:5,TC:1-,Periphery.Deep:4+</availability>
+			<availability>PP:3+,IS:5,Periphery:5,TC:1-,Periphery.Deep:4+</availability>
 			<model name='(Demolition)'>
 				<roles>recon,engineer</roles>
 				<availability>General:2,CLAN:0,PP:1+</availability>
 			</model>
 			<model name='(Flamer)'>
-				<availability>CLAN:5,PP:8,IS:8,Periphery:8,TC:2-,Periphery.Deep:8</availability>
+				<availability>PP:8,IS:8,Periphery:8,TC:2-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
                 <roles>recon</roles>
-				<availability>CLAN:8,PP:6,IS:6,Periphery:5,TC:5+,Periphery.Deep:5+</availability>
+				<availability>PP:6,IS:6,Periphery:5,TC:5+,Periphery.Deep:5+</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
-				<availability>CLAN:7,PP:7,IS:7,Periphery:7,TC:4,Periphery.Deep:6</availability>
+				<availability>PP:7,IS:7,Periphery:7,TC:4,Periphery.Deep:6</availability>
 			</model>
 			<model name='(Rifle)'>
                 <roles>recon</roles>
-				<availability>CLAN:4-,PP:6-,IS:8,Periphery:8,TC:3,Periphery.Deep:8</availability>
+				<availability>PP:6-,IS:8,Periphery:8,TC:3,Periphery.Deep:8</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>CLAN:5+,PP:5+,IS:5,Periphery:5,TC:4+,Periphery.Deep:5+</availability>
+				<availability>PP:5+,IS:5,Periphery:5,TC:4+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
         <chassis name='Mechanized Hover Platoon (Taurian)' unitType='Infantry'>
@@ -3246,26 +3421,26 @@
             </model>
         </chassis>
 		<chassis name='Mechanized Tracked Platoon' unitType='Infantry'>
-			<availability>CLAN:5-,PP:5,IS:7,Periphery:7,TC:3-,Periphery.Deep:6+</availability>
+			<availability>PP:5,IS:7,Periphery:7,TC:3-,Periphery.Deep:6+</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
-				<availability>CLAN:6,PP:8,IS:8,Periphery:8,TC:3-,Periphery.Deep:8</availability>
+				<availability>PP:8,IS:8,Periphery:8,TC:3-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>CLAN:3+,PP:6,IS:6,Periphery:5,TC:5+,Periphery.Deep:5+</availability>
+				<availability>PP:6,IS:6,Periphery:5,TC:5+,Periphery.Deep:5+</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
-				<availability>CLAN:7,PP:7,IS:7,Periphery:7,TC:5,Periphery.Deep:7</availability>
+				<availability>PP:7,IS:7,Periphery:7,TC:5,Periphery.Deep:7</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>CLAN:4,PP:6-,IS:8,Periphery:8,TC:3,Periphery.Deep:6</availability>
+				<availability>PP:6-,IS:8,Periphery:8,TC:3,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>CLAN:5+,PP:4+,IS:5,Periphery:5,TC:4+,Periphery.Deep:4+</availability>
+				<availability>PP:4+,IS:5,Periphery:5,TC:4+,Periphery.Deep:4+</availability>
 			</model>
 		</chassis>
         <chassis name='Mechanized Tracked Platoon (Taurian)' unitType='Infantry'>
@@ -3289,10 +3464,10 @@
             </model>
         </chassis>
 		<chassis name='Mechanized Wheeled Platoon' unitType='Infantry'>
-			<availability>CLAN:4-,PP:6,IS:7,Periphery:7,TC:2-,Periphery.Deep:8+</availability>
+			<availability>PP:6,IS:7,Periphery:7,TC:2-,Periphery.Deep:8+</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
-				<availability>CLAN:6,PP:8,IS:8,Periphery:8,TC:4-,Periphery.Deep:8</availability>
+				<availability>PP:8,IS:8,Periphery:8,TC:4-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
                 <roles>urban</roles>
@@ -3300,19 +3475,19 @@
 			</model>
 			<model name='(Laser)'>
                 <roles>urban</roles>
-				<availability>CLAN:3+,PP:5+,IS:6,Periphery:5,TC:5+,Periphery.Deep:5+</availability>
+				<availability>PP:5+,IS:6,Periphery:5,TC:5+,Periphery.Deep:5+</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry,urban</roles>
-				<availability>CLAN:7,PP:5,IS:7,Periphery:7,TC:6,Periphery.Deep:7</availability>
+				<availability>PP:5,IS:7,Periphery:7,TC:6,Periphery.Deep:7</availability>
 			</model>
 			<model name='(Rifle)'>
                 <roles>urban</roles>
-				<availability>CLAN:4,PP:8,IS:8,Periphery:8,TC:4,Periphery.Deep:6</availability>
+				<availability>PP:8,IS:8,Periphery:8,TC:4,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
                 <roles>urban</roles>
-				<availability>CLAN:5+,PP:4+,IS:5,Periphery:5,TC:4+,Periphery.Deep:4+</availability>
+				<availability>PP:4+,IS:5,Periphery:5,TC:4+,Periphery.Deep:4+</availability>
 			</model>
 		</chassis>
         <chassis name='Mechanized Wheeled Platoon (Taurian)' unitType='Infantry'>
@@ -3462,38 +3637,38 @@
 			</model>
 		</chassis>
 		<chassis name='Motorized Platoon' unitType='Infantry'>
-			<availability>CLAN:5-,PP:9,IS:9,Periphery:9,TC:3-,Periphery.Deep:9</availability>
+			<availability>PP:9,IS:9,Periphery:9,TC:3-,Periphery.Deep:9</availability>
 			<model name='(Fieldworks)'>
 				<roles>engineer</roles>
-				<availability>CHH:5,CGS:2,IS:4,Periphery:2</availability>
+				<availability>IS:4,Periphery:2</availability>
 			</model>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
-				<availability>CLAN:6,PP:8,IS:8,Periphery:8,TC:5-,Periphery.Deep:8</availability>
+				<availability>PP:8,IS:8,Periphery:8,TC:5-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser XCT)'>
 				<roles>xct</roles>
-				<availability>CLAN:4,IS:2</availability>
+				<availability>IS:2</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>CLAN:5+,PP:4+,IS:6,Periphery:5,TC:4+,Periphery.Deep:5</availability>
+				<availability>PP:4+,IS:6,Periphery:5,TC:4+,Periphery.Deep:5</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
-				<availability>CLAN:7,PP:6,IS:7,Periphery:7,TC:5,Periphery.Deep:5</availability>
+				<availability>PP:6,IS:7,Periphery:7,TC:5,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Nonlethal)'>
 				<roles>urban,anti_infantry</roles>
-				<availability>CLAN:0,PP:2,CS:7,General:4</availability>
+				<availability>PP:2,CS:7,General:4</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>CLAN:8,PP:8,IS:8,Periphery:8,TC:7,Periphery.Deep:8</availability>
+				<availability>PP:8,IS:8,Periphery:8,TC:7,Periphery.Deep:8</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>CLAN:5+,PP:4+,IS:5,Periphery:5,TC:4+,Periphery.Deep:5+</availability>
+				<availability>PP:4+,IS:5,Periphery:5,TC:4+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
         <chassis name='Motorized Platoon (Taurian)' unitType='Infantry'>

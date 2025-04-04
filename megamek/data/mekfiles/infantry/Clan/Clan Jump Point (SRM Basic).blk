@@ -1,0 +1,65 @@
+#Saved from version 0.50.04-SNAPSHOT on 2025-03-03
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Clan Jump Point
+</Name>
+
+<Model>
+(SRM Basic)
+</Model>
+
+<mul id:>
+9599
+</mul id:>
+
+<year>
+2807
+</year>
+
+<originalBuildYear>
+2807
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<Troopers Equipment>
+AntiMekGear
+Generic Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+
+<Secondary>
+InfantryHeavySRM
+</Secondary>
+

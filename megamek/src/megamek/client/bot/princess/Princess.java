@@ -1188,7 +1188,7 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Deprecated, consider {@link BotClient#deployMinefields()}
+     * @deprecated, consider {@link BotClient#deployMinefields()}
      */
     @Override
     @Deprecated (since = "0.50.05", forRemoval = true)

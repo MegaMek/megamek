@@ -276,7 +276,7 @@ public abstract class BotClient extends Client {
     protected abstract MovePath continueMovementFor(Entity entity);
 
     /**
-     * Deprecated, consider {@link BotClient#deployMinefields()}
+     * @deprecated, consider {@link BotClient#deployMinefields()}
      */
     @Deprecated (since = "0.50.05")
     protected abstract Vector<Minefield> calculateMinefieldDeployment();

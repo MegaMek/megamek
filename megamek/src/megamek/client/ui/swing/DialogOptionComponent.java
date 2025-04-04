@@ -21,17 +21,33 @@
 package megamek.client.ui.swing;
 
 import java.awt.FlowLayout;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.StringTokenizer;
+import javax.swing.Box;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
-import javax.swing.*;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
-import megamek.common.options.*;
+import megamek.codeUtilities.MathUtility;
+import megamek.common.options.BasicOption;
+import megamek.common.options.IBasicOption;
+import megamek.common.options.IOption;
 
 /** @author Cord Awtry */
-public class DialogOptionComponent extends FixedYPanel implements ItemListener,
-    FocusListener, ActionListener, Comparable<DialogOptionComponent> {
+public class DialogOptionComponent extends FixedYPanel
+      implements ItemListener, FocusListener, ActionListener, Comparable<DialogOptionComponent> {
 
+    @Serial
     private static final long serialVersionUID = -4190538980884459746L;
 
     IOption option;
@@ -44,19 +60,23 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener,
     /** Value used to force a change */
     private boolean hasOptionChanged = false;
 
+    /**
+     * @deprecated No indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public DialogOptionComponent(DialogOptionListener parent, IOption option) {
         this(parent, option, true);
     }
 
-    public DialogOptionComponent(DialogOptionListener parent, IOption option,
-            boolean editable) {
+    public DialogOptionComponent(DialogOptionListener parent, IOption option, boolean editable) {
         this(parent, option, editable, false);
     }
 
-    public DialogOptionComponent(DialogOptionListener parent, IOption option,
-            boolean editable, boolean choiceLabelFirst) {
+    public DialogOptionComponent(DialogOptionListener parent, IOption option, boolean editable,
+          boolean choiceLabelFirst) {
         dialogOptionListener = parent;
         this.option = option;
+        JLabel label;
 
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
         switch (option.getType()) {
@@ -65,7 +85,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener,
                 checkbox.addItemListener(this);
                 checkbox.setToolTipText(convertToHtml(option.getDescription()));
                 checkbox.setEnabled(editable);
-                JLabel label = new JLabel(option.getDisplayableName());
+                label = new JLabel(option.getDisplayableName());
                 label.setLabelFor(checkbox);
                 label.setToolTipText(convertToHtml(option.getDescription()));
                 label.addMouseListener(new MouseAdapter() {
@@ -143,20 +163,14 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener,
     }
 
     public Object getValue() {
-        switch (option.getType()) {
-            case IOption.BOOLEAN:
-                return checkbox.isSelected();
-            case IOption.INTEGER:
-                return textField.getText().isBlank() ? 0 : Integer.parseInt(textField.getText());
-            case IOption.FLOAT:
-                return textField.getText().isBlank() ? 0 : Float.parseFloat(textField.getText());
-            case IOption.STRING:
-                return textField.getText();
-            case IOption.CHOICE:
-                return choice.getSelectedItem();
-            default:
-                return null;
-        }
+        return switch (option.getType()) {
+            case IOption.BOOLEAN -> checkbox.isSelected();
+            case IOption.INTEGER -> textField.getText().isBlank() ? 0 : MathUtility.parseInt(textField.getText(), 0);
+            case IOption.FLOAT -> textField.getText().isBlank() ? 0 : MathUtility.parseFloat(textField.getText(), 0);
+            case IOption.STRING -> textField.getText();
+            case IOption.CHOICE -> choice.getSelectedItem();
+            default -> null;
+        };
     }
 
     public void setValue(Object v) {
@@ -184,8 +198,8 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener,
     /**
      * Update the option component so that it is editable or view-only.
      *
-     * @param editable - <code>true</code> if the contents of the component
-     *            are editable, <code>false</code> if they are view-only.
+     * @param editable - <code>true</code> if the contents of the component are editable, <code>false</code> if they are
+     *                 view-only.
      */
     public void setEditable(boolean editable) {
 
@@ -204,14 +218,11 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener,
     }
 
     public boolean getEditable() {
-        switch (option.getType()) {
-            case IOption.BOOLEAN:
-                return checkbox.isEnabled();
-            case IOption.CHOICE:
-                return choice.isEnabled();
-            default:
-                return textField.isEnabled();
-        }
+        return switch (option.getType()) {
+            case IOption.BOOLEAN -> checkbox.isEnabled();
+            case IOption.CHOICE -> choice.isEnabled();
+            default -> textField.isEnabled();
+        };
     }
 
     public void setSelected(boolean state) {
@@ -230,15 +241,13 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener,
     }
 
     public boolean isDefaultValue() {
-        switch (option.getType()) {
-            case IOption.BOOLEAN:
-                return checkbox.isSelected() == (boolean) option.getDefault();
-            case IOption.CHOICE:
+        return switch (option.getType()) {
+            case IOption.BOOLEAN -> checkbox.isSelected() == (boolean) option.getDefault();
+            case IOption.CHOICE ->
                 // Assume first choice is always default
-                return choice.getSelectedIndex() == 0;
-            default:
-                return textField.getText().equals(String.valueOf(option.getDefault()));
-        }
+                  choice.getSelectedIndex() == 0;
+            default -> textField.getText().equals(String.valueOf(option.getDefault()));
+        };
     }
 
     public void resetToDefault() {
@@ -276,12 +285,27 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener,
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DialogOptionComponent dialogOptionComponent) {
+            return dialogOptionComponent.option.getDisplayableName().equals(option.getDisplayableName());
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return option.getDisplayableName().hashCode();
+    }
+
+    @Override
     public String toString() {
         return option.getDisplayableName();
     }
 
     @Override
-    public void focusGained(FocusEvent e) { }
+    public void focusGained(FocusEvent e) {
+    }
 
     @Override
     public void focusLost(FocusEvent e) {

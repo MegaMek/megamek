@@ -20,8 +20,8 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.Serial;
 import java.util.ArrayList;
-
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,6 +33,7 @@ import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.Hex;
 import megamek.common.Mek;
 import megamek.common.MiscType;
@@ -43,9 +44,10 @@ import megamek.common.Tank;
  * @author beerockxs
  */
 public class TurretFacingDialog extends JDialog implements ActionListener {
+    @Serial
     private static final long serialVersionUID = -4509638026655222982L;
-    private JButton butOkay = new JButton(Messages.getString("Okay"));
-    private JButton butCancel = new JButton(Messages.getString("Cancel"));
+    private final JButton butOkay = new JButton(Messages.getString("Okay"));
+    private final JButton butCancel = new JButton(Messages.getString("Cancel"));
     Mek mek;
     Tank tank;
     Mounted<?> turret;
@@ -154,7 +156,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         add(buttonPanel, BorderLayout.SOUTH);
         pack();
         setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (getSize().width / 2),
-                (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
+              (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
     }
 
     public TurretFacingDialog(JFrame parent, Tank tank, ClientGUI clientgui) {
@@ -225,7 +227,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         add(buttonPanel, BorderLayout.SOUTH);
         pack();
         setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (getSize().width / 2),
-                (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
+              (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
     }
 
     @Override
@@ -233,7 +235,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         if (ae.getSource().equals(butCancel)) {
             dispose();
         } else if (ae.getSource().equals(butOkay)) {
-            int facing = Integer.parseInt(buttonGroup.getSelection().getActionCommand());
+            int facing = MathUtility.parseInt(buttonGroup.getSelection().getActionCommand(), 0);
             int locToChange;
             if (mek != null) {
                 facing = ((6 - mek.getFacing()) + facing) % 6;

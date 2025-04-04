@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -1227,13 +1228,10 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
         fldCommandInit.setText(Integer.toString(entity.getCrew().getCommandBonus()));
 
-        // Set up commanders for commander killed victory condition
-        if (gameOptions().booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
-            panCrew.add(new JLabel(Messages.getString("CustomMekDialog.labCommander"), SwingConstants.RIGHT),
-                  GBC.std());
-            panCrew.add(chCommander, GBC.eol());
-            chCommander.setSelected(entity.isCommander());
-        }
+        // Set up commanders for commander killed victory condition & SPA
+        panCrew.add(new JLabel(Messages.getString("CustomMekDialog.labCommander"), SwingConstants.RIGHT), GBC.std());
+        panCrew.add(chCommander, GBC.eol());
+        chCommander.setSelected(entity.isCommander());
         panOptions = new JPanel(new GridBagLayout());
         panCrew.add(panOptions, GBC.eop());
 

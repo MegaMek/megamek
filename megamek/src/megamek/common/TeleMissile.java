@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007 - Jay Lawson
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,7 +38,7 @@ public class TeleMissile extends Aero {
     // need another type of boolean for out-of-control status that indicates
     // lack of contact with originating unit
     private boolean outContact = false;
-    
+
     public TeleMissile() {
         super();
         damThresh = new int[] { 0 };
@@ -179,14 +179,14 @@ public class TeleMissile extends Aero {
     @Override
     public PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
+        roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
         return roll;
     }
 
     @Override
     public PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
+        roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
         return roll;
     }
 
@@ -216,7 +216,7 @@ public class TeleMissile extends Aero {
     public int locations() {
         return 1;
     }
-    
+
     @Override
     public boolean canRam() {
         return false;
@@ -225,5 +225,10 @@ public class TeleMissile extends Aero {
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO & Entity.ETYPE_TELEMISSILE;
+    }
+
+    @Override
+    public void clearInitiative(boolean bUseInitComp) {
+
     }
 }

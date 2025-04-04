@@ -19,6 +19,8 @@ MEGAMEK VERSION HISTORY:
 + PR #6806: Added Method for Variable Cost Check in MiscType
 + Fix #6807: Auto-set SI in ASFs
 + PR #6816 parse mek/blk from string
++ PR #6824: Don't fail loading unit with MASS in wrong location
++ PR #6823: Added Combat Sense and Combat Paralysis SPAs
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

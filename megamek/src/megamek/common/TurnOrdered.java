@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -13,9 +14,21 @@
  */
 package megamek.common;
 
-import megamek.common.options.OptionsConstants;
+import static megamek.common.Game.TEAM_HAS_COMBAT_PARALYSIS;
+import static megamek.common.Game.TEAM_HAS_COMBAT_SENSE;
+import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
+import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Vector;
+
+import megamek.common.options.OptionsConstants;
 
 public abstract class TurnOrdered implements ITurnOrdered {
     private static final long serialVersionUID = 4131468442031773195L;
@@ -38,14 +51,12 @@ public abstract class TurnOrdered implements ITurnOrdered {
     private transient int turns_tm = 0;
 
     /**
-     * Return the number of "normal" turns that this item requires. This is
-     * normally the sum of multi-unit turns and the other turns.
+     * Return the number of "normal" turns that this item requires. This is normally the sum of multi-unit turns and the
+     * other turns.
      * <p>
-     * Subclasses are expected to override this value in order to make the "move
-     * even" code work correctly.
+     * Subclasses are expected to override this value in order to make the "move even" code work correctly.
      *
-     * @return the <code>int</code> number of "normal" turns this item should
-     *         take in a phase.
+     * @return the <code>int</code> number of "normal" turns this item should take in a phase.
      */
     @Override
     public int getNormalTurns(IGame game) {
@@ -261,32 +272,37 @@ public abstract class TurnOrdered implements ITurnOrdered {
      * Clear the initiative of this object.
      */
     @Override
-    public void clearInitiative(boolean bUseInitComp) {
+    public void clearInitiative(boolean bUseInitComp, Map<Team, Integer> initiativeAptitude) {
         getInitiative().clear();
     }
 
+    /**
+     * @deprecated use {@link #rollInitiative(List, boolean, Map)} instead.
+     */
+    @Deprecated(since = "0.50.5", forRemoval = true)
     public static void rollInitiative(List<? extends ITurnOrdered> v, boolean bUseInitiativeCompensation) {
+        rollInitiative(v, bUseInitiativeCompensation, new HashMap<>());
+    }
+
+    public static void rollInitiative(List<? extends ITurnOrdered> initiativeCandidates,
+                                      boolean bUseInitiativeCompensation, Map<Team, Integer> initiativeAptitude) {
         // Clear all rolls
-        for (ITurnOrdered item : v) {
-            item.clearInitiative(bUseInitiativeCompensation);
+        for (ITurnOrdered item : initiativeCandidates) {
+            item.clearInitiative(bUseInitiativeCompensation, initiativeAptitude);
         }
 
-        rollInitAndResolveTies(v, null, bUseInitiativeCompensation);
+        rollInitAndResolveTies(initiativeCandidates, null, bUseInitiativeCompensation, initiativeAptitude);
     }
 
     /**
-     * This takes a vector of TurnOrdered (Teams or Players), and does post
-     * initiative phase cleanup of the initiative streak bonus.
+     * This takes a vector of TurnOrdered (Teams or Players), and does post initiative phase cleanup of the initiative
+     * streak bonus.
      *
-     * @param v
-     *            A vector of items that need to have turns.
-     * @param bInitCompBonus
-     *            A flag that determines whether initiative compensation bonus
-     *            should be used: used to prevent one side getting long init win
-     *            streaks
+     * @param v              A vector of items that need to have turns.
+     * @param bInitCompBonus A flag that determines whether initiative compensation bonus should be used: used to
+     *                       prevent one side getting long init win streaks
      */
-    public static void resetInitiativeCompensation(List<? extends ITurnOrdered> v,
-                                                   boolean bInitCompBonus) {
+    public static void resetInitiativeCompensation(List<? extends ITurnOrdered> v, boolean bInitCompBonus) {
         // initiative compensation
         if (bInitCompBonus && !v.isEmpty()) {
             final ITurnOrdered comparisonElement = v.get(0);
@@ -296,8 +312,8 @@ public abstract class TurnOrdered implements ITurnOrdered {
             // figure out who won initiative this round
             for (ITurnOrdered item : v) {
                 // Observers don't have initiative, and they don't get initiative compensation
-                if (((item instanceof Player) && ((Player) item).isObserver())
-                        || ((item instanceof Team) && ((Team) item).isObserverTeam())) {
+                if (((item instanceof Player) && ((Player) item).isObserver()) ||
+                          ((item instanceof Team) && ((Team) item).isObserverTeam())) {
                     continue;
                 }
 
@@ -312,15 +328,15 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 for (ITurnOrdered item : v) {
                     if (!item.equals(winningElement)) {
                         int newBonus = 0;
-                        boolean observer = ((item instanceof Player) && ((Player) item).isObserver())
-                                || ((item instanceof Team) && ((Team) item).isObserverTeam());
+                        boolean observer = ((item instanceof Player) && ((Player) item).isObserver()) ||
+                                                 ((item instanceof Team) && ((Team) item).isObserverTeam());
                         // Observers don't have initiative, and they don't get initiative compensation
 
                         if (!item.equals(lastRoundInitWinner) && !observer) {
                             newBonus = item.getInitCompensationBonus() + 1;
                         }
                         item.setInitCompensationBonus(newBonus);
-                    }  else {
+                    } else {
                         // Reset our bonus to 0 if we won
                         item.setInitCompensationBonus(0);
                     }
@@ -331,50 +347,76 @@ public abstract class TurnOrdered implements ITurnOrdered {
     }
 
     /**
-     * This takes a vector of TurnOrdered (Teams or Players), rolls initiative,
-     * and resolves ties. The second argument is used when a specific teams
-     * initiative should be re-rolled.
-     *
-     * @param v
-     *            A vector of items that need to have turns.
-     * @param rerollRequests null when there should be no re-rolls
-     * @param bInitCompBonus
-     *            A flag that determines whether initiative compensation bonus
-     *            should be used: used to prevent one side getting long init win
-     *            streaks
+     * @deprecated use {@link #rollInitAndResolveTies(List, List, boolean, Map)} instead.
      */
+    @Deprecated(since = "0.50.5", forRemoval = true)
     public static void rollInitAndResolveTies(List<? extends ITurnOrdered> v,
-            List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus) {
-        for (ITurnOrdered item : v) {
+                                              List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus) {
+        rollInitAndResolveTies(v, rerollRequests, bInitCompBonus, new HashMap<>());
+    }
+
+    /**
+     * This takes a vector of TurnOrdered (Teams or Players), rolls initiative, and resolves ties. The second argument
+     * is used when a specific teams initiative should be re-rolled.
+     *
+     * @param initiativeCandidates A vector of items that need to have turns.
+     * @param rerollRequests       null when there should be no re-rolls
+     * @param bInitCompBonus       A flag that determines whether initiative compensation bonus should be used: used to
+     *                             prevent one side getting long init win streaks
+     */
+    public static void rollInitAndResolveTies(List<? extends ITurnOrdered> initiativeCandidates,
+                                              List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus,
+                                              Map<Team, Integer> initiativeAptitude) {
+        for (ITurnOrdered initiativeCandidate : initiativeCandidates) {
             // Observers don't have initiative, set it to -1
-            if (((item instanceof Player) && ((Player) item).isObserver())
-                    || ((item instanceof Team) && ((Team) item).isObserverTeam())) {
-                item.getInitiative().observerRoll();
+            if (((initiativeCandidate instanceof Player) && ((Player) initiativeCandidate).isObserver()) ||
+                      ((initiativeCandidate instanceof Team) && ((Team) initiativeCandidate).isObserverTeam())) {
+                initiativeCandidate.getInitiative().observerRoll();
             }
 
             int bonus = 0;
-            if (item instanceof Team) {
-                bonus = ((Team) item).getTotalInitBonus(bInitCompBonus);
+            String initiativeAptitudeSPA = "";
+
+            // If we're using team-based initiative, we just need to check whether the team commander has Combat Sense
+            if (initiativeCandidate instanceof Team) {
+                bonus = ((Team) initiativeCandidate).getTotalInitBonus(bInitCompBonus);
+
+                if (!initiativeAptitude.isEmpty()) {
+                    if (initiativeAptitude.containsKey(initiativeCandidate)) {
+                        int aptitude = initiativeAptitude.get(initiativeCandidate);
+
+                        if (aptitude == TEAM_HAS_COMBAT_SENSE) {
+                            initiativeAptitudeSPA = ATOW_COMBAT_SENSE;
+                        } else if (aptitude == TEAM_HAS_COMBAT_PARALYSIS) {
+                            initiativeAptitudeSPA = ATOW_COMBAT_PARALYSIS;
+                        }
+                    }
+                }
             }
 
-            if (item instanceof Entity) {
-                final Entity entity = (Entity) item;
+            // Individual entities are used here if we're using Individual Initiative
+            if (initiativeCandidate instanceof Entity entity) {
                 if (entity.getGame() != null) {
                     final Team team = entity.getGame().getTeamForPlayer(entity.getOwner());
                     if (team != null) {
                         bonus = team.getTotalInitBonus(false) + entity.getCrew().getInitBonus();
+                        if (entity.hasAbility(ATOW_COMBAT_SENSE)) {
+                            initiativeAptitudeSPA = ATOW_COMBAT_SENSE;
+                        } else if (entity.hasAbility(ATOW_COMBAT_PARALYSIS)) {
+                            initiativeAptitudeSPA = ATOW_COMBAT_PARALYSIS;
+                        }
                     }
                 }
             }
 
             if (rerollRequests == null) { // normal init roll
                 // add a roll for all teams
-                item.getInitiative().addRoll(bonus);
+                initiativeCandidate.getInitiative().addRoll(bonus, initiativeAptitudeSPA);
             } else {
                 // Resolve Tactical Genius (lvl 3) pilot ability
                 for (ITurnOrdered rerollItem : rerollRequests) {
-                    if (item == rerollItem) { // this is the team re-rolling
-                        item.getInitiative().replaceRoll(bonus);
+                    if (Objects.equals(initiativeCandidate, rerollItem)) { // this is the team re-rolling
+                        initiativeCandidate.getInitiative().replaceRoll(bonus, initiativeAptitudeSPA);
                         break; // each team only needs one reroll
                     }
                 }
@@ -383,16 +425,16 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
         // check for ties
         Vector<ITurnOrdered> ties = new Vector<>();
-        for (ITurnOrdered item : v) {
+        for (ITurnOrdered item : initiativeCandidates) {
             // Observers don't have initiative, and were already set to -1
-            if (((item instanceof Player) && ((Player) item).isObserver())
-                    || ((item instanceof Team) && ((Team) item).isObserverTeam())) {
+            if (((item instanceof Player) && ((Player) item).isObserver()) ||
+                      ((item instanceof Team) && ((Team) item).isObserverTeam())) {
                 continue;
             }
             ties.removeAllElements();
             ties.addElement(item);
-            for (ITurnOrdered other : v) {
-                if ((item != other) && item.getInitiative().equals(other.getInitiative())) {
+            for (ITurnOrdered other : initiativeCandidates) {
+                if ((!Objects.equals(item, other)) && item.getInitiative().equals(other.getInitiative())) {
                     ties.addElement(other);
                 }
             }
@@ -400,7 +442,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
             if (ties.size() > 1) {
                 // We want to ignore initiative compensation here, because it will
                 // get dealt with once we're done resolving ties
-                rollInitAndResolveTies(ties, null, false);
+                rollInitAndResolveTies(ties, null, false, initiativeAptitude);
             }
         }
     }
@@ -515,12 +557,26 @@ public abstract class TurnOrdered implements ITurnOrdered {
             }
         }
 
-        int total_turns = total_normal_turns + total_space_station_turns + total_jumpship_turns + total_warship_turns
-                + total_dropship_turns + total_small_craft_turns + total_telemissile_turns + total_aero_turns;
+        int total_turns = total_normal_turns +
+                                total_space_station_turns +
+                                total_jumpship_turns +
+                                total_warship_turns +
+                                total_dropship_turns +
+                                total_small_craft_turns +
+                                total_telemissile_turns +
+                                total_aero_turns;
 
-        TurnVectors turns = new TurnVectors(total_normal_turns, total_turns, total_space_station_turns,
-                total_jumpship_turns, total_warship_turns, total_dropship_turns, total_small_craft_turns,
-                total_telemissile_turns, total_aero_turns, total_even_turns, min);
+        TurnVectors turns = new TurnVectors(total_normal_turns,
+              total_turns,
+              total_space_station_turns,
+              total_jumpship_turns,
+              total_warship_turns,
+              total_dropship_turns,
+              total_small_craft_turns,
+              total_telemissile_turns,
+              total_aero_turns,
+              total_even_turns,
+              min);
 
         // Allocate the normal turns.
         turns_left = total_normal_turns;

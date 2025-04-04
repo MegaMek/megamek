@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007-2008 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,14 +19,14 @@
  */
 package megamek.server.victory;
 
-import megamek.common.Game;
-import megamek.common.IGame;
-import megamek.common.Player;
-import megamek.common.Report;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
+
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Implements a victory condition that checks if all enemy commanders have been killed.
@@ -50,10 +50,14 @@ public class EnemyCmdrDestroyedVictory implements VictoryCondition, Serializable
                 }
                 doneTeams.add(team);
             }
-
-            boolean killedAllCommanders = game.getPlayersList().stream()
-                    .filter(p -> p.isEnemyOf(player))
-                    .mapToInt(game::getLiveCommandersOwnedBy).sum() == 0;
+            boolean killedAllCommanders = false;
+            if (game.getOptions().booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
+                killedAllCommanders = game.getPlayersList()
+                                            .stream()
+                                            .filter(p -> p.isEnemyOf(player))
+                                            .mapToInt(game::getLiveCommandersOwnedBy)
+                                            .sum() == 0;
+            }
 
             if (killedAllCommanders) {
                 Report r = new Report(7110, Report.PUBLIC);

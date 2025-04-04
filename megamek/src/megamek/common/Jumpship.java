@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2025 - The MegaMek Team. All Rights Reserved.
  * MegaAero - Copyright (C) 2007 Jay Lawson This program is free software; you
  * can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2
@@ -11,12 +12,7 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.cost.JumpShipCostCalculator;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.options.OptionsConstants;
+import static megamek.common.Compute.*;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -24,7 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static megamek.common.Compute.*;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.cost.JumpShipCostCalculator;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author Jay Lawson
@@ -57,8 +58,8 @@ public class Jumpship extends Aero {
     private static final double[] DRIVE_CORE_WEIGHT_PCT = { 0.95, 0.4525, 0.5, 0.0, 0.95 };
 
     private static final String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL" };
-    private static final String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
-            "Aft", "Aft Left Side", "Aft Right Side", "Hull" };
+    private static final String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft",
+                                                     "Aft Left Side", "Aft Right Side", "Hull" };
 
     // K-F Drive Stuff
     private int original_kf_integrity = 0;
@@ -96,18 +97,16 @@ public class Jumpship extends Aero {
 
     /**
      * Keep track of all of the grav decks and their sizes.
-     *
-     * This is a new approach for storing grav decks, which allows the size of each deck to be stored. Previously,
-     * we just stored the number of standard, large and huge grav decks, and could not specify the exact size of the
-     * deck.
+     * <p>
+     * This is a new approach for storing grav decks, which allows the size of each deck to be stored. Previously, we
+     * just stored the number of standard, large and huge grav decks, and could not specify the exact size of the deck.
      */
     private final List<Integer> gravDecks = new ArrayList<>();
 
     /**
      * Keep track of all of the grav decks and their damage status
-     *
-     * Stores the number of hits on each grav deck by the index value from the list
-     * gravDecks
+     * <p>
+     * Stores the number of hits on each grav deck by the index value from the list gravDecks
      */
     private final Map<Integer, Integer> damagedGravDecks = new HashMap<>();
 
@@ -174,23 +173,31 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Primitive JumpShips may be constructed with standard docking collars, or with
-     * pre-boom collars.
+     * Primitive JumpShips may be constructed with standard docking collars, or with pre-boom collars.
      */
     public static final int COLLAR_STANDARD = 0;
     public static final int COLLAR_NO_BOOM = 1;
 
-    protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_NONE, 2300).setISApproximate(false, true)
-            .setProductionFactions(F_TA).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    protected static final TechAdvancement TA_JUMPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(2100, 2200, DATE_NONE, 2500)
-            .setISApproximate(true, true, false, false)
-            .setProductionFactions(F_TA).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_NONE,
+                2300)
+                                                               .setISApproximate(false, true)
+                                                               .setProductionFactions(F_TA)
+                                                               .setTechRating(RATING_D)
+                                                               .setAvailability(RATING_D, RATING_E, RATING_D, RATING_F)
+                                                               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    protected static final TechAdvancement TA_JUMPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS).setISAdvancement(
+                2100,
+                2200,
+                DATE_NONE,
+                2500)
+                                                                         .setISApproximate(true, true, false, false)
+                                                                         .setProductionFactions(F_TA)
+                                                                         .setTechRating(RATING_D)
+                                                                         .setAvailability(RATING_D,
+                                                                               RATING_X,
+                                                                               RATING_X,
+                                                                               RATING_X)
+                                                                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -201,26 +208,27 @@ public class Jumpship extends Aero {
      * Tech advancement data for lithium fusion batteries
      */
     public static TechAdvancement getLFBatteryTA() {
-        return new TechAdvancement(TECH_BASE_ALL)
-                .setISAdvancement(2520, 2529, DATE_NONE, 2819, 3043)
-                .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_FS)
-                .setClanAdvancement(2520, 2529)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        return new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2520, 2529, DATE_NONE, 2819, 3043)
+                     .setISApproximate(true, false, false, false, false)
+                     .setPrototypeFactions(F_TH)
+                     .setProductionFactions(F_TH)
+                     .setReintroductionFactions(F_FS)
+                     .setClanAdvancement(2520, 2529)
+                     .setTechRating(RATING_E)
+                     .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     /**
      * Tech advancement data for the jump sail
      */
     public static TechAdvancement getJumpSailTA() {
-        return new TechAdvancement(TECH_BASE_ALL)
-                .setAdvancement(2200, 2300, 2325)
-                .setPrototypeFactions(F_TA).setProductionFactions(F_TA)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2200, 2300, 2325)
+                     .setPrototypeFactions(F_TA)
+                     .setProductionFactions(F_TA)
+                     .setTechRating(RATING_D)
+                     .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
+                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     /**
@@ -297,8 +305,7 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Get the number of damaged docking collars on the ship.
-     * Used by crit damage string on unit display
+     * Get the number of damaged docking collars on the ship. Used by crit damage string on unit display
      *
      * @return the number of damaged docking collars
      */
@@ -316,8 +323,7 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Get the number of damaged grav decks on the ship.
-     * Used by JS/WS MapSet widget to display critical hits
+     * Get the number of damaged grav decks on the ship. Used by JS/WS MapSet widget to display critical hits
      *
      * @return the number of damaged grav decks
      */
@@ -335,8 +341,7 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Get a list of all grav decks mounted on this ship. Returns the size in meters
-     * of the deck
+     * Get a list of all grav decks mounted on this ship. Returns the size in meters of the deck
      *
      * @return a list of grav deck diameters, in meters
      */
@@ -345,9 +350,7 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Adds a grav deck damage value that maps to the index of each deck size in
-     * meters
-     *
+     * Adds a grav deck damage value that maps to the index of each deck size in meters
      */
     public void initializeGravDeckDamage(int index) {
         damagedGravDecks.put(index, 0);
@@ -363,8 +366,7 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Sets the damage flag for the grav deck with the specified key to the
-     * specified value
+     * Sets the damage flag for the grav deck with the specified key to the specified value
      *
      * @param key     - the id of the deck to affect
      * @param damaged - 0 (undamaged), 1 (damaged)
@@ -374,9 +376,8 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Old style for setting the number of grav decks. This allows the user to
-     * specify N standard grav decks, which
-     * will get added at a default value.
+     * Old style for setting the number of grav decks. This allows the user to specify N standard grav decks, which will
+     * get added at a default value.
      *
      * @param n The number of grav decks
      */
@@ -396,9 +397,8 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Old style method for adding N large grav decks. A default value is chosen
-     * that is half-way
-     * between the standard and huge sizes.
+     * Old style method for adding N large grav decks. A default value is chosen that is half-way between the standard
+     * and huge sizes.
      *
      * @param n The number of grav decks
      */
@@ -415,15 +415,14 @@ public class Jumpship extends Aero {
      */
     public int getGravDeckLarge() {
         return (int) gravDecks.stream()
-                .filter(deck -> deck >= GRAV_DECK_STANDARD_MAX)
-                .filter(deck -> deck <= GRAV_DECK_LARGE_MAX)
-                .count();
+                           .filter(deck -> deck >= GRAV_DECK_STANDARD_MAX)
+                           .filter(deck -> deck <= GRAV_DECK_LARGE_MAX)
+                           .count();
     }
 
     /**
-     * Old style method for adding N huge grav decks. A default value is chosen that
-     * is the current
-     * large maximum plus half that value.
+     * Old style method for adding N huge grav decks. A default value is chosen that is the current large maximum plus
+     * half that value.
      *
      * @param n The number of grav decks
      */
@@ -649,12 +648,12 @@ public class Jumpship extends Aero {
 
     // Is any part of the KF Drive damaged? Used by MHQ for repairs.
     public boolean isKFDriveDamaged() {
-        return (getKFHeliumTankHit()
-                || getKFDriveCoilHit()
-                || getKFDriveControllerHit()
-                || getLFBatteryHit()
-                || getKFChargingSystemHit()
-                || getKFFieldInitiatorHit());
+        return (getKFHeliumTankHit() ||
+                      getKFDriveCoilHit() ||
+                      getKFDriveControllerHit() ||
+                      getLFBatteryHit() ||
+                      getKFChargingSystemHit() ||
+                      getKFFieldInitiatorHit());
     }
 
     public void setKFHeliumTankIntegrity(int ht) {
@@ -736,8 +735,7 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * @return Whether this ship has a jump sail (optional on space stations and
-     *         primitive jumpships)
+     * @return Whether this ship has a jump sail (optional on space stations and primitive jumpships)
      */
     public boolean hasSail() {
         return sail;
@@ -1059,8 +1057,10 @@ public class Jumpship extends Aero {
             return false;
         }
 
-        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
-                && (atype.getAmmoType() == wtype.getAmmoType()) && (atype.getRackSize() == wtype.getRackSize())) {
+        if (mountedAmmo.isAmmoUsable() &&
+                  !wtype.hasFlag(WeaponType.F_ONESHOT) &&
+                  (atype.getAmmoType() == wtype.getAmmoType()) &&
+                  (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             return true;
         }
@@ -1091,8 +1091,8 @@ public class Jumpship extends Aero {
      */
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
+                  !game.getBoard().inSpace()) {
             return super.hasActiveECM();
         }
         return getECMRange() >= 0;
@@ -1102,12 +1102,12 @@ public class Jumpship extends Aero {
      * What's the range of the ECM equipment?
      *
      * @return the <code>int</code> range of this unit's ECM. This value will be
-     *         <code>Entity.NONE</code> if no ECM is active.
+     *       <code>Entity.NONE</code> if no ECM is active.
      */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
+                  !game.getBoard().inSpace()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {
@@ -1219,5 +1219,10 @@ public class Jumpship extends Aero {
     @Override
     public boolean hasPatchworkArmor() {
         return false;
+    }
+
+    @Override
+    public void clearInitiative(boolean bUseInitComp) {
+
     }
 }

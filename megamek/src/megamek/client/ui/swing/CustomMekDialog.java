@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -26,7 +27,6 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
@@ -54,16 +54,15 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.server.ServerBoardHelper;
 
 /**
- * A dialog that a player can use to customize his mek before battle.
- * Currently, changing pilots, setting up C3 networks, changing ammunition,
- * deploying artillery offboard, setting MGs to rapidfire, setting auto-eject is
+ * A dialog that a player can use to customize his mek before battle. Currently, changing pilots, setting up C3
+ * networks, changing ammunition, deploying artillery offboard, setting MGs to rapidfire, setting auto-eject is
  * supported.
  *
  * @author Ben
  * @since March 18, 2002, 2:56 PM
  */
-public class CustomMekDialog extends AbstractButtonDialog implements ActionListener,
-        DialogOptionListener, ItemListener {
+public class CustomMekDialog extends AbstractButtonDialog
+      implements ActionListener, DialogOptionListener, ItemListener {
 
     public static final int DONE = 0;
     public static final int NEXT = 1;
@@ -83,14 +82,14 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
     private final JTextField fldCommandInit = new JTextField(3);
     private final JCheckBox chCommander = new JCheckBox();
 
-    private final JLabel labDeploymentRound = new JLabel(
-            Messages.getString("CustomMekDialog.labDeployment"), SwingConstants.RIGHT);
-    private final JLabel labDeploymentZone = new JLabel(
-            Messages.getString("CustomMekDialog.labDeploymentZone"), SwingConstants.RIGHT);
-    private final JLabel labDeploymentOffset = new JLabel(
-            Messages.getString("CustomMekDialog.labDeploymentOffset"), SwingConstants.RIGHT);
-    private final JLabel labDeploymentWidth = new JLabel(
-            Messages.getString("CustomMekDialog.labDeploymentWidth"), SwingConstants.RIGHT);
+    private final JLabel labDeploymentRound = new JLabel(Messages.getString("CustomMekDialog.labDeployment"),
+          SwingConstants.RIGHT);
+    private final JLabel labDeploymentZone = new JLabel(Messages.getString("CustomMekDialog.labDeploymentZone"),
+          SwingConstants.RIGHT);
+    private final JLabel labDeploymentOffset = new JLabel(Messages.getString("CustomMekDialog.labDeploymentOffset"),
+          SwingConstants.RIGHT);
+    private final JLabel labDeploymentWidth = new JLabel(Messages.getString("CustomMekDialog.labDeploymentWidth"),
+          SwingConstants.RIGHT);
     private final JComboBox<String> choDeploymentRound = new JComboBox<>();
     private final JComboBox<String> choDeploymentZone = new JComboBox<>();
 
@@ -108,47 +107,46 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
     private JSpinner spinStartingAnySEx;
     private JSpinner spinStartingAnySEy;
 
-    private final JLabel labDeployShutdown = new JLabel(
-            Messages.getString("CustomMekDialog.labDeployShutdown"), SwingConstants.RIGHT);
+    private final JLabel labDeployShutdown = new JLabel(Messages.getString("CustomMekDialog.labDeployShutdown"),
+          SwingConstants.RIGHT);
     private final JCheckBox chDeployShutdown = new JCheckBox();
-    private final JLabel labDeployProne = new JLabel(
-            Messages.getString("CustomMekDialog.labDeployProne"), SwingConstants.RIGHT);
+    private final JLabel labDeployProne = new JLabel(Messages.getString("CustomMekDialog.labDeployProne"),
+          SwingConstants.RIGHT);
     private final JCheckBox chDeployProne = new JCheckBox();
-    private final JLabel labDeployHullDown = new JLabel(
-            Messages.getString("CustomMekDialog.labDeployHullDown"), SwingConstants.RIGHT);
+    private final JLabel labDeployHullDown = new JLabel(Messages.getString("CustomMekDialog.labDeployHullDown"),
+          SwingConstants.RIGHT);
     private final JCheckBox chDeployHullDown = new JCheckBox();
-    private final JLabel labHidden = new JLabel(Messages.getString("CustomMekDialog.labHidden"),
-            SwingConstants.RIGHT);
+    private final JLabel labHidden = new JLabel(Messages.getString("CustomMekDialog.labHidden"), SwingConstants.RIGHT);
     private final JCheckBox chHidden = new JCheckBox();
 
     private final JLabel labDeployStealth = new JLabel(Messages.getString("CustomMekDialog.labDeployStealth"),
-            SwingConstants.RIGHT);
+          SwingConstants.RIGHT);
     private final JCheckBox chDeployStealth = new JCheckBox();
 
-    private final JLabel labOffBoard = new JLabel(
-            Messages.getString("CustomMekDialog.labOffBoard"), SwingConstants.RIGHT);
+    private final JLabel labOffBoard = new JLabel(Messages.getString("CustomMekDialog.labOffBoard"),
+          SwingConstants.RIGHT);
     private final JCheckBox chOffBoard = new JCheckBox();
-    private final JLabel labOffBoardDirection = new JLabel(
-            Messages.getString("CustomMekDialog.labOffBoardDirection"), SwingConstants.RIGHT);
+    private final JLabel labOffBoardDirection = new JLabel(Messages.getString("CustomMekDialog.labOffBoardDirection"),
+          SwingConstants.RIGHT);
     private final JComboBox<String> choOffBoardDirection = new JComboBox<>();
-    private final JLabel labOffBoardDistance = new JLabel(
-            Messages.getString("CustomMekDialog.labOffBoardDistance"), SwingConstants.RIGHT);
+    private final JLabel labOffBoardDistance = new JLabel(Messages.getString("CustomMekDialog.labOffBoardDistance"),
+          SwingConstants.RIGHT);
     private final JTextField fldOffBoardDistance = new JTextField(4);
     private final JButton butOffBoardDistance = new JButton("0");
-    private final JLabel labStartingMode = new JLabel(
-            Messages.getString("CustomMekDialog.labStartingMode"), SwingConstants.RIGHT);
+    private final JLabel labStartingMode = new JLabel(Messages.getString("CustomMekDialog.labStartingMode"),
+          SwingConstants.RIGHT);
     private final JComboBox<String> choStartingMode = new JComboBox<>();
-    private final JLabel labCurrentFuel = new JLabel(
-            Messages.getString("CustomMekDialog.labCurrentFuel"), SwingConstants.RIGHT);
+    private final JLabel labCurrentFuel = new JLabel(Messages.getString("CustomMekDialog.labCurrentFuel"),
+          SwingConstants.RIGHT);
     private final JTextField fldCurrentFuel = new JTextField(7);
-    private final JLabel labStartVelocity = new JLabel(
-            Messages.getString("CustomMekDialog.labStartVelocity"), SwingConstants.RIGHT);
+    private final JLabel labStartVelocity = new JLabel(Messages.getString("CustomMekDialog.labStartVelocity"),
+          SwingConstants.RIGHT);
     private final JTextField fldStartVelocity = new JTextField(3);
-    private final JLabel labStartAltitude = new JLabel(
-            Messages.getString("CustomMekDialog.labStartAltitude"), SwingConstants.RIGHT);
+    private final JLabel labStartAltitude = new JLabel(Messages.getString("CustomMekDialog.labStartAltitude"),
+          SwingConstants.RIGHT);
     private final JTextField fldStartAltitude = new JTextField(3);
-    private final JLabel labStartHeight = new JLabel(
-            Messages.getString("CustomMekDialog.labStartHeight"), SwingConstants.RIGHT);
+    private final JLabel labStartHeight = new JLabel(Messages.getString("CustomMekDialog.labStartHeight"),
+          SwingConstants.RIGHT);
     private final JTextField fldStartHeight = new JTextField(3);
     private final JCheckBox chDeployAirborne = new JCheckBox();
     private final JPanel panButtons = new JPanel();
@@ -191,7 +189,7 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
      * Creates new CustomMekDialog
      */
     public CustomMekDialog(ClientGUI clientgui, Client client, List<Entity> entities, boolean editable,
-            boolean editableDeployment) {
+                           boolean editableDeployment) {
         super(clientgui.getFrame(), "CustomizeMekDialog", "CustomMekDialog.title");
 
         this.entities = entities;
@@ -258,28 +256,28 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
         c.ipadx = 0;
         c.ipady = 0;
 
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
 
-            if (group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES)
-                    && !gameOptions().booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)) {
+            if (group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) &&
+                      !gameOptions().booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)) {
                 continue;
             }
 
-            if (group.getKey().equalsIgnoreCase(PilotOptions.EDGE_ADVANTAGES)
-                    && !gameOptions().booleanOption(OptionsConstants.EDGE)) {
+            if (group.getKey().equalsIgnoreCase(PilotOptions.EDGE_ADVANTAGES) &&
+                      !gameOptions().booleanOption(OptionsConstants.EDGE)) {
                 continue;
             }
 
-            if (group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES)
-                    && !gameOptions().booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) {
+            if (group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES) &&
+                      !gameOptions().booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) {
                 continue;
             }
 
             addGroup(group, gridbag, c);
 
             Entity entity = entities.get(0);
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 if (entity instanceof GunEmplacement) {
@@ -287,18 +285,18 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
                 }
 
                 // a bunch of stuff should get disabled for conv infantry
-                if (entity.isConventionalInfantry()
-                        && (option.getName().equals(OptionsConstants.MD_VDNI)
-                                || option.getName().equals(OptionsConstants.MD_BVDNI))) {
+                if (entity.isConventionalInfantry() &&
+                          (option.getName().equals(OptionsConstants.MD_VDNI) ||
+                                 option.getName().equals(OptionsConstants.MD_BVDNI))) {
                     continue;
                 }
 
                 // a bunch of stuff should get disabled for all but conventional infantry
-                if (!entity.isConventionalInfantry()
-                        && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
-                                || option.getName().equals(OptionsConstants.MD_PL_MASC)
-                                || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO)
-                                || option.getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL))) {
+                if (!entity.isConventionalInfantry() &&
+                          (option.getName().equals(OptionsConstants.MD_PL_ENHANCED) ||
+                                 option.getName().equals(OptionsConstants.MD_PL_MASC) ||
+                                 option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO) ||
+                                 option.getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL))) {
                     continue;
                 }
 
@@ -330,11 +328,11 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
         Entity entity = entities.get(0);
         panPartReps.removeAll();
         partRepsComps = new ArrayList<>();
-        for (Enumeration<IOptionGroup> i = partReps.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = partReps.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
             panPartReps.add(new JLabel(group.getDisplayableName()), GBC.eol());
 
-            for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 if (!PartialRepairs.isPartRepLegalFor(option, entity)) {
@@ -503,7 +501,7 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
 
         if (client.getGame().getPhase().isLounge()) {
             for (int zoneID : ServerBoardHelper.getPossibleGameBoard(clientgui.getClient().getMapSettings(), true)
-                    .getCustomDeploymentZones()) {
+                                    .getCustomDeploymentZones()) {
                 choDeploymentZone.addItem("Zone " + zoneID);
             }
         }
@@ -534,9 +532,9 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
         y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
         spinStartingAnySEy.setValue(y);
 
-        boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled()
-                && (choDeploymentZone.getSelectedIndex() > 0)
-                && (choDeploymentZone.getSelectedIndex() < Board.NUM_ZONES);
+        boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() &&
+                                                     (choDeploymentZone.getSelectedIndex() > 0) &&
+                                                     (choDeploymentZone.getSelectedIndex() < Board.NUM_ZONES);
         txtDeploymentOffset.setEnabled(enableDeploymentZoneControls);
         txtDeploymentWidth.setEnabled(enableDeploymentZoneControls);
 
@@ -612,11 +610,12 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
                 }
 
             }
-            Slider sl = new Slider(
-                    clientgui.frame,
-                    Messages.getString("CustomMekDialog.offboardDistanceTitle"),
-                    Messages.getString("CustomMekDialog.offboardDistanceQuestion"),
-                    Math.min(Math.max(entities.get(0).getOffBoardDistance(), 17), maxDistance), 17, maxDistance);
+            Slider sl = new Slider(clientgui.frame,
+                  Messages.getString("CustomMekDialog.offboardDistanceTitle"),
+                  Messages.getString("CustomMekDialog.offboardDistanceQuestion"),
+                  Math.min(Math.max(entities.get(0).getOffBoardDistance(), 17), maxDistance),
+                  17,
+                  maxDistance);
             if (!sl.showDialog()) {
                 return;
             }
@@ -659,19 +658,19 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
         boolean isAirMek = true;
         boolean isGlider = true;
         for (Entity e : entities) {
-            isAero &= ((e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship)))
-                    || ((e instanceof LandAirMek)
-                            && (choStartingMode.getSelectedIndex() == 2
-                                    || ((LandAirMek) e).getLAMType() == LandAirMek.LAM_BIMODAL
-                                            && choStartingMode.getSelectedIndex() == 1));
+            isAero &= ((e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship))) ||
+                            ((e instanceof LandAirMek) &&
+                                   (choStartingMode.getSelectedIndex() == 2 ||
+                                          ((LandAirMek) e).getLAMType() == LandAirMek.LAM_BIMODAL &&
+                                                choStartingMode.getSelectedIndex() == 1));
             isShip &= (e instanceof SmallCraft) || (e instanceof Jumpship);
             isVTOL &= (e.getMovementMode() == EntityMovementMode.VTOL);
             isWiGE &= (e instanceof Tank) && (e.getMovementMode() == EntityMovementMode.WIGE);
             isQuadVee &= (e instanceof QuadVee);
             isLAM &= (e instanceof LandAirMek);
-            isAirMek &= (e instanceof LandAirMek)
-                    && (((LandAirMek) e).getLAMType() == LandAirMek.LAM_STANDARD)
-                    && (choStartingMode.getSelectedIndex() == 1);
+            isAirMek &= (e instanceof LandAirMek) &&
+                              (((LandAirMek) e).getLAMType() == LandAirMek.LAM_STANDARD) &&
+                              (choStartingMode.getSelectedIndex() == 1);
             isGlider &= (e instanceof ProtoMek) && (e.getMovementMode() == EntityMovementMode.WIGE);
         }
 
@@ -778,13 +777,28 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
                 }
 
                 // keep these reasonable, please
-                if ((gunnery < 0) || (gunnery > 8) || (piloting < 0) || (piloting > 8)
-                        || (gunneryL < 0) || (gunneryL > 8) || (gunneryM < 0)
-                        || (gunneryM > 8) || (gunneryB < 0) || (gunneryB > 8)
-                        || (gunneryAero < 0) || (gunneryAero > 8) || (pilotingAero < 0) || (pilotingAero > 8)
-                        || (gunneryAeroL < 0) || (gunneryAeroL > 8) || (gunneryAeroM < 0)
-                        || (gunneryAeroM > 8) || (gunneryAeroB < 0) || (gunneryAeroB > 8)
-                        || (artillery < 0) || (artillery > 8)) {
+                if ((gunnery < 0) ||
+                          (gunnery > 8) ||
+                          (piloting < 0) ||
+                          (piloting > 8) ||
+                          (gunneryL < 0) ||
+                          (gunneryL > 8) ||
+                          (gunneryM < 0) ||
+                          (gunneryM > 8) ||
+                          (gunneryB < 0) ||
+                          (gunneryB > 8) ||
+                          (gunneryAero < 0) ||
+                          (gunneryAero > 8) ||
+                          (pilotingAero < 0) ||
+                          (pilotingAero > 8) ||
+                          (gunneryAeroL < 0) ||
+                          (gunneryAeroL > 8) ||
+                          (gunneryAeroM < 0) ||
+                          (gunneryAeroM > 8) ||
+                          (gunneryAeroB < 0) ||
+                          (gunneryAeroB > 8) ||
+                          (artillery < 0) ||
+                          (artillery > 8)) {
                     msg = Messages.getString("CustomMekDialog.EnterSkillsBetween0_8");
                     title = Messages.getString("CustomMekDialog.NumberFormatError");
                     JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
@@ -892,19 +906,17 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
                 } catch (NumberFormatException e) {
                     msg = Messages.getString("CustomMekDialog.EnterValidSkills");
                     title = Messages.getString("CustomMekDialog.NumberFormatError");
-                    JOptionPane.showMessageDialog(clientgui.frame, msg, title,
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 if (offBoardDistance < 17) {
                     msg = Messages.getString("CustomMekDialog.OffboardDistance");
                     title = Messages.getString("CustomMekDialog.NumberFormatError");
-                    JOptionPane.showMessageDialog(clientgui.frame, msg, title,
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 entity.setOffBoard(offBoardDistance,
-                        OffBoardDirection.getDirection(choOffBoardDirection.getSelectedIndex()));
+                      OffBoardDirection.getDirection(choOffBoardDirection.getSelectedIndex()));
             } else {
                 entity.setOffBoard(0, OffBoardDirection.NONE);
             }
@@ -939,9 +951,9 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
                     entity.setConversionMode(LandAirMek.CONV_MODE_FIGHTER);
                 } else if (choStartingMode.getSelectedIndex() == 1) {
                     entity.setConversionMode(LandAirMek.CONV_MODE_FIGHTER);
-                    entity.setConversionMode(
-                            ((LandAirMek) entity).getLAMType() == LandAirMek.LAM_BIMODAL ? LandAirMek.CONV_MODE_FIGHTER
-                                    : LandAirMek.CONV_MODE_AIRMEK);
+                    entity.setConversionMode(((LandAirMek) entity).getLAMType() == LandAirMek.LAM_BIMODAL ?
+                                                   LandAirMek.CONV_MODE_FIGHTER :
+                                                   LandAirMek.CONV_MODE_AIRMEK);
                 } else {
                     entity.setConversionMode(LandAirMek.CONV_MODE_MEK);
                 }
@@ -1018,9 +1030,9 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
         }
 
         if (itemEvent.getSource().equals(choDeploymentZone)) {
-            boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled()
-                    && (choDeploymentZone.getSelectedIndex() > 0) &&
-                    choDeploymentZone.getSelectedIndex() < Board.NUM_ZONES;
+            boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() &&
+                                                         (choDeploymentZone.getSelectedIndex() > 0) &&
+                                                         choDeploymentZone.getSelectedIndex() < Board.NUM_ZONES;
             txtDeploymentOffset.setEnabled(enableDeploymentZoneControls);
             txtDeploymentWidth.setEnabled(enableDeploymentZoneControls);
         }
@@ -1033,8 +1045,8 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
             chDeployProne.setEnabled(index == 0);
         } else if (entities.get(0) instanceof LandAirMek) {
             int mode = index;
-            if (((LandAirMek) entities.get(0)).getLAMType() == LandAirMek.LAM_BIMODAL
-                    && mode == LandAirMek.CONV_MODE_AIRMEK) {
+            if (((LandAirMek) entities.get(0)).getLAMType() == LandAirMek.LAM_BIMODAL &&
+                      mode == LandAirMek.CONV_MODE_AIRMEK) {
                 mode = LandAirMek.CONV_MODE_FIGHTER;
             }
             labDeployProne.setEnabled(mode < LandAirMek.CONV_MODE_FIGHTER);
@@ -1113,7 +1125,7 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
         final boolean isQuadVee = entities.stream().allMatch(e -> e instanceof QuadVee);
         final boolean isLAM = entities.stream().allMatch(e -> e instanceof LandAirMek);
         final boolean isGlider = entities.stream()
-                .allMatch(e -> (e instanceof ProtoMek) && e.getMovementMode().isWiGE());
+                                       .allMatch(e -> (e instanceof ProtoMek) && e.getMovementMode().isWiGE());
         final boolean hasStealth = entities.stream().allMatch(e -> e.hasStealth());
         boolean eligibleForOffBoard = true;
 
@@ -1144,11 +1156,14 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
             // TODO : extreme range bearings-only fights, plus Ortillery.
             // TODO : Further, this should be revisited with a rules query when it comes to
             // TODO : handling offboard gun emplacements, especially if they are allowed
-            final boolean entityEligibleForOffBoard = !space && (e.getAltitude() == 0) && !(e instanceof GunEmplacement)
-                    && e.getWeaponList().stream()
-                            .map(mounted -> (WeaponType) mounted.getType())
-                            .anyMatch(wtype -> wtype.hasFlag(WeaponType.F_ARTILLERY)
-                                    || (wtype instanceof CapitalMissileBayWeapon));
+            final boolean entityEligibleForOffBoard = !space &&
+                                                            (e.getAltitude() == 0) &&
+                                                            !(e instanceof GunEmplacement) &&
+                                                            e.getWeaponList()
+                                                                  .stream()
+                                                                  .map(mounted -> (WeaponType) mounted.getType())
+                                                                  .anyMatch(wtype -> wtype.hasFlag(WeaponType.F_ARTILLERY) ||
+                                                                                           (wtype instanceof CapitalMissileBayWeapon));
             eligibleForOffBoard &= entityEligibleForOffBoard;
         }
 
@@ -1189,9 +1204,9 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
             }
             tabAll.addTab(Messages.getString("CustomMekDialog.tabEquipment"), scrEquip);
         }
-        tabAll.addTab(Messages.getString(
-                editableDeployment ? "CustomMekDialog.tabDeployment" : "CustomMekDialog.tabState"),
-                new JScrollPane(panDeploy));
+        tabAll.addTab(Messages.getString(editableDeployment ?
+                                               "CustomMekDialog.tabDeployment" :
+                                               "CustomMekDialog.tabState"), new JScrollPane(panDeploy));
         if (quirksEnabled && !multipleEntities) {
             JScrollPane scrQuirks = new JScrollPane(panQuirks);
             scrQuirks.getVerticalScrollBar().setUnitIncrement(16);
@@ -1199,9 +1214,7 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
             tabAll.addTab("Quirks", scrQuirks);
         }
         if (partialRepairsEnabled && !multipleEntities) {
-            tabAll.addTab(
-                    Messages.getString("CustomMekDialog.tabPartialRepairs"),
-                    new JScrollPane(panPartReps));
+            tabAll.addTab(Messages.getString("CustomMekDialog.tabPartialRepairs"), new JScrollPane(panPartReps));
         }
 
         options = entity.getCrew().getOptions();
@@ -1225,18 +1238,15 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
 
         if (gameOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
             panCrew.add(new JLabel(Messages.getString("CustomMekDialog.labCommandInit"), SwingConstants.RIGHT),
-                    GBC.std());
+                  GBC.std());
             panCrew.add(fldCommandInit, GBC.eop());
         }
         fldCommandInit.setText(Integer.toString(entity.getCrew().getCommandBonus()));
 
-        // Set up commanders for commander killed victory condition
-        if (gameOptions().booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
-            panCrew.add(new JLabel(Messages.getString("CustomMekDialog.labCommander"), SwingConstants.RIGHT),
-                    GBC.std());
-            panCrew.add(chCommander, GBC.eol());
-            chCommander.setSelected(entity.isCommander());
-        }
+        // Set up commanders for commander killed victory condition & SPA
+        panCrew.add(new JLabel(Messages.getString("CustomMekDialog.labCommander"), SwingConstants.RIGHT), GBC.std());
+        panCrew.add(chCommander, GBC.eol());
+        chCommander.setSelected(entity.isCommander());
         panOptions = new JPanel(new GridBagLayout());
         panCrew.add(panOptions, GBC.eop());
 
@@ -1258,8 +1268,8 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
             panDeploy.add(fldStartHeight, GBC.eol());
         }
         if (isWiGE) {
-            panDeploy.add(new JLabel(Messages.getString("CustomMekDialog.labDeployAirborne"),
-                    SwingConstants.RIGHT), GBC.std());
+            panDeploy.add(new JLabel(Messages.getString("CustomMekDialog.labDeployAirborne"), SwingConstants.RIGHT),
+                  GBC.std());
             panDeploy.add(chDeployAirborne, GBC.eol());
         }
         if (isAero || isLAM || isShip) {
@@ -1301,9 +1311,9 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
         txtDeploymentOffset.setColumns(4);
         txtDeploymentWidth.setColumns(4);
 
-        if (gameOptions().booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN)
-                && !(entity instanceof Infantry)
-                && !(entity instanceof GunEmplacement)) {
+        if (gameOptions().booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN) &&
+                  !(entity instanceof Infantry) &&
+                  !(entity instanceof GunEmplacement)) {
             panDeploy.add(labDeployShutdown, GBC.std());
             panDeploy.add(chDeployShutdown, GBC.eol());
             chDeployShutdown.setSelected(entity.isManualShutdown());

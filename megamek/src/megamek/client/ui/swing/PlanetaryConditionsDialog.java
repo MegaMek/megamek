@@ -1,18 +1,18 @@
 /*
-* MegaMek -
-* Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018, 2020 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * MegaMek -
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018, 2020 The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 
 /*
  * PlanetaryConditionsDialog.java
@@ -30,7 +30,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-
+import java.io.Serial;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -41,6 +41,7 @@ import megamek.client.ui.swing.util.UIUtil.Content;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.client.ui.swing.util.UIUtil.OptionPanel;
 import megamek.client.ui.swing.util.UIUtil.TipLabel;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.BlowingSand;
@@ -63,14 +64,14 @@ import megamek.common.util.fileUtils.MegaMekFile;
  */
 public class PlanetaryConditionsDialog extends ClientDialog {
 
+    @Serial
     private static final long serialVersionUID = -4426594323169113468L;
 
     /** Creates new PlanetaryConditionsDialog and takes the conditions from the client's Game. */
     public PlanetaryConditionsDialog(ClientGUI cl) {
         super(cl.frame, Messages.getString("PlanetaryConditionsDialog.title"), true);
-        client = cl;
         setupDialog();
-        update(client.getClient().getGame().getPlanetaryConditions());
+        update(cl.getClient().getGame().getPlanetaryConditions());
     }
 
     /** Creates new PlanetaryConditionsDialog and sets the given conditions. Used for scenarios. */
@@ -97,47 +98,48 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     public void update(PlanetaryConditions planetConditions) {
         conditions = (PlanetaryConditions) planetConditions.clone();
         refreshValues();
-        adaptToWeatherAtmo();
+        adaptToWeatherAtmosphere();
     }
 
     // PRIVATE
 
-    private ClientGUI client;
     private PlanetaryConditions conditions;
     private static final String PCD = "PlanetaryConditionsDialog.";
-    private JLabel labLight = new JLabel(Messages.getString(PCD + "labLight"), SwingConstants.RIGHT);
-    private JComboBox<Light> comLight = new JComboBox<>();
-    private JLabel labWeather = new TipLabel(Messages.getString(PCD + "labWeather"), SwingConstants.RIGHT);
-    private JComboBox<Weather> comWeather = new JComboBox<>();
-    private JLabel labWind = new TipLabel(Messages.getString(PCD + "labWind"), SwingConstants.RIGHT);
-    private JComboBox<Wind> comWind = new JComboBox<>();
-    private JLabel labMinWind = new JLabel(Messages.getString(PCD + "labMinWind"), SwingConstants.RIGHT);
-    private JComboBox<Wind> comWindFrom = new JComboBox<>();
-    private JLabel labMaxWind = new JLabel(Messages.getString(PCD + "labMaxWind"), SwingConstants.RIGHT);
-    private JComboBox<Wind> comWindTo = new JComboBox<>();
-    private JLabel labWindDirection = new JLabel(Messages.getString(PCD + "labWindDirection"), SwingConstants.RIGHT);
-    private JComboBox<WindDirection> comWindDirection = new JComboBox<>();
-    private JLabel labAtmosphere = new TipLabel(Messages.getString(PCD + "labAtmosphere"), SwingConstants.RIGHT);
-    private JComboBox<Atmosphere> comAtmosphere = new JComboBox<>();
-    private JLabel labFog = new TipLabel(Messages.getString(PCD + "labFog"), SwingConstants.RIGHT);
-    private JComboBox<Fog> comFog = new JComboBox<>();
-    private JLabel labBlowingSands = new TipLabel(Messages.getString(PCD + "BlowingSands"), SwingConstants.RIGHT);
-    private JCheckBox chkBlowingSands = new JCheckBox();
-    private JLabel labShiftWindDir = new JLabel(Messages.getString(PCD + "shiftWindDir"), SwingConstants.RIGHT);
-    private JCheckBox chkShiftWindDir = new JCheckBox();
-    private JLabel labShiftWindStr = new JLabel(Messages.getString(PCD + "shiftWindStr"), SwingConstants.RIGHT);
-    private JCheckBox chkShiftWindStr = new JCheckBox();
-    private JTextField fldTemp = new JTextField(4);
-    private JLabel labTemp = new TipLabel(Messages.getString(PCD + "labTemp"), SwingConstants.RIGHT);
-    private JTextField fldGrav = new JTextField(4);
-    private JLabel labGrav = new TipLabel(Messages.getString(PCD + "labGrav"), SwingConstants.RIGHT);
-    private JLabel labEMI = new JLabel(Messages.getString(PCD + "EMI"), SwingConstants.RIGHT);
-    private JCheckBox chkEMI = new JCheckBox();
-    private JLabel labTerrainAffected = new JLabel(Messages.getString(PCD + "TerrainAffected"), SwingConstants.RIGHT);
-    private JCheckBox chkTerrainAffected = new JCheckBox();
+    private final JLabel labLight = new JLabel(Messages.getString(PCD + "labLight"), SwingConstants.RIGHT);
+    private final JComboBox<Light> comLight = new JComboBox<>();
+    private final JLabel labWeather = new TipLabel(Messages.getString(PCD + "labWeather"), SwingConstants.RIGHT);
+    private final JComboBox<Weather> comWeather = new JComboBox<>();
+    private final JLabel labWind = new TipLabel(Messages.getString(PCD + "labWind"), SwingConstants.RIGHT);
+    private final JComboBox<Wind> comWind = new JComboBox<>();
+    private final JLabel labMinWind = new JLabel(Messages.getString(PCD + "labMinWind"), SwingConstants.RIGHT);
+    private final JComboBox<Wind> comWindFrom = new JComboBox<>();
+    private final JLabel labMaxWind = new JLabel(Messages.getString(PCD + "labMaxWind"), SwingConstants.RIGHT);
+    private final JComboBox<Wind> comWindTo = new JComboBox<>();
+    private final JLabel labWindDirection = new JLabel(Messages.getString(PCD + "labWindDirection"),
+          SwingConstants.RIGHT);
+    private final JComboBox<WindDirection> comWindDirection = new JComboBox<>();
+    private final JLabel labAtmosphere = new TipLabel(Messages.getString(PCD + "labAtmosphere"), SwingConstants.RIGHT);
+    private final JComboBox<Atmosphere> comAtmosphere = new JComboBox<>();
+    private final JLabel labFog = new TipLabel(Messages.getString(PCD + "labFog"), SwingConstants.RIGHT);
+    private final JComboBox<Fog> comFog = new JComboBox<>();
+    private final JLabel labBlowingSands = new TipLabel(Messages.getString(PCD + "BlowingSands"), SwingConstants.RIGHT);
+    private final JCheckBox chkBlowingSands = new JCheckBox();
+    private final JLabel labShiftWindDir = new JLabel(Messages.getString(PCD + "shiftWindDir"), SwingConstants.RIGHT);
+    private final JCheckBox chkShiftWindDir = new JCheckBox();
+    private final JLabel labShiftWindStr = new JLabel(Messages.getString(PCD + "shiftWindStr"), SwingConstants.RIGHT);
+    private final JCheckBox chkShiftWindStr = new JCheckBox();
+    private final JTextField fldTemp = new JTextField(4);
+    private final JLabel labTemp = new TipLabel(Messages.getString(PCD + "labTemp"), SwingConstants.RIGHT);
+    private final JTextField fldGrav = new JTextField(4);
+    private final JLabel labGrav = new TipLabel(Messages.getString(PCD + "labGrav"), SwingConstants.RIGHT);
+    private final JLabel labEMI = new JLabel(Messages.getString(PCD + "EMI"), SwingConstants.RIGHT);
+    private final JCheckBox chkEMI = new JCheckBox();
+    private final JLabel labTerrainAffected = new JLabel(Messages.getString(PCD + "TerrainAffected"),
+          SwingConstants.RIGHT);
+    private final JCheckBox chkTerrainAffected = new JCheckBox();
 
-    private JButton butOkay = new DialogButton(Messages.getString("Okay"));
-    private JButton butCancel = new DialogButton(Messages.getString("Cancel"));
+    private final JButton butOkay = new DialogButton(Messages.getString("Okay"));
+    private final JButton butCancel = new DialogButton(Messages.getString("Cancel"));
 
     private boolean userResponse;
 
@@ -172,7 +174,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         Image image = ImageUtil.loadImageFromFile(iconFile.toString());
         Icon planetIcon = new ImageIcon(image.getScaledInstance(UIUtil.scaleForGUI(40), -1, Image.SCALE_SMOOTH));
         JLabel planetLabel = new JLabel(Messages.getString("PlanetaryConditionsDialog.title"),
-                planetIcon, SwingConstants.CENTER);
+              planetIcon,
+              SwingConstants.CENTER);
         planetLabel.setIconTextGap(12);
         planetLabel.setBorder(new EmptyBorder(15, 0, 10, 0));
         result.add(planetLabel);
@@ -238,7 +241,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         return result;
     }
 
-    /** Fills the dialog comboboxes. */
+    /** Fills the dialog combo boxes. */
     private void setupCombos() {
         for (Light condition : Light.values()) {
             comLight.addItem(condition);
@@ -328,7 +331,9 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         refreshWindRange();
         conditions.setAtmosphere(comAtmosphere.getItemAt(comAtmosphere.getSelectedIndex()));
         conditions.setFog(comFog.getItemAt(comFog.getSelectedIndex()));
-        BlowingSand blowingSand = chkBlowingSands.isSelected() ? BlowingSand.BLOWING_SAND : BlowingSand.BLOWING_SAND_NONE;
+        BlowingSand blowingSand = chkBlowingSands.isSelected() ?
+                                        BlowingSand.BLOWING_SAND :
+                                        BlowingSand.BLOWING_SAND_NONE;
         conditions.setBlowingSand(blowingSand);
         conditions.setShiftingWindDirection(chkShiftWindDir.isSelected());
         conditions.setShiftingWindStrength(chkShiftWindStr.isSelected());
@@ -340,113 +345,87 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     }
 
     /**
-     * Validates the current entries in the dialog. Any conflicting entries are marked
-     * and a helper tooltip attached. Does not change entries.
+     * Validates the current entries in the dialog. Any conflicting entries are marked and a helper tooltip attached.
+     * Does not change entries.
      */
     private boolean validateEntries() {
         StringBuilder tempTip = new StringBuilder();
-        StringBuilder wthrTip = new StringBuilder();
+        StringBuilder weatherTip = new StringBuilder();
         StringBuilder gravTip = new StringBuilder();
         StringBuilder windTip = new StringBuilder();
-        StringBuilder atmoTip = new StringBuilder();
+        StringBuilder atmosphereTip = new StringBuilder();
         StringBuilder sandTip = new StringBuilder();
         Weather weather = comWeather.getItemAt(comWeather.getSelectedIndex());
-        int temp = 0;
-        float grav = (float) 1.0;
-        try {
-            temp = Integer.parseInt(fldTemp.getText());
-        } catch (NumberFormatException er) {
-            tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.integer"));
-        }
+        int temp = MathUtility.parseInt(fldTemp.getText(), 0);
         if ((temp > 200) || (temp < -200)) {
             tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.tempRange"));
         }
 
-        // Currently, MM does not automatically include the effects of -40, -50 or -60 °C
-        // with snowy weather and instead relies on the temperature itself being set correctly.
-        // I believe that the rules allow a temp of e.g. -5 °C with snow (and why not?) and
-        // that the "includes the effects" statements are meant to reduce repetition. If the temp
-        // were fixed to -40 °C, the text of the rules saying "cannot be used with temp of 30 °C
-        // or more" would be unnecessary. With the current rules handling, temp has to be set to
-        // the necessary values. Therefore the following check for 30 °C is not needed.
-        //        if (temp >= 30 && requiresLowTemp(weather)) {
-        //            tempValid = false;
-        //            wthrValid = false;
-        //            tempTip.append("The Temperature cannot be 30 °C or more in snowy weather.<BR>");
-        //            wthrTip.append("The Temperature cannot be 30 °C or more in snowy weather.<BR>");
-        //        }
-
-        try {
-            grav = Float.parseFloat(fldGrav.getText());
-        } catch (NumberFormatException er) {
-            gravTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.number"));
-        }
+        float grav = MathUtility.parseFloat(fldGrav.getText(), 1.0f);
         if ((grav < 0.1) || (grav > 10.0)) {
             gravTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.gravRange"));
         }
 
         Wind wind = comWind.getItemAt(comWind.getSelectedIndex());
-        Atmosphere atmo = comAtmosphere.getItemAt(comAtmosphere.getSelectedIndex());
+        Atmosphere atmosphere = comAtmosphere.getItemAt(comAtmosphere.getSelectedIndex());
 
-        boolean blowingSandsLessThanModerateGale = chkBlowingSands.isSelected()
-                && wind.isWeakerThan(Wind.MOD_GALE);
-        boolean shiftWindsLessThanModerateGale = chkShiftWindStr.isSelected()
-                && conditions.getWindMax().isWeakerThan(Wind.MOD_GALE);
-        if (blowingSandsLessThanModerateGale
-                || shiftWindsLessThanModerateGale) {
+        boolean blowingSandsLessThanModerateGale = chkBlowingSands.isSelected() && wind.isWeakerThan(Wind.MOD_GALE);
+        boolean shiftWindsLessThanModerateGale = chkShiftWindStr.isSelected() &&
+                                                       conditions.getWindMax().isWeakerThan(Wind.MOD_GALE);
+        if (blowingSandsLessThanModerateGale || shiftWindsLessThanModerateGale) {
             windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
             sandTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
         }
 
-        if (atmo.isTrace()
-                && wind.isLightGale()) {
-            atmoTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
+        if (atmosphere.isTrace() && wind.isLightGale()) {
+            atmosphereTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
             windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
         }
 
         // The following temperature checks are not exactly what the rules demand, but see the comment above.
-        if (weather.isLightSnowOrSleetOrLightHailOrHeavyHail()
-                && (temp > -40)) {
+        if (weather.isLightSnowOrSleetOrLightHailOrHeavyHail() && (temp > -40)) {
             tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.lightSnowTemp"));
-            wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.lightSnowTemp"));
+            weatherTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.lightSnowTemp"));
         }
 
-        if (weather.isModerateSnowOrHeavySnowOrSnowFlurries()
-                && (temp > -50)) {
+        if (weather.isModerateSnowOrHeavySnowOrSnowFlurries() && (temp > -50)) {
             tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.modSnowTemp"));
-            wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.modSnowTemp"));
+            weatherTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.modSnowTemp"));
         }
 
-        if (weather.isIceStorm()
-                && (temp > -60)) {
+        if (weather.isIceStorm() && (temp > -60)) {
             tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.iceStormTemp"));
-            wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.iceStormTemp"));
+            weatherTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.iceStormTemp"));
         }
 
         if (chkShiftWindStr.isSelected()) {
-            if (comWind.getItemAt(comWind.getSelectedIndex()).isWeakerThan(conditions.getWindMin())
-                    || comWind.getItemAt(comWind.getSelectedIndex()).isStrongerThan(conditions.getWindMax())) {
+            if (comWind.getItemAt(comWind.getSelectedIndex()).isWeakerThan(conditions.getWindMin()) ||
+                      comWind.getItemAt(comWind.getSelectedIndex()).isStrongerThan(conditions.getWindMax())) {
                 windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.windRange"));
             }
         }
 
         refreshWarning(labTemp, tempTip);
-        refreshWarning(labWeather, wthrTip);
-        refreshWarning(labAtmosphere, atmoTip);
+        refreshWarning(labWeather, weatherTip);
+        refreshWarning(labAtmosphere, atmosphereTip);
         refreshWarning(labGrav, gravTip);
         refreshWarning(labWind, windTip);
         refreshWarning(labBlowingSands, sandTip);
 
-        return (tempTip.length() == 0) && (wthrTip.length() == 0) && (atmoTip.length() == 0)
-                && (sandTip.length() == 0) && (windTip.length() == 0) && (gravTip.length() == 0);
+        return (tempTip.isEmpty()) &&
+                     (weatherTip.isEmpty()) &&
+                     (atmosphereTip.isEmpty()) &&
+                     (sandTip.isEmpty()) &&
+                     (windTip.isEmpty()) &&
+                     (gravTip.isEmpty());
     }
 
     /**
-     * Marks the given label red and adds the given tooltip text if isValid is false,
-     * otherwise resets the label color and removes the tooltip.
+     * Marks the given label red and adds the given tooltip text if isValid is false, otherwise resets the label color
+     * and removes the tooltip.
      */
     private void refreshWarning(JLabel label, StringBuilder text) {
-        if (text.length() == 0) {
+        if (text.isEmpty()) {
             label.setForeground(null);
             label.setToolTipText(null);
         } else {
@@ -456,11 +435,10 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     }
 
     /**
-     * Updates the enabled state of some fields based on the atmosphere setting.
-     * Also resets the state for some settings, e.g. vacuum will set wind and
-     * weather to none.
+     * Updates the enabled state of some fields based on the atmosphere setting. Also resets the state for some
+     * settings, e.g. vacuum will set wind and weather to none.
      */
-    private void adaptToWeatherAtmo() {
+    private void adaptToWeatherAtmosphere() {
         boolean isVacuum = comAtmosphere.getItemAt(comAtmosphere.getSelectedIndex()).isVacuum();
         boolean isTraceOrThin = comAtmosphere.getItemAt(comAtmosphere.getSelectedIndex()).isTraceOrThin();
         boolean isDense = !isVacuum && !isTraceOrThin;
@@ -514,22 +492,12 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     /** Sets the temperature to at most -40, -50 or -60 for snow conditions. */
     private void adaptTemperature() {
         Weather weather = comWeather.getItemAt(comWeather.getSelectedIndex());
-        int maxTemp = 200;
-        switch (weather) {
-            case LIGHT_SNOW:
-            case SLEET:
-            case LIGHT_HAIL:
-            case HEAVY_HAIL:
-                maxTemp = -40;
-                break;
-            case HEAVY_SNOW:
-            case MOD_SNOW:
-            case SNOW_FLURRIES:
-                maxTemp = -50;
-                break;
-            case ICE_STORM:
-                maxTemp = -60;
-        }
+        int maxTemp = switch (weather) {
+            case LIGHT_SNOW, SLEET, LIGHT_HAIL, HEAVY_HAIL -> -40;
+            case HEAVY_SNOW, MOD_SNOW, SNOW_FLURRIES -> -50;
+            case ICE_STORM -> -60;
+            default -> 200;
+        };
         setMaximumTemperature(maxTemp);
     }
 
@@ -559,12 +527,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
 
     /** Sets the temperature to the given value if it is higher than that. */
     private void setMaximumTemperature(int maxTemp) {
-        int currentTemp;
-        try {
-            currentTemp = Integer.parseInt(fldTemp.getText());
-        } catch (NumberFormatException er) {
-            currentTemp = 200;
-        }
+        int currentTemp = MathUtility.parseInt(fldTemp.getText(), 200);
         if (currentTemp > maxTemp) {
             removeListeners();
             fldTemp.setText(Integer.toString(maxTemp));
@@ -584,16 +547,15 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             } else if (e.getSource() == butCancel) {
                 setVisible(false);
 
-            } else if ((e.getSource() instanceof JComboBox<?>)
-                    || (e.getSource() instanceof JCheckBox))  {
+            } else if ((e.getSource() instanceof JComboBox<?>) || (e.getSource() instanceof JCheckBox)) {
                 if (e.getSource() == chkBlowingSands) {
                     adaptWindToBlowingSands();
                 }
                 if (e.getSource() == comAtmosphere) {
-                    adaptToWeatherAtmo();
+                    adaptToWeatherAtmosphere();
                 }
                 if (e.getSource() == comWeather) {
-                    adaptToWeatherAtmo();
+                    adaptToWeatherAtmosphere();
                     adaptTemperature();
                 }
                 if (e.getSource() == chkShiftWindStr) {
@@ -608,9 +570,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     };
 
     /**
-     * Extracts the minimum and maximum wind from the two comboboxes. Also,
-     * if the current wind is outside that range, sets the current wind to the
-     * closer border of that range.
+     * Extracts the minimum and maximum wind from the two combo boxes. Also, if the current wind is outside that range,
+     * sets the current wind to the closer border of that range.
      */
     private void refreshWindRange() {
         Wind min = Wind.getWind(Math.min(comWindFrom.getSelectedIndex(), comWindTo.getSelectedIndex()));
@@ -636,6 +597,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         }
 
         @Override
-        public void focusGained(FocusEvent e) { }
+        public void focusGained(FocusEvent e) {
+        }
     };
 }

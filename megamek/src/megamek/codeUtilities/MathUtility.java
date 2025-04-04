@@ -220,4 +220,25 @@ public class MathUtility {
         }
     }
 
+    /**
+     * Utility function to handle parsing strings into boolean and to handle the possible NumberFormatException with
+     * logging and to return defaultValue.
+     *
+     * @param value        String value to parse.
+     * @param defaultValue Default value to set if failed to parse.
+     *
+     * @return The <code>boolean</code> value or defaultValue.
+     */
+    public static boolean parseBoolean(final String value, boolean defaultValue) {
+        if (value == null || value.isEmpty()) {
+            return defaultValue;
+        }
+
+        try {
+            return Boolean.parseBoolean(value);
+        } catch (NumberFormatException e) {
+            LOGGER.warn("Can't parse String `{}` into an Boolean due to {}", value, e.getMessage());
+            return defaultValue;
+        }
+    }
 }

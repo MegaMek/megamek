@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,13 +36,12 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import javax.swing.*;
 
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.Game;
@@ -59,13 +59,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private final static MMLogger logger = MMLogger.create(ForceGeneratorViewUi.class);
 
     private int currentYear;
-    private Consumer<ForceDescriptor> onGenerate;
+    private final Consumer<ForceDescriptor> onGenerate;
 
     private ForceDescriptor forceDesc = new ForceDescriptor();
 
     private JTextField txtYear;
     private JComboBox<FactionRecord> cbFaction;
-    private JComboBox<FactionRecord> cbSubfaction;
+    private JComboBox<FactionRecord> cbSubFaction;
     private JComboBox<Integer> cbUnitType;
     private JComboBox<String> cbFormation;
     private JComboBox<String> cbRating;
@@ -75,13 +75,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JComboBox<Integer> cbWeightClass;
     private JCheckBox chkAttachments;
 
-    private DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>(
-            Messages.getString("ForceGeneratorDialog.general"),
-            fRec -> fRec.getName(currentYear));
+    private final DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>(Messages.getString(
+          "ForceGeneratorDialog.general"), fRec -> fRec.getName(currentYear));
 
-    private HashMap<String, String> ratingDisplayNames = new HashMap<>();
-    private HashMap<String, String> formationDisplayNames = new HashMap<>();
-    private HashMap<String, String> flagDisplayNames = new HashMap<>();
+    private final HashMap<String, String> ratingDisplayNames = new HashMap<>();
+    private final HashMap<String, String> formationDisplayNames = new HashMap<>();
+    private final HashMap<String, String> flagDisplayNames = new HashMap<>();
 
     private JPanel panGroundRole;
     private JPanel panInfRole;
@@ -93,7 +92,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JCheckBox chkRoleInfantrySupport;
     private JCheckBox chkRoleCavalry;
     private JCheckBox chkRoleRaider;
-    private JCheckBox chkRoleIncindiary;
+    private JCheckBox chkRoleIncendiary;
     private JCheckBox chkRoleAntiAircraft;
     private JCheckBox chkRoleAntiInfantry;
     private JCheckBox chkRoleArtillery;
@@ -108,8 +107,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JCheckBox chkRoleAirRecon;
     private JCheckBox chkRoleGroundSupport;
     private JCheckBox chkRoleInterceptor;
-    private JCheckBox chkRoleEscort;
-    private JCheckBox chkRoleBomber;
     private JCheckBox chkRoleAssault;
     private JCheckBox chkRoleAirTransport;
 
@@ -121,7 +118,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JButton btnExportMUL;
     private JButton btnClear;
 
-    private ClientGUI clientGui;
+    private final ClientGUI clientGui;
 
     public ForceGeneratorOptionsView(ClientGUI gui, Consumer<ForceDescriptor> onGenerate) {
         clientGui = gui;
@@ -171,20 +168,20 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridx = 2;
         gbc.gridy = y;
         add(new JLabel(Messages.getString("ForceGeneratorDialog.subfaction")), gbc);
-        cbSubfaction = new JComboBox<>();
-        cbSubfaction.setRenderer(factionRenderer);
+        cbSubFaction = new JComboBox<>();
+        cbSubFaction.setRenderer(factionRenderer);
         gbc.gridx = 3;
         gbc.gridy = y++;
-        add(cbSubfaction, gbc);
-        cbSubfaction.setToolTipText(Messages.getString("ForceGeneratorDialog.subfaction.tooltip"));
-        cbSubfaction.addActionListener(this);
+        add(cbSubFaction, gbc);
+        cbSubFaction.setToolTipText(Messages.getString("ForceGeneratorDialog.subfaction.tooltip"));
+        cbSubFaction.addActionListener(this);
 
         gbc.gridx = 0;
         gbc.gridy = y;
         add(new JLabel(Messages.getString("ForceGeneratorDialog.unitType")), gbc);
         cbUnitType = new JComboBox<>();
         cbUnitType.setRenderer(new CBRenderer<>(Messages.getString("ForceGeneratorDialog.combined"),
-                UnitType::getTypeName));
+              UnitType::getTypeName));
         gbc.gridx = 1;
         gbc.gridy = y;
         add(cbUnitType, gbc);
@@ -196,7 +193,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         add(new JLabel(Messages.getString("ForceGeneratorDialog.formation")), gbc);
         cbFormation = new JComboBox<>();
         cbFormation.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
-                f -> formationDisplayNames.get(f)));
+              formationDisplayNames::get));
         gbc.gridx = 3;
         gbc.gridy = y++;
         add(cbFormation, gbc);
@@ -208,7 +205,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
         cbRating = new JComboBox<>();
         cbRating.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
-                r -> ratingDisplayNames.get(r)));
+              ratingDisplayNames::get));
         gbc.gridx = 1;
         gbc.gridy = y;
         add(cbRating, gbc);
@@ -220,7 +217,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         add(new JLabel(Messages.getString("ForceGeneratorDialog.weight")), gbc);
         cbWeightClass = new JComboBox<>();
         cbWeightClass.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.random"),
-                EntityWeightClass::getClassName));
+              EntityWeightClass::getClassName));
         cbWeightClass.addItem(null);
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_LIGHT);
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_MEDIUM);
@@ -236,7 +233,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridy = y;
         add(new JLabel(Messages.getString("ForceGeneratorDialog.other")), gbc);
         cbFlags = new JComboBox<>();
-        cbFlags.setRenderer(new CBRenderer<String>("---", f -> flagDisplayNames.get(f)));
+        cbFlags.setRenderer(new CBRenderer<String>("---", flagDisplayNames::get));
         gbc.gridx = 1;
         gbc.gridy = y;
         add(cbFlags, gbc);
@@ -297,9 +294,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         panTransport.add(txtDropshipPct, gbc);
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage")));
         panTransport.add(txtJumpshipPct, gbc);
-        // Cargo needs more work to select cargo dropships.
-        // panTransport.add(new JLabel("Cargo Tonnage:"));
-        // panTransport.add(txtCargo, gbc);
         gbc.gridx = 0;
         gbc.gridy = y++;
         gbc.fill = GridBagConstraints.NONE;
@@ -360,10 +354,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridy = 1;
         panGroundRole.add(chkRoleRaider, gbc);
 
-        chkRoleIncindiary = createMissionRoleCheck(MissionRole.INCENDIARY);
+        chkRoleIncendiary = createMissionRoleCheck(MissionRole.INCENDIARY);
         gbc.gridx = 1;
         gbc.gridy = 1;
-        panGroundRole.add(chkRoleIncindiary, gbc);
+        panGroundRole.add(chkRoleIncendiary, gbc);
 
         chkRoleAntiAircraft = createMissionRoleCheck(MissionRole.ANTI_AIRCRAFT);
         gbc.gridx = 2;
@@ -436,12 +430,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridy = 0;
         panAirRole.add(chkRoleInterceptor, gbc);
 
-        chkRoleEscort = createMissionRoleCheck(MissionRole.ESCORT);
+        JCheckBox chkRoleEscort = createMissionRoleCheck(MissionRole.ESCORT);
         gbc.gridx = 0;
         gbc.gridy = 1;
         panAirRole.add(chkRoleEscort, gbc);
 
-        chkRoleBomber = createMissionRoleCheck(MissionRole.BOMBER);
+        JCheckBox chkRoleBomber = createMissionRoleCheck(MissionRole.BOMBER);
         gbc.gridx = 1;
         gbc.gridy = 1;
         panAirRole.add(chkRoleBomber, gbc);
@@ -506,7 +500,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     if (chkRoleRaider.isSelected()) {
                         fd.getRoles().add(MissionRole.RAIDER);
                     }
-                    if (chkRoleIncindiary.isSelected()) {
+                    if (chkRoleIncendiary.isSelected()) {
                         fd.getRoles().add(MissionRole.INCENDIARY);
                     }
                     if (chkRoleAntiAircraft.isSelected()) {
@@ -561,27 +555,21 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
         }
 
-        try {
-            fd.setDropshipPct(Double.parseDouble(txtDropshipPct.getText()) * 0.01);
-        } catch (NumberFormatException ex) {
-            fd.setDropshipPct(0.0);
-            txtDropshipPct.setText("0");
-        }
-        try {
-            fd.setJumpshipPct(Double.parseDouble(txtJumpshipPct.getText()) * 0.01);
-        } catch (NumberFormatException ex) {
-            fd.setJumpshipPct(0.0);
-            txtJumpshipPct.setText("0");
-        }
-        try {
-            fd.setCargo(Double.parseDouble(txtCargo.getText()));
-        } catch (NumberFormatException ex) {
-            fd.setCargo(0.0);
-            txtCargo.setText("0");
-        }
+        double dropShipPCT = MathUtility.parseDouble(txtDropshipPct.getText(), 0.0) * 0.01;
+        fd.setDropshipPct(dropShipPCT);
+        txtDropshipPct.setText(String.valueOf(dropShipPCT));
+
+        double jumpShipPCT = MathUtility.parseDouble(txtJumpshipPct.getText(), 0) * 0.01;
+        txtJumpshipPct.setText(String.valueOf(jumpShipPCT));
+
+        double cargo = MathUtility.parseDouble(txtCargo.getText(), 0);
+        txtCargo.setText(String.valueOf(cargo));
 
         ProgressMonitor monitor = new ProgressMonitor(this,
-                Messages.getString("ForceGeneratorDialog.generateFormation"), "", 0, 100);
+              Messages.getString("ForceGeneratorDialog.generateFormation"),
+              "",
+              0,
+              100);
         monitor.setProgress(0);
         GenerateTask task = new GenerateTask(fd);
         task.addPropertyChangeListener(e -> {
@@ -604,42 +592,46 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         FactionRecord oldFaction = (FactionRecord) cbFaction.getSelectedItem();
         cbFaction.removeActionListener(this);
         cbFaction.removeAllItems();
-        RATGenerator.getInstance().getFactionList().stream()
-                .filter(fr -> !fr.getKey().contains(".") && fr.isActiveInYear(currentYear))
-                .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
-                .forEach(fr -> cbFaction.addItem(fr));
+        RATGenerator.getInstance()
+              .getFactionList()
+              .stream()
+              .filter(fr -> !fr.getKey().contains(".") && fr.isActiveInYear(currentYear))
+              .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
+              .forEach(fr -> cbFaction.addItem(fr));
         cbFaction.setSelectedItem(oldFaction);
         if (cbFaction.getSelectedItem() == null ||
-                !cbFaction.getSelectedItem().toString().equals(oldFaction.toString())) {
+                  !cbFaction.getSelectedItem().toString().equals(Objects.requireNonNull(oldFaction).toString())) {
             cbFaction.setSelectedItem(RATGenerator.getInstance().getFaction("IS"));
         }
-        forceDesc.setFaction(cbFaction.getSelectedItem().toString());
-        refreshSubfactions();
+        forceDesc.setFaction(Objects.requireNonNull(cbFaction.getSelectedItem()).toString());
+        refreshSubFactions();
         cbFaction.addActionListener(this);
     }
 
-    private void refreshSubfactions() {
-        FactionRecord oldFaction = (FactionRecord) cbSubfaction.getSelectedItem();
-        cbSubfaction.removeActionListener(this);
-        cbSubfaction.removeAllItems();
-        String currentFaction = ((FactionRecord) cbFaction.getSelectedItem()).getKey();
+    private void refreshSubFactions() {
+        FactionRecord oldFaction = (FactionRecord) cbSubFaction.getSelectedItem();
+        cbSubFaction.removeActionListener(this);
+        cbSubFaction.removeAllItems();
+        String currentFaction = ((FactionRecord) Objects.requireNonNull(cbFaction.getSelectedItem())).getKey();
         if (currentFaction != null) {
-            List<FactionRecord> sorted = RATGenerator.getInstance().getFactionList().stream()
-                    .filter(fr -> fr.getKey().startsWith(currentFaction + ".")
-                            && fr.isActiveInYear(currentYear))
-                    .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
-                    .collect(Collectors.toList());
-            cbSubfaction.addItem(null);
-            sorted.forEach(fr -> cbSubfaction.addItem(fr));
+            List<FactionRecord> sorted = RATGenerator.getInstance()
+                                               .getFactionList()
+                                               .stream()
+                                               .filter(fr -> fr.getKey().startsWith(currentFaction + ".") &&
+                                                                   fr.isActiveInYear(currentYear))
+                                               .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
+                                               .toList();
+            cbSubFaction.addItem(null);
+            sorted.forEach(fr -> cbSubFaction.addItem(fr));
         }
-        cbSubfaction.setSelectedItem(oldFaction);
-        if (cbSubfaction.getSelectedItem() == null) {
+        cbSubFaction.setSelectedItem(oldFaction);
+        if (cbSubFaction.getSelectedItem() == null) {
             forceDesc.setFaction(cbFaction.getSelectedItem().toString());
         } else {
-            forceDesc.setFaction(cbSubfaction.getSelectedItem().toString());
+            forceDesc.setFaction(cbSubFaction.getSelectedItem().toString());
         }
         refreshUnitTypes();
-        cbSubfaction.addActionListener(this);
+        cbSubFaction.addActionListener(this);
     }
 
     private void refreshUnitTypes() {
@@ -693,10 +685,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             Integer unitType = (Integer) cbUnitType.getSelectedItem();
             if (unitType != null) {
                 panGroundRole.setVisible(unitType == UnitType.MEK || unitType == UnitType.TANK);
-                panInfRole.setVisible(unitType == UnitType.INFANTRY
-                        || unitType == UnitType.BATTLE_ARMOR);
-                panAirRole.setVisible(unitType == UnitType.AEROSPACEFIGHTER
-                        || unitType == UnitType.CONV_FIGHTER);
+                panInfRole.setVisible(unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR);
+                panAirRole.setVisible(unitType == UnitType.AEROSPACEFIGHTER || unitType == UnitType.CONV_FIGHTER);
             }
         }
 
@@ -712,11 +702,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 formationDisplayNames.clear();
                 for (String formation : n.getContent().split(",")) {
                     Ruleset rs = ruleset;
-                    ForceNode fn = null;
+                    ForceNode fn;
                     do {
                         fn = rs.findForceNode(forceDesc,
-                                Integer.parseInt(formation.replaceAll("[^0-9]", "")),
-                                formation.endsWith("^"));
+                              MathUtility.parseInt(formation.replaceAll("[^0-9]", ""), 0),
+                              formation.endsWith("^"));
                         if (fn == null) {
                             if (rs.getParent() != null) {
                                 rs = Ruleset.findRuleset(rs.getParent());
@@ -748,8 +738,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         } else {
             Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
             String esch = rs.getDefaultEschelon(forceDesc);
-            if ((esch == null || !formationDisplayNames.containsKey(esch)
-                    && cbFormation.getItemCount() > 0)) {
+            if ((esch == null || !formationDisplayNames.containsKey(esch) && cbFormation.getItemCount() > 0)) {
                 esch = cbFormation.getItemAt(0);
             }
             if (esch != null) {
@@ -845,7 +834,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         if (null == rs) {
             return null;
         }
-        TOCNode toc = null;
+        TOCNode toc;
         do {
             toc = rs.getTOCNode();
             if (toc == null) {
@@ -865,12 +854,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             if (cbFaction.getSelectedItem() != null) {
                 forceDesc.setFaction(((FactionRecord) cbFaction.getSelectedItem()).getKey());
             }
-            refreshSubfactions();
-        } else if (ev.getSource() == cbSubfaction) {
-            if (cbSubfaction.getSelectedItem() != null) {
-                forceDesc.setFaction(((FactionRecord) cbSubfaction.getSelectedItem()).getKey());
+            refreshSubFactions();
+        } else if (ev.getSource() == cbSubFaction) {
+            if (cbSubFaction.getSelectedItem() != null) {
+                forceDesc.setFaction(((FactionRecord) cbSubFaction.getSelectedItem()).getKey());
             } else {
-                forceDesc.setFaction(((FactionRecord) cbFaction.getSelectedItem()).getKey());
+                forceDesc.setFaction(((FactionRecord) Objects.requireNonNull(cbFaction.getSelectedItem())).getKey());
             }
             refreshUnitTypes();
         } else if (ev.getSource() == cbUnitType) {
@@ -939,23 +928,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * Searches recursively for nodes that are flagged with C3 networks and
-     * configures them.
+     * Searches recursively for nodes that are flagged with C3 networks and configures them.
      *
-     * @param fd
+     * @param fd {@link ForceDescriptor} Object
      */
     private void configureNetworks(ForceDescriptor fd) {
         if (fd.getFlags().contains("c3")) {
-            Entity master = fd.getSubforces().stream().map(ForceDescriptor::getEntity)
-                    .filter(en -> (null != en)
-                            && (en.hasC3M() || en.hasC3MM()))
-                    .findFirst().orElse(null);
+            Entity master = fd.getSubforces()
+                                  .stream()
+                                  .map(ForceDescriptor::getEntity)
+                                  .filter(en -> (null != en) && (en.hasC3M() || en.hasC3MM()))
+                                  .findFirst()
+                                  .orElse(null);
             if (null != master) {
                 int c3s = 0;
                 for (ForceDescriptor sf : fd.getSubforces()) {
-                    if ((null != sf.getEntity())
-                            && (sf.getEntity().getId() != master.getId())
-                            && sf.getEntity().hasC3S()) {
+                    if ((null != sf.getEntity()) &&
+                              (sf.getEntity().getId() != master.getId()) &&
+                              sf.getEntity().hasC3S()) {
                         sf.getEntity().setC3Master(master, false);
                         c3s++;
                         if (c3s == 3) {
@@ -971,17 +961,15 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             Entity first = null;
             int nodes = 0;
             for (ForceDescriptor sf : fd.getSubforces()) {
-                if ((null != sf.getEntity())
-                        && sf.getEntity().hasC3i()) {
+                if ((null != sf.getEntity()) && sf.getEntity().hasC3i()) {
                     sf.getEntity().setC3UUID();
                     if (null == first) {
                         sf.getEntity().setC3NetIdSelf();
                         first = sf.getEntity();
-                        nodes++;
                     } else {
                         sf.getEntity().setC3NetId(first);
-                        nodes++;
                     }
+                    nodes++;
                 }
                 if (nodes >= Entity.MAX_C3i_NODES) {
                     break;
@@ -993,7 +981,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void setFormation(String esch) {
-        forceDesc.setEschelon(Integer.parseInt(esch.replaceAll("[^0-9]", "")));
+        forceDesc.setEschelon(MathUtility.parseInt(esch.replaceAll("[^0-9]", ""), 0));
         forceDesc.setAugmented(esch.contains("^"));
         if (esch.endsWith("+")) {
             forceDesc.setSizeMod(1);
@@ -1010,8 +998,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * Worker function that updates various things that need to be updated when the
-     * year is changed.
+     * Worker function that updates various things that need to be updated when the year is changed.
      */
     private void yearUpdated() {
         txtYear.setText(String.valueOf(currentYear));
@@ -1027,25 +1014,26 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     @Override
     public void focusLost(FocusEvent evt) {
-        try {
-            currentYear = Integer.parseInt(txtYear.getText());
-            if (currentYear < RATGenerator.getInstance().getEraSet().first()) {
-                currentYear = RATGenerator.getInstance().getEraSet().first();
-            } else if (currentYear > RATGenerator.getInstance().getEraSet().last()) {
-                currentYear = RATGenerator.getInstance().getEraSet().last();
-            }
-        } catch (NumberFormatException ignored) {
-
+        currentYear = MathUtility.parseInt(txtYear.getText(), RATGenerator.getInstance().getEraSet().first());
+        if (currentYear < RATGenerator.getInstance().getEraSet().first()) {
+            currentYear = RATGenerator.getInstance().getEraSet().first();
+        } else if (currentYear > RATGenerator.getInstance().getEraSet().last()) {
+            currentYear = RATGenerator.getInstance().getEraSet().last();
         }
         yearUpdated();
     }
 
     static class CBRenderer<T> extends DefaultListCellRenderer {
+        @Serial
         private static final long serialVersionUID = 4895258839502183158L;
 
-        private String nullVal;
-        private Function<T, String> toString;
+        private final String nullVal;
+        private final Function<T, String> toString;
 
+        /**
+         * @deprecated No indicated uses.
+         */
+        @Deprecated(since = "0.50.05", forRemoval = true)
         public CBRenderer(String nullVal) {
             this(nullVal, null);
         }
@@ -1057,8 +1045,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         @SuppressWarnings(value = "unchecked")
         @Override
-        public Component getListCellRendererComponent(JList<?> list, Object entry, int position,
-                boolean arg3, boolean arg4) {
+        public Component getListCellRendererComponent(JList<?> list, Object entry, int position, boolean arg3,
+              boolean arg4) {
             if (entry == null) {
                 setText(nullVal);
             } else {
@@ -1069,7 +1057,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private class GenerateTask extends SwingWorker<ForceDescriptor, Double> implements ProgressListener {
-        private ForceDescriptor fd;
+        private final ForceDescriptor fd;
 
         private final Object progressLock = new Object();
         private double progress = 0;
@@ -1080,7 +1068,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
 
         @Override
-        protected ForceDescriptor doInBackground() throws Exception {
+        protected ForceDescriptor doInBackground() {
             btnGenerate.setEnabled(false);
             Ruleset.findRuleset(fd).processRoot(fd, this);
             return fd;

@@ -26,9 +26,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import megamek.client.ui.swing.TowLinkWarning;
-import org.apache.logging.log4j.Level;
-
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalCalculator;
@@ -38,6 +35,7 @@ import megamek.client.bot.princess.FiringPlanCalculationParameters.Builder;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.TowLinkWarning;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
@@ -66,6 +64,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.Weapon;
 import megamek.logging.MMLogger;
+import org.apache.logging.log4j.Level;
 
 public class Princess extends BotClient {
     private static final MMLogger logger = MMLogger.create(Princess.class);
@@ -1188,7 +1187,11 @@ public class Princess extends BotClient {
         return plan.getEntityActionVector();
     }
 
+    /**
+     * Deprecated, consider {@link BotClient#deployMinefields()}
+     */
     @Override
+    @Deprecated (since = "0.50.05", forRemoval = true)
     protected Vector<Minefield> calculateMinefieldDeployment() {
         try {
             // currently returns no minefields

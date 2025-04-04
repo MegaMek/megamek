@@ -1660,7 +1660,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // if LOS is blocked, block the shot except in the case of artillery fire
-        if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect && !isArtilleryDirect) {
+        // fall through in the targeting phase to show a more specific reason than "no LOS"
+        if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect && !isArtilleryDirect
+                   && !game.getPhase().isTargeting()) {
             return losMods.getDesc();
         }
 
@@ -2938,7 +2940,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // Protomek can fire MGA only into front arc, TW page 137
-            if (!Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD) &&
+            if (!ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD) &&
                       wtype.hasFlag(WeaponType.F_MGA) &&
                       (ae instanceof ProtoMek)) {
                 return Messages.getString("WeaponAttackAction.ProtoMGAOnlyFront");
@@ -3093,7 +3095,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // Weapon in arc?
-            if (!Compute.isInArc(game, attackerId, weaponId, target) &&
+            if (!ComputeArc.isInArc(game, attackerId, weaponId, target) &&
                       (!Compute.isAirToGround(ae, target) || isArtilleryIndirect) &&
                       !ae.isMakingVTOLGroundAttack() &&
                       !ae.isOffBoard()) {

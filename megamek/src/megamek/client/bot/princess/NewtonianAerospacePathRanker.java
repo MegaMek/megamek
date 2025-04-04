@@ -141,7 +141,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
             for (int vertexNum = 0; vertexNum < 6; vertexNum++) {
                 Coords vertex = movableArea.getVertexNum(vertexNum);
 
-                if (vertex != null && Compute.isInArc(finalCoords, path.getFinalFacing(), vertex, arcToUse)) {
+                if (vertex != null && ComputeArc.isInArc(finalCoords, path.getFinalFacing(), vertex, arcToUse)) {
                     inArcVertexCount++;
                 }
             }

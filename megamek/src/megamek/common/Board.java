@@ -2172,10 +2172,10 @@ public class Board implements Serializable {
         return null;
     }
 
-    public @Nullable BoardLocation embeddedBoardLocation(int boardId) {
+    public @Nullable Coords embeddedBoardLocation(int boardId) {
         for (Map.Entry<Coords, Integer> entry : embeddedBoards.entrySet()) {
             if (entry.getValue() == boardId) {
-                return BoardLocation.of(entry.getKey(), boardId);
+                return entry.getKey();
             }
         }
         return null;

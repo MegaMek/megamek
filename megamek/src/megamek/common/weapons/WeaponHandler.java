@@ -294,10 +294,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 boolean isInArc;
                 // If the defending unit is the target, use attacker for arc
                 if (entityTarget.equals(pdEnt)) {
-                    isInArc = Compute.isInArc(game, pdEnt.getId(), pdEnt.getEquipmentNum(counter), ae);
+                    isInArc = ComputeArc.isInArc(game, pdEnt.getId(), pdEnt.getEquipmentNum(counter), ae);
                 } else { // Otherwise, the attack must pass through an escort unit's hex
                     // TODO: We'll get here, eventually
-                    isInArc = Compute.isInArc(game, pdEnt.getId(),
+                    isInArc = ComputeArc.isInArc(game, pdEnt.getId(),
                             pdEnt.getEquipmentNum(counter),
                             entityTarget);
                 }

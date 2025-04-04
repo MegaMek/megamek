@@ -445,7 +445,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // Add only targets in arc
         Vector<Aero> inArc = new Vector<>();
         for (Aero a : targets) {
-            boolean isInArc = Compute.isInArc(tc, missileFacing, a, Compute.ARC_NOSE);
+            boolean isInArc = ComputeArc.isInArc(tc, missileFacing, a, Compute.ARC_NOSE);
             if (isInArc) {
                 inArc.add(a);
             }

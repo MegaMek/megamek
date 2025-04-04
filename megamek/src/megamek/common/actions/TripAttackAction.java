@@ -95,7 +95,7 @@ public class TripAttackAction extends PhysicalAttackAction {
         int limb1 = Entity.LOC_NONE;
 
         // check facing
-        if (!Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
+        if (!ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 

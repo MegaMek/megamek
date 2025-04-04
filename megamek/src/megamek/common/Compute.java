@@ -22,7 +22,6 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
-import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
@@ -479,7 +478,7 @@ public class Compute {
                 thisLowStackingLevel = entering.calcElevation(
                       board.getHex(origPosition),
                       board.getHex(coords),
-                      elevation, climbMode, false);
+                      elevation, climbMode);
             }
             int thisHighStackingLevel = thisLowStackingLevel;
             // meks only occupy one level of a building
@@ -2473,10 +2472,10 @@ public class Compute {
             return null;
         }
 
-        boolean curInFrontArc = Compute
+        boolean curInFrontArc = ComputeArc
                 .isInArc(attacker.getPosition(), attacker.getSecondaryFacing(),
                         target, attacker.getForwardArc());
-        boolean curInRearArc = Compute.isInArc(attacker.getPosition(),
+        boolean curInRearArc = ComputeArc.isInArc(attacker.getPosition(),
                 attacker.getSecondaryFacing(), target, attacker.getRearArc());
         if (!curInRearArc && attacker.hasQuirk(OptionsConstants.QUIRK_POS_MULTI_TRAC)) {
             return null;
@@ -2512,7 +2511,7 @@ public class Compute {
 
                     // Determine primary target
                     if ((primaryTarget == Entity.NONE || !primaryInFrontArc)
-                            && Compute.isInArc(attacker.getPosition(),
+                            && ComputeArc.isInArc(attacker.getPosition(),
                                     attacker.getSecondaryFacing(), pte,
                                     attacker.getForwardArc())) {
                         primaryTarget = prevAttack.getTargetId();
@@ -4029,84 +4028,6 @@ public class Compute {
     }
 
     /**
-     * Checks to see if a target is in arc of the specified weapon, on the
-     * specified entity
-     */
-    public static boolean isInArc(Game game, int attackerId, int weaponId,
-            Targetable t) {
-        Entity ae = game.getEntity(attackerId);
-        if ((ae instanceof Mek)
-                && (((Mek) ae).getGrappled() == t.getId())) {
-            return true;
-        }
-        int facing = ae.isSecondaryArcWeapon(weaponId) ? ae
-                .getSecondaryFacing() : ae.getFacing();
-        if ((ae instanceof Tank)
-                && (ae.getEquipment(weaponId).getLocation() == ((Tank) ae)
-                        .getLocTurret2())) {
-            facing = ((Tank) ae).getDualTurretFacing();
-        }
-        if (ae.getEquipment(weaponId).isMekTurretMounted()) {
-            facing = ae.getSecondaryFacing()
-                    + (ae.getEquipment(weaponId).getFacing() % 6);
-        }
-        Coords aPos = ae.getPosition();
-        Vector<Coords> tPosV = new Vector<>();
-        Coords tPos = t.getPosition();
-        // aeros in the same hex in space may still be able to fire at one
-        // another. First I need to translate
-        // their positions to see who was further back
-        if (game.getBoard().inSpace()
-                && ae.getPosition().equals(t.getPosition())
-                && ae.isAero() && t.isAero()) {
-            int moveSort = shouldMoveBackHex(ae, (Entity) t);
-            if (moveSort < 0) {
-                aPos = ae.getPriorPosition();
-            }
-            if (moveSort > 0) {
-                tPos = ((Entity) t).getPriorPosition();
-            }
-        }
-
-        // Allow dive-bombing VTOLs to attack the hex they are in, if they didn't select
-        // one for bombing while moving.
-        if ((ae.getMovementMode() == EntityMovementMode.VTOL)
-                && aPos.equals(tPos)) {
-            if (ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
-                return true;
-            }
-        }
-
-        // if using advanced AA options, then ground-to-air fire determines arc
-        // by closest position
-        if (isGroundToAir(ae, t) && (t instanceof Entity)) {
-            tPos = getClosestFlightPath(ae.getId(), ae.getPosition(),
-                    (Entity) t);
-        }
-
-        // AMS defending against Ground to Air fire needs to calculate arc based on the
-        // closest flight path
-        // Technically it's an AirToGround attack since the AMS is on the aircraft
-        if (isAirToGround(ae, t) && (t instanceof Entity)
-                && (ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
-                        || ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMSBAY))) {
-            Entity te = (Entity) t;
-            aPos = getClosestFlightPath(te.getId(), te.getPosition(),
-                    ae);
-        }
-
-        tPosV.add(tPos);
-        // check for secondary positions
-        if ((t instanceof Entity)
-                && (null != ((Entity) t).getSecondaryPositions())) {
-            for (int key : ((Entity) t).getSecondaryPositions().keySet()) {
-                tPosV.add(((Entity) t).getSecondaryPositions().get(key));
-            }
-        }
-        return Compute.isInArc(aPos, facing, tPosV, ae.getWeaponArc(weaponId));
-    }
-
-    /**
      * Returns true if the line between source Coords and target goes through
      * the hex in front of the attacker
      */
@@ -4128,300 +4049,6 @@ public class Compute {
      */
     public static int firingArcFromVGLFacing(int facing) {
         return VGL_FIRING_ARCS[facing % 6];
-    }
-
-    public static boolean isInArc(Coords src, int facing, Targetable target,
-            int arc) {
-
-        Vector<Coords> tPosV = new Vector<>();
-        tPosV.add(target.getPosition());
-        // check for secondary positions
-        if (target instanceof Entity) {
-            Map<Integer, Coords> secondaryPositions = ((Entity) target).getSecondaryPositions();
-            if (null != secondaryPositions && !secondaryPositions.isEmpty()) {
-                // Some units fill additional hexes
-                for (Coords hex : secondaryPositions.values()) {
-                    // Some hexes may not be configured, or be invalid
-                    if (null != hex) {
-                        tPosV.add(hex);
-                    } else {
-                        logger.warn(
-                                "Entity " + ((Entity) target).getDisplayName() + " has null secondary location!");
-                    }
-                }
-            }
-        }
-
-        return isInArc(src, facing, tPosV, arc);
-    }
-
-    public static boolean isInArc(Coords src, int facing, Coords dest, int arc) {
-        Vector<Coords> destV = new Vector<>();
-        destV.add(dest);
-        return isInArc(src, facing, destV, arc);
-    }
-
-    /**
-     * Returns true if the target is in the specified arc. Note: This has to
-     * take vectors of coordinates to account for potential secondary positions
-     *
-     * @param src    the attack coordinates
-     * @param facing the appropriate attacker sfacing
-     * @param destV  A vector of target coordinates
-     * @param arc    the arc
-     */
-    public static boolean isInArc(Coords src, int facing, Vector<Coords> destV,
-            int arc) {
-        if ((src == null) || (destV == null)) {
-            return true;
-        }
-
-        // Jay: I have to adjust this to take in vectors of coordinates to
-        // account for secondary positions of the
-        // target - I am fairly certain that secondary positions of the attacker
-        // shouldn't matter because you don't get
-        // to move the angle based on the secondary positions
-
-        // if any of the destination coords are in the right place, then return
-        // true
-        for (Coords dest : destV) {
-            // Sometimes we get non-null destV containing null Coord entries.
-            if (null == dest) {
-                return true;
-            }
-
-            // calculate firing angle
-            int fa = src.degree(dest) - (facing * 60);
-            if (fa < 0) {
-                fa += 360;
-            }
-            // is it in the specifed arc?
-            switch (arc) {
-                case ARC_FORWARD:
-                    if ((fa >= 300) || (fa <= 60)) {
-                        return true;
-                    }
-                    break;
-                case Compute.ARC_RIGHTARM:
-                    if ((fa >= 300) || (fa <= 120)) {
-                        return true;
-                    }
-                    break;
-                case Compute.ARC_LEFTARM:
-                    if ((fa >= 240) || (fa <= 60)) {
-                        return true;
-                    }
-                    break;
-                case ARC_REAR:
-                    if ((fa > 120) && (fa < 240)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RIGHTSIDE:
-                    if ((fa > 60) && (fa <= 120)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LEFTSIDE:
-                    if ((fa < 300) && (fa >= 240)) {
-                        return true;
-                    }
-                    break;
-                case ARC_MAINGUN:
-                    if ((fa >= 240) || (fa <= 120)) {
-                        return true;
-                    }
-                    break;
-                case ARC_360:
-                    return true;
-                case ARC_NORTH:
-                    if ((fa >= 270) || (fa <= 30)) {
-                        return true;
-                    }
-                    break;
-                case ARC_EAST:
-                    if ((fa >= 30) && (fa <= 150)) {
-                        return true;
-                    }
-                    break;
-                case ARC_WEST:
-                    if ((fa >= 150) && (fa <= 270)) {
-                        return true;
-                    }
-                    break;
-                case ARC_NOSE:
-                    if ((fa > 300) || (fa < 60)) {
-                        return true;
-                    }
-                    break;
-                case ARC_NOSE_WPL:
-                    if ((fa > 240) || (fa < 120)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LWING:
-                    if ((fa > 300) || (fa <= 0)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LWING_WPL:
-                    if ((fa > 240) || (fa < 60)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RWING:
-                    if ((fa >= 0) && (fa < 60)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RWING_WPL:
-                    if ((fa > 300) || (fa < 120)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LWINGA:
-                    if ((fa >= 180) && (fa < 240)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LWINGA_WPL:
-                    if ((fa > 120) && (fa < 300)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RWINGA:
-                    if ((fa > 120) && (fa <= 180)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RWINGA_WPL:
-                    if ((fa > 60) && (fa < 240)) {
-                        return true;
-                    }
-                    break;
-                case ARC_AFT:
-                    if ((fa > 120) && (fa < 240)) {
-                        return true;
-                    }
-                    break;
-                case ARC_AFT_WPL:
-                    if ((fa > 60) && (fa < 300)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LEFTSIDE_SPHERE:
-                    if ((fa > 240) || (fa < 0)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LEFTSIDE_SPHERE_WPL:
-                    if ((fa > 180) || (fa < 60)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RIGHTSIDE_SPHERE:
-                    if ((fa > 0) && (fa < 120)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RIGHTSIDE_SPHERE_WPL:
-                    if ((fa > 300) || (fa < 180)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LEFTSIDEA_SPHERE:
-                    if ((fa > 180) && (fa < 300)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LEFTSIDEA_SPHERE_WPL:
-                    if ((fa > 120) && (fa < 360)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RIGHTSIDEA_SPHERE:
-                    if ((fa > 60) && (fa < 180)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RIGHTSIDEA_SPHERE_WPL:
-                    if ((fa > 0) && (fa < 240)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LEFT_BROADSIDE:
-                    if ((fa >= 240) && (fa <= 300)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LEFT_BROADSIDE_WPL:
-                    if ((fa > 180) && (fa <= 360)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RIGHT_BROADSIDE:
-                    if ((fa >= 60) && (fa <= 120)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RIGHT_BROADSIDE_WPL:
-                    if ((fa > 0) && (fa < 180)) {
-                        return true;
-                    }
-                    break;
-                case ARC_LEFT_SPHERE_GROUND:
-                    if ((fa >= 180) && (fa < 360)) {
-                        return true;
-                    }
-                    break;
-                case ARC_RIGHT_SPHERE_GROUND:
-                    if ((fa >= 0) && (fa < 180)) {
-                        return true;
-                    }
-                    break;
-                case ARC_TURRET:
-                    if ((fa >= 330) || (fa <= 30)) {
-                        return true;
-                    }
-                    break;
-                case ARC_SPONSON_TURRET_LEFT:
-                case ARC_PINTLE_TURRET_LEFT:
-                    if ((fa >= 180) || (fa == 0)) {
-                        return true;
-                    }
-                    break;
-                case ARC_SPONSON_TURRET_RIGHT:
-                case ARC_PINTLE_TURRET_RIGHT:
-                    if ((fa >= 0) && (fa <= 180)) {
-                        return true;
-                    }
-                    break;
-                case ARC_PINTLE_TURRET_FRONT:
-                    if ((fa >= 270) || (fa <= 90)) {
-                        return true;
-                    }
-                    break;
-                case ARC_PINTLE_TURRET_REAR:
-                    if ((fa >= 90) && (fa <= 270)) {
-                        return true;
-                    }
-                    break;
-                case ARC_VGL_FRONT:
-                    return (fa >= 270) || (fa <= 90);
-                case ARC_VGL_RF:
-                    return (fa >= 330) || (fa <= 150);
-                case ARC_VGL_RR:
-                    return (fa >= 30) && (fa <= 210);
-                case ARC_VGL_REAR:
-                    return (fa >= 90) && (fa <= 270);
-                case ARC_VGL_LR:
-                    return (fa >= 150) && (fa <= 330);
-                case ARC_VGL_LF:
-                    return (fa >= 210) || (fa <= 30);
-            }
-        }
-        // if we got here then no matches
-        return false;
     }
 
     /**

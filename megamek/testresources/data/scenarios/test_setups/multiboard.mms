@@ -55,8 +55,8 @@ factions:
     # offboard effective distance doesnt work yet
 
   - fullname: Mobile Long Tom Artillery LT-MOB-25
-    at: [5,5]
-    board: 0
+    at: [13,10]
+    board: 1
     facing: 2
 #  - fullname: Locust LCT-1V
 #    board: 8

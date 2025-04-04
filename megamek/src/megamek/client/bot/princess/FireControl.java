@@ -587,7 +587,7 @@ public class FireControl {
     }
 
     /**
-     * Returns the value of {@link Compute#isInArc(Coords, int, Targetable, int)}.
+     * Returns the value of {@link ComputeArc#isInArc(Coords, int, Targetable, int)}.
      *
      * @param shooterPosition The current {@link Coords} of the shooter.
      * @param shooterFacing   The shooter's current facing.
@@ -600,7 +600,7 @@ public class FireControl {
             final int shooterFacing,
             final Coords targetPosition,
             final int weaponArc) {
-        return Compute.isInArc(shooterPosition, shooterFacing, targetPosition, weaponArc);
+        return ComputeArc.isInArc(shooterPosition, shooterFacing, targetPosition, weaponArc);
     }
 
     /**
@@ -778,7 +778,7 @@ public class FireControl {
         }
         // Bays compute arc differently
         final boolean inArc = (bayWeapon)
-                ? Compute.isInArc(game, shooter.getId(), weapon.getBayWeapons().get(0).getEquipmentNum(), target)
+                ? ComputeArc.isInArc(game, shooter.getId(), weapon.getBayWeapons().get(0).getEquipmentNum(), target)
                 : isInArc(shooterState.getPosition(), shooterFacing, targetState.getPosition(),
                         shooter.getWeaponArc(shooter.getEquipmentNum(weapon)));
         if (!inArc) {

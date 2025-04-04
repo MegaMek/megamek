@@ -28,7 +28,6 @@ import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.event.ListSelectionEvent;
 
-import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -453,7 +452,7 @@ public class PointblankShotDisplay extends FiringDisplay {
                         .getEntity(clientgui.getClient().getGame());
                     Targetable target1 = waa.getTarget(clientgui.getClient()
                         .getGame());
-                    boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
+                    boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
                         attacker.getSecondaryFacing(), target1,
                         attacker.getForwardArc());
                     if (curInFrontArc) {
@@ -487,7 +486,7 @@ public class PointblankShotDisplay extends FiringDisplay {
                         .getEntity(clientgui.getClient().getGame());
                     Targetable target1 = waa.getTarget(clientgui.getClient()
                         .getGame());
-                    boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
+                    boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
                         attacker.getSecondaryFacing(), target1,
                         attacker.getForwardArc());
                     if (!curInFrontArc) {

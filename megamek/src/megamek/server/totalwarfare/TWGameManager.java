@@ -3103,7 +3103,7 @@ public class TWGameManager extends AbstractGameManager {
             int damageDice = (8 - i) * 2;
             List<Coords> ring = centralPos.allAtDistance(i);
             for (Coords pos : ring) {
-                if (rearArc && !Compute.isInArc(centralPos, facing, pos, Compute.ARC_AFT)) {
+                if (rearArc && !ComputeArc.isInArc(centralPos, facing, pos, Compute.ARC_AFT)) {
                     continue;
                 }
 
@@ -10193,7 +10193,7 @@ public class TWGameManager extends AbstractGameManager {
         // Create a list of valid assignments for this APDS
         List<WeaponAttackAction> vAttacksInArc = new ArrayList<>(vAttacks.size());
         for (WeaponHandler wr : vAttacks) {
-            boolean isInArc = Compute.isInArc(e.getGame(),
+            boolean isInArc = ComputeArc.isInArc(e.getGame(),
                   e.getId(),
                   e.getEquipmentNum(apds),
                   game.getEntity(wr.waa.getEntityId()));
@@ -10272,7 +10272,7 @@ public class TWGameManager extends AbstractGameManager {
             List<WeaponAttackAction> vAttacksInArc = new ArrayList<>(vAttacks.size());
             for (WeaponHandler wr : vAttacks) {
                 if (!amsTargets.contains(wr.waa) &&
-                          Compute.isInArc(game,
+                          ComputeArc.isInArc(game,
                                 e.getId(),
                                 e.getEquipmentNum(ams),
                                 game.getEntity(wr.waa.getEntityId()))) {
@@ -10364,7 +10364,7 @@ public class TWGameManager extends AbstractGameManager {
                     List<Coords> coords = e.getPosition().allAtDistance(dist);
                     for (Coords pos : coords) {
                         // Check that we're in the right arc
-                        if (Compute.isInArc(game,
+                        if (ComputeArc.isInArc(game,
                               e.getId(),
                               e.getEquipmentNum(ams),
                               new HexTarget(pos, HexTarget.TYPE_HEX_CLEAR))) {

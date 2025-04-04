@@ -835,7 +835,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(clientgui.getClient().getGame());
                 Targetable target1 = waa.getTarget(clientgui.getClient().getGame());
-                boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
+                boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
                         attacker.getSecondaryFacing(), target1,
                         attacker.getForwardArc());
                 if (curInFrontArc) {
@@ -865,7 +865,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(clientgui.getClient().getGame());
                 Targetable target1 = waa.getTarget(clientgui.getClient().getGame());
-                boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
+                boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
                         attacker.getSecondaryFacing(), target1,
                         attacker.getForwardArc());
                 if (!curInFrontArc) {
@@ -1183,9 +1183,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 WeaponAttackAction oldWaa = (WeaponAttackAction) lastAction;
                 Targetable oldTarget = oldWaa.getTarget(game);
                 if (!oldTarget.equals(target)) {
-                    boolean oldInFront = Compute.isInArc(ce().getPosition(),
+                    boolean oldInFront = ComputeArc.isInArc(ce().getPosition(),
                             ce().getSecondaryFacing(), oldTarget, ce().getForwardArc());
-                    boolean curInFront = Compute.isInArc(ce().getPosition(),
+                    boolean curInFront = ComputeArc.isInArc(ce().getPosition(),
                             ce().getSecondaryFacing(), target, ce().getForwardArc());
                     if (!oldInFront && curInFront) {
                         String title = Messages.getString("FiringDisplay.SecondaryTargetToHitChange.title");

@@ -234,7 +234,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // Check facing if the Mek is not prone.
-        else if (!Compute.isInArc(ae.getPosition(), ae.getSecondaryFacing(),
+        else if (!ComputeArc.isInArc(ae.getPosition(), ae.getSecondaryFacing(),
                 target, armArc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }

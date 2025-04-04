@@ -19,14 +19,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.ui.Messages;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.LosEffects;
-import megamek.common.Report;
-import megamek.common.Tank;
-import megamek.common.Targetable;
+import megamek.common.*;
 
 /**
  * Used for aiming a searchlight at a target.
@@ -65,7 +58,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         }
 
         // can't searchlight if target is outside of the front firing arc
-        if (!Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target, attacker.getForwardArc())) {
+        if (!ComputeArc.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target, attacker.getForwardArc())) {
             return false;
         }
 

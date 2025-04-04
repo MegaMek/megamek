@@ -456,7 +456,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 clubArc = Compute.ARC_FORWARD;
             }
         }
-        if (!Compute.isInArc(ae.getPosition(), ae.getSecondaryFacing(), target,
+        if (!ComputeArc.isInArc(ae.getPosition(), ae.getSecondaryFacing(), target,
                 clubArc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }

@@ -215,14 +215,14 @@ public class KickAttackAction extends PhysicalAttackAction {
         // Don't check arc for stomping infantry or tanks.
         if ((0 != range)
                 && (mule != 1)
-                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
+                && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
         // check facing, part 2: Mule kick
         if ((0 != range)
                 && (mule == 1)
-                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
+                && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 

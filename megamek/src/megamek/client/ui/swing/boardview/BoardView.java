@@ -4608,7 +4608,7 @@ public final class BoardView extends AbstractBoardView
                     int distance = ecmPos.distance(coords);
                     int direction = ecmInfo.getDirection();
                     // Direction is the facing of the owning Entity
-                    boolean inArc = (direction == -1) || Compute.isInArc(ecmPos, direction, coords, Compute.ARC_NOSE);
+                    boolean inArc = (direction == -1) || ComputeArc.isInArc(ecmPos, direction, coords, Compute.ARC_NOSE);
                     if ((distance > range) || !inArc) {
                         continue;
                     }

@@ -480,11 +480,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 boolean isInArc;
                 // If the defending unit is the target, use attacker for arc
                 if (entityTarget.equals(pdEnt)) {
-                    isInArc = Compute.isInArc(game, entityTarget.getId(),
+                    isInArc = ComputeArc.isInArc(game, entityTarget.getId(),
                             entityTarget.getEquipmentNum(counter), ae);
                 } else {
                     // Otherwise, the attack target must be in arc
-                    isInArc = Compute.isInArc(game, pdEnt.getId(), pdEnt.getEquipmentNum(counter),
+                    isInArc = ComputeArc.isInArc(game, pdEnt.getId(), pdEnt.getEquipmentNum(counter),
                             entityTarget);
                 }
 

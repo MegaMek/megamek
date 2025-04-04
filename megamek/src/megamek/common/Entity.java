@@ -6788,7 +6788,7 @@ public abstract class Entity extends TurnOrdered
         getActiveAMS().stream()
               .filter(ams -> ams.getType().hasFlag(WeaponType.F_AMSBAY) ||
                                    (ams.getType().hasFlag(WeaponType.F_PDBAY) && !ams.isUsedThisRound()))
-              .filter(ams -> Compute.isInArc(game,
+              .filter(ams -> ComputeArc.isInArc(game,
                     getId(),
                     getEquipmentNum(ams),
                     game.getEntity(telemissileAttack.getEntityId())))
@@ -6808,7 +6808,7 @@ public abstract class Entity extends TurnOrdered
                                                                                                 null) &&
                                                                                                !targets.contains(
                                                                                                      weaponHandler.getWaa()) &&
-                                                                                               Compute.isInArc(getGame(),
+                                                                                               ComputeArc.isInArc(getGame(),
                                                                                                      getId(),
                                                                                                      getEquipmentNum(ams),
                                                                                                      (weaponHandler instanceof CapitalMissileBearingsOnlyHandler) ?

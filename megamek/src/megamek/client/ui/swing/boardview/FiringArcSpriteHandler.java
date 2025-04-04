@@ -196,7 +196,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
 
             // Remove hexes that are not on the board or not in the arc
             fieldFire.get(bracket).removeIf(coords -> !game.getBoard().contains(coords)
-                    || !Compute.isInArc(firingPosition, facing, coords, arc));
+                    || !ComputeArc.isInArc(firingPosition, facing, coords, arc));
         }
 
         // for all available range brackets Min/S/M/L/E ...

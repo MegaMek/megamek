@@ -305,7 +305,7 @@ public class FireCommand extends ClientCommand {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(getClient().getGame());
                 Targetable target = waa.getTarget(getClient().getGame());
-                boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
+                boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
                                                         attacker.getSecondaryFacing(), target,
                                                         attacker.getForwardArc());
                 if (curInFrontArc) {
@@ -326,7 +326,7 @@ public class FireCommand extends ClientCommand {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(getClient().getGame());
                 Targetable target = waa.getTarget(getClient().getGame());
-                boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
+                boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
                                                         attacker.getSecondaryFacing(), target,
                                                         attacker.getForwardArc());
                 if (!curInFrontArc) {

@@ -26,6 +26,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6761: Stalker Jamison TechBase Fix: Mixed >>> Clan
 + PR #6760: Update Tomahawk II (Prime).mtf 
 + PR #6759: Update Mackie MSK-6S introduction date 
++ Fix 6751: Princess will now deploy mines on her turn instead of at the start of the phase.
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

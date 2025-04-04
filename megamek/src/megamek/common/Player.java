@@ -51,6 +51,7 @@ public final class Player extends TurnOrdered {
     private String name;
     private String email;
     private final int id;
+    private PlayerRating rating;
 
     private int team = TEAM_NONE;
 
@@ -147,6 +148,17 @@ public final class Player extends TurnOrdered {
     public boolean hasMinefields() {
         return (numMfCmd > 0) || (numMfConv > 0) || (numMfVibra > 0) || (numMfActive > 0) || (numMfInferno > 0)
               || getGroundObjectsToPlace().size() > 0;
+    }
+
+    public double getRatingNumber() {
+        return rating.getCurrentRating();
+    }
+
+    public PlayerRating getRatingObject() {
+        if (rating == null) {
+            rating = RatingPersistenceManager.getInstance().getPlayerRating(this.getId(), this);
+        }
+        return rating;
     }
 
     public void setNbrMFConventional(int nbrMF) {

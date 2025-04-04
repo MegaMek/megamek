@@ -102,6 +102,7 @@ public class PlayerListDialog extends JDialog implements ActionListener {
         for (Player player : sortedPlayerList(client.getGame())) {
             StringBuffer playerDisplay = new StringBuffer(String.format("%-12s", player.getName()));
 
+
             // Append team information
             if (displayTeam) {
                 Team team = client.getGame().getTeamForPlayer(player);
@@ -114,6 +115,12 @@ public class PlayerListDialog extends JDialog implements ActionListener {
                 } else {
                     playerDisplay.append(Messages.getString("PlayerListDialog.TeamLess"));
                 }
+            }
+            //Player Rating
+            if (player.getRatingObject() != null) {
+                playerDisplay.append(" [R:");
+                playerDisplay.append(String.format("%.0f", player.getRatingNumber()));
+                playerDisplay.append("]");
             }
 
             if (player.isGameMaster()) {

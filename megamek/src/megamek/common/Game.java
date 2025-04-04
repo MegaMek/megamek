@@ -112,6 +112,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private boolean ignorePlayerDefeatVotes = false;
     private int victoryPlayerId = Player.PLAYER_NONE;
     private int victoryTeam = Player.TEAM_NONE;
+    private boolean isCompetitive = true;
 
     private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<>();
     private Vector<Minefield> vibrabombs = new Vector<>();
@@ -185,6 +186,52 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public int getNbrMinefields(Coords coords) {
         Vector<Minefield> mfs = minefields.get(coords);
         return (mfs == null) ? 0 : mfs.size();
+    }
+
+
+
+    /**
+     * update le rating des joueurs de la partie
+     * selon s'ils ont gagner ou non
+     */
+    private void updateEloRatings() {
+        List<Player> players = getPlayersList();
+        RatingPersistenceManager ratingManager = RatingPersistenceManager.getInstance();
+
+        for (Player player : players) {
+            int isWinner;
+            if (isDraw()) {
+                isWinner = 0; // Match nul
+            } else {
+                isWinner = (player.getTeam() == this.victoryTeam ? 1 : -1);
+            }
+            player.getRatingObject().updateRating(getEnemyTeamRating(), isWinner);
+
+            // Sauvegarder le rating mis à jour
+            ratingManager.updatePlayerRating(player.getRatingObject());
+        }
+    }
+
+
+    public boolean isDraw()
+    {
+        return this.victoryTeam == Player.TEAM_NONE && this.victoryPlayerId == Player.PLAYER_NONE;
+    }
+
+    /**
+     * Get the average rating of the current game
+     */
+    public double getEnemyTeamRating()
+    {
+        double enemyTeamRating = 0.0;
+        List<Player> players = getPlayersList();
+        for (Player player : players) {
+            if(player.getTeam() != this.victoryTeam)
+            {
+                enemyTeamRating += player.getRatingNumber();
+            }
+        }
+        return enemyTeamRating;
     }
 
     /**
@@ -486,6 +533,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         processGameEvent(new GamePlayerChangeEvent(this, player));
     }
 
+    public boolean getIsCompetitive() {
+        return this.isCompetitive;
+    }
+
+    public void setIsCompetitive(boolean isCompetitive)
+    {
+        this.isCompetitive = isCompetitive;
+    }
     /**
      * Returns the number of entities owned by the player, regardless of their
      * status.
@@ -2655,10 +2710,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void end(int winner, int winnerTeam) {
         setVictoryPlayerId(winner);
         setVictoryTeam(winnerTeam);
+        if(isCompetitive)
+        {
+            updateEloRatings();
+        }
         processGameEvent(new GameEndEvent(this));
 
     }
-
     /**
      * Getter for property victoryPlayerId.
      *

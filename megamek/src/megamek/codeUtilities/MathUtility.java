@@ -177,6 +177,22 @@ public class MathUtility {
     }
 
     /**
+     * Attempts to parse the provided string into an integer.
+     *
+     * <p>If parsing fails, the method defaults to returning {@code 0}. To specify a custom default value in case of
+     * failure, use the overloaded {@link #parseInt(String, int)} method.</p>
+     *
+     * @param value The string to parse. Can be a numeric string or null.
+     *
+     * @return The integer value parsed from the string, or {@code 0} if parsing fails.
+     *
+     * @see #parseInt(String, int)
+     */
+    public static int parseInt(final String value) {
+        return parseInt(value, 0);
+    }
+
+    /**
      * Utility function to handle parsing strings into Doubles and to handle the possible NumberFormatException with
      * logging and to return defaultValue.
      *

@@ -1,0 +1,58 @@
+#Saved from version 0.50.04-SNAPSHOT on 2025-03-03
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Clan Field Gun Point
+</Name>
+
+<Model>
+(Tracked CLBX20 Advanced)
+</Model>
+
+<year>
+2845
+</year>
+
+<originalBuildYear>
+2845
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Clan Armor Kit (All)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+CLLBXAC20
+IS LB 20-X Cluster Ammo
+</Field Guns Equipment>
+
+<notes>
+Intro date based on Clan infantry kit intro date
+</notes>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+

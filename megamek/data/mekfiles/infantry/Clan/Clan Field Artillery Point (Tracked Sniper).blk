@@ -1,0 +1,66 @@
+#Saved from version 0.50.04-SNAPSHOT on 2025-03-02
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Clan Field Artillery Point
+</Name>
+
+<Model>
+(Tracked Sniper)
+</Model>
+
+<year>
+2807
+</year>
+
+<originalBuildYear>
+2807
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Generic Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISSniper
+ISSniperAmmo
+</Field Guns Equipment>
+
+<notes>
+Intro date based on General Clan faction intro date. Uses Generic Infantry kit due to much later intro date of standard Clan kit.
+</notes>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+1
+</secondn>
+
+<Primary>
+Submachine Gun
+</Primary>
+
+<Secondary>
+InfantryAssaultRifle
+</Secondary>
+

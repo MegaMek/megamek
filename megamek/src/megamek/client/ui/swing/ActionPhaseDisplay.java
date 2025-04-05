@@ -30,6 +30,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceChangeEvent;
 
@@ -43,10 +44,12 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     private boolean ignoreNoActionNag = false;
 
     protected final ClientGUI clientgui;
+    protected final Game game;
 
     protected ActionPhaseDisplay(ClientGUI cg) {
         super(cg);
         clientgui = cg;
+        game = clientgui.getClient().getGame();
     }
 
     @Override
@@ -68,8 +71,8 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
                         return;
                     }
                     if ((clientgui.getClient().isMyTurn())
-                            || (clientgui.getClient().getGame().getTurn() == null)
-                            || (clientgui.getClient().getGame().getPhase().isReport())) {
+                            || (game.getTurn() == null)
+                            || (game.getPhase().isReport())) {
                         // act like Done button
                         performDoneNoAction();
                         // When the turn is ended, we could miss a key release event
@@ -94,8 +97,8 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
     public boolean shouldReceiveDoneKeyCommand() {
         return ((clientgui.getClient().isMyTurn()
-                || (clientgui.getClient().getGame().getTurn() == null)
-                || (clientgui.getClient().getGame().getPhase().isReport())))
+                || (game.getTurn() == null)
+                || (game.getPhase().isReport())))
                 && !clientgui.getBoardView().getChatterBoxActive()
                 && !isIgnoringEvents()
                 && isVisible()
@@ -282,7 +285,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
      * @see ClientGUI#getDisplayedUnit()
      */
     protected final Entity ce() {
-        return clientgui.getClient().getGame().getEntity(currentEntity);
+        return game.getEntity(currentEntity);
     }
 
 }

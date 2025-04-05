@@ -20,21 +20,22 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.common.Board;
-import megamek.common.Game;
 import megamek.common.IGame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
- * The BoardViewsContainer manages the JPanel that contains the BoardView(s) of a ClientGUI. When only
- * one BoardView is present, it is shown by itself. When multiple BoardViews are present,
- * they are arranged as tabs of a TabbedPane. The panel that holds the BoardView(s) is obtained from
- * {@link #getPanel()}.
- * <P>The display contents are not automatically updated. Use {@link #updateMapTabs()} after construction
- * and later to make it reflect the current set of BoardViews.
+ * The BoardViewsContainer manages the JPanel that contains the BoardView(s) of a ClientGUI. When only one BoardView is
+ * present, it is shown by itself. When multiple BoardViews are present, they are arranged as tabs of a TabbedPane. The
+ * panel that holds the BoardView(s) is obtained from {@link #getPanel()}.
+ * <p>
+ * The display contents are not automatically updated. Use {@link #updateMapTabs()} after construction and later to make
+ * it reflect the current set of BoardViews.
  */
 public class BoardViewsContainer {
 
@@ -44,11 +45,16 @@ public class BoardViewsContainer {
     /** The tabbed pane is used when there are multiple boards to display */
     private final JTabbedPane mapTabPane = new JTabbedPane();
 
+    /**
+     * The boardview components of the game with the board ID as the map value. Used to retrieve the active boardview
+     */
+    protected final Map<Component, Integer> shownBoardViews = new HashMap<>();
+
     private final AbstractClientGUI clientGUI;
 
     /**
-     * Returns a new BoardViewsContainer. Call {@link #updateMapTabs()} after construction to make it
-     * reflect the current BoardViews. Requires a non-null AbstractClientGUI as parent.
+     * Returns a new BoardViewsContainer. Call {@link #updateMapTabs()} after construction to make it reflect the
+     * current BoardViews. Requires a non-null AbstractClientGUI as parent.
      *
      * @param clientGUI The AbstractClientGUI parent
      */
@@ -57,8 +63,8 @@ public class BoardViewsContainer {
     }
 
     /**
-     * Returns the JPanel that holds the BoardView(s), either one BoardView by itself or multiple
-     * BoardViews in a tabbed pane. Add this panel to the view area of the ClientGUI.
+     * Returns the JPanel that holds the BoardView(s), either one BoardView by itself or multiple BoardViews in a tabbed
+     * pane. Add this panel to the view area of the ClientGUI.
      *
      * @return The panel holding all present BoardViews
      */
@@ -71,6 +77,7 @@ public class BoardViewsContainer {
      */
     public void updateMapTabs() {
         boardViewsContainer.removeAll();
+        shownBoardViews.clear();
         if (clientGUI.boardViews.size() > 1) {
             arrangeMultipleBoardViews();
         } else if (clientGUI.boardViews.size() == 1) {
@@ -86,6 +93,7 @@ public class BoardViewsContainer {
             boardComponent.setName(String.valueOf(boardId));
             mapTabPane.add(board(boardId).getMapName(), boardComponent);
             mapTabPane.setToolTipTextAt(mapTabPane.getTabCount() - 1, getBoardViewTabTooltip(boardId));
+            shownBoardViews.put(boardComponent, boardId);
         }
         boardViewsContainer.add(mapTabPane);
     }
@@ -93,7 +101,9 @@ public class BoardViewsContainer {
     private void arrangeSingleBoardView() {
         // The single BoardView does not use the tabbed pane
         int boardId = clientGUI.boardViews.keySet().iterator().next();
-        boardViewsContainer.add(board(boardId).getMapName(), boardView(boardId).getComponent());
+        Component boardComponent = boardView(boardId).getComponent();
+        boardViewsContainer.add(board(boardId).getMapName(), boardComponent);
+        shownBoardViews.put(boardComponent, boardId);
     }
 
     private String getBoardViewTabTooltip(int boardId) {
@@ -101,19 +111,32 @@ public class BoardViewsContainer {
         String tooltip = String.format("<HTML>%s (Board #%d)", game.getBoard(boardId).getMapName(), boardId);
         Optional<Board> enclosingBoard = game.getEnclosingBoard(boardId);
         if (enclosingBoard.isPresent()) {
-            tooltip += "<BR>Located at %s in %s".formatted(
-                  enclosingBoard.get().embeddedBoardPosition(boardId).getBoardNum(),
-                  enclosingBoard.get().getMapName());
+            tooltip += "<BR>Located at %s in %s".formatted(enclosingBoard.get()
+                     .embeddedBoardPosition(boardId)
+                     .getBoardNum(), enclosingBoard.get().getMapName());
         }
         return tooltip;
     }
 
-    private Board board(int id) {
-        return clientGUI.getClient().getGame().getBoard(id);
-    }
-
-    private IBoardView boardView(int id) {
-        return clientGUI.boardViews.get(id);
+    /**
+     * Returns the currently shown boardview. If there is only a single boardview (no tabbed pane), this will be
+     * returned. With multiple boardviews, the one in the currently selected tab is returned.
+     * <p>
+     * Unfortunately it is possible to have no selected tab in a JTabbedPane; also, theoretically, there could be no
+     * boardview. Therefore the result is returned as an Optional.
+     *
+     * @return The currently shown boardview, if any
+     */
+    public Optional<IBoardView> getCurrentBoardView() {
+        if ((clientGUI.boardViews.size() > 1) && (mapTabPane.getSelectedComponent() != null)) {
+            Component shownComponent = mapTabPane.getSelectedComponent();
+            int boardId = shownBoardViews.get(shownComponent);
+            return Optional.of(boardView(boardId));
+        } else if (clientGUI.boardViews.size() == 1) {
+            return Optional.of(boardView(clientGUI.boardViews.keySet().iterator().next()));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public void setName(String name) {
@@ -130,5 +153,13 @@ public class BoardViewsContainer {
                 }
             }
         }
+    }
+
+    private Board board(int id) {
+        return clientGUI.getClient().getGame().getBoard(id);
+    }
+
+    private IBoardView boardView(int id) {
+        return clientGUI.boardViews.get(id);
     }
 }

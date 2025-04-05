@@ -531,6 +531,10 @@ public final class Player extends TurnOrdered {
         artyAutoHitHexes.removeIf(BoardLocation::isNoLocation);
     }
 
+    public void removeArtyAutoHitHex(BoardLocation boardLocation) {
+        artyAutoHitHexes.remove(boardLocation);
+    }
+
     public int getInitialEntityCount() {
         return initialEntityCount;
     }

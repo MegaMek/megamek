@@ -200,12 +200,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         shiftheld = false;
 
         setupStatusBar(Messages.getString("TargetingPhaseDisplay.waitingForTargetingPhase"));
-
         setButtons();
         setButtonsTooltips();
-
         setupButtonPanel();
-
         registerKeyCommands();
     }
 
@@ -252,9 +249,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     }
 
     protected boolean shouldPerformClearKeyCommand() {
-        return !clientgui.getBoardView().getChatterBoxActive()
-                && !isIgnoringEvents()
-                && isVisible();
+        return !clientgui.isChatBoxActive() && !isIgnoringEvents() && isVisible();
     }
 
     /**
@@ -293,10 +288,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      * aren't on the panel itself.
      */
     public void initializeListeners() {
-        clientgui.getClient().getGame().addGameListener(this);
-        clientgui.getBoardView().addBoardViewListener(this);
-
-        // Mek display.
+        game.addGameListener(this);
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
     }
 
@@ -331,7 +323,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             refreshAll();
         }
         Client client = clientgui.getClient();
-        Entity entity = client.getGame().getEntity(en);
+        Entity entity = game.getEntity(en);
         if ((entity != null) && entity.isWeapOrderChanged()) {
             client.sendEntityWeaponOrderUpdate(entity);
         }
@@ -346,7 +338,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
                 // Walk through the list of entities for this player.
                 for (int nextId = client.getNextEntityNum(en); nextId != en; nextId = client.getNextEntityNum(nextId)) {
-                    if (null != clientgui.getClient().getGame().getEntity(nextId).getPosition()) {
+                    if (null != game.getEntity(nextId).getPosition()) {
                         currentEntity = nextId;
                         break;
                     }
@@ -395,7 +387,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     private void beginMyTurn() {
         target = null;
 
-        if (!clientgui.getBoardView().isMovingUnits()) {
+        if (clientgui.getCurrentBoardView().map(bv -> (BoardView) bv).filter(BoardView::isMovingUnits).isEmpty()) {
             clientgui.maybeShowUnitDisplay();
         }
         clientgui.clearFieldOfFire();
@@ -434,7 +426,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         } else {
             setNextEnabled(true);
             butDone.setEnabled(true);
-            clientgui.getBoardView().select(null);
+            clientgui.boardViews().forEach(boardView -> boardView.select(null));
             initDonePanelForNewTurn();
         }
         setupButtonPanel();
@@ -447,7 +439,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      */
     private void endMyTurn() {
         stopTimer();
-        Game game = clientgui.getClient().getGame();
         // end my turn, then.
         Entity next = game.getNextEntity(game.getTurnIndex());
         if ((phase == game.getPhase())
@@ -458,10 +449,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         currentEntity = Entity.NONE;
         target(null);
 
-        clientgui.getBoardView().select(null);
-        clientgui.getBoardView().highlight(null);
-        clientgui.getBoardView().cursor(null);
-        clientgui.getBoardView().clearMovementData();
+        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).clearMovementData());
         clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
@@ -575,25 +564,20 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     }
 
     private void doSearchlight() {
-        // validate
-        if ((ce() == null) || (target == null)) {
-            throw new IllegalArgumentException("current searchlight parameters are invalid");
-        }
-
-        if (!SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), currentEntity, target, null)) {
+        if (!SearchlightAttackAction.isPossible(game, currentEntity, target, null)) {
             return;
         }
 
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(currentEntity, target.getTargetType(),
-                target.getId());
+              target.getId());
         addAttack(saa);
 
         // and add it into the game, temporarily
-        clientgui.getClient().getGame().addAction(saa);
-        clientgui.getBoardView().addAttack(saa);
+        game.addAction(saa);
+        ((BoardView) clientgui.getBoardView(game.getEntity(currentEntity))).addAttack(saa);
 
-        // refresh weapon panel, as bth will have changed
+        // refresh weapon panel, as both will have changed
         updateTarget();
     }
 
@@ -619,7 +603,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         WeaponAttackAction waa = new WeaponAttackAction(currentEntity, target.getTargetType(),
                 target.getId(), weaponNum);
-        Game game = clientgui.getClient().getGame();
         int distance = Compute.effectiveDistance(game, waa.getEntity(game), waa.getTarget(game));
         if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
                 || (mounted.isInBearingsOnlyMode()
@@ -627,14 +610,14 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 || (mounted.getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ce(), target))) {
             waa = new ArtilleryAttackAction(currentEntity, target.getTargetType(),
-                    target.getId(), weaponNum, clientgui.getClient().getGame());
+                    target.getId(), weaponNum, game);
             // Get the launch velocity for bearings-only telemissiles
             if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {
                 TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.frame,
-                        clientgui.getClient().getGame());
+                        game);
                 tsd.setVisible(true);
                 waa.setLaunchVelocity(tsd.getSetting());
-                waa.updateTurnsTilHit(clientgui.getClient().getGame());
+                waa.updateTurnsTilHit(game);
             }
         }
 
@@ -669,7 +652,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         addAttack(waa);
 
         // and add it into the game, temporarily
-        clientgui.getClient().getGame().addAction(waa);
+        game.addAction(waa);
 
         // set the weapon as used
         mounted.setUsedThisRound(true);
@@ -764,7 +747,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      */
     private void removeTempAttacks() {
         // remove temporary attacks from game & board
-        clientgui.getClient().getGame().removeActionsFor(currentEntity);
+        game.removeActionsFor(currentEntity);
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).removeAttacksFor(ce()));
     }
 
@@ -780,8 +763,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 removeAttack(o);
                 setDisengageEnabled(attacks.isEmpty() && ce().isOffBoard() && ce().canFlee(ce().getPosition()));
                 clientgui.getUnitDisplay().wPan.displayMek(ce());
-                clientgui.getClient().getGame().removeAction(o);
-                clientgui.getBoardView().refreshAttacks();
+                game.removeAction(o);
+                clientgui.boardViews().forEach(bv -> ((BoardView) bv).refreshAttacks());
             }
         }
     }
@@ -793,7 +776,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         if (ce() == null) {
             return;
         }
-        clientgui.getBoardView().redrawEntity(ce());
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(ce()));
         clientgui.getUnitDisplay().displayEntity(ce());
         if (GUIP.getFireDisplayTabDuringFiringPhases()) {
             clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.WEAPONS);
@@ -819,18 +802,19 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         // update target panel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        Entity entity = ce();
-        if ((entity != null) && entity.equals(clientgui.getUnitDisplay().getCurrentEntity())
-                && (target != null) && (weaponId != -1) && (entity.getPosition() != null)) {
+        Entity attacker = ce();
+        if ((attacker != null) && attacker.equals(clientgui.getUnitDisplay().getCurrentEntity())
+                && (target != null) && (weaponId != -1) && (attacker.getPosition() != null)) {
             ToHitData toHit;
-            Mounted<?> m = entity.getEquipment(weaponId);
+            Mounted<?> m = attacker.getEquipment(weaponId);
 
-            int targetDistance = entity.getPosition().distance(target.getPosition());
+            int targetDistance = attacker.getPosition().distance(target.getPosition());
 
             String distanceText = Integer.toString(targetDistance);
-            Game game = clientgui.getClient().getGame();
-            if (!game.onTheSameBoard(entity, target) && game.isOnGroundMap(entity) && game.isOnGroundMap(target)) {
-                targetDistance = CrossBoardAttackHelper.getCrossBoardGroundMapDistance(ce(), target, game);
+            if (!game.onTheSameBoard(attacker, target) && game.isOnGroundMap(attacker) && game.isOnGroundMap(target)) {
+                targetDistance = CrossBoardAttackHelper.getCrossBoardGroundMapDistance(attacker, target, game);
+                distanceText = targetDistance / 17 + " Map Sheets";
+            } else if (attacker.isOffBoard() && game.onTheSameBoard(attacker, target)) {
                 distanceText = targetDistance / 17 + " Map Sheets";
             }
 
@@ -843,7 +827,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
             String flightTimeText = "";
             if (isArtilleryAttack) {
-                ArtilleryAttackAction aaa = new ArtilleryAttackAction(entity.getId(), target.getTargetType(),
+                ArtilleryAttackAction aaa = new ArtilleryAttackAction(attacker.getId(), target.getTargetType(),
                         target.getId(), weaponId, game);
                 flightTimeText = String.format("(%d turns)", aaa.getTurnsTilHit());
             }
@@ -851,7 +835,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             clientgui.getUnitDisplay().wPan.setTarget(target, null);
             clientgui.getUnitDisplay().wPan.wRangeR.setText(String.format("%s %s", distanceText, flightTimeText));
 
-            int distance = Compute.effectiveDistance(game, entity, target);
+            int distance = Compute.effectiveDistance(game, attacker, target);
             if (m.isUsedThisRound()) {
                 clientgui.getUnitDisplay().wPan.setToHit(
                         Messages.getString("TargetingPhaseDisplay.alreadyFired"));
@@ -873,7 +857,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 setFireEnabled(true);
             } else {
                 clientgui.getUnitDisplay().wPan.setToHit(toHit,
-                      entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
+                      attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
                 setFireEnabled(true);
             }
             setSkipEnabled(true);
@@ -894,7 +878,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     private void cacheVisibleTargets() {
         clearVisibleTargets();
 
-        List<Entity> vec = clientgui.getClient().getGame().getValidTargets(ce());
+        List<Entity> vec = game.getValidTargets(ce());
         Comparator<Entity> sortComp = (x, y) -> {
             int rangeToX = ce().getPosition().distance(x.getPosition());
             int rangeToY = ce().getPosition().distance(y.getPosition());
@@ -951,8 +935,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             return;
         }
 
-        clientgui.getBoardView().centerOnHex(targ.getPosition());
-        clientgui.getBoardView().select(targ.getPosition());
+        clientgui.getBoardView(targ).centerOnHex(targ.getPosition());
+        clientgui.getBoardView(targ).select(targ.getPosition());
 
         target(targ);
     }
@@ -984,8 +968,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             return;
         }
 
-        clientgui.getBoardView().centerOnHex(targ.getPosition());
-        clientgui.getBoardView().select(targ.getPosition());
+        clientgui.getBoardView(targ).centerOnHex(targ.getPosition());
+        clientgui.getBoardView(targ).select(targ.getPosition());
 
         target(targ);
     }
@@ -1103,7 +1087,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      * @param location - the <code>location</code> containing targets.
      */
     private Targetable chooseTarget(BoardLocation location) {
-        Game game = clientgui.getClient().getGame();
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
         // Assume that we have *no* choice.
         Targetable choice = null;
@@ -1133,10 +1116,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         // Is there a building in the hex?
-        Building bldg = clientgui.getClient().getGame().getBoard()
+        Building bldg = game.getBoard()
                 .getBuildingAt(location.coords());
         if (bldg != null) {
-            targets.add(new BuildingTarget(location.coords(), clientgui.getClient().getGame()
+            targets.add(new BuildingTarget(location.coords(), game
                     .getBoard(), Targetable.TYPE_BLDG_TAG));
         }
 
@@ -1164,7 +1147,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase().isLounge()) {
+        if (game.getPhase().isLounge()) {
             endMyTurn();
         }
         // On simultaneous phases, each player ending their turn will generate a turn
@@ -1172,9 +1155,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // We want to ignore turns from other players and only listen to events we
         // generated
         // Except on the first turn
-        if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
+        if (game.getPhase().isSimultaneous(game)
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
-                && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
+                && (game.getTurnIndex() != 0)) {
             return;
         }
 
@@ -1185,7 +1168,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         String s = getRemainingPlayerWithTurns();
 
-        if (clientgui.getClient().getGame().getPhase() == phase) {
+        if (game.getPhase() == phase) {
             if (clientgui.getClient().isMyTurn()) {
                 if (currentEntity == Entity.NONE) {
                     beginMyTurn();
@@ -1213,11 +1196,11 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != phase)) {
+                && (game.getPhase() != phase)) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if (clientgui.getClient().getGame().getPhase() == phase) {
+        if (game.getPhase() == phase) {
             setStatusBarText(Messages.getString("TargetingPhaseDisplay.waitingForFiringPhase"));
         }
     }
@@ -1312,7 +1295,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 && (target != null)
                 && ce().isUsingSearchlight()
                 && ce().getCrew().isActive()
-                && SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), currentEntity, target, null));
+                && SearchlightAttackAction.isPossible(game, currentEntity, target, null));
     }
 
     private void updateClearWeaponJam(){
@@ -1403,25 +1386,25 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             return;
         }
 
-        Entity e = clientgui.getClient().getGame().getEntity(b.getEntityId());
+        Entity e = game.getEntity(b.getEntityId());
         if (clientgui.getClient().isMyTurn()) {
             if (clientgui.getClient().getMyTurn()
-                    .isValidEntity(e, clientgui.getClient().getGame())) {
+                    .isValidEntity(e, game)) {
                 selectEntity(e.getId());
             }
         } else {
             clientgui.maybeShowUnitDisplay();
             clientgui.getUnitDisplay().displayEntity(e);
             if (e.isDeployed()) {
-                clientgui.getBoardView().centerOnHex(e.getPosition());
+                clientgui.getBoardView(e).centerOnHex(e.getPosition());
             }
         }
     }
 
     @Override
     public void removeAllListeners() {
-        clientgui.getClient().getGame().removeGameListener(this);
-        clientgui.getBoardView().removeBoardViewListener(this);
+        game.removeGameListener(this);
+        clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
         clientgui.getUnitDisplay().wPan.weaponList.removeListSelectionListener(this);
     }
 
@@ -1431,7 +1414,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             return;
         }
 
-        if ((clientgui.getClient().getGame().getPhase().isTargeting()) &&
+        if ((game.getPhase().isTargeting()) &&
                 (event.getSource().equals(clientgui.getUnitDisplay().wPan.weaponList))) {
             // update target data in weapon display
             updateTarget();

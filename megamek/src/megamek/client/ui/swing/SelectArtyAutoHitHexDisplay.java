@@ -40,6 +40,8 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 
+import javax.swing.JOptionPane;
+
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     @Serial
     private static final long serialVersionUID = -4948184589134809323L;
@@ -203,20 +205,30 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     private void addArtyAutoHitHex(BoardLocation location) {
-        if (game().hasBoardLocation(location) &&
-                  !plannedAutoHits.containsKey(location) &&
-                  (plannedAutoHits.size() < startingHexes) &&
-                  clientgui.doYesNoDialog(
-                        Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"),
-                        Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message",
-                              location.getBoardNum()))) {
+        if (!game().hasBoardLocation(location)) {
+            return;
+        }
+
+        if (!plannedAutoHits.containsKey(location)) {
+            if (plannedAutoHits.size() >= startingHexes) {
+                JOptionPane.showMessageDialog(clientgui.frame,
+                      Messages.getString("SelectArtyAutoHitHexDisplay.TooManyTargets.message"),
+                      Messages.getString("SelectArtyAutoHitHexDisplay.TooManyTargets.title"),
+                      JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
             player.addArtyAutoHitHex(location);
             var autoHitIcon = SpecialHexDisplay.createArtyAutoHit(player);
             game().getBoard(location).addSpecialHexDisplay(location.coords(), autoHitIcon, true);
             plannedAutoHits.put(location, autoHitIcon);
-            setArtyEnabled(startingHexes - plannedAutoHits.size());
-            clientgui.boardViews().forEach(IBoardView::refreshDisplayables);
+        } else {
+            SpecialHexDisplay autoHitIcon = plannedAutoHits.get(location);
+            player.removeArtyAutoHitHex(location);
+            game().getBoard(location).removeSpecialHexDisplay(location.coords(), autoHitIcon, true);
+            plannedAutoHits.remove(location);
         }
+        setArtyEnabled(startingHexes - plannedAutoHits.size());
+        clientgui.boardViews().forEach(IBoardView::refreshDisplayables);
     }
 
     //

@@ -5671,6 +5671,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
                                                     WeaponMounted weapon, AmmoType atype, boolean isArtilleryDirect,
                                                     boolean isArtilleryFLAK, boolean isArtilleryIndirect,
                                                     boolean isHoming, boolean usesAmmo, SpecialResolutionTracker srt) {
+        if ((target instanceof HexTarget hexTarget) && !game.isOnGroundMap(hexTarget)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.ArtyCanOnlyHitGroundHexes"));
+        }
+
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
             te = (Entity) target;

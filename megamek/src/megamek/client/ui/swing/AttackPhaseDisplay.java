@@ -28,7 +28,7 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
 
     protected AttackPhaseDisplay(ClientGUI cg) {
         super(cg);
-        attacks = new EntityActionLog(clientgui.getClient().getGame());
+        attacks = new EntityActionLog(game);
     }
 
     /**

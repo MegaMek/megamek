@@ -64,8 +64,14 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
 
     protected Map<String, ClientCommand> clientCommands = new HashMap<>();
 
-    // BoardViews
+    /**
+     * The boardviews of the game with the board ID as the map key
+     */
     protected final Map<Integer, IBoardView> boardViews = new HashMap<>();
+
+    /**
+     * The minimaps of the game with the board ID as the map key
+     */
     protected final Map<Integer, JDialog> miniMaps = new HashMap<>();
     protected final BoardViewsContainer boardViewsContainer = new BoardViewsContainer(this);
     protected final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
@@ -227,5 +233,16 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
 
     public IBoardView getBoardView(BoardLocation boardLocation) {
         return boardViews.get(boardLocation.boardId());
+    }
+
+    /**
+     * @return The currently shown boardview. If there is only a single boardview (no tabbed pane), this will be
+     * returned. With multiple boardviews, the one in the currently selected tab is returned.
+     * <p>
+     * Unfortunately it is possible to have no selected tab in a JTabbedPane; also, theoretically, there could be no
+     * boardview. Therefore the result is returned as an Optional.
+     */
+    public Optional<IBoardView> getCurrentBoardView() {
+        return boardViewsContainer.getCurrentBoardView();
     }
 }

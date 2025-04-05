@@ -1854,12 +1854,19 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     }
 
     /**
-     * Centers the BoardView connected to the Minimap on x, y in the Minimap's pixel coordinates.
+     * Changes the currently shown boardview to this minimap's own board.
      */
-    private void centerOnPos(double x, double y) {
+    private void ShowThisBoardView() {
         if (clientGui instanceof AbstractClientGUI abstractClientGUI) {
             abstractClientGUI.showBoardView(boardId);
         }
+    }
+
+    /**
+     * Centers the BoardView connected to the Minimap on x, y in the Minimap's pixel coordinates.
+     */
+    private void centerOnPos(double x, double y) {
+        ShowThisBoardView();
         bv.centerOnPointRel(
                 ((x - leftMargin)) / ((HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom]) * board.getWidth()),
                 ((y - topMargin)) / (2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight()));
@@ -1943,6 +1950,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         public void mouseReleased(MouseEvent me) {
             if (me.isPopupTrigger()) {
                 showPopup(me);
+            } else {
+                ShowThisBoardView();
             }
         }
 
@@ -1950,6 +1959,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         public void mousePressed(MouseEvent me) {
             if (me.isPopupTrigger()) {
                 showPopup(me);
+            } else {
+                ShowThisBoardView();
             }
         }
 

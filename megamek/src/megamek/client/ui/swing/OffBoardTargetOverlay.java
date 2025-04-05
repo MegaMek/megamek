@@ -349,7 +349,14 @@ public class OffBoardTargetOverlay implements IDisplayable {
                 targetingPhaseDisplay.ce().getEquipmentNum(clientgui.getBoardView().getSelectedArtilleryWeapon()),
                 clientgui.getClient().getGame());
 
-            targetingPhaseDisplay.updateDisplayForPendingAttack(clientgui.getBoardView().getSelectedArtilleryWeapon(), waa);
+            // Only add if chance of success.
+            // TODO: properly display any toHit "IMPOSSIBLE" reasons
+            if (!waa.toHit(getCurrentGame(), true).cannotSucceed()) {
+                targetingPhaseDisplay.updateDisplayForPendingAttack(
+                      clientgui.getBoardView().getSelectedArtilleryWeapon(),
+                      waa
+                );
+            }
         }
     }
 }

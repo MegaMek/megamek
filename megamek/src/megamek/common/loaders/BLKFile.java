@@ -929,7 +929,7 @@ public class BLKFile {
         }
 
         if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT) || t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            blk.writeBlockData("structural_integrity", ((Aero) t).get0SI());
+            blk.writeBlockData("structural_integrity", ((Aero) t).getOSI());
         }
 
         if (!t.getFluff().getCapabilities().isBlank()) {

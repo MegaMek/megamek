@@ -1207,6 +1207,11 @@ public class Compute {
             te = (Entity) target;
         }
 
+        // No _standard_ range mods for Artillery Flak or ADA vs airborne Aerospace or VTOL/WiGE
+        if (wtype.hasFlag(WeaponType.F_ARTILLERY) && (target.isAirborne() || target.isAirborneVTOLorWIGE())) {
+            return mods;
+        }
+
         // We need to adjust the ranges for Centurion Weapon Systems: it's
         // default range is 6/12/18 but that's only for units that are
         // susceptible to CWS, for those that aren't the ranges are 1/2/3
@@ -3878,7 +3883,7 @@ public class Compute {
                                         && (abin_type.getMunitionType().contains(AmmoType.Munitions.M_NEMESIS))
                                         && !(target instanceof Infantry)) {
                                     if (!target.isINarcedWith(INarcPod.NEMESIS)) {
-                                        ex_damage = (double) (target.getWalkMP() + target.getJumpMP()) / 2;
+                                        ex_damage = (double) (target.getWalkMP() + target.getAnyTypeMaxJumpMP()) / 2;
                                     } else {
                                         ex_damage = 0.5;
                                     }

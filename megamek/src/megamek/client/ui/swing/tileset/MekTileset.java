@@ -39,15 +39,13 @@ import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;
 import megamek.logging.MMLogger;
 
 /**
- * MekTileset is a misleading name, as this matches any unit, not just Meks
- * with the appropriate image. It requires mekset.txt (in the unit images
- * directory), the
- * format of which is explained in that file.
+ * MekTileSet is a misleading name, as this matches any unit, not just Meks with the appropriate image. It requires
+ * mekset.txt (in the unit images directory), the format of which is explained in that file.
  *
  * @author Ben
  */
 public class MekTileset {
-    private static final MMLogger logger = MMLogger.create(MekTileset.class);
+    private static final MMLogger LOGGER = MMLogger.create(MekTileset.class);
 
     public static final String CHASSIS_KEY = "chassis";
     public static final String MODEL_KEY = "exact";
@@ -170,7 +168,7 @@ public class MekTileset {
     /**
      * Creates new MekTileset.
      *
-     * @param dir_path Path to the tileset directory.
+     * @param dir_path Path to the tile set directory.
      */
     public MekTileset(File dir_path) {
         Objects.requireNonNull(dir_path, "Must provide dir_path");
@@ -190,9 +188,8 @@ public class MekTileset {
         MekEntry entry = entryFor(entity, secondaryPos);
 
         if (entry == null) {
-            logger.warn("Entry is null, please make sure that there is a default entry for "
-                    + entity.getShortNameRaw() + " in both mekset.txt and wreckset.txt. Defaulting to "
-                    + LIGHT_STRING);
+            LOGGER.warn("Entry is null, please make sure that there is a default entry for {} in both mekset.txt and" +
+                              " wreckset.txt. Defaulting to {}", entity.getShortNameRaw(), LIGHT_STRING);
             entry = default_light;
         }
 
@@ -234,37 +231,25 @@ public class MekTileset {
         } else if (entity instanceof TripodMek) {
             return default_tripod;
         } else if (entity instanceof QuadVee) {
-            return entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE
-                    ? default_quadvee_vehicle
-                    : default_quadvee;
+            return entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE ? default_quadvee_vehicle : default_quadvee;
         } else if (entity instanceof LandAirMek) {
-            switch (entity.getConversionMode()) {
-                case LandAirMek.CONV_MODE_FIGHTER:
-                    return default_lam_fighter;
-                case LandAirMek.CONV_MODE_AIRMEK:
-                    return default_lam_airmek;
-                default:
-                    return default_lam_mek;
-            }
+            return switch (entity.getConversionMode()) {
+                case LandAirMek.CONV_MODE_FIGHTER -> default_lam_fighter;
+                case LandAirMek.CONV_MODE_AIRMEK -> default_lam_airmek;
+                default -> default_lam_mek;
+            };
         } else if (entity instanceof Mek) {
             if (entity.getMovementMode() == EntityMovementMode.QUAD) {
                 return default_quad;
             } else {
-                switch (entity.getWeightClass()) {
-                    case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
-                        return default_ultra_light;
-                    case EntityWeightClass.WEIGHT_LIGHT:
-                        return default_light;
-                    case EntityWeightClass.WEIGHT_MEDIUM:
-                        return default_medium;
-                    case EntityWeightClass.WEIGHT_HEAVY:
-                        return default_heavy;
-                    case EntityWeightClass.WEIGHT_SUPER_HEAVY:
-                        return default_super_heavy_mek;
-                    case EntityWeightClass.WEIGHT_ASSAULT:
-                    default:
-                        return default_assault;
-                }
+                return switch (entity.getWeightClass()) {
+                    case EntityWeightClass.WEIGHT_ULTRA_LIGHT -> default_ultra_light;
+                    case EntityWeightClass.WEIGHT_LIGHT -> default_light;
+                    case EntityWeightClass.WEIGHT_MEDIUM -> default_medium;
+                    case EntityWeightClass.WEIGHT_HEAVY -> default_heavy;
+                    case EntityWeightClass.WEIGHT_SUPER_HEAVY -> default_super_heavy_mek;
+                    default -> default_assault;
+                };
             }
         } else if (entity.getMovementMode() == EntityMovementMode.NAVAL) {
             return default_naval;
@@ -290,14 +275,11 @@ public class MekTileset {
                     return default_wige;
                 case TRACKED:
                 default:
-                    switch (entity.getWeightClass()) {
-                        case EntityWeightClass.WEIGHT_HEAVY:
-                            return default_tracked_heavy;
-                        case EntityWeightClass.WEIGHT_ASSAULT:
-                            return default_tracked_assault;
-                        default:
-                            return default_tracked;
-                    }
+                    return switch (entity.getWeightClass()) {
+                        case EntityWeightClass.WEIGHT_HEAVY -> default_tracked_heavy;
+                        case EntityWeightClass.WEIGHT_ASSAULT -> default_tracked_assault;
+                        default -> default_tracked;
+                    };
             }
         } else if (entity instanceof Aero) {
             if (entity instanceof SpaceStation) {
@@ -306,53 +288,20 @@ public class MekTileset {
                 return default_warship;
             } else if (entity instanceof Jumpship) {
                 return default_jumpship;
-            } else if (entity instanceof Dropship) {
-                Dropship ds = (Dropship) entity;
-                if (ds.isSpheroid()) {
-                    switch (secondaryPos) {
-                        case 0:
-                            return default_dropship_sphere_0;
-                        case 1:
-                            return default_dropship_sphere_1;
-                        case 2:
-                            return default_dropship_sphere_2;
-                        case 3:
-                            return default_dropship_sphere_3;
-                        case 4:
-                            return default_dropship_sphere_4;
-                        case 5:
-                            return default_dropship_sphere_5;
-                        case 6:
-                            return default_dropship_sphere_6;
-                        case -1:
-                        default:
-                            return default_dropship_sphere;
-                    }
-                } else {
-                    switch (secondaryPos) {
-                        case 0:
-                            return default_dropship_aero_0;
-                        case 1:
-                            return default_dropship_aero_1;
-                        case 2:
-                            return default_dropship_aero_2;
-                        case 3:
-                            return default_dropship_aero_3;
-                        case 4:
-                            return default_dropship_aero_4;
-                        case 5:
-                            return default_dropship_aero_5;
-                        case 6:
-                            return default_dropship_aero_6;
-                        case -1:
-                        default:
-                            return default_dropship_aero;
-                    }
-                }
+            } else if (entity instanceof Dropship ds) {
+                return switch (secondaryPos) {
+                    case 0 -> ds.isSpheroid() ? default_dropship_sphere_0 : default_dropship_aero_0;
+                    case 1 -> ds.isSpheroid() ? default_dropship_sphere_1 : default_dropship_aero_1;
+                    case 2 -> ds.isSpheroid() ? default_dropship_sphere_2 : default_dropship_aero_2;
+                    case 3 -> ds.isSpheroid() ? default_dropship_sphere_3 : default_dropship_aero_3;
+                    case 4 -> ds.isSpheroid() ? default_dropship_sphere_4 : default_dropship_aero_4;
+                    case 5 -> ds.isSpheroid() ? default_dropship_sphere_5 : default_dropship_aero_5;
+                    case 6 -> ds.isSpheroid() ? default_dropship_sphere_6 : default_dropship_aero_6;
+                    default -> ds.isSpheroid() ? default_dropship_sphere : default_dropship_aero;
+                };
             } else if (entity instanceof FighterSquadron) {
                 return default_fighter_squadron;
-            } else if (entity instanceof SmallCraft) {
-                SmallCraft sc = (SmallCraft) entity;
+            } else if (entity instanceof SmallCraft sc) {
                 if (sc.isSpheroid()) {
                     return default_small_craft_sphere;
                 } else {
@@ -371,8 +320,9 @@ public class MekTileset {
     }
 
     public void loadFromFile(String filename) throws IOException {
-        logger.info("Loading unit icons from {}", filename);
-        try (Reader r = new BufferedReader(new FileReader(new MegaMekFile(dir, filename).getFile(), StandardCharsets.UTF_8))) {
+        LOGGER.info("Loading unit icons from {}", filename);
+        try (Reader r = new BufferedReader(new FileReader(new MegaMekFile(dir, filename).getFile(),
+              StandardCharsets.UTF_8))) {
             StandardTextfileStreamTokenizer tokenizer = new StandardTextfileStreamTokenizer(r);
             while (true) {
                 List<String> tokens = tokenizer.getLineTokens();
@@ -383,7 +333,7 @@ public class MekTileset {
                         try {
                             loadFromFile(tokens.get(1));
                         } catch (IOException e) {
-                            logger.error("... failed: {}.", e.getMessage(), e);
+                            LOGGER.error("... failed: {}.", e.getMessage(), e);
                         }
                     } else if (tokens.get(0).equals(CHASSIS_KEY)) {
                         chassis.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));
@@ -391,7 +341,7 @@ public class MekTileset {
                         exact.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));
                     }
                 } else {
-                    logger.warn("Malformed line in {}: {}", filename, tokens.toString());
+                    LOGGER.warn("Malformed line in {}: {}", filename, tokens.toString());
                 }
             }
         }
@@ -453,16 +403,15 @@ public class MekTileset {
     }
 
     boolean hasOnlyChassisMatch(Entity entity) {
-        return !exact.containsKey(entity.getShortNameRaw().toUpperCase(Locale.ROOT))
-                && chassis.containsKey(entity.getShortNameRaw().toUpperCase(Locale.ROOT));
+        return !exact.containsKey(entity.getShortNameRaw().toUpperCase(Locale.ROOT)) &&
+                     chassis.containsKey(entity.getShortNameRaw().toUpperCase(Locale.ROOT));
     }
 
     /**
-     * Stores the name, image file name, and image (once loaded) for a mek or
-     * other entity
+     * Stores the name, image file name, and image (once loaded) for a mek or other entity
      */
     public class MekEntry {
-        private String imageFile;
+        private final String imageFile;
         private Image image;
 
         public MekEntry(String imageFile) {
@@ -478,7 +427,7 @@ public class MekTileset {
             File fin = new MegaMekFile(dir, imageFile).getFile();
             image = ImageUtil.loadImageFromFile(fin.toString());
             if (image == null) {
-                logger.warn("Received null image from ImageUtil.loadImageFromFile! File: %s", fin);
+                LOGGER.warn("Received null image from ImageUtil.loadImageFromFile! File: {}", fin);
             }
         }
     }

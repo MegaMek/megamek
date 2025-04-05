@@ -115,7 +115,7 @@ public class WarshipMapSet implements DisplayMapSet {
 
         }
         a = t.getSI();
-        a0 = t.get0SI();
+        a0 = t.getOSI();
         vLabels[6].setValue(Integer.toString(t.getSI()));
         WidgetUtils.setAreaColor(areas[6], vLabels[6], (double) a / (double) a0);
 

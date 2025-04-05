@@ -1,5 +1,24 @@
 MEGAMEK VERSION HISTORY:
 ----------------
+0.50.05-SNAPSHOT
++ Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1
++ PR #6752: Mek jump boosters and jump jets
++ PR #6758: Removed Deprecated methods from MMLogger and updated impacted calls
++ PR #6764: GitHub CodeQL Error Fixes
++ PR #6763: MM-side fix for MHQ 6373: Prevent impossible Counter-Battery Fire shots from being taken 
++ PR #6779: Fixed Missing Prone Modifier in Weapon Attack Calculation 
++ PR #6777: Added Missing Handheld Weapon Unit Type to Messages Properties 
++ PR #6776: Corrected Spelling of 'Land Air' Unit Type 
++ PR #6774: Removed 3 Duplicate Callsigns 
++ PR #6771: Add missing type check for MiscType 
++ PR #6770: Fixed ConcurrentModification Exceptions In BV Calculation Methods 
++ PR #6768: Fixed issues with Implicit narrowing conversion in compound assignment. 
++ PR #6782: add Save As to the board preview in the lobby 
++ PR #6795: Fixes for various Artillery and Artillery Flak issues
++ PR #6796: feat: add a callsign to princess instead of numbers
++ PR #6806: Added Method for Variable Cost Check in MiscType
++ Fix #6807: Auto-set SI in ASFs
+
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width
 + PR #6489: PPC Capacitors must all be linked to a PPC

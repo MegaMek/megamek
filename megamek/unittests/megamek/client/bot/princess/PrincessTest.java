@@ -110,6 +110,7 @@ class PrincessTest {
         Entity mockMek = mock(BipedMek.class);
         when(mockMek.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(9);
         when(mockMek.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(6);
+        when(mockMek.getAnyTypeMaxJumpMP()).thenReturn(0);
         when(mockMek.isProne()).thenReturn(false);
         when(mockMek.isCommander()).thenReturn(false);
         when(mockMek.isMilitary()).thenReturn(true);
@@ -164,7 +165,7 @@ class PrincessTest {
         // Test a BA unit.
         Entity mockBA = mock(BattleArmor.class);
         when(mockBA.getRunMP()).thenReturn(1);
-        when(mockBA.getJumpMP()).thenReturn(3);
+        when(mockBA.getAnyTypeMaxJumpMP()).thenReturn(3);
         when(mockBA.isProne()).thenReturn(false);
         when(mockBA.isCommander()).thenReturn(false);
         when(mockBA.isMilitary()).thenReturn(true);
@@ -178,6 +179,7 @@ class PrincessTest {
         // Test an Inf unit.
         Entity mockInf = mock(Infantry.class);
         when(mockInf.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(1);
+        when(mockInf.getAnyTypeMaxJumpMP()).thenReturn(0);
         when(mockInf.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(0);
         when(mockInf.isProne()).thenReturn(false);
         when(mockInf.isCommander()).thenReturn(false);
@@ -192,6 +194,7 @@ class PrincessTest {
         // Test a Tank.
         Entity mockTank = mock(Tank.class);
         when(mockTank.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(6);
+        when(mockInf.getAnyTypeMaxJumpMP()).thenReturn(0);
         when(mockTank.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(0);
         when(mockTank.isProne()).thenReturn(false);
         when(mockTank.isCommander()).thenReturn(false);

@@ -110,7 +110,7 @@ public class SpheroidMapSet implements DisplayMapSet{
 
         }
         a = t.getSI();
-        a0 = t.get0SI();
+        a0 = t.getOSI();
         vLabels[4].setValue(Integer.toString(t.getSI()));
         WidgetUtils.setAreaColor(areas[4], vLabels[4], (double) a / (double) a0);
 

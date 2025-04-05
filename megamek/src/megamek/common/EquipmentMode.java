@@ -14,24 +14,23 @@
 
 package megamek.common;
 
-import megamek.common.weapons.Weapon;
-
 import java.util.Hashtable;
 import java.util.Objects;
+
+import megamek.common.weapons.Weapon;
 
 /**
  * <p>
  * Class EquipmentMode describes a Equipment's particular mode.
  * <p>
- * The <code>getDisplayableName</code> method allows you to obtain the
- * localized string from a predefined <code>ResourceBundle</code>.
+ * The <code>getDisplayableName</code> method allows you to obtain the localized string from a predefined
+ * <code>ResourceBundle</code>.
  * <p>
- * The <code>equals</code> function allows to check if the mode is equivalent
- * to the mode identified by the given name.
+ * The <code>equals</code> function allows to check if the mode is equivalent to the mode identified by the given name.
  * <p>
- * There is no way to create the instance of the <code>EquipmentMode</code>
- * directly, use <code>EquipmentMode#getMode</code> instead.
- * 
+ * There is no way to create the instance of the <code>EquipmentMode</code> directly, use
+ * <code>EquipmentMode#getMode</code> instead.
+ *
  * @see megamek.common.EquipmentType
  * @see megamek.common.Mounted
  */
@@ -43,18 +42,16 @@ public class EquipmentMode {
     protected static Hashtable<String, EquipmentMode> modesHash = new Hashtable<>();
 
     /**
-     * Unique internal mode identifier. Used as the part of the key to look for
-     * the displayable name presented to user.
+     * Unique internal mode identifier. Used as the part of the key to look for the displayable name presented to user.
      */
     protected String name;
 
     /**
      * <p>
-     * Protected constructor since we don't allow direct creation of the mode.
-     * Modes available via <code>getMode</code>
+     * Protected constructor since we don't allow direct creation of the mode. Modes available via <code>getMode</code>
      * <p>
-     * Contructs the new mode denoted by the given name.
-     * 
+     * Constructs the new mode denoted by the given name.
+     *
      * @param name unique mode identifier
      */
     protected EquipmentMode(String name) {
@@ -74,7 +71,7 @@ public class EquipmentMode {
     public String getDisplayableName() {
         return getDisplayableName(false);
     }
-    
+
     /**
      * @return the localized displayable name presented by the GUI to the user.
      */
@@ -93,26 +90,36 @@ public class EquipmentMode {
 
     /**
      * @param name mode name
+     *
      * @return unique mode that corresponds to the given name
      */
     public static EquipmentMode getMode(String name) {
-        EquipmentMode mode = modesHash.get(name);
-        if (mode == null) {
-            mode = new EquipmentMode(name);
-            modesHash.put(name, mode);
-        }
-        return mode;
+        return modesHash.computeIfAbsent(name, EquipmentMode::new);
     }
 
     /**
-     * @param modeName The name of the mode to compare with
-     * @return <code>true</code> if this mode equals to the mode denoted by
-     *         the given name
+     * @param modeName The name of the mode to compare with. Overloaded just for {@code String} classes.
+     *
+     * @return <code>true</code> if this mode equals to the mode denoted by the given name
+     */
+    @Override
+    public boolean equals(Object modeName) {
+        if (modeName instanceof EquipmentMode) {
+            return this.hashCode() == modeName.hashCode();
+        }
+
+        return false;
+    }
+
+    /**
+     * @param modeName The name of the mode to compare with. Overloaded just for {@code String} classes.
+     *
+     * @return <code>true</code> if this mode equals to the mode denoted by the given name
      */
     public boolean equals(String modeName) {
         return name.equals(modeName);
     }
-    
+
     @Override
     public String toString() {
         return getName();
@@ -124,5 +131,10 @@ public class EquipmentMode {
 
     public boolean isIndirect() {
         return name.equals(Weapon.MODE_MISSILE_INDIRECT) || name.equals(Weapon.MODE_INDIRECT_HEAT);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 }

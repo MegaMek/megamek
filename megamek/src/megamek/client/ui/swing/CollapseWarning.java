@@ -92,7 +92,7 @@ public final class CollapseWarning {
             }
 
             Coords pos = e.getPosition();
-            int range = Math.max(e.getJumpMP(), e.getRunMP());
+            int range = Math.max(e.getAnyTypeMaxJumpMP(), e.getRunMP());
 
             List<Coords> hexesToCheck = new ArrayList<Coords>();
             if (pos != null) {

@@ -3,8 +3,9 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 allprojects {
@@ -15,7 +16,7 @@ allprojects {
 
 subprojects {
     group = 'org.megamek'
-    version = '0.50.04'
+    version = '0.50.05-SNAPSHOT'
 }
 
 

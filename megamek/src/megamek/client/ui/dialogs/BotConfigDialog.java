@@ -60,6 +60,7 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
+import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMComboBox;
@@ -78,6 +79,7 @@ import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.internationalization.Internationalization;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
@@ -266,15 +268,18 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
      * and subsequently adds numbers (Princess1 etc.) until a free one is found.
      */
     private String getFreePrincessName() {
-        String baseName = "Princess";
-        String name = baseName;
+        String name = "Princess";
         if (client != null) {
             int counter = 0;
             Set<String> playerNames = client.getGame().getPlayersList().stream().map(Player::getName)
                     .collect(Collectors.toSet());
             while (playerNames.contains(name) && counter < 1000) {
                 counter++;
-                name = baseName + counter;
+                name = "Princess-" + Internationalization.normalizeTextToASCII(
+                      RandomCallsignGenerator.getInstance().generate(),
+                      true
+                ).replace(" ", "-");
+
             }
         }
         return name;

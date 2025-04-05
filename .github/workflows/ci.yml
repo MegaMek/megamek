@@ -2,7 +2,7 @@ name: MegaMek CI with Gradle
 
 on:
   pull_request:
-    branches: [master]
+    branches: [ master ]
 
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
@@ -13,9 +13,9 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        java-distribution: [temurin]
-        java-version: [17]
+        os: [ ubuntu-latest ]
+        java-distribution: [ temurin ]
+        java-version: [ 17 ]
       fail-fast: false
 
     steps:
@@ -37,9 +37,9 @@ jobs:
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
           build-scan-terms-of-use-agree: "yes"
 
-      - name: Build with Gradle
+      - name: Test
         working-directory: megamek
-        run: ./gradlew build  -x checkstyleMain -x checkstyleTest --stacktrace --scan
+        run: ./gradlew test
 
       - name: Upload Test Logs on Failure
         uses: actions/upload-artifact@v4
@@ -54,6 +54,10 @@ jobs:
           directory: ./megamek/megamek/build/reports/jacoco/test
           fail_ci_if_error: false
           verbose: true
+
+      - name: Build with Gradle
+        working-directory: megamek
+        run: ./gradlew build -x test
 
       - name: Upload TarGZ Release
         uses: actions/upload-artifact@v4

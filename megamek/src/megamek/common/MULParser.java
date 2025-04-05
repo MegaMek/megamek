@@ -2524,7 +2524,7 @@ public class MULParser {
         String value = OsiTag.getAttribute(ATTR_NUMBER);
         try {
             int newSI = Integer.parseInt(value);
-            ((Aero) entity).set0SI(newSI);
+            ((Aero) entity).setOSI(newSI);
         } catch (Exception ignored) {
             warning.append("Invalid SI value in original structural integrity tag.\n");
         }

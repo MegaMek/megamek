@@ -27,6 +27,7 @@ import megamek.common.EntityMovementType;
 import megamek.common.MovePath;
 import megamek.common.Targetable;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.message.ParameterizedMessage;
 
 /**
  * EntityState describes a hypothetical situation an entity could be in when firing
@@ -39,52 +40,51 @@ public class EntityState {
     private int facing;
     private int secondaryFacing; // to account for torso twists
     private int heat;
-    private int hexesMoved;
-    private boolean prone;
-    private boolean immobile;
-    private boolean jumping;
-    private EntityMovementType movementType;
+    private final int hexesMoved;
+    private final boolean prone;
+    private final boolean immobile;
+    private final boolean jumping;
+    private final EntityMovementType movementType;
     private boolean building;
     private boolean aero;
     private boolean airborne;
-    private boolean naturalAptGun;
-    private boolean naturalAptPilot;
+    private final boolean naturalAptGun;
+    private final boolean naturalAptPilot;
 
     /**
-     * Initialize an entity state from the state an entity is actually in
-     * (or something that isn't an entity)
+     * Initialize an entity state from the state an entity is actually in (or something that isn't an entity)
      */
     EntityState(Targetable target) {
-        if (target instanceof Entity entity) { // Meks and planes and tanks etc
-            position = entity.getPosition();
-            facing = entity.getFacing();
-            hexesMoved = entity.delta_distance;
-            heat = entity.heat;
-            prone = entity.isProne() || entity.isHullDown();
-            immobile = entity.isImmobile();
-            jumping = (entity.moved == EntityMovementType.MOVE_JUMP);
-            movementType = entity.moved;
-            setSecondaryFacing(entity.getSecondaryFacing());
-            building = false;
-            aero = target.isAero();
-            airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
-            naturalAptGun = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-            naturalAptPilot = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
-        } else { // for buildings and such
-            position = target.getPosition();
-            facing = 0;
-            hexesMoved = 0;
-            heat = 0;
-            prone = false;
-            immobile = true;
-            jumping = false;
-            movementType = EntityMovementType.MOVE_NONE;
-            setSecondaryFacing(0);
-            building = (target instanceof BuildingTarget);
-            aero = false;
-            naturalAptGun = false;
-            naturalAptPilot = false;
-        }
+        position = target.getPosition();
+        facing = 0;
+        hexesMoved = 0;
+        heat = 0;
+        prone = false;
+        immobile = true;
+        jumping = false;
+        movementType = EntityMovementType.MOVE_NONE;
+        setSecondaryFacing(0);
+        building = (target instanceof BuildingTarget);
+        aero = false;
+        naturalAptGun = false;
+        naturalAptPilot = false;
+    }
+
+    EntityState(Entity entity) {
+        position = entity.getPosition();
+        facing = entity.getFacing();
+        hexesMoved = entity.delta_distance;
+        heat = entity.heat;
+        prone = entity.isProne() || entity.isHullDown();
+        immobile = entity.isImmobile();
+        jumping = (entity.moved == EntityMovementType.MOVE_JUMP);
+        movementType = entity.moved;
+        setSecondaryFacing(entity.getSecondaryFacing());
+        building = false;
+        aero = entity.isAero();
+        airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
+        naturalAptGun = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        naturalAptPilot = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
     }
 
     /**
@@ -95,17 +95,17 @@ public class EntityState {
         facing = path.getFinalFacing();
         hexesMoved = path.getHexesMoved();
         heat = path.getEntity().heat;
+
         if (path.getLastStepMovementType() == EntityMovementType.MOVE_WALK) {
             heat = getHeat() + 1;
         } else if (path.getLastStepMovementType() == EntityMovementType.MOVE_RUN) {
             heat = getHeat() + 2;
-        } else if ((path.getLastStepMovementType() == EntityMovementType.MOVE_JUMP)
-                   && (getHexesMoved() <= 3)) {
+        } else if ((path.getLastStepMovementType() == EntityMovementType.MOVE_JUMP) && (getHexesMoved() <= 3)) {
             heat = getHeat() + 3;
-        } else if ((path.getLastStepMovementType() == EntityMovementType.MOVE_JUMP)
-                   && (getHexesMoved() > 3)) {
+        } else if ((path.getLastStepMovementType() == EntityMovementType.MOVE_JUMP) && (getHexesMoved() > 3)) {
             heat = getHeat() + getHexesMoved();
         }
+
         prone = path.getFinalProne() || path.getFinalHullDown();
         immobile = path.getEntity().isImmobile();
         jumping = path.isJumping();
@@ -186,5 +186,26 @@ public class EntityState {
 
     public boolean hasNaturalAptPiloting() {
         return naturalAptPilot;
+    }
+
+    @Override
+    public String toString() {
+        return new ParameterizedMessage("EntityState{ position = {}, movementType = {}, facing = {}, secondaryFacing" +
+                                              " = {}, heat = {}, hexesMoved = {}, prone = {}, immobile = {}, building" +
+                                              " = {}, aero = {}, airborne = {}, naturalAptGun = {}, naturalAptPilot = {}, }",
+              position,
+              movementType,
+              facing,
+              secondaryFacing,
+              heat,
+              hexesMoved,
+              prone,
+              immobile,
+              jumping,
+              building,
+              aero,
+              airborne,
+              naturalAptGun,
+              naturalAptPilot).getFormattedMessage();
     }
 }

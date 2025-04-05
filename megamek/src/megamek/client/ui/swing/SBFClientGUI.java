@@ -491,7 +491,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
      * @param mvEnvData The movement envelope data
      */
     public void showMovementEnvelope(SBFFormation formation, Map<Coords, Integer> mvEnvData) {
-        movementEnvelopeHandler.setMovementEnvelope(mvEnvData, formation.getMovement(),
+        movementEnvelopeHandler.setMovementEnvelope(mvEnvData, 0, formation.getMovement(),
                 formation.getMovement(), formation.getMovement(), MovementDisplay.GEAR_JUMP);
     }
 

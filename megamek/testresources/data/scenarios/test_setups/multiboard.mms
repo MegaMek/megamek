@@ -58,9 +58,10 @@ factions:
     at: [13,10]
     board: 1
     facing: 2
-#  - fullname: Locust LCT-1V
-#    board: 8
-#    at: [ 4,4 ]
+
+  - fullname: Locust LCT-1V
+    board: 0
+    at: [ 4,4 ]
 
 #  - fullname: Atlas AS7-D
 

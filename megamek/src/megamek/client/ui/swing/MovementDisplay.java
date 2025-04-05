@@ -648,6 +648,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         if (!clientgui.getBoardView().isMovingUnits()) {
+            clientgui.showBoardView(ce.getBoardId());
             clientgui.getBoardView().centerOnHex(ce.getPosition());
         }
 

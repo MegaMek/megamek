@@ -26,6 +26,7 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.FiringDisplay.FiringCommand;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -330,12 +331,12 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             refreshAll();
         }
         Client client = clientgui.getClient();
-        if ((ce() != null) && ce().isWeapOrderChanged()) {
-            client.sendEntityWeaponOrderUpdate(ce());
+        Entity entity = client.getGame().getEntity(en);
+        if ((entity != null) && entity.isWeapOrderChanged()) {
+            client.sendEntityWeaponOrderUpdate(entity);
         }
 
-        if (client.getGame().getEntity(en) != null) {
-
+        if (entity != null) {
             currentEntity = en;
             clientgui.setSelectedEntityNum(en);
 
@@ -345,9 +346,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
                 // Walk through the list of entities for this player.
                 for (int nextId = client.getNextEntityNum(en); nextId != en; nextId = client.getNextEntityNum(nextId)) {
-
-                    if (null != clientgui.getClient().getGame()
-                            .getEntity(nextId).getPosition()) {
+                    if (null != clientgui.getClient().getGame().getEntity(nextId).getPosition()) {
                         currentEntity = nextId;
                         break;
                     }
@@ -362,25 +361,25 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             }
 
             target(null);
-            clientgui.getBoardView().highlight(ce().getPosition());
-            clientgui.getBoardView().select(null);
-            clientgui.getBoardView().cursor(null);
+            clientgui.getBoardView(entity).clearMarkedHexes();
+            clientgui.getBoardView(entity).highlight(entity.getPosition());
 
             refreshAll();
             cacheVisibleTargets();
 
-            if (!clientgui.getBoardView().isMovingUnits() && !ce().isOffBoard()) {
-                clientgui.getBoardView().centerOnHex(ce().getPosition());
+            if (!((BoardView) clientgui.getBoardView(entity)).isMovingUnits() && !entity.isOffBoard()) {
+                clientgui.showBoardView(entity.getBoardId());
+                clientgui.getBoardView(entity).centerOnHex(entity.getPosition());
             }
 
-            setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
-            setFlipArmsEnabled(ce().canFlipArms() && ce().getCrew().isActive());
+            setTwistEnabled(entity.canChangeSecondaryFacing() && entity.getCrew().isActive());
+            setFlipArmsEnabled(entity.canFlipArms() && entity.getCrew().isActive());
             updateSearchlight();
 
             setFireModeEnabled(true);
 
-            if (!ce().isOffBoard()) {
-                clientgui.showFiringSolutions(ce());
+            if (!entity.isOffBoard()) {
+                clientgui.showFiringSolutions(entity);
             }
 
             updateClearWeaponJam();
@@ -448,17 +447,17 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      */
     private void endMyTurn() {
         stopTimer();
-
+        Game game = clientgui.getClient().getGame();
         // end my turn, then.
-        Entity next = clientgui.getClient().getGame()
-                .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-        if ((phase == clientgui.getClient().getGame().getPhase())
+        Entity next = game.getNextEntity(game.getTurnIndex());
+        if ((phase == game.getPhase())
                 && (null != next) && (null != ce())
                 && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
         currentEntity = Entity.NONE;
         target(null);
+
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
@@ -515,12 +514,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // notify the player
         if (m.canInstantSwitch(nMode)) {
             clientgui.systemMessage(Messages.getString(
-                    "FiringDisplay.switched", new Object[] { m.getName(),
-                            m.curMode().getDisplayableName() }));
+                    "FiringDisplay.switched", m.getName(), m.curMode().getDisplayableName()));
         } else {
             clientgui.systemMessage(Messages.getString(
-                    "FiringDisplay.willSwitch", new Object[] { m.getName(),
-                            m.pendingMode().getDisplayableName() }));
+                    "FiringDisplay.willSwitch", m.getName(), m.pendingMode().getDisplayableName()));
         }
 
         updateTarget();
@@ -559,7 +556,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // remove temporary attacks from game & board
         removeTempAttacks();
 
-        // If the only action is a torso/turret twist, discard it as it would have no effect for the unit but prevent twisting later
+        // If the only action is a torso/turret twist, discard it as it would have no effect for the unit but
+        // prevent twisting later
         if ((attacks.size() == 1) && (attacks.firstElement() instanceof TorsoTwistAction)) {
             attacks.clear();
         }
@@ -767,7 +765,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     private void removeTempAttacks() {
         // remove temporary attacks from game & board
         clientgui.getClient().getGame().removeActionsFor(currentEntity);
-        clientgui.getBoardView().removeAttacksFor(ce());
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).removeAttacksFor(ce()));
     }
 
     /**

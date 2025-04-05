@@ -32,6 +32,10 @@ public enum MovementClassification {
     DEFENSIVE(1),
     HOLD_POSITION(2);
 
+    /**
+     * The value associated with the movement classification.
+     * It is defined by how the tensorflow model was trained and the data generated and tagged.
+     */
     private final int value;
 
     MovementClassification(int value) {
@@ -52,5 +56,14 @@ public enum MovementClassification {
 
     public boolean isHoldPosition() {
         return this == HOLD_POSITION;
+    }
+
+    public static MovementClassification fromValue(int value) {
+        for (MovementClassification classification : values()) {
+            if (classification.value == value) {
+                return classification;
+            }
+        }
+        throw new IllegalArgumentException("Invalid value: " + value);
     }
 }

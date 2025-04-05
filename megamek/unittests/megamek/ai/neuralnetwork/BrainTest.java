@@ -163,7 +163,7 @@ public class BrainTest {
      */
     private static MovementClassification getMovementClassificationFromSplitLine(String[] values) {
         // The last value in the line is the classification
-        return MovementClassification.values()[Integer.parseInt(values[values.length-1])];
+        return MovementClassification.fromValue(Integer.parseInt(values[values.length-1]));
     }
 
     /**

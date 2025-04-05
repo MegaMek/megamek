@@ -1306,10 +1306,13 @@ public class Infantry extends Entity {
     }
 
     public double calcDamageDivisor() {
-        double divisor = 1.0;
+        double divisor;
         EquipmentType armorKit = getArmorKit();
         if (armorKit != null) {
             divisor = ((MiscType) armorKit).getDamageDivisor();
+        } else {
+            // For custom armor kits, which aren't found by getArmorKit()
+            divisor = getArmorDamageDivisor();
         }
         // TSM implant reduces divisor to 0.5 if no other armor is worn
         if ((divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {

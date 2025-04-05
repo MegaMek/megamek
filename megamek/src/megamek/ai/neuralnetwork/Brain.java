@@ -27,7 +27,13 @@
  */
 package megamek.ai.neuralnetwork;
 
+import static megamek.codeUtilities.MathUtility.clamp01;
+
+import java.util.Map;
+
+import megamek.common.Configuration;
 import megamek.logging.MMLogger;
+import org.tensorflow.Result;
 import org.tensorflow.SavedModelBundle;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
@@ -38,33 +44,26 @@ import org.tensorflow.ndarray.Shape;
 import org.tensorflow.proto.SignatureDef;
 import org.tensorflow.proto.TensorInfo;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Map;
-
-import static megamek.codeUtilities.MathUtility.clamp01;
-
 /**
  * NeuralNetwork class for loading and making predictions with TensorFlow models.
  * @author Luana Coppio
  */
-public class NeuralNetwork {
-    private static final MMLogger logger = MMLogger.create(NeuralNetwork.class);
+public class Brain {
+    private static final MMLogger logger = MMLogger.create(Brain.class);
 
-    private SavedModelBundle model;
-    private Session session;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final SavedModelBundle model;
+    private final Session session;
     private final String inputOperationName;
     private final String outputOperationName;
-    private final float[] inputNormalizationMinValues;
-    private final float[] inputNormalizationMaxValues;
+    private final FeatureNormalizationParameters featureNormalizationParameters;
     private final int outputAxisLength;
 
-    private NeuralNetwork(
+
+    private Brain(
           int outputAxisLength,
           SavedModelBundle model,
-          InputNormalizationValues inputNormalizationValues)
+          FeatureNormalizationParameters featureNormalizationParameters)
     {
         this.model = model;
         this.outputAxisLength = outputAxisLength;
@@ -79,11 +78,7 @@ public class NeuralNetwork {
         // Extract output operation name
         Map.Entry<String, TensorInfo> outputEntry = sigDef.getOutputsMap().entrySet().iterator().next();
         outputOperationName = parseOperationName(outputEntry.getValue().getName());
-        inputNormalizationMinValues = new float[inputNormalizationValues.minValues().length];
-        inputNormalizationMaxValues = new float[inputNormalizationValues.maxValues().length];
-
-        System.arraycopy(inputNormalizationValues.minValues(), 0, inputNormalizationMinValues, 0, inputNormalizationMinValues.length);
-        System.arraycopy(inputNormalizationValues.maxValues(), 0, inputNormalizationMaxValues, 0, inputNormalizationMaxValues.length);
+        this.featureNormalizationParameters = featureNormalizationParameters;
 
         logger.info("Input operation: {}", inputOperationName);
         logger.info("Output operation: {}", outputOperationName);
@@ -96,11 +91,12 @@ public class NeuralNetwork {
      * @return this NeuralNetwork instance
      * @throws RuntimeException If the model cannot be loaded
      */
-    public static NeuralNetwork loadBrain(BrainRegistry brainRegistry) {
-        Path path = Path.of("data", "ai","brains", brainRegistry.name());
-        SavedModelBundle model = SavedModelBundle.load(path.toString(), "serve");
-        InputNormalizationValues inputNormalizationValues = InputNormalizationValues.loadFile(path);
-        return new NeuralNetwork(brainRegistry.outputAxisLength(), model, inputNormalizationValues);
+    public static Brain loadBrain(BrainRegistry brainRegistry) {
+        SavedModelBundle model =
+              SavedModelBundle.load(Configuration.aiBrainFolderPath(brainRegistry.name()).toString());
+        FeatureNormalizationParameters featureNormalizationParameters =
+              FeatureNormalizationParameters.loadFile(Configuration.aiBrainNormalizationFile(brainRegistry.name()));
+        return new Brain(brainRegistry.outputAxisLength(), model, featureNormalizationParameters);
     }
 
     /**
@@ -115,39 +111,19 @@ public class NeuralNetwork {
     }
 
     /**
-     * Makes a prediction using the loaded model.
+     * Makes a prediction based on the input vector.
      *
-     * @param inputVector Input features as a double array
+     * @param inputVector Input features as a floats array
      * @return Prediction result as a double
      * @throws IllegalStateException If the model is not loaded
      */
     public float[] predict(float[] inputVector) {
-        // normalize the input vector with the min and max values
-        for (int i = 0; i < inputVector.length; i++) {
-            inputVector[i] = clamp01(
-                  (inputVector[i] - inputNormalizationMinValues[i]) /
-                        (inputNormalizationMaxValues[i] - inputNormalizationMinValues[i])
-            );
-        }
-
-        FloatNdArray ndArray = NdArrays.ofFloats(Shape.of(1, inputVector.length));
-
-        // Copy the float values into the correct shape
-        for (int i = 0; i < inputVector.length; i++) {
-            // Assuming a 2D input shape [1][features]
-            ndArray.setFloat(inputVector[i], 0, i);
-        }
-
+        FloatNdArray ndArray = getNormalizedFloatNdArray(inputVector);
         try (var inputTensor = Tensor.of(org.tensorflow.types.TFloat32.class, ndArray.shape(), ndArray::copyTo)) {
-            try(var outputTensors = session.runner().feed(inputOperationName, inputTensor)
+            try (var outputTensors = session.runner().feed(inputOperationName, inputTensor)
                                           .fetch(outputOperationName)
                                           .run()) {
-                // Extract the result
-                try (var rOutputTensor = outputTensors.get(0).asRawTensor()) {
-                    float[] output = new float[outputAxisLength];
-                    rOutputTensor.data().asFloats().read(output);
-                    return output;
-                }
+                return resultArrayFromTensors(outputTensors);
             }
         } catch (Exception e) {
             logger.error("Prediction failed", e);
@@ -156,22 +132,32 @@ public class NeuralNetwork {
     }
 
     /**
-     * Closes the model and session to release resources.
+     * Extracts the result array from the output tensors.
+     * @param outputTensors The output tensors from the model
+     * @return The result array containing the prediction values
      */
-    public void close() {
-        if (model != null) {
-            try {
-                model.close();
-                model = null;
-                session = null;
-                logger.info("Neural network model resources released");
-            } catch (Exception e) {
-                logger.warn("Error closing model", e);
-            } finally {
-                model = null;
-                session = null;
-            }
+    private float[] resultArrayFromTensors(Result outputTensors) {
+        try (var rOutputTensor = outputTensors.get(0).asRawTensor()) {
+            float[] output = new float[outputAxisLength];
+            rOutputTensor.data().asFloats().read(output);
+            return output;
         }
+    }
+
+    /**
+     * Creates a FloatNdArray from the input vector.
+     * @param inputVector The input vector to convert
+     * @return The created FloatNdArray with the normalized values from the input vector
+     */
+    private FloatNdArray getNormalizedFloatNdArray(float[] inputVector) {
+        FloatNdArray ndArray = NdArrays.ofFloats(Shape.of(1, inputVector.length));
+        for (int i = 0; i < inputVector.length; i++) {
+            ndArray.setFloat(clamp01(
+                  (inputVector[i] - featureNormalizationParameters.minValues()[i]) /
+                        (featureNormalizationParameters.maxValues()[i] - featureNormalizationParameters.minValues()[i])
+            ), 0, i);
+        }
+        return ndArray;
     }
 
     /**

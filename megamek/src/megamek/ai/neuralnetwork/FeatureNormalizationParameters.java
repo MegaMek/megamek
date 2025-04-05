@@ -28,14 +28,26 @@
 package megamek.ai.neuralnetwork;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public record InputNormalizationValues(float[] minValues, float[] maxValues) {
-    public static InputNormalizationValues loadFile(Path path) {
+/**
+ * FeatureNormalizationParameters is a record that holds the minimum and maximum values for input normalization for
+ * the Neural Network model being run.
+ * @param minValues  the minimum values array of floats
+ * @param maxValues  the maximum values array of floats
+ * @author Luana Coppio
+ */
+public record FeatureNormalizationParameters(float[] minValues, float[] maxValues) {
+    /**
+     * Creates a new FeatureNormalizationParameters object from the given file with the min and max values.
+     * @param featureNormalizationCsvFile the csv file containing the min and max values for feature normalization
+     * @return a new FeatureNormalizationParameters object
+     */
+    public static FeatureNormalizationParameters loadFile(File featureNormalizationCsvFile) {
         List<Float> minValuesList = new ArrayList<>();
         List<Float> maxValuesList = new ArrayList<>();
         float[] minValuesTemp;
@@ -44,8 +56,7 @@ public record InputNormalizationValues(float[] minValues, float[] maxValues) {
         int inputSize = 0;
         // Initialize normalization values
         // the normalization values are on a file named min_max_feature_normalization.csv inside the model folder
-        Path normalizationFilePath = Path.of(path.toString(), "min_max_feature_normalization.csv");
-        try (var reader = new BufferedReader(new FileReader(normalizationFilePath.toFile()))) {
+        try (var reader = new BufferedReader(new FileReader(featureNormalizationCsvFile))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("feature,")) {
@@ -73,6 +84,6 @@ public record InputNormalizationValues(float[] minValues, float[] maxValues) {
             throw new RuntimeException("Failed to load TensorFlow model: " + e.getMessage(), e);
         }
 
-        return new InputNormalizationValues(minValuesTemp, maxValuesTemp);
+        return new FeatureNormalizationParameters(minValuesTemp, maxValuesTemp);
     }
 }

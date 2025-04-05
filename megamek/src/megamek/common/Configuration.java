@@ -17,6 +17,7 @@
 package megamek.common;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.common.preference.PreferenceManager;
@@ -131,6 +132,11 @@ public final class Configuration {
     private static final String DEFAULT_DIR_NAME_IMG_UNIVERSE = "universe";
     private static final String DEFAULT_DIR_ORBITAL_BOMBARDMENT = "orbital_bombardment";
     private static final String DEFAULT_DIR_NUKE = "nuke";
+
+    /** The default AI directory. */
+    private static final String DEFAULT_AI_DIR = "ai";
+    private static final String DEFAULT_AI_BRAIN_DIR = "brains";
+    private static final String DEFAULT_NORMALIZATION_CSV_FILE = "min_max_feature_normalization.csv";
 
     private Configuration() {
     }
@@ -526,6 +532,25 @@ public final class Configuration {
      */
     public static File storyarcsDir() {
         return new File(dataDir(), DEFAULT_DIR_NAME_STORY_ARCS);
+    }
+
+    /**
+     *  Return the directory for the brain to be loaded.
+     * @param brainName The name of the brain to be loaded.
+     * @return {@link File} containing the path to the brain directory.
+     */
+    public static Path aiBrainFolderPath(String brainName) {
+        return Path.of(DEFAULT_DIR_NAME_DATA, DEFAULT_AI_DIR, DEFAULT_AI_BRAIN_DIR, brainName);
+    }
+
+    /**
+     *  Return the input normalization file for the brain to be loaded.
+     * @param brainName The name of the brain to be loaded.
+     * @return {@link File} containing the path to the brains input normalization csv file.
+     */
+    public static File aiBrainNormalizationFile(String brainName) {
+        return Path.of(DEFAULT_DIR_NAME_DATA, DEFAULT_AI_DIR, DEFAULT_AI_BRAIN_DIR, brainName,
+              DEFAULT_NORMALIZATION_CSV_FILE).toFile();
     }
 
     /**

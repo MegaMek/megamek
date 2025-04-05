@@ -33,7 +33,7 @@ public class MathUtility {
      *         maximum. Otherwise, this will return the rounded integer between the
      *         two points
      */
-    public static int lerp(int min, int max, double f) {
+    public static int lerp(final int min, final int max, final double f) {
         // The order of operations is important here, to not lose precision
         return (int) Math.round(min * (1d - f) + max * f);
     }
@@ -46,7 +46,7 @@ public class MathUtility {
      *         of 0d will return the minimum, a f of 1d will return the maximum.
      *         Otherwise, this will return the double value between the two points
      */
-    public static double lerp(double min, double max, double f) {
+    public static double lerp(final double min, final double max, final double f) {
         return min * (1d - f) + max * f;
     }
 
@@ -58,7 +58,7 @@ public class MathUtility {
      *         0f will return the minimum, a f of 1f will return the maximum.
      *         Otherwise, this will return the float value between the two points
      */
-    public static float lerp(float min, float max, float f) {
+    public static float lerp(final float min, final float max, final float f) {
         return min * (1f - f) + max * f;
     }
 
@@ -70,7 +70,7 @@ public class MathUtility {
      *         a f of 0d will return the minimum, a f of 1d will return the maximum.
      *         Otherwise, this will return the rounded long between the two points
      */
-    public static long lerp(long min, long max, double f) {
+    public static long lerp(final long min, final long max, final double f) {
         // The order of operations is important here, to not lose precision
         return Math.round(min * (1L - f) + max * f);
     }
@@ -88,7 +88,7 @@ public class MathUtility {
      *         clamp(7, 6, 8) returns 7,
      *         clamp(12, 3, 5) returns 5.
      */
-    public static int clamp(int value, int min, int max) {
+    public static int clamp(final int value, final int min, final int max) {
         return Math.min(Math.max(value, min), max);
     }
 
@@ -103,7 +103,7 @@ public class MathUtility {
      *         clamp(7, 6, 8) returns 7,
      *         clamp(12, 3, 5) returns 5.
      */
-    public static double clamp(double value, double min, double max) {
+    public static double clamp(final double value, final double min, final double max) {
         return Math.min(Math.max(value, min), max);
     }
 
@@ -118,7 +118,7 @@ public class MathUtility {
      *         clamp(7, 6, 8) returns 7,
      *         clamp(12, 3, 5) returns 5.
      */
-    public static float clamp(float value, float min, float max) {
+    public static float clamp(final float value, final float min, final float max) {
         return Math.min(Math.max(value, min), max);
     }
 
@@ -133,7 +133,7 @@ public class MathUtility {
      *         clamp(7, 6, 8) returns 7,
      *         clamp(12, 3, 5) returns 5.
      */
-    public static long clamp(long value, long min, long max) {
+    public static long clamp(final long value, final long min, final long max) {
         return Math.min(Math.max(value, min), max);
     }
     // endregion Clamp
@@ -145,7 +145,7 @@ public class MathUtility {
      * @return The value clamped
      */
     public static float clamp01(float value) {
-        return Math.min(Math.max(value, 0f), 1f);
+        return clamp(value, 0f, 1f);
     }
 
     /**
@@ -154,7 +154,7 @@ public class MathUtility {
      * @return The value clamped
      */
     public static double clamp01(double value) {
-        return Math.min(Math.max(value, 0f), 1f);
+        return clamp(value, 0d, 1d);
     }
     // endregion Clamp01
 }

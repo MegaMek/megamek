@@ -29,17 +29,8 @@ package megamek.ai.neuralnetwork;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
-import megamek.client.bot.caspar.MovementClassification;
 import megamek.common.Configuration;
 import megamek.logging.MMLogger;
 import org.tensorflow.Result;

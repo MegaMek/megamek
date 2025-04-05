@@ -48,6 +48,7 @@ public record ClassificationScore(float offensive, float defensive, float holdPo
         return holdPosition > offensive && holdPosition > defensive;
     }
 
+    @Override
     public String toString() {
         return String.format("ClassificationScore<%s>[offensive=%.2f, defensive=%.2f, holdPosition=%.2f]",
               getClassification(), offensive, defensive, holdPosition);

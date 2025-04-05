@@ -73,7 +73,9 @@ import megamek.logging.MMLogger;
 import megamek.server.*;
 import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
+import megamek.server.totalwarfare.Target.ArtilleryHexHandler;
 import megamek.server.victory.VictoryResult;
+import megamek.server.totalwarfare.Target.TargetHandler;
 
 import static megamek.common.weapons.AreaEffectHelper.calculateDamageFallOff;
 
@@ -6909,35 +6911,9 @@ public class TWGameManager extends AbstractGameManager {
         switch (t.getTargetType()) {
             case Targetable.TYPE_HEX_ARTILLERY:
                 // used for BA inferno explosion
-                for (Entity e : game.getEntitiesVector(t.getPosition())) {
-                    if (e.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV)) {
-                        r = new Report(6685);
-                        r.subject = e.getId();
-                        r.addDesc(e);
-                        vPhaseReport.add(r);
-                        vPhaseReport.addAll(deliverInfernoMissiles(ae, e, missiles, called));
-                    } else {
-                        Roll diceRoll = Compute.rollD6(1);
-                        r = new Report(3570);
-                        r.subject = e.getId();
-                        r.addDesc(e);
-                        r.add(diceRoll);
-                        vPhaseReport.add(r);
-
-                        if (diceRoll.getIntValue() >= 5) {
-                            vPhaseReport.addAll(deliverInfernoMissiles(ae, e, missiles, called));
-                        }
-                    }
-                }
-                if (game.getBoard().getBuildingAt(t.getPosition()) != null) {
-                    Vector<Report> vBuildingDamageReport = damageBuilding(
-                            game.getBoard().getBuildingAt(t.getPosition()),
-                            2 * missiles, t.getPosition());
-                    for (Report report : vBuildingDamageReport) {
-                        report.subject = attId;
-                    }
-                    vPhaseReport.addAll(vBuildingDamageReport);
-                }
+                ArtilleryHexHandler artilleryHandler = new ArtilleryHexHandler(this);
+                Vector<Report> artilleryReports = artilleryHandler.handle(t, game, ae, missiles, attId);
+                vPhaseReport.addAll(artilleryReports);
                 // fall through
             case Targetable.TYPE_HEX_CLEAR:
             case Targetable.TYPE_HEX_IGNITE:

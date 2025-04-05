@@ -3107,7 +3107,7 @@ public class ClientGUI extends AbstractClientGUI
      * @param gear      The move gear, MovementDisplay.GEAR_LAND or GEAR_JUMP
      */
     public void showMovementEnvelope(Entity entity, Map<Coords, Integer> mvEnvData, int gear) {
-        movementEnvelopeHandler.setMovementEnvelope(mvEnvData,
+        movementEnvelopeHandler.setMovementEnvelope(mvEnvData, entity.getBoardId(),
               entity.getWalkMP(),
               entity.getRunMP(),
               entity.getAnyTypeMaxJumpMP(),

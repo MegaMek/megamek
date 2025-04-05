@@ -50,7 +50,15 @@ public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
         game.removeGameListener(this);
     }
 
+    /**
+     * LEGACY give the real board ID instead -- this will work with single board games
+     */
     public void setMovementEnvelope(Map<Coords, Integer> mvEnvData, int walk, int run, int jump, int gear) {
+        setMovementEnvelope(mvEnvData, 0, walk, run, jump, gear);
+    }
+
+    public void setMovementEnvelope(Map<Coords, Integer> mvEnvData, int boardId, int walk, int run, int jump,
+          int gear) {
         clear();
 
         if (mvEnvData == null) {
@@ -111,12 +119,13 @@ public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
             }
 
             if (spriteColor != null) {
-                currentSprites.add(new MovementEnvelopeSprite((BoardView) clientGUI.boardViews().get(0), spriteColor, loc,
+                currentSprites.add(new MovementEnvelopeSprite((BoardView) clientGUI.boardViews().get(boardId), spriteColor,
+                      loc,
                       edgesToPaint));
             }
         }
 
-        clientGUI.boardViews().get(0).addSprites(currentSprites);
+        clientGUI.boardViews().get(boardId).addSprites(currentSprites);
     }
 
     @Override

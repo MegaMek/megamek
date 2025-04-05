@@ -1,5 +1,14 @@
 plugins {
     id 'java'
+    id "org.sonarqube" version "6.0.1.5171"
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "RayanBM216_megamek"
+        property "sonar.organization", "rayanbm216"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
 
 java {

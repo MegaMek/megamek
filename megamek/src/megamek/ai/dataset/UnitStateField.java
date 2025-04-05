@@ -74,7 +74,7 @@ public enum UnitStateField{
      */
     public static String getHeaderLine() {
         return Arrays.stream(values())
-            .map(UnitStateField::getHeaderName)
-            .collect(Collectors.joining("\t"));
+                     .map(UnitStateField::getHeaderName)
+                     .collect(Collectors.joining("\t"));
     }
 }

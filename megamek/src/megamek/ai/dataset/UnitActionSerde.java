@@ -27,12 +27,8 @@
  */
 package megamek.ai.dataset;
 
-import megamek.common.MovePath;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +38,7 @@ import java.util.stream.Collectors;
 public class UnitActionSerde extends TsvSerde<UnitAction> {
 
     private final DecimalFormat LOG_DECIMAL =
-        new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
+          new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
 
     @Override
     public String toTsv(UnitAction obj) {
@@ -73,8 +69,8 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
 
         // For STEPS, join the list of MoveStepType values with a space.
         row[UnitActionField.STEPS.ordinal()] = obj.steps().stream()
-            .map(Enum::name)
-            .collect(Collectors.joining(" "));
+                                                     .map(Enum::name)
+                                                     .collect(Collectors.joining(" "));
 
         return String.join("\t", row);
     }

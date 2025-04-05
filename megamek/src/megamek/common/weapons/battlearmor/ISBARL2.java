@@ -41,7 +41,7 @@ public class ISBARL2 extends RLWeapon {
         shortRange = 3;
         mediumRange = 7;
         longRange = 12;
-        extremeRange = 14;
+        extremeRange = 18;
         bv = 3;
         cost = 3000;
         tonnage = 0.05;

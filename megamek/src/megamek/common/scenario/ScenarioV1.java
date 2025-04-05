@@ -1,20 +1,29 @@
 /*
- * Copyright (c) 2022, 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.common.scenario;
 
@@ -27,6 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import megamek.client.generator.RandomGenderGenerator;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -45,19 +55,17 @@ import megamek.common.planetaryconditions.Weather;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.planetaryconditions.WindDirection;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * This class holds all scenario info loaded from a scenario (.mms) file. It is
- * a map of constants given in
+ * This class holds all scenario info loaded from a scenario (.mms) file. It is a map of constants given in
  * {@link ScenarioLoader} to a list of data for that constant.
  */
 public class ScenarioV1 extends HashMap<String, Collection<String>> implements Scenario {
-    private static final MMLogger logger = MMLogger.create(ScenarioV1.class);
+    private static final MMLogger LOGGER = MMLogger.create(ScenarioV1.class);
 
     private static final String SEPARATOR_PROPERTY = "=";
     private static final String SEPARATOR_COMMA = ",";
@@ -72,9 +80,9 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     private static final String PARAM_GAME_OPTIONS_FIXED = "FixedGameOptions";
     private static final String PARAM_GAME_EXTERNAL_ID = "ExternalId";
     private static final String PARAM_FACTIONS = "Factions";
-    private static final String PARAM_SINGLEPLAYER = "SinglePlayer";
+    private static final String PARAM_SINGLE_PLAYER = "SinglePlayer";
 
-    private static final String PARAM_PLANETCOND_FIXED = "FixedPlanetaryConditions";
+    private static final String PARAM_PLANET_CONDITIONS_FIXED = "FixedPlanetaryConditions";
 
     private static final String PARAM_MAP_WIDTH = "MapWidth";
     private static final String PARAM_MAP_HEIGHT = "MapHeight";
@@ -90,7 +98,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     private static final String PARAM_MINEFIELDS = "Minefields";
     private static final String PARAM_DAMAGE = "Damage";
     private static final String PARAM_SPECIFIC_DAMAGE = "DamageSpecific";
-    private static final String PARAM_CRITICAL_HIT = "CritHit";
+    private static final String PARAM_CRITICAL_HIT = "CriticalHit";
     private static final String PARAM_AMMO_AMOUNT = "SetAmmoTo";
     private static final String PARAM_AMMO_TYPE = "SetAmmoType";
     private static final String PARAM_PILOT_HITS = "PilotHits";
@@ -102,28 +110,28 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     private static final String PARAM_CAMO = "camo";
     private static final String PARAM_ALTITUDE = "altitude";
 
-    private static final String PARAM_PLANETCOND_TEMP = "PlanetaryConditionsTemperature";
-    private static final String PARAM_PLANETCOND_GRAV = "PlanetaryConditionsGravity";
-    private static final String PARAM_PLANETCOND_LIGHT = "PlanetaryConditionsLight";
-    private static final String PARAM_PLANETCOND_WEATHER = "PlanetaryConditionsWeather";
-    private static final String PARAM_PLANETCOND_WIND = "PlanetaryConditionsWind";
-    private static final String PARAM_PLANETCOND_WINDDIR = "PlanetaryConditionsWindDir";
-    private static final String PARAM_PLANETCOND_ATMOS = "PlanetaryConditionsAtmosphere";
-    private static final String PARAM_PLANETCOND_FOG = "PlanetaryConditionsFog";
-    private static final String PARAM_PLANETCOND_WINDSHIFTINGSTR = "PlanetaryConditionsWindShiftingStr";
-    private static final String PARAM_PLANETCOND_WINDMIN = "PlanetaryConditionsWindMin";
-    private static final String PARAM_PLANETCOND_WINDMAX = "PlanetaryConditionsWindMax";
-    private static final String PARAM_PLANETCOND_WINDSHIFTINGDIR = "PlanetaryConditionsWindShiftingDir";
-    private static final String PARAM_PLANETCOND_BLOWINGSAND = "PlanetaryConditionsBlowingSand";
-    private static final String PARAM_PLANETCOND_EMI = "PlanetaryConditionsEMI";
-    private static final String PARAM_PLANETCOND_TERRAINCHANGES = "PlanetaryConditionsAllowTerrainChanges";
+    private static final String PARAM_PLANET_CONDITIONS_TEMP = "PlanetaryConditionsTemperature";
+    private static final String PARAM_PLANET_CONDITIONS_GRAV = "PlanetaryConditionsGravity";
+    private static final String PARAM_PLANET_CONDITIONS_LIGHT = "PlanetaryConditionsLight";
+    private static final String PARAM_PLANET_CONDITIONS_WEATHER = "PlanetaryConditionsWeather";
+    private static final String PARAM_PLANET_CONDITIONS_WIND = "PlanetaryConditionsWind";
+    private static final String PARAM_PLANET_CONDITIONS_WIND_DIRECTION = "PlanetaryConditionsWindDir";
+    private static final String PARAM_PLANET_CONDITIONS_ATMOSPHERE = "PlanetaryConditionsAtmosphere";
+    private static final String PARAM_PLANET_CONDITIONS_FOG = "PlanetaryConditionsFog";
+    private static final String PARAM_PLANET_CONDITIONS_WIND_SHIFTING_STRENGTH = "PlanetaryConditionsWindShiftingStr";
+    private static final String PARAM_PLANET_CONDITIONS_WIND_MIN = "PlanetaryConditionsWindMin";
+    private static final String PARAM_PLANET_CONDITIONS_WIND_MAX = "PlanetaryConditionsWindMax";
+    private static final String PARAM_PLANET_CONDITIONS_WIND_SHIFTING_DIRECTION = "PlanetaryConditionsWindShiftingDir";
+    private static final String PARAM_PLANET_CONDITIONS_BLOWING_SAND = "PlanetaryConditionsBlowingSand";
+    private static final String PARAM_PLANET_CONDITIONS_EMI = "PlanetaryConditionsEMI";
+    private static final String PARAM_PLANET_CONDITIONS_TERRAIN_CHANGES = "PlanetaryConditionsAllowTerrainChanges";
 
-    private final File file;
+    private File file;
 
     private final List<DamagePlan> damagePlans = new ArrayList<>();
-    // Used to store Crit Hits
-    private final List<CritHitPlan> critHitPlans = new ArrayList<>();
-    // Used to set ammo Spec Ammounts
+    // Used to store Critical Hits
+    private final List<CriticalHitPlan> criticalHitPlans = new ArrayList<>();
+    // Used to set ammo Spec Amounts
     private final List<SetAmmoPlan> ammoPlans = new ArrayList<>();
 
     /** When true, the Game Options Dialog is skipped. */
@@ -133,15 +141,36 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     private boolean fixedPlanetCond;
 
     /**
-     * When true, the Player assignment/camo Dialog and the host dialog are skipped.
-     * The first faction (player) is assumed to be the local player and the rest
-     * are assumed to be Princess.
+     * When true, the Player assignment/camo Dialog and the host dialog are skipped. The first faction (player) is
+     * assumed to be the local player and the rest are assumed to be Princess.
      */
     private boolean singlePlayer;
 
     ScenarioV1(File file) throws IOException {
         this.file = file;
         load();
+    }
+
+    @Override
+    public ScenarioV1 clone() {
+        try {
+            ScenarioV1 scenarioV1 = (ScenarioV1) super.clone();
+            scenarioV1.file = file;
+            load();
+            scenarioV1.damagePlans.clear();
+            scenarioV1.damagePlans.addAll(damagePlans);
+            scenarioV1.criticalHitPlans.clear();
+            scenarioV1.criticalHitPlans.addAll(criticalHitPlans);
+            scenarioV1.ammoPlans.clear();
+            scenarioV1.ammoPlans.addAll(ammoPlans);
+            scenarioV1.fixedGameOptions = fixedGameOptions;
+            scenarioV1.fixedPlanetCond = fixedPlanetCond;
+            return scenarioV1;
+        } catch (IOException e) {
+            LOGGER.error(e, "Unable to clone a ScenarioV1 object: {}", e.getMessage());
+        }
+
+        return null;
     }
 
     @Override
@@ -162,7 +191,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     public void load() throws IOException {
         for (String line : readLines(file, s -> s.trim().startsWith("#"))) {
             if (!line.contains("=")) {
-                logger.error("Missing = in scenario line: " + line);
+                LOGGER.error("Missing = in scenario line: {}", line);
             } else {
                 String[] elements = line.split(SEPARATOR_PROPERTY, 2);
                 String keyword = elements[0].trim();
@@ -198,16 +227,16 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         boolean firstElement = true;
-        StringBuilder sb = new StringBuilder();
-        for (String val : values) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String value : values) {
             if (firstElement) {
                 firstElement = false;
             } else {
-                sb.append(separator);
+                stringBuilder.append(separator);
             }
-            sb.append(val);
+            stringBuilder.append(value);
         }
-        return sb.toString();
+        return stringBuilder.toString();
     }
 
     /**
@@ -218,6 +247,30 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         return (values == null) ? 0 : values.size();
     }
 
+    public int parseInt(String key, int defaultValue) {
+        String value = getString(key);
+        return MathUtility.parseInt(value, defaultValue);
+    }
+
+    public float parseFloat(String key, float defaultValue) {
+        String value = getString(key);
+        return MathUtility.parseFloat(value, defaultValue);
+    }
+
+    /**
+     * Parses a boolean value. When the key is not present, returns the given defaultValue. When the key is present,
+     * interprets "true" and "on" and "1" as true and everything else as false.
+     */
+    private boolean parseBoolean(String key, boolean defaultValue) {
+        if (containsKey(key)) {
+            return getString(key).equalsIgnoreCase("true") ||
+                         getString(key).equalsIgnoreCase("on") ||
+                         getString(key).equalsIgnoreCase("1");
+        }
+
+        return defaultValue;
+    }
+
     @Override
     public Collection<String> get(Object key) {
         return super.get(key);
@@ -225,7 +278,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
 
     @Override
     public IGame createGame() throws ScenarioLoaderException {
-        logger.info("Loading scenario from " + file);
+        LOGGER.info("Loading scenario from {}", file);
         Game game = new Game();
         game.setBoardDirect(createBoard(this));
 
@@ -244,8 +297,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 entity.setId(entityId);
                 ++entityId;
                 game.addEntity(entity);
-                // Grounded DropShips don't set secondary positions unless they're part of a
-                // game and can verify
+                // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
                 // they're not on a space map.
                 if (entity.isLargeCraft() && !entity.isAirborne()) {
                     entity.setAltitude(0);
@@ -260,13 +312,13 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         } else {
             game.getOptions().loadOptions(new MegaMekFile(file.getParentFile(), optionFile).getFile(), true);
         }
-        fixedGameOptions = parseBoolean(this, PARAM_GAME_OPTIONS_FIXED, false);
+        fixedGameOptions = parseBoolean(PARAM_GAME_OPTIONS_FIXED, false);
 
         // set wind
         parsePlanetaryConditions(game, this);
         game.getPlanetaryConditions().determineWind();
-        fixedPlanetCond = parseBoolean(this, PARAM_PLANETCOND_FIXED, false);
-        singlePlayer = parseBoolean(this, PARAM_SINGLEPLAYER, false);
+        fixedPlanetCond = parseBoolean(PARAM_PLANET_CONDITIONS_FIXED, false);
+        singlePlayer = parseBoolean(PARAM_SINGLE_PLAYER, false);
 
         // Set up the teams (for initiative)
         game.setupTeams();
@@ -278,139 +330,119 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         return game;
     }
 
-    /**
-     * Parses a boolean value. When the key is not present, returns the given
-     * defaultValue. When the key is present, interprets "true" and "on" and "1"
-     * as true and everything else as false.
-     */
-    private boolean parseBoolean(String key, boolean defaultValue) {
-        boolean result = defaultValue;
-        if (containsKey(key)) {
-            result = getString(key).equalsIgnoreCase("true")
-                    || getString(key).equalsIgnoreCase("on")
-                    || getString(key).equalsIgnoreCase("1");
-        }
-        return result;
-    }
-
-    // TODO : legal/valid ammo type handling and game options, since they are set at
-    // this point
+    // TODO : legal/valid ammo type handling and game options, since they are set at this point
     private AmmoType getValidAmmoType(Game game, Mounted<?> mounted, String ammoString) {
-        final Entity e = mounted.getEntity();
+        final Entity entity = mounted.getEntity();
         final int year = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         final EquipmentType currentAmmoType = mounted.getType();
         final Mounted<?> currentWeapon = mounted.getLinkedBy();
         final EquipmentType currentWeaponType = (null != currentWeapon) ? currentWeapon.getType() : null;
-        final EquipmentType newAmmoType = EquipmentType.get(ammoString);
-        if (newAmmoType == null) {
-            logger.error(String.format("Ammo type '%s' not found", ammoString));
+        final EquipmentType equipmentType = EquipmentType.get(ammoString);
+
+        if (!(equipmentType instanceof AmmoType newAmmoType)) {
+            LOGGER.error("Ammo type '{}' not found or not an AmmoType", ammoString);
             return null;
-        } else if (!(newAmmoType instanceof AmmoType)) {
-            logger.error(String.format("Equipment %s is not an ammo type", newAmmoType.getName()));
+        }
+
+        if (!newAmmoType.isLegal(year,
+              SimpleTechLevel.getGameTechLevel(game),
+              entity.isClan(),
+              entity.isMixedTech(),
+              game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
+            LOGGER.warn("Ammo {} (TL {}) is not legal for year {} (TL {})",
+                  newAmmoType.getName(),
+                  newAmmoType.getTechLevel(year),
+                  year,
+                  TechConstants.getGameTechLevel(game, entity.isClan()));
             return null;
-        } else if (!newAmmoType.isLegal(year, SimpleTechLevel.getGameTechLevel(game), e.isClan(),
-                e.isMixedTech(), game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
-            logger.warn(String.format("Ammo %s (TL %d) is not legal for year %d (TL %d)",
-                    newAmmoType.getName(), newAmmoType.getTechLevel(year), year,
-                    TechConstants.getGameTechLevel(game, e.isClan())));
-            return null;
-        } else if (e.isClan() && !game.getOptions().booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS)) {
+        } else if (entity.isClan() &&
+                         !game.getOptions().booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS)) {
             // Check for clan weapon restrictions
-            // Construct EnumSet with all the relevant
-            final EnumSet<AmmoType.Munitions> muniType = ((AmmoType) newAmmoType).getMunitionType();
-            muniType.add(AmmoType.Munitions.M_INCENDIARY_LRM);
-            if ((muniType.contains(AmmoType.Munitions.M_SEMIGUIDED) || (muniType.contains(AmmoType.Munitions.M_SWARM_I))
-                    || (muniType.contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))
-                    || (muniType.contains(AmmoType.Munitions.M_THUNDER_INFERNO))
-                    || (muniType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))
-                    || (muniType.contains(AmmoType.Munitions.M_THUNDER_ACTIVE))
-                    || (muniType.contains(AmmoType.Munitions.M_INFERNO_IV))
-                    || (muniType.contains(AmmoType.Munitions.M_VIBRABOMB_IV))
-                    || (muniType.contains(AmmoType.Munitions.M_LISTEN_KILL))
-                    || (muniType.contains(AmmoType.Munitions.M_ANTI_TSM))
-                    || (muniType.contains(AmmoType.Munitions.M_DEAD_FIRE))
-                    || (muniType.contains(AmmoType.Munitions.M_MINE_CLEARANCE)))) {
-                logger
-                        .warn(String.format("Ammo type %s not allowed by Clan rules", newAmmoType.getName()));
+            if (newAmmoType.notAllowedByClanRules()) {
+                LOGGER.warn("Ammo type {} not allowed by Clan rules", newAmmoType.getName());
                 return null;
             }
+
+            // Construct EnumSet with all the relevant
+            final EnumSet<AmmoType.Munitions> munitionTypes = newAmmoType.getMunitionType();
+            munitionTypes.add(AmmoType.Munitions.M_INCENDIARY_LRM);
         }
 
-        if (AmmoType.canDeliverMinefield((AmmoType) newAmmoType)
-                && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
-            logger.warn(String.format("Minefield-creating ammo type %s forbidden by game rules",
-                    newAmmoType.getName()));
+        if (AmmoType.canDeliverMinefield(newAmmoType) &&
+                  !game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
+            LOGGER.warn("Minefield-creating ammo type {} forbidden by game rules", newAmmoType.getName());
             return null;
         }
 
-        int weaponAmmoType = (currentWeaponType instanceof WeaponType) ? ((WeaponType) currentWeaponType).getAmmoType()
-                : 0;
-        if ((((AmmoType) newAmmoType).getRackSize() == ((AmmoType) currentAmmoType).getRackSize())
-                && (newAmmoType.hasFlag(AmmoType.F_BATTLEARMOR) == currentAmmoType.hasFlag(AmmoType.F_BATTLEARMOR))
-                && (newAmmoType.hasFlag(AmmoType.F_ENCUMBERING) == currentAmmoType.hasFlag(AmmoType.F_ENCUMBERING))
-                && (newAmmoType.getTonnage(e) == currentAmmoType.getTonnage(e))
-                && (((AmmoType) newAmmoType).getAmmoType() == weaponAmmoType)) {
-            return (AmmoType) newAmmoType;
+        int weaponAmmoType = (currentWeaponType instanceof WeaponType weaponType) ? weaponType.getAmmoType() : 0;
+        if ((newAmmoType.getRackSize() == ((AmmoType) currentAmmoType).getRackSize()) &&
+                  (newAmmoType.hasFlag(AmmoType.F_BATTLEARMOR) == currentAmmoType.hasFlag(AmmoType.F_BATTLEARMOR)) &&
+                  (newAmmoType.hasFlag(AmmoType.F_ENCUMBERING) == currentAmmoType.hasFlag(AmmoType.F_ENCUMBERING)) &&
+                  (newAmmoType.getTonnage(entity) == currentAmmoType.getTonnage(entity)) &&
+                  (newAmmoType.getAmmoType() == weaponAmmoType)) {
+            return newAmmoType;
         } else {
             return null;
         }
     }
 
     /**
-     * The damage procedures are built into a server object, so we delay dealing
-     * the random damage until a server is made available to us.
+     * The damage procedures are built into a server object, so we delay dealing the random damage until a server is
+     * made available to us.
      */
     @Override
     public void applyDamage(IGameManager iGameManager) {
-        TWGameManager m = (TWGameManager) iGameManager;
+        TWGameManager twGameManager = (TWGameManager) iGameManager;
         for (DamagePlan damagePlan : damagePlans) {
-            logger.debug(String.format("Applying damage to %s", damagePlan.entity.getShortName()));
+            LOGGER.debug("Applying damage to {}", damagePlan.entity.getShortName());
             for (int y = 0; y < damagePlan.nBlocks; ++y) {
                 HitData hit = damagePlan.entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                logger.debug("[s.damageEntity(dp.entity, hit, 5)]");
-                m.damageEntity(damagePlan.entity, hit, 5);
+                LOGGER.debug("[s.damageEntity(dp.entity, hit, 5)]");
+                twGameManager.damageEntity(damagePlan.entity, hit, 5);
             }
 
             // Apply Spec Damage
-            for (SpecDam specDamage : damagePlan.specificDammage) {
+            for (SpecDam specDamage : damagePlan.specificDamage) {
                 if (damagePlan.entity.locations() <= specDamage.loc) {
                     // location is valid
-                    logger.error(String.format("\tInvalid location specified %d", specDamage.loc));
+                    LOGGER.error("\tInvalid location specified {}", specDamage.loc);
                 } else {
                     // Infantry only take damage to "internal"
                     if (specDamage.internal || damagePlan.entity.isConventionalInfantry()) {
                         if (damagePlan.entity.getOInternal(specDamage.loc) > specDamage.setArmorTo) {
                             damagePlan.entity.setInternal(specDamage.setArmorTo, specDamage.loc);
-                            logger.debug(String.format("\tSet armor value for (internal %s) to %d",
-                                    damagePlan.entity.getLocationName(specDamage.loc), specDamage.setArmorTo));
+                            LOGGER.debug("\tSet armor value for (internal {}) to {}",
+                                  damagePlan.entity.getLocationName(specDamage.loc),
+                                  specDamage.setArmorTo);
                             if (specDamage.setArmorTo == 0) {
-                                logger.debug(String.format("\tSection destroyed %s",
-                                        damagePlan.entity.getLocationName(specDamage.loc)));
+                                LOGGER.debug("\tSection destroyed {}",
+                                      damagePlan.entity.getLocationName(specDamage.loc));
                                 damagePlan.entity.destroyLocation(specDamage.loc);
                             }
                         }
                     } else {
                         if (specDamage.rear && damagePlan.entity.hasRearArmor(specDamage.loc)) {
                             if (damagePlan.entity.getOArmor(specDamage.loc, true) > specDamage.setArmorTo) {
-                                logger.debug(String.format("\tSet armor value for (rear %s) to %d",
-                                        damagePlan.entity.getLocationName(specDamage.loc), specDamage.setArmorTo));
+                                LOGGER.debug("\tSet armor value for (rear {}) to {}",
+                                      damagePlan.entity.getLocationName(specDamage.loc),
+                                      specDamage.setArmorTo);
                                 damagePlan.entity.setArmor(specDamage.setArmorTo, specDamage.loc, true);
                             }
                         } else {
                             if (damagePlan.entity.getOArmor(specDamage.loc, false) > specDamage.setArmorTo) {
-                                logger.debug(String.format("\tSet armor value for (%s) to %d",
-                                        damagePlan.entity.getLocationName(specDamage.loc), specDamage.setArmorTo));
+                                LOGGER.debug("\tSet armor value for ({}) to {}",
+                                      damagePlan.entity.getLocationName(specDamage.loc),
+                                      specDamage.setArmorTo);
 
                                 // Battle Armor Handled Differently
-                                // If armor set to Zero kill the Armor sport
-                                // which represents one member of the squad
+                                // If armor set to Zero kill the Armor sport which represents one member of the squad
                                 if (damagePlan.entity instanceof BattleArmor) {
                                     if (specDamage.setArmorTo == 0) {
                                         damagePlan.entity.setArmor(IArmorState.ARMOR_DOOMED, specDamage.loc, false);
                                         damagePlan.entity.setInternal(IArmorState.ARMOR_DOOMED, specDamage.loc);
                                     } else {
-                                        // For some reason setting armor to 1 will result in 2 armor points
-                                        // left on the GUI. Dont know why but adjust here!
+                                        // For some reason setting armor to 1 will result in 2 armor points left on
+                                        // the GUI. Don't know why but adjust here!
                                         damagePlan.entity.setArmor(specDamage.setArmorTo - 1, specDamage.loc);
                                     }
                                 } else {
@@ -423,80 +455,98 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             }
         }
 
-        // Loop through Crit Hits
-        for (CritHitPlan chp : critHitPlans) {
-            logger.debug("Applying critical hits to " + chp.entity.getShortName());
-            for (CritHit critHit : chp.critHits) {
+        // Loop through Critical Hits
+        for (CriticalHitPlan criticalHitPlan : criticalHitPlans) {
+            LOGGER.debug("Applying critical hits to {}", criticalHitPlan.entity.getShortName());
+            for (CriticalHit criticalHit : criticalHitPlan.criticalHits) {
                 // Apply a critical hit to the indicated slot.
-                if (chp.entity.locations() <= critHit.loc) {
-                    logger.error("Invalid location specified " + critHit.loc);
+                if (criticalHitPlan.entity.locations() <= criticalHit.loc) {
+                    LOGGER.error("Invalid location specified {}", criticalHit.loc);
                 } else {
-                    // Make sure that we have crit spot to hit
-                    if ((chp.entity instanceof Mek) || (chp.entity instanceof ProtoMek)) {
+                    // Make sure that we have critical spot to hit
+                    if ((criticalHitPlan.entity instanceof Mek) || (criticalHitPlan.entity instanceof ProtoMek)) {
                         // Is this a torso weapon slot?
-                        CriticalSlot cs = null;
-                        if ((chp.entity instanceof ProtoMek)
-                                && (ProtoMek.LOC_TORSO == critHit.loc)
-                                && ((ProtoMek.SYSTEM_TORSO_WEAPON_A == critHit.slot)
-                                        || (ProtoMek.SYSTEM_TORSO_WEAPON_B == critHit.slot))) {
-                            cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, critHit.slot);
+                        CriticalSlot criticalSlot = null;
+                        if ((criticalHitPlan.entity instanceof ProtoMek) &&
+                                  (ProtoMek.LOC_TORSO == criticalHit.loc) &&
+                                  ((ProtoMek.SYSTEM_TORSO_WEAPON_A == criticalHit.slot) ||
+                                         (ProtoMek.SYSTEM_TORSO_WEAPON_B == criticalHit.slot))) {
+                            criticalSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, criticalHit.slot);
                         }
                         // Is this a valid slot number?
-                        else if ((critHit.slot < 0)
-                                || (critHit.slot > chp.entity.getNumberOfCriticals(critHit.loc))) {
-                            logger.error(String.format("%s - invalid slot specified %d: %d",
-                                    chp.entity.getShortName(), critHit.loc, (critHit.slot + 1)));
-                        }
-                        // Get the slot from the entity.
-                        else {
-                            cs = chp.entity.getCritical(critHit.loc, critHit.slot);
+                        else if ((criticalHit.slot < 0) ||
+                                       (criticalHit.slot >
+                                              criticalHitPlan.entity.getNumberOfCriticals(criticalHit.loc))) {
+                            LOGGER.error("{} - invalid slot specified (Slot < 0 OR Slot > Number of Critical Slots) " +
+                                               "{}: {}",
+                                  criticalHitPlan.entity.getShortName(),
+                                  criticalHit.loc,
+                                  (criticalHit.slot + 1));
+                        } else {
+                            // Get the slot from the entity.
+                            criticalSlot = criticalHitPlan.entity.getCritical(criticalHit.loc, criticalHit.slot);
                         }
 
-                        // Ignore invalid, unhittable, and damaged slots.
-                        if ((null == cs) || !cs.isHittable()) {
-                            logger.error(String.format("%s - slot not hittable %d: %d",
-                                    chp.entity.getShortName(), critHit.loc, (critHit.slot + 1)));
+                        // Ignore invalid, non-hittable, and damaged slots.
+                        if ((null == criticalSlot) || !criticalSlot.isHittable()) {
+                            LOGGER.error("{} - slot not hittable {}: {}",
+                                  criticalHitPlan.entity.getShortName(),
+                                  criticalHit.loc,
+                                  (criticalHit.slot + 1));
                         } else {
-                            logger.debug("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
-                            m.applyCriticalHit(chp.entity, critHit.loc, cs, false, 0, false);
+                            LOGGER.debug("[s.applyCriticalHit(criticalHitPlan.entity, ch.loc, criticalSlot, false)]");
+                            twGameManager.applyCriticalHit(criticalHitPlan.entity,
+                                  criticalHit.loc,
+                                  criticalSlot,
+                                  false,
+                                  0,
+                                  false);
                         }
                     }
                     // Handle Tanks differently.
-                    else if (chp.entity instanceof Tank) {
-                        if ((critHit.slot < 0) || (critHit.slot >= 6)) {
-                            logger.error(String.format("%s - invalid slot specified %d: %d",
-                                    chp.entity.getShortName(), critHit.loc, (critHit.slot + 1)));
+                    else if (criticalHitPlan.entity instanceof Tank) {
+                        if ((criticalHit.slot < 0) || (criticalHit.slot >= 6)) {
+                            LOGGER.error("{} - invalid slot specified ( Tank Slot < 0 OR Slot >= 6) {}: {}",
+                                  criticalHitPlan.entity.getShortName(),
+                                  criticalHit.loc,
+                                  (criticalHit.slot + 1));
                         } else {
-                            CriticalSlot cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, critHit.slot + 1);
-                            logger.debug("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
-                            m.applyCriticalHit(chp.entity, Entity.NONE, cs, false, 0, false);
+                            CriticalSlot cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, criticalHit.slot + 1);
+                            LOGGER.debug("[s.applyCriticalHit(criticalHitPlan.entity, ch.loc, cs, false)]");
+                            twGameManager.applyCriticalHit(criticalHitPlan.entity, Entity.NONE, cs, false, 0, false);
                         }
                     }
                 }
             }
         }
 
-        // Loop throught Set Ammo To
-        for (SetAmmoPlan sap : ammoPlans) {
-            logger.debug("Applying ammo adjustment to " + sap.entity.getShortName());
-            for (SetAmmoType sa : sap.ammoSetType) {
-                // Limit to 'Meks for now (needs to be extended later)
-                if (sap.entity instanceof Mek) {
-                    if (sa.slot < sap.entity.getNumberOfCriticals(sa.loc)) {
-                        CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);
-                        if (cs != null) {
-                            AmmoMounted ammo = (AmmoMounted) sap.entity.getCritical(sa.loc, sa.slot).getMount();
+        // Loop through Set Ammo To
+        for (SetAmmoPlan setAmmoPlan : ammoPlans) {
+            LOGGER.debug("Applying ammo adjustment to {}", setAmmoPlan.entity.getShortName());
+            for (SetAmmoType setAmmoType : setAmmoPlan.ammoSetType) {
+                // Limit to `Meks for now (needs to be extended later)
+                if (setAmmoPlan.entity instanceof Mek) {
+                    if (setAmmoType.slot < setAmmoPlan.entity.getNumberOfCriticals(setAmmoType.loc)) {
+                        CriticalSlot criticalSlot = setAmmoPlan.entity.getCritical(setAmmoType.loc, setAmmoType.slot);
+                        if (criticalSlot != null) {
+                            AmmoMounted ammo = (AmmoMounted) setAmmoPlan.entity.getCritical(setAmmoType.loc,
+                                  setAmmoType.slot).getMount();
                             if (ammo == null) {
-                                logger.error(String.format("%s - invalid slot specified %d: %d",
-                                        sap.entity.getShortName(), sa.loc, sa.slot + 1));
+                                LOGGER.error("{} - invalid slot specified (setAmmoPlan) {}: {}",
+                                      setAmmoPlan.entity.getShortName(),
+                                      setAmmoType.loc,
+                                      setAmmoType.slot + 1);
                             } else {
-                                AmmoType newAmmoType = getValidAmmoType(m.getGame(), ammo, sa.type);
+                                AmmoType newAmmoType = getValidAmmoType(twGameManager.getGame(),
+                                      ammo,
+                                      setAmmoType.type);
                                 if (newAmmoType != null) {
                                     ammo.changeAmmoType(newAmmoType);
                                 } else {
-                                    logger
-                                            .warn(String.format("Illegal ammo type '%s' for unit %s, slot %s",
-                                                    sa.type, sap.entity.getDisplayName(), ammo.getName()));
+                                    LOGGER.warn("Illegal ammo type '{}' for unit {}, slot {}",
+                                          setAmmoType.type,
+                                          setAmmoPlan.entity.getDisplayName(),
+                                          ammo.getName());
                                 }
                             }
                         }
@@ -504,21 +554,22 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 }
             }
 
-            for (SetAmmoTo sa : sap.ammoSetTo) {
+            for (SetAmmoTo setAmmoTo : setAmmoPlan.ammoSetTo) {
                 // Only can be done against Meks
-                if (sap.entity instanceof Mek) {
-                    if (sa.slot < sap.entity.getNumberOfCriticals(sa.loc)) {
-                        // Get the piece of equipment and check to make sure it
-                        // is a ammo item then set its amount!
-                        CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);
-                        if (cs != null) {
-                            Mounted<?> ammo = sap.entity.getCritical(sa.loc, sa.slot).getMount();
+                if (setAmmoPlan.entity instanceof Mek) {
+                    if (setAmmoTo.slot < setAmmoPlan.entity.getNumberOfCriticals(setAmmoTo.loc)) {
+                        // Get the piece of equipment and check to make sure it is an ammo item then set its amount!
+                        CriticalSlot criticalSlot = setAmmoPlan.entity.getCritical(setAmmoTo.loc, setAmmoTo.slot);
+                        if (criticalSlot != null) {
+                            Mounted<?> ammo = setAmmoPlan.entity.getCritical(setAmmoTo.loc, setAmmoTo.slot).getMount();
                             if (ammo == null) {
-                                logger.error(String.format("%s - invalid slot specified %d: %d",
-                                        sap.entity.getShortName(), sa.loc, sa.slot + 1));
+                                LOGGER.error("{} - invalid slot specified (SetAmmoTo) {}: {}",
+                                      setAmmoPlan.entity.getShortName(),
+                                      setAmmoTo.loc,
+                                      setAmmoTo.slot + 1);
                             } else if (ammo.getType() instanceof AmmoType) {
-                                // Also make sure we dont exceed the max allowed
-                                ammo.setShotsLeft(Math.min(sa.setAmmoTo, ammo.getBaseShotsLeft()));
+                                // Also make sure we don't exceed the max allowed
+                                ammo.setShotsLeft(Math.min(setAmmoTo.setAmmoTo, ammo.getBaseShotsLeft()));
                             }
                         }
                     }
@@ -527,80 +578,80 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
     }
 
-    private void parsePlanetaryConditions(Game g, ScenarioV1 p) {
-        if (p.containsKey(PARAM_PLANETCOND_TEMP)) {
-            g.getPlanetaryConditions().setTemperature(Integer.parseInt(p.getString(PARAM_PLANETCOND_TEMP)));
+    private void parsePlanetaryConditions(Game game, ScenarioV1 scenarioV1) {
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_TEMP)) {
+            game.getPlanetaryConditions().setTemperature(parseInt(PARAM_PLANET_CONDITIONS_TEMP, 0));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_GRAV)) {
-            g.getPlanetaryConditions().setGravity(Float.parseFloat(p.getString(PARAM_PLANETCOND_GRAV)));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_GRAV)) {
+            game.getPlanetaryConditions().setGravity(parseFloat(PARAM_PLANET_CONDITIONS_GRAV, 0.0f));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_FOG)) {
-            g.getPlanetaryConditions().setFog(Fog.getFog(StringUtil.toInt(p.getString(PARAM_PLANETCOND_FOG), 0)));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_FOG)) {
+            game.getPlanetaryConditions().setFog(Fog.getFog(parseInt(PARAM_PLANET_CONDITIONS_FOG, 0)));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_ATMOS)) {
-            g.getPlanetaryConditions()
-                    .setAtmosphere(Atmosphere.getAtmosphere(StringUtil.toInt(p.getString(PARAM_PLANETCOND_ATMOS), 0)));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_ATMOSPHERE)) {
+            game.getPlanetaryConditions()
+                  .setAtmosphere(Atmosphere.getAtmosphere(parseInt(PARAM_PLANET_CONDITIONS_ATMOSPHERE, 0)));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_LIGHT)) {
-            g.getPlanetaryConditions()
-                    .setLight(Light.getLight(StringUtil.toInt(p.getString(PARAM_PLANETCOND_LIGHT), 0)));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_LIGHT)) {
+            game.getPlanetaryConditions().setLight(Light.getLight(parseInt(PARAM_PLANET_CONDITIONS_LIGHT, 0)));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_WEATHER)) {
-            g.getPlanetaryConditions()
-                    .setWeather(Weather.getWeather(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WEATHER), 0)));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WEATHER)) {
+            game.getPlanetaryConditions().setWeather(Weather.getWeather(parseInt(PARAM_PLANET_CONDITIONS_WEATHER, 0)));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_WIND)) {
-            g.getPlanetaryConditions().setWind(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WIND), 0)));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WIND)) {
+            game.getPlanetaryConditions().setWind(Wind.getWind(parseInt(PARAM_PLANET_CONDITIONS_WIND, 0)));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_WINDDIR)) {
-            g.getPlanetaryConditions().setWindDirection(
-                    WindDirection.getWindDirection(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDDIR), 0)));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WIND_DIRECTION)) {
+            game.getPlanetaryConditions()
+                  .setWindDirection(WindDirection.getWindDirection(parseInt(PARAM_PLANET_CONDITIONS_WIND_DIRECTION,
+                        0)));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGDIR)) {
-            g.getPlanetaryConditions()
-                    .setShiftingWindDirection(parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGDIR, false));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WIND_SHIFTING_DIRECTION)) {
+            game.getPlanetaryConditions()
+                  .setShiftingWindDirection(parseBoolean(PARAM_PLANET_CONDITIONS_WIND_SHIFTING_DIRECTION, false));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGSTR)) {
-            g.getPlanetaryConditions()
-                    .setShiftingWindStrength(parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGSTR, false));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WIND_SHIFTING_STRENGTH)) {
+            game.getPlanetaryConditions()
+                  .setShiftingWindStrength(parseBoolean(PARAM_PLANET_CONDITIONS_WIND_SHIFTING_STRENGTH, false));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_WINDMIN)) {
-            g.getPlanetaryConditions()
-                    .setWindMin(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDMIN), 0)));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WIND_MIN)) {
+            game.getPlanetaryConditions().setWindMin(Wind.getWind(parseInt(PARAM_PLANET_CONDITIONS_WIND_MIN, 0)));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_WINDMAX)) {
-            g.getPlanetaryConditions()
-                    .setWindMax(Wind.getWind(StringUtil.toInt(p.getString(PARAM_PLANETCOND_WINDMAX), 0)));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_WIND_MAX)) {
+            game.getPlanetaryConditions().setWindMax(Wind.getWind(parseInt(PARAM_PLANET_CONDITIONS_WIND_MAX, 0)));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_EMI)) {
-            EMI emi = parseBoolean(p, PARAM_PLANETCOND_EMI, false) ? EMI.EMI : EMI.EMI_NONE;
-            g.getPlanetaryConditions().setEMI(emi);
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_EMI)) {
+            EMI emi = parseBoolean(PARAM_PLANET_CONDITIONS_EMI, false) ? EMI.EMI : EMI.EMI_NONE;
+            game.getPlanetaryConditions().setEMI(emi);
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_TERRAINCHANGES)) {
-            g.getPlanetaryConditions().setTerrainAffected(parseBoolean(p, PARAM_PLANETCOND_TERRAINCHANGES, true));
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_TERRAIN_CHANGES)) {
+            game.getPlanetaryConditions()
+                  .setTerrainAffected(parseBoolean(PARAM_PLANET_CONDITIONS_TERRAIN_CHANGES, true));
         }
 
-        if (p.containsKey(PARAM_PLANETCOND_BLOWINGSAND)) {
-            BlowingSand blowingSand = parseBoolean(p, PARAM_PLANETCOND_BLOWINGSAND, false) ? BlowingSand.BLOWING_SAND
-                    : BlowingSand.BLOWING_SAND_NONE;
-            g.getPlanetaryConditions().setBlowingSand(blowingSand);
+        if (scenarioV1.containsKey(PARAM_PLANET_CONDITIONS_BLOWING_SAND)) {
+            BlowingSand blowingSand = parseBoolean(PARAM_PLANET_CONDITIONS_BLOWING_SAND, false) ?
+                                            BlowingSand.BLOWING_SAND :
+                                            BlowingSand.BLOWING_SAND_NONE;
+            game.getPlanetaryConditions().setBlowingSand(blowingSand);
         }
     }
 
-    private Collection<Entity> buildFactionEntities(ScenarioV1 p, Player player) throws ScenarioLoaderException {
+    private Collection<Entity> buildFactionEntities(ScenarioV1 scenarioV1, Player player)
+          throws ScenarioLoaderException {
         String faction = player.getName();
         Pattern unitPattern = Pattern.compile(String.format("^Unit_\\Q%s\\E_[^_]+$", faction));
         Pattern unitDataPattern = Pattern.compile(String.format("^(Unit_\\Q%s\\E_[^_]+)_([A-Z][^_]+)$", faction));
@@ -608,110 +659,108 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         Map<String, Entity> entities = new HashMap<>();
 
         // Gather all defined units
-        for (String key : p.keySet()) {
-            if (unitPattern.matcher(key).matches() && (p.getNumValues(key) > 0)) {
-                if (p.getNumValues(key) > 1) {
-                    logger.error(String.format("Scenario loading: Unit declaration %s found %d times",
-                            key, p.getNumValues(key)));
+        for (String key : scenarioV1.keySet()) {
+            if (unitPattern.matcher(key).matches() && (scenarioV1.getNumValues(key) > 0)) {
+                if (scenarioV1.getNumValues(key) > 1) {
+                    LOGGER.error("Scenario loading: Unit declaration {} found {} times",
+                          key,
+                          scenarioV1.getNumValues(key));
                     throw new ScenarioLoaderException("ScenarioLoaderException.multipleUnitDeclarations", key);
                 }
-                entities.put(key, parseEntityLine(p.getString(key)));
+                entities.put(key, parseEntityLine(scenarioV1.getString(key)));
             }
         }
 
         // Add other information
-        for (String key : p.keySet()) {
+        for (String key : scenarioV1.keySet()) {
             Matcher dataMatcher = unitDataPattern.matcher(key);
             if (dataMatcher.matches()) {
                 String unitKey = dataMatcher.group(1);
                 if (!entities.containsKey(unitKey)) {
-                    logger
-                            .warn("Scenario loading: Data for undeclared unit encountered, ignoring: " + key);
+                    LOGGER.warn("Scenario loading: Data for undeclared unit encountered, ignoring: {}", key);
                     continue;
                 }
-                Entity e = entities.get(unitKey);
+                Entity entity = entities.get(unitKey);
                 switch (dataMatcher.group(2)) {
                     case PARAM_DAMAGE:
-                        for (String val : p.get(key)) {
-                            damagePlans.add(new DamagePlan(e, Integer.parseInt(val)));
+                        for (String value : scenarioV1.get(key)) {
+                            damagePlans.add(new DamagePlan(entity, MathUtility.parseInt(value, 0)));
                         }
                         break;
                     case PARAM_SPECIFIC_DAMAGE:
-                        DamagePlan dp = new DamagePlan(e);
-                        for (String val : p.getString(key).split(SEPARATOR_COMMA, -1)) {
-                            dp.addSpecificDamage(val);
+                        DamagePlan damagePlan = new DamagePlan(entity);
+                        for (String value : scenarioV1.getString(key).split(SEPARATOR_COMMA, -1)) {
+                            damagePlan.addSpecificDamage(value);
                         }
-                        damagePlans.add(dp);
+                        damagePlans.add(damagePlan);
                         break;
                     case PARAM_CRITICAL_HIT:
-                        CritHitPlan chp = new CritHitPlan(e);
-                        for (String val : p.getString(key).split(SEPARATOR_COMMA, -1)) {
-                            chp.addCritHit(val);
+                        CriticalHitPlan criticalHitPlan = new CriticalHitPlan(entity);
+                        for (String value : scenarioV1.getString(key).split(SEPARATOR_COMMA, -1)) {
+                            criticalHitPlan.addCriticalHits(value);
                         }
-                        critHitPlans.add(chp);
+                        criticalHitPlans.add(criticalHitPlan);
                         break;
                     case PARAM_AMMO_AMOUNT:
-                        SetAmmoPlan amountSap = new SetAmmoPlan(e);
-                        for (String val : p.getString(key).split(SEPARATOR_COMMA, -1)) {
-                            amountSap.addSetAmmoTo(val);
+                        SetAmmoPlan setAmmoPlanAmount = new SetAmmoPlan(entity);
+                        for (String value : scenarioV1.getString(key).split(SEPARATOR_COMMA, -1)) {
+                            setAmmoPlanAmount.addSetAmmoTo(value);
                         }
-                        ammoPlans.add(amountSap);
+                        ammoPlans.add(setAmmoPlanAmount);
                         break;
                     case PARAM_AMMO_TYPE:
-                        SetAmmoPlan typeSap = new SetAmmoPlan(e);
-                        for (String val : p.getString(key).split(SEPARATOR_COMMA, -1)) {
-                            typeSap.addSetAmmoType(val);
+                        SetAmmoPlan setAmmoPlanType = new SetAmmoPlan(entity);
+                        for (String val : scenarioV1.getString(key).split(SEPARATOR_COMMA, -1)) {
+                            setAmmoPlanType.addSetAmmoType(val);
                         }
-                        ammoPlans.add(typeSap);
+                        ammoPlans.add(setAmmoPlanType);
                         break;
                     case PARAM_PILOT_HITS:
-                        int hits = Integer.parseInt(p.getString(key));
-                        e.getCrew().setHits(Math.min(hits, 5), 0);
+                        int hits = parseInt(scenarioV1.getString(key), 0);
+                        entity.getCrew().setHits(Math.min(hits, 5), 0);
                         break;
                     case PARAM_EXTERNAL_ID:
-                        e.setExternalIdAsString(p.getString(key));
+                        entity.setExternalIdAsString(scenarioV1.getString(key));
                         break;
                     case PARAM_ADVANTAGES:
-                        parseAdvantages(e, p.getString(key, SEPARATOR_SPACE));
+                        parseAdvantages(entity, scenarioV1.getString(key, SEPARATOR_SPACE));
                         break;
                     case PARAM_AUTO_EJECT:
-                        parseAutoEject(e, p.getString(key));
+                        parseAutoEject(entity, scenarioV1.getString(key));
                         break;
                     case PARAM_COMMANDER:
-                        parseCommander(e, p.getString(key));
+                        parseCommander(entity, scenarioV1.getString(key));
                         break;
                     case PARAM_DEPLOYMENT_ROUND:
-                        int round = Integer.parseInt(p.getString(key));
+                        int round = parseInt(scenarioV1.getString(key), 0);
                         if (round > 0) {
-                            logger.debug(String.format("%s will be deployed before round %d",
-                                    e.getDisplayName(), round));
-                            e.setDeployRound(round);
-                            e.setDeployed(false);
-                            e.setNeverDeployed(false);
-                            e.setPosition(null);
+                            LOGGER.debug("{} will be deployed before round {}", entity.getDisplayName(), round);
+                            entity.setDeployRound(round);
+                            entity.setDeployed(false);
+                            entity.setNeverDeployed(false);
+                            entity.setPosition(null);
                         }
                         break;
                     case PARAM_CAMO:
-                        final Camouflage camouflage = parseCamouflage(p.getString(key));
+                        final Camouflage camouflage = parseCamouflage(scenarioV1.getString(key));
                         if (!camouflage.isDefault()) {
-                            e.setCamouflage(camouflage);
+                            entity.setCamouflage(camouflage);
                         }
                         break;
                     case PARAM_ALTITUDE:
-                        int altitude = Math.min(Integer.parseInt(p.getString(key)), 10);
-                        if (e.isAero()) {
-                            e.setAltitude(altitude);
+                        int altitude = Math.min(parseInt(scenarioV1.getString(key), 0), 10);
+                        if (entity.isAero()) {
+                            entity.setAltitude(altitude);
                             if (altitude <= 0) {
-                                ((IAero) e).land();
+                                ((IAero) entity).land();
                             }
                         } else {
-                            logger
-                                    .warn(String.format("Altitude setting for a non-aerospace unit %s; ignoring",
-                                            e.getShortName()));
+                            LOGGER.warn("Altitude setting for a non-aerospace unit {}; ignoring",
+                                  entity.getShortName());
                         }
                         break;
                     default:
-                        logger.error("Scenario loading: Unknown unit data key " + key);
+                        LOGGER.error("Scenario loading: Unknown unit data key {}", key);
                 }
             }
         }
@@ -719,72 +768,80 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         return entities.values();
     }
 
-    private Entity parseEntityLine(String s) throws ScenarioLoaderException {
+    private Entity parseEntityLine(String line) throws ScenarioLoaderException {
         try {
-            String[] parts = s.split(SEPARATOR_COMMA, -1);
+            String[] parts = line.split(SEPARATOR_COMMA, -1);
             int i;
-            MekSummary ms = MekSummaryCache.getInstance().getMek(parts[0]);
-            if (ms == null) {
+            MekSummary mekSummary = MekSummaryCache.getInstance().getMek(parts[0]);
+
+            if (mekSummary == null) {
                 throw new ScenarioLoaderException("ScenarioLoaderException.missingRequiredEntity", parts[0]);
             }
-            logger.debug(String.format("Loading %s", ms.getName()));
-            Entity e = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
 
-            // The following section is used to determine if part 4 of the string includes
-            // gender or not
-            // The regex is used to match a number that might be negative. As the direction
-            // is never
-            // a number, if a number is found it must be gender.
-            // The i value must be included to ensure that the correct indexes are used for
-            // the
-            // direction calculation below.
+            LOGGER.debug("Loading {}", mekSummary.getName());
+            Entity entity = new MekFileParser(mekSummary.getSourceFile(), mekSummary.getEntryName()).getEntity();
+
+            // The following section is used to determine if part 4 of the string includes gender or not the regex is
+            // used to match a number that might be negative. As the direction is never a number, if a number is
+            // found it must be gendered. The `i` value must be included to ensure that the correct indexes are used for
+            // the direction calculation below.
             if ((parts.length > 4) && parts[4].matches("-?\\d+")) {
-                e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
-                        Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-                        Gender.parseFromString(parts[4]), Boolean.parseBoolean(parts[5]), null));
+                entity.setCrew(new Crew(entity.getCrew().getCrewType(),
+                      parts[1],
+                      1,
+                      Integer.parseInt(parts[2]),
+                      Integer.parseInt(parts[3]),
+                      Gender.parseFromString(parts[4]),
+                      Boolean.parseBoolean(parts[5]),
+                      null));
                 i = 6; // direction will be part 6, as the scenario has the gender of its pilots
-                       // included
+                // included
             } else {
-                e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
-                        Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-                        RandomGenderGenerator.generate(), e.isClan(), null));
+                entity.setCrew(new Crew(entity.getCrew().getCrewType(),
+                      parts[1],
+                      1,
+                      Integer.parseInt(parts[2]),
+                      Integer.parseInt(parts[3]),
+                      RandomGenderGenerator.generate(),
+                      entity.isClan(),
+                      null));
                 i = 4; // direction will be part 4, as the scenario does not contain gender
             }
 
-            // This uses the i value to ensure it is calculated correctly
+            // This uses the `i` value to ensure it is calculated correctly
             if (parts.length >= 7) {
                 String direction = parts[i++].toUpperCase(Locale.ROOT); // grab value at i, then increment
                 switch (direction) {
                     case "N":
-                        e.setFacing(0);
+                        entity.setFacing(0);
                         break;
                     case "NW":
-                        e.setFacing(5);
+                        entity.setFacing(5);
                         break;
                     case "SW":
-                        e.setFacing(4);
+                        entity.setFacing(4);
                         break;
                     case "S":
-                        e.setFacing(3);
+                        entity.setFacing(3);
                         break;
                     case "SE":
-                        e.setFacing(2);
+                        entity.setFacing(2);
                         break;
                     case "NE":
-                        e.setFacing(1);
+                        entity.setFacing(1);
                         break;
                     default:
                         break;
                 }
                 int x = Integer.parseInt(parts[i++]) - 1;
                 int y = Integer.parseInt(parts[i]) - 1;
-                e.setPosition(new Coords(x, y));
-                e.setDeployed(true);
+                entity.setPosition(new Coords(x, y));
+                entity.setDeployed(true);
             }
-            return e;
+            return entity;
         } catch (NumberFormatException | IndexOutOfBoundsException | EntityLoadingException ex) {
-            logger.error("", ex);
-            throw new ScenarioLoaderException("ScenarioLoaderException.unparsableEntityLine", s);
+            LOGGER.error("", ex);
+            throw new ScenarioLoaderException("ScenarioLoaderException.unparsableEntityLine", line);
         }
     }
 
@@ -795,10 +852,9 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             String[] advantageData = curAdv.split(SEPARATOR_COLON, -1);
             IOption option = entity.getCrew().getOptions().getOption(advantageData[0]);
             if (option == null) {
-                logger.error(String.format("Ignoring invalid pilot advantage '%s'", curAdv));
+                LOGGER.error("Ignoring invalid pilot advantage '{}'", curAdv);
             } else {
-                logger.debug(String.format("Adding pilot advantage '%s' to %s",
-                        curAdv, entity.getDisplayName()));
+                LOGGER.debug("Adding pilot advantage '{}' to {}", curAdv, entity.getDisplayName());
                 if (advantageData.length > 1) {
                     option.setValue(advantageData[1]);
                 } else {
@@ -809,8 +865,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     }
 
     private void parseAutoEject(Entity entity, String eject) {
-        if (entity instanceof Mek) {
-            Mek mek = (Mek) entity;
+        if (entity instanceof Mek mek) {
             mek.setAutoEject(Boolean.parseBoolean(eject));
         }
     }
@@ -823,12 +878,15 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         if ((camouflage == null) || camouflage.isBlank()) {
             return new Camouflage();
         }
+
         final String[] camouflageParameters = camouflage.split(SEPARATOR_COMMA, -1);
+
         if (camouflageParameters.length == 2) {
             return new Camouflage(camouflageParameters[0], camouflageParameters[1]);
         } else {
-            logger.error("Attempted to parse illegal camouflage parameter array of size "
-                    + camouflageParameters.length + " from " + camouflage);
+            LOGGER.error("Attempted to parse illegal camouflage parameter array of size {} from {}",
+                  camouflageParameters.length,
+                  camouflage);
             return new Camouflage();
         }
     }
@@ -837,8 +895,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         return param + SEPARATOR_UNDERSCORE + faction;
     }
 
-    private Collection<Player> createPlayers(ScenarioV1 p) throws ScenarioLoaderException {
-        String sFactions = p.getString(PARAM_FACTIONS);
+    private Collection<Player> createPlayers(ScenarioV1 scenarioV1) throws ScenarioLoaderException {
+        String sFactions = scenarioV1.getString(PARAM_FACTIONS);
         if ((sFactions == null) || sFactions.isEmpty()) {
             throw new ScenarioLoaderException("ScenarioLoaderException.missingFactions");
         }
@@ -855,19 +913,21 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             // scenario players start out as ghosts to be logged into
             player.setGhost(true);
 
-            String loc = p.getString(getFactionParam(faction, PARAM_LOCATION));
+            String loc = scenarioV1.getString(getFactionParam(faction, PARAM_LOCATION));
+
             if (loc == null) {
                 loc = "Any";
             }
+
             int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, loc), 0);
             player.setStartingPos(dir);
 
-            final Camouflage camouflage = parseCamouflage(p.getString(getFactionParam(faction, PARAM_CAMO)));
+            final Camouflage camouflage = parseCamouflage(scenarioV1.getString(getFactionParam(faction, PARAM_CAMO)));
             if (!camouflage.isDefault()) {
                 player.setCamouflage(camouflage);
             }
 
-            String team = p.getString(getFactionParam(faction, PARAM_TEAM));
+            String team = scenarioV1.getString(getFactionParam(faction, PARAM_TEAM));
             if ((team != null) && !team.isEmpty()) {
                 try {
                     teamId = Integer.parseInt(team);
@@ -877,22 +937,22 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             } else {
                 teamId++;
             }
+
             player.setTeam(Math.min(teamId, Player.TEAM_NAMES.length - 1));
 
-            String minefields = p.getString(getFactionParam(faction, PARAM_MINEFIELDS));
+            String minefields = scenarioV1.getString(getFactionParam(faction, PARAM_MINEFIELDS));
             if ((minefields != null) && !minefields.isEmpty()) {
                 String[] mines = minefields.split(SEPARATOR_COMMA, -1);
                 if (mines.length >= 3) {
                     try {
-                        int minesConventional = Integer.parseInt(mines[0]);
-                        int minesCommand = Integer.parseInt(mines[1]);
-                        int minesVibra = Integer.parseInt(mines[2]);
+                        int minesConventional = MathUtility.parseInt(mines[0], 0);
+                        int minesCommand = MathUtility.parseInt(mines[1], 0);
+                        int minesVibra = MathUtility.parseInt(mines[2], 0);
                         player.setNbrMFConventional(minesConventional);
                         player.setNbrMFCommand(minesCommand);
                         player.setNbrMFVibra(minesVibra);
-                    } catch (NumberFormatException nfex) {
-                        logger.error(String.format("Format error with minefields string '%s' for %s",
-                                minefields, faction));
+                    } catch (NumberFormatException numberFormatException) {
+                        LOGGER.error("Format error with minefields string '{}' for {}", minefields, faction);
                     }
                 }
             }
@@ -904,41 +964,41 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     /**
      * Load board files and create the megaboard.
      */
-    private Board createBoard(ScenarioV1 p) throws ScenarioLoaderException {
+    private Board createBoard(ScenarioV1 scenarioV1) throws ScenarioLoaderException {
         int mapWidth = 16, mapHeight = 17;
-        if (p.getString(PARAM_MAP_WIDTH) == null) {
-            logger.info("No map width specified; using " + mapWidth);
+        if (scenarioV1.getString(PARAM_MAP_WIDTH) == null) {
+            LOGGER.info("No map width specified; using {}", mapWidth);
         } else {
-            mapWidth = Integer.parseInt(p.getString(PARAM_MAP_WIDTH));
+            mapWidth = parseInt(PARAM_MAP_WIDTH, mapWidth);
         }
 
-        if (p.getString(PARAM_MAP_HEIGHT) == null) {
-            logger.info("No map height specified; using " + mapHeight);
+        if (scenarioV1.getString(PARAM_MAP_HEIGHT) == null) {
+            LOGGER.info("No map height specified; using {}", mapHeight);
         } else {
-            mapHeight = Integer.parseInt(p.getString(PARAM_MAP_HEIGHT));
+            mapHeight = scenarioV1.parseInt(PARAM_MAP_HEIGHT, mapHeight);
         }
 
         int nWidth = 1, nHeight = 1;
-        if (p.getString(PARAM_BOARD_WIDTH) == null) {
-            logger.info("No board width specified; using " + nWidth);
+        if (scenarioV1.getString(PARAM_BOARD_WIDTH) == null) {
+            LOGGER.info("No board width specified; using {}", nWidth);
         } else {
-            nWidth = Integer.parseInt(p.getString(PARAM_BOARD_WIDTH));
+            nWidth = parseInt(PARAM_BOARD_WIDTH, nWidth);
         }
 
-        if (p.getString(PARAM_BOARD_HEIGHT) == null) {
-            logger.info("No board height specified; using " + nHeight);
+        if (scenarioV1.getString(PARAM_BOARD_HEIGHT) == null) {
+            LOGGER.info("No board height specified; using {}", nHeight);
         } else {
-            nHeight = Integer.parseInt(p.getString(PARAM_BOARD_HEIGHT));
+            nHeight = parseInt(PARAM_BOARD_HEIGHT, nHeight);
         }
 
-        logger.debug(String.format("Mapsheets are %d by %d hexes.", mapWidth, mapHeight));
-        logger.debug(String.format("Constructing %d by %d board.", nWidth, nHeight));
-        int cf = 0;
-        if (p.getString(PARAM_BRIDGE_CF) == null) {
-            logger.debug("No CF for bridges defined. Using map file defaults.");
+        LOGGER.debug("Map sheets are {} by {} hexes.", mapWidth, mapHeight);
+        LOGGER.debug("Constructing {} by {} board.", nWidth, nHeight);
+        int constructionFactor = 0;
+        if (scenarioV1.getString(PARAM_BRIDGE_CF) == null) {
+            LOGGER.debug("No CF for bridges defined. Using map file defaults.");
         } else {
-            cf = Integer.parseInt(p.getString(PARAM_BRIDGE_CF));
-            logger.debug("Overriding map-defined bridge CFs with " + cf);
+            constructionFactor = parseInt(PARAM_BRIDGE_CF, constructionFactor);
+            LOGGER.debug("Overriding map-defined bridge CFs with {}", constructionFactor);
         }
         // load available boards
         // basically copied from Server.java. Should get moved somewhere neutral
@@ -949,15 +1009,14 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         // "" entry stands for the boards base directory
         allDirs.add("");
 
-        if (p.getString(PARAM_MAP_DIRECTORIES) != null) {
-            allDirs = Arrays.asList(p.getString(PARAM_MAP_DIRECTORIES)
-                    .split(SEPARATOR_COMMA, -1));
+        if (scenarioV1.getString(PARAM_MAP_DIRECTORIES) != null) {
+            allDirs = Arrays.asList(scenarioV1.getString(PARAM_MAP_DIRECTORIES).split(SEPARATOR_COMMA, -1));
         }
 
         for (String dir : allDirs) {
             File curDir = new File(Configuration.boardsDir(), dir);
             if (curDir.exists()) {
-                for (String file : curDir.list()) {
+                for (String file : Objects.requireNonNull(curDir.list())) {
                     if (file.toLowerCase(Locale.ROOT).endsWith(FILE_SUFFIX_BOARD)) {
                         boards.add(dir + "/" + file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
                     }
@@ -966,17 +1025,19 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         Board[] ba = new Board[nWidth * nHeight];
-        Queue<String> maps = new LinkedList<>(
-                Arrays.asList(p.getString(PARAM_MAPS).split(SEPARATOR_COMMA, -1)));
+        Queue<String> maps = new LinkedList<>(Arrays.asList(scenarioV1.getString(PARAM_MAPS)
+                                                                  .split(SEPARATOR_COMMA, -1)));
         List<Boolean> rotateBoard = new ArrayList<>();
         for (int x = 0; x < nWidth; x++) {
             for (int y = 0; y < nHeight; y++) {
                 int n = (y * nWidth) + x;
                 String board = MAP_RANDOM;
+
                 if (!maps.isEmpty()) {
                     board = maps.poll();
                 }
-                logger.debug(String.format("(%d,%d) %s", x, y, board));
+
+                LOGGER.debug("({}, {}) {}", x, y, board);
 
                 boolean isRotated = false;
                 if (board.startsWith(Board.BOARD_REQUEST_ROTATION)) {
@@ -985,20 +1046,26 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 }
 
                 String sBoardFile;
+
                 if (board.equals(MAP_RANDOM)) {
                     sBoardFile = (boards.get(Compute.randomInt(boards.size()))) + FILE_SUFFIX_BOARD;
                 } else {
                     sBoardFile = board + FILE_SUFFIX_BOARD;
                 }
+
                 File fBoard = new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
+
                 if (!fBoard.exists()) {
                     throw new ScenarioLoaderException("ScenarioLoaderException.nonexistentBoard", board);
                 }
+
                 ba[n] = new Board();
                 ba[n].load(new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile());
-                if (cf > 0) {
-                    ba[n].setBridgeCF(cf);
+
+                if (constructionFactor > 0) {
+                    ba[n].setBridgeCF(constructionFactor);
                 }
+
                 BoardUtilities.flip(ba[n], isRotated, isRotated);
                 rotateBoard.add(isRotated);
             }
@@ -1008,6 +1075,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         if (ba.length == 1) {
             return ba[0];
         }
+
         // construct the big board
         return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, rotateBoard, MapSettings.MEDIUM_GROUND);
     }
@@ -1015,12 +1083,14 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     /**
      * Parses out the external game id from the scenario file
      */
-    private int parseExternalGameId(ScenarioV1 p) {
-        String sExternalId = p.getString(PARAM_GAME_EXTERNAL_ID);
+    private int parseExternalGameId(ScenarioV1 scenarioV1) {
+        String sExternalId = scenarioV1.getString(PARAM_GAME_EXTERNAL_ID);
         int ExternalGameId = 0;
+
         if (sExternalId != null) {
-            ExternalGameId = Integer.parseInt(sExternalId);
+            ExternalGameId = MathUtility.parseInt(sExternalId, 0);
         }
+
         return ExternalGameId;
     }
 
@@ -1040,84 +1110,51 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     }
 
     /**
-     * Parses a boolean value. When the key is not present, returns the given
-     * defaultValue. When the key is present, interprets "true" and "on" and "1"
-     * as true and everything else as false.
-     */
-    private boolean parseBoolean(ScenarioV1 p, String key, boolean defaultValue) {
-        boolean result = defaultValue;
-        if (p.containsKey(key)) {
-            result = p.getString(key).equalsIgnoreCase("true")
-                    || p.getString(key).equalsIgnoreCase("on")
-                    || p.getString(key).equalsIgnoreCase("1");
-        }
-        return result;
-    }
-
-    /**
      * This is used specify the critical hit location
      */
-    private static class CritHit {
+    private static class CriticalHit {
         public int loc;
         public int slot;
 
-        public CritHit(int l, int s) {
+        public CriticalHit(int l, int s) {
             loc = l;
             slot = s;
         }
     }
 
     /**
-     * This class is used to store the critical hit plan for a entity it is
-     * loaded from the scenario file. It contains a vector of CritHit.
+     * This class is used to store the critical hit plan for an entity it is loaded from the scenario file. It contains
+     * a vector of {@link CriticalHit}.
      */
-    private static class CritHitPlan {
+    private static class CriticalHitPlan {
         public Entity entity;
-        List<CritHit> critHits = new ArrayList<>();
+        List<CriticalHit> criticalHits = new ArrayList<>();
 
-        public CritHitPlan(Entity e) {
+        public CriticalHitPlan(Entity e) {
             entity = e;
         }
 
-        public void addCritHit(String s) {
+        public void addCriticalHits(String s) {
             int ewSpot = s.indexOf(':');
-            int loc = Integer.parseInt(s.substring(0, ewSpot));
-            int slot = Integer.parseInt(s.substring(ewSpot + 1));
+            int loc = MathUtility.parseInt(s.substring(0, ewSpot), 0);
+            int slot = MathUtility.parseInt(s.substring(ewSpot + 1), 0);
 
-            critHits.add(new CritHit(loc, slot - 1));
+            criticalHits.add(new CriticalHit(loc, slot - 1));
         }
     }
 
     /**
      * This is used to store the armor to change ammo at a given location
      */
-    private static class SetAmmoTo {
-        public final int loc;
-        public final int slot;
-        public final int setAmmoTo;
-
-        public SetAmmoTo(int loc, int slot, int setAmmoTo) {
-            this.loc = loc;
-            this.slot = slot;
-            this.setAmmoTo = setAmmoTo;
-        }
+    private record SetAmmoTo(int loc, int slot, int setAmmoTo) {
     }
 
-    private static class SetAmmoType {
-        public final int loc;
-        public final int slot;
-        public final String type;
-
-        public SetAmmoType(int loc, int slot, String type) {
-            this.loc = loc;
-            this.slot = slot;
-            this.type = type;
-        }
+    private record SetAmmoType(int loc, int slot, String type) {
     }
 
     /**
-     * This class is used to store the ammo Adjustments it is loaded from the
-     * scenario file. It contains a vector of SetAmmoTo.
+     * This class is used to store the ammo Adjustments it is loaded from the scenario file. It contains a vector of
+     * SetAmmoTo.
      */
     private static class SetAmmoPlan {
         public final Entity entity;
@@ -1131,29 +1168,33 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         /**
          * Converts 2:1-34 to Location 2 Slot 1 set Ammo to 34
          */
-        public void addSetAmmoTo(String s) {
-            int ewSpot = s.indexOf(':');
-            int amSpot = s.indexOf('-');
-            if (s.isEmpty() || (ewSpot < 1) || (amSpot < ewSpot)) {
+        public void addSetAmmoTo(String string) {
+            int equipmentSlot = string.indexOf(':');
+            int ammoSpot = string.indexOf('-');
+
+            if (string.isEmpty() || (equipmentSlot < 1) || (ammoSpot < equipmentSlot)) {
                 return;
             }
-            int loc = Integer.parseInt(s.substring(0, ewSpot));
-            int slot = Integer.parseInt(s.substring(ewSpot + 1, amSpot));
-            int setTo = Integer.parseInt(s.substring(amSpot + 1));
+
+            int loc = MathUtility.parseInt(string.substring(0, equipmentSlot), 0);
+            int slot = MathUtility.parseInt(string.substring(equipmentSlot + 1, ammoSpot), 0);
+            int setTo = MathUtility.parseInt(string.substring(ammoSpot + 1), 0);
 
             ammoSetTo.add(new SetAmmoTo(loc, slot - 1, setTo));
         }
 
         public void addSetAmmoType(String s) {
-            int ewSpot = s.indexOf(':');
-            int atSpot = s.indexOf('-');
-            if (s.isEmpty() || (ewSpot < 1) || (atSpot < ewSpot)) {
+            int equipmentSlot = s.indexOf(':');
+            int ammoTypeSpot = s.indexOf('-');
+
+            if (s.isEmpty() || (equipmentSlot < 1) || (ammoTypeSpot < equipmentSlot)) {
                 return;
             }
-            int loc = Integer.parseInt(s.substring(0, ewSpot));
-            int slot = Integer.parseInt(s.substring(ewSpot + 1, atSpot));
 
-            ammoSetType.add(new SetAmmoType(loc, slot - 1, s.substring(atSpot + 1)));
+            int loc = MathUtility.parseInt(s.substring(0, equipmentSlot), 0);
+            int slot = MathUtility.parseInt(s.substring(equipmentSlot + 1, ammoTypeSpot), 0);
+
+            ammoSetType.add(new SetAmmoType(loc, slot - 1, s.substring(ammoTypeSpot + 1)));
         }
     }
 
@@ -1175,13 +1216,13 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     }
 
     /**
-     * This class is used to store the damage plan for a entity it is loaded
-     * from the scenario file. It contains a vector of SpecDam.
+     * This class is used to store the damage plan for an entity it is loaded from the scenario file. It contains a
+     * vector of SpecDam.
      */
     private static class DamagePlan {
         public final Entity entity;
         public final int nBlocks;
-        public final List<SpecDam> specificDammage = new ArrayList<>();
+        public final List<SpecDam> specificDamage = new ArrayList<>();
 
         public DamagePlan(Entity e, int n) {
             entity = e;
@@ -1201,12 +1242,12 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             if (s.isEmpty() || (ewSpot < 1)) {
                 return;
             }
-            int loc = Integer.parseInt(s.substring(1, ewSpot));
-            int setTo = Integer.parseInt(s.substring(ewSpot + 1));
+            int loc = MathUtility.parseInt(s.substring(1, ewSpot), 0);
+            int setTo = MathUtility.parseInt(s.substring(ewSpot + 1), 0);
             boolean rear = (s.charAt(0) == 'R');
             boolean internal = (s.charAt(0) == 'I');
 
-            specificDammage.add(new SpecDam(loc, setTo, rear, internal));
+            specificDamage.add(new SpecDam(loc, setTo, rear, internal));
         }
     }
 

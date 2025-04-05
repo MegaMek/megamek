@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,8 +39,9 @@ public class AeroSpaceFighter extends Aero {
         // appropriately
         maxExtBombPoints = (int) Math.round(getWeight() / 5);
         // Can't check quirk here, as they don't exist in unit files yet.
-        maxIntBombPoints = getTransportBays().stream().mapToInt(
-                tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0).sum();
+        maxIntBombPoints = getTransportBays().stream()
+                                 .mapToInt(tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0)
+                                 .sum();
     }
 
     @Override
@@ -71,28 +72,25 @@ public class AeroSpaceFighter extends Aero {
     /**
      * Method to enable mass location damaging, mainly for Fighter Squadrons
      *
-     * @param loc that every fighter in the squadron needs to damage, for MekHQ
-     *            tracking
+     * @param loc that every fighter in the squadron needs to damage, for MekHQ tracking
      */
     public void damageLocation(int loc) {
-        weaponList.stream().filter(x -> x.getLocation() == loc).forEach(
-                (weapon) -> {
-                    // Damage the weapon
-                    weapon.setHit(true);
-                    // Damage the critical slot
-                    for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-                        CriticalSlot slot1 = getCritical(loc, i);
-                        if ((slot1 == null) ||
-                                (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                            continue;
-                        }
-                        Mounted<?> mounted = slot1.getMount();
-                        if (mounted.equals(weapon)) {
-                            hitAllCriticals(loc, i);
-                            break;
-                        }
-                    }
-                });
+        weaponList.stream().filter(x -> x.getLocation() == loc).forEach((weapon) -> {
+            // Damage the weapon
+            weapon.setHit(true);
+            // Damage the critical slot
+            for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+                CriticalSlot slot1 = getCritical(loc, i);
+                if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                    continue;
+                }
+                Mounted<?> mounted = slot1.getMount();
+                if (mounted.equals(weapon)) {
+                    hitAllCriticals(loc, i);
+                    break;
+                }
+            }
+        });
     }
 
     @Override
@@ -118,4 +116,8 @@ public class AeroSpaceFighter extends Aero {
     }
 
 
+    @Override
+    public void clearInitiative(boolean bUseInitComp) {
+
+    }
 }

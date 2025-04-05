@@ -19,19 +19,21 @@
 package megamek;
 
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.io.Serializable;
 
+import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
 /**
- * This is used for versioning, and to track the current Version the suite is
- * running at.
+ * This is used for versioning, and to track the current Version the suite is running at.
  */
 public final class Version implements Comparable<Version>, Serializable {
     // region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 3121116859864232639L;
 
     private static final MMLogger logger = MMLogger.create(Version.class);
@@ -43,6 +45,7 @@ public final class Version implements Comparable<Version>, Serializable {
     // endregion Variable Declarations
 
     // region Constructors
+
     /**
      * This Constructor is not to be used outside of unit testing
      */
@@ -58,13 +61,12 @@ public final class Version implements Comparable<Version>, Serializable {
         fillFromText(text);
     }
 
-    public Version(final String release, final String major, final String minor,
-            final String snapshot) throws NumberFormatException {
+    public Version(final String release, final String major, final String minor, final String snapshot) {
         this();
-        setRelease(Integer.parseInt(release));
-        setMajor(Integer.parseInt(major));
-        setMinor(Integer.parseInt(minor));
-        setSnapshot(Boolean.parseBoolean(snapshot));
+        setRelease(MathUtility.parseInt(release, 0));
+        setMajor(MathUtility.parseInt(major, 50));
+        setMinor(MathUtility.parseInt(minor, 5));
+        setSnapshot(MathUtility.parseBoolean(snapshot, false));
     }
     // endregion Constructors
 
@@ -103,21 +105,24 @@ public final class Version implements Comparable<Version>, Serializable {
     // endregion Getters
 
     /**
-     * Use this method to determine if this version is higher than the version
-     * passed
+     * Use this method to determine if this version is higher than the version passed
      *
      * @param other The version we want to see if it is lower than this version
+     *
      * @return true if this is higher than checkVersion
+     *
+     * @deprecated use {@link #isHigherThan(Version)} instead.
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public boolean isHigherThan(final String other) {
         return isHigherThan(new Version(other));
     }
 
     /**
-     * Use this method to determine if the version passed is less than this Version
-     * object.
+     * Use this method to determine if the version passed is less than this Version object.
      *
      * @param other The version we want to see if is less than this version
+     *
      * @return true if checkVersion is less than this Version object
      */
     public boolean isHigherThan(final Version other) {
@@ -128,8 +133,12 @@ public final class Version implements Comparable<Version>, Serializable {
      * Use this method to determine if this version is lower than the version passed
      *
      * @param other The version we want to see if it is higher than this version.
+     *
      * @return true if this is lower than checkVersion
+     *
+     * @deprecated use {@link #isLowerThan(Version) instead}
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public boolean isLowerThan(final String other) {
         return isLowerThan(new Version(other));
     }
@@ -138,6 +147,7 @@ public final class Version implements Comparable<Version>, Serializable {
      * Use this method to determine if this version is lower than the version passed
      *
      * @param other The version we want to see if it is higher than this version.
+     *
      * @return true if this is lower than checkVersion
      */
     public boolean isLowerThan(final Version other) {
@@ -147,8 +157,8 @@ public final class Version implements Comparable<Version>, Serializable {
     /**
      * @param lower the lower Version bound (exclusive)
      * @param upper the upper Version bound (exclusive)
-     * @return true if the version is between lower and upper versions, both
-     *         exclusive
+     *
+     * @return true if the version is between lower and upper versions, both exclusive
      */
     public boolean isBetween(final String lower, final String upper) {
         return isBetween(new Version(lower), new Version(upper));
@@ -157,8 +167,8 @@ public final class Version implements Comparable<Version>, Serializable {
     /**
      * @param lower the lower Version bound (exclusive)
      * @param upper the upper Version bound (exclusive)
-     * @return true is the version is between lower and upper versions, both
-     *         exclusive
+     *
+     * @return true is the version is between lower and upper versions, both exclusive
      */
     public boolean isBetween(final Version lower, final Version upper) {
         return isHigherThan(lower) && isLowerThan(upper);
@@ -166,6 +176,7 @@ public final class Version implements Comparable<Version>, Serializable {
 
     /**
      * @param other The version we want to see if it is the same as this version.
+     *
      * @return true if this is same version as the other
      */
     public boolean is(final String other) {
@@ -174,6 +185,7 @@ public final class Version implements Comparable<Version>, Serializable {
 
     /**
      * @param other The version we want to see if it is the same as this version.
+     *
      * @return true if this is same version as the other
      */
     public boolean is(final Version other) {
@@ -217,9 +229,9 @@ public final class Version implements Comparable<Version>, Serializable {
     public boolean equals(Object obj) {
         if (obj instanceof Version other) {
             return (getRelease() == other.getRelease() &&
-                    getMajor() == other.getMajor() &&
-                    getMinor() == other.getMinor() &&
-                    isSnapshot() == other.isSnapshot());
+                          getMajor() == other.getMajor() &&
+                          getMinor() == other.getMinor() &&
+                          isSnapshot() == other.isSnapshot());
         }
 
         return false;
@@ -239,7 +251,7 @@ public final class Version implements Comparable<Version>, Serializable {
         if (StringUtility.isNullOrBlank(text)) {
             final String nullOrBlank = ((text == null) ? "a null string" : "a blank string");
             final String message = String.format(MMLoggingConstants.VERSION_ERROR_CANNOT_PARSE_VERSION_FROM_STRING,
-                    nullOrBlank);
+                  nullOrBlank);
             logger.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
@@ -254,7 +266,7 @@ public final class Version implements Comparable<Version>, Serializable {
         }
 
         try {
-            setRelease(Integer.parseInt(versionSplit[0]));
+            setRelease(MathUtility.parseInt(versionSplit[0], 0));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_RELEASE, text);
             logger.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
@@ -262,7 +274,7 @@ public final class Version implements Comparable<Version>, Serializable {
         }
 
         try {
-            setMajor(Integer.parseInt(versionSplit[1]));
+            setMajor(MathUtility.parseInt(versionSplit[1], 50));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MAJOR, text);
             logger.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
@@ -270,7 +282,7 @@ public final class Version implements Comparable<Version>, Serializable {
         }
 
         try {
-            setMinor(Integer.parseInt(versionSplit[2]));
+            setMinor(MathUtility.parseInt(versionSplit[2], 5));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MINOR, text);
             logger.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
@@ -283,11 +295,6 @@ public final class Version implements Comparable<Version>, Serializable {
 
     @Override
     public String toString() {
-        return String.format(
-            "%d.%02d.%02d%s",
-            getRelease(),
-            getMajor(),
-            getMinor(),
-            (isSnapshot() ? "-SNAPSHOT" : ""));
+        return String.format("%d.%02d.%02d%s", getRelease(), getMajor(), getMinor(), (isSnapshot() ? "-SNAPSHOT" : ""));
     }
 }

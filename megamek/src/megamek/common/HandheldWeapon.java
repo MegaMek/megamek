@@ -14,16 +14,13 @@
 
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.cost.CostCalculator;
-import megamek.common.cost.HandheldWeaponCostCalculator;
-import megamek.common.enums.AimingMode;
-import megamek.logging.MMLogger;
-
 import java.io.Serial;
 import java.util.Vector;
 
-import static megamek.common.ITechnology.TECH_BASE_ALL;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.cost.HandheldWeaponCostCalculator;
+import megamek.common.enums.AimingMode;
+import megamek.logging.MMLogger;
 
 public class HandheldWeapon extends Entity {
     private static final MMLogger logger = MMLogger.create(HandheldWeapon.class);
@@ -42,19 +39,23 @@ public class HandheldWeapon extends Entity {
         return UnitType.HANDHELD_WEAPON;
     }
 
-    private static final TechAdvancement ADVANCEMENT = new TechAdvancement(TECH_BASE_ALL)
-        .setAdvancement(3055, 3083).setApproximate(false, true)
-        .setPrototypeFactions(F_FS, F_LC).setProductionFactions(F_FS, F_LC)
-        .setTechRating(RATING_D).setAvailability(RATING_E, RATING_E, RATING_F, RATING_E)
-        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    private static final TechAdvancement ADVANCEMENT = new TechAdvancement(TECH_BASE_ALL).setAdvancement(3055, 3083)
+                                                             .setApproximate(false, true)
+                                                             .setPrototypeFactions(F_FS, F_LC)
+                                                             .setProductionFactions(F_FS, F_LC)
+                                                             .setTechRating(RATING_D)
+                                                             .setAvailability(RATING_E, RATING_E, RATING_F, RATING_E)
+                                                             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return ADVANCEMENT;
     }
 
     public static final int LOC_GUN = 0;
-    private static final String[] LOCATION_NAMES = new String[] {"Gun"};
-    private static final String[] LOCATION_ABBRS = new String[] {"GUN"};
+    private static final String[] LOCATION_NAMES = new String[] { "Gun" };
+    private static final String[] LOCATION_ABBRS = new String[] { "GUN" };
+
     @Override
     public int locations() {
         return LOCATION_NAMES.length;
@@ -150,7 +151,8 @@ public class HandheldWeapon extends Entity {
         return 0;
     }
 
-    private static final int[] NUM_OF_SLOTS = new int[] {25};
+    private static final int[] NUM_OF_SLOTS = new int[] { 25 };
+
     @Override
     protected int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
@@ -265,5 +267,10 @@ public class HandheldWeapon extends Entity {
     @Override
     public double getArmorWeight() {
         return RoundWeight.nextHalfTon(getOArmor(LOC_GUN) / 16.0);
+    }
+
+    @Override
+    public void clearInitiative(boolean bUseInitComp) {
+
     }
 }

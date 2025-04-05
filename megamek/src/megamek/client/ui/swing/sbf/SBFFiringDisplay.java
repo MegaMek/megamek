@@ -279,10 +279,6 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
                 .anyMatch(a -> ((SBFStandardUnitAttack) a).getUnitNumber() == firingUnit);
     }
 
-    private boolean isMyTurn() {
-        return clientgui.getClient().isMyTurn();
-    }
-
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         if (isIgnoringEvents()) {

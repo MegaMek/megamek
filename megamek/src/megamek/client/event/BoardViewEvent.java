@@ -24,6 +24,7 @@ import megamek.common.BoardLocation;
 import megamek.common.Coords;
 import megamek.common.Entity;
 
+import java.awt.event.InputEvent;
 import java.io.Serial;
 import java.util.Optional;
 
@@ -139,5 +140,17 @@ public class BoardViewEvent extends java.util.EventObject {
 
     public int getBoardId() {
         return getBoardView().getBoardId();
+    }
+
+    public boolean isShiftHeld() {
+        return (getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+    }
+
+    public boolean isAltHeld() {
+        return (getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+    }
+
+    public boolean isCtrlHeld() {
+        return (getModifiers() & InputEvent.ALT_DOWN_MASK) != 0;
     }
 }

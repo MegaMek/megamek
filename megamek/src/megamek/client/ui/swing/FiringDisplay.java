@@ -519,7 +519,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
         currentEntity = Entity.NONE;
         target(null);
-        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
+        clearMarkedHexes();
         clearMovementSprites();
         clientgui.getBoardView().clearStrafingCoords();
         clientgui.clearFieldOfFire();
@@ -1697,57 +1697,40 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     //
-    // BoardListener
+    // BoardViewListener
     //
     @Override
-    public void hexMoused(BoardViewEvent b) {
-
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
+    public void hexMoused(BoardViewEvent event) {
+        if (isIgnoringEvents() || !isMyTurn() || (event.getButton() != MouseEvent.BUTTON1) ||
+                  event.isCtrlHeld() || event.isAltHeld()) {
+            // CTRL/ALT pressed means a line of sight check.
             return;
         }
 
-        // ignore buttons other than 1
-        if (!clientgui.getClient().isMyTurn()
-                || ((b.getButton() != MouseEvent.BUTTON1))) {
-            return;
-        }
-        // control pressed means a line of sight check.
-        // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
-                || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
-            return;
-        }
-        // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
-        }
+        shiftheld = event.isShiftHeld();
 
-        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+        if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
             if ((ce() != null) && !ce().getAlreadyTwisted() && (shiftheld || twisting)) {
                 updateFlipArms(false);
-                torsoTwist(b.getCoords());
+                torsoTwist(event.getCoords());
             }
-            b.getBoardView().cursor(b.getCoords());
-        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+            event.getBoardView().cursor(event.getCoords());
+        } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
             if (!shiftheld) {
-                b.getBoardView().select(b.getCoords());
+                event.getBoardView().select(event.getCoords());
             }
         }
     }
 
     @Override
     public void hexSelected(BoardViewEvent b) {
-
-        // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
 
         Coords evtCoords = b.getCoords();
-        if (clientgui.getClient().isMyTurn() && (evtCoords != null)
-                && (ce() != null)) {
+        if (isMyTurn() && (evtCoords != null) && (ce() != null)) {
             if (isStrafing) {
                 if (validStrafingCoord(evtCoords)) {
                     strafingCoords.add(evtCoords);
@@ -1758,25 +1741,20 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 // HACK : sometimes we don't show the target choice window
                 Targetable targ = null;
                 if (showTargetChoice) {
-                    targ = chooseTarget(evtCoords);
+                    targ = chooseTarget(evtCoords, b.getBoardId());
                 }
                 if (shiftheld) {
                     updateFlipArms(false);
                     torsoTwist(b.getCoords());
                 } else if (targ != null && !ce().isMakingVTOLGroundAttack()) {
-                    if ((targ instanceof Entity) && Compute.isGroundToAir(ce(), targ)) {
-                        Entity entTarg = (Entity) targ;
+                    if ((targ instanceof Entity entTarg) && Compute.isGroundToAir(ce(), targ)) {
                         boolean alreadyShotAt = false;
-                        List<EntityAction> actions = clientgui.getClient()
-                                .getGame().getActionsVector();
+                        List<EntityAction> actions = game.getActionsVector();
                         for (EntityAction action : actions) {
-                            if (!(action instanceof AttackAction)) {
-                                continue;
-                            }
-                            AttackAction aa = (AttackAction) action;
-                            if ((action.getEntityId() == currentEntity)
-                                    && (aa.getTargetId() == entTarg.getId())) {
-                                alreadyShotAt = true;
+                            if (action instanceof AttackAction aa) {
+                                if ((action.getEntityId() == currentEntity) && (aa.getTargetId() == entTarg.getId())) {
+                                    alreadyShotAt = true;
+                                }
                             }
                         }
                         if (!alreadyShotAt) {
@@ -1794,19 +1772,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     //
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (!game.getPhase().isFiring()) {
+        if (isIgnoringEvents() || !game.getPhase().isFiring()) {
             return;
         }
 
         String s = getRemainingPlayerWithTurns();
 
         if (!game.getPhase().isSimultaneous(game)) {
-            if (clientgui.getClient().isMyTurn()) {
+            if (isMyTurn()) {
                 setStatusBarText(Messages.getString("FiringDisplay.its_your_turn") + s);
             } else {
                 String playerName;
@@ -1823,10 +1796,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             setStatusBarText(s);
         }
 
-        // On simultaneous phases, each player ending their turn will generate a turn
-        // change
-        // We want to ignore turns from other players and only listen to events we
-        // generated
+        // On simultaneous phases, each player ending their turn will generate a turn change
+        // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
         if (game.getPhase().isSimultaneous(game)
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
@@ -1834,7 +1805,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return;
         }
 
-        if (clientgui.getClient().isMyTurn()) {
+        if (isMyTurn()) {
             if (currentEntity == Entity.NONE) {
                 beginMyTurn();
                 clientgui.bingMyTurn();
@@ -1857,7 +1828,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return;
         }
 
-        if (clientgui.getClient().isMyTurn() && !game.getPhase().isFiring()) {
+        if (isMyTurn() && !game.getPhase().isFiring()) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
@@ -1874,7 +1845,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
-        } else if (!clientgui.getClient().isMyTurn()) {
+        } else if (!isMyTurn()) {
             return;
         }
 
@@ -2093,7 +2064,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return;
         }
 
-        if (clientgui.getClient().isMyTurn() && (ce() != null)) {
+        if (isMyTurn() && (ce() != null)) {
             clientgui.maybeShowUnitDisplay();
             clientgui.centerOnUnit(ce());
         }
@@ -2107,7 +2078,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
 
         Entity e = game.getEntity(b.getEntityId());
-        if (clientgui.getClient().isMyTurn()) {
+        if (isMyTurn()) {
             if (clientgui.getClient().getMyTurn().isValidEntity(e, game)) {
                 selectEntity(e.getId());
             }
@@ -2143,11 +2114,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      *
      * @param pos - the <code>Coords</code> containing targets.
      */
-    private Targetable chooseTarget(Coords pos) {
+    private Targetable chooseTarget(Coords pos, int boardId) {
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
         // Assume that we have *no* choice.
         Targetable choice = null;
-        Iterator<Entity> choices;
 
         int wn = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         Mounted<?> weap = ce().getEquipment(wn);
@@ -2160,30 +2130,29 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             // Mek mortar flares should default to deliver flare
             if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
                     && (munitionType.contains(AmmoType.Munitions.M_FLARE))) {
-                return new HexTarget(pos, Targetable.TYPE_FLARE_DELIVER);
+                return new HexTarget(pos, boardId, Targetable.TYPE_FLARE_DELIVER);
                 // Certain mek mortar types and LRMs should target hexes
             } else if (((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
                     || (aType.getAmmoType() == AmmoType.T_LRM)
                     || (aType.getAmmoType() == AmmoType.T_LRM_IMP))
                     && ((munitionType.contains(AmmoType.Munitions.M_AIRBURST))
                             || (munitionType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD)))) {
-                return new HexTarget(pos, Targetable.TYPE_HEX_CLEAR);
+                return new HexTarget(pos, boardId, Targetable.TYPE_HEX_CLEAR);
             } else if (munitionType.contains(AmmoType.Munitions.M_MINE_CLEARANCE)) {
-                return new HexTarget(pos, Targetable.TYPE_HEX_CLEAR);
+                return new HexTarget(pos, boardId, Targetable.TYPE_HEX_CLEAR);
             }
         }
         // Get the available choices, depending on friendly fire
+        List<Entity> choices;
         if (friendlyFire) {
-            choices = game.getEntities(pos);
+            choices = game.getEntitiesVector(pos, boardId);
         } else {
-            choices = game.getEnemyEntities(pos, ce());
+            choices = game.getEnemyEntities(pos, boardId, ce());
         }
-
         // Convert the choices into a List of targets.
         List<Targetable> targets = new ArrayList<>();
         final Player localPlayer = clientgui.getClient().getLocalPlayer();
-        while (choices.hasNext()) {
-            Entity t = choices.next();
+        for (Entity t : choices) {
             boolean isSensorReturn = false;
             boolean isVisible = true;
             boolean isHidden = false;
@@ -2200,7 +2169,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
         // If there aren't other targets, check for targets flying over pos
         if (targets.isEmpty()) {
-            List<Entity> flyovers = clientgui.getBoardView().getEntitiesFlyingOver(pos);
+            List<Entity> flyovers = ((BoardView) clientgui.boardViews.get(boardId)).getEntitiesFlyingOver(pos);
             for (Entity e : flyovers) {
                 if (!targets.contains(e)) {
                     targets.add(e);
@@ -2209,16 +2178,15 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
 
         // Is there a building in the hex?
-        Building bldg = game.getBoard(ce()).getBuildingAt(pos);
+        Building bldg = game.getBoard(boardId).getBuildingAt(pos);
         if (bldg != null) {
-            targets.add(new BuildingTarget(pos, game.getBoard(ce()), false));
+            targets.add(new BuildingTarget(pos, game.getBoard(boardId), false));
         }
 
         // If we clicked on a wooded hex with no other targets, clear woods
         if (targets.isEmpty()) {
-            Hex hex = game.getBoard(ce()).getHex(pos);
-            if (hex.containsTerrain(Terrains.WOODS)
-                    || hex.containsTerrain(Terrains.JUNGLE)) {
+            Hex hex = game.getBoard(boardId).getHex(pos);
+            if (hex.hasVegetation()) {
                 targets.add(new HexTarget(pos, Targetable.TYPE_HEX_CLEAR));
             }
         }

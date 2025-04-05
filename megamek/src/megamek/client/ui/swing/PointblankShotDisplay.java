@@ -334,8 +334,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         if (numButtonGroups > 1) {
             buttons.get(FiringCommand.FIRE_MORE).setEnabled(true);
         }
-        setFireCalledEnabled(game.getOptions()
-                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
+        setFireCalledEnabled(game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
         setStatusBarText(Messages.getString("StatusBarPhaseDisplay.pointblankShot"));
     }
 
@@ -664,9 +663,6 @@ public class PointblankShotDisplay extends FiringDisplay {
         ash.showDialog();
     }
 
-    /**
-     * Targets something
-     */
     @Override
     public void updateTarget() {
         setFireEnabled(false);

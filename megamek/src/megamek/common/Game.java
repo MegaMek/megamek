@@ -1661,6 +1661,22 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
+     * Returns an <code>Iterator</code> of the enemy's active entities at the given coordinates.
+     *
+     * @param coords        the <code>Coords</code> of the hex being examined.
+     * @param currentEntity the <code>Entity</code> whose enemies are needed.
+     *
+     * @return an <code>Enumeration</code> of <code>Entity</code>s at the given coordinates who are enemies of the given
+     *       unit.
+     */
+    public List<Entity> getEnemyEntities(final Coords coords, final int boardId, Entity currentEntity) {
+        return getEntitiesVector(coords, boardId).stream()
+                     .filter(Entity::isTargetable)
+                     .filter(entity -> entity.isEnemyOf(currentEntity))
+                     .toList();
+    }
+
+    /**
      * Returns an <code>Enumeration</code> of active enemy entities
      *
      * @param currentEntity the <code>Entity</code> whose enemies are needed.

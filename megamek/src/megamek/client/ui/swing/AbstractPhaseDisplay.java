@@ -62,14 +62,16 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
      * @param cg The IClientGUI parent of this display
      */
     protected AbstractPhaseDisplay(IClientGUI cg) {
-        this(cg, SkinSpecification.UIComponents.PhaseDisplay.getComp(),
-                SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
+        this(cg,
+              SkinSpecification.UIComponents.PhaseDisplay.getComp(),
+              SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
     }
 
     /**
      * Creates a phase display using the given skin settings for the button panel and the buttons.
      *
      * @param cg The IClientGUI parent of this display
+     *
      * @see SkinSpecification.UIComponents#getComp()
      */
     protected AbstractPhaseDisplay(IClientGUI cg, String panelSkin, String buttonSkin) {
@@ -78,7 +80,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         setBorder(new MegaMekBorder(panelSkin));
 
         butDone = new MegaMekButton("DONE", buttonSkin);
-        String f = UIUtil.fontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        String f = UIUtil.fontHTML(UIUtil.uiLightViolet()) + KeyCommandBind.getDesc(KeyCommandBind.DONE) + "</FONT>";
         butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.addActionListener(e -> done());
 
@@ -95,13 +97,13 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     }
 
     private boolean shouldperformDone() {
-        return ((clientgui.getClient().isMyTurn()
-                || (clientgui.getClient().getGame().getTurn() == null)
-                || (clientgui.getClient().getGame().getPhase().isReport())))
-                && !clientgui.shouldIgnoreHotKeys()
-                && !isIgnoringEvents()
-                && isVisible()
-                && butDone.isEnabled();
+        return ((clientgui.getClient().isMyTurn() ||
+                       (clientgui.getClient().getGame().getTurn() == null) ||
+                       (clientgui.getClient().getGame().getPhase().isReport()))) &&
+                     !clientgui.shouldIgnoreHotKeys() &&
+                     !isIgnoringEvents() &&
+                     isVisible() &&
+                     butDone.isEnabled();
     }
 
     @Override
@@ -115,9 +117,9 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     }
 
     /**
-     * Tells the display to finish the current player turn and send all planned actions to the server.
-     * Planned actions are e.g. movement, attacks or deployment. Usually, the planned actions are all
-     * actions that, together, make up a single unit's turn, e.g. all weapon attacks of one unit.
+     * Tells the display to finish the current player turn and send all planned actions to the server. Planned
+     * actions are e.g. movement, attacks or deployment. Usually, the planned actions are all actions that,
+     * together, make up a single unit's turn, e.g. all weapon attacks of one unit.
      */
     public abstract void ready();
 
@@ -132,6 +134,14 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
      */
     protected void sendDone() {
         clientgui.getClient().sendDone(true);
+    }
+
+    /**
+     * @return True when the client determines that it is the local player's turn to act. Shortcut to
+     * clientgui.getClient().isMyTurn().
+     */
+    protected boolean isMyTurn() {
+        return clientgui.getClient().isMyTurn();
     }
 
     //region Empty BoardViewListener

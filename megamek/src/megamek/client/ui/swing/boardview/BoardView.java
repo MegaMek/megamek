@@ -24,6 +24,7 @@ import static megamek.client.ui.swing.tileset.HexTileset.HEX_W;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
@@ -4369,7 +4370,7 @@ public final class BoardView extends AbstractBoardView
             Coords coords = new Coords(x, y);
             switch (mouseActionType) {
                 case BOARD_HEX_CLICK:
-                    if ((modifiers & java.awt.event.InputEvent.CTRL_DOWN_MASK) != 0) {
+                    if ((modifiers & InputEvent.CTRL_DOWN_MASK) != 0) {
                         checkLOS(coords);
                     } else {
                         processBoardViewEvent(new BoardViewEvent(this, coords,

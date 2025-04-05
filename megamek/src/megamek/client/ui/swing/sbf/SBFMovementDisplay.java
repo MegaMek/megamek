@@ -279,10 +279,6 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         buttons.get(MoveCommand.MOVE_MORE).setEnabled(myTurn && (numButtonGroups > 1));
     }
 
-    private boolean isMyTurn() {
-        return clientgui.getClient().isMyTurn();
-    }
-
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         if (isIgnoringEvents()) {

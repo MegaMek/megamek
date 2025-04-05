@@ -24,6 +24,8 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 
+import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
@@ -288,4 +290,16 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         return game.getEntity(currentEntity);
     }
 
+    protected void clearMovementSprites() {
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).clearMovementData());
+    }
+
+    protected void clearMarkedHexes() {
+        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
+    }
+
+    public void removeAllListeners() {
+        game.removeGameListener(this);
+        clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
+    }
 }

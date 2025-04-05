@@ -233,7 +233,7 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public boolean canFlee(Coords pos) {
+    public boolean canFlee(Coords position) {
         return false;
     }
 

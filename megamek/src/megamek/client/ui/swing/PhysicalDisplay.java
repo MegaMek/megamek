@@ -1685,12 +1685,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd(), enabled);
     }
 
-    @Override
-    public void removeAllListeners() {
-        clientgui.getClient().getGame().removeGameListener(this);
-        clientgui.getBoardView().removeBoardViewListener(this);
-    }
-
     private class AimedShotHandler implements ActionListener, ItemListener {
         private int aimingAt = -1;
 
@@ -1705,14 +1699,11 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         public int getAimTable() {
-            switch (aimingAt) {
-                case 0:
-                    return ToHitData.HIT_PUNCH;
-                case 1:
-                    return ToHitData.HIT_KICK;
-                default:
-                    return ToHitData.HIT_NORMAL;
-            }
+            return switch (aimingAt) {
+                case 0 -> ToHitData.HIT_PUNCH;
+                case 1 -> ToHitData.HIT_KICK;
+                default -> ToHitData.HIT_NORMAL;
+            };
         }
 
         public void setCanAim(boolean v) {

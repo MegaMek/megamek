@@ -2829,7 +2829,10 @@ public class ClientGUI extends AbstractClientGUI
      * @param selectedEntityNum The selectedEntityNum to set.
      */
     public void setSelectedEntityNum(int selectedEntityNum) {
-        getBoardView().selectEntity(client.getGame().getEntity(selectedEntityNum));
+        boardViews().stream()
+              .filter(bv -> bv instanceof BoardView)
+              .map(bv -> (BoardView) bv)
+              .forEach(bv -> bv.selectEntity(client.getGame().getEntity(selectedEntityNum)));
     }
 
     public RandomArmyDialog getRandomArmyDialog() {
@@ -3317,6 +3320,39 @@ public class ClientGUI extends AbstractClientGUI
         showFleeZone = false;
         if (fleeZoneSpriteHandler != null) {
             fleeZoneSpriteHandler.clear();
+        }
+    }
+
+    /**
+     * Returns true when the currently shown boardview is showing some animation and should not be centered on another
+     * hex or be hidden right now. An example is showing a unit's move animation.
+     *
+     * @return True when the currently shown BoardView is in the process of showing some animation
+     */
+    public boolean isCurrentBoardViewShowingAnimation() {
+        return getCurrentBoardView().filter(IBoardView::isShowingAnimation).isPresent();
+    }
+
+    /**
+     * Shows the BoardView of the given location, if it exists, and centers on its coords.
+     *
+     * @param boardLocation The location to show and center on
+     */
+    public void centerOnHex(@Nullable BoardLocation boardLocation) {
+        if (client.getGame().hasBoardLocation(boardLocation)) {
+            showBoardView(boardLocation.boardId());
+            getBoardView(boardLocation).centerOnHex(boardLocation.coords());
+        }
+    }
+
+    /**
+     * Shows the BoardView of the given targetable, if it exists, and centers on its position, if that exists.
+     *
+     * @param targetable The unit or target to show and center on
+     */
+    public void centerOnUnit(@Nullable Targetable targetable) {
+        if (targetable != null) {
+            centerOnHex(targetable.getBoardLocation());
         }
     }
 }

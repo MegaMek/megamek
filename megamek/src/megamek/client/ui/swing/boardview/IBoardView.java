@@ -273,4 +273,13 @@ public interface IBoardView {
         return 0;
     }
 
+    /**
+     * Returns true when this boardview is showing some animation and should not be centered on another hex or be
+     * hidden right now. An example is showing a unit's move animation.
+     *
+     * @return True when this BoardView is in the process of showing some animation
+     */
+    default boolean isShowingAnimation() {
+        return false;
+    }
 }

@@ -387,7 +387,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     private void beginMyTurn() {
         target = null;
 
-        if (clientgui.getCurrentBoardView().map(bv -> (BoardView) bv).filter(BoardView::isMovingUnits).isEmpty()) {
+        if (!clientgui.isCurrentBoardViewShowingAnimation()) {
             clientgui.maybeShowUnitDisplay();
         }
         clientgui.clearFieldOfFire();
@@ -449,8 +449,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         currentEntity = Entity.NONE;
         target(null);
 
-        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
-        clientgui.boardViews().forEach(bv -> ((BoardView) bv).clearMovementData());
+        clearMarkedHexes();
+        clearMovementSprites();
         clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
@@ -1403,8 +1403,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
     @Override
     public void removeAllListeners() {
-        game.removeGameListener(this);
-        clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
+        super.removeAllListeners();
         clientgui.getUnitDisplay().wPan.weaponList.removeListSelectionListener(this);
     }
 

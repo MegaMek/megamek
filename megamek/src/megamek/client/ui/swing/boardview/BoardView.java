@@ -4298,7 +4298,7 @@ public final class BoardView extends AbstractBoardView
     public void setHighlightColor(Color color) {
         highlightSprite.setColor(color);
         highlightSprite.prepare();
-        boardPanel.repaint();
+        repaint();
     }
 
     /**
@@ -5307,5 +5307,8 @@ public final class BoardView extends AbstractBoardView
         }
     }
 
-
+    @Override
+    public boolean isShowingAnimation() {
+        return isMovingUnits();
+    }
 }

@@ -29,8 +29,17 @@ package megamek.ai.neuralnetwork;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
+import megamek.client.bot.caspar.MovementClassification;
 import megamek.common.Configuration;
 import megamek.logging.MMLogger;
 import org.tensorflow.Result;
@@ -45,7 +54,7 @@ import org.tensorflow.proto.SignatureDef;
 import org.tensorflow.proto.TensorInfo;
 
 /**
- * NeuralNetwork class for loading and making predictions with TensorFlow models.
+ * Brain class for loading different tensorflow models and making predictions.
  * @author Luana Coppio
  */
 public class Brain {
@@ -58,7 +67,6 @@ public class Brain {
     private final String outputOperationName;
     private final FeatureNormalizationParameters featureNormalizationParameters;
     private final int outputAxisLength;
-
 
     private Brain(
           int outputAxisLength,
@@ -126,7 +134,7 @@ public class Brain {
                 return resultArrayFromTensors(outputTensors);
             }
         } catch (Exception e) {
-            logger.error("Prediction failed", e);
+            logger.error("Prediction failed, there is no recourse from this", e);
             throw new RuntimeException("Failed to make prediction: " + e.getMessage(), e);
         }
     }
@@ -161,14 +169,95 @@ public class Brain {
     }
 
     /**
-     * Simple test method to verify TensorFlow is working.
+     * Simple test method to verify if TensorFlow is working.
      */
-    public static void testTensorFlow() {
+    public static boolean testTensorFlow() {
         try {
             String version = TensorFlow.version();
             logger.info("TensorFlow version: {}", version);
+            return true;
         } catch (Exception e) {
             logger.error("Error loading TensorFlow", e);
         }
+        return false;
+    }
+
+    /**
+     * Get the input size of the model.
+     * @return The input size of the model
+     */
+    public int getInputSize() {
+        return featureNormalizationParameters.minValues().length;
+    }
+
+    /**
+     * Get the output size of the model.
+     * @return The output size of the model
+     */
+    public int getOutputSize() {
+        return outputAxisLength;
+    }
+
+    /**
+     * TestValue is a record that holds the input values and their corresponding classification.
+     * @param input The input values as a float array
+     * @param classification The classification of the input values as a {@link MovementClassification}
+     */
+    public record TestValue(float[] input, MovementClassification classification) {}
+
+    /**
+     * Get the test values for the model.
+     * @param brainRegistry The BrainRegistry containing model information
+     * @return A stream of TestValue objects containing the input values and their corresponding classification
+     */
+    public static Stream<TestValue> testValidationInputs(BrainRegistry brainRegistry) {
+        return loadTestValues(brainRegistry).stream();
+    }
+
+    /**
+     * Load the test values from the CSV file that accompany the brain model.
+     * @param brainRegistry The BrainRegistry containing model information
+     * @return A collection of TestValue objects containing the input values and their corresponding classification
+     */
+    public static Collection<TestValue> loadTestValues(BrainRegistry brainRegistry) {
+        List<TestValue> testInputs = new ArrayList<>();
+        Path testInputFilePath = Path.of(Configuration.aiBrainFolderPath(brainRegistry.name()).toString(),
+              "test_inputs.csv");
+        try (var reader = new BufferedReader(new FileReader(testInputFilePath.toFile()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] values = line.split(",");
+                float[] entry = getInputsFromSplitLine(values);
+                MovementClassification res = getMovementClassificationFromSplitLine(values);
+                testInputs.add(new TestValue(entry, res));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load TensorFlow model: " + e.getMessage(), e);
+        }
+        return testInputs;
+    }
+
+    /**
+     * Parse the classification from the split line.
+     * @param values The split line as an array of strings, the last value in the array is the classification
+     * @return The classification as a {@link MovementClassification}
+     */
+    private static MovementClassification getMovementClassificationFromSplitLine(String[] values) {
+        // The last value in the line is the classification
+        return MovementClassification.values()[Integer.parseInt(values[values.length-1])];
+    }
+
+    /**
+     * Parse the input values from the split line.
+     * @param values The split line as an array of strings
+     * @return The input values as an array of floats
+     */
+    private static float[] getInputsFromSplitLine(String[] values) {
+        // The last value in the line is the classification, so we don't want it in the input value
+        float[] entry = new float[values.length-1];
+        for (int i = 0; i < values.length-1; i++) {
+            entry[i] = Float.parseFloat(values[i]);
+        }
+        return entry;
     }
 }

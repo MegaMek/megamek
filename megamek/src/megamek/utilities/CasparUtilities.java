@@ -27,27 +27,33 @@
  */
 package megamek.utilities;
 
+import static megamek.ai.neuralnetwork.Brain.testValidationInputs;
+
 import java.io.IOException;
-import java.util.Arrays;
 
 import megamek.ai.neuralnetwork.Brain;
 import megamek.ai.neuralnetwork.BrainRegistry;
 import megamek.client.bot.caspar.ClassificationScore;
+import megamek.client.bot.caspar.MovementClassification;
 
+/**
+ * CasparUtilities is a utility class for testing the Caspar neural network model.
+ * It loads the model and runs predictions on test inputs, printing the results to the console.
+ * Very useful when you just want to run it using the CLI and see the results.
+ * @author Luana Coppio
+ */
 public class CasparUtilities {
 
-    private static final double[] entry = new double[]{0.3333333222222226,0.0,0.9999999500000026,0.9999998076923448,0.0,0.0764160718595137,0.0781249998779297,0.33333330000000333,0.9999999000000099,0.1666666652777778,0.23529411626297578,0.9999999000000099,0.0,0.0,0.0,0.99999950000025,0.0,0.9999998500000226,0.0,0.0,0.4999999950000001,0.42372763609406866,0.4848349085715538,0.4153284385971791,0.9999999000000099,0.9999997500000625,0.0,0.9999999000000099,0.0304600708927842,0.0,0.9999999000000099,0.32416916459119854,0.0,0.0,0.3894020364548058,0.6666666611111112,0.10044641444615156,0.0,0.25963204223019976,0.0,0.3679270433087095,0.5294117645905421,0.0,0.0034075476462798082,0.4999999950000001,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-    private static final float[] target = { 1f, 0f, 0f};
+    private static final BrainRegistry DEFAULT_BRAIN = new BrainRegistry("default", 3);
 
     public static void main(String[] args) throws IOException {
-        Brain.testTensorFlow();
-        Brain brain = Brain.loadBrain(new BrainRegistry("default", 3));
-        float[] x_test = new float[entry.length];
-        for (int i = 0; i < entry.length; i++) {
-            x_test[i] = (float) entry[i];
+        Brain brain = Brain.loadBrain(DEFAULT_BRAIN);
+        for (var testValue : testValidationInputs(DEFAULT_BRAIN).toList()) {
+            var prediction = brain.predict(testValue.input());
+            MovementClassification predictedClassification = ClassificationScore.fromPrediction(prediction).getClassification();
+            System.out.println((predictedClassification.equals(testValue.classification()) ? "[V]" : "[X]") +
+                                     " Predicted classification: " + predictedClassification +
+                                     " expected: " + testValue.classification());
         }
-        ClassificationScore result = ClassificationScore.fromPrediction(brain.predict(x_test));
-        System.out.println("Prediction result: " + result);
-        System.out.println("Expected result: " + Arrays.toString(target));
     }
 }

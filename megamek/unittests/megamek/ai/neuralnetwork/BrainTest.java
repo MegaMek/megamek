@@ -28,48 +28,49 @@
 package megamek.ai.neuralnetwork;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import megamek.client.bot.caspar.ClassificationScore;
 import megamek.client.bot.caspar.MovementClassification;
-import megamek.common.Configuration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class BrainTest {
 
-    private static Brain brain;
+    private static Brain BRAIN;
     private static final Map<MovementClassification, Integer> ERROR_COUNTS =
           new EnumMap<>(MovementClassification.class);
     private static int TOTAL_TESTS = 0;
     private static final float ACCEPTABLE_ERROR_PERCENT = 0.5f;
+    private static final BrainRegistry DEFAULT_BRAIN = new BrainRegistry("default", 3);
 
     @BeforeAll
     public static void setUp() {
         resetTrackers();
-        brain = Brain.loadBrain(new BrainRegistry("default", 3));
-        Brain.testTensorFlow();
+        BRAIN = Brain.loadBrain(DEFAULT_BRAIN);
+
+    }
+
+    @Test
+    void testLoadBrain() {
+        assertNotNull(BRAIN, "Brain should not be null");
+        assertTrue(Brain.testTensorFlow());
+        assertTrue(BRAIN.getInputSize() > 0, "Brain input size should be greater than 0");
+        assertTrue(BRAIN.getOutputSize() > 0, "Brain output size should be greater than 0");
     }
 
     @ParameterizedTest
     @MethodSource(value = "testValidationInputs")
-    void testCalculatingMoves(TestValue testValue) {
-        var prediction = brain.predict(testValue.input());
+    void testCalculatingMoves(Brain.TestValue testValue) {
+        var prediction = BRAIN.predict(testValue.input());
         MovementClassification predictedClassification = ClassificationScore.fromPrediction(prediction).getClassification();
         if (!predictedClassification.equals(testValue.classification())) {
             ERROR_COUNTS.merge(testValue.classification(), 1, Integer::sum);
@@ -79,10 +80,14 @@ public class BrainTest {
 
     @AfterAll
     public static void afterAllTests() {
-        if (TOTAL_TESTS == 0) {
-            return;
+        if (TOTAL_TESTS > 0) {
+            assertClassifications();
         }
+        BRAIN = null;
+        resetTrackers();
+    }
 
+    private static void assertClassifications() {
         int threshold = (int) (TOTAL_TESTS * ACCEPTABLE_ERROR_PERCENT);
 
         assertAll("Distribution check",
@@ -99,7 +104,6 @@ public class BrainTest {
                           + " error count: " + ERROR_COUNTS.getOrDefault(MovementClassification.HOLD_POSITION, 0) + ","
                           + " total tests: " + TOTAL_TESTS + " threshold: " + threshold)
         );
-        resetTrackers();
     }
 
     private static void resetTrackers() {
@@ -107,44 +111,7 @@ public class BrainTest {
         TOTAL_TESTS = 0;
     }
 
-    private record TestValue(float[] input, MovementClassification classification) {}
-
-    private static Stream<TestValue> testValidationInputs() {
-        return loadTestValues().stream();
+    private static Stream<Brain.TestValue> testValidationInputs() {
+        return Brain.testValidationInputs(DEFAULT_BRAIN);
     }
-
-    private static Collection<TestValue> loadTestValues() {
-        List<TestValue> testInputs = new ArrayList<>();
-        Path testInputFilePath = Path.of(Configuration.aiBrainFolderPath("default").toString(),
-              "test_inputs.csv");
-        try (var reader = new BufferedReader(new FileReader(testInputFilePath.toFile()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] values = line.split(",");
-                float[] entry = getInputsFromSplitLine(values);
-                MovementClassification res = getMovementClassificationFromSplitLine(values);
-                testInputs.add(new TestValue(entry, res));
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load TensorFlow model: " + e.getMessage(), e);
-        }
-        return testInputs;
-    }
-
-    private static MovementClassification getMovementClassificationFromSplitLine(String[] values) {
-        // The last value in the line is the classification
-        return MovementClassification.values()[Integer.parseInt(values[values.length-1])];
-    }
-
-    private static float[] getInputsFromSplitLine(String[] values) {
-        // The last value in the line is the classification, so we don't want it in the input value
-        float[] entry = new float[values.length-1];
-        for (int i = 0; i < values.length-1; i++) {
-            entry[i] = Float.parseFloat(values[i]);
-        }
-        return entry;
-    }
-
-
-
 }

@@ -35,12 +35,9 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
- * This BoardViewSpriteHandler handles the sprites for the firing arcs (field of
- * fire) that can be shown for
- * individual weapons or bays. The field of fire depends on a handful of
- * variables (position, unit facing
- * and twists, weapon arc and range). These variables can and must be set
- * individually and are cached.
+ * This BoardViewSpriteHandler handles the sprites for the firing arcs (field of fire) that can be shown for individual
+ * weapons or bays. The field of fire depends on a handful of variables (position, unit facing and twists, weapon arc
+ * and range). These variables can and must be set individually and are cached.
  */
 public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IPreferenceChangeListener {
 
@@ -155,9 +152,11 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             return;
         }
 
+        Board board = game.getBoard(firingEntity);
+
         // check if extreme range is used
         int maxrange = 4;
-        if (!game.getBoard().onGround() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
+        if (!board.onGround() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
             maxrange = 5;
         }
 
@@ -195,7 +194,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             }
 
             // Remove hexes that are not on the board or not in the arc
-            fieldFire.get(bracket).removeIf(coords -> !game.getBoard().contains(coords)
+            fieldFire.get(bracket).removeIf(coords -> !board.contains(coords)
                     || !ComputeArc.isInArc(firingPosition, facing, coords, arc));
         }
 
@@ -215,7 +214,8 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 }
                 // create sprite if there's a border to paint
                 if (edgesToPaint > 0) {
-                    FieldofFireSprite ffSprite = new FieldofFireSprite((BoardView) clientGUI.boardViews().get(0), bracket, loc, edgesToPaint);
+                    FieldofFireSprite ffSprite = new FieldofFireSprite(
+                          (BoardView) clientGUI.getBoardView(firingEntity), bracket, loc, edgesToPaint);
                     currentSprites.add(ffSprite);
                 }
             }
@@ -245,14 +245,15 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 Coords mark = firingPosition.translated((dir[0] + facing) % 6, (dist + 1) / 2)
                         .translated((dir[1] + facing) % 6, dist / 2);
                 // traverse back to the unit until a hex is onboard
-                while (!game.getBoard().contains(mark)) {
+                while (!board.contains(mark)) {
                     mark = Coords.nextHex(mark, firingPosition);
                 }
 
                 // add a text range marker if the found position is good
-                if (game.getBoard().contains(mark) && fieldFire.get(bracket).contains(mark)
+                if (board.contains(mark) && fieldFire.get(bracket).contains(mark)
                         && ((bracket > 0) || (numMinMarkers < 2))) {
-                    TextMarkerSprite tS = new TextMarkerSprite((BoardView) clientGUI.boardViews().get(0), mark,
+                    TextMarkerSprite tS =
+                          new TextMarkerSprite((BoardView) clientGUI.getBoardView(firingEntity), mark,
                             rangeTexts[bracket], FieldofFireSprite.getFieldOfFireColor(bracket));
                     currentSprites.add(tS);
                     if (bracket == 0) {
@@ -262,7 +263,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             }
         }
 
-        clientGUI.boardViews().get(0).addSprites(currentSprites);
+        clientGUI.getBoardView(firingEntity).addSprites(currentSprites);
     }
 
     @Override
@@ -372,8 +373,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // the usual range types as displaying 5 range circles
         // would be visual overkill (and besides this makes
         // things easier)
-        if (wtype instanceof InfantryWeapon) {
-            InfantryWeapon inftype = (InfantryWeapon) wtype;
+        if (wtype instanceof InfantryWeapon inftype) {
             int iR = inftype.getInfantryRange();
             ranges[0] = new int[] { 0, iR, iR * 2, iR * 3, 0 };
             ranges[1] = new int[] { 0, iR / 2, (iR / 2) * 2, (iR / 2) * 3, 0 };
@@ -385,7 +385,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // direct fire then
         if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
             boolean isADA = (ammoMounted != null
-                    && ((AmmoType) ammoMounted.getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA));
+                    && ammoMounted.getType().getMunitionType().contains(AmmoType.Munitions.M_ADA));
             if (game.getPhase().isTargeting()) {
                 ranges[0] = (!isADA ? new int[] { 0, 0, 0, 100, 0 } : new int[] { 0, 0, 0, 51, 0 });
             } else {
@@ -437,9 +437,8 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 maxr = wtype.getMaxRange(weapon, ammoMounted);
 
                 // set the standard ranges, depending on capital or no
-                // boolean isCap = wtype.isCapital();
                 int rangeMultiplier = wtype.isCapital() ? 2 : 1;
-                if (game.getBoard().onGround()) {
+                if (game.getBoard(firingEntity).onGround()) {
                     rangeMultiplier *= 8;
                 }
 
@@ -478,22 +477,31 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
      *         ends up being underwater.
      */
     private boolean testUnderWater() {
-        return testUnderWater(firingPosition, true, firingEntity.getElevation());
+        return testUnderWater(firingPosition, firingEntity.getBoardId(), true, firingEntity.getElevation());
     }
 
     /**
-     * @return True when, at the given position and elevation and when allowSubmerge
-     *         is true,
-     *         the currently selected weapon ends up being underwater
+     * @return True when, at the given position and elevation and when allowSubmerge is true, the currently selected
+     *       weapon ends up being underwater
+     *
+     *       LEGACY replaced with BoardLocation version when ready
      */
     private boolean testUnderWater(Coords position, boolean allowSubmerge, int unitElevation) {
+        return testUnderWater(position, 0, allowSubmerge, unitElevation);
+    }
+
+    /**
+     * @return True when, at the given position and elevation and when allowSubmerge is true, the currently selected
+     *       weapon ends up being underwater
+     */
+    private boolean testUnderWater(Coords position, int boardId, boolean allowSubmerge, int unitElevation) {
         if ((firingEntity == null) || clientGUI.getDisplayedWeapon().isEmpty() || (position == null)
-                || (game.getBoard().getHex(position) == null)) {
+                || (game.getBoard(boardId).getHex(position) == null)) {
             return false;
         }
 
         int location = clientGUI.getDisplayedWeapon().get().getLocation();
-        Hex hex = game.getBoard().getHex(position);
+        Hex hex = game.getBoard(boardId).getHex(position);
         int waterDepth = hex.terrainLevel(Terrains.WATER);
 
         // if this is a ship/sub on the surface and we have a weapon that only has water

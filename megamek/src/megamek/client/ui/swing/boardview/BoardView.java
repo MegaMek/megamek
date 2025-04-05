@@ -282,7 +282,6 @@ public final class BoardView extends AbstractBoardView
     private Color rulerEndColor;
 
     private Coords lastCursor;
-    private Coords highlighted;
     Coords selected;
     private Coords firstLOS;
 
@@ -941,7 +940,10 @@ public final class BoardView extends AbstractBoardView
                 break;
 
             case GUIPreferences.USE_ISOMETRIC:
-                drawIsometric = GUIP.getIsometricEnabled(); // intentional fallthrough
+                drawIsometric = GUIP.getIsometricEnabled();
+                toggleIsometric();
+                break;
+
             case GUIPreferences.AOHEXSHADOWS:
             case GUIPreferences.FLOATINGISO:
             case GUIPreferences.LEVELHIGHLIGHT:
@@ -1260,9 +1262,9 @@ public final class BoardView extends AbstractBoardView
             Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
             princess.getGame().setBoard(game.getBoard(boardId));
             PathEnumerator pathEnum = new PathEnumerator(princess, game);
-            pathEnum.recalculateMovesFor(this.getSelectedEntity());
+            pathEnum.recalculateMovesFor(getSelectedEntity());
 
-            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(this.getSelectedEntity().getId());
+            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(getSelectedEntity().getId());
             for (int x = 0; x < game.getBoard(boardId).getWidth(); x++) {
                 for (int y = 0; y < game.getBoard(boardId).getHeight(); y++) {
                     Point centreHexLocation = getCentreHexLocation(x, y, true);
@@ -1739,21 +1741,6 @@ public final class BoardView extends AbstractBoardView
                 graphics2D.drawImage(getScaledImage(artyIconImage, true), location.x, location.y, boardPanel);
             }
         }
-
-        // Draw pre-designated auto-hit hexes
-        // Baked into the hex cache!
-//        if (getLocalPlayer() != null) { // Could be null, like in map-editor
-//            for (BoardLocation c : getLocalPlayer().getArtyAutoHitHexes()) {
-//                // Is the Coord within the viewing area?
-//                if (isOnThisBord(c) && (c.getX() >= drawX) && (c.getX() <= (drawX + drawWidth))
-//                        && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight))) {
-//
-//                    Point p = getHexLocation(c.coords());
-//                    artyIconImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
-//                    g.drawImage(getScaledImage(artyIconImage, true), p.x, p.y, boardPanel);
-//                }
-//            }
-//        }
 
         // Draw modifiers for selected entity and selectedArtilleryWeapon
         if (selectedArtilleryWeapon != null) {
@@ -4236,13 +4223,6 @@ public final class BoardView extends AbstractBoardView
     }
 
     /**
-     * @param highlighted The highlighted to set.
-     */
-    public void setHighlighted(Coords highlighted) {
-        this.highlighted = highlighted;
-    }
-
-    /**
      * @param selected The selected to set.
      */
     public void setSelected(Coords selected) {
@@ -4305,7 +4285,6 @@ public final class BoardView extends AbstractBoardView
      */
     public void highlight(Coords coords) {
         if ((coords == null) || game.getBoard(boardId).contains(coords)) {
-            setHighlighted(coords);
             moveCursor(highlightSprite, coords);
             moveCursor(firstLOSSprite, null);
             moveCursor(secondLOSSprite, null);
@@ -5039,14 +5018,11 @@ public final class BoardView extends AbstractBoardView
         return ImageUtil.getScaledImage(image, width, height, ZOOM_SCALE_TYPES[zoomIndex]);
     }
 
-    public boolean toggleIsometric() {
-        drawIsometric = !drawIsometric;
+    public void toggleIsometric() {
         allSprites.forEach(Sprite::prepare);
-
         clearHexImageCache();
         updateBoard();
-        boardPanel.repaint();
-        return drawIsometric;
+        repaint();
     }
 
     public void updateEntityLabels() {

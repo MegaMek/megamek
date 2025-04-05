@@ -31,12 +31,20 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import megamek.client.bot.caspar.ClassificationScore;
 import megamek.client.bot.caspar.MovementClassification;
+import megamek.common.Configuration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -69,7 +77,7 @@ public class BrainTest {
 
     @ParameterizedTest
     @MethodSource(value = "testValidationInputs")
-    void testCalculatingMoves(Brain.TestValue testValue) {
+    void testCalculatingMoves(TestValue testValue) {
         var prediction = BRAIN.predict(testValue.input());
         MovementClassification predictedClassification = ClassificationScore.fromPrediction(prediction).getClassification();
         if (!predictedClassification.equals(testValue.classification())) {
@@ -111,7 +119,65 @@ public class BrainTest {
         TOTAL_TESTS = 0;
     }
 
-    private static Stream<Brain.TestValue> testValidationInputs() {
-        return Brain.testValidationInputs(DEFAULT_BRAIN);
+    /**
+     * TestValue is a record that holds the input values and their corresponding classification.
+     * @param input The input values as a float array
+     * @param classification The classification of the input values as a {@link MovementClassification}
+     */
+    private record TestValue(float[] input, MovementClassification classification) {}
+
+    /**
+     * Get the test values for the model.
+     * @return A stream of TestValue objects containing the input values and their corresponding classification
+     */
+    static Stream<TestValue> testValidationInputs() {
+        return loadTestValues().stream();
     }
+
+    /**
+     * Load the test values from the CSV file that accompany the brain model.
+     * @return A collection of TestValue objects containing the input values and their corresponding classification
+     */
+    private static Collection<TestValue> loadTestValues() {
+        List<TestValue> testInputs = new ArrayList<>();
+        Path testInputFilePath = Path.of(Configuration.aiBrainFolderPath(DEFAULT_BRAIN.name()).toString(),
+              "test_inputs.csv");
+        try (var reader = new BufferedReader(new FileReader(testInputFilePath.toFile()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] values = line.split(",");
+                float[] entry = getInputsFromSplitLine(values);
+                MovementClassification res = getMovementClassificationFromSplitLine(values);
+                testInputs.add(new TestValue(entry, res));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load TensorFlow model: " + e.getMessage(), e);
+        }
+        return testInputs;
+    }
+
+    /**
+     * Parse the classification from the split line.
+     * @param values The split line as an array of strings, the last value in the array is the classification
+     * @return The classification as a {@link MovementClassification}
+     */
+    private static MovementClassification getMovementClassificationFromSplitLine(String[] values) {
+        // The last value in the line is the classification
+        return MovementClassification.values()[Integer.parseInt(values[values.length-1])];
+    }
+
+    /**
+     * Parse the input values from the split line.
+     * @param values The split line as an array of strings
+     * @return The input values as an array of floats
+     */
+    private static float[] getInputsFromSplitLine(String[] values) {
+        // The last value in the line is the classification, so we don't want it in the input value
+        float[] entry = new float[values.length-1];
+        for (int i = 0; i < values.length-1; i++) {
+            entry[i] = Float.parseFloat(values[i]);
+        }
+        return entry;
+    }
+    // endregion TestSetup
 }

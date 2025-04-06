@@ -38,7 +38,7 @@ public class PlayerIDAndList<T> extends Vector<T> {
      * Clone method as is required for Vector. SuppressWarnings is needed as there is no clean way to clone a Vector of
      * Data with type checking.
      *
-     * @return a clone of {@link PlayerIDAndList <T>}
+     * @return a clone of {@link PlayerIDAndList} that is templated to type T
      */
     @SuppressWarnings("unchecked")
     public PlayerIDAndList<T> clone() {

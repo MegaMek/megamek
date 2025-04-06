@@ -31,10 +31,8 @@ import megamek.common.enums.GamePhase;
 import megamek.logging.MMLogger;
 
 /**
- * Construction Factor Warning Logic. Handles events, help
- * methods and logic related to CF Warning in a way that
- * can be unit tested and encapsulated from BoardView and
- * ClientGUI and other actors.
+ * Construction Factor Warning Logic. Handles events, help methods and logic related to CF Warning in a way that can be
+ * unit tested and encapsulated from BoardView and ClientGUI and other actors.
  */
 public final class CollapseWarning {
     private final static MMLogger logger = MMLogger.create(CollapseWarning.class);
@@ -71,54 +69,55 @@ public final class CollapseWarning {
     }
 
     /**
-     * For the provided entity, find all hexes within movement range with
-     * buildings that would collapse if entered or landed upon. This is
-     * used by the {@link MovementDisplay} class.
+     * For the provided entity, find all hexes within movement range with buildings that would collapse if entered or
+     * landed upon. This is used by the {@link MovementDisplay} class.
      *
-     * @param g {@link Game} provided by the phase display class
-     * @param e {@link Entity} currently selected in the movement phase.
-     * @param b {@link Board} board object with building data.
+     * @param game   {@link Game} provided by the phase display class
+     * @param entity {@link Entity} currently selected in the movement phase.
+     * @param board  {@link Board} board object with building data.
      *
-     * @return returns a list of {@link Coords} that where warning flags
-     *         should be placed.
+     * @return returns a list of {@link Coords} that where warning flags should be placed.
      */
-    public static List<Coords> findCFWarningsMovement(Game g, Entity e, Board b) {
-        List<Coords> warnList = new ArrayList<Coords>();
+    public static List<Coords> findCFWarningsMovement(Game game, Entity entity, Board board) {
+        List<Coords> warnList = new ArrayList<>();
+
+        // If we don't have an entity, can't do anything.
+        if (entity == null) {
+            return warnList;
+        }
 
         try {
             // Only calculate CF Warnings for entity types in the whitelist.
-            if (!entityTypeIsInWhiteList(e)) {
+            if (!entityTypeIsInWhiteList(entity)) {
                 return warnList;
             }
 
-            Coords pos = e.getPosition();
-            int range = Math.max(e.getAnyTypeMaxJumpMP(), e.getRunMP());
+            Coords pos = entity.getPosition();
+            int range = Math.max(entity.getAnyTypeMaxJumpMP(), entity.getRunMP());
 
-            List<Coords> hexesToCheck = new ArrayList<Coords>();
+            List<Coords> hexesToCheck = new ArrayList<>();
             if (pos != null) {
                 hexesToCheck = pos.allAtDistanceOrLess(range);
             } else {
                 return hexesToCheck;
             }
 
-            // For each hex in jumping range, look for buildings, if found check for
-            // collapse.
+            // For each hex in jumping range, look for buildings, if found check for collapse.
             for (Coords c : hexesToCheck) {
                 // is there a building at this location? If so add it to hexes with buildings.
-                Building bld = b.getBuildingAt(c);
+                Building bld = board.getBuildingAt(c);
 
                 // If a building, compare total weight and add to warning list.
                 if (null != bld) {
-                    if (calculateTotalTonnage(g, e, c) > bld.getCurrentCF(c)) {
+                    if (calculateTotalTonnage(game, entity, c) > bld.getCurrentCF(c)) {
                         warnList.add(c);
                     }
                 }
             }
         } catch (Exception exc) {
-            // Something bad is going to happen. This is a passive feature return an empty
-            // list.
+            // Something bad is going to happen. This is a passive feature return an empty list.
             logger.error(exc, "Unable to calculate construction factor collapse candidates. (Movement)");
-            return new ArrayList<Coords>();
+            return new ArrayList<>();
         }
 
         return warnList;
@@ -128,23 +127,20 @@ public final class CollapseWarning {
      * Returns true if the selected entity should have CF warnings calculated when
      * selected.
      */
-    protected static boolean entityTypeIsInWhiteList(Entity e) {
-        // Include entities that are ground units and onboard only. Flying units need
-        // not apply.
-        return (e.isGround() && !e.isOffBoard());
+    static boolean entityTypeIsInWhiteList(Entity entity) {
+        // Include entities that are ground units and onboard only. Flying units need not apply.
+        return (entity.isGround() && !entity.isOffBoard());
     }
 
     /**
-     * Looks for all building locations in a legal deploy zone that would collapse
-     * if the currently selected entity would deploy there. This is used by
-     * {@link DeploymentDisplay} to render a warning sprite on danger hexes.
+     * Looks for all building locations in a legal deploy zone that would collapse if the currently selected entity
+     * would deploy there. This is used by {@link DeploymentDisplay} to render a warning sprite on danger hexes.
      *
      * @param g {@link Game} provided by the phase display class
      * @param e {@link Entity} currently selected in the movement phase.
      * @param b {@link Board} board object with building data.
      *
-     * @return returns a list of {@link Coords} that where warning flags
-     *         should be placed.
+     * @return returns a list of {@link Coords} that where warning flags should be placed.
      */
     public static List<Coords> findCFWarningsDeployment(Game g, Entity e, Board b) {
         List<Coords> warnList = new ArrayList<Coords>();

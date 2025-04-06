@@ -110,7 +110,7 @@ public class MunitionChoicePanel extends JPanel {
             comboNumberOfShots.addItem(String.valueOf(i));
         }
 
-        comboNumberOfShots.setSelectedItem(this.ammoMounted.getBaseShotsLeft());
+        comboNumberOfShots.setSelectedItem(String.valueOf(this.ammoMounted.getBaseShotsLeft()));
         comboNumberOfShots.addItemListener(numShotsListener);
 
         comboAmmoTypes.addItemListener(evt -> {
@@ -136,9 +136,9 @@ public class MunitionChoicePanel extends JPanel {
 
             // If the shots selection was changed, try to set that value, unless it's too large
             if (numShotsChanged && currShots <= numberOfShotsPerTon) {
-                comboNumberOfShots.setSelectedItem(currShots);
+                comboNumberOfShots.setSelectedItem(String.valueOf(currShots));
             } else {
-                comboNumberOfShots.setSelectedItem(numberOfShotsPerTon);
+                comboNumberOfShots.setSelectedItem(String.valueOf(numberOfShotsPerTon));
             }
 
             for (WeaponAmmoChoicePanel weaponAmmoChoicePanel : weaponAmmoChoicePanels) {

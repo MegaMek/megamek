@@ -67,7 +67,7 @@ public class WeaponAmmoChoicePanel extends JPanel {
         weaponMounted = weapon;
 
         this.setLayout(new GridBagLayout());
-        
+
         if (weaponMounted.isOneShot() ||
                   (entity.isSupportVehicle() && (weaponMounted.getType() instanceof InfantryWeapon))) {
             // One-shot weapons can only access their own bin

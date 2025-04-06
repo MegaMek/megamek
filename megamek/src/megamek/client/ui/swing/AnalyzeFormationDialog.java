@@ -39,6 +39,7 @@ import megamek.client.ratgenerator.Parameters;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.EntityWeightClass;
 import megamek.common.MekSummary;
 import megamek.common.UnitRole;
@@ -187,7 +188,7 @@ public class AnalyzeFormationDialog extends JDialog {
         JTable tblUnits = new JTable(model);
         tableSorter = new TableRowSorter<>(model);
         tableSorter.setComparator(UnitTableModel.COL_MOVEMENT,
-              Comparator.comparing(m -> Integer.valueOf(m.toString().replaceAll("\\D.*", ""))));
+              Comparator.comparing(m -> MathUtility.parseInt(m.toString().replaceAll("\\D.*", ""))));
         List<RowSorter.SortKey> sortKeys = new ArrayList<>();
         sortKeys.add(new RowSorter.SortKey(UnitTableModel.COL_NAME, SortOrder.ASCENDING));
         tableSorter.setSortKeys(sortKeys);

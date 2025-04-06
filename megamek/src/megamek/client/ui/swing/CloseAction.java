@@ -43,10 +43,15 @@ public class CloseAction extends AbstractAction {
         putValue(NAME, Messages.getString("Close"));
     }
 
-    public CloseAction clone() throws CloneNotSupportedException {
-        CloseAction closeAction = (CloseAction) super.clone();
-        closeAction.owner = this.owner;
-        return closeAction;
+    @Override
+    public CloseAction clone() {
+        try {
+            CloseAction closeAction = (CloseAction) super.clone();
+            closeAction.owner = this.owner;
+            return closeAction;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 
     @Override

@@ -46,10 +46,14 @@ public class OkayAction extends AbstractAction {
     }
 
     @Override
-    public OkayAction clone() throws CloneNotSupportedException {
-        OkayAction okayAction = (OkayAction) super.clone();
-        okayAction.owner = this.owner;
-        return okayAction;
+    public OkayAction clone() {
+        try {
+            OkayAction okayAction = (OkayAction) super.clone();
+            okayAction.owner = this.owner;
+            return okayAction;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 
     @Override

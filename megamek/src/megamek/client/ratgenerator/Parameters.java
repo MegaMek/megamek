@@ -98,25 +98,30 @@ public final class Parameters implements Cloneable {
         this.roleStrictness = roleStrictness;
         this.deployingFaction = (deployingFaction == null) ? faction : deployingFaction;
     }
- 
+
     @Override
-    public Parameters clone() throws CloneNotSupportedException {
-        Parameters parameters = (Parameters) super.clone();
-        parameters.faction = this.faction;
-        parameters.deployingFaction = this.deployingFaction;
+    public Parameters clone() {
+        try {
 
-        parameters.unitType = this.unitType;
-        parameters.year = this.year;
-        parameters.networkMask = this.networkMask;
-        parameters.roleStrictness = this.roleStrictness;
+            Parameters parameters = (Parameters) super.clone();
+            parameters.faction = this.faction;
+            parameters.deployingFaction = this.deployingFaction;
 
-        parameters.rating = this.rating;
+            parameters.unitType = this.unitType;
+            parameters.year = this.year;
+            parameters.networkMask = this.networkMask;
+            parameters.roleStrictness = this.roleStrictness;
 
-        parameters.weightClasses = weightClasses;
-        parameters.movementModes = movementModes;
-        parameters.roles = this.roles;
-        parameters.rolesExcluded = this.rolesExcluded;
-        return parameters;
+            parameters.rating = this.rating;
+
+            parameters.weightClasses = weightClasses;
+            parameters.movementModes = movementModes;
+            parameters.roles = this.roles;
+            parameters.rolesExcluded = this.rolesExcluded;
+            return parameters;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 
     @Override
@@ -255,7 +260,7 @@ public final class Parameters implements Cloneable {
     }
 
     public Collection<Integer> getWeightClasses() {
-        return weightClasses;
+        return new ArrayList<>(weightClasses);
     }
 
     public void setWeightClasses(Collection<Integer> weightClasses) {
@@ -275,7 +280,7 @@ public final class Parameters implements Cloneable {
     }
 
     public Collection<EntityMovementMode> getMovementModes() {
-        return movementModes;
+        return new ArrayList<>(movementModes);
     }
 
     public void setMovementModes(Collection<EntityMovementMode> movementModes) {
@@ -283,7 +288,7 @@ public final class Parameters implements Cloneable {
     }
 
     public Collection<MissionRole> getRoles() {
-        return roles;
+        return new ArrayList<>(roles);
     }
 
     public void setRoles(Collection<MissionRole> roles) {

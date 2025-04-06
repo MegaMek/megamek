@@ -43,10 +43,16 @@ public class CancelAction extends AbstractAction {
         putValue(NAME, Messages.getString("Cancel"));
     }
 
-    public CancelAction clone() throws CloneNotSupportedException {
-        CancelAction cancelAction = (CancelAction) super.clone();
-        cancelAction.owner = this.owner;
-        return cancelAction;
+    @Override
+    public CancelAction clone() {
+        try {
+
+            CancelAction cancelAction = (CancelAction) super.clone();
+            cancelAction.owner = this.owner;
+            return cancelAction;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 
     @Override

@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,8 +42,9 @@ import megamek.logging.MMLogger;
  * @since April 1, 2002, 1:29 PM
  */
 public class Mounted<T extends EquipmentType> implements Serializable, RoundUpdated, PhaseUpdated {
-    private static final MMLogger logger = MMLogger.create(Mounted.class);
+    private static final MMLogger LOGGER = MMLogger.create(Mounted.class);
 
+    @Serial
     private static final long serialVersionUID = 6438017987074691566L;
     private boolean usedThisRound = false;
     private boolean destroyed = false;
@@ -142,9 +144,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     protected int switchedReason = 0;
 
     /**
-     * BattleArmor use the standard locations to track troopers. On BA, this field
-     * keeps track of where
-     * a piece of equipment is mounted.
+     * BattleArmor use the standard locations to track troopers. On BA, this field keeps track of where a piece of
+     * equipment is mounted.
      */
     private int baMountLoc = BattleArmor.MOUNT_LOC_NONE;
 
@@ -154,8 +155,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean isDWPMounted = false;
 
     /**
-     * Does this Mounted represent a weapon that is mounted in an anti-personnel
-     * weapon mount?
+     * Does this Mounted represent a weapon that is mounted in an anti-personnel weapon mount?
      */
     private boolean isAPMMounted = false;
 
@@ -171,8 +171,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private final CalledShot called = new CalledShot();
 
     /**
-     * Flag that keeps track of whether this <code>Mounted</code> is mounted as
-     * a squad support weapon on <code>BattleArmor</code>.
+     * Flag that keeps track of whether this <code>Mounted</code> is mounted as a squad support weapon on
+     * <code>BattleArmor</code>.
      */
     private boolean squadSupportWeapon;
 
@@ -214,7 +214,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
         if (type == null) {
             String message = String.format("Could not restore equipment type \"%s\"", typeName);
-            logger.error(message);
+            LOGGER.error(message);
         }
     }
 
@@ -251,8 +251,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * @return the current mode of the equipment, or <code>null</code> if it's
-     *         not available.
+     * @return the current mode of the equipment, or <code>null</code> if it's not available.
      */
     public EquipmentMode curMode() {
         if ((mode >= 0) && (mode < getModesCount())) {
@@ -274,14 +273,13 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     /**
      * Switches the equipment mode to the next or previous available.
      *
-     * @param forward
-     *                Flag that determines whether the mode should be advanced
-     *                forward or backwards.
+     * @param forward Flag that determines whether the mode should be advanced forward or backwards.
+     *
      * @return new mode number, or <code>-1</code> if it's not available.
      */
     public int switchMode(boolean forward) {
         if (hasModes()) {
-            int nMode = 0;
+            int nMode;
             if (pendingMode > -1) {
                 if (forward) {
                     nMode = (pendingMode + 1) % getModesCount();
@@ -311,6 +309,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * Sets the equipment mode to the mode denoted by the given mode name
      *
      * @param newMode the name of the desired new mode
+     *
      * @return new mode number on success, <code>-1</code> otherwise.
      */
     public int setMode(String newMode) {
@@ -326,8 +325,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     /**
      * Sets the equipment mode to the mode denoted by the given mode number
      *
-     * @param newMode
-     *                the number of the desired new mode
+     * @param newMode the number of the desired new mode
      */
     public boolean setMode(int newMode) {
         if (hasModes()) {
@@ -348,11 +346,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             }
         }
         // all communications equipment mounteds need to have the same mode at all times
-        if ((getType() instanceof MiscType)
-                && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+        if ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
             for (Mounted<?> m : entity.getMisc()) {
-                if (!m.equals(this)
-                        && m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                if (!m.equals(this) && m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
                     m.setMode(newMode);
                 }
             }
@@ -364,14 +360,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * Can the switch from the current mode to the new mode happen instantly?
      *
      * @param newMode - integer that represents the new mode
+     *
      * @return true if the new mode can be switched instantly
      */
     public boolean canInstantSwitch(int newMode) {
         String newModeName = type.getMode(newMode).getName();
         String curModeName = curMode().getName();
-        return getType().hasInstantModeSwitch()
-                && !type.isNextTurnModeSwitch(newModeName)
-                && !type.isNextTurnModeSwitch(curModeName);
+        return getType().hasInstantModeSwitch() &&
+                     !type.isNextTurnModeSwitch(newModeName) &&
+                     !type.isNextTurnModeSwitch(curModeName);
     }
 
     @Override
@@ -505,15 +502,16 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             desc.append(" (Int. Bay)");
         }
 
-        if (is(EquipmentTypeLookup.PINTLE_TURRET) && entity instanceof Tank tank && tank.getBaseChassisSponsonPintleWeight() >= 0) {
+        if (is(EquipmentTypeLookup.PINTLE_TURRET) &&
+                  entity instanceof Tank tank &&
+                  tank.getBaseChassisSponsonPintleWeight() >= 0) {
             desc.append(" (%d kg)".formatted((int) (getTonnage() * 1000)));
         }
         return desc.toString();
     }
 
     /**
-     * @return The weight of the equipment in this mount, using the default rounding
-     *         method for the {@link Entity}.
+     * @return The weight of the equipment in this mount, using the default rounding method for the {@link Entity}.
      */
     public double getTonnage() {
         return getTonnage(RoundWeight.STANDARD);
@@ -521,6 +519,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * @param defaultRounding The method to use in rounding the weight
+     *
      * @return The weight of the equipment in this mount
      */
     public double getTonnage(RoundWeight defaultRounding) {
@@ -529,7 +528,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             if (cargo != null) {
                 return defaultRounding.round(cargo.getSize() * 0.05, getEntity());
             }
-            logger.warn("Found dumper not linked to a Cargo equipment. Using zero for the weight.");
+            LOGGER.warn("Found dumper not linked to a Cargo equipment. Using zero for the weight.");
             return 0.0;
         }
         double retVal = getType().getTonnage(getEntity(), getLocation(), getSize(), defaultRounding);
@@ -558,9 +557,13 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public boolean isReady(boolean isStrafing, boolean evenIfAlreadyFired) {
-        return (!usedThisRound || evenIfAlreadyFired || isStrafing) && !destroyed && !missing
-                && !jammed && !useless && !fired
-                && (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
+        return (!usedThisRound || evenIfAlreadyFired || isStrafing) &&
+                     !destroyed &&
+                     !missing &&
+                     !jammed &&
+                     !useless &&
+                     !fired &&
+                     (!isDWPMounted || getLinkedBy() != null);
     }
 
     public boolean isUsedThisRound() {
@@ -596,26 +599,27 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Set this Mounted's destroyed status NOTE: only set this if this Mounted
-     * cannot be used in the current phase anymore. If it still can, use setHit
-     * instead
+     * Set this Mounted's destroyed status NOTE: only set this if this Mounted cannot be used in the current phase
+     * anymore. If it still can, use setHit instead
      *
      * @param destroyed set this object as detroyed
+     *
      * @see #setHit(boolean)
      */
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
-        if ((entity != null) && destroyed && (this instanceof MiscMounted) && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+        if ((entity != null) &&
+                  destroyed &&
+                  (this instanceof MiscMounted) &&
+                  getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
             entity.setHasDamagedRHS(true);
         }
     }
 
     /**
-     * Returns true when this Mounted is not destroyed nor located in a blown-off
-     * or breached location. Does not check any other conditions such as DWP
-     * mounting or prior use.
-     * Also does not check if this mounted has been hit in this phase.
-     * This is equivalent to !{@link #isInoperable()}.
+     * Returns true when this Mounted is not destroyed nor located in a blown-off or breached location. Does not check
+     * any other conditions such as DWP mounting or prior use. Also does not check if this mounted has been hit in this
+     * phase. This is equivalent to !{@link #isInoperable()}.
      *
      * @return True when this Mounted is operable
      */
@@ -624,10 +628,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns true when this Mounted destroyed or located in a blown-off
-     * or breached location. Does not check any other conditions such as DWP
-     * mounting or prior use.
-     * Also does not check if this mounted has been hit in this phase.
+     * Returns true when this Mounted destroyed or located in a blown-off or breached location. Does not check any other
+     * conditions such as DWP mounting or prior use. Also does not check if this mounted has been hit in this phase.
      * Equivalent to !{@link #isOperable()}.
      *
      * @return True when this Mounted is operable
@@ -637,14 +639,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns true if this Mounted's EquipmentType is that identified by the given
-     * typeInternalName String. The
-     * given typeInternalName is compared to the internal name of the EquipmentType
-     * of this Mounted,
-     * not the (display) name!
+     * Returns true if this Mounted's EquipmentType is that identified by the given typeInternalName String. The given
+     * typeInternalName is compared to the internal name of the EquipmentType of this Mounted, not the (display) name!
      * Best use the constants defined in EquipmentTypeLookup.
      *
      * @param typeInternalName An Equipment internal name to check
+     *
      * @return true if the internalName of this equipment matches the given type
      */
     public boolean is(String typeInternalName) {
@@ -656,16 +656,19 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * set that this mounted was or was not hit with a crit this phase Note:
-     * stuff that was hit in a phase can still be used in that phase, if that's
-     * not desired, use setDestroyed instead
+     * set that this mounted was or was not hit with a crit this phase Note: stuff that was hit in a phase can still be
+     * used in that phase, if that's not desired, use setDestroyed instead
      *
      * @param hit sets the object as hit
+     *
      * @see #setDestroyed(boolean)
      */
     public void setHit(boolean hit) {
         this.hit = hit;
-        if ((entity != null) && hit && (this instanceof MiscMounted) && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+        if ((entity != null) &&
+                  hit &&
+                  (this instanceof MiscMounted) &&
+                  getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
             entity.setHasDamagedRHS(true);
         }
     }
@@ -699,30 +702,29 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * The number of shots of ammunition currently stored in this Mounted
-     * regardless of its operational status. Or in other words, the straight
-     * value last set by {@link #setShotsLeft(int)}, even if this ammo slot is
-     * no longer functional or indeed notionally no longer part of the unit
-     * formerly carrying it. This is the 'general' base value that should be
-     * used for display, reporting, entity encoding and salvage purposes.
+     * The number of shots of ammunition currently stored in this Mounted regardless of its operational status. Or in
+     * other words, the straight value last set by {@link #setShotsLeft(int)}, even if this ammo slot is no longer
+     * functional or indeed notionally no longer part of the unit formerly carrying it. This is the 'general' base value
+     * that should be used for display, reporting, entity encoding and salvage purposes.
+     *
+     * @return The base 'true' number of shots in this slot.
      *
      * @see #getHittableShotsLeft()
      * @see #getUsableShotsLeft()
-     * @return The base 'true' number of shots in this slot.
      */
     public int getBaseShotsLeft() {
         return shotsLeft;
     }
 
     /**
-     * Convenience method returning the number of shots of ammunition in this
-     * Mounted that may be affected by a critical hit. This method returns 0 if
-     * this Mounted is marked as destroyed or missing and the same value as
+     * Convenience method returning the number of shots of ammunition in this Mounted that may be affected by a critical
+     * hit. This method returns 0 if this Mounted is marked as destroyed or missing and the same value as
      * {@link #getBaseShotsLeft()} otherwise.
+     *
+     * @return The number of 'hittable' shots in this slot.
      *
      * @see #getBaseShotsLeft()
      * @see #getUsableShotsLeft()
-     * @return The number of 'hittable' shots in this slot.
      */
     public int getHittableShotsLeft() {
         if (destroyed || missing) {
@@ -732,15 +734,14 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Convenience method returning the number of shots of ammunition in this
-     * Mounted that can actually be used <em>as</em> ammunition. This method
-     * returns 0 if this Mounted is marked as destroyed, missing, or breached
-     * and thus nonfunctional and the same value as {@link #getBaseShotsLeft()}
-     * otherwise.
+     * Convenience method returning the number of shots of ammunition in this Mounted that can actually be used
+     * <em>as</em> ammunition. This method returns 0 if this Mounted is marked as destroyed, missing, or breached and
+     * thus nonfunctional and the same value as {@link #getBaseShotsLeft()} otherwise.
+     *
+     * @return The number of usable shots in this slot.
      *
      * @see #getBaseShotsLeft()
      * @see #getHittableShotsLeft()
-     * @return The number of usable shots in this slot.
      */
     public int getUsableShotsLeft() {
         if (destroyed || missing || useless) {
@@ -751,6 +752,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * @return True when this ammunition Mounted has shots left and is operable.
+     *
      * @see #getUsableShotsLeft()
      * @see #isOperable()
      */
@@ -766,28 +768,26 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns how many shots a weapon type would use. This can be used without
-     * an instantiation of Mounted, which is useful for computing Aero heat.
-     * If ignoreMode is true, then mode can be null.
+     * Returns how many shots a weapon type would use. This can be used without an instantiation of Mounted, which is
+     * useful for computing Aero heat. If ignoreMode is true, then mode can be null.
      */
-    public static int getNumShots(WeaponType wtype, EquipmentMode mode,
-            boolean ignoreMode) {
+    public static int getNumShots(WeaponType weaponType, EquipmentMode mode, boolean ignoreMode) {
         // figure out # of shots for variable-shot weapons
-        if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
-                && (ignoreMode || mode.equals(Weapon.MODE_UAC_ULTRA))) {
+        if (((weaponType.getAmmoType() == AmmoType.T_AC_ULTRA) ||
+                   (weaponType.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) &&
+                  (ignoreMode || ((mode != null) && mode.equals(Weapon.MODE_UAC_ULTRA)))) {
             return 2;
         }
         // sets number of shots for AC rapid mode
-        else if (((wtype.getAmmoType() == AmmoType.T_AC)
-                || (wtype.getAmmoType() == AmmoType.T_LAC)
-                || (wtype.getAmmoType() == AmmoType.T_AC_IMP)
-                || (wtype.getAmmoType() == AmmoType.T_PAC))
-                && wtype.hasModes()
-                && (ignoreMode || mode.equals(Weapon.MODE_AC_RAPID))) {
+        else if (((weaponType.getAmmoType() == AmmoType.T_AC) ||
+                        (weaponType.getAmmoType() == AmmoType.T_LAC) ||
+                        (weaponType.getAmmoType() == AmmoType.T_AC_IMP) ||
+                        (weaponType.getAmmoType() == AmmoType.T_PAC)) &&
+                       weaponType.hasModes() &&
+                       (ignoreMode || ((mode != null) && mode.equals(Weapon.MODE_AC_RAPID)))) {
             return 2;
-        } else if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY)
-                || wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
+        } else if ((weaponType.getAmmoType() == AmmoType.T_AC_ROTARY) ||
+                         weaponType.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
             if (ignoreMode || (mode == null) || mode.equals(Weapon.MODE_RAC_SIX_SHOT)) {
                 return 6;
             } else if (mode.equals(Weapon.MODE_RAC_TWO_SHOT)) {
@@ -820,18 +820,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Used for equipment that can vary in size. This is not used for equipment for
-     * which
-     * size is computed by outside factors such as unit weight or targeting
-     * computer-linked
-     * weapons, but for equipment that comes in various weights, lengths, or
-     * capacities.
-     * The meaning of the size varies according to the equipment. For robotic
-     * control systems,
-     * this is the number of drones that can be controlled. For ladders this is the
-     * length in meters.
-     * For most other variable equipment this is the weight in tons. Non-variable
-     * equipment should return 1.0.
+     * Used for equipment that can vary in size. This is not used for equipment for which size is computed by outside
+     * factors such as unit weight or targeting computer-linked weapons, but for equipment that comes in various
+     * weights, lengths, or capacities. The meaning of the size varies according to the equipment. For robotic control
+     * systems, this is the number of drones that can be controlled. For ladders this is the length in meters. For most
+     * other variable equipment this is the weight in tons. Non-variable equipment should return 1.0.
      *
      * @return The size of the mounted equipment
      */
@@ -843,6 +836,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * Sets the size of variable-sized equipment.
      *
      * @param size of the quipment
+     *
      * @see #getSize()
      */
     public void setSize(double size) {
@@ -861,11 +855,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * Checks to see if the current ammo for this weapon is hotloaded
      *
      * @return <code>true</code> if ammo is hotloaded or <code>false</code> if
-     *         not
+     *       not
      */
     public boolean isHotLoaded() {
 
-        boolean isHotLoaded = false;
+        boolean isHotLoaded;
 
         if (getType() instanceof WeaponType) {
             Mounted<?> link = getLinked();
@@ -878,8 +872,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             // Check to see if the ammo has its mode set to hotloaded.
             // This is for vehicles that can change hotload status during
             // combat.
-            if (!isHotLoaded && link.getType().hasModes()
-                    && link.curMode().equals("HotLoad")) {
+            if (!isHotLoaded && link.getType().hasModes() && link.curMode().equals("HotLoad")) {
                 isHotLoaded = true;
             }
 
@@ -892,8 +885,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             // Check to see if the ammo has its mode set to hotloaded.
             // This is for vehicles that can change hotload status during
             // combat.
-            if (!isHotLoaded && getType().hasModes()
-                    && curMode().equals("HotLoad")) {
+            if (!isHotLoaded && getType().hasModes() && curMode().equals("HotLoad")) {
                 isHotLoaded = true;
             }
 
@@ -929,36 +921,28 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /** Returns true when m is a PPC Capacitor and not destroyed. */
     private boolean isWorkingCapacitor(Mounted<?> m) {
-        return !m.isDestroyed()
-                && m.getType() instanceof MiscType
-                && ((MiscType) m.getType()).hasFlag(MiscType.F_PPC_CAPACITOR);
+        return !m.isDestroyed() && m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_PPC_CAPACITOR);
     }
 
     /**
-     * Returns 1 or 2 if this Mounted has a linked
-     * and charged (= set to charge in an earlier turn)
-     * PPC Capacitor.
+     * Returns 1 or 2 if this Mounted has a linked and charged (= set to charge in an earlier turn) PPC Capacitor.
      */
     public int hasChargedCapacitor() {
-        if (getCrossLinkedBy() != null
-                && isWorkingCapacitor(getCrossLinkedBy())
-                && getCrossLinkedBy().curMode().equals("Charge")) {
+        if (getCrossLinkedBy() != null &&
+                  isWorkingCapacitor(getCrossLinkedBy()) &&
+                  getCrossLinkedBy().curMode().equals("Charge")) {
             return 2;
         }
 
-        if (getLinkedBy() != null
-                && isWorkingCapacitor(getLinkedBy())
-                && getLinkedBy().curMode().equals("Charge")) {
+        if (getLinkedBy() != null && isWorkingCapacitor(getLinkedBy()) && getLinkedBy().curMode().equals("Charge")) {
             return 1;
         }
         return 0;
     }
 
     /**
-     * Returns 1 or 2 if this Mounted has a linked
-     * and charged (= set to charge in an earlier turn)
-     * or charging (= set to charge this turn)
-     * PPC Capacitor. Used to determine heat.
+     * Returns 1 or 2 if this Mounted has a linked and charged (= set to charge in an earlier turn) or charging (= set
+     * to charge this turn) PPC Capacitor. Used to determine heat.
      */
     public int hasChargedOrChargingCapacitor() {
         int isCharged = hasChargedCapacitor();
@@ -967,15 +951,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         } else {
             // When it has been set to charge this turn,
             // pendingMode is set
-            if (getCrossLinkedBy() != null
-                    && isWorkingCapacitor(getCrossLinkedBy())
-                    && getCrossLinkedBy().pendingMode().equals("Charge")) {
+            if (getCrossLinkedBy() != null &&
+                      isWorkingCapacitor(getCrossLinkedBy()) &&
+                      getCrossLinkedBy().pendingMode().equals("Charge")) {
                 return 2;
             }
 
-            if (getLinkedBy() != null
-                    && isWorkingCapacitor(getLinkedBy())
-                    && getLinkedBy().pendingMode().equals("Charge")) {
+            if (getLinkedBy() != null &&
+                      isWorkingCapacitor(getLinkedBy()) &&
+                      getLinkedBy().pendingMode().equals("Charge")) {
                 return 1;
             }
             return 0;
@@ -983,13 +967,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns the location this equipment is mounted in, such as
-     * {@link Tank#LOC_FRONT}. May also return
-     * {@link Entity#LOC_NONE} for unallocated equipment and some special equipment.
-     * For BattleArmor, will
-     * return one of the trooper locations, such as
-     * {@link BattleArmor#LOC_TROOPER_1}. To get the equipment
-     * location on BA, use {@link #getBaMountLoc()}.
+     * Returns the location this equipment is mounted in, such as {@link Tank#LOC_FRONT}. May also return
+     * {@link Entity#LOC_NONE} for unallocated equipment and some special equipment. For BattleArmor, will return one of
+     * the trooper locations, such as {@link BattleArmor#LOC_TROOPER_1}. To get the equipment location on BA, use
+     * {@link #getBaMountLoc()}.
      *
      * @return The location of this equipment on its unit
      */
@@ -1027,12 +1008,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Fetches all locations that contain this equipment. This is primarily for
-     * spreadable equipment, can be placed in locations other than the primary or
-     * secondary,
-     * but will also work for non-spreadable equipment.
+     * Fetches all locations that contain this equipment. This is primarily for spreadable equipment, can be placed in
+     * locations other than the primary or secondary, but will also work for non-spreadable equipment.
      *
      * @return A list of indices for all locations that contain this equipment.
+     *
      * @see #getLocation()
      * @see #getSecondLocation()
      */
@@ -1103,18 +1083,23 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Used for associating the equipment mount with a cargo bay. This is for
-     * dumpers and transient bays
-     * created on load for use by 'Mek cargo equipment.
+     * Used for associating the equipment mount with a cargo bay. This is for dumpers and transient bays created on load
+     * for use by `Mek cargo equipment.
      *
-     * @return The index of the bay this mount is linked to, or -1 if it is not
-     *         linked.
+     * @return The index of the bay this mount is linked to, or -1 if it is not linked.
+     *
      * @see Entity#getBayById(int)
+     * @deprecated No indicated uses.
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public int getLinkedBayId() {
         return linkedBayId;
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public void setLinkedBayId(int id) {
         linkedBayId = id;
     }
@@ -1132,9 +1117,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public boolean isSplitable() {
-        return (((getType() instanceof WeaponType) && ((WeaponType) getType()).isSplitable())
-                || ((getType() instanceof MiscType) && getType()
-                        .hasFlag(MiscType.F_SPLITABLE)));
+        return (((getType() instanceof WeaponType) && ((WeaponType) getType()).isSplitable()) ||
+                      ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_SPLITABLE)));
     }
 
     public void setSplit(boolean b) {
@@ -1144,8 +1128,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public int getExplosionDamage() {
         if (type instanceof MiscType mtype) {
             if (mtype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                if (curMode().equals("Charge") && (linked != null)
-                        && !linked.isFired()) {
+                if (curMode().equals("Charge") && (linked != null) && !linked.isFired()) {
                     return 15;
                 }
             }
@@ -1155,8 +1138,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             if (mtype.hasFlag(MiscType.F_BLUE_SHIELD)) {
                 return 5;
             }
-            if (mtype.hasFlag(MiscType.F_JUMP_JET) && mtype.hasSubType(MiscType.S_PROTOTYPE)
-                    && mtype.hasSubType(MiscType.S_IMPROVED)) {
+            if (mtype.hasFlag(MiscType.F_JUMP_JET) &&
+                      mtype.hasSubType(MiscType.S_PROTOTYPE) &&
+                      mtype.hasSubType(MiscType.S_IMPROVED)) {
                 return 10;
             }
             if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
@@ -1170,7 +1154,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         // um, otherwise, I'm not sure
         String message = String.format("mounted: unable to determine explosion damage for %s", typeName);
-        logger.error(message);
+        LOGGER.error(message);
         return 0;
     }
 
@@ -1194,7 +1178,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * Confirm that the given entity can fire the indicated equipment.
      *
      * @return <code>true</code> if the equipment can be fired by the entity;
-     *         <code>false</code> otherwise.
+     *       <code>false</code> otherwise.
      */
     public boolean canFire() {
         return canFire(false, false);
@@ -1211,23 +1195,17 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
 
         // Is the entity even active?
-        if (entity.isShutDown()
-                || ((null != entity.getCrew()) && !entity.getCrew().isActive())) {
-            return false;
-        }
+        return !entity.isShutDown() && ((null == entity.getCrew()) || entity.getCrew().isActive());
 
         // Otherwise, the equipment can be fired.
-        return true;
     }
 
     /**
-     * Determines whether this weapon should be considered crippled for damage
-     * level purposes.
+     * Determines whether this weapon should be considered crippled for damage level purposes.
      *
-     * @return {@code true} if the weapon is at least one of: destroyed,
-     *         missing, breached, jammed, a detachable weapon no longer attached
-     *         to its original battle armor, or simply out of ammo (includes
-     *         discharged one-shot weapons), {@code false} otherwise.
+     * @return {@code true} if the weapon is at least one of: destroyed, missing, breached, jammed, a detachable weapon
+     *       no longer attached to its original battle armor, or simply out of ammo (includes discharged one-shot
+     *       weapons), {@code false} otherwise.
      */
     public boolean isCrippled() {
         /*
@@ -1242,8 +1220,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             return true;
         }
         if ((type instanceof AmmoWeapon) || (type instanceof AmmoBayWeapon)) {
-            if ((getLinked() == null)
-                    || (entity.getTotalAmmoOfType(getLinked().getType()) < 1)) {
+            if ((getLinked() == null) || (entity.getTotalAmmoOfType(getLinked().getType()) < 1)) {
                 return true;
             }
         }
@@ -1251,7 +1228,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     *
      * @return The index of this mount in the entity's equipmentlist.
      */
     public int getEquipmentNum() {
@@ -1259,22 +1235,21 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns false if this ammo should not be loaded. Checks if the ammo is
-     * already destroyed or missing, is being dumped, has been breached, is
-     * already used up, or is locationless (oneshot ammo).
+     * Returns false if this ammo should not be loaded. Checks if the ammo is already destroyed or missing, is being
+     * dumped, has been breached, is already used up, or is locationless (oneshot ammo).
      */
     public boolean isAmmoUsable() {
-        if (destroyed || missing || m_bDumping || useless || (shotsLeft <= 0)
-                || (location == Entity.LOC_NONE)) {
-            return false;
-        }
-        return true;
+        return !destroyed && !missing && !m_bDumping && !useless && (shotsLeft > 0) && (location != Entity.LOC_NONE);
     }
 
     public void setByShot(boolean b) {
         byShot = b;
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public boolean byShot() {
         return byShot;
     }
@@ -1300,9 +1275,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Convenience method to determine if a bomb munition is mounted EXternally
-     * (reduces MP) or INternally (no
-     * MP reduction).
+     * Convenience method to determine if a bomb munition is mounted EXternally (reduces MP) or INternally (no MP
+     * reduction).
      *
      * @return True if
      */
@@ -1311,16 +1285,14 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * returns the heat for this weapon taking account of rapid-fire weapon
-     * status
+     * returns the heat for this weapon taking account of rapid-fire weapon status
      */
     public int getCurrentHeat() {
         return 0;
     }
 
     public boolean isBodyMounted() {
-        return (baMountLoc == BattleArmor.MOUNT_LOC_BODY)
-                || (baMountLoc == BattleArmor.MOUNT_LOC_TURRET);
+        return (baMountLoc == BattleArmor.MOUNT_LOC_BODY) || (baMountLoc == BattleArmor.MOUNT_LOC_TURRET);
     }
 
     public boolean isDWPMounted() {
@@ -1370,13 +1342,17 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         nweapons = i;
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public void unlink() {
         linked = null;
     }
 
     /**
-     * Sets the Mounted to be an armored component, TO:AUE p.95. This method checks if the EquipmentType allows armoring at all and sets
-     * the armored status to false if it doesn't.
+     * Sets the Mounted to be an armored component, TO:AUE p.95. This method checks if the EquipmentType allows armoring
+     * at all and sets the armored status to false if it doesn't.
      *
      * @param armored The armored status to be set
      */
@@ -1396,9 +1372,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Retrieves the quirks object for mounted. DO NOT USE this to check boolean
-     * options, as it will not check game options for quirks. Use
-     * Mounted#hasQuirk instead
+     * Retrieves the quirks object for mounted. DO NOT USE this to check boolean options, as it will not check game
+     * options for quirks. Use Mounted#hasQuirk instead
      *
      * @return the list of quirks
      */
@@ -1407,28 +1382,24 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public boolean hasQuirk(String name) {
-        if ((null == entity)
-                || (null == entity.getGame())
-                || !entity.getGame().getOptions()
-                        .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+        if ((null == entity) ||
+                  (null == entity.getGame()) ||
+                  !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return false;
         }
         return quirks.booleanOption(name);
     }
 
     /**
-     * Count all the weapon quirks for this Mounted. Returns 0 when this Mounted is
-     * tied to an Entity and
-     * this Entity's game does not use quirks! In all other cases (e.g. outside of
-     * games), returns the quirk
-     * count of this Mounted.
+     * Count all the weapon quirks for this Mounted. Returns 0 when this Mounted is tied to an Entity and this Entity's
+     * game does not use quirks! In all other cases (e.g. outside of games), returns the quirk count of this Mounted.
      *
-     * @return The number of active weapon quirks for this Mounted unless the game
-     *         does not use quirks
+     * @return The number of active weapon quirks for this Mounted unless the game does not use quirks
      */
     public int countQuirks() {
-        if ((entity != null) && (entity.getGame() != null) &&
-                !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+        if ((entity != null) &&
+                  (entity.getGame() != null) &&
+                  !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return 0;
         } else {
             return quirks.count();
@@ -1436,12 +1407,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns a string of all the quirk "codes" for this entity, using sep as
-     * the separator
+     * Returns a string of all the quirk "codes" for this entity, using sep as the separator
      */
     public String getQuirkList(String sep) {
-        if ((null == entity) || (null == entity.game)
-                || !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+        if ((null == entity) ||
+                  (null == entity.game) ||
+                  !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return "";
         }
 
@@ -1516,39 +1487,33 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * @return True if our capital missile bay is in bearings-only mode
-     *         Only available in space games
+     * @return True if our capital missile bay is in bearings-only mode Only available in space games
      */
     public boolean isInBearingsOnlyMode() {
-        return (curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_EXT)
-                || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_LONG)
-                || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_MED)
-                || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_SHORT)
-                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
-                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG)
-                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED)
-                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT))
-                && getEntity().isSpaceborne();
+        return (curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_EXT) ||
+                      curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_LONG) ||
+                      curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_MED) ||
+                      curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_SHORT) ||
+                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT) ||
+                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG) ||
+                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED) ||
+                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT)) && getEntity().isSpaceborne();
     }
 
     /**
-     * @return True if our capital missile bay is in waypoint launch mode
-     *         Only available in space games
+     * @return True if our capital missile bay is in waypoint launch mode Only available in space games
      */
     public boolean isInWaypointLaunchMode() {
-        return (curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
-                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG)
-                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED)
-                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT)
-                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT))
-                && getEntity().isSpaceborne();
+        return (curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT) ||
+                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG) ||
+                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED) ||
+                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT) ||
+                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT)) && getEntity().isSpaceborne();
     }
 
     /**
-     * Method that adds/removes available capital missile modes as we move between
-     * space and atmospheric maps
-     * Called by Entity.setGameOptions(), which is in turn called during a mode
-     * change by server.
+     * Method that adds/removes available capital missile modes as we move between space and atmospheric maps Called by
+     * Entity.setGameOptions(), which is in turn called during a mode change by server.
      */
     // Though we can't currently switch maps, this is needed to ensure space-only
     // modes are removed on ground maps
@@ -1577,9 +1542,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * @return For BattleArmor, returns the location where a piece of equipment is
-     *         mounted, e.g.
-     *         {@link BattleArmor#MOUNT_LOC_LARM}.
+     * @return For BattleArmor, returns the location where a piece of equipment is mounted, e.g.
+     *       {@link BattleArmor#MOUNT_LOC_LARM}.
      */
     public int getBaMountLoc() {
         return baMountLoc;
@@ -1590,8 +1554,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Checks whether this mount is either one a one-shot weapon or ammo for a
-     * one-shot weapon.
+     * Checks whether this mount is either one a one-shot weapon or ammo for a one-shot weapon.
      *
      * @return Whether the equipment is one-shot
      */
@@ -1636,8 +1599,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public boolean isAnyMissingTroopers() {
-        for (int i = 0; i < missingForTrooper.length; i++) {
-            if (missingForTrooper[i]) {
+        for (boolean b : missingForTrooper) {
+            if (b) {
                 return true;
             }
         }
@@ -1646,8 +1609,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public String getMissingTrooperString() {
         StringBuilder missingTroopers = new StringBuilder();
-        for (int i = 0; i < missingForTrooper.length; i++) {
-            missingTroopers.append(missingForTrooper[i]).append("::");
+        for (boolean b : missingForTrooper) {
+            missingTroopers.append(b).append("::");
         }
         return missingTroopers.toString();
     }
@@ -1660,8 +1623,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             return false;
         }
 
-        return ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING) &&
-                curMode().equals("Homing");
+        return ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING) && curMode().equals("Homing");
     }
 
     public int equipmentIndex() {
@@ -1694,77 +1656,102 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     @Override
     public String toString() {
         List<String> locations = allLocations().stream().map(entity::getLocationAbbr).collect(Collectors.toList());
-        String intro = getType().toString()
-                + " (" + String.join("/", locations)
-                + (rearMounted ? "-R" : "")
-                + (mekTurretMounted ? "-MTu" : "")
-                + (sponsonTurretMounted ? "-STu" : "")
-                + (pintleTurretMounted ? "-PTu" : "")
-                + (isDWPMounted ? "-DWP" : "")
-                + (isAPMMounted ? "-APM" : "")
-                + (squadSupportWeapon ? "-SSW" : "")
-                + (baMountLoc != -1 ? "-" + BattleArmor.MOUNT_LOC_NAMES[baMountLoc] : "")
-                + (omniPodMounted ? "-Pod" : "")
+        String intro = getType().toString() +
+                             " (" +
+                             String.join("/", locations) +
+                             (rearMounted ? "-R" : "") +
+                             (mekTurretMounted ? "-MTu" : "") +
+                             (sponsonTurretMounted ? "-STu" : "") +
+                             (pintleTurretMounted ? "-PTu" : "") +
+                             (isDWPMounted ? "-DWP" : "") +
+                             (isAPMMounted ? "-APM" : "") +
+                             (squadSupportWeapon ? "-SSW" : "") +
+                             (baMountLoc != -1 ? "-" + BattleArmor.MOUNT_LOC_NAMES[baMountLoc] : "") +
+                             (omniPodMounted ? "-Pod" : "")
 
-                + ")";
+                             +
+                             ")";
 
         List<String> state = new ArrayList<>();
         if (linked != null) {
             if (linked.getEntity().getId() != entity.getId()) {
-                state.add("Linked: [" + linked.getEntity() + ":" + linked.getEntity().getEquipment().indexOf(linked)
-                        + "]");
+                state.add("Linked: [" +
+                                linked.getEntity() +
+                                ":" +
+                                linked.getEntity().getEquipment().indexOf(linked) +
+                                "]");
             } else {
                 state.add("Linked: [" + entity.getEquipment().indexOf(linked) + "]");
             }
         }
         if (linkedBy != null) {
             if (linkedBy.getEntity().getId() != entity.getId()) {
-                state.add("LinkedBy: [" + linkedBy.getEntity() + ":"
-                        + linkedBy.getEntity().getEquipment().indexOf(linkedBy) + "]");
+                state.add("LinkedBy: [" +
+                                linkedBy.getEntity() +
+                                ":" +
+                                linkedBy.getEntity().getEquipment().indexOf(linkedBy) +
+                                "]");
             } else {
                 state.add("LinkedBy: [" + entity.getEquipment().indexOf(linkedBy) + "]");
             }
         }
         if (crossLinkedBy != null) {
             if (crossLinkedBy.getEntity().getId() != entity.getId()) {
-                state.add("CrossLinkedBy: [" + crossLinkedBy.getEntity() + ":"
-                        + crossLinkedBy.getEntity().getEquipment().indexOf(crossLinkedBy) + "]");
+                state.add("CrossLinkedBy: [" +
+                                crossLinkedBy.getEntity() +
+                                ":" +
+                                crossLinkedBy.getEntity().getEquipment().indexOf(crossLinkedBy) +
+                                "]");
             } else {
                 state.add("CrossLinkedBy: [" + entity.getEquipment().indexOf(crossLinkedBy) + "]");
             }
         }
-        if (linkedBayId != -1)
+        if (linkedBayId != -1) {
             state.add("LinkedBay: [" + linkedBayId + "]");
+        }
         state.addAll(bayComponentsToString());
         if (type instanceof AmmoType) {
             state.add("Shots: " + shotsLeft);
         }
-        if (destroyed)
+        if (destroyed) {
             state.add("Destroyed");
-        if (hit)
+        }
+        if (hit) {
             state.add("Hit");
-        if (missing)
+        }
+        if (missing) {
             state.add("Missing");
-        if (fired)
+        }
+        if (fired) {
             state.add("Fired");
-        if (rapidfire)
+        }
+        if (rapidfire) {
             state.add("Rapidfire");
-        if (jammed)
+        }
+        if (jammed) {
             state.add("Jammed");
-        if (useless)
+        }
+        if (useless) {
             state.add("Useless");
-        if (armoredComponent)
+        }
+        if (armoredComponent) {
             state.add("Armored");
-        if (facing != -1)
+        }
+        if (facing != -1) {
             state.add("Facing: " + facing);
-        if (!quirks.activeQuirks().isEmpty())
+        }
+        if (!quirks.activeQuirks().isEmpty()) {
             state.add("Quirks: " + quirks.getOptionList("/"));
-        if (weaponGroup)
+        }
+        if (weaponGroup) {
             state.add("Group");
-        if (nweapons != 1 || weaponGroup)
+        }
+        if (nweapons != 1 || weaponGroup) {
             state.add("#Weapons: " + nweapons);
-        if (size != 1)
+        }
+        if (size != 1) {
             state.add("Size: " + size);
+        }
         return intro + " { " + String.join(", ", state) + " }";
     }
 }

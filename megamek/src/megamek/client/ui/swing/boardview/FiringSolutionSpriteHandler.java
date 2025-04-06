@@ -83,13 +83,14 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
     protected boolean shouldShowTarget(Entity target, Entity ce) {
         boolean friendlyFire = client.getGame().getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
         boolean enemyTarget = target.getOwner().isEnemyOf(ce.getOwner());
-        boolean friendlyFireOrEnemyTarget =  friendlyFire || enemyTarget;
+        boolean friendlyFireOrEnemyTarget = friendlyFire || enemyTarget;
         boolean NotEnemyTargetOrVisible = !enemyTarget
                 || EntityVisibilityUtils.detectedOrHasVisual(client.getLocalPlayer(), client.getGame(), target);
         return (target.getId() != ce.getId())
-                && friendlyFireOrEnemyTarget
-                && NotEnemyTargetOrVisible
-                && target.isTargetable();
+                     && friendlyFireOrEnemyTarget
+                     && NotEnemyTargetOrVisible
+                     && game.onTheSameBoard(ce, target)
+                     && target.isTargetable();
     }
 
     @Override

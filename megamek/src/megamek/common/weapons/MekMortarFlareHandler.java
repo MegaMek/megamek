@@ -121,7 +121,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
         } else {
             // only scatters by one d6
             targetPos = Compute.scatter(targetPos, 1);
-            if (game.getBoard().contains(targetPos)) {
+            if (game.hasBoardLocation(targetPos, target.getBoardId())) {
                 // misses and scatters to another hex
                 r = new Report(3195);
                 r.subject = subjectId;
@@ -136,7 +136,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
             }
         }
 
-        gameManager.deliverMortarFlare(targetPos, duration);
+        gameManager.deliverMortarFlare(targetPos, target.getBoardId(), duration);
         return false;
     }
 }

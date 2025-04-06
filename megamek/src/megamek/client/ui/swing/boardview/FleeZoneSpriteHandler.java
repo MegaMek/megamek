@@ -37,14 +37,14 @@ public class FleeZoneSpriteHandler extends BoardViewSpriteHandler {
         clear();
     }
 
-    public void renewSprites(Collection<Coords> coords) {
+    public void renewSprites(Collection<Coords> coords, int boardId) {
         clear();
-        if (clientGUI.boardViews().isEmpty()) {
-            return;
+        IBoardView iBoardView = clientGUI.getBoardView(boardId);
+        if (iBoardView instanceof BoardView boardView) {
+            coords.stream()
+                  .map(c -> new FieldofFireSprite(boardView, 1, c, 63))
+                  .forEach(currentSprites::add);
+            boardView.addSprites(currentSprites);
         }
-        coords.stream()
-              .map(c -> new FieldofFireSprite((BoardView) clientGUI.boardViews().get(0), 1, c, 63))
-              .forEach(currentSprites::add);
-        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 }

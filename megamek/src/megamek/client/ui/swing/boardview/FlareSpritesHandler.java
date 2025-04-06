@@ -36,11 +36,14 @@ public class FlareSpritesHandler extends BoardViewSpriteHandler {
 
     public void renewSprites(Collection<Flare> flares) {
         clear();
-        if (clientGUI.boardViews().isEmpty()) {
-            return;
+        for (Flare flare : flares) {
+            IBoardView iBoardView = clientGUI.getBoardView(flare.getBoardId());
+            if (iBoardView instanceof BoardView boardView) {
+                var sprite = new FlareSprite(boardView, flare);
+                currentSprites.add(sprite);
+                boardView.addSprite(sprite);
+            }
         }
-        flares.stream().map(flare -> new FlareSprite((BoardView) clientGUI.boardViews().get(0), flare)).forEach(currentSprites::add);
-        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 
     @Override

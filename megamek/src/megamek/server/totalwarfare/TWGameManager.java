@@ -6615,12 +6615,12 @@ public class TWGameManager extends AbstractGameManager {
      * Creates an artillery flare of the given radius above the target
      */
     public void deliverArtilleryFlare(Coords coords, int radius) {
-        Flare flare = new Flare(coords, 5, radius, Flare.F_DRIFTING);
+        Flare flare = new Flare(coords, 0, 5, radius, Flare.F_DRIFTING);
         game.addFlare(flare);
     }
 
-    public void deliverMortarFlare(Coords coords, int duration) {
-        Flare flare = new Flare(coords, duration, 1, Flare.F_IGNITED);
+    public void deliverMortarFlare(Coords coords, int boardId, int duration) {
+        Flare flare = new Flare(coords, boardId, duration, 1, Flare.F_IGNITED);
         game.addFlare(flare);
     }
 

@@ -6,6 +6,9 @@ map: testiceonwater.board
 
 options:
   on: black_ice
+  off:
+    - check_victory
+
 
 planetaryconditions:
   temperature: -40

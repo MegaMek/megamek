@@ -19,6 +19,7 @@
  */
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,8 +27,11 @@ import java.io.Serializable;
  *  or mech mortars.
  */
 public class Flare implements Serializable {
+    @Serial
     private static final long serialVersionUID = 451911245389504483L;
+
     public Coords position;
+    private final int boardId;
     public int turnsToBurn;
     public final int radius;
     public int flags;
@@ -35,15 +39,25 @@ public class Flare implements Serializable {
     public static int F_IGNITED = 1;
     public static int F_DRIFTING = 2;
 
-    public Flare(Coords position, int turnsToBurn, int radius, int flags) {
+    public Flare(Coords position, int boardId, int turnsToBurn, int radius, int flags) {
         this.position = position;
+        this.boardId = boardId;
         this.turnsToBurn = turnsToBurn;
         this.radius = radius;
         this.flags = flags;
     }
 
+    public int getBoardId() {
+        return boardId;
+    }
+
     public boolean illuminates(Coords c) {
-        return isIgnited() && (position.distance(c) <= radius);
+        // LEGACY replace with boardId version
+        return illuminates(c, 0);
+    }
+
+    public boolean illuminates(Coords c, int boardId) {
+        return isIgnited() && (this.boardId == boardId) && (position.distance(c) <= radius);
     }
 
     public boolean isIgnited() {

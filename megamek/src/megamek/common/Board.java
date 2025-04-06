@@ -91,7 +91,7 @@ public class Board implements Serializable {
     private int maxElevation = UNDEFINED_MAX_ELEV;
 
     private int mapType = T_GROUND;
-    private BoardType boardType;
+    private BoardType boardType = BoardType.GROUND;
 
     private Hex[] data;
 

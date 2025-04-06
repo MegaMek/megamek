@@ -5,7 +5,8 @@ description: AMS may not engage mortars - test setup
 map: Beginner Box/16x17 Grassland 1.board
 
 options:
-  #off:
+  off:
+    - check_victory
    # - auto_ams
 
 factions:

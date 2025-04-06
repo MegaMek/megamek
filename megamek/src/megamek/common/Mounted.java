@@ -1545,16 +1545,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Method that adds/removes available capital missile modes as we move between
-     * space and atmospheric maps
-     * Called by Entity.setGameOptions(), which is in turn called during a mode
-     * change by server.
+     * Method that adds/removes available capital missile modes as we move between space and atmospheric maps. Called by
+     * Entity.setGameOptions(), which is in turn called during a mode change by server.
      */
-    // Though we can't currently switch maps, this is needed to ensure space-only
-    // modes are removed on ground maps
     public void setModesForMapType() {
-        // If the entity is not in space, remove these modes, which get set up based on
-        // game options in Weapon before game type is known
         if (!getEntity().isSpaceborne()) {
             getType().removeMode(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT);
             getType().removeMode(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG);
@@ -1566,14 +1560,18 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             getType().removeMode(Weapon.MODE_CAP_MISSILE_BEARING_LONG);
             getType().removeMode(Weapon.MODE_CAP_MISSILE_BEARING_MED);
             getType().removeMode(Weapon.MODE_CAP_MISSILE_BEARING_SHORT);
+        } else {
+            getType().addMode(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT);
+            getType().addMode(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG);
+            getType().addMode(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED);
+            getType().addMode(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT);
+            getType().addMode(Weapon.MODE_CAP_MISSILE_WAYPOINT);
+            getType().addMode(Weapon.MODE_CAP_MISSILE_TELE_OPERATED);
+            getType().addMode(Weapon.MODE_CAP_MISSILE_BEARING_EXT);
+            getType().addMode(Weapon.MODE_CAP_MISSILE_BEARING_LONG);
+            getType().addMode(Weapon.MODE_CAP_MISSILE_BEARING_MED);
+            getType().addMode(Weapon.MODE_CAP_MISSILE_BEARING_SHORT);
         }
-        /*
-         * //Placeholder. This will be used to add the space modes back when we're able
-         * to switch maps.
-         * if (getEntity().isSpaceborne()) {
-         *
-         * }
-         */
     }
 
     /**

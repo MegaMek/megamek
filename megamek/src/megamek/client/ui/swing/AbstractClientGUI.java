@@ -227,11 +227,15 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
     }
 
     public IBoardView getBoardView(Targetable entity) {
-        return boardViews.get(entity.getBoardId());
+        return getBoardView(entity.getBoardId());
     }
 
     public IBoardView getBoardView(BoardLocation boardLocation) {
-        return boardViews.get(boardLocation.boardId());
+        return getBoardView(boardLocation.boardId());
+    }
+
+    public IBoardView getBoardView(int boardId) {
+        return boardViews.get(boardId);
     }
 
     /**

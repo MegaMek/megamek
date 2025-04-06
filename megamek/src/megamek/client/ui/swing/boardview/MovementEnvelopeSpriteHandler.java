@@ -58,6 +58,11 @@ public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
             return;
         }
 
+        IBoardView iBoardView = clientGUI.getBoardView(boardId);
+        if (!(iBoardView instanceof BoardView boardView)) {
+            return;
+        }
+
         for (Coords loc : mvEnvData.keySet()) {
             Color spriteColor = null;
             int mvType = -1;
@@ -112,13 +117,11 @@ public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
             }
 
             if (spriteColor != null) {
-                currentSprites.add(new MovementEnvelopeSprite((BoardView) clientGUI.boardViews().get(boardId), spriteColor,
-                      loc,
-                      edgesToPaint));
+                currentSprites.add(new MovementEnvelopeSprite(boardView, spriteColor, loc, edgesToPaint));
             }
         }
 
-        clientGUI.boardViews().get(boardId).addSprites(currentSprites);
+        boardView.addSprites(currentSprites);
     }
 
     @Override

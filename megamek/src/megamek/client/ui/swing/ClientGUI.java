@@ -88,6 +88,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
+import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -3307,10 +3308,12 @@ public class ClientGUI extends AbstractClientGUI
 
     private void toggleFleeZone() {
         showFleeZone = !showFleeZone;
-        if (showFleeZone && unitDisplay.getCurrentEntity() != null) {
+        Entity entity = unitDisplay.getCurrentEntity();
+        if (showFleeZone && entity != null) {
             Game game = client.getGame();
-            fleeZoneSpriteHandler.renewSprites(game.getFleeZone(unitDisplay.getCurrentEntity())
-                                                     .getCoords(game.getBoard()));
+            Board board = game.getBoard(entity);
+            HexArea fleeZone = game.getFleeZone(entity);
+            fleeZoneSpriteHandler.renewSprites(fleeZone.getCoords(board), board.getBoardId());
         } else {
             fleeZoneSpriteHandler.clear();
         }

@@ -40,9 +40,6 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
 
     public void setGroundObjectSprites(Map<Coords, List<ICarryable>> objectCoordList) {
         clear();
-        if (clientGUI.boardViews().isEmpty()) {
-            return;
-        }
         currentGroundObjectList = objectCoordList;
         if (currentGroundObjectList != null) {
         	for (Coords coords : currentGroundObjectList.keySet()) {

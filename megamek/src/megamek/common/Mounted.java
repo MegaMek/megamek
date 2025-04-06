@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,8 +42,9 @@ import megamek.logging.MMLogger;
  * @since April 1, 2002, 1:29 PM
  */
 public class Mounted<T extends EquipmentType> implements Serializable, RoundUpdated, PhaseUpdated {
-    private static final MMLogger logger = MMLogger.create(Mounted.class);
+    private static final MMLogger LOGGER = MMLogger.create(Mounted.class);
 
+    @Serial
     private static final long serialVersionUID = 6438017987074691566L;
     private boolean usedThisRound = false;
     private boolean destroyed = false;
@@ -212,7 +214,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
         if (type == null) {
             String message = String.format("Could not restore equipment type \"%s\"", typeName);
-            logger.error(message);
+            LOGGER.error(message);
         }
     }
 
@@ -277,7 +279,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public int switchMode(boolean forward) {
         if (hasModes()) {
-            int nMode = 0;
+            int nMode;
             if (pendingMode > -1) {
                 if (forward) {
                     nMode = (pendingMode + 1) % getModesCount();
@@ -526,7 +528,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             if (cargo != null) {
                 return defaultRounding.round(cargo.getSize() * 0.05, getEntity());
             }
-            logger.warn("Found dumper not linked to a Cargo equipment. Using zero for the weight.");
+            LOGGER.warn("Found dumper not linked to a Cargo equipment. Using zero for the weight.");
             return 0.0;
         }
         double retVal = getType().getTonnage(getEntity(), getLocation(), getSize(), defaultRounding);
@@ -561,7 +563,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                      !jammed &&
                      !useless &&
                      !fired &&
-                     (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
+                     (!isDWPMounted || getLinkedBy() != null);
     }
 
     public boolean isUsedThisRound() {
@@ -769,22 +771,23 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * Returns how many shots a weapon type would use. This can be used without an instantiation of Mounted, which is
      * useful for computing Aero heat. If ignoreMode is true, then mode can be null.
      */
-    public static int getNumShots(WeaponType wtype, EquipmentMode mode, boolean ignoreMode) {
+    public static int getNumShots(WeaponType weaponType, EquipmentMode mode, boolean ignoreMode) {
         // figure out # of shots for variable-shot weapons
-        if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) &&
-                  (ignoreMode || mode.equals(Weapon.MODE_UAC_ULTRA))) {
+        if (((weaponType.getAmmoType() == AmmoType.T_AC_ULTRA) ||
+                   (weaponType.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) &&
+                  (ignoreMode || ((mode != null) && mode.equals(Weapon.MODE_UAC_ULTRA)))) {
             return 2;
         }
         // sets number of shots for AC rapid mode
-        else if (((wtype.getAmmoType() == AmmoType.T_AC) ||
-                        (wtype.getAmmoType() == AmmoType.T_LAC) ||
-                        (wtype.getAmmoType() == AmmoType.T_AC_IMP) ||
-                        (wtype.getAmmoType() == AmmoType.T_PAC)) &&
-                       wtype.hasModes() &&
-                       (ignoreMode || mode.equals(Weapon.MODE_AC_RAPID))) {
+        else if (((weaponType.getAmmoType() == AmmoType.T_AC) ||
+                        (weaponType.getAmmoType() == AmmoType.T_LAC) ||
+                        (weaponType.getAmmoType() == AmmoType.T_AC_IMP) ||
+                        (weaponType.getAmmoType() == AmmoType.T_PAC)) &&
+                       weaponType.hasModes() &&
+                       (ignoreMode || ((mode != null) && mode.equals(Weapon.MODE_AC_RAPID)))) {
             return 2;
-        } else if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY) ||
-                         wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
+        } else if ((weaponType.getAmmoType() == AmmoType.T_AC_ROTARY) ||
+                         weaponType.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
             if (ignoreMode || (mode == null) || mode.equals(Weapon.MODE_RAC_SIX_SHOT)) {
                 return 6;
             } else if (mode.equals(Weapon.MODE_RAC_TWO_SHOT)) {
@@ -856,7 +859,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public boolean isHotLoaded() {
 
-        boolean isHotLoaded = false;
+        boolean isHotLoaded;
 
         if (getType() instanceof WeaponType) {
             Mounted<?> link = getLinked();
@@ -918,9 +921,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /** Returns true when m is a PPC Capacitor and not destroyed. */
     private boolean isWorkingCapacitor(Mounted<?> m) {
-        return !m.isDestroyed() &&
-                     m.getType() instanceof MiscType &&
-                     ((MiscType) m.getType()).hasFlag(MiscType.F_PPC_CAPACITOR);
+        return !m.isDestroyed() && m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_PPC_CAPACITOR);
     }
 
     /**
@@ -1083,16 +1084,22 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * Used for associating the equipment mount with a cargo bay. This is for dumpers and transient bays created on load
-     * for use by 'Mek cargo equipment.
+     * for use by `Mek cargo equipment.
      *
      * @return The index of the bay this mount is linked to, or -1 if it is not linked.
      *
      * @see Entity#getBayById(int)
+     * @deprecated No indicated uses.
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public int getLinkedBayId() {
         return linkedBayId;
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public void setLinkedBayId(int id) {
         linkedBayId = id;
     }
@@ -1147,7 +1154,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         // um, otherwise, I'm not sure
         String message = String.format("mounted: unable to determine explosion damage for %s", typeName);
-        logger.error(message);
+        LOGGER.error(message);
         return 0;
     }
 
@@ -1188,12 +1195,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
 
         // Is the entity even active?
-        if (entity.isShutDown() || ((null != entity.getCrew()) && !entity.getCrew().isActive())) {
-            return false;
-        }
+        return !entity.isShutDown() && ((null == entity.getCrew()) || entity.getCrew().isActive());
 
         // Otherwise, the equipment can be fired.
-        return true;
     }
 
     /**
@@ -1242,6 +1246,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         byShot = b;
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public boolean byShot() {
         return byShot;
     }
@@ -1334,6 +1342,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         nweapons = i;
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public void unlink() {
         linked = null;
     }
@@ -1587,8 +1599,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public boolean isAnyMissingTroopers() {
-        for (int i = 0; i < missingForTrooper.length; i++) {
-            if (missingForTrooper[i]) {
+        for (boolean b : missingForTrooper) {
+            if (b) {
                 return true;
             }
         }
@@ -1597,8 +1609,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public String getMissingTrooperString() {
         StringBuilder missingTroopers = new StringBuilder();
-        for (int i = 0; i < missingForTrooper.length; i++) {
-            missingTroopers.append(missingForTrooper[i]).append("::");
+        for (boolean b : missingForTrooper) {
+            missingTroopers.append(b).append("::");
         }
         return missingTroopers.toString();
     }

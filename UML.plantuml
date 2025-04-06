@@ -1,0 +1,33 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class DedicatedServer
+class Entity
+class Game
+class MegaMekGUI
+class Player
+class Server
+class TWGameManager
+class VictoryHelper
+class VictoryResult
+
+DedicatedServer  -[#595959,dashed]->  Server          : "«create»"
+DedicatedServer  -[#595959,dashed]->  TWGameManager   : "«create»"
+Entity          "1" *-[#595959,plain]-> "game\n1" Game            
+Entity          "1" *-[#595959,plain]-> "entitySeenBy\n*" Player          
+Game            "1" *-[#595959,plain]-> "vOutOfGame\n*" Entity          
+Game            "1" *-[#595959,plain]-> "victoryHelper\n1" VictoryHelper   
+Game             -[#595959,dashed]->  VictoryHelper   : "«create»"
+MegaMekGUI       -[#595959,dashed]->  Player          : "«create»"
+MegaMekGUI       -[#595959,dashed]->  Server          : "«create»"
+MegaMekGUI      "1" *-[#595959,plain]-> "server\n1" Server          
+MegaMekGUI       -[#595959,dashed]->  TWGameManager   : "«create»"
+Server           -[#595959,dashed]->  Player          : "«create»"
+TWGameManager    -[#595959,dashed]->  Game            : "«create»"
+TWGameManager   "1" *-[#595959,plain]-> "game\n1" Game            
+TWGameManager   "1" *-[#595959,plain]-> "playerChangingTeam\n1" Player          
+VictoryHelper    -[#595959,dashed]->  VictoryResult   : "«create»"
+@enduml

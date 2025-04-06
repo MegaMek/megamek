@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>megamek.server.Server</OriginalElement>
+  <nodes>
+    <node x="-60.0" y="-25.160358890701445">megamek.common.Entity</node>
+    <node x="164.9835236541599" y="184.81076672104405">megamek.server.totalwarfare.TWGameManager</node>
+    <node x="376.0" y="-15.5">megamek.server.Server</node>
+    <node x="-86.5" y="285.96818923327896">megamek.server.victory.VictoryResult</node>
+    <node x="546.5164763458401" y="-15.5">megamek.client.ui.swing.MegaMekGUI</node>
+    <node x="-62.5" y="84.16982055464928">megamek.common.Game</node>
+    <node x="-88.0" y="193.5">megamek.server.victory.VictoryHelper</node>
+    <node x="207.4835236541599" y="-25.160358890701445">megamek.common.Player</node>
+    <node x="339.49999999999994" y="84.16982055464928">megamek.server.DedicatedServer</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="megamek.client.ui.swing.MegaMekGUI" target="megamek.server.Server" relationship="CREATE">
+      <point x="0.0" y="5.0" />
+      <point x="48.0" y="5.0" />
+    </edge>
+    <edge source="megamek.server.totalwarfare.TWGameManager" target="megamek.common.Game" relationship="TO_ONE">
+      <point x="0.0" y="-5.0" />
+      <point x="206.00889070146818" y="195.31076672104405" />
+      <point x="206.00889070146818" y="94.66982055464928" />
+      <point x="46.5" y="-5.0" />
+    </edge>
+    <edge source="megamek.common.Game" target="megamek.common.Entity" relationship="TO_MANY">
+      <point x="5.0" y="-15.5" />
+      <point x="5.0" y="-0.0" />
+    </edge>
+    <edge source="megamek.server.totalwarfare.TWGameManager" target="megamek.common.Player" relationship="TO_ONE">
+      <point x="0.0" y="-15.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="megamek.common.Game" target="megamek.server.victory.VictoryHelper" relationship="TO_ONE">
+      <point x="5.0" y="-0.0" />
+      <point x="5.0" y="-15.5" />
+    </edge>
+    <edge source="megamek.server.DedicatedServer" target="megamek.server.Server" relationship="CREATE">
+      <point x="0.0" y="-15.5" />
+      <point x="423.99999999999994" y="40.0" />
+      <point x="424.0" y="40.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="megamek.server.victory.VictoryHelper" target="megamek.server.victory.VictoryResult" relationship="CREATE">
+      <point x="0.0" y="15.5" />
+      <point x="-16.0" y="200.0" />
+      <point x="-16.0" y="200.0" />
+      <point x="0.0" y="-15.5" />
+    </edge>
+    <edge source="megamek.client.ui.swing.MegaMekGUI" target="megamek.server.totalwarfare.TWGameManager" relationship="CREATE">
+      <point x="0.0" y="15.5" />
+      <point x="619.5164763458401" y="201.2011419249592" />
+      <point x="64.00424143556273" y="0.8903752039151414" />
+    </edge>
+    <edge source="megamek.common.Entity" target="megamek.common.Game" relationship="TO_ONE">
+      <point x="-5.0" y="-0.0" />
+      <point x="-5.0" y="-15.5" />
+    </edge>
+    <edge source="megamek.common.Entity" target="megamek.common.Player" relationship="TO_MANY">
+      <point x="44.0" y="-0.0" />
+      <point x="-47.0" y="-0.0" />
+    </edge>
+    <edge source="megamek.common.Game" target="megamek.server.victory.VictoryHelper" relationship="CREATE">
+      <point x="-5.0" y="-0.0" />
+      <point x="-5.0" y="-15.5" />
+    </edge>
+    <edge source="megamek.client.ui.swing.MegaMekGUI" target="megamek.server.Server" relationship="TO_ONE">
+      <point x="0.0" y="-5.0" />
+      <point x="48.0" y="-5.0" />
+    </edge>
+    <edge source="megamek.server.totalwarfare.TWGameManager" target="megamek.common.Game" relationship="CREATE">
+      <point x="0.0" y="5.0" />
+      <point x="198.48764274061995" y="205.31076672104405" />
+      <point x="198.48764274061995" y="200.31076672104405" />
+      <point x="140.44282218597067" y="200.31076672104405" />
+      <point x="140.44282218597067" y="104.66982055464928" />
+      <point x="46.5" y="5.0" />
+    </edge>
+    <edge source="megamek.server.DedicatedServer" target="megamek.server.totalwarfare.TWGameManager" relationship="CREATE">
+      <point x="-84.5" y="-0.0" />
+      <point x="306.5" y="99.66982055464928" />
+      <point x="306.5" y="200.31076672104405" />
+      <point x="89.5" y="-0.0" />
+    </edge>
+    <edge source="megamek.client.ui.swing.MegaMekGUI" target="megamek.common.Player" relationship="CREATE">
+      <point x="0.0" y="-15.5" />
+      <point x="619.5164763458401" y="-60.0" />
+      <point x="254.4835236541599" y="-60.0" />
+      <point x="0.0" y="-15.5" />
+    </edge>
+    <edge source="megamek.server.Server" target="megamek.common.Player" relationship="CREATE">
+      <point x="-48.0" y="-0.0" />
+      <point x="301.4835236541599" y="0.0" />
+      <point x="47.0" y="-0.0" />
+    </edge>
+  </edges>
+  <settings layout="Orthogonal Groups" zoom="0.7777777777777778" showDependencies="true" x="302.5" y="118.50000000000003" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

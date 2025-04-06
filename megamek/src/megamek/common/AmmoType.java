@@ -74,10 +74,12 @@ public class AmmoType extends EquipmentType {
     public static final int T_EXLRM = 37;
     public static final int T_APGAUSS = 38;
     public static final int T_MAGSHOT = 39;
+
     // Removed
     // public static final int T_PXLRM = 40;
     // public static final int T_HSRM = 41;
     // public static final int T_MRM_STREAK = 42;
+
     public static final int T_MPOD = 43;
     public static final int T_HAG = 44;
     public static final int T_MML = 45;
@@ -537,6 +539,21 @@ public class AmmoType extends EquipmentType {
         return munitionType;
     }
 
+    public boolean notAllowedByClanRules() {
+        return (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED) ||
+                      (munitionType.contains(AmmoType.Munitions.M_SWARM_I)) ||
+                      (munitionType.contains(AmmoType.Munitions.M_THUNDER_AUGMENTED)) ||
+                      (munitionType.contains(AmmoType.Munitions.M_THUNDER_INFERNO)) ||
+                      (munitionType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)) ||
+                      (munitionType.contains(AmmoType.Munitions.M_THUNDER_ACTIVE)) ||
+                      (munitionType.contains(AmmoType.Munitions.M_INFERNO_IV)) ||
+                      (munitionType.contains(AmmoType.Munitions.M_VIBRABOMB_IV)) ||
+                      (munitionType.contains(AmmoType.Munitions.M_LISTEN_KILL)) ||
+                      (munitionType.contains(AmmoType.Munitions.M_ANTI_TSM)) ||
+                      (munitionType.contains(AmmoType.Munitions.M_DEAD_FIRE)) ||
+                      (munitionType.contains(AmmoType.Munitions.M_MINE_CLEARANCE)));
+    }
+
     protected int heat;
     protected RangeType range;
     protected int tech;
@@ -566,7 +583,7 @@ public class AmmoType extends EquipmentType {
      * Used by units that are constructed using per-shot weights (BA and ProtoMeks). Some ammo is defined in the rules
      * rounded to a set number of decimal places.
      *
-     * @return KG Per Shot
+     * @return KG per Shot
      */
     public double getKgPerShot() {
         /*
@@ -15440,7 +15457,8 @@ public class AmmoType extends EquipmentType {
 
         private final TechAdvancement techAdvancement;
 
-        public MunitionMutator(String munitionName, int weightRatio, Munitions munitionType, TechAdvancement techAdvancement, String rulesRefs) {
+        public MunitionMutator(String munitionName, int weightRatio, Munitions munitionType,
+              TechAdvancement techAdvancement, String rulesRefs) {
             name = munitionName;
             weight = weightRatio;
             type = EnumSet.of(munitionType);

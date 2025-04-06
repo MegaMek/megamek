@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,6 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -21,13 +23,11 @@ import java.io.Serializable;
  */
 public interface ITurnOrdered extends Serializable {
     /**
-     * Return the number of "normal" turns that this item requires. This is
-     * normally the sum of multi-unit turns and the other turns. <p> Subclasses
-     * are expected to override this value in order to make the "move even" code
-     * work correctly.
+     * Return the number of "normal" turns that this item requires. This is normally the sum of multi-unit turns and the
+     * other turns. <p> Subclasses are expected to override this value in order to make the "move even" code work
+     * correctly.
      *
-     * @return the <code>int</code> number of "normal" turns this item should
-     *         take in a phase.
+     * @return the <code>int</code> number of "normal" turns this item should take in a phase.
      */
     int getNormalTurns(IGame game);
 
@@ -46,7 +46,7 @@ public interface ITurnOrdered extends Serializable {
     int getDropshipTurns();
 
     int getSmallCraftTurns();
-    
+
     int getTeleMissileTurns();
 
     int getAeroTurns();
@@ -66,7 +66,7 @@ public interface ITurnOrdered extends Serializable {
     void incrementDropshipTurns();
 
     void incrementSmallCraftTurns();
-    
+
     void incrementTeleMissileTurns();
 
     void incrementAeroTurns();
@@ -86,7 +86,7 @@ public interface ITurnOrdered extends Serializable {
     void resetDropshipTurns();
 
     void resetSmallCraftTurns();
-    
+
     void resetTeleMissileTurns();
 
     void resetAeroTurns();
@@ -94,12 +94,18 @@ public interface ITurnOrdered extends Serializable {
     InitiativeRoll getInitiative();
 
     /**
+     * @deprecated use {@link #clearInitiative(boolean, Map)} instead
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
+    void clearInitiative(boolean bUseInitComp);
+
+    /**
      * Clear the initiative of this object.
      */
-    void clearInitiative(boolean bUseInitComp);
-    
+    void clearInitiative(boolean bUseInitComp, Map<Team, Integer> initiativeAptitude);
+
     void setInitiative(InitiativeRoll newRoll);
-    
+
     int getInitCompensationBonus();
 
     void setInitCompensationBonus(int newBonus);

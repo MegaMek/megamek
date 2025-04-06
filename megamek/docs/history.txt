@@ -28,6 +28,8 @@ MEGAMEK VERSION HISTORY:
 + PR #6759: Update Mackie MSK-6S introduction date 
 + Fix #6751: Princess will now deploy mines on her turn instead of at the start of the phase.
 + PR #6829: Expanded MathUtility Integer Parsing
++ PR #6832: Corrects custom armor calculation required for megameklab#1820 that fixes megameklab#1808: Conventional infantry custom armor not appearring on record sheet
++ PR #6835 Fixed issue with Ammo Counts showing 0 when configuring from Lobby
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

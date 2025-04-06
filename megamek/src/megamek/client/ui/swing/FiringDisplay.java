@@ -33,6 +33,7 @@ import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
@@ -2114,7 +2115,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      *
      * @param pos - the <code>Coords</code> containing targets.
      */
-    private Targetable chooseTarget(Coords pos, int boardId) {
+    private @Nullable Targetable chooseTarget(Coords pos, int boardId) {
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
         // Assume that we have *no* choice.
         Targetable choice = null;
@@ -2143,27 +2144,21 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             }
         }
         // Get the available choices, depending on friendly fire
-        List<Entity> choices;
-        if (friendlyFire) {
-            choices = game.getEntitiesVector(pos, boardId);
-        } else {
-            choices = game.getEnemyEntities(pos, boardId, ce());
-        }
+        List<Entity> choices = new ArrayList<>(friendlyFire ?
+                                                     game.getEntitiesVector(pos, boardId) :
+                                                     game.getEnemyEntities(pos, boardId, ce()));
+        // Safety first
+        choices.removeIf(Objects::isNull);
         // Convert the choices into a List of targets.
         List<Targetable> targets = new ArrayList<>();
         final Player localPlayer = clientgui.getClient().getLocalPlayer();
-        for (Entity t : choices) {
-            boolean isSensorReturn = false;
-            boolean isVisible = true;
-            boolean isHidden = false;
-            if (t != null) {
-                isSensorReturn = t.isSensorReturn(localPlayer);
-                isVisible = t.hasSeenEntity(localPlayer);
-                isHidden = t.isHidden();
-            }
+        for (Entity possibleTarget : choices) {
+            boolean isSensorReturn = possibleTarget.isSensorReturn(localPlayer);
+            boolean isVisible = possibleTarget.hasSeenEntity(localPlayer);
+            boolean isHidden = possibleTarget.isHidden();
 
-            if (!ce().equals(t) && !isSensorReturn && isVisible && !isHidden) {
-                targets.add(t);
+            if (!ce().equals(possibleTarget) && !isSensorReturn && isVisible && !isHidden) {
+                targets.add(possibleTarget);
             }
         }
 
@@ -2178,14 +2173,15 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
 
         // Is there a building in the hex?
-        Building bldg = game.getBoard(boardId).getBuildingAt(pos);
+        Board board = game.getBoard(boardId);
+        Building bldg = board.getBuildingAt(pos);
         if (bldg != null) {
-            targets.add(new BuildingTarget(pos, game.getBoard(boardId), false));
+            targets.add(new BuildingTarget(pos, board, false));
         }
 
         // If we clicked on a wooded hex with no other targets, clear woods
         if (targets.isEmpty()) {
-            Hex hex = game.getBoard(boardId).getHex(pos);
+            Hex hex = board.getHex(pos);
             if (hex.hasVegetation()) {
                 targets.add(new HexTarget(pos, Targetable.TYPE_HEX_CLEAR));
             }

@@ -15,6 +15,7 @@
 */
 package megamek.common;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,12 +26,14 @@ import java.util.Map;
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class BuildingTarget implements Targetable {
+    @Serial
     private static final long serialVersionUID = 6432766092407639630L;
 
     /**
      * The coordinates of the hex being targeted.
      */
     private Coords position = null;
+    private int boardId = 0;
 
     /**
      * The ID of the building being targeted.
@@ -71,6 +74,7 @@ public class BuildingTarget implements Targetable {
      */
     protected void init(Coords coords, Board board, int nType) {
         position = coords;
+        boardId = board.getBoardId();
         type = nType;
 
         // Get the building at the given coordinates.
@@ -145,6 +149,12 @@ public class BuildingTarget implements Targetable {
     }
 
     // Implementation of Targetable
+
+
+    @Override
+    public int getBoardId() {
+        return boardId;
+    }
 
     @Override
     public int getTargetType() {

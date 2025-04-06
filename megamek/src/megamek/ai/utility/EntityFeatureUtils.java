@@ -230,7 +230,7 @@ public class EntityFeatureUtils {
 
         @Override
         protected float getHealth(Warship unit) {
-            return unit.getArmor(Warship.LOC_NONE) / (float) unit.getOArmor(Warship.LOC_NOSE);
+            return unit.getArmor(Warship.LOC_NOSE) / (float) unit.getOArmor(Warship.LOC_NOSE);
         }
     }
 

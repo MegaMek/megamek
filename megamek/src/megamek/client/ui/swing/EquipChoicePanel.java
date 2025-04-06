@@ -524,8 +524,8 @@ public class EquipChoicePanel extends JPanel {
     }
 
     private void setupMunitions() {
-        GridBagLayout gbl = new GridBagLayout();
-        panMunitions.setLayout(gbl);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        panMunitions.setLayout(gridBagLayout);
         Game game = clientgui.getClient().getGame();
         IGameOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
@@ -541,10 +541,10 @@ public class EquipChoicePanel extends JPanel {
             panMunitions = new SmallSVMunitionsChoicePanel(entity);
             return;
         }
-        panMunitions.setLayout(gbl);
+        panMunitions.setLayout(gridBagLayout);
 
-        for (AmmoMounted m : entity.getAmmo()) {
-            AmmoType at = m.getType();
+        for (AmmoMounted ammoMounted : entity.getAmmo()) {
+            AmmoType at = ammoMounted.getType();
             ArrayList<AmmoType> vTypes = new ArrayList<>();
             Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
             if (vAllTypes == null) {
@@ -633,10 +633,13 @@ public class EquipChoicePanel extends JPanel {
                       !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
                 continue;
             }
-            MunitionChoicePanel mcp;
-            mcp = new MunitionChoicePanel(m, vTypes, m_vWeaponAmmoChoice, entity, clientgui);
-            panMunitions.add(mcp, GBC.eol());
-            m_vMunitions.add(mcp);
+            MunitionChoicePanel munitionChoicePanel = new MunitionChoicePanel(ammoMounted,
+                  vTypes,
+                  m_vWeaponAmmoChoice,
+                  entity,
+                  clientgui);
+            panMunitions.add(munitionChoicePanel, GBC.eol());
+            m_vMunitions.add(munitionChoicePanel);
         }
     }
 
@@ -806,11 +809,11 @@ public class EquipChoicePanel extends JPanel {
         for (final MunitionChoicePanel munitions : m_vMunitions) {
             munitions.applyChoice();
         }
-        if (panMunitions instanceof BayMunitionsChoicePanel) {
-            ((BayMunitionsChoicePanel) panMunitions).apply();
+        if (panMunitions instanceof BayMunitionsChoicePanel bayMunitionsChoicePanel) {
+            bayMunitionsChoicePanel.apply();
         } else {
-            if (panMunitions instanceof SmallSVMunitionsChoicePanel) {
-                ((SmallSVMunitionsChoicePanel) panMunitions).apply();
+            if (panMunitions instanceof SmallSVMunitionsChoicePanel smallSVMunitionsChoicePanel) {
+                smallSVMunitionsChoicePanel.apply();
             }
             // update ammo names for weapon ammo choice selectors
             for (WeaponAmmoChoicePanel wacPanel : m_vWeaponAmmoChoice) {

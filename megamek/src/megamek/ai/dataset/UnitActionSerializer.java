@@ -27,25 +27,18 @@
  */
 package megamek.ai.dataset;
 
-import megamek.common.MovePath;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
+
+import megamek.common.UnitRole;
 
 /**
  * <p>serializer and deserializer for UnitAction to/from TSV format.</p>
  * @author Luana Coppio
  */
-public class UnitActionSerde extends TsvSerde<UnitAction> {
-
-    private final DecimalFormat LOG_DECIMAL =
-        new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
+public class UnitActionSerializer extends TabSeparatedValueSerializer<UnitAction> {
 
     @Override
-    public String toTsv(UnitAction obj) {
+    public String serialize(UnitAction obj) {
         String[] row = new String[UnitActionField.values().length];
         row[UnitActionField.ENTITY_ID.ordinal()] = String.valueOf(obj.id());
         row[UnitActionField.PLAYER_ID.ordinal()] = String.valueOf(obj.playerId());
@@ -70,11 +63,24 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
         row[UnitActionField.LEGAL.ordinal()] = obj.legal() ? "1" : "0";
         row[UnitActionField.CHANCE_OF_FAILURE.ordinal()] = LOG_DECIMAL.format(obj.chanceOfFailure());
         row[UnitActionField.IS_BOT.ordinal()] = obj.bot() ? "1" : "0";
-
-        // For STEPS, join the list of MoveStepType values with a space.
         row[UnitActionField.STEPS.ordinal()] = obj.steps().stream()
-            .map(Enum::name)
-            .collect(Collectors.joining(" "));
+                                                     .map(Enum::name)
+                                                     .collect(Collectors.joining(" "));
+        row[UnitActionField.HAS_ECM.ordinal()] = obj.hasEcm() ? "1" : "0";
+        row[UnitActionField.ARMOR.ordinal()] = String.valueOf(obj.armor());
+        row[UnitActionField.INTERNAL.ordinal()] = String.valueOf(obj.internal());
+        row[UnitActionField.BV.ordinal()] = String.valueOf(obj.bv());
+        row[UnitActionField.MAX_RANGE.ordinal()] = String.valueOf(obj.maxRange());
+        row[UnitActionField.TOTAL_DAMAGE.ordinal()] = String.valueOf(obj.totalDamage());
+        row[UnitActionField.ARMOR_FRONT_P.ordinal()] = LOG_DECIMAL.format(obj.armorFrontP());
+        row[UnitActionField.ARMOR_LEFT_P.ordinal()] = LOG_DECIMAL.format(obj.armorLeftP());
+        row[UnitActionField.ARMOR_RIGHT_P.ordinal()] = LOG_DECIMAL.format(obj.armorRightP());
+        row[UnitActionField.ARMOR_BACK_P.ordinal()] = LOG_DECIMAL.format(obj.armorBackP());
+        row[UnitStateField.ROLE.ordinal()] = obj.role() == null ? UnitRole.NONE.name() : obj.role().name();
+        row[UnitActionField.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE.ordinal()] =
+                obj.weaponDamageFacingShortMediumLongRange().stream()
+                      .map(Object::toString)
+                      .collect(Collectors.joining(" "));
 
         return String.join("\t", row);
     }

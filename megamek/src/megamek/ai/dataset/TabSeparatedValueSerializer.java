@@ -27,14 +27,28 @@
  */
 package megamek.ai.dataset;
 
-
-import java.util.List;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 /**
- * Represents an action and the state of the board after the action is performed.
- * @param round game round
- * @param unitAction unit action performed
- * @param boardUnitState state of the board when the action is performed
+ * Abstract class to serialize objects to TSV format.
  * @author Luana Coppio
  */
-public record ActionAndState(int round, UnitAction unitAction, List<UnitState> boardUnitState){}
+public abstract class TabSeparatedValueSerializer<T> {
+
+    protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
+
+    /**
+     * Serializes an object to TSV format.
+     * @param obj object to serialize
+     * @return the serialized string formatted as a tab separated value entry
+     */
+    public abstract String serialize(T obj);
+
+    /**
+     * Returns the header line for the TSV format.
+     * @return the header line for the tab separated value entry
+     */
+    public abstract String getHeaderLine();
+}

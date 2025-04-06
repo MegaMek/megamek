@@ -27,26 +27,18 @@
  */
 package megamek.ai.dataset;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.MekSummary;
-import megamek.common.UnitRole;
-import megamek.common.enums.GamePhase;
+import java.util.stream.Collectors;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Map;
+import megamek.common.UnitRole;
 
 /**
  * <p>serializer and deserializer for UnitState to/from TSV format.</p>
  * @author Luana Coppio
  */
-public class UnitStateSerde extends TsvSerde<UnitState> {
-
-    private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
+public class UnitStateSerializer extends TabSeparatedValueSerializer<UnitState> {
 
     @Override
-    public String toTsv(UnitState obj) {
+    public String serialize(UnitState obj) {
         String[] row = new String[UnitStateField.values().length];
         row[UnitStateField.ROUND.ordinal()] = String.valueOf(obj.round());
         row[UnitStateField.PHASE.ordinal()] = obj.phase().name();
@@ -75,6 +67,16 @@ public class UnitStateSerde extends TsvSerde<UnitState> {
         row[UnitStateField.ARMOR.ordinal()] = LOG_DECIMAL.format(obj.armor());
         row[UnitStateField.INTERNAL.ordinal()] = LOG_DECIMAL.format(obj.internal());
         row[UnitStateField.BV.ordinal()] = LOG_DECIMAL.format(obj.bv());
+        row[UnitStateField.HAS_ECM.ordinal()] = obj.hasEcm() ? "1" : "0";
+        row[UnitStateField.IS_BOT.ordinal()] = obj.bot() ? "1" : "0";
+        row[UnitStateField.ARMOR_FRONT_P.ordinal()] = LOG_DECIMAL.format(obj.armorFrontP());
+        row[UnitStateField.ARMOR_LEFT_P.ordinal()] = LOG_DECIMAL.format(obj.armorLeftP());
+        row[UnitStateField.ARMOR_RIGHT_P.ordinal()] = LOG_DECIMAL.format(obj.armorRightP());
+        row[UnitStateField.ARMOR_BACK_P.ordinal()] = LOG_DECIMAL.format(obj.armorBackP());
+        row[UnitStateField.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE.ordinal()] =
+                obj.weaponDamageFacingShortMediumLongRange().stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(" "));
 
         return String.join("\t", row);
     }

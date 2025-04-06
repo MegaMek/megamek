@@ -449,7 +449,7 @@ public class Compute {
                 || (entering instanceof SmallCraft);
         boolean isLargeSupport = (entering instanceof LargeSupportTank)
                 || (entering instanceof Dropship)
-                || ((entering instanceof Mek) && ((Mek) entering)
+                || ((entering instanceof Mek) && entering
                         .isSuperHeavy());
 
         boolean isTrain = !entering.getAllTowedUnits().isEmpty();
@@ -471,7 +471,7 @@ public class Compute {
                         .getHex(origPosition),
                         game.getBoard()
                                 .getHex(coords),
-                        elevation, climbMode, false);
+                        elevation, climbMode);
             }
             int thisHighStackingLevel = thisLowStackingLevel;
             // meks only occupy one level of a building
@@ -8046,4 +8046,4 @@ public class Compute {
         // No enemies in the volume == all outside
         return entities;
     }
-} // End public class Compute
+}

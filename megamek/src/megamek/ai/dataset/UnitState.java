@@ -27,42 +27,28 @@
  */
 package megamek.ai.dataset;
 
-import megamek.common.*;
+import java.util.List;
+import java.util.stream.Stream;
+
+import megamek.ai.utility.EntityFeatureUtils;
+import megamek.common.Compute;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.IAero;
+import megamek.common.UnitRole;
 import megamek.common.enums.GamePhase;
 
 /**
  * Represents the state of a unit.
- * @param id unit id
- * @param teamId team id
- * @param round round number
- * @param playerId player id
- * @param chassis chassis
- * @param model model
- * @param type type is actually the simple name of the class of the entity
- * @param role UnitRole
- * @param x x coordinate
- * @param y y coordinate
- * @param facing facing direction
- * @param mp movement points
- * @param heat heat points
- * @param prone prone
- * @param airborne airborne
- * @param offBoard off board
- * @param crippled crippled
- * @param destroyed destroyed
- * @param armorP armor percent
- * @param internalP internal percent
- * @param done done
- * @param maxRange max weapon range
- * @param totalDamage total damage it can cause
- * @param entity entity
  * @author Luana Coppio
  */
-public record UnitState(int id, GamePhase phase, int teamId, int round, int playerId, String chassis, String model, String type,
-                        UnitRole role, int x, int y, int facing, double mp, double heat, boolean prone, boolean airborne,
-                        boolean offBoard, boolean crippled, boolean destroyed, double armorP,
-                        double internalP, boolean done, int maxRange, int totalDamage, int armor, int internal, int bv,
-                        Entity entity) {
+public record UnitState(int id, GamePhase phase, int teamId, int round, int playerId,
+      String chassis, String model, String type,
+      UnitRole role, int x, int y, int facing, double mp, double heat, boolean prone, boolean airborne,
+      boolean offBoard, boolean crippled, boolean destroyed, double armorP, double internalP,
+      boolean done, int maxRange, int totalDamage, int armor, int internal, int bv,
+      boolean bot, boolean hasEcm, float armorFrontP, float armorLeftP, float armorRightP, float armorBackP,
+      List<Integer> weaponDamageFacingShortMediumLongRange) {
 
     /**
      * Creates a UnitState from an {@code entity}.
@@ -72,41 +58,48 @@ public record UnitState(int id, GamePhase phase, int teamId, int round, int play
      */
     public static UnitState fromEntity(Entity entity, Game game) {
         return new UnitState(
-            entity.getId(),
-            game.getPhase(),
-            entity.getOwner().getTeam(),
-            game.getCurrentRound(),
-            entity.getOwner().getId(),
-            entity.getChassis(),
-            entity.getModel(),
-            entity.getClass().getSimpleName(),
-            entity.getRole(),
-            entity.getPosition() == null ? -1 : entity.getPosition().getX(),
-            entity.getPosition() == null ? -1 : entity.getPosition().getY(),
-            entity.getFacing(),
-            entity.getMpUsedLastRound(),
-            entity.getHeat(),
-            entity.isProne(),
-            entity.isAirborne(),
-            entity.isOffBoard(),
-            entity.isCrippled(),
-            entity.isDestroyed(),
-            entity.getArmorRemainingPercent(),
-            entity.getInternalRemainingPercent(),
-            entity.isDone(),
-            entity.getMaxWeaponRange(),
-            Compute.computeTotalDamage(entity.getWeaponList()),
-            entity.getTotalArmor(),
-            entity instanceof IAero aero ? aero.getSI() : entity.getTotalInternal(),
-            entity.getInitialBV(),
-            entity);
-    }
-
-    /**
-     * Returns the position of the unit.
-     * @return The position
-     */
-    public Coords position() {
-        return new Coords(x, y);
+              entity.getId(),
+              game.getPhase(),
+              entity.getOwner().getTeam(),
+              game.getCurrentRound(),
+              entity.getOwner().getId(),
+              entity.getChassis(),
+              entity.getModel(),
+              entity.getClass().getSimpleName(),
+              entity.getRole(),
+              entity.getPosition() == null ? -1 : entity.getPosition().getX(),
+              entity.getPosition() == null ? -1 : entity.getPosition().getY(),
+              entity.getFacing(),
+              entity.getMpUsedLastRound(),
+              entity.getHeat(),
+              entity.isProne(),
+              entity.isAirborne(),
+              entity.isOffBoard(),
+              entity.isCrippled(),
+              entity.isDestroyed(),
+              entity.getArmorRemainingPercent(),
+              entity.getInternalRemainingPercent(),
+              entity.isDone(),
+              entity.getMaxWeaponRange(),
+              Compute.computeTotalDamage(entity.getWeaponList()),
+              entity.getTotalArmor(),
+              entity instanceof IAero aero ? aero.getSI() : entity.getTotalInternal(),
+              entity.getInitialBV(),
+              entity.getOwner().isBot(),
+              entity.hasActiveECM(),
+              EntityFeatureUtils.getTargetFrontHealthStats(entity),
+              EntityFeatureUtils.getTargetLeftSideHealthStats(entity),
+              EntityFeatureUtils.getTargetRightSideHealthStats(entity),
+              EntityFeatureUtils.getTargetBackHealthStats(entity),
+              entity.getWeaponList().stream().flatMap(weapon -> {
+                  int damage = Compute.computeTotalDamage(weapon);
+                  int facing = weapon.isRearMounted() ? -entity.getWeaponArc(weapon.getLocation()) :
+                                     entity.getWeaponArc(weapon.getLocation());
+                  int shortRange = weapon.getType().getShortRange();
+                  int mediumRange = weapon.getType().getMediumRange();
+                  int longRange = weapon.getType().getLongRange();
+                  return Stream.of(damage, facing, shortRange, mediumRange, longRange);
+              }).toList()
+        );
     }
 }

@@ -30,48 +30,41 @@ package megamek.ai.dataset;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public enum UnitActionField {
-    PLAYER_ID("PLAYER_ID"),
+/**
+ * Enum defining the fields for UnitAttackAction serialization.
+ * @author Luana Coppio
+ */
+public enum UnitAttackField {
+    ROUND("ROUND"),
     ENTITY_ID("ENTITY_ID"),
-    CHASSIS("CHASSIS"),
-    MODEL("MODEL"),
-    FACING("FACING"),
-    FROM_X("FROM_X"),
-    FROM_Y("FROM_Y"),
-    TO_X("TO_X"),
-    TO_Y("TO_Y"),
-    HEXES_MOVED("HEXES_MOVED"),
-    DISTANCE("DISTANCE"),
-    MP_USED("MP_USED"),
-    MAX_MP("MAX_MP"),
-    MP_P("MP_P"),
-    HEAT_P("HEAT_P"),
-    ARMOR_P("ARMOR_P"),
-    INTERNAL_P("INTERNAL_P"),
-    JUMPING("JUMPING"),
-    PRONE("PRONE"),
-    LEGAL("LEGAL"),
-    STEPS("STEPS"),
-    TEAM_ID("TEAM_ID"),
-    CHANCE_OF_FAILURE("CHANCE_OF_FAILURE"),
-    IS_BOT("IS_BOT"),
-    HAS_ECM("HAS_ECM"),
-    ARMOR("ARMOR"),
-    INTERNAL("INTERNAL"),
-    BV("BV"),
-    MAX_RANGE("MAX_RANGE"),
-    ARMOR_FRONT_P("ARMOR_FRONT_P"),
-    ARMOR_LEFT_P("ARMOR_LEFT_P"),
-    ARMOR_RIGHT_P("ARMOR_RIGHT_P"),
-    ARMOR_BACK_P("ARMOR_BACK_P"),
-    TOTAL_DAMAGE("TOTAL_DAMAGE"),
+    PLAYER_ID("PLAYER_ID"),
+    TYPE("TYPE"),
     ROLE("ROLE"),
-    WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE("WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE"),
-    ;
+    X("X"),
+    Y("Y"),
+    FACING("FACING"),
+    TARGET_PLAYER_ID("TARGET_PLAYER_ID"),
+    TARGET_ID("TARGET_ID"),
+    TARGET_TYPE("TARGET_TYPE"),
+    TARGET_ROLE("TARGET_ROLE"),
+    TARGET_X("TARGET_X"),
+    TARGET_Y("TARGET_Y"),
+    TARGET_FACING("TARGET_FACING"),
+    AIMING_LOC("AIMING_LOC"),
+    AIMING_MODE("AIMING_MODE"),
+    WEAPON_ID("WEAPON_ID"),
+    AMMO_ID("AMMO_ID"),
+    ATA("ATA"), // air to air
+    ATG("ATG"), // air to ground
+    GTG("GTG"), // ground to ground
+    GTA("GTA"), // ground to air
+    TO_HIT("TO_HIT"),
+    TURNS_TO_HIT("TURNS_TO_HIT"),
+    SPOTTER_ID("SPOTTER_ID");
 
     private final String headerName;
 
-    UnitActionField(String headerName) {
+    UnitAttackField(String headerName) {
         this.headerName = headerName;
     }
 
@@ -84,18 +77,18 @@ public enum UnitActionField {
      */
     public static String getHeaderLine() {
         return Arrays.stream(values())
-                     .map(UnitActionField::getHeaderName)
+                     .map(UnitAttackField::getHeaderName)
                      .collect(Collectors.joining("\t"));
     }
 
     /**
-     * Builds the TSV header line (joined by tabs) by iterating over all enum constants.
+     * Builds a partial TSV header line (joined by tabs).
      */
     public static String getPartialHeaderLine(int startsAt, int endsAt) {
         return Arrays.stream(values())
                      .skip(startsAt)
                      .limit(endsAt - startsAt)
-                     .map(UnitActionField::getHeaderName)
+                     .map(UnitAttackField::getHeaderName)
                      .collect(Collectors.joining("\t"));
     }
 }

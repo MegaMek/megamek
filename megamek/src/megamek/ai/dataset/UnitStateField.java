@@ -57,7 +57,15 @@ public enum UnitStateField{
     TEAM_ID("TEAM_ID"),
     ARMOR("ARMOR"),
     INTERNAL("INTERNAL"),
-    BV("BV");
+    BV("BV"),
+    HAS_ECM("HAS_ECM"),
+    IS_BOT("IS_BOT"),
+    ARMOR_FRONT_P("ARMOR_FRONT_P"),
+    ARMOR_LEFT_P("ARMOR_LEFT_P"),
+    ARMOR_RIGHT_P("ARMOR_RIGHT_P"),
+    ARMOR_BACK_P("ARMOR_BACK_P"),
+    WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE("WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE"),
+    ;
 
     private final String headerName;
 
@@ -74,7 +82,7 @@ public enum UnitStateField{
      */
     public static String getHeaderLine() {
         return Arrays.stream(values())
-            .map(UnitStateField::getHeaderName)
-            .collect(Collectors.joining("\t"));
+                     .map(UnitStateField::getHeaderName)
+                     .collect(Collectors.joining("\t"));
     }
 }

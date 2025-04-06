@@ -22,19 +22,20 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.ModelRecord;
+import megamek.client.ratgenerator.Parameters;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
@@ -43,34 +44,29 @@ import megamek.common.MekSummary;
 import megamek.common.UnitRole;
 
 /**
- * Shows a table of all units matching the chosen faction/unit type/era
- * parameters and
- * general criteria for a formation along with data relevant to the formation
- * constraints.
- * User can select combinations of additional criteria to see which units meet
- * those criteria
- * as well.
+ * Shows a table of all units matching the chosen faction/unit type/era parameters and general criteria for a formation
+ * along with data relevant to the formation constraints. User can select combinations of additional criteria to see
+ * which units meet those criteria as well.
  *
  * @author Neoancient
  */
 public class AnalyzeFormationDialog extends JDialog {
 
+    @Serial
     private static final long serialVersionUID = 6487681030307585648L;
 
-    private JTable tblUnits;
-    private TableRowSorter<UnitTableModel> tableSorter;
+    private final TableRowSorter<UnitTableModel> tableSorter;
 
-    private FormationType formationType;
-    private List<MekSummary> units = new ArrayList<>();
-    private List<JCheckBox> otherCriteriaChecks = new ArrayList<>();
-    private List<FormationType.Constraint> allConstraints = new ArrayList<>();
+    private final FormationType formationType;
+    private final List<MekSummary> units = new ArrayList<>();
+    private final List<JCheckBox> otherCriteriaChecks = new ArrayList<>();
+    private final List<FormationType.Constraint> allConstraints = new ArrayList<>();
 
-    public AnalyzeFormationDialog(JFrame frame, List<MekSummary> generatedUnits,
-            FormationType ft, List<UnitTable.Parameters> params,
-            int numUnits, int networkMask) {
+    public AnalyzeFormationDialog(JFrame frame, List<MekSummary> generatedUnits, FormationType ft,
+          List<Parameters> params, int numUnits, int networkMask) {
         super(frame, Messages.getString("AnalyzeFormationDialog.title"), true);
         formationType = ft;
-        ft.getOtherCriteria().forEachRemaining(c -> allConstraints.add(c));
+        ft.getOtherCriteria().forEachRemaining(allConstraints::add);
         allConstraints.addAll(networkConstraints(networkMask));
 
         getContentPane().setLayout(new BorderLayout());
@@ -100,16 +96,16 @@ public class AnalyzeFormationDialog extends JDialog {
         gbc.gridwidth = 3;
         gbc.weightx = 0;
         gbc.weighty = 0;
-        panAvailable.add(new JLabel(Messages.getString("AnalyzeFormationDialog.formation") + ft.getName()),
-                gbc);
+        panAvailable.add(new JLabel(Messages.getString("AnalyzeFormationDialog.formation") + ft.getName()), gbc);
 
         gbc.gridy++;
         StringBuilder sb = new StringBuilder(Messages.getString("AnalyzeFormationDialog.weightClassRange"));
-        sb.append(": ").append(EntityWeightClass.getClassName(Math.max(ft.getMinWeightClass(),
-                EntityWeightClass.WEIGHT_LIGHT)));
+        sb.append(": ")
+              .append(EntityWeightClass.getClassName(Math.max(ft.getMinWeightClass(), EntityWeightClass.WEIGHT_LIGHT)));
         if (ft.getMinWeightClass() != ft.getMaxWeightClass()) {
-            sb.append("-").append(EntityWeightClass.getClassName(Math.min(ft.getMaxWeightClass(),
-                    EntityWeightClass.WEIGHT_ASSAULT)));
+            sb.append("-")
+                  .append(EntityWeightClass.getClassName(Math.min(ft.getMaxWeightClass(),
+                        EntityWeightClass.WEIGHT_ASSAULT)));
         }
         panAvailable.add(new JLabel(sb.toString()), gbc);
 
@@ -156,8 +152,7 @@ public class AnalyzeFormationDialog extends JDialog {
             panAvailable.add(new JLabel(String.valueOf(units.stream().filter(c::matches).count())), gbc);
         });
 
-        if (ft.getGroupingCriteria() != null
-                && ft.getGroupingCriteria().appliesTo(params.get(0).getUnitType())) {
+        if (ft.getGroupingCriteria() != null && ft.getGroupingCriteria().appliesTo(params.get(0).getUnitType())) {
             gbc.gridy++;
             gbc.gridx = 0;
             gbc.anchor = GridBagConstraints.CENTER;
@@ -166,21 +161,21 @@ public class AnalyzeFormationDialog extends JDialog {
             gbc.anchor = GridBagConstraints.WEST;
             if (ft.getGroupingCriteria().hasGeneralCriteria()) {
                 JCheckBox chk = new JCheckBox(String.format(Messages.getString("AnalyzeFormationDialog.groups.format"),
-                        ft.getGroupingCriteria().getDescription(),
-                        Math.min(numUnits, ft.getGroupingCriteria().getGroupSize())));
+                      ft.getGroupingCriteria().getDescription(),
+                      Math.min(numUnits, ft.getGroupingCriteria().getGroupSize())));
                 otherCriteriaChecks.add(chk);
                 chk.addChangeListener(ev -> filter());
                 panAvailable.add(chk, gbc);
             } else {
                 panAvailable.add(new JLabel(String.format(Messages.getString("AnalyzeFormationDialog.groups.format"),
-                        ft.getGroupingCriteria().getDescription(),
-                        Math.min(numUnits, ft.getGroupingCriteria().getGroupSize()))),
-                        gbc);
+                      ft.getGroupingCriteria().getDescription(),
+                      Math.min(numUnits, ft.getGroupingCriteria().getGroupSize()))), gbc);
             }
             gbc.gridx = 2;
             gbc.anchor = GridBagConstraints.CENTER;
             panAvailable.add(new JLabel(String.valueOf(units.stream()
-                    .filter(ms -> ft.getGroupingCriteria().matches(ms)).count())), gbc);
+                                                             .filter(ms -> ft.getGroupingCriteria().matches(ms))
+                                                             .count())), gbc);
         }
 
         gbc.gridx = 0;
@@ -189,10 +184,10 @@ public class AnalyzeFormationDialog extends JDialog {
         panAvailable.add(new JLabel(""), gbc);
 
         UnitTableModel model = new UnitTableModel();
-        tblUnits = new JTable(model);
+        JTable tblUnits = new JTable(model);
         tableSorter = new TableRowSorter<>(model);
         tableSorter.setComparator(UnitTableModel.COL_MOVEMENT,
-                Comparator.comparing(m -> Integer.valueOf(m.toString().replaceAll("\\D.*", ""))));
+              Comparator.comparing(m -> Integer.valueOf(m.toString().replaceAll("\\D.*", ""))));
         List<RowSorter.SortKey> sortKeys = new ArrayList<>();
         sortKeys.add(new RowSorter.SortKey(UnitTableModel.COL_NAME, SortOrder.ASCENDING));
         tableSorter.setSortKeys(sortKeys);
@@ -215,8 +210,7 @@ public class AnalyzeFormationDialog extends JDialog {
             txtReport.setContentType("text/html");
             txtReport.setText(ft.qualificationReport(generatedUnits));
             JScrollPane scroll = new JScrollPane(txtReport);
-            panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Current"),
-                    scroll);
+            panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Current"), scroll);
             panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Available"), panAvailable);
             getContentPane().add(panTabs, BorderLayout.CENTER);
 
@@ -238,8 +232,8 @@ public class AnalyzeFormationDialog extends JDialog {
                 filters.add(new UnitTableRowFilter(allConstraints.get(i)));
             }
         }
-        if (otherCriteriaChecks.size() > allConstraints.size()
-                && otherCriteriaChecks.get(otherCriteriaChecks.size() - 1).isSelected()) {
+        if (otherCriteriaChecks.size() > allConstraints.size() &&
+                  otherCriteriaChecks.get(otherCriteriaChecks.size() - 1).isSelected()) {
             filters.add(new UnitTableRowFilter(formationType.getGroupingCriteria()));
         }
         tableSorter.setRowFilter(RowFilter.andFilter(filters));
@@ -249,20 +243,26 @@ public class AnalyzeFormationDialog extends JDialog {
         List<FormationType.Constraint> retVal = new ArrayList<>();
         if ((networkMask & ModelRecord.NETWORK_BOOSTED) != 0) {
             retVal.add(new FormationType.CountConstraint(1,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_BOOSTED_MASTER) != 0, "C3 Boosted Master"));
+                  ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_BOOSTED_MASTER) != 0,
+                  "C3 Boosted Master"));
             retVal.add(new FormationType.CountConstraint(3,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_BOOSTED_SLAVE) != 0, "C3 Boosted Slave"));
+                  ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_BOOSTED_SLAVE) != 0,
+                  "C3 Boosted Slave"));
         } else if ((networkMask & ModelRecord.NETWORK_C3_MASTER) != 0) {
             retVal.add(new FormationType.CountConstraint(1,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_MASTER) != 0, "C3 Master"));
+                  ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_MASTER) != 0,
+                  "C3 Master"));
             retVal.add(new FormationType.CountConstraint(3,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_SLAVE) != 0, "C3 Slave"));
+                  ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_SLAVE) != 0,
+                  "C3 Slave"));
         } else if ((networkMask & ModelRecord.NETWORK_C3I) != 0) {
             retVal.add(new FormationType.CountConstraint(1,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3I) != 0, "C3i"));
+                  ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3I) != 0,
+                  "C3i"));
         } else if ((networkMask & ModelRecord.NETWORK_NOVA) != 0) {
             retVal.add(new FormationType.CountConstraint(1,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_NOVA) != 0, "Nova CEWS"));
+                  ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_NOVA) != 0,
+                  "Nova CEWS"));
         }
         return retVal;
     }
@@ -287,20 +287,21 @@ public class AnalyzeFormationDialog extends JDialog {
 
     class UnitTableModel extends AbstractTableModel {
 
+        @Serial
         private static final long serialVersionUID = -1543320699765809458L;
 
         private static final int COL_NAME = 0;
         private static final int COL_WEIGHT_CLASS = 1;
         private static final int COL_MOVEMENT = 2;
         private static final int COL_ROLE = 3;
-        private List<String> colNames = new ArrayList<>();
+        private final List<String> colNames = new ArrayList<>();
 
         public UnitTableModel() {
             colNames.add("Name");
             colNames.add("Weight Class");
             colNames.add("Movement");
             colNames.add("Role");
-            formationType.getReportMetricKeys().forEachRemaining(k -> colNames.add(k));
+            formationType.getReportMetricKeys().forEachRemaining(colNames::add);
         }
 
         @Override
@@ -333,8 +334,8 @@ public class AnalyzeFormationDialog extends JDialog {
                 case COL_NAME:
                     return ms.getName();
                 case COL_WEIGHT_CLASS:
-                    return EntityWeightClass
-                            .getClassName(EntityWeightClass.getWeightClass(ms.getTons(), ms.getUnitType()));
+                    return EntityWeightClass.getClassName(EntityWeightClass.getWeightClass(ms.getTons(),
+                          ms.getUnitType()));
                 case COL_MOVEMENT:
                     StringBuilder sb = new StringBuilder();
                     sb.append(ms.getWalkMp()).append("/").append(ms.getRunMp());

@@ -76,7 +76,7 @@ public class UnitActionSerializer extends TabSeparatedValueSerializer<UnitAction
         row[UnitActionField.ARMOR_LEFT_P.ordinal()] = LOG_DECIMAL.format(obj.armorLeftP());
         row[UnitActionField.ARMOR_RIGHT_P.ordinal()] = LOG_DECIMAL.format(obj.armorRightP());
         row[UnitActionField.ARMOR_BACK_P.ordinal()] = LOG_DECIMAL.format(obj.armorBackP());
-        row[UnitStateField.ROLE.ordinal()] = obj.role() == null ? UnitRole.NONE.name() : obj.role().name();
+        row[UnitActionField.ROLE.ordinal()] = obj.role() == null ? UnitRole.NONE.name() : obj.role().name();
         row[UnitActionField.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE.ordinal()] =
                 obj.weaponDamageFacingShortMediumLongRange().stream()
                       .map(Object::toString)

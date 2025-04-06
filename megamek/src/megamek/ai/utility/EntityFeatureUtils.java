@@ -29,289 +29,293 @@ package megamek.ai.utility;
 
 import megamek.common.*;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+
+/**
+ * Utility class for calculating multiple features from entities.
+ * @author Luana Coppio
+ */
 public class EntityFeatureUtils {
 
 
     private EntityFeatureUtils() {}
 
-
     /**
-     * Get the health stats of the front armor of a targetable unit in percent. (don't count internal)
-     * @param unit The targetable unit
+     * Get the health stats of the front armor of a Entity unit in percent. (don't count internal)
+     * @param unit The Entity unit
      * @return The health stats of the front armor in percent
      */
-    public static float getTargetFrontHealthStats(Targetable unit) {
-        return new FrontSide().getArmorRemainingPercent(unit);
+    public static float getTargetFrontHealthStats(Entity unit) {
+        return ArmorCalculator.FRONT.calculateArmorPercent(unit);
     }
 
     /**
-     * Get the health stats of the front armor of a targetable unit in percent. (don't count internal)
-     * @param unit The targetable unit
-     * @return The health stats of the front armor in percent
+     * Get the health stats of the back armor of a Entity unit in percent. (don't count internal)
+     * @param unit The Entity unit
+     * @return The health stats of the back armor in percent
      */
-    public static float getTargetBackHealthStats(Targetable unit) {
-        return new BackSide().getArmorRemainingPercent(unit);
+    public static float getTargetBackHealthStats(Entity unit) {
+        return ArmorCalculator.BACK.calculateArmorPercent(unit);
     }
 
     /**
-     * Get the health stats of the front armor of a targetable unit in percent. (don't count internal)
-     * @param unit The targetable unit
-     * @return The health stats of the front armor in percent
+     * Get the health stats of the overall armor of a Entity unit in percent. (don't count internal)
+     * @param unit The Entity unit
+     * @return The health stats of the overall armor in percent
      */
-    public static float getTargetOverallHealthStats(Targetable unit) {
-        return new OverallArmor().getArmorRemainingPercent(unit);
+    public static float getTargetOverallHealthStats(Entity unit) {
+        return ArmorCalculator.OVERALL.calculateArmorPercent(unit);
     }
 
     /**
-     * Get the health stats of the left armor of a targetable unit in percent. (don't count internal)
-     * @param unit The targetable unit
+     * Get the health stats of the left armor of a Entity unit in percent. (don't count internal)
+     * @param unit The Entity unit
      * @return The health stats of the left side armor in percent
      */
-    public static float getTargetLeftSideHealthStats(Targetable unit) {
-        return new LeftSide().getArmorRemainingPercent(unit);
+    public static float getTargetLeftSideHealthStats(Entity unit) {
+        return ArmorCalculator.LEFT_SIDE.calculateArmorPercent(unit);
     }
 
     /**
-     * Get the health stats of the back armor of a targetable unit in percent. (don't count internal)
+     * Get the health stats of the right armor of a targetable unit in percent. (don't count internal)
      * @param unit The targetable unit
-     * @return The health stats of the back armor in percent from 0.0 to 1.0
+     * @return The health stats of the right armor in percent from 0.0 to 1.0
      */
-    public static float getTargetRightSideHealthStats(Targetable unit) {
-        return new RightSide().getArmorRemainingPercent(unit);
+    public static float getTargetRightSideHealthStats(Entity unit) {
+        return ArmorCalculator.RIGHT_SIDE.calculateArmorPercent(unit);
     }
 
-    // End public class Compute
+    /**
+     * Enumeration of different armor calculation strategies to calculate armor percentage
+     * for different sides of a unit.
+     *
+     * @author Luana Coppio
+     */
+    private enum ArmorCalculator {
+        /**
+         * Calculates the front armor percentage of a unit.
+         */
+        FRONT {
+            @Override
+            protected void registerCalculators() {
+                register(Aero.class, unit -> unit.getArmor(Aero.LOC_NOSE) / (float) unit.getOArmor(Aero.LOC_NOSE));
 
-    private static class OverallArmor {
-        public float getArmorRemainingPercent(Targetable unit) {
-            if (unit instanceof Warship warship) {
-                return getHealth(warship);
-            } else if (unit instanceof SpaceStation spaceStation) {
-                return getHealth(spaceStation);
-            } else if (unit instanceof Jumpship jumpship) {
-                return getHealth(jumpship);
-            } else if (unit instanceof Aero aero) {
-                return getHealth(aero);
-            } else if (unit instanceof SuperHeavyTank superHeavyTank) {
-                return getHealth(superHeavyTank);
-            } else if (unit instanceof GunEmplacement gunEmplacement) {
-                return getHealth(gunEmplacement);
-            } else if (unit instanceof Tank tank) {
-                return getHealth(tank);
-            } else if (unit instanceof Mek mek) {
-                return getHealth(mek);
-            } else if (unit instanceof ProtoMek protoMek) {
-                return getHealth(protoMek);
-            } else if (unit instanceof Infantry infantry) {
-                return getHealth(infantry);
-            } else if (unit instanceof Entity entity) {
-                return (float) entity.getArmorRemainingPercent();
+                register(Tank.class, unit ->
+                                           unit.getArmor(Tank.LOC_FRONT) / (float) unit.getOArmor(Tank.LOC_FRONT));
+
+                register(SuperHeavyTank.class, unit ->
+                                                     unit.getArmor(SuperHeavyTank.LOC_FRONT) / (float) unit.getOArmor(SuperHeavyTank.LOC_FRONT));
+
+                register(Mek.class, unit ->
+                                          (unit.getArmor(Mek.LOC_CT) + unit.getArmor(Mek.LOC_LT) + unit.getArmor(Mek.LOC_RT)) /
+                                                (float) (unit.getOArmor(Mek.LOC_CT) + unit.getOArmor(Mek.LOC_LT) + unit.getOArmor(Mek.LOC_RT)));
+
+                register(Jumpship.class, unit ->
+                                               unit.getArmor(Jumpship.LOC_NOSE) / (float) unit.getOArmor(Jumpship.LOC_NOSE));
+
+                register(SpaceStation.class, unit ->
+                                                   unit.getArmor(SpaceStation.LOC_NOSE) / (float) unit.getOArmor(SpaceStation.LOC_NOSE));
+
+                register(Warship.class, unit ->
+                                              unit.getArmor(Warship.LOC_NOSE) / (float) unit.getOArmor(Warship.LOC_NOSE));
+
+                register(GunEmplacement.class, unit -> (float) unit.getArmorRemainingPercent());
+                register(Entity.class, unit -> (float) unit.getArmorRemainingPercent());
+                register(Infantry.class, unit -> (float) unit.getInternalRemainingPercent());
             }
-            throw new IllegalArgumentException("Unsupported unit type: " + unit.getClass());
+        },
+
+        /**
+         * Calculates the back armor percentage of a unit.
+         */
+        BACK {
+            @Override
+            protected void registerCalculators() {
+                register(Aero.class, unit ->
+                                           unit.getArmor(Aero.LOC_AFT) / (float) unit.getOArmor(Aero.LOC_AFT));
+
+                register(Tank.class, unit ->
+                                           unit.getArmor(Tank.LOC_REAR) / (float) unit.getOArmor(Tank.LOC_REAR));
+
+                register(SuperHeavyTank.class, unit ->
+                                                     unit.getArmor(SuperHeavyTank.LOC_REAR) / (float) unit.getOArmor(SuperHeavyTank.LOC_REAR));
+
+                register(Mek.class, unit ->
+                                          (unit.getArmor(Mek.LOC_LT, true) + unit.getArmor(Mek.LOC_CT, true) +
+                                                 unit.getArmor(Mek.LOC_RT, true)) /
+                                                (float) (unit.getOArmor(Mek.LOC_LT, true) + unit.getOArmor(Mek.LOC_CT, true) +
+                                                               unit.getOArmor(Mek.LOC_RT, true)));
+
+                register(Jumpship.class, unit ->
+                                               (unit.getArmor(Jumpship.LOC_AFT) + unit.getArmor(Jumpship.LOC_ARS)) /
+                                                     (float) (unit.getOArmor(Jumpship.LOC_FRS) + unit.getOArmor(Jumpship.LOC_ARS)));
+
+                register(SpaceStation.class, unit ->
+                                                   (unit.getArmor(SpaceStation.LOC_FRS) + unit.getArmor(SpaceStation.LOC_ARS)) /
+                                                         (float) (unit.getOArmor(SpaceStation.LOC_FRS) + unit.getOArmor(SpaceStation.LOC_ARS)));
+
+                register(Warship.class, unit ->
+                                              (unit.getArmor(Warship.LOC_FRS) + unit.getArmor(Warship.LOC_ARS) +
+                                                     unit.getArmor(Warship.LOC_RBS)) /
+                                                    (float) (unit.getOArmor(Warship.LOC_FRS) + unit.getOArmor(Warship.LOC_ARS) +
+                                                                   unit.getOArmor(Warship.LOC_RBS)));
+                register(GunEmplacement.class, unit -> (float) unit.getArmorRemainingPercent());
+                register(Entity.class, unit -> (float) unit.getArmorRemainingPercent());
+                register(Infantry.class, unit -> (float) unit.getInternalRemainingPercent());
+            }
+        },
+
+        /**
+         * Calculates the left side armor percentage of a unit.
+         */
+        LEFT_SIDE {
+            @Override
+            protected void registerCalculators() {
+                register(Aero.class, unit ->
+                                           unit.getArmor(Aero.LOC_LWING) / (float) unit.getOArmor(Aero.LOC_LWING));
+
+                register(Tank.class, unit ->
+                                           unit.getArmor(Tank.LOC_LEFT) / (float) unit.getOArmor(Tank.LOC_LEFT));
+
+                register(SuperHeavyTank.class, unit ->
+                                                     (unit.getArmor(SuperHeavyTank.LOC_FRONTLEFT) + unit.getArmor(SuperHeavyTank.LOC_REARLEFT)) /
+                                                           (float) (unit.getOArmor(SuperHeavyTank.LOC_FRONTLEFT) +
+                                                                          unit.getOArmor(SuperHeavyTank.LOC_REARLEFT)));
+
+                register(Mek.class, unit ->
+                                          (unit.getArmor(Mek.LOC_LT) + unit.getArmor(Mek.LOC_LARM) + unit.getArmor(Mek.LOC_LLEG)) /
+                                                (float) (unit.getOArmor(Mek.LOC_LT) + unit.getOArmor(Mek.LOC_LARM) +
+                                                               unit.getOArmor(Mek.LOC_LLEG)));
+
+                register(Jumpship.class, unit ->
+                                               (unit.getArmor(Jumpship.LOC_FLS) + unit.getArmor(Jumpship.LOC_ALS)) /
+                                                     (float) (unit.getOArmor(Jumpship.LOC_FLS) + unit.getOArmor(Jumpship.LOC_ALS)));
+
+                register(SpaceStation.class, unit ->
+                                                   (unit.getArmor(SpaceStation.LOC_FLS) + unit.getArmor(SpaceStation.LOC_ALS)) /
+                                                         (float) (unit.getOArmor(SpaceStation.LOC_FLS) + unit.getOArmor(SpaceStation.LOC_ALS)));
+
+                register(Warship.class, unit ->
+                                              (unit.getArmor(Warship.LOC_FLS) + unit.getArmor(Warship.LOC_ALS) +
+                                                     unit.getArmor(Warship.LOC_LBS)) /
+                                                    (float) (unit.getOArmor(Warship.LOC_FLS) + unit.getOArmor(Warship.LOC_ALS) +
+                                                                   unit.getOArmor(Warship.LOC_LBS)));
+                register(GunEmplacement.class, unit -> (float) unit.getArmorRemainingPercent());
+                register(Entity.class, unit -> (float) unit.getArmorRemainingPercent());
+                register(Infantry.class, unit -> (float) unit.getInternalRemainingPercent());
+            }
+        },
+
+        /**
+         * Calculates the right side armor percentage of a unit.
+         */
+        RIGHT_SIDE {
+            @Override
+            protected void registerCalculators() {
+                register(Aero.class, unit ->
+                                           unit.getArmor(Aero.LOC_RWING) / (float) unit.getOArmor(Aero.LOC_RWING));
+
+                register(Tank.class, unit ->
+                                           unit.getArmor(Tank.LOC_RIGHT) / (float) unit.getOArmor(Tank.LOC_RIGHT));
+
+                register(SuperHeavyTank.class, unit ->
+                                                     (unit.getArmor(SuperHeavyTank.LOC_FRONTRIGHT) + unit.getArmor(SuperHeavyTank.LOC_REARRIGHT)) /
+                                                           (float) (unit.getOArmor(SuperHeavyTank.LOC_FRONTRIGHT) +
+                                                                          unit.getOArmor(SuperHeavyTank.LOC_REARRIGHT)));
+
+                register(Mek.class, unit ->
+                                          (unit.getArmor(Mek.LOC_RT) + unit.getArmor(Mek.LOC_RARM) + unit.getArmor(Mek.LOC_RLEG)) /
+                                                (float) (unit.getOArmor(Mek.LOC_RT) + unit.getOArmor(Mek.LOC_RARM) +
+                                                               unit.getOArmor(Mek.LOC_RLEG)));
+
+                register(Jumpship.class, unit ->
+                                               (unit.getArmor(Jumpship.LOC_FRS) + unit.getArmor(Jumpship.LOC_ARS)) /
+                                                     (float) (unit.getOArmor(Jumpship.LOC_FRS) + unit.getOArmor(Jumpship.LOC_ARS)));
+
+                register(SpaceStation.class, unit ->
+                                                   (unit.getArmor(SpaceStation.LOC_FRS) + unit.getArmor(SpaceStation.LOC_ARS)) /
+                                                         (float) (unit.getOArmor(SpaceStation.LOC_FRS) + unit.getOArmor(SpaceStation.LOC_ARS)));
+
+                register(Warship.class, unit ->
+                                              (unit.getArmor(Warship.LOC_FRS) + unit.getArmor(Warship.LOC_ARS) +
+                                                     unit.getArmor(Warship.LOC_RBS)) /
+                                                    (float) (unit.getOArmor(Warship.LOC_FRS) + unit.getOArmor(Warship.LOC_ARS) +
+                                                                   unit.getOArmor(Warship.LOC_RBS)));
+                register(GunEmplacement.class, unit -> (float) unit.getArmorRemainingPercent());
+                register(Infantry.class, unit -> (float) unit.getInternalRemainingPercent());
+                register(Entity.class, unit -> (float) unit.getArmorRemainingPercent());
+            }
+        },
+
+        /**
+         * Calculates the overall armor percentage of a unit.
+         */
+        OVERALL {
+            @Override
+            protected void registerCalculators() {
+                // For overall armor, we use the default Entity method for most types
+                register(GunEmplacement.class, unit -> (float) unit.getArmorRemainingPercent());
+                register(Infantry.class, unit -> (float) unit.getInternalRemainingPercent());
+                register(Entity.class, unit -> (float) unit.getArmorRemainingPercent());
+            }
+        };
+
+        // Maps to store the calculation logic for each entity type
+        private final Map<Class<?>, Function<Entity, Float>> calculators = new ConcurrentHashMap<>();
+
+        /**
+         * Initialize the enum constants by registering their calculator functions.
+         */
+        ArmorCalculator() {
+            registerCalculators();
         }
 
-        protected float getHealth(Aero unit) {
-            return (float) unit.getArmorRemainingPercent();
+        /**
+         * Abstract method to be implemented by each enum constant to register
+         * appropriate calculator functions for different entity types.
+         */
+        protected abstract void registerCalculators();
+
+        /**
+         * Registers a calculator function for a specific entity type.
+         *
+         * @param <T> the entity type
+         * @param entityClass the class of the entity
+         * @param calculator the function to calculate armor percentage
+         */
+        protected <T extends Entity> void register(Class<T> entityClass, Function<T, Float> calculator) {
+            calculators.put(entityClass, entity -> calculator.apply(entityClass.cast(entity)));
         }
 
-        protected float getHealth(Infantry unit) {
-            return (float) unit.getInternalRemainingPercent();
-        }
+        /**
+         * Calculates the armor percentage for the given entity.
+         * Uses a type hierarchy dispatch to find the most specific calculator.
+         *
+         * @param entity the Entity
+         * @return the armor percentage as a float value
+         * @throws IllegalArgumentException if no suitable calculator is found
+         */
+        public float calculateArmorPercent(Entity entity) {
+            Class<?> entityClass = entity.getClass();
 
-        protected float getHealth(Tank unit) {
-            return (float)  unit.getArmorRemainingPercent();
-        }
+            // Look for calculator matching this class or its superclasses following hierarchy
+            while (entityClass != null) {
+                Function<Entity, Float> calculator = calculators.get(entityClass);
+                if (calculator != null) {
+                    return calculator.apply(entity);
+                }
+                entityClass = entityClass.getSuperclass();
+            }
 
-        protected float getHealth(GunEmplacement unit) {
-            return (float) unit.getArmorRemainingPercent();
-        }
+            // If no specific calculator found, use the Entity calculator
+            Function<Entity, Float> defaultCalculator = calculators.get(Entity.class);
+            if (defaultCalculator != null) {
+                return defaultCalculator.apply(entity);
+            }
 
-        protected float getHealth(SuperHeavyTank unit) {
-            return (float) unit.getArmorRemainingPercent();
-        }
-
-        protected float getHealth(Mek unit) {
-            return (float) unit.getArmorRemainingPercent();
-        }
-
-        protected float getHealth(ProtoMek unit) {
-            return (float) unit.getArmorRemainingPercent();
-        }
-
-        protected float getHealth(Jumpship unit) {
-            return (float) unit.getArmorRemainingPercent();
-        }
-
-        protected float getHealth(SpaceStation unit) {
-            return (float) unit.getArmorRemainingPercent();
-        }
-
-        protected float getHealth(Warship unit) {
-            return (float) unit.getArmorRemainingPercent();
-        }
-    }
-
-    private static class BackSide extends OverallArmor {
-
-        @Override
-        protected float getHealth(Aero unit) {
-            return unit.getArmor(Aero.LOC_AFT) / (float) unit.getOArmor(Aero.LOC_AFT);
-        }
-
-        @Override
-        protected float getHealth(Tank unit) {
-            return unit.getArmor(Tank.LOC_REAR) / (float) unit.getOArmor(Tank.LOC_REAR);
-        }
-
-        @Override
-        protected float getHealth(SuperHeavyTank unit) {
-            return (unit.getArmor(SuperHeavyTank.LOC_REAR)) / (float) (unit.getOArmor(SuperHeavyTank.LOC_REAR));
-        }
-
-        @Override
-        protected float getHealth(Mek unit) {
-            return (unit.getArmor(Mek.LOC_LT, true) + unit.getArmor(Mek.LOC_CT, true) + unit.getArmor(Mek.LOC_RT, true))
-                         / (float) (unit.getOArmor(Mek.LOC_LT, true) + unit.getOArmor(Mek.LOC_CT, true) + unit.getOArmor(Mek.LOC_RT, true));
-        }
-
-        @Override
-        protected float getHealth(Jumpship unit) {
-            return (unit.getArmor(Jumpship.LOC_AFT) + unit.getArmor(Jumpship.LOC_ARS)) / (float) (unit.getOArmor(Jumpship.LOC_FRS) + unit.getOArmor(Jumpship.LOC_ARS));
-        }
-
-        @Override
-        protected float getHealth(SpaceStation unit) {
-            return (unit.getArmor(SpaceStation.LOC_FRS) + unit.getArmor(SpaceStation.LOC_ARS)) / (float) (unit.getOArmor(SpaceStation.LOC_FRS) + unit.getOArmor(SpaceStation.LOC_ARS));
-        }
-
-        @Override
-        protected float getHealth(Warship unit) {
-            return (unit.getArmor(Warship.LOC_FRS) + unit.getArmor(Warship.LOC_ARS) + unit.getArmor(Warship.LOC_RBS)) / (float) (unit.getOArmor(Warship.LOC_FRS) + unit.getOArmor(Warship.LOC_ARS) + unit.getOArmor(Warship.LOC_RBS));
-        }
-    }
-
-    private static class FrontSide extends OverallArmor {
-
-        @Override
-        protected float getHealth(Aero unit) {
-            return unit.getArmor(Aero.LOC_NOSE) / (float) unit.getOArmor(Aero.LOC_NOSE);
-        }
-
-        @Override
-        protected float getHealth(Tank unit) {
-            return unit.getArmor(Tank.LOC_FRONT) / (float) unit.getOArmor(Tank.LOC_FRONT);
-        }
-
-        @Override
-        protected float getHealth(SuperHeavyTank unit) {
-            return unit.getArmor(SuperHeavyTank.LOC_FRONT) / (float) unit.getOArmor(SuperHeavyTank.LOC_FRONT);
-        }
-
-        @Override
-        protected float getHealth(Mek unit) {
-            return (unit.getArmor(Mek.LOC_CT) + unit.getArmor(Mek.LOC_LT) + unit.getArmor(Mek.LOC_RT))
-                         / (float) (unit.getOArmor(Mek.LOC_CT) + unit.getOArmor(Mek.LOC_LT) + unit.getOArmor(Mek.LOC_RT));
-        }
-
-        @Override
-        protected float getHealth(ProtoMek unit) {
-            return unit.getArmor(ProtoMek.LOC_BODY) / (float) unit.getOArmor(ProtoMek.LOC_BODY);
-        }
-
-        @Override
-        protected float getHealth(Jumpship unit) {
-            return unit.getArmor(Jumpship.LOC_NOSE) / (float) unit.getOArmor(Jumpship.LOC_NOSE);
-        }
-
-        @Override
-        protected float getHealth(SpaceStation unit) {
-            return unit.getArmor(SpaceStation.LOC_NOSE) / (float) unit.getOArmor(SpaceStation.LOC_NOSE);
-        }
-
-        @Override
-        protected float getHealth(Warship unit) {
-            return unit.getArmor(Warship.LOC_NOSE) / (float) unit.getOArmor(Warship.LOC_NOSE);
-        }
-    }
-
-    private static class LeftSide extends OverallArmor {
-
-        @Override
-        protected float getHealth(Aero unit) {
-            return unit.getArmor(Aero.LOC_LWING) / (float) unit.getOArmor(Aero.LOC_LWING);
-        }
-
-        @Override
-        protected float getHealth(Tank unit) {
-            return unit.getArmor(Tank.LOC_LEFT) / (float) unit.getOArmor(Tank.LOC_LEFT);
-        }
-
-        @Override
-        protected float getHealth(SuperHeavyTank unit) {
-            return (unit.getArmor(SuperHeavyTank.LOC_FRONTLEFT) + unit.getArmor(SuperHeavyTank.LOC_REARLEFT))/ (float) (unit.getOArmor(SuperHeavyTank.LOC_FRONTLEFT) + unit.getOArmor(SuperHeavyTank.LOC_REARLEFT));
-        }
-
-        @Override
-        protected float getHealth(Mek unit) {
-            return (unit.getArmor(Mek.LOC_LT) + unit.getArmor(Mek.LOC_LARM) + unit.getArmor(Mek.LOC_LLEG))
-                         / (float) (unit.getOArmor(Mek.LOC_LT) + unit.getOArmor(Mek.LOC_LARM) + unit.getOArmor(Mek.LOC_LLEG));
-        }
-
-        @Override
-        protected float getHealth(Jumpship unit) {
-            return (unit.getArmor(Jumpship.LOC_FLS) + unit.getArmor(Jumpship.LOC_ALS)) / (float) (unit.getOArmor(Jumpship.LOC_FLS) + unit.getOArmor(Jumpship.LOC_ALS));
-        }
-
-        @Override
-        protected float getHealth(SpaceStation unit) {
-            return (unit.getArmor(SpaceStation.LOC_FLS) + unit.getArmor(SpaceStation.LOC_ALS)) / (float) (unit.getOArmor(SpaceStation.LOC_FLS) + unit.getOArmor(SpaceStation.LOC_ALS));
-        }
-
-        @Override
-        protected float getHealth(Warship unit) {
-            return (unit.getArmor(Warship.LOC_FLS) + unit.getArmor(Warship.LOC_ALS) + unit.getArmor(Warship.LOC_LBS)) / (float) (unit.getOArmor(Warship.LOC_FLS) + unit.getOArmor(Warship.LOC_ALS) + unit.getOArmor(Warship.LOC_LBS));
-        }
-
-    }
-
-    private static class RightSide extends OverallArmor {
-
-        @Override
-        protected float getHealth(Aero unit) {
-            return unit.getArmor(Aero.LOC_RWING) / (float) unit.getOArmor(Aero.LOC_RWING);
-        }
-
-        @Override
-        protected float getHealth(Tank unit) {
-            return unit.getArmor(Tank.LOC_RIGHT) / (float) unit.getOArmor(Tank.LOC_RIGHT);
-        }
-
-        @Override
-        protected float getHealth(SuperHeavyTank unit) {
-            return (unit.getArmor(SuperHeavyTank.LOC_FRONTRIGHT) + unit.getArmor(SuperHeavyTank.LOC_REARRIGHT)) / (float) (unit.getOArmor(SuperHeavyTank.LOC_FRONTRIGHT) + unit.getOArmor(SuperHeavyTank.LOC_REARRIGHT));
-        }
-
-        @Override
-        protected float getHealth(Mek unit) {
-            return (unit.getArmor(Mek.LOC_RT) + unit.getArmor(Mek.LOC_RARM) + unit.getArmor(Mek.LOC_RLEG))
-                         / (float) (unit.getOArmor(Mek.LOC_RT) + unit.getOArmor(Mek.LOC_RARM) + unit.getOArmor(Mek.LOC_RLEG));
-        }
-
-        @Override
-        protected float getHealth(Jumpship unit) {
-            return (unit.getArmor(Jumpship.LOC_FRS) + unit.getArmor(Jumpship.LOC_ARS)) / (float) (unit.getOArmor(Jumpship.LOC_FRS) + unit.getOArmor(Jumpship.LOC_ARS));
-        }
-
-        @Override
-        protected float getHealth(SpaceStation unit) {
-            return (unit.getArmor(SpaceStation.LOC_FRS) + unit.getArmor(SpaceStation.LOC_ARS)) / (float) (unit.getOArmor(SpaceStation.LOC_FRS) + unit.getOArmor(SpaceStation.LOC_ARS));
-        }
-
-        @Override
-        protected float getHealth(Warship unit) {
-            return (unit.getArmor(Warship.LOC_FRS) + unit.getArmor(Warship.LOC_ARS) + unit.getArmor(Warship.LOC_RBS)) / (float) (unit.getOArmor(Warship.LOC_FRS) + unit.getOArmor(Warship.LOC_ARS) + unit.getOArmor(Warship.LOC_RBS));
+            throw new IllegalArgumentException("No calculator found for: " + entity.getClass());
         }
     }
-
-
 }

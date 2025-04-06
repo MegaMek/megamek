@@ -54,8 +54,8 @@ public record UnitAction(int id, int teamId, int playerId, String chassis, Strin
 
     /**
      * Creates a UnitAction from a MovePath.
-     * @param movePath
-     * @return
+     * @param movePath The MovePath to convert
+     * @return The UnitAction
      */
     public static UnitAction fromMovePath(MovePath movePath) {
         Entity entity = movePath.getEntity();

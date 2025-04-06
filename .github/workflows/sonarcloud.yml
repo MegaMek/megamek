@@ -31,7 +31,8 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
+        uses: SonarSource/sonarcloud-github-action@master
+
         with:
           projectKey: RayanBM216_megamek
           organization: rayanbm216

@@ -44,7 +44,7 @@ import megamek.common.Building.DemolitionCharge;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.containers.PlayerIDandList;
+import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.GamePhase;
@@ -3309,7 +3309,7 @@ public class TWGameManager extends AbstractGameManager {
      *       <code>false</code> if the unit isn't carried in unloader.
      */
     private boolean unloadUnit(Entity unloader, Targetable unloaded, Coords pos, int facing, int elevation,
-                               boolean evacuation, boolean duringDeployment) {
+          boolean evacuation, boolean duringDeployment) {
 
         // We can only unload Entities.
         Entity unit;
@@ -3593,7 +3593,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     boolean launchUnit(Entity unloader, Targetable unloaded, Coords pos, int facing, int velocity, int altitude,
-                       int[] moveVec, int bonus) {
+          int[] moveVec, int bonus) {
 
         Entity unit;
         if (unloaded instanceof Entity && unloader instanceof Aero) {
@@ -4125,7 +4125,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return true if the entity was removed from play
      */
     boolean processSkid(Entity entity, Coords start, int elevation, int direction, int distance, MoveStep step,
-                        EntityMovementType moveType) {
+          EntityMovementType moveType) {
         return processSkid(entity, start, elevation, direction, distance, step, moveType, false);
     }
 
@@ -4143,7 +4143,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return true if the entity was removed from play
      */
     private boolean processSkid(Entity entity, Coords start, int elevation, int direction, int distance, MoveStep step,
-                                EntityMovementType moveType, boolean flip) {
+          EntityMovementType moveType, boolean flip) {
         Coords nextPos = start;
         Coords curPos = nextPos;
         Hex curHex = game.getBoard().getHex(start);
@@ -4952,8 +4952,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return true if the maneuver failure result ends the unit's turn.
      */
     boolean processFailedVehicleManeuver(Entity entity, Coords curPos, int turnDirection, MoveStep prevStep,
-                                         boolean isBackwards, EntityMovementType lastStepMoveType, int distance,
-                                         int modifier, int marginOfFailure) {
+          boolean isBackwards, EntityMovementType lastStepMoveType, int distance, int modifier, int marginOfFailure) {
         Hex curHex = game.getBoard().getHex(curPos);
         if (entity.getMovementMode() == EntityMovementMode.WHEELED && !curHex.containsTerrain(Terrains.PAVEMENT)) {
             modifier += 2;
@@ -6046,7 +6045,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     private void ApplyMASCOrSuperchargerCriticals(Entity entity, MovePath md,
-                                                  HashMap<Integer, List<CriticalSlot>> crits) {
+          HashMap<Integer, List<CriticalSlot>> crits) {
         for (Integer loc : crits.keySet()) {
             List<CriticalSlot> lcs = crits.get(loc);
             for (CriticalSlot cs : lcs) {
@@ -6080,7 +6079,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param carrierDamage If true, the carrier takes damage from converting while carrying infantry.
      */
     Vector<Report> checkDropBAFromConverting(Entity carrier, Entity rider, Coords curPos, int curFacing,
-                                             boolean automatic, boolean infDamage, boolean carrierDamage) {
+          boolean automatic, boolean infDamage, boolean carrierDamage) {
         Vector<Report> reports = new Vector<>();
         Report r;
         PilotingRollData prd = rider.getBasePilotingRoll(EntityMovementType.MOVE_NONE);
@@ -6752,7 +6751,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param subjectId the <code>int</code> id of the target
      */
     public Vector<Integer> deliverArtilleryInferno(Coords coords, Entity ae, int subjectId,
-                                                   Vector<Report> vPhaseReport) {
+          Vector<Report> vPhaseReport) {
         Hex h = game.getBoard().getHex(coords);
         Report r;
         Vector<Integer> alreadyHit = new Vector<>();
@@ -6844,7 +6843,7 @@ public class TWGameManager extends AbstractGameManager {
      * deploys a new telemissile entity onto the map
      */
     public void deployTeleMissile(Entity ae, WeaponType wtype, AmmoType atype, int wId, int capMisMod, int damage,
-                                  int armor, Vector<Report> vPhaseReport) {
+          int armor, Vector<Report> vPhaseReport) {
         Report r = new Report(9080);
         r.subject = ae.getId();
         r.addDesc(ae);
@@ -6934,7 +6933,7 @@ public class TWGameManager extends AbstractGameManager {
      *                   Arrow IV inferno, and partial cover should be ignored.
      */
     public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t, int missiles, int called,
-                                                 boolean areaEffect) {
+          boolean areaEffect) {
         Hex hex = game.getBoard().getHex(t.getPosition());
         Report r;
         Vector<Report> vPhaseReport = new Vector<>();
@@ -7332,7 +7331,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return - <code>true</code> if the entity set off any mines
      */
     private boolean enterMinefield(Entity entity, Coords c, int curElev, boolean isOnGround, Vector<Report> vMineReport,
-                                   int target) {
+          int target) {
         Report r;
         boolean trippedMine = false;
         // flying units cannot trip a mine
@@ -7645,7 +7644,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return <code>true</code> if clearance successful
      */
     public boolean clearMinefield(Minefield mf, Entity en, int target, int botch, Vector<Report> vClearReport,
-                                  int indent) {
+          int indent) {
         Report r;
         Roll diceRoll = Compute.rollD6(2);
 
@@ -7735,7 +7734,7 @@ public class TWGameManager extends AbstractGameManager {
      * Checks to see if an entity sets off any vibrabombs.
      */
     boolean checkVibrabombs(Entity entity, Coords coords, boolean displaced, Coords lastPos, Coords curPos,
-                            Vector<Report> vMineReport) {
+          Vector<Report> vMineReport) {
         int mass = (int) entity.getWeight();
 
         // Check for Mine sweepers
@@ -8637,7 +8636,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return Margin of Failure if the pilot fails the skill check, 0 if they pass.
      */
     int doSkillCheckWhileMoving(Entity entity, int entityElevation, Coords src, Coords dest, PilotingRollData roll,
-                                boolean isFallRoll) {
+          boolean isFallRoll) {
         return doSkillCheckWhileMoving(entity, entityElevation, src, dest, roll, isFallRoll, mainPhaseReport);
     }
 
@@ -8659,7 +8658,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return Margin of Failure if the pilot fails the skill check, 0 if they pass.
      */
     int doSkillCheckWhileMoving(Entity entity, int entityElevation, Coords src, Coords dest, PilotingRollData roll,
-                                boolean isFallRoll, Vector<Report> skillReport) {
+          boolean isFallRoll, Vector<Report> skillReport) {
         boolean fallsInPlace;
 
         // Start the info for this roll.
@@ -8751,7 +8750,7 @@ public class TWGameManager extends AbstractGameManager {
      *                           fall from above
      */
     Vector<Report> doEntityFallsInto(Entity entity, int entitySrcElevation, Coords src, Coords dest,
-                                     PilotingRollData roll, boolean causeAffa) {
+          PilotingRollData roll, boolean causeAffa) {
         return doEntityFallsInto(entity, entitySrcElevation, src, dest, roll, causeAffa, 0);
     }
 
@@ -8772,7 +8771,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param fallReduction      An integer value to reduce the fall distance by
      */
     Vector<Report> doEntityFallsInto(Entity entity, int entitySrcElevation, Coords origSrc, Coords origDest,
-                                     PilotingRollData roll, boolean causeAffa, int fallReduction) {
+          PilotingRollData roll, boolean causeAffa, int fallReduction) {
         Vector<Report> vPhaseReport = new Vector<>();
         Hex srcHex = game.getBoard().getHex(origSrc);
         Hex destHex = game.getBoard().getHex(origDest);
@@ -9486,7 +9485,7 @@ public class TWGameManager extends AbstractGameManager {
      * Also, check that the deployment is valid.
      */
     private void processDeployment(Entity entity, Coords coords, int nFacing, int elevation, Vector<Entity> loadVector,
-                                   boolean assaultDrop) {
+          boolean assaultDrop) {
         for (Entity loaded : loadVector) {
             if (loaded.getTransportId() != Entity.NONE) {
                 // we probably already loaded this unit in the chat lounge
@@ -9623,7 +9622,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     @SuppressWarnings("unchecked")
     private void receiveArtyAutoHitHexes(Packet packet, int connId) {
-        PlayerIDandList<Coords> artyAutoHitHexes = (PlayerIDandList<Coords>) packet.getObject(0);
+        PlayerIDAndList<Coords> artyAutoHitHexes = (PlayerIDAndList<Coords>) packet.getObject(0);
 
         int playerId = artyAutoHitHexes.getPlayerID();
 
@@ -11161,7 +11160,7 @@ public class TWGameManager extends AbstractGameManager {
      *                       igniting a hex accidentally. -1 for intentional
      */
     public boolean tryIgniteHex(Coords c, int entityId, boolean bHotGun, boolean bInferno, TargetRoll nTargetRoll,
-                                boolean bReportAttempt, int accidentTarget, Vector<Report> vPhaseReport) {
+          boolean bReportAttempt, int accidentTarget, Vector<Report> vPhaseReport) {
 
         Hex hex = game.getBoard().getHex(c);
         Report r;
@@ -11284,7 +11283,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param nTargetRoll - the <code>int</code> roll target for the attempt.
      */
     public boolean tryIgniteHex(Coords c, int entityId, boolean bHotGun, boolean bInferno, TargetRoll nTargetRoll,
-                                int accidentTarget, Vector<Report> vPhaseReport) {
+          int accidentTarget, Vector<Report> vPhaseReport) {
         return tryIgniteHex(c, entityId, bHotGun, bInferno, nTargetRoll, false, accidentTarget, vPhaseReport);
     }
 
@@ -14568,7 +14567,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction, boolean glancing,
-                                     boolean throughFront, boolean airMekRam) {
+          boolean throughFront, boolean airMekRam) {
         // we hit...
 
         PilotingRollData chargePSR = null;
@@ -14827,7 +14826,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return The damage after applying any reduction due to spikes
      */
     private int checkForSpikes(Entity target, int targetLocation, int damage, Entity attacker, int attackerLocation,
-                               int attackerLocation2) {
+          int attackerLocation2) {
         if (target.hasWorkingMisc(MiscType.F_SPIKES, -1, targetLocation)) {
             Report r;
             if (damage == 0) {
@@ -18193,7 +18192,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag,
-                                       boolean damageIS) {
+          boolean damageIS) {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, false);
     }
 
@@ -18212,7 +18211,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag,
-                                       boolean damageIS, boolean areaSatArty) {
+          boolean damageIS, boolean areaSatArty) {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, true);
     }
 
@@ -18232,7 +18231,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag,
-                                       boolean damageIS, boolean areaSatArty, boolean throughFront) {
+          boolean damageIS, boolean areaSatArty, boolean throughFront) {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, throughFront, false, false);
     }
 
@@ -18253,8 +18252,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag,
-                                       boolean damageIS, boolean areaSatArty, boolean throughFront,
-                                       boolean underWater) {
+          boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater) {
         return damageEntity(te,
               hit,
               damage,
@@ -18285,8 +18283,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType damageType,
-                                       boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater,
-                                       boolean nukeS2S) {
+          boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S) {
 
         Vector<Report> vDesc = new Vector<>();
         Report r;
@@ -20392,7 +20389,7 @@ public class TWGameManager extends AbstractGameManager {
      * Extract explosion functionality for generalized explosions in areas.
      */
     public void doFusionEngineExplosion(int engineRating, Coords position, Vector<Report> vDesc,
-                                        Vector<Integer> vUnits) {
+          Vector<Integer> vUnits) {
         int[] myDamages = { engineRating, (engineRating / 10), (engineRating / 20), (engineRating / 40) };
         doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1, true, false);
     }
@@ -20401,8 +20398,8 @@ public class TWGameManager extends AbstractGameManager {
      * General function to cause explosions in areas.
      */
     public void doExplosion(int damage, int degradation, boolean autoDestroyInSameHex, Coords position,
-                            boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits, int excludedUnitId,
-                            boolean canDamageVtol) {
+          boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits, int excludedUnitId,
+          boolean canDamageVtol) {
         if (degradation < 1) {
             return;
         }
@@ -20434,8 +20431,8 @@ public class TWGameManager extends AbstractGameManager {
      * TODO Luana: Refactor this function so it is less of a mess
      */
     public void doExplosion(int[] damages, boolean autoDestroyInSameHex, Coords position, boolean allowShelter,
-                            Vector<Report> vDesc, Vector<Integer> vUnits, int clusterAmt, int excludedUnitId,
-                            boolean engineExplosion, boolean canDamageVtol) {
+          Vector<Report> vDesc, Vector<Integer> vUnits, int clusterAmt, int excludedUnitId, boolean engineExplosion,
+          boolean canDamageVtol) {
         if (vDesc == null) {
             vDesc = new Vector<>();
         }
@@ -21024,7 +21021,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param vDesc           a vector that contains the output report
      */
     public void doNuclearExplosion(Coords position, int baseDamage, int degradation, int secondaryRadius,
-                                   int craterDepth, Vector<Report> vDesc) {
+          int craterDepth, Vector<Report> vDesc) {
         // Just in case.
         if (vDesc == null) {
             vDesc = new Vector<>();
@@ -21421,7 +21418,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param isCapital        whether it was capital scale damage that caused critical
      */
     public Vector<Report> applyCriticalHit(Entity en, int loc, CriticalSlot cs, boolean secondaryEffects,
-                                           int damageCaused, boolean isCapital) {
+          int damageCaused, boolean isCapital) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
@@ -21737,7 +21734,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param isCapital        whether it was capital scale damage that caused critical
      */
     private Vector<Report> applyProtoMekCritical(ProtoMek pm, int loc, CriticalSlot cs, boolean secondaryEffects,
-                                                 int damageCaused, boolean isCapital) {
+          int damageCaused, boolean isCapital) {
         Vector<Report> reports = new Vector<>();
         Report r;
         int numHit = pm.getCritsHit(loc);
@@ -23169,7 +23166,7 @@ public class TWGameManager extends AbstractGameManager {
      */
 
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, int critMod, int damage,
-                                         DamageType damageType) {
+          DamageType damageType) {
         return criticalEntity(en, loc, isRear, critMod, true, false, damage, damageType);
     }
 
@@ -23213,14 +23210,14 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     private boolean crashAirMek(Entity en, Coords pos, int elevation, int distance, PilotingRollData psr,
-                                Vector<Report> vDesc) {
+          Vector<Report> vDesc) {
         MoveStep step = new MoveStep(null, MovePath.MoveStepType.DOWN);
         step.setFromEntity(en, game);
         return crashAirMek(en, pos, elevation, distance, psr, step, vDesc);
     }
 
     private boolean crashAirMek(Entity en, Coords pos, int elevation, int distance, PilotingRollData psr,
-                                MoveStep lastStep, Vector<Report> vDesc) {
+          MoveStep lastStep, Vector<Report> vDesc) {
         vDesc.addAll(doEntityFallsInto(en, elevation, pos, pos, psr, true, 0));
         return en.isDoomed() || processSkid(en, pos, 0, 0, distance, lastStep, en.moved, false);
     }
@@ -23366,7 +23363,7 @@ public class TWGameManager extends AbstractGameManager {
      */
 
     private Vector<Report> crashVTOLorWiGE(Tank en, boolean rerollRotorHits, boolean sideSlipCrash, int hexesMoved,
-                                           Coords crashPos, int crashElevation, int impactSide) {
+          Coords crashPos, int crashElevation, int impactSide) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
@@ -23667,7 +23664,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param nukeS2S       - was this a ship 2 ship nuke attack
      */
     private void checkAeroCrits(Vector<Report> vDesc, Aero a, HitData hit, int damage_orig, boolean critThresh,
-                                boolean critSI, boolean ammoExplosion, boolean nukeS2S) {
+          boolean critSI, boolean ammoExplosion, boolean nukeS2S) {
 
         Report r;
 
@@ -23802,7 +23799,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     private Vector<Report> criticalAero(Aero a, int loc, int critMod, String reason, int target, int damage,
-                                        boolean isCapital) {
+          boolean isCapital) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
@@ -23847,7 +23844,7 @@ public class TWGameManager extends AbstractGameManager {
      * for MaxTech Heat Scale rule.
      */
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, int critMod, boolean rollNumber,
-                                         boolean isCapital, int damage) {
+          boolean isCapital, int damage) {
         return criticalEntity(en, loc, isRear, critMod, rollNumber, isCapital, damage, DamageType.NONE);
     }
 
@@ -23856,7 +23853,7 @@ public class TWGameManager extends AbstractGameManager {
      * for MaxTech Heat Scale rule.
      */
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, int critMod, boolean rollNumber,
-                                         boolean isCapital, int damage, DamageType damageType) {
+          boolean isCapital, int damage, DamageType damageType) {
 
         if (en.hasQuirk("poor_work")) {
             critMod += 1;
@@ -24829,7 +24826,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param vDesc     Reprt vector to which this report will be added.
      */
     protected void destroyCarriedUnit(Entity carrier, Entity passenger, int condition, int reportId,
-                                      Vector<Report> vDesc) {
+          Vector<Report> vDesc) {
         passenger.setDestroyed(true);
         // We need to unload the unit, since it's ID goes away
         carrier.unload(passenger);
@@ -25282,7 +25279,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param intoBasement Flag that determines whether this is a fall into a basement or not.
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos, int fallHeight, int facing,
-                                        PilotingRollData roll, boolean intoBasement, boolean fromCliff) {
+          PilotingRollData roll, boolean intoBasement, boolean fromCliff) {
         entity.setFallen(true);
 
         Vector<Report> vPhaseReport = new Vector<>();
@@ -25866,7 +25863,7 @@ public class TWGameManager extends AbstractGameManager {
      *                 attempt will not be included in the report.
      */
     public boolean checkIgnition(Coords c, TargetRoll roll, boolean bInferno, int entityId,
-                                 Vector<Report> vPhaseReport) {
+          Vector<Report> vPhaseReport) {
 
         Hex hex = game.getBoard().getHex(c);
 
@@ -26156,7 +26153,7 @@ public class TWGameManager extends AbstractGameManager {
      *                         double-blind games.
      */
     public void entityUpdate(int nEntityID, Vector<UnitLocation> movePath, boolean updateVisibility,
-                             Map<UnitTargetPair, LosEffects> losCache) {
+          Map<UnitTargetPair, LosEffects> losCache) {
         Entity eTarget = game.getEntity(nEntityID);
         if (eTarget == null) {
             if (game.getOutOfGameEntity(nEntityID) != null) {
@@ -26336,7 +26333,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return
      */
     private Vector<Player> whoCanDetect(Entity entity, List<ECMInfo> allECMInfo,
-                                        Map<UnitTargetPair, LosEffects> losCache) {
+          Map<UnitTargetPair, LosEffects> losCache) {
         if (losCache == null) {
             losCache = new HashMap<>();
         }
@@ -26426,7 +26423,7 @@ public class TWGameManager extends AbstractGameManager {
      * Filters an entity vector according to LOS
      */
     private List<Entity> filterEntities(Player pViewer, List<Entity> vEntities,
-                                        Map<UnitTargetPair, LosEffects> losCache) {
+          Map<UnitTargetPair, LosEffects> losCache) {
         if (losCache == null) {
             losCache = new HashMap<>();
         }
@@ -28179,7 +28176,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     void passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos, int distance, String why,
-                          boolean backwards, EntityMovementType overallMoveType, boolean entering) {
+          boolean backwards, EntityMovementType overallMoveType, boolean entering) {
         passBuildingWall(entity,
               bldg,
               lastPos,
@@ -28208,8 +28205,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param entering  - a <code>boolean</code> if the entity is entering or exiting a building
      */
     void passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos, int distance, String why,
-                          boolean backwards, EntityMovementType overallMoveType, boolean entering,
-                          Vector<Report> buildingReport) {
+          boolean backwards, EntityMovementType overallMoveType, boolean entering, Vector<Report> buildingReport) {
         Report r;
 
         if (entity instanceof ProtoMek) {
@@ -28415,7 +28411,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return <code>true</code> if the building collapsed.
      */
     public boolean checkForCollapse(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-                                    boolean checkBecauseOfDamage, Vector<Report> vPhaseReport) {
+          boolean checkBecauseOfDamage, Vector<Report> vPhaseReport) {
 
         // If the input is meaningless, do nothing and throw no exception.
         if ((bldg == null) ||
@@ -28597,12 +28593,12 @@ public class TWGameManager extends AbstractGameManager {
     } // End private boolean checkForCollapse( Building, Hashtable )
 
     public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-                                 Vector<Report> vPhaseReport) {
+          Vector<Report> vPhaseReport) {
         collapseBuilding(bldg, positionMap, coords, true, false, vPhaseReport);
     }
 
     public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-                                 boolean collapseAll, Vector<Report> vPhaseReport) {
+          boolean collapseAll, Vector<Report> vPhaseReport) {
         collapseBuilding(bldg, positionMap, coords, collapseAll, false, vPhaseReport);
     }
 
@@ -28620,7 +28616,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param coords      - The <code>Coords</code> of the building basement hex that has collapsed
      */
     public void collapseBasement(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-                                 Vector<Report> vPhaseReport) {
+          Vector<Report> vPhaseReport) {
         if (!bldg.hasCFIn(coords)) {
             return;
         }
@@ -28720,7 +28716,7 @@ public class TWGameManager extends AbstractGameManager {
      *                    the top).
      */
     public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-                                 boolean collapseAll, boolean topFloor, Vector<Report> vPhaseReport) {
+          boolean collapseAll, boolean topFloor, Vector<Report> vPhaseReport) {
         // sometimes, buildings that reach CF 0 decide against collapsing
         // but we want them to go away anyway, as a building with CF 0 cannot stand
         final int phaseCF = bldg.hasCFIn(coords) ? bldg.getPhaseCF(coords) : 0;
@@ -29822,7 +29818,7 @@ public class TWGameManager extends AbstractGameManager {
      *                               mid-move change in MP causing erroneous grav check
      */
     void checkExtremeGravityMovement(Entity entity, MoveStep step, EntityMovementType moveType, Coords curPos,
-                                     int cachedMaxMPExpenditure) {
+          int cachedMaxMPExpenditure) {
         PilotingRollData rollTarget;
         if (game.getPlanetaryConditions().getGravity() != 1) {
             if ((entity instanceof Mek) || (entity instanceof Tank)) {
@@ -30429,7 +30425,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     public static PilotingRollData getEjectModifiers(Game game, Entity entity, int crewPos, boolean autoEject,
-                                                     Coords targetCoords, String desc) {
+          Coords targetCoords, String desc) {
         PilotingRollData rollTarget = new PilotingRollData(entity.getId(), entity.getCrew().getPiloting(crewPos), desc);
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // Per SO p26, fighters can eject as per TO rules on 196 with some exceptions
@@ -31560,10 +31556,9 @@ public class TWGameManager extends AbstractGameManager {
      * @param variableDamage if true, treat damage as the number of six-sided dice to roll
      */
     public Vector<Integer> artilleryDamageHex(Coords coords, Coords attackSource, int damage, AmmoType ammo,
-                                              int subjectId, Entity killer, Entity exclude, boolean flak, int altitude,
-                                              int targetLevel, Vector<Report> vPhaseReport, boolean asfFlak,
-                                              Vector<Integer> alreadyHit, boolean variableDamage,
-                                              DamageFalloff falloff) {
+          int subjectId, Entity killer, Entity exclude, boolean flak, int altitude, int targetLevel,
+          Vector<Report> vPhaseReport, boolean asfFlak, Vector<Integer> alreadyHit, boolean variableDamage,
+          DamageFalloff falloff) {
 
         // Values used later
         boolean isFuelAirBomb = ammo != null &&
@@ -31736,8 +31731,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param asfFlak      Is this flak against ASF?
      */
     public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId,
-                                               Entity killer, boolean flak, int altitude, boolean mineClear,
-                                               Vector<Report> vPhaseReport, boolean asfFlak) {
+          Entity killer, boolean flak, int altitude, boolean mineClear, Vector<Report> vPhaseReport, boolean asfFlak) {
 
         // Use the standard falloff values
         DamageFalloff damageFalloff = calculateDamageFallOff(ammo, 0, mineClear);
@@ -31770,8 +31764,8 @@ public class TWGameManager extends AbstractGameManager {
      * @param asfFlak      Is this flak against ASF?
      */
     public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId,
-                                               Entity killer, DamageFalloff falloff, boolean flak, int altitude,
-                                               Vector<Report> vPhaseReport, boolean asfFlak) {
+          Entity killer, DamageFalloff falloff, boolean flak, int altitude, Vector<Report> vPhaseReport,
+          boolean asfFlak) {
         Vector<Integer> alreadyHit = new Vector<>();
 
         // This is artillery damage
@@ -31810,7 +31804,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     public Vector<Integer> deliverBombDamage(HexTarget targetHex, int type, int subjectId, Entity killer,
-                                             Vector<Report> vPhaseReport) {
+          Vector<Report> vPhaseReport) {
         Coords center = targetHex.getPosition();
         Vector<Integer> alreadyHit = new Vector<>();
 

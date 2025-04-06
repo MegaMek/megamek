@@ -61,7 +61,7 @@ public record UnitAction(int id, int teamId, int playerId, String chassis, Strin
         Entity entity = movePath.getEntity();
         double chanceOfFailure = SharedUtility.getPSRList(movePath).stream()
                                        .map(psr -> psr.getValue() / 36d)
-                                       .reduce(0.0, (a, b) -> a * b);
+                                       .reduce(1.0, (a, b) -> a * b);
 
         var steps = movePath.getStepVector().stream().map(MoveStep::getType).toList();
 

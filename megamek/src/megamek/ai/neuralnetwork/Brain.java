@@ -125,7 +125,7 @@ public class Brain {
                 return resultArrayFromTensors(outputTensors);
             }
         } catch (Exception e) {
-            logger.error("Prediction failed, there is no recourse from this", e);
+            logger.error("Prediction failed due to an unexpected error", e);
             throw new RuntimeException("Failed to make prediction: " + e.getMessage(), e);
         }
     }

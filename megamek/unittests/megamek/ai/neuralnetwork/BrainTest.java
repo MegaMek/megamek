@@ -163,7 +163,7 @@ public class BrainTest {
      */
     private static MovementClassification getMovementClassificationFromSplitLine(String[] values) {
         // The last value in the line is the classification
-        return MovementClassification.fromValue(Integer.parseInt(values[values.length-1]));
+        return MovementClassification.fromValue(parseInt(values[values.length-1]));
     }
 
     /**
@@ -175,9 +175,24 @@ public class BrainTest {
         // The last value in the line is the classification, so we don't want it in the input value
         float[] entry = new float[values.length-1];
         for (int i = 0; i < values.length-1; i++) {
-            entry[i] = Float.parseFloat(values[i]);
+            entry[i] = parseFloat(values[i]);
         }
         return entry;
     }
-    // endregion TestSetup
+
+    private static float parseFloat(String value) {
+        try {
+            return Float.parseFloat(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid float value: " + value + " Possibly invalid test file", e);
+        }
+    }
+
+    private static int parseInt(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid int value: " + value + " Possibly invalid test file", e);
+        }
+    }
 }

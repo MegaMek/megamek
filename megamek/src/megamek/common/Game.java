@@ -1128,39 +1128,27 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Returns the appropriate target for this game given a type and id
      */
-    public @Nullable Targetable getTarget(int nType, int nID) {
+    public @Nullable Targetable getTarget(int targetType, int targetId) {
         try {
-            switch (nType) {
-                case Targetable.TYPE_ENTITY:
-                    return getEntity(nID);
-                case Targetable.TYPE_HEX_CLEAR:
-                case Targetable.TYPE_HEX_IGNITE:
-                case Targetable.TYPE_HEX_BOMB:
-                case Targetable.TYPE_MINEFIELD_DELIVER:
-                case Targetable.TYPE_FLARE_DELIVER:
-                case Targetable.TYPE_HEX_EXTINGUISH:
-                case Targetable.TYPE_HEX_ARTILLERY:
-                case Targetable.TYPE_HEX_SCREEN:
-                case Targetable.TYPE_HEX_AERO_BOMB:
-                case Targetable.TYPE_HEX_TAG:
-                    return new HexTarget(HexTarget.idToLocation(nID), nType);
-                case Targetable.TYPE_FUEL_TANK:
-                case Targetable.TYPE_FUEL_TANK_IGNITE:
-                case Targetable.TYPE_BUILDING:
-                case Targetable.TYPE_BLDG_IGNITE:
-                case Targetable.TYPE_BLDG_TAG:
-                    if (getBoard().getBuildingAt(BuildingTarget.idToCoords(nID)) != null) {
-                        return new BuildingTarget(BuildingTarget.idToCoords(nID), getBoard(), nType);
-                    } else {
-                        return null;
-                    }
-                case Targetable.TYPE_MINEFIELD_CLEAR:
-                    return new MinefieldTarget(MinefieldTarget.idToCoords(nID));
-                case Targetable.TYPE_INARC_POD:
-                    return INarcPod.idToInstance(nID);
-                default:
-                    return null;
-            }
+            return switch (targetType) {
+                case Targetable.TYPE_ENTITY -> getEntity(targetId);
+
+                case Targetable.TYPE_HEX_CLEAR, Targetable.TYPE_HEX_IGNITE, Targetable.TYPE_HEX_BOMB,
+                     Targetable.TYPE_MINEFIELD_DELIVER, Targetable.TYPE_FLARE_DELIVER, Targetable.TYPE_HEX_EXTINGUISH,
+                     Targetable.TYPE_HEX_ARTILLERY, Targetable.TYPE_HEX_SCREEN, Targetable.TYPE_HEX_AERO_BOMB,
+                     Targetable.TYPE_HEX_TAG -> new HexTarget(HexTarget.idToLocation(targetId), targetType);
+
+                case Targetable.TYPE_FUEL_TANK, Targetable.TYPE_FUEL_TANK_IGNITE, Targetable.TYPE_BUILDING,
+                     Targetable.TYPE_BLDG_IGNITE, Targetable.TYPE_BLDG_TAG -> {
+                    final BoardLocation boardLocation = HexTarget.idToLocation(targetId);
+                    yield getBuildingAt(boardLocation)
+                                .map(b -> new BuildingTarget(this, boardLocation, targetType))
+                                .orElse(null);
+                }
+                case Targetable.TYPE_MINEFIELD_CLEAR -> new MinefieldTarget(MinefieldTarget.idToCoords(targetId));
+                case Targetable.TYPE_INARC_POD -> INarcPod.idToInstance(targetId);
+                default -> null;
+            };
         } catch (Exception e) {
             logger.error("", e);
             return null;
@@ -3568,5 +3556,19 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public Optional<Player> playerForPlayername(String playerName) {
         return getPlayersList().stream().filter(p -> p.getName().equals(playerName)).findFirst();
+    }
+
+    /**
+     * Returns the Building at the given location, if any. Shortcut to Board.getBuildingAt().
+     *
+     * @param boardLocation The location to check
+     * @return The building at the location, if any
+     */
+    public Optional<Building> getBuildingAt(@Nullable BoardLocation boardLocation) {
+        if (hasBoardLocation(boardLocation)) {
+            return Optional.ofNullable(getBoard(boardLocation.boardId()).getBuildingAt(boardLocation.coords()));
+        } else {
+            return Optional.empty();
+        }
     }
 }

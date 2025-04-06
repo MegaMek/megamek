@@ -2009,7 +2009,7 @@ public class Board implements Serializable {
     }
 
     /** @return The name of this map; this is meant to be displayed in the GUI. */
-    public String getMapName() {
+    public String getBoardName() {
         return mapName;
     }
 

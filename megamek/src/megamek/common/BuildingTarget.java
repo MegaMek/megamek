@@ -30,7 +30,7 @@ public class BuildingTarget implements Targetable {
     private static final long serialVersionUID = 6432766092407639630L;
 
     /**
-     * The coordinates of the hex being targeted.
+     * The coordinates of the building being targeted.
      */
     private Coords position = null;
     private int boardId = 0;
@@ -68,7 +68,7 @@ public class BuildingTarget implements Targetable {
      *
      * @param coords - the <code>Coords</code> of the hext being targeted.
      * @param board  - the game's <code>Board</code> object.
-     * @param nType
+     * @param nType the target type
      * @throws IllegalArgumentException will be thrown if
      *            the given coordinates do not contain a building.
      */
@@ -76,40 +76,28 @@ public class BuildingTarget implements Targetable {
         position = coords;
         boardId = board.getBoardId();
         type = nType;
+        id = HexTarget.locationToId(getBoardLocation());
 
         // Get the building at the given coordinates.
         Building bldg = board.getBuildingAt(position);
         if (bldg == null) {
-            throw new IllegalArgumentException("The coordinates, " + position.getBoardNum()
-                    + ", do not contain a building.");
+            throw new IllegalArgumentException("No building at %s.".formatted(getBoardLocation()));
         }
 
-        // Save the building's ID.
-        id = BuildingTarget.coordsToId(coords);
-
-        // Generate a name.
-        StringBuilder sb = new StringBuilder();
-        sb.append("Hex ").append(position.getBoardNum()).append(" of ")
-            .append(bldg.getName());
-        switch (nType) {
-            case Targetable.TYPE_BLDG_IGNITE:
-                sb.append(Messages.getString("BuildingTarget.Ignite"));
-                break;
-            case Targetable.TYPE_BUILDING:
-                sb.append(Messages.getString("BuildingTarget.Collapse"));
-                break;
-            case Targetable.TYPE_BLDG_TAG:
-                sb.append(Messages.getString("BuildingTarget.Tag"));
-                break;
+        name = "Hex %s of %s".formatted(position.getBoardNum(), bldg.toString());
+        if (boardId > 0) {
+            name += " (Board #%d - %s)".formatted(boardId, board.getBoardName());
         }
+        name += switch (nType) {
+            case Targetable.TYPE_BLDG_IGNITE -> Messages.getString("BuildingTarget.Ignite");
+            case Targetable.TYPE_BUILDING -> Messages.getString("BuildingTarget.Collapse");
+            case Targetable.TYPE_BLDG_TAG -> Messages.getString("BuildingTarget.Tag");
+            default -> "";
+        };
 
-        name = sb.toString();
-
-        // Bottom of building is at ground level, top of building is at
-        // BLDG_ELEV.
+        // Bottom of building is at ground level, top of building is at BLDG_ELEV.
         // Note that height of 0 is a single story building.
-        // Bridges are always height 0, and the BRIDGE_ELEV indicates the
-        // elevation
+        // Bridges are always height 0, and the BRIDGE_ELEV indicates the elevation
         Hex targetHex = board.getHex(position);
         elevation = Math.max(-targetHex.depth(), targetHex.terrainLevel(Terrains.BRIDGE_ELEV));
         height = targetHex.terrainLevel(Terrains.BLDG_ELEV);
@@ -134,6 +122,10 @@ public class BuildingTarget implements Targetable {
         init(coords, board, nType);
     }
 
+    public BuildingTarget(Game game, BoardLocation boardLocation, int nType) {
+        init(boardLocation.coords(), game.getBoard(boardLocation.boardId()), nType);
+    }
+
     /**
      * Target a single hex of a building.
      *
@@ -149,8 +141,6 @@ public class BuildingTarget implements Targetable {
     }
 
     // Implementation of Targetable
-
-
     @Override
     public int getBoardId() {
         return boardId;
@@ -219,25 +209,6 @@ public class BuildingTarget implements Targetable {
         return name;
     }
 
-    /**
-     * Creates an id for this building based on its location as well as a
-     * building code.
-     * The transformation encodes the y value in the top 5 decimal digits and
-     * the x value in the bottom 5. Could more efficiently encode this by
-     * partitioning the binary representation, but this is more human readable
-     * and still allows for a 99999x99999 hex map.
-     */
-    public static int coordsToId(Coords c) {
-        return Targetable.TYPE_BUILDING * 1000000 + c.getY() * 1000 + c.getX();
-    }
-
-    // decode 1 number into 2
-    public static Coords idToCoords(int id) {
-        int idNoType = id - Targetable.TYPE_BUILDING * 1000000;
-        int y = (idNoType) / 1000;
-        return new Coords(idNoType - (y * 1000), y);
-    }
-
     @Override
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
@@ -258,10 +229,6 @@ public class BuildingTarget implements Targetable {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Targetable#isAirborneVTOLorWIGE()
-     */
     @Override
     public boolean isAirborneVTOLorWIGE() {
         return false;

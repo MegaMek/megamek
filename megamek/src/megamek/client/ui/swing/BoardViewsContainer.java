@@ -91,7 +91,7 @@ public class BoardViewsContainer {
         for (int boardId : clientGUI.boardViews.keySet()) {
             Component boardComponent = boardView(boardId).getComponent();
             boardComponent.setName(String.valueOf(boardId));
-            mapTabPane.add(board(boardId).getMapName(), boardComponent);
+            mapTabPane.add(board(boardId).getBoardName(), boardComponent);
             mapTabPane.setToolTipTextAt(mapTabPane.getTabCount() - 1, getBoardViewTabTooltip(boardId));
             shownBoardViews.put(boardComponent, boardId);
         }
@@ -102,18 +102,18 @@ public class BoardViewsContainer {
         // The single BoardView does not use the tabbed pane
         int boardId = clientGUI.boardViews.keySet().iterator().next();
         Component boardComponent = boardView(boardId).getComponent();
-        boardViewsContainer.add(board(boardId).getMapName(), boardComponent);
+        boardViewsContainer.add(board(boardId).getBoardName(), boardComponent);
         shownBoardViews.put(boardComponent, boardId);
     }
 
     private String getBoardViewTabTooltip(int boardId) {
         IGame game = clientGUI.getClient().getGame();
-        String tooltip = String.format("<HTML>%s (Board #%d)", game.getBoard(boardId).getMapName(), boardId);
+        String tooltip = String.format("<HTML>%s (Board #%d)", game.getBoard(boardId).getBoardName(), boardId);
         Optional<Board> enclosingBoard = game.getEnclosingBoard(boardId);
         if (enclosingBoard.isPresent()) {
             tooltip += "<BR>Located at %s in %s".formatted(enclosingBoard.get()
                      .embeddedBoardPosition(boardId)
-                     .getBoardNum(), enclosingBoard.get().getMapName());
+                     .getBoardNum(), enclosingBoard.get().getBoardName());
         }
         return tooltip;
     }

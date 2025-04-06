@@ -155,7 +155,7 @@ public class GameDatasetLogger {
             appendToFile(
                 String.join(
                     "\t",
-                    board.getMapName(), board.getWidth() + "", board.getHeight() + ""
+                    board.getBoardName(), board.getWidth() + "", board.getHeight() + ""
                 )
             );
 

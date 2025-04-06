@@ -3399,6 +3399,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * @return True if the given board is prohibited to this unit.
+     */
+    public boolean isBoardProhibited(Board board) {
+        return isBoardProhibited(board.getType());
+    }
+
+    /**
      * Returns true if the specified hex contains some sort of deadly terrain.
      */
     public boolean isLocationDeadly(Coords c) {

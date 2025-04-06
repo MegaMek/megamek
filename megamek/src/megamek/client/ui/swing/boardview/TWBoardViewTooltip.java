@@ -72,7 +72,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             // Embedded Board
             if (bv.getBoard().embeddedBoardCoords().contains(coords)) {
                 Board embeddedBoard = game.getBoard(bv.getBoard().getEmbeddedBoardAt(coords));
-                sbTerrain.append("Embedded Map: ").append(embeddedBoard.getMapName()).append("<BR>");
+                sbTerrain.append("Embedded Map: ").append(embeddedBoard.getBoardName()).append("<BR>");
             }
             appendTerrainTooltip(sbTerrain, mhex, GUIP);
             String sTerrain = sbTerrain.toString();

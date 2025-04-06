@@ -61,7 +61,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         } else {
             result.addAll(allowedGroundElevations());
         }
-        result.removeIf(o -> entity.isLocationProhibited(coords, o.elevation()));
+        result.removeIf(o -> entity.isLocationProhibited(coords, board().getBoardId(), o.elevation()));
         result.removeIf(o -> Compute.stackingViolation(game, entity, o.elevation(), coords,
               board.getBoardId(), null, entity.climbMode()) != null);
 

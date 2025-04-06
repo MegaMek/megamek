@@ -1666,6 +1666,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return losMods.getDesc();
         }
 
+        if (game.getPhase().isFiring() && !game.onTheSameBoard(ae, target)) {
+            return Messages.getString("WeaponAttackAction.CantAttackOtherBoard");
+        }
+
         // If using SO advanced sensors, the firing unit or one on its NC3 network must
         // have a valid firing solution
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS) &&

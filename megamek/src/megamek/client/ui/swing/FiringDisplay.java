@@ -15,7 +15,6 @@
 package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
@@ -183,7 +182,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected boolean showTargetChoice = true;
 
     // is the shift key held?
-    protected boolean shiftheld = false;
+//    protected boolean shiftheld = false;
 
     protected boolean twisting;
 
@@ -200,7 +199,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     /**
      * Keeps track of the Coords that are in a strafing run.
      */
-    private ArrayList<Coords> strafingCoords = new ArrayList<>(5);
+    private final List<Coords> strafingCoords = new ArrayList<>(5);
 
     /**
      * Creates and lays out a new firing phase display for the specified
@@ -1061,7 +1060,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
                     || (toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
                 setFireEnabled(false);
-                if (toHitBuff.length() < 1) {
+                if (toHitBuff.isEmpty()) {
                     toHitBuff.append(toHit.getDesc());
                 }
             }
@@ -1134,8 +1133,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     /**
-     * Adds a weapon attack with the currently selected weapon to the attack
-     * queue.
+     * Adds a weapon attack with the currently selected weapon to the attack queue.
      */
     void fire() {
         // get the selected weaponnum
@@ -1146,8 +1144,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if ((ce() == null)
                 || (target == null && (!isStrafing || strafingCoords.isEmpty()))
                 || (mounted == null)) {
-            throw new IllegalArgumentException("current fire parameters are invalid");
+            logger.error("current fire parameters are invalid");
+            return;
         }
+
         // check if we now shoot at a target in the front arc and previously
         // shot a target in side/rear arc that then was primary target
         // if so, ask and tell the user that to-hits will change
@@ -1299,7 +1299,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
         clientgui.getUnitDisplay().wPan.selectWeapon(nextWeapon);
         updateTarget();
-
     }
 
     /**
@@ -1377,7 +1376,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return;
         }
         addAttack(new SpotAction(currentEntity, target.getId()));
-
     }
 
     /**
@@ -1521,15 +1519,16 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      */
     public void updateTarget() {
         setFireEnabled(false);
+        Entity attacker = ce();
         // allow spotting
-        if ((ce() != null) && !ce().isSpotting() && ce().canSpot() && (target != null)
+        if ((attacker != null) && !attacker.isSpotting() && attacker.canSpot() && (target != null)
                 && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
-            boolean hasLos = LosEffects.calculateLOS(game, ce(), target).canSee();
+            boolean hasLos = LosEffects.calculateLOS(game, attacker, target).canSee();
             // In double blind, we need to "spot" the target as well as LoS
             if (hasLos
                     && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                    && !Compute.inVisualRange(game, ce(), target)
-                    && !Compute.inSensorRange(game, ce(), target, null)) {
+                    && !Compute.inVisualRange(game, attacker, target)
+                    && !Compute.inSensorRange(game, attacker, target, null)) {
                 hasLos = false;
             }
             setSpotEnabled(hasLos);
@@ -1545,13 +1544,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                     .getString("FiringDisplay.Strafing.TargetLabel"));
 
             updateStrafingTargets();
-        } else if ((ce() != null) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
+        } else if ((attacker != null) && attacker.equals(clientgui.getUnitDisplay().getCurrentEntity())
                 && (target != null) && (target.getPosition() != null)
                 && (weaponId != -1)) {
             ToHitData toHit;
 
             if (!ash.getAimingMode().isNone()) {
-                WeaponMounted weapon = (WeaponMounted) ce().getEquipment(weaponId);
+                WeaponMounted weapon = (WeaponMounted) attacker.getEquipment(weaponId);
                 boolean aiming = ash.isAimingAtLocation() && ash.allowAimedShotWith(weapon);
                 ash.setEnableAll(aiming);
                 if (aiming) {
@@ -1572,9 +1571,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                         Entity.LOC_NONE, AimingMode.NONE, false);
                 clientgui.getUnitDisplay().wPan.setTarget(target, null);
             }
-            int effectiveDistance = Compute.effectiveDistance(game, ce(), target);
+            int effectiveDistance = Compute.effectiveDistance(game, attacker, target);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
-            Mounted<?> m = ce().getEquipment(weaponId);
+            Mounted<?> m = attacker.getEquipment(weaponId);
             // If we have a Centurion Weapon System selected, we may need to
             // update ranges.
             if (m.getType().hasFlag(WeaponType.F_CWS)) {
@@ -1602,7 +1601,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 clientgui.getUnitDisplay().wPan.setToHit(toHit);
                 setFireEnabled(true);
             } else {
-                boolean natAptGunnery = ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+                boolean natAptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
                 clientgui.getUnitDisplay().wPan.setToHit(toHit, natAptGunnery);
 
                 setFireEnabled(true);
@@ -1614,9 +1613,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             clientgui.getUnitDisplay().wPan.clearToHit();
         }
 
-        if ((clientgui.getDisplayedUnit() != null) && (clientgui.getDisplayedUnit().equals(ce()))
+        if ((clientgui.getDisplayedUnit() != null) && (clientgui.getDisplayedUnit().equals(attacker))
                 && !isStrafing && (weaponId != -1)) {
-            adaptFireModeEnabled(ce().getEquipment(weaponId));
+            adaptFireModeEnabled(attacker.getEquipment(weaponId));
         } else {
             setFireModeEnabled(false);
         }
@@ -1627,7 +1626,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         updateClearTurret();
 
         // Hidden units can only spot
-        if ((ce() != null) && ce().isHidden()) {
+        if ((attacker != null) && attacker.isHidden()) {
             setFireEnabled(false);
             setTwistEnabled(false);
             setFindClubEnabled(false);
@@ -1638,20 +1637,21 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     /**
-     * A VTOL or LAM in airmek mode making a bombing or strafing attack already has
-     * the target set
-     * during the movement phase.
+     * A VTOL or LAM in airmek mode making a bombing or strafing attack already has the target set during the movement
+     * phase.
      */
     void updateVTOLGroundTarget() {
         clientgui.getBoardView().clearStrafingCoords();
         target(null);
         isStrafing = false;
         strafingCoords.clear();
-        if (ce().isBomber() && ((IBomber) ce()).isVTOLBombing()) {
-            target(((IBomber) ce()).getVTOLBombTarget());
+        Entity attacker = ce();
+        if ((attacker instanceof IBomber bomber) && attacker.isBomber() && bomber.isVTOLBombing()) {
+            // IBomber and isBomber are not equivalent; instanceof helps with pattern variable and null check
+            target(bomber.getVTOLBombTarget());
             clientgui.getBoardView().addStrafingCoords(target.getPosition());
-        } else if ((ce() instanceof VTOL) && !((VTOL) ce()).getStrafingCoords().isEmpty()) {
-            strafingCoords.addAll(((VTOL) ce()).getStrafingCoords());
+        } else if ((attacker instanceof VTOL vtol) && !vtol.getStrafingCoords().isEmpty()) {
+            strafingCoords.addAll(vtol.getStrafingCoords());
             strafingCoords.forEach(c -> clientgui.getBoardView().addStrafingCoords(c));
             isStrafing = true;
         }
@@ -1708,17 +1708,15 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return;
         }
 
-        shiftheld = event.isShiftHeld();
-
         if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if ((ce() != null) && !ce().getAlreadyTwisted() && (shiftheld || twisting)) {
+            if ((ce() != null) && !ce().getAlreadyTwisted() && (event.isShiftHeld() || twisting)) {
                 updateFlipArms(false);
                 torsoTwist(event.getCoords());
             }
             event.getBoardView().cursor(event.getCoords());
         } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            if (!shiftheld) {
+            if (!event.isShiftHeld()) {
                 event.getBoardView().select(event.getCoords());
             }
         }
@@ -1730,25 +1728,25 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return;
         }
 
-        Coords evtCoords = b.getCoords();
-        if (isMyTurn() && (evtCoords != null) && (ce() != null)) {
+        Coords coords = b.getCoords();
+        if (isMyTurn() && (coords != null) && (ce() != null)) {
             if (isStrafing) {
-                if (validStrafingCoord(evtCoords)) {
-                    strafingCoords.add(evtCoords);
-                    b.getBoardView().addStrafingCoords(evtCoords);
+                if (validStrafingCoord(coords)) {
+                    strafingCoords.add(coords);
+                    b.getBoardView().addStrafingCoords(coords);
                     updateStrafingTargets();
                 }
-            } else if (!evtCoords.equals(ce().getPosition())) {
+            } else if (!coords.equals(ce().getPosition())) {
                 // HACK : sometimes we don't show the target choice window
-                Targetable targ = null;
+                Targetable target = null;
                 if (showTargetChoice) {
-                    targ = chooseTarget(evtCoords, b.getBoardId());
+                    target = chooseTarget(coords, b.getBoardId());
                 }
-                if (shiftheld) {
+                if (b.isShiftHeld()) {
                     updateFlipArms(false);
                     torsoTwist(b.getCoords());
-                } else if (targ != null && !ce().isMakingVTOLGroundAttack()) {
-                    if ((targ instanceof Entity entTarg) && Compute.isGroundToAir(ce(), targ)) {
+                } else if (target != null && !ce().isMakingVTOLGroundAttack()) {
+                    if ((target instanceof Entity entTarg) && Compute.isGroundToAir(ce(), target)) {
                         boolean alreadyShotAt = false;
                         List<EntityAction> actions = game.getActionsVector();
                         for (EntityAction action : actions) {
@@ -1759,10 +1757,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                             }
                         }
                         if (!alreadyShotAt) {
-                            entTarg.setPlayerPickedPassThrough(currentEntity, evtCoords);
+                            entTarg.setPlayerPickedPassThrough(currentEntity, coords);
                         }
                     }
-                    target(targ);
+                    target(target);
                 }
             }
         }
@@ -2121,12 +2119,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         Targetable choice = null;
 
         int wn = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        Mounted<?> weap = ce().getEquipment(wn);
+        Mounted<?> weapon = ce().getEquipment(wn);
 
         // Check for weapon/ammo types that should automatically target hexes
-        if ((weap != null) && (weap.getLinked() != null)
-                && (weap.getLinked().getType() instanceof AmmoType)) {
-            AmmoType aType = (AmmoType) weap.getLinked().getType();
+        if ((weapon != null) && (weapon.getLinked() != null)
+                && (weapon.getLinked().getType() instanceof AmmoType)) {
+            AmmoType aType = (AmmoType) weapon.getLinked().getType();
             EnumSet<AmmoType.Munitions> munitionType = aType.getMunitionType();
             // Mek mortar flares should default to deliver flare
             if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
@@ -2183,7 +2181,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (targets.isEmpty()) {
             Hex hex = board.getHex(pos);
             if (hex.hasVegetation()) {
-                targets.add(new HexTarget(pos, Targetable.TYPE_HEX_CLEAR));
+                targets.add(new HexTarget(pos, boardId, Targetable.TYPE_HEX_CLEAR));
             }
         }
 

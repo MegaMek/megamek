@@ -171,7 +171,7 @@ public class BoardLocation implements Serializable {
         if (isNoLocation) {
             return "No Location";
         } else {
-            return coords.getBoardNum() + " (Map Id: " + boardId + ")";
+            return coords.getBoardNum() + " (Board Id: " + boardId + ")";
         }
     }
 

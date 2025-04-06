@@ -26,6 +26,7 @@ import megamek.common.Entity;
 
 import java.awt.event.InputEvent;
 import java.io.Serial;
+import java.util.EventObject;
 import java.util.Optional;
 
 /**
@@ -33,12 +34,19 @@ import java.util.Optional;
  *
  * @see BoardViewListener
  */
-public class BoardViewEvent extends java.util.EventObject {
+public class BoardViewEvent extends EventObject {
     @Serial
     private static final long serialVersionUID = -4823618884833399318L;
 
+    /**
+     * This event type is sent when the mouse button is released (BOARD_HEX_DRAGGED is sent when the button is pressed)
+     */
     public static final int BOARD_HEX_CLICKED = 0;
     public static final int BOARD_HEX_DOUBLE_CLICKED = 1;
+
+    /**
+     * This event type is sent when the mouse button is pressed (BOARD_HEX_CLICKED is sent when the button is released)
+     */
     public static final int BOARD_HEX_DRAGGED = 2;
 
     public static final int BOARD_HEX_CURSOR = 3;
@@ -147,10 +155,10 @@ public class BoardViewEvent extends java.util.EventObject {
     }
 
     public boolean isAltHeld() {
-        return (getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+        return (getModifiers() & InputEvent.ALT_DOWN_MASK) != 0;
     }
 
     public boolean isCtrlHeld() {
-        return (getModifiers() & InputEvent.ALT_DOWN_MASK) != 0;
+        return (getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0;
     }
 }

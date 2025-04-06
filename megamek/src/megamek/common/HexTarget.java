@@ -13,31 +13,38 @@
  */
 package megamek.common;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HexTarget implements Targetable {
+    @Serial
     private static final long serialVersionUID = -5742445409423125942L;
-    private Coords m_coords;
+
+    private final Coords coords;
     private final int boardId;
-    private boolean m_bIgnite;
-    private int m_type;
+    private final boolean isIgnite;
+    private final int type;
     private HexTarget originalTarget = null;
     private int targetLevel = 0;
 
     // Legacy: Needs to be replaced with the other constructor
     public HexTarget(Coords c, int nType) {
-        m_coords = c;
-        m_type = nType;
-        m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
+        coords = c;
+        type = nType;
+        isIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
         boardId = 0;
     }
 
     public HexTarget(Coords c, int boardId, int nType) {
-        m_coords = c;
+        coords = c;
         this.boardId = boardId;
-        m_type = nType;
-        m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
+        type = nType;
+        isIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
+    }
+
+    public HexTarget(Coords c, Board board, int nType) {
+        this(c, board.getBoardId(), nType);
     }
 
     public HexTarget(BoardLocation boardLocation, int nType) {
@@ -51,7 +58,7 @@ public class HexTarget implements Targetable {
 
     @Override
     public int getTargetType() {
-        return m_type;
+        return type;
     }
 
     @Override
@@ -77,7 +84,7 @@ public class HexTarget implements Targetable {
 
     @Override
     public Coords getPosition() {
-        return m_coords;
+        return coords;
     }
 
     @Override
@@ -102,50 +109,28 @@ public class HexTarget implements Targetable {
 
     @Override
     public boolean isImmobile() {
-        return ((m_type != Targetable.TYPE_HEX_BOMB) && (m_type != Targetable.TYPE_HEX_AERO_BOMB));
+        return ((type != Targetable.TYPE_HEX_BOMB) && (type != Targetable.TYPE_HEX_AERO_BOMB));
     }
 
     @Override
     public String getDisplayName() {
-        final String name;
-        switch (m_type) {
-            case Targetable.TYPE_FLARE_DELIVER:
-                name = Messages.getString("HexTarget.DeliverFlare");
-                break;
-            case Targetable.TYPE_MINEFIELD_DELIVER:
-                name = Messages.getString("HexTarget.DeliverMinefield");
-                break;
-            case Targetable.TYPE_HEX_BOMB:
-            case Targetable.TYPE_HEX_AERO_BOMB:
-                name = Messages.getString("HexTarget.Bomb");
-                break;
-            case Targetable.TYPE_HEX_CLEAR:
-                name = Messages.getString("HexTarget.Clear");
-                break;
-            case Targetable.TYPE_HEX_IGNITE:
-                name = Messages.getString("HexTarget.Ignite");
-                break;
-            case Targetable.TYPE_HEX_ARTILLERY:
-                name = Messages.getString("HexTarget.Artillery");
-                break;
-            case Targetable.TYPE_HEX_EXTINGUISH:
-                name = Messages.getString("HexTarget.Extinguish");
-                break;
-            case Targetable.TYPE_HEX_SCREEN:
-                name = Messages.getString("HexTarget.Screen");
-                break;
-            case Targetable.TYPE_HEX_TAG:
-                name = Messages.getString("HexTarget.Tag");
-                break;
-            default:
-                name = "";
-                break;
-        }
-        return "Hex: " + m_coords.getBoardNum() + name;
+        final String name = switch (type) {
+            case Targetable.TYPE_FLARE_DELIVER -> Messages.getString("HexTarget.DeliverFlare");
+            case Targetable.TYPE_MINEFIELD_DELIVER -> Messages.getString("HexTarget.DeliverMinefield");
+            case Targetable.TYPE_HEX_BOMB, Targetable.TYPE_HEX_AERO_BOMB -> Messages.getString("HexTarget.Bomb");
+            case Targetable.TYPE_HEX_CLEAR -> Messages.getString("HexTarget.Clear");
+            case Targetable.TYPE_HEX_IGNITE -> Messages.getString("HexTarget.Ignite");
+            case Targetable.TYPE_HEX_ARTILLERY -> Messages.getString("HexTarget.Artillery");
+            case Targetable.TYPE_HEX_EXTINGUISH -> Messages.getString("HexTarget.Extinguish");
+            case Targetable.TYPE_HEX_SCREEN -> Messages.getString("HexTarget.Screen");
+            case Targetable.TYPE_HEX_TAG -> Messages.getString("HexTarget.Tag");
+            default -> "";
+        };
+        return "Hex: " + getBoardLocation() + name;
     }
 
     public boolean isIgniting() {
-        return m_bIgnite;
+        return isIgnite;
     }
 
     /** Allows a 9999 x 999 map and board IDs up to 200 */
@@ -173,28 +158,16 @@ public class HexTarget implements Targetable {
         return sideTable(src);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Targetable#isOffBoard()
-     */
     @Override
     public boolean isOffBoard() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Targetable#isAirborne()
-     */
     @Override
     public boolean isAirborne() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Targetable#isAirborneVTOLorWIGE()
-     */
     @Override
     public boolean isAirborneVTOLorWIGE() {
         return false;
@@ -222,12 +195,12 @@ public class HexTarget implements Targetable {
 
     // For artillery leading
     public void setOriginalTarget(HexTarget target) {
-        this.originalTarget = target;
+        originalTarget = target;
     }
 
     // For artillery leading
     public HexTarget getOriginalTarget() {
-        return this.originalTarget;
+        return originalTarget;
     }
 
     // For bombing
@@ -241,6 +214,6 @@ public class HexTarget implements Targetable {
 
     @Override
     public String toString() {
-        return "HexTarget (type %d): %s; Board #%d".formatted(m_type, getPosition(), boardId);
+        return "HexTarget (type %d): %s; Board #%d".formatted(type, getPosition(), boardId);
     }
 }

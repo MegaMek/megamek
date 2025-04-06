@@ -568,10 +568,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      */
     private void handleCounterBatteryObservation(WeaponAttackAction aaa, Coords targetPos,
             Vector<Report> vPhaseReport) {
-        // if the round landed on the board, and the attacker is an off-board artillery
-        // piece
-        // then check to see if the hex where it landed can be seen by anyone on an
-        // opposing team
+        // if the round landed on the board, and the attacker is an off-board artillery piece
+        // then check to see if the hex where it landed can be seen by anyone on an opposing team
         // if so, mark the attacker so that it can be targeted by counter-battery fire
         if (game.getBoard().contains(targetPos)) {
             HexTarget hexTarget = new HexTarget(targetPos, Targetable.TYPE_HEX_ARTILLERY);

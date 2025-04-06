@@ -30,8 +30,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -171,7 +174,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             clientgui.getClient().sendChat("Pausing the game only works when only bot units remain.");
         } else {
             clientgui.getClient().sendChat("Requesting game pause.");
-            ((AbstractClient) clientgui.getClient()).sendPause();
+            clientgui.getClient().sendPause();
         }
     }
 

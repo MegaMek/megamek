@@ -4992,10 +4992,6 @@ public abstract class Entity extends TurnOrdered
      * @return true if there was room for the critical
      */
     public boolean addCritical(int loc, CriticalSlot cs, int slotNumber) {
-        if (slotNumber >= getNumberOfCriticals(loc)) {
-            return false;
-        }
-
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             if (getCritical(loc, slotNumber) == null) {
                 crits[loc][slotNumber] = cs;

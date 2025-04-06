@@ -50,16 +50,12 @@ import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Roll;
 import megamek.common.annotations.Nullable;
 import megamek.common.commandline.AbstractCommandLineParser.ParseException;
-import megamek.common.enums.GamePhase;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
@@ -1369,80 +1365,6 @@ public class Server implements Runnable {
 
     private void wargamesResponse() {
         sendServerChat(WARGAMES_RESPONSE);
-        wargamesAttack(3, new Random().nextInt(5, 13));
-    }
-
-    private void wargamesAttack(int rounds, int numberOfStrikes) {
-        if (rounds <= 0) {
-            return;
-        }
-
-        if (this.getGame() != null && this.getGame().getBoard() != null) {
-            int height = this.getGame().getBoard().getHeight();
-            int width = this.getGame().getBoard().getWidth(); // Fixed width retrieval
-
-            Random random = new Random();
-            List<Coords> selectedCoords = new ArrayList<>();
-
-            int maxAttempts = 100;
-            int maxStrikes = rounds == 1 ? numberOfStrikes : new Random().nextInt(1, numberOfStrikes + 1);
-            for (int i = 0; i < maxStrikes; i++) {
-                Coords newCoord = null;
-
-                for (int attempt = 0; attempt < maxAttempts; attempt++) {
-                    int x = random.nextInt(width);
-                    int y = random.nextInt(height);
-                    Coords candidate = new Coords(x, y);
-
-                    boolean isValid = true;
-                    for (Coords coords : selectedCoords) {
-                        int dx = Math.abs(coords.getX() - x);
-                        int dy = Math.abs(coords.getY() - y);
-                        if (Math.max(dx, dy) <= 9) {
-                            isValid = false;
-                            break;
-                        }
-                    }
-
-                    if (isValid) {
-                        newCoord = candidate;
-                        break;
-                    }
-                }
-
-                if (newCoord != null) {
-                    selectedCoords.add(newCoord);
-                } else {
-                    break; // Stop if we can't find a valid coordinate
-                }
-            }
-
-            if (!selectedCoords.isEmpty()) {
-                sendServerChat("!!!WARNING!!! LAUNCH OF STRATEGIC WEAPONS DETECTED");
-                sendServerChat("!!!WARNING!!! LAUNCH OF STRATEGIC WEAPONS DETECTED");
-                sendServerChat("!!!WARNING!!! LAUNCH OF STRATEGIC WEAPONS DETECTED");
-            }
-
-            for (Coords coords : selectedCoords) {
-                numberOfStrikes--;
-                processCommand(SERVER_CONN, "/ob " + coords.getX() + 1 + " " + coords.getY() + 1);
-                sendServerChat("DANGER ZONE: Incoming strategic strike at " +
-                                     (coords.getX() + 1) +
-                                     ", " +
-                                     (coords.getY() + 1));
-            }
-        }
-
-        final int strikesRemaining = numberOfStrikes;
-        this.getGame().addGameListener(new GameListenerAdapter() {
-            @Override
-            public void gamePhaseChange(GamePhaseChangeEvent e) {
-                if (e.getNewPhase() == GamePhase.PREMOVEMENT) {
-                    wargamesAttack(rounds - 1, strikesRemaining);
-                    getGame().removeGameListener(this);
-                }
-            }
-        });
     }
 
     /**

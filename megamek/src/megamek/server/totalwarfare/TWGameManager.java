@@ -56,7 +56,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
-import megamek.common.internationalization.Internationalization;
+import megamek.common.internationalization.I18n;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
@@ -31481,7 +31481,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // {entity} fell into a hole and was never seen again
         addReport(destroyEntity(entity,
-              Internationalization.getText("TWGameManager.report.ultra_sublevel.text"),
+              I18n.getText("TWGameManager.report.ultra_sublevel.text"),
               false,
               false));
         addNewLines();

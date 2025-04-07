@@ -46,6 +46,7 @@ public final class UIUtil {
      * The width for a tooltip displayed to the side of a dialog using one of TipXX classes.
      */
     private static final int TOOLTIP_WIDTH = 300;
+    private static final int DEFAULT_DPI = 96;
 
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
     public static final int FONT_SCALE1 = 14;
@@ -491,6 +492,28 @@ public final class UIUtil {
         int pixelPerInch = Toolkit.getDefaultToolkit().getScreenResolution();
         return DEFAULT_DISPLAY_PPI * monitorH / pixelPerInch;
     }
+
+    /**
+     * Calculate the DPI scale factor for a component
+     * 
+     * @param component The component to get scaling information from
+     * @return The scaling factor based on DPI
+     */
+    public static float getDpiScaleFactor(Component component) {
+        GraphicsConfiguration gc = null;
+        if (component != null) {
+            gc = component.getGraphicsConfiguration();
+        }
+        if (gc == null) {
+            // Fallback to default GraphicsEnvironment if component doesn't have a GraphicsConfiguration
+            gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        }
+        // Get screen resolution
+        int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+        // Calculate scale factor (compared to reference 96 DPI)
+        return (float) dpi / DEFAULT_DPI;
+    }
+
 
     /**
      * @return The height of the screen taking into account display scaling

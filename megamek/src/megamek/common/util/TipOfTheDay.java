@@ -120,7 +120,7 @@ public class TipOfTheDay {
     /**
      * Draws the Tip of the Day text with word wrap and styling.
      */
-    public void drawTipOfTheDay(Graphics2D g2d, Rectangle referenceBounds, boolean positionBottom) {
+    public void drawTipOfTheDay(Graphics2D graphics2D, Rectangle referenceBounds, boolean positionBottom) {
         if (tipOfTheDay == null || tipOfTheDay.isEmpty() || tipLabelFont == null || tipFont == null) {
             return;
         }
@@ -131,7 +131,7 @@ public class TipOfTheDay {
         if (availableWidth <= 0)
             return; // Not enough space to draw
 
-        Graphics2D g = (Graphics2D) g2d.create();
+        Graphics2D g = (Graphics2D) graphics2D.create();
 
         try {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

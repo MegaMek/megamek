@@ -21597,9 +21597,8 @@ public class TWGameManager extends AbstractGameManager {
             reports.addAll(breachLocation(en, loc, null, true));
         }
 
-        // HarJel II/III hits trigger another possible critical hit on
-        // the same location
-        // it's like an ammunition explosion---a secondary effect
+        // HarJel II/III hits trigger another possible critical hit on the same location it's like an ammunition
+        // explosion---a secondary effect
         if (secondaryEffects &&
                   (eqType instanceof MiscType) &&
                   (eqType.hasFlag(MiscType.F_HARJEL_II) || eqType.hasFlag(MiscType.F_HARJEL_III)) &&
@@ -21611,8 +21610,7 @@ public class TWGameManager extends AbstractGameManager {
             reports.addAll(criticalEntity(en, loc, false, 0, 0));
         }
 
-        // If the item is the ECM suite of a Mek Stealth system
-        // then it's destruction turns off the stealth.
+        // If the item is the ECM suite of a Mek Stealth system then it's destruction turns off the stealth.
         if (!hitBefore &&
                   (eqType instanceof MiscType) &&
                   eqType.hasFlag(MiscType.F_ECM) &&
@@ -21627,8 +21625,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Handle equipment explosions.
-        // Equipment explosions are secondary effects and
-        // do not occur when loading from a scenario.
+        // Equipment explosions are secondary effects and do not occur when loading from a scenario.
         if (((secondaryEffects && eqType.isExplosive(mounted)) ||
                    mounted.isHotLoaded() ||
                    (mounted.hasChargedCapacitor() != 0)) && !hitBefore) {
@@ -21640,9 +21637,8 @@ public class TWGameManager extends AbstractGameManager {
             mounted.setShotsLeft(0);
         }
 
-        // LAMs that are part of a fighter squadron will need to have the squadron
-        // recalculate
-        // the bomb load out on a bomb bay critical.
+        // LAMs that are part of a fighter squadron will need to have the squadron recalculate the bomb load out on a
+        // bomb bay critical.
         if (en.isPartOfFighterSquadron() &&
                   (mounted.getType() instanceof MiscType) &&
                   mounted.getType().hasFlag(MiscType.F_BOMB_BAY)) {
@@ -26054,7 +26050,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * remove fire from a hex
      *
-     * @param fireCoords {@link Coords] of the hex on fire.
+     * @param fireCoords {@link Coords} of the hex on fire.
      * @param reason     Reason to remove the fire.
      */
     public void removeFire(Coords fireCoords, String reason) {

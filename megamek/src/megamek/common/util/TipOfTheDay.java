@@ -131,15 +131,15 @@ public class TipOfTheDay {
         if (availableWidth <= 0)
             return; // Not enough space to draw
 
-        Graphics2D g = (Graphics2D) graphics2D.create();
+        Graphics2D tipGraphics = (Graphics2D) graphics2D.create();
 
         try {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+            tipGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            tipGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            tipGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            tipGraphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-            FontRenderContext frc = g.getFontRenderContext();
+            FontRenderContext frc = tipGraphics.getFontRenderContext();
 
             // "Tip of the Day:" label
             AttributedString labelAS = new AttributedString(tipLabel);
@@ -181,19 +181,19 @@ public class TipOfTheDay {
 
             // Draw the text (outline then fill)
             BasicStroke outlineStroke = new BasicStroke(STROKE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-            g.setStroke(outlineStroke);
+            tipGraphics.setStroke(outlineStroke);
 
             // Draw Label
             float labelDrawX = startX + (availableWidth - labelWidth) / 2; // Center label
             float labelDrawY = startY + labelLayout.getAscent();
             Shape labelShape = labelLayout.getOutline(null);
 
-            g.translate(labelDrawX, labelDrawY);
-            g.setColor(TIP_STROKE_COLOR);
-            g.draw(labelShape); // Draw outline
-            g.setColor(TIP_TITLE_FONT_COLOR); // Fill color
-            g.fill(labelShape); // Draw fill
-            g.translate(-labelDrawX, -labelDrawY); // Translate back
+            tipGraphics.translate(labelDrawX, labelDrawY);
+            tipGraphics.setColor(TIP_STROKE_COLOR);
+            tipGraphics.draw(labelShape); // Draw outline
+            tipGraphics.setColor(TIP_TITLE_FONT_COLOR); // Fill color
+            tipGraphics.fill(labelShape); // Draw fill
+            tipGraphics.translate(-labelDrawX, -labelDrawY); // Translate back
 
             // Draw Tip Lines
             float currentY = startY + labelHeight; // Start drawing tips below the label
@@ -206,16 +206,16 @@ public class TipOfTheDay {
                 float lineDrawX = startX + (availableWidth - lineWidth) / 2f; // Center line
                 lineDrawX = Math.max(startX, lineDrawX); // Ensure it doesn't go out of bounds
                 Shape tipShape = tipLayout.getOutline(AffineTransform.getTranslateInstance(lineDrawX, lineDrawY));
-                g.setColor(TIP_STROKE_COLOR); // Outline color
-                g.draw(tipShape); // Draw outline
-                g.setColor(TIP_FONT_COLOR); // Fill color
-                g.fill(tipShape); // Draw fill
+                tipGraphics.setColor(TIP_STROKE_COLOR); // Outline color
+                tipGraphics.draw(tipShape); // Draw outline
+                tipGraphics.setColor(TIP_FONT_COLOR); // Fill color
+                tipGraphics.fill(tipShape); // Draw fill
 
                 currentY += lineHeight;
             }
 
         } finally {
-            g.dispose();
+            tipGraphics.dispose();
         }
     }
 

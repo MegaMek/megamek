@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.ImageObserver;
 import java.net.URL;
 import java.util.ArrayList;
@@ -43,7 +44,8 @@ public final class UIUtil {
     private static final int DEFAULT_DISPLAY_PPI = 96;
 
     /**
-     * The width for a tooltip displayed to the side of a dialog using one of TipXX classes.
+     * The width for a tooltip displayed to the side of a dialog using one of TipXX
+     * classes.
      */
     private static final int TOOLTIP_WIDTH = 300;
     private static final int DEFAULT_DPI = 96;
@@ -80,21 +82,24 @@ public final class UIUtil {
     }
 
     /**
-     * Returns an HTML FONT tag setting the font face to Dialog and the font size according to GUIScale.
+     * Returns an HTML FONT tag setting the font face to Dialog and the font size
+     * according to GUIScale.
      */
     public static String fontHTML() {
         return "<FONT FACE=Dialog>";
     }
 
     /**
-     * Returns an HTML FONT tag setting the color to the given col and the font face to Dialog.
+     * Returns an HTML FONT tag setting the color to the given col and the font face
+     * to Dialog.
      */
     public static String fontHTML(Color col) {
         return "<FONT FACE=Dialog " + colorString(col) + ">";
     }
 
     /**
-     * Returns an HTML FONT tag setting the font face to Dialog and the font size according to the given scale delta,
+     * Returns an HTML FONT tag setting the font face to Dialog and the font size
+     * according to the given scale delta,
      * where the font size target is standard font size * (1 + deltaScale)
      */
     public static String fontHTML(float deltaScale) {
@@ -121,7 +126,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a span of the given CSS class with opening and closing tag and the content in between. The class should
+     * Returns a span of the given CSS class with opening and closing tag and the
+     * content in between. The class should
      * be defined in the header styles block, e.g. as
      * <code>.myspan { ... }</code>,
      * then it can be given as "myspan" here.
@@ -136,7 +142,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns an anchor with opening and closing tag and the content in between. Used for internal navigation in a
+     * Returns an anchor with opening and closing tag and the content in between.
+     * Used for internal navigation in a
      * document
      *
      * @param anchorId the name of the anchor
@@ -170,7 +177,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a div of the given CSS class with opening and closing tag and the content in between. The class should be
+     * Returns a div of the given CSS class with opening and closing tag and the
+     * content in between. The class should be
      * defined in the header styles block, e.g. as
      * <code>.mydiv { ... }</code>,
      * then it can be given as "mydiv" here.
@@ -185,7 +193,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a TD table cell of the given CSS class with opening and closing tag and the content in between. The class
+     * Returns a TD table cell of the given CSS class with opening and closing tag
+     * and the content in between. The class
      * should be defined in the header styles block, e.g. as
      * <code>.mycell { ... }</code>, then it
      * can be given as "mycell" here.
@@ -200,7 +209,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a TD table cell of the given CSS class with opening and closing tag and the content in between (as text).
+     * Returns a TD table cell of the given CSS class with opening and closing tag
+     * and the content in between (as text).
      * The class should be defined in the header styles block, e.g. as
      * <code>.mycell { ... }</code>, then it
      * can be given as "mycell" here.
@@ -215,9 +225,12 @@ public final class UIUtil {
     }
 
     /**
-     * Helper method to place Strings in lines according to length. The Strings in origList will be added to one line
-     * with separator sep between them as long as the total length does not exceed maxLength. If it exceeds maxLength, a
-     * new line is begun. All lines but the last will end with sep if sepAtEnd is true.
+     * Helper method to place Strings in lines according to length. The Strings in
+     * origList will be added to one line
+     * with separator sep between them as long as the total length does not exceed
+     * maxLength. If it exceeds maxLength, a
+     * new line is begun. All lines but the last will end with sep if sepAtEnd is
+     * true.
      */
     public static ArrayList<String> arrangeInLines(List<String> origList, int maxLength, String sep, boolean sepAtEnd) {
 
@@ -259,7 +272,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a UIManager Color that can be used as an alternate row color in a table to offset each other row.
+     * Returns a UIManager Color that can be used as an alternate row color in a
+     * table to offset each other row.
      */
     public static Color alternateTableBGColor() {
         Color result = UIManager.getColor("Table.alternateRowColor");
@@ -279,7 +293,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns the Color associated with either enemies, allies or oneself from the GUIPreferences depending on the
+     * Returns the Color associated with either enemies, allies or oneself from the
+     * GUIPreferences depending on the
      * relation of the given player1 and player2.
      */
     public static Color teamColor(Player player1, Player player2) {
@@ -293,7 +308,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a green color suitable as a text color. The supplied color depends on the UI look and feel and will be
+     * Returns a green color suitable as a text color. The supplied color depends on
+     * the UI look and feel and will be
      * lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiGreen() {
@@ -301,7 +317,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a gray color suitable as a text color. The supplied color depends on the UI look and feel and will be
+     * Returns a gray color suitable as a text color. The supplied color depends on
+     * the UI look and feel and will be
      * lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiGray() {
@@ -309,7 +326,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a light blue color suitable as a text color. The supplied color depends on the UI look and feel and will
+     * Returns a light blue color suitable as a text color. The supplied color
+     * depends on the UI look and feel and will
      * be lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiLightBlue() {
@@ -317,7 +335,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a light red color suitable as a text color. The supplied color depends on the UI look and feel and will
+     * Returns a light red color suitable as a text color. The supplied color
+     * depends on the UI look and feel and will
      * be lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiLightRed() {
@@ -325,7 +344,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a light violet color suitable as a text color. The supplied color depends on the UI look and feel and
+     * Returns a light violet color suitable as a text color. The supplied color
+     * depends on the UI look and feel and
      * will be lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiLightViolet() {
@@ -333,7 +353,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a light green color suitable as a text color. The supplied color depends on the UI look and feel and will
+     * Returns a light green color suitable as a text color. The supplied color
+     * depends on the UI look and feel and will
      * be lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiLightGreen() {
@@ -341,7 +362,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a yellow color suitable as a text color. The supplied color depends on the UI look and feel and will be
+     * Returns a yellow color suitable as a text color. The supplied color depends
+     * on the UI look and feel and will be
      * lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiYellow() {
@@ -349,7 +371,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a light red color suitable as a text color. The supplied color depends on the UI look and feel and will
+     * Returns a light red color suitable as a text color. The supplied color
+     * depends on the UI look and feel and will
      * be lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiBlack() {
@@ -357,7 +380,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a light red color suitable as a text color. The supplied color depends on the UI look and feel and will
+     * Returns a light red color suitable as a text color. The supplied color
+     * depends on the UI look and feel and will
      * be lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiWhite() {
@@ -365,7 +389,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a color for the UI display of Quirks/Advantages. Different colors will be supplied for a dark and for a
+     * Returns a color for the UI display of Quirks/Advantages. Different colors
+     * will be supplied for a dark and for a
      * light UI look-and-feel.
      */
     public static Color uiQuirksColor() {
@@ -373,7 +398,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a color for the UI display of Partial Repairs. Different colors will be supplied for a dark and for a
+     * Returns a color for the UI display of Partial Repairs. Different colors will
+     * be supplied for a dark and for a
      * light UI look-and-feel.
      */
     public static Color uiPartialRepairColor() {
@@ -381,7 +407,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a color for the UI display of C3 Info. Different colors will be supplied for a dark and for a light UI
+     * Returns a color for the UI display of C3 Info. Different colors will be
+     * supplied for a dark and for a light UI
      * look-and-feel.
      */
     public static Color uiC3Color() {
@@ -389,7 +416,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a color for the UI display of C3 Info. Different colors will be supplied for a dark and for a light UI
+     * Returns a color for the UI display of C3 Info. Different colors will be
+     * supplied for a dark and for a light UI
      * look-and-feel.
      */
     public static Color uiNickColor() {
@@ -397,7 +425,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a color for the UI display of C3 Info. Different colors will be supplied for a dark and for a light UI
+     * Returns a color for the UI display of C3 Info. Different colors will be
+     * supplied for a dark and for a light UI
      * look-and-feel.
      */
     public static Color uiTTWeaponColor() {
@@ -405,7 +434,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a dark blue color suitable as a background color. The supplied color depends on the UI look and feel and
+     * Returns a dark blue color suitable as a background color. The supplied color
+     * depends on the UI look and feel and
      * will be darker for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiDarkBlue() {
@@ -413,7 +443,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns the given values multiplied by the current GUI scaling as a Dimension. Use this to adapt things that the
+     * Returns the given values multiplied by the current GUI scaling as a
+     * Dimension. Use this to adapt things that the
      * automatic scaling doesn't affect, e.g. images.
      *
      * @param width  the width of the Dimension
@@ -424,8 +455,10 @@ public final class UIUtil {
     }
 
     /**
-     * Returns the given value multiplied by the current GUI scaling. Use this to adapt things that the automatic
-     * scaling doesn't affect, e.g. images. Note that the given int value is scaled as a float and then rounded.
+     * Returns the given value multiplied by the current GUI scaling. Use this to
+     * adapt things that the automatic
+     * scaling doesn't affect, e.g. images. Note that the given int value is scaled
+     * as a float and then rounded.
      *
      * @param value The value to scale up or down according to the current GUI scale
      */
@@ -434,7 +467,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns the given value multiplied by the current GUI scaling. Use this to adapt things that the automatic
+     * Returns the given value multiplied by the current GUI scaling. Use this to
+     * adapt things that the automatic
      * scaling doesn't affect, e.g. images.
      *
      * @param value The value to scale up or down according to the current GUI scale
@@ -444,7 +478,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns the provided color with its alpha value set to the provided alpha. alpha should be from 0 to 255 with 0
+     * Returns the provided color with its alpha value set to the provided alpha.
+     * alpha should be from 0 to 255 with 0
      * meaning transparent.
      */
     public static Color addAlpha(Color color, int alpha) {
@@ -456,7 +491,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a grayed-out version of the given color. gray should be from 0 to 255 with 255 meaning completely gray.
+     * Returns a grayed-out version of the given color. gray should be from 0 to 255
+     * with 255 meaning completely gray.
      * Does not change the brightness, nor alpha.
      */
     public static Color addGray(Color color, int gray) {
@@ -494,6 +530,23 @@ public final class UIUtil {
     }
 
     /**
+     * Gets the DPI scale factor for the monitor containing the specified component
+     * 
+     * @param component The component to check
+     * @return The DPI scale factor for the containing monitor
+     */
+    public static float getDpiScaleFactorForMonitor(Component component) {
+        // Get the GraphicsConfiguration for the monitor containing this component
+        GraphicsConfiguration gc = (component != null) ? component.getGraphicsConfiguration() : null;
+        if (gc == null) {
+            return getDpiScaleFactor(component); //fallback
+        }
+        // Calculate the DPI scale for this specific monitor
+        AffineTransform transform = gc.getDefaultTransform();
+        return (float) transform.getScaleX();
+    }
+
+    /**
      * Calculate the DPI scale factor for a component
      * 
      * @param component The component to get scaling information from
@@ -505,7 +558,8 @@ public final class UIUtil {
             gc = component.getGraphicsConfiguration();
         }
         if (gc == null) {
-            // Fallback to default GraphicsEnvironment if component doesn't have a GraphicsConfiguration
+            // Fallback to default GraphicsEnvironment if component doesn't have a
+            // GraphicsConfiguration
             gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         }
         // Get screen resolution
@@ -513,7 +567,6 @@ public final class UIUtil {
         // Calculate scale factor (compared to reference 96 DPI)
         return (float) dpi / DEFAULT_DPI;
     }
-
 
     /**
      * @return The height of the screen taking into account display scaling
@@ -532,12 +585,13 @@ public final class UIUtil {
         int monitorW = currentMonitor.getWidth();
         int pixelPerInch = Toolkit.getDefaultToolkit().getScreenResolution();
         return new Dimension(DEFAULT_DISPLAY_PPI * monitorW / pixelPerInch,
-              DEFAULT_DISPLAY_PPI * monitorH / pixelPerInch);
+                DEFAULT_DISPLAY_PPI * monitorH / pixelPerInch);
     }
 
     /**
-     * @return an image with the same aspect ratio that fits within the given bounds, or the existing image if it
-     *       already does
+     * @return an image with the same aspect ratio that fits within the given
+     *         bounds, or the existing image if it
+     *         already does
      */
     public static Image constrainImageSize(Image image, ImageObserver observer, int maxWidth, int maxHeight) {
         int w = image.getWidth(observer);
@@ -558,7 +612,8 @@ public final class UIUtil {
     }
 
     /**
-     * @param multiResImageMap a collection of widths matched with corresponding image file path
+     * @param multiResImageMap a collection of widths matched with corresponding
+     *                         image file path
      * @param parent           component
      *
      * @return a JLabel setup to the correct size to act as a splash screen
@@ -567,8 +622,8 @@ public final class UIUtil {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = getScaledScreenSize(parent.getGraphicsConfiguration()
-                                                                .getDevice()
-                                                                .getDisplayMode());
+                .getDevice()
+                .getDisplayMode());
         Image imgSplash = parent.getToolkit().getImage(multiResImageMap.floorEntry(scaledMonitorSize.width).getValue());
 
         // wait for splash image to load completely
@@ -593,8 +648,8 @@ public final class UIUtil {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = getScaledScreenSize(parent.getGraphicsConfiguration()
-                                                                .getDevice()
-                                                                .getDisplayMode());
+                .getDevice()
+                .getDisplayMode());
 
         Image imgSplash = parent.getToolkit().getImage(imgSplashFile);
 
@@ -613,14 +668,15 @@ public final class UIUtil {
     /**
      * @param imgSplash         an image
      * @param observer          An imageObserver
-     * @param scaledMonitorSize the dimensions of the monitor taking into account display scaling
+     * @param scaledMonitorSize the dimensions of the monitor taking into account
+     *                          display scaling
      *
      * @return a JLabel setup to the correct size to act as a splash screen
      */
     public static JLabel createSplashComponent(Image imgSplash, ImageObserver observer, Dimension scaledMonitorSize) {
         JLabel splash;
         Dimension maxSize = new Dimension((int) (scaledMonitorSize.width * 0.75),
-              (int) (scaledMonitorSize.height * 0.75));
+                (int) (scaledMonitorSize.height * 0.75));
 
         if (imgSplash != null) {
             imgSplash = UIUtil.constrainImageSize(imgSplash, null, maxSize.width, maxSize.height);
@@ -631,7 +687,7 @@ public final class UIUtil {
         }
 
         Dimension splashDim = new Dimension(imgSplash == null ? maxSize.width : imgSplash.getWidth(observer),
-              imgSplash == null ? maxSize.height : imgSplash.getHeight(observer));
+                imgSplash == null ? maxSize.height : imgSplash.getHeight(observer));
 
         splash.setMaximumSize(splashDim);
         splash.setMinimumSize(splashDim);
@@ -651,15 +707,16 @@ public final class UIUtil {
 
         // center and size if out of bounds
         if ((pos.x < 0) ||
-                  (pos.y < 0) ||
-                  (pos.x + size.width > scaledScreenSize.width) ||
-                  (pos.y + size.height > scaledScreenSize.getHeight())) {
+                (pos.y < 0) ||
+                (pos.x + size.width > scaledScreenSize.width) ||
+                (pos.y + size.height > scaledScreenSize.getHeight())) {
             component.setLocationRelativeTo(null);
         }
     }
 
     /**
-     * Activates anti-aliasing and other high-quality settings for the given Graphics.
+     * Activates anti-aliasing and other high-quality settings for the given
+     * Graphics.
      *
      * @param graph Graphics context to use hq rendering for
      */
@@ -668,15 +725,16 @@ public final class UIUtil {
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                  RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                  RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         }
     }
 
     /**
-     * Updates all existing windows and frames. Use after a gui scale change or look-and-feel change.
+     * Updates all existing windows and frames. Use after a gui scale change or
+     * look-and-feel change.
      */
     public static void updateAfterUiChange() {
         for (Window window : Window.getWindows()) {
@@ -766,8 +824,10 @@ public final class UIUtil {
     }
 
     /**
-     * A JLabel with a specialized tooltip display. Displays the tooltip to the right side of the parent dialog, not
-     * following the mouse. Used in the player settings and planetary settings dialogs.
+     * A JLabel with a specialized tooltip display. Displays the tooltip to the
+     * right side of the parent dialog, not
+     * following the mouse. Used in the player settings and planetary settings
+     * dialogs.
      */
     public static class TipLabel extends JLabel {
 
@@ -801,8 +861,10 @@ public final class UIUtil {
     }
 
     /**
-     * A JButton with a specialized tooltip display. Displays the tooltip to the right side of the parent dialog, not
-     * following the mouse. Used in the player settings and planetary settings dialogs.
+     * A JButton with a specialized tooltip display. Displays the tooltip to the
+     * right side of the parent dialog, not
+     * following the mouse. Used in the player settings and planetary settings
+     * dialogs.
      */
     public static class TipButton extends JButton {
 
@@ -832,9 +894,11 @@ public final class UIUtil {
     }
 
     /**
-     * A MMComboBox with a specialized tooltip display. Displays the tooltip to the right side
+     * A MMComboBox with a specialized tooltip display. Displays the tooltip to the
+     * right side
      * <p>
-     * of the parent dialog, not following the mouse. Used in the player settings dialog.
+     * of the parent dialog, not following the mouse. Used in the player settings
+     * dialog.
      */
     public static class TipCombo<E> extends MMComboBox<E> {
 
@@ -872,7 +936,8 @@ public final class UIUtil {
     }
 
     /**
-     * A JList with a specialized tooltip display. Displays the tooltip to the right side of the parent dialog, not
+     * A JList with a specialized tooltip display. Displays the tooltip to the right
+     * side of the parent dialog, not
      * following the mouse.
      */
     public static class TipList<E> extends JList<E> {
@@ -907,8 +972,10 @@ public final class UIUtil {
     }
 
     /**
-     * A JTextField with a specialized tooltip display. Displays the tooltip to the right side of the parent dialog, not
-     * following the mouse. Can also display a hint text such as "..., ..." when empty. Used in the player settings and
+     * A JTextField with a specialized tooltip display. Displays the tooltip to the
+     * right side of the parent dialog, not
+     * following the mouse. Can also display a hint text such as "..., ..." when
+     * empty. Used in the player settings and
      * planetary settings dialogs.
      */
     public static class TipTextField extends JTextField {
@@ -993,7 +1060,8 @@ public final class UIUtil {
     }
 
     /**
-     * A JPanel with a specialized tooltip display. Displays the tooltip to the right side of the parent dialog, not
+     * A JPanel with a specialized tooltip display. Displays the tooltip to the
+     * right side of the parent dialog, not
      * following the mouse.
      */
     public static class TipPanel extends JPanel {
@@ -1028,8 +1096,10 @@ public final class UIUtil {
     }
 
     /**
-     * A JSlider with a specialized tooltip display. Displays the tooltip to the right side of the parent window
-     * (dialog), not following the mouse. Implement the missing super constructors as necessary.
+     * A JSlider with a specialized tooltip display. Displays the tooltip to the
+     * right side of the parent window
+     * (dialog), not following the mouse. Implement the missing super constructors
+     * as necessary.
      */
     public static class TipSlider extends JSlider {
 
@@ -1059,7 +1129,8 @@ public final class UIUtil {
     }
 
     /**
-     * A MMToggleButton with a specialized tooltip display. Displays the tooltip to the right side of the parent window
+     * A MMToggleButton with a specialized tooltip display. Displays the tooltip to
+     * the right side of the parent window
      * (dialog), not following the mouse.
      */
     public static class TipMMToggleButton extends MMToggleButton {
@@ -1090,18 +1161,24 @@ public final class UIUtil {
     }
 
     /**
-     * Completes the tooltip for a dialog using one of the TipXXX classes, setting its width and adding HTML tags.
+     * Completes the tooltip for a dialog using one of the TipXXX classes, setting
+     * its width and adding HTML tags.
      */
     public static String formatSideTooltip(String text) {
         return "<html><p width=" + scaleForGUI(TOOLTIP_WIDTH) + " style='padding:5'>" + text + "</html>";
     }
 
     /**
-     * This is a specialized JPanel for use with a button bar at the bottom of a dialog for when it's possible that the
-     * button bar has to wrap (is wider than the dialog and needs to use two or more rows for the buttons). With a
-     * normal JPanel the wrapped buttons just disappear. This Panel tries to detect when wrapping occurs and then
-     * extends vertically. Note that it will only extend to two rows, not more. But if three rows of buttons are used,
-     * this will be very obvious. The native FlowLayout should be kept for the buttons.
+     * This is a specialized JPanel for use with a button bar at the bottom of a
+     * dialog for when it's possible that the
+     * button bar has to wrap (is wider than the dialog and needs to use two or more
+     * rows for the buttons). With a
+     * normal JPanel the wrapped buttons just disappear. This Panel tries to detect
+     * when wrapping occurs and then
+     * extends vertically. Note that it will only extend to two rows, not more. But
+     * if three rows of buttons are used,
+     * this will be very obvious. The native FlowLayout should be kept for the
+     * buttons.
      */
     public static class WrappingButtonPanel extends JPanel {
         private static final long serialVersionUID = -6966176665047676553L;
@@ -1127,7 +1204,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a single menu item with the given text, the given command string cmd, the given enabled state, and
+     * Returns a single menu item with the given text, the given command string cmd,
+     * the given enabled state, and
      * assigned the given listener.
      */
     public static JMenuItem menuItem(String text, String cmd, boolean enabled, ActionListener listener) {
@@ -1136,7 +1214,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a single menu item with the given text, the given command string cmd, the given enabled state, and
+     * Returns a single menu item with the given text, the given command string cmd,
+     * the given enabled state, and
      * assigned the given listener. Also assigns the given key mnemonic.
      */
     public static JMenuItem menuItem(String text, String cmd, boolean enabled, ActionListener listener, int mnemonic) {
@@ -1152,7 +1231,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a Font object using the "Dialog" logic font. The font size 14. legacy from manual gui scaling. This
+     * Returns a Font object using the "Dialog" logic font. The font size 14. legacy
+     * from manual gui scaling. This
      * method should eventually be removed
      *
      * @deprecated since 0.50.04 - {@link #getDefaultFont()}
@@ -1170,11 +1250,12 @@ public final class UIUtil {
     }
 
     /**
-     * Returns true when a modal dialog such as the Camo Chooser or a Load Force dialog is currently shown.
+     * Returns true when a modal dialog such as the Camo Chooser or a Load Force
+     * dialog is currently shown.
      */
     public static boolean isModalDialogDisplayed() {
         return Stream.of(Window.getWindows())
-                     .anyMatch(w -> w.isShowing() && (w instanceof JDialog dialogWindow) && (dialogWindow.isModal()));
+                .anyMatch(w -> w.isShowing() && (w instanceof JDialog dialogWindow) && (dialogWindow.isModal()));
     }
 
     // PRIVATE
@@ -1203,9 +1284,12 @@ public final class UIUtil {
     private static final Color DARKUI_WHITE = new Color(255, 255, 255);
 
     /**
-     * Returns an HTML FONT Size String, according to GUIScale and deltaScale (e.g. "style=font-size:22"). The given
-     * deltaScale is added to the GUIScale value, so a positive deltaScale value will increase the font size. The
-     * adjusted GUIScale value will be kept within the limits of GUIScale. Suitable deltaScale values are usually
+     * Returns an HTML FONT Size String, according to GUIScale and deltaScale (e.g.
+     * "style=font-size:22"). The given
+     * deltaScale is added to the GUIScale value, so a positive deltaScale value
+     * will increase the font size. The
+     * adjusted GUIScale value will be kept within the limits of GUIScale. Suitable
+     * deltaScale values are usually
      * between -0.4 and +0.4
      */
     private static String sizeString(float deltaScale) {
@@ -1214,7 +1298,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns an HTML FONT Color String, e.g. COLOR=#FFFFFF according to the given color.
+     * Returns an HTML FONT Color String, e.g. COLOR=#FFFFFF according to the given
+     * color.
      */
     public static String colorString(Color col) {
         return " COLOR=" + Integer.toHexString(col.getRGB() & 0xFFFFFF) + " ";
@@ -1245,11 +1330,13 @@ public final class UIUtil {
     }
 
     /**
-     * Only place this is used is in the Skin Builder. If the Skin Builder can be worked without this method, it can be
+     * Only place this is used is in the Skin Builder. If the Skin Builder can be
+     * worked without this method, it can be
      * removed.
      *
-     * @return the 'virtual bounds' of the screen. That is, the union of the displayable space on all available screen
-     *       devices.
+     * @return the 'virtual bounds' of the screen. That is, the union of the
+     *         displayable space on all available screen
+     *         devices.
      *
      * @deprecated since 0.50.04 - Unknown replacement.
      */
@@ -1257,10 +1344,10 @@ public final class UIUtil {
     public static Rectangle getVirtualBounds() {
         final Rectangle bounds = new Rectangle();
         Stream.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
-              .map(GraphicsDevice::getConfigurations)
-              .flatMap(Stream::of)
-              .map(GraphicsConfiguration::getBounds)
-              .forEach(bounds::add);
+                .map(GraphicsDevice::getConfigurations)
+                .flatMap(Stream::of)
+                .map(GraphicsConfiguration::getBounds)
+                .forEach(bounds::add);
         return bounds;
     }
 
@@ -1270,10 +1357,10 @@ public final class UIUtil {
     public static void updateWindowBounds(Window window) {
         final Rectangle bounds = new Rectangle();
         Stream.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
-              .map(GraphicsDevice::getConfigurations)
-              .flatMap(Stream::of)
-              .map(GraphicsConfiguration::getBounds)
-              .forEach(bounds::add);
+                .map(GraphicsDevice::getConfigurations)
+                .flatMap(Stream::of)
+                .map(GraphicsConfiguration::getBounds)
+                .forEach(bounds::add);
 
         final Dimension size = window.getSize();
         final Point location = window.getLocation();
@@ -1302,7 +1389,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns the HTML/CSS color string for the given color, e.g. #FF0000 for red. Includes the #. Does not include any
+     * Returns the HTML/CSS color string for the given color, e.g. #FF0000 for red.
+     * Includes the #. Does not include any
      * alpha components.
      *
      * @param color The color to convert

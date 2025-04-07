@@ -43,7 +43,7 @@ import megamek.common.internationalization.Internationalization;
 /**
  * @author Drake
  * 
- *         Provides a daily/random tip functionality
+ * Provides a daily/random tip functionality
  */
 public class TipOfTheDay {
     private static final String TIP_BUNDLE_KEY = "TipOfTheDay.tip.";

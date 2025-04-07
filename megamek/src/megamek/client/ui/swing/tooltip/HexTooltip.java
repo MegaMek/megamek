@@ -36,7 +36,9 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 
 public final class HexTooltip {
 
-    public static String getHexTip(Hex mhex, @Nullable Client client, GUIPreferences GUIP) {
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    public static String getHexTip(Hex mhex, @Nullable Client client) {
         StringBuilder result = new StringBuilder();
         Coords mcoords = mhex.getCoords();
         // All of the following can be null even if there's a ClientGUI!
@@ -46,7 +48,7 @@ public final class HexTooltip {
 
         // Fuel Tank
         if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
-            String sFuelTank = "";
+            String sFuelTank;
             // In at least the BoardEditor and lobby map preview, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
             if ((game == null) || (game.getBoard().getBuildingAt(mcoords) == null)) {
@@ -171,7 +173,7 @@ public final class HexTooltip {
             }
         }
 
-        if ((game != null) && game.getGroundObjects(mcoords).size() > 0) {
+        if ((game != null) && !game.getGroundObjects(mcoords).isEmpty()) {
         	for (ICarryable groundObject : game.getGroundObjects(mcoords)) {
         		result.append("&nbsp");
                 String groundObj = groundObject.specificName();
@@ -185,8 +187,10 @@ public final class HexTooltip {
         return result.toString();
     }
 
-    public static String getBuildingTargetTip(BuildingTarget target, Board board, GUIPreferences GUIP) {
-        String result = "";
+    public static String getBuildingTargetTip(BuildingTarget target, Board board) {
+        if ((target == null) || (board == null)) {
+            return "Error - Could not create building tooltip";
+        }
         Coords mcoords = target.getPosition();
         Building bldg = board.getBuildingAt(mcoords);
         Hex mhex = board.getHex(mcoords);
@@ -205,9 +209,8 @@ public final class HexTooltip {
         String col = UIUtil.tag("TD", "", sBuilding);
         String row = UIUtil.tag("TR", "", col);
         attr = String.format("CELLSPACING=0 CELLPADDING=0 BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor()));
-        String table = UIUtil.tag("TABLE", attr, row);
 
-        return table;
+        return UIUtil.tag("TABLE", attr, row);
     }
 
     public static String getOneLineSummary(BuildingTarget target, Board board) {
@@ -229,7 +232,7 @@ public final class HexTooltip {
         String illuminated = UIUtil.tag("FONT", attr, " " + indicator);
         illuminated = DOT_SPACER + illuminated;
 
-        String result = "";
+        String result;
         StringBuilder sTerrain = new StringBuilder(
                 Messages.getString(
                         (inAtmosphere) ? "BoardView1.Tooltip.HexAlt": "BoardView1.Tooltip.Hex",
@@ -299,7 +302,7 @@ public final class HexTooltip {
 
         if (isMovement) {
             sTerrain += "<BR>";
-            String sDinstanceMove = "";
+            String sDinstanceMove;
             if (disPM == 1) {
                 sDinstanceMove = Messages.getString("BoardView1.Tooltip.DistanceMove1");
             } else {
@@ -315,7 +318,7 @@ public final class HexTooltip {
         return sTerrain;
     }
 
-    public static String getAttilleryHit(GUIPreferences GUIP, Game game, Coords coords) {
+    public static String getArtilleryHit(Game game, Coords coords) {
         String sAttilleryAutoHix = "";
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         boolean foundPlayer = false;
@@ -354,9 +357,8 @@ public final class HexTooltip {
         String col = UIUtil.tag("TD", "", sAttilleryAutoHix);
         String row = UIUtil.tag("TR", "", col);
         attr = String.format("CELLSPACING=0 CELLPADDING=0 BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
-        String table = UIUtil.tag("TABLE", attr, row);
 
-        return table;
+        return UIUtil.tag("TABLE", attr, row);
     }
 
     public static String getFlares(GUIPreferences GUIP, BoardView bv, Point point) {
@@ -400,8 +402,7 @@ public final class HexTooltip {
                 }
 
                 attr = String.format("CELLSPACING=0 CELLPADDING=0 BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor()));
-                String table = UIUtil.tag("TABLE", attr, rows);
-                result = table;
+                result = UIUtil.tag("TABLE", attr, rows);
             }
         }
 

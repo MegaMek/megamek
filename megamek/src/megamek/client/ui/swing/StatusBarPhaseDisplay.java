@@ -30,11 +30,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -374,7 +371,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             List<Player> remainingPlayers = game.getPlayersList().stream()
                     .filter(p -> !p.isBot() && !p.isObserver() && !p.isDone())
                     .sorted(Comparator.comparingInt(Player::getId))
-                    .collect(Collectors.toList());
+                    .toList();
             if (!remainingPlayers.isEmpty()) {
                 String playersText = remainingPlayers.stream()
                         .limit(playerCountToShow)

@@ -169,7 +169,7 @@ public class SummaryPanel extends PicMap {
                 row = UIUtil.tag("TR", "", col);
                 rows += row;
 
-                String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), GUIP);
+                String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient());
                 if (!hexTip.isEmpty()) {
                     attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
                     col = UIUtil.tag("TD", attr, hexTip);

@@ -142,7 +142,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         // Show the player(s) that may deploy here
         // in the artillery autohit designation phase
         if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex != null)) {
-            result += HexTooltip.getAttilleryHit(GUIP, game, coords);
+            result += HexTooltip.getArtilleryHit(game, coords);
         }
 
         // check if it's on any flares
@@ -210,6 +210,9 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
         // Artillery attacks
         for (ArtilleryAttackAction aaa : getArtilleryAttacksAtLocation(game, coords)) {
+            if (!bv.isOnThisBord(aaa.getTarget(game))) {
+                continue;
+            }
             // Default texts if no real names can be found
             String wpName = Messages.getString("BoardView1.Artillery");
             String ammoName = "Unknown";
@@ -355,7 +358,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
      */
     public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
         if ((mhex != null) && (clientGui != null)) {
-            String result = HexTooltip.getHexTip(mhex, clientGui.getClient(), GUIP);
+            String result = HexTooltip.getHexTip(mhex, clientGui.getClient());
             txt.append(result);
         }
     }

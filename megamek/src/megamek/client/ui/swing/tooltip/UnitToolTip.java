@@ -189,11 +189,11 @@ public final class UnitToolTip {
         if (target instanceof Entity) {
             return UnitToolTip.getEntityTipAsTarget((Entity) target, (client != null) ? client.getLocalPlayer() : null)
                     .toString();
-        } else if (target instanceof BuildingTarget) {
-            return HexTooltip.getBuildingTargetTip((BuildingTarget) target, (client != null) ? client.getBoard() : null,
-                    GUIP);
-        } else if (target instanceof Hex) {
-            return HexTooltip.getHexTip((Hex) target, client, GUIP);
+        } else if (target instanceof BuildingTarget buildingTarget) {
+            Board board = (client != null) ? client.getBoard(target.getBoardId()) : null;
+            return HexTooltip.getBuildingTargetTip(buildingTarget, board);
+        } else if (target instanceof Hex hex) {
+            return HexTooltip.getHexTip(hex, client);
         } else {
             return getTargetTipSummary(target, client);
         }

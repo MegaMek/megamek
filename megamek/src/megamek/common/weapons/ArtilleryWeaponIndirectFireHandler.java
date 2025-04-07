@@ -81,7 +81,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         + ", fired by "
                         + game.getPlayer(aaa.getPlayerId()).getName();
                 if (aaa.getTarget(game) != null) {
-                    game.getBoard().addSpecialHexDisplay(
+                    game.getBoard(aaa.getTarget(game).getBoardId()).addSpecialHexDisplay(
                             aaa.getTarget(game).getPosition(),
                             new SpecialHexDisplay(
                                     Type.ARTILLERY_INCOMING, game

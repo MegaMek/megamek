@@ -60,10 +60,10 @@ factions:
 #    board: 1
 #    # offboard effective distance doesnt work yet
 #
-#  - fullname: Mobile Long Tom Artillery LT-MOB-25
-#    at: [13,10]
-#    board: 1
-#    facing: 2
+  - fullname: Mobile Long Tom Artillery LT-MOB-25
+    at: [13,10]
+    board: 1
+    facing: 2
 
   - fullname: Locust LCT-1V
     board: 0
@@ -78,7 +78,7 @@ factions:
 #  - fullname: Atlas AS7-D
 
   - fullname: Cheetah IIC
-    at: [4, 4]
+    at: [5, 6]
     board: 2
     facing: 2
     altitude: 7

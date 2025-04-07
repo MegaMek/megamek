@@ -127,7 +127,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                         + (game.getRoundCount() + aaa.getTurnsTilHit())
                         + ", fired by "
                         + game.getPlayer(aaa.getPlayerId()).getName();
-                game.getBoard().addSpecialHexDisplay(
+                game.getBoard(aaa.getTarget(game).getBoardId()).addSpecialHexDisplay(
                         aaa.getTarget(game).getPosition(),
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILLERY_INCOMING, game

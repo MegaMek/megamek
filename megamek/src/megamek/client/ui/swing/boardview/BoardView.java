@@ -1129,8 +1129,6 @@ public final class BoardView extends AbstractBoardView
             drawAllDeployment(graphics2D);
         }
 
-        drawEmbeddedBoards(graphics);
-
         // draw C3 links
         drawSprites(graphics2D, c3Sprites);
 
@@ -1732,8 +1730,7 @@ public final class BoardView extends AbstractBoardView
         for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             final ArtilleryAttackAction attack = attacks.nextElement();
             final Targetable target = attack.getTarget(game);
-
-            if (target == null) {
+            if (!isOnThisBord(target)) {
                 continue;
             }
 
@@ -2308,6 +2305,10 @@ public final class BoardView extends AbstractBoardView
                     graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
                 }
             }
+        }
+
+        if (getBoard().embeddedBoardCoords().contains(coords)) {
+            drawEmbeddedBoard(graphics2D);
         }
 
         // Shade and add static noise to hexes that are in an ECM field
@@ -5271,16 +5272,21 @@ public final class BoardView extends AbstractBoardView
     }
 
     /**
-     * @return True when the given entity is on this board and has a non-null position.
+     * @return True when the given Targetable is not null and is on this board as given by its boardId. Does *not*
+     * require the targetable to have a non-null position or a position contained within the board, nor is the
+     * targetable's deployment status checked.
      */
-    private boolean isOnThisBord(Entity entity) {
-        return entity.getBoardLocation().isOn(boardId);
+    public boolean isOnThisBord(@Nullable Targetable targetable) {
+        return (targetable != null) && targetable.getBoardId() == boardId;
     }
 
     /**
-     * @return True when the given boardLocation is on this board and has a non-null position.
+     * @return True when the given boardLocation is on this board according to its boardId only. Does *not*
+     * test the position of the boardLocation.
+     *
+     * @see BoardLocation#isOn(int)
      */
-    private boolean isOnThisBord(BoardLocation boardLocation) {
+    public boolean isOnThisBord(BoardLocation boardLocation) {
         return boardLocation.isOn(boardId);
     }
 
@@ -5312,6 +5318,20 @@ public final class BoardView extends AbstractBoardView
                 ((Graphics2D) g).setTransform(oldTransform);
             }
         }
+    }
+
+    /**
+     * Draws an embedded board indicator into the hex image
+     */
+    private void drawEmbeddedBoard(Graphics2D g) {
+        AffineTransform oldTransform = g.getTransform();
+        g.transform(AffineTransform.getScaleInstance(scale, scale));
+        g.setColor(new Color(0, 140, 0, 120));
+        g.fillRect(HEX_W / 4 + 1, 2, HEX_W / 2 - 2, HEX_H - 4);
+        g.setColor(new Color(0, 140, 0));
+        g.setStroke(new BasicStroke(1.5f));
+        g.drawRect(HEX_W / 4 + 1, 2, HEX_W / 2 - 2, HEX_H - 4);
+        g.setTransform(oldTransform);
     }
 
     @Override

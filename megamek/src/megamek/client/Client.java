@@ -27,6 +27,7 @@ import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.force.Force;
@@ -140,6 +141,19 @@ public class Client extends AbstractClient {
      */
     public Board getBoard() {
         return game.getBoard();
+    }
+
+    /**
+     * Returns the board with the given boardId or null if the game does not have a board of that boardId. Shortcut
+     * to game.getBoard(int).
+     *
+     * @param boardId The board's ID
+     * @return The board with the given ID
+     * @see IGame#getBoard(int)
+     */
+    @Nullable
+    public Board getBoard(int boardId) {
+        return game.getBoard(boardId);
     }
 
     /**

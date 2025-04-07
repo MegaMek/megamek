@@ -21,7 +21,6 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import megamek.client.event.BoardViewEvent;
@@ -255,7 +254,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-//        event.getBoardView().select(event.getCoords());
         addArtyAutoHitHex(event.getBoardLocation());
     }
 

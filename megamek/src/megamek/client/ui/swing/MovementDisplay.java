@@ -4622,7 +4622,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Create a path finder to find possible moves; if aerodyne, use a custom Aero
         // path finder.
-        ShortestPathFinder pf = null;
+        ShortestPathFinder pf;
         if (!en.isAerodyne()) {
             pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, en.getGame());
         } else {

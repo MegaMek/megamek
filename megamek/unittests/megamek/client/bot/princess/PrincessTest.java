@@ -19,6 +19,22 @@
  */
 package megamek.client.bot.princess;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
@@ -29,14 +45,6 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -104,7 +112,9 @@ class PrincessTest {
         when(mockPrincess.calculateMoveIndex(any(Entity.class), any(StringBuilder.class))).thenCallRealMethod();
         when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(false);
 
-        when(mockPathRanker.distanceToClosestEnemy(any(Entity.class), nullable(Coords.class), nullable(Game.class))).thenReturn(10.0);
+        when(mockPathRanker.distanceToClosestEnemy(any(Entity.class),
+              nullable(Coords.class),
+              nullable(Game.class))).thenReturn(10.0);
 
         // Test a 6/9/6 regular mek.
         Entity mockMek = mock(BipedMek.class);
@@ -492,7 +502,13 @@ class PrincessTest {
         when(mockMek.checkGetUp(any(MoveStep.class), any(EntityMovementType.class))).thenReturn(mockPilotingRollData);
         when(mockMek.getPosition()).thenReturn(mockPosition);
         when(mockMek.getPriorPosition()).thenReturn(mockPriorPosition);
-        when(mockMek.checkBogDown(any(MoveStep.class), any(EntityMovementType.class), eq(mockHex), eq(mockPriorPosition), eq(mockPosition), anyInt(), anyBoolean())).thenReturn(mockPilotingRollData);
+        when(mockMek.checkBogDown(any(MoveStep.class),
+              any(EntityMovementType.class),
+              eq(mockHex),
+              eq(mockPriorPosition),
+              eq(mockPosition),
+              anyInt(),
+              anyBoolean())).thenReturn(mockPilotingRollData);
         assertFalse(mockPrincess.isImmobilized(mockMek));
 
         // Test a shutdown mek.

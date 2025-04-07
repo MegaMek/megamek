@@ -36,6 +36,7 @@ import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.TowLinkWarning;
+import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
@@ -67,7 +68,7 @@ import megamek.logging.MMLogger;
 import org.apache.logging.log4j.Level;
 
 public class Princess extends BotClient {
-    private static final MMLogger logger = MMLogger.create(Princess.class);
+    private static final MMLogger LOGGER = MMLogger.create(Princess.class);
     private static final char PLUS = '+';
     private static final char MINUS = '-';
 
@@ -186,12 +187,13 @@ public class Princess extends BotClient {
 
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given host and port. The new
-     * Princess Bot outputs its settings to its own logger.
+     * Princess Bot outputs its settings to its own LOGGER.
      */
     public static Princess createPrincess(String name, String host, int port, BehaviorSettings behavior) {
         Princess result = new Princess(name, host, port);
+        result.startPrecognition();
         result.setBehaviorSettings(behavior);
-        logger.debug(result.getBehaviorSettings().toLog());
+        LOGGER.debug(result.getBehaviorSettings().toLog());
         return result;
     }
 
@@ -216,13 +218,20 @@ public class Princess extends BotClient {
         // and it will stay up-to date.
         precognition = new Precognition(this);
         precognitionThread = new Thread(precognition, "Princess-precognition (" + getName() + ")");
+    }
+
+    /**
+     * Helper method to start the pre-cognition. This is extracted from the initializer to allow for sub-classing of
+     * Princess and remove the possibility that it'll start before a sub-class finishes initializing.
+     */
+    public void startPrecognition() {
         precognitionThread.start();
     }
 
     /**
      * Lazy-loading accessor for the artillery targeting control.
      *
-     * @return
+     * @return {@link ArtilleryTargetingControl}
      */
     public ArtilleryTargetingControl getArtilleryTargetingControl() {
         if (atc == null) {
@@ -326,7 +335,7 @@ public class Princess extends BotClient {
     }
 
     private void setFleeBoard(final boolean fleeBoard, final String reason) {
-        logger.debug("Setting Flee Board " + fleeBoard + " because: " + reason);
+        LOGGER.debug("Setting Flee Board {} because: {}", fleeBoard, reason);
 
         this.fleeBoard = fleeBoard;
     }
@@ -348,13 +357,11 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Retrieves maximum weapon range for the given entity. Cached version of entity.getMaxWeaponRange()
-     *
      * @param entity         Entity we're checking
      * @param airborneTarget Whether the potential target is in the air, only relevant for aircraft shooting at other
      *                       aircraft on ground maps.
      *
-     * @return
+     * @return maximum weapon range for the given entity. Cached version of entity.getMaxWeaponRange()
      */
     public int getMaxWeaponRange(Entity entity, boolean airborneTarget) {
         return getFireControlState().getWeaponRanges(airborneTarget)
@@ -362,16 +369,16 @@ public class Princess extends BotClient {
     }
 
     public void setFallBack(final boolean fallBack, final String reason) {
-        logger.debug("Setting Fall Back " + fallBack + " because: " + reason);
+        LOGGER.debug("Setting Fall Back {} because: {}", fallBack, reason);
         this.fallBack = fallBack;
     }
 
     public void setBehaviorSettings(final BehaviorSettings behaviorSettings) {
-        logger.info("New behavior settings for " + getName() + "\n" + behaviorSettings.toLog());
+        LOGGER.info("New behavior settings for {}\n{}", getName(), behaviorSettings.toLog());
         try {
             this.behaviorSettings = behaviorSettings.getCopy();
         } catch (final PrincessException e) {
-            logger.error("", e);
+            LOGGER.error("", e);
             return;
         }
         getStrategicBuildingTargets().clear();
@@ -392,7 +399,7 @@ public class Princess extends BotClient {
             final String y = targetCoords.replaceFirst(x, "");
             // Need to subtract 1, since we are given a Hex number string,
             // which is Coords X + 1Y + 1
-            final Coords coords = new Coords(Integer.parseInt(x) - 1, Integer.parseInt(y) - 1);
+            final Coords coords = new Coords(MathUtility.parseInt(x) - 1, MathUtility.parseInt(y) - 1);
             getStrategicBuildingTargets().add(coords);
         }
 
@@ -453,7 +460,7 @@ public class Princess extends BotClient {
             throw new NullPointerException("Coords is null.");
         }
         if (!getGame().getBoard().contains(coords)) {
-            logger.warn("Board does not contain " + coords.toFriendlyString());
+            LOGGER.warn("Board does not contain " + coords.toFriendlyString());
             return;
         }
         getStrategicBuildingTargets().add(coords);
@@ -503,7 +510,7 @@ public class Princess extends BotClient {
         // if we are using forced withdrawal, and the entity being considered is crippled
         // we will opt to not re-deploy the entity
         if (getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
-            logger.info("Declining to deploy crippled unit: " + getEntity(entityNum).getChassis() + ". Removing unit.");
+            LOGGER.info("Declining to deploy crippled unit: {}. Removing unit.", getEntity(entityNum).getChassis());
             sendDeleteEntity(entityNum);
             return;
         }
@@ -511,16 +518,14 @@ public class Princess extends BotClient {
         // get a list of all coordinates to which we can deploy
         final List<Coords> startingCoords = getStartingCoordsArray(game.getEntity(entityNum));
         if (startingCoords.isEmpty()) {
-            logger.error("No valid locations to deploy " + getEntity(entityNum).getDisplayName());
+            LOGGER.error("No valid locations to deploy {}", getEntity(entityNum).getDisplayName());
         }
 
         // get the coordinates I can deploy on
         final Coords deployCoords = getFirstValidCoords(getEntity(entityNum), startingCoords);
         if (null == deployCoords) {
             // if I cannot deploy anywhere, then I get rid of the entity instead so that we may go about our business
-            logger.error("getCoordsAround gave no location for " +
-                               getEntity(entityNum).getChassis() +
-                               ". Removing unit.");
+            LOGGER.error("getCoordsAround gave no location for {}. Removing unit.", getEntity(entityNum).getChassis());
 
             sendDeleteEntity(entityNum);
             return;
@@ -563,7 +568,7 @@ public class Princess extends BotClient {
                 List<ElevationOption> allowedDeployment = deploymentHelper.findAllowedElevations(DeploymentElevationType.ALTITUDE);
                 if (allowedDeployment.isEmpty()) {
                     // that's bad, cannot deploy at all
-                    logger.error("Cannot find viable altitude to deploy to");
+                    LOGGER.error("Cannot find viable altitude to deploy to");
                     sendDeleteEntity(entityNum);
                     return;
                 } else {
@@ -701,7 +706,7 @@ public class Princess extends BotClient {
     protected double rankKernelAroundCoords(MovePath start, Entity deployedUnit, int radius, BasicPathRanker ranker) {
         // Logging is extremely slow, only use when debugging.
         StringBuilder sb = null;
-        if (logger.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             sb = new StringBuilder();
             sb.append("Ranking kernel around hex ").append(start.getFinalCoords().toString());
         }
@@ -728,7 +733,7 @@ public class Princess extends BotClient {
                   .append("-length paths: ")
                   .append(pf.getAllComputedPaths().size());
             sb.append("\n\tFinal rank (including hazards): ").append(rank);
-            logger.debug(sb.toString());
+            LOGGER.debug(sb.toString());
         }
 
         return rank;
@@ -746,7 +751,7 @@ public class Princess extends BotClient {
      */
     protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         StringBuilder sb = null;
-        if (logger.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             sb = new StringBuilder();
             sb.append("Ranking deployment hexes...");
         }
@@ -756,10 +761,10 @@ public class Princess extends BotClient {
             List<Coords> filteredCoords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(game,
                   deployedUnit,
                   getBoard());
-            if (filteredCoords != null && !filteredCoords.isEmpty()) {
+            if (!filteredCoords.isEmpty()) {
                 possibleDeployCoords = possibleDeployCoords.stream().filter(filteredCoords::contains).toList();
             } else {
-                logger.error("No valid locations to tractor/trailer deploy " + deployedUnit.getDisplayName());
+                LOGGER.error("No valid locations to tractor/trailer deploy {}", deployedUnit.getDisplayName());
             }
         }
 
@@ -833,7 +838,7 @@ public class Princess extends BotClient {
                               .append(candidates.size())
                               .append(" with a score of ")
                               .append(scoreToBeat);
-                        logger.debug(sb.toString());
+                        LOGGER.debug(sb.toString());
                     }
                     return bestCandidate;
                 }
@@ -846,12 +851,12 @@ public class Princess extends BotClient {
 
         if (sb != null) {
             sb.append("\n\tFalling back to default getFirstValidCoords method!");
-            logger.debug(sb.toString());
+            LOGGER.debug(sb.toString());
         }
         // Fall back on old method
         Coords bestCandidate = super.getFirstValidCoords(deployedUnit, possibleDeployCoords);
         if (bestCandidate == null) {
-            logger.error("Returning no deployment position; THIS IS BAD!");
+            LOGGER.error("Returning no deployment position; THIS IS BAD!");
         }
         return bestCandidate;
     }
@@ -865,7 +870,7 @@ public class Princess extends BotClient {
             shooter = getEntityToFire(fireControlState);
         } catch (Exception e) {
             // If we fail to get the shooter, literally nothing can be done.
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return;
         }
 
@@ -894,13 +899,13 @@ public class Princess extends BotClient {
                         skipFiring = true;
                     }
                 } finally {
-                    logger.info(msg.toString());
+                    LOGGER.info(msg.toString());
                 }
             }
 
             if (shooter.isHidden()) {
                 skipFiring = true;
-                logger.info("Hidden unit skips firing.");
+                LOGGER.info("Hidden unit skips firing.");
             }
 
             // calculating a firing plan is somewhat expensive, so
@@ -919,8 +924,8 @@ public class Princess extends BotClient {
                     plan.sortPlan();
 
                     // Log info and debug at different levels
-                    logger.info(shooter.getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(false));
-                    logger.debug(shooter.getDisplayName() +
+                    LOGGER.info(shooter.getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(false));
+                    LOGGER.debug(shooter.getDisplayName() +
                                        " - Detailed Best Firing Plan: " +
                                        plan.getDebugDescription(true));
 
@@ -1033,7 +1038,7 @@ public class Princess extends BotClient {
                     sendAttackData(shooter.getId(), actions);
                     return;
                 } else {
-                    logger.info("No best firing plan for " + shooter.getDisplayName());
+                    LOGGER.info("No best firing plan for " + shooter.getDisplayName());
                 }
             }
 
@@ -1050,7 +1055,7 @@ public class Princess extends BotClient {
                                                          .findFirst()
                                                          .orElse(null);
                 if (stopSwarmWeapon == null) {
-                    logger.error(
+                    LOGGER.error(
                           "Failed to find a Stop Swarm Weapon while Swarming a unit, which should not be possible.");
                 } else {
                     miscPlan = new Vector<>();
@@ -1089,7 +1094,7 @@ public class Princess extends BotClient {
 
             sendAttackData(shooter.getId(), miscPlan);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             // Don't lock up, just skip this entity.
             Vector<EntityAction> fallback = new Vector<>();
             sendAttackData(shooter.getId(), fallback);
@@ -1187,7 +1192,7 @@ public class Princess extends BotClient {
 
             return ammoConservation;
         } finally {
-            logger.debug(msg.toString());
+            LOGGER.debug(msg.toString());
         }
     }
 
@@ -1216,7 +1221,7 @@ public class Princess extends BotClient {
     }
 
     /**
-     * @deprecated, consider {@link BotClient#deployMinefields()}
+     * @deprecated consider {@link BotClient#deployMinefields()}
      */
     @Override
     @Deprecated(since = "0.50.05", forRemoval = true)
@@ -1346,7 +1351,7 @@ public class Princess extends BotClient {
         enableEnhancedTargeting = enable;
 
         // Set default enhanced targeting target and attacker types
-        enhancedTargetingTargetTypes = new ArrayList<>(Arrays.asList(UnitType.MEK));
+        enhancedTargetingTargetTypes = new ArrayList<>(List.of(UnitType.MEK));
         enhancedTargetingAttackerTypes = new ArrayList<>(Arrays.asList(UnitType.MEK,
               UnitType.TANK,
               UnitType.BATTLE_ARMOR,
@@ -1471,7 +1476,7 @@ public class Princess extends BotClient {
      */
     protected boolean checkForEnhancedTargeting(Entity shooter, Targetable targetable, int cover) {
         // Only works on entities
-        if (!(targetable instanceof Entity)) {
+        if (!(targetable instanceof Entity target)) {
             return false;
         }
 
@@ -1490,7 +1495,6 @@ public class Princess extends BotClient {
             return false;
         }
 
-        Entity target = (Entity) targetable;
         if (!isValidEnhancedTargetingTarget(target.getUnitType())) {
             return false;
         }
@@ -1577,11 +1581,9 @@ public class Princess extends BotClient {
             case UnitType.TANK:
             case UnitType.VTOL:
             case UnitType.NAVAL:
-                aimLocation = Entity.LOC_NONE;
                 break;
             case UnitType.CONV_FIGHTER:
             case UnitType.AEROSPACEFIGHTER:
-                aimLocation = Entity.LOC_NONE;
                 break;
             default:
                 break;
@@ -1625,11 +1627,9 @@ public class Princess extends BotClient {
             return calledShotDirection;
         }
 
+        // TODO: placeholder for non-Mek targets. Create appropriate methods for each.
         if (target instanceof Mek) {
             calledShotDirection = calculateCalledShotDirection((Mek) target, attackSide, workingShots);
-        } else {
-            // TODO: placeholder for non-Mek targets. Create appropriate methods for each.
-            calledShotDirection = CalledShot.CALLED_NONE;
         }
 
         return calledShotDirection;
@@ -2065,7 +2065,7 @@ public class Princess extends BotClient {
                       (entity.isOffBoard() ||
                              (null == entity.getPosition()) ||
                              entity.isUnloadedThisTurn() ||
-                             !getGame().getTurn().isValidEntity(entity, getGame()))) {
+                             !Objects.requireNonNull(getGame().getTurn()).isValidEntity(entity, getGame()))) {
                 msg.append("cannot be moved.");
                 continue;
             }
@@ -2107,9 +2107,9 @@ public class Princess extends BotClient {
         }
 
         if (movingEntity == null) {
-            logger.warn(msg.toString());
+            LOGGER.warn(msg.toString());
         } else {
-            logger.debug(msg.toString());
+            LOGGER.debug(msg.toString());
         }
 
         return movingEntity;
@@ -2125,7 +2125,7 @@ public class Princess extends BotClient {
             }
             return path;
         } catch (Exception ignored) {
-            logger.error(ignored, "Error while calculating movement");
+            LOGGER.error("Error while calculating movement");
             return null;
         }
     }
@@ -2148,7 +2148,7 @@ public class Princess extends BotClient {
                     msg.append("\n\tI will not attack so long as I'm not fired on.");
                     return null;
                 }
-                logger.info(msg.toString());
+                LOGGER.info(msg.toString());
             }
 
             // the original bot's physical options seem superior
@@ -2205,10 +2205,10 @@ public class Princess extends BotClient {
 
     boolean isImmobilized(final Entity mover) {
         if (mover.isImmobile() && !mover.isShutDown()) {
-            logger.info("Is truly immobile.");
+            LOGGER.info("Is truly immobile.");
             return true;
         } else if (1 > mover.getRunMP()) {
-            logger.info("Has 0 movement.");
+            LOGGER.info("Has 0 movement.");
             return true;
         } else if (!(mover instanceof Mek)) {
             return false;
@@ -2223,36 +2223,20 @@ public class Princess extends BotClient {
 
         // For a normal fall-shame setting (index 5), our threshold should be
         // a 10+ piloting roll.
-        final int threshold;
-        switch (getBehaviorSettings().getFallShameIndex()) {
-            case 10:
-                threshold = 7;
-                break;
-            case 9:
-                threshold = 8;
-                break;
-            case 8:
-            case 7:
-                threshold = 9;
-                break;
-            case 6:
-            case 5:
-                threshold = 10;
-                break;
-            case 4:
-                threshold = 11;
-                break;
-            case 3:
-                threshold = 12;
-                break;
-            default:
-                threshold = 13; // Actually impossible.
-        }
+        final int threshold = switch (getBehaviorSettings().getFallShameIndex()) {
+            case 10 -> 7;
+            case 9 -> 8;
+            case 8, 7 -> 9;
+            case 6, 5 -> 10;
+            case 4 -> 11;
+            case 3 -> 12;
+            default -> 13; // Actually impossible.
+        };
 
         // If we're prone, see if we have a chance of getting up.
         if (mek.isProne()) {
             if (mek.cannotStandUpFromHullDown()) {
-                logger.info("Cannot stand up.");
+                LOGGER.info("Cannot stand up.");
                 return true;
             }
 
@@ -2264,7 +2248,7 @@ public class Princess extends BotClient {
             // If our odds to get up are equal to or worse than the threshold,
             // consider ourselves immobile.
             final PilotingRollData target = mek.checkGetUp(getUp, movePath.getLastStepMovementType());
-            logger.info("Need to roll " + target.getValue() + " to stand and our tolerance is " + threshold);
+            LOGGER.info("Need to roll " + target.getValue() + " to stand and our tolerance is " + threshold);
             return (target.getValue() >= threshold);
         }
 
@@ -2279,7 +2263,7 @@ public class Princess extends BotClient {
               mek.getPosition(),
               hex.getLevel(),
               false);
-        logger.info("Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
+        LOGGER.info("Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
         return (target.getValue() >= threshold);
     }
 
@@ -2299,7 +2283,7 @@ public class Princess extends BotClient {
             // figure out who moved last, and whose move lists need to be updated
 
             // moves this entity during movement phase
-            logger.debug("Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
+            LOGGER.debug("Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
             getPrecognition().ensureUpToDate();
 
             if (isFallingBack(entity)) {
@@ -2309,7 +2293,7 @@ public class Princess extends BotClient {
                 } else if (entity.isCrippled()) {
                     msg += " is crippled and withdrawing.";
                 }
-                logger.debug(msg);
+                LOGGER.debug(msg);
                 sendChat(msg, Level.ERROR);
 
                 // If this entity is falling back, able to flee the board, on
@@ -2323,7 +2307,7 @@ public class Princess extends BotClient {
                 // If we want to flee, but cannot, eject the crew.
                 if (isImmobilized(entity) && entity.isEjectionPossible()) {
                     msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
-                    logger.info(msg);
+                    LOGGER.info(msg);
                     sendChat(msg, Level.ERROR);
                     final MovePath mp = new MovePath(game, entity);
                     mp.addStep(MoveStepType.EJECT);
@@ -2334,22 +2318,13 @@ public class Princess extends BotClient {
             final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
 
             if (null == paths) {
-                logger.warn("No valid paths found.");
+                LOGGER.warn("No valid paths found.");
                 return performPathPostProcessing(new MovePath(game, entity), 0);
             }
 
             final double thisTimeEstimate = (paths.size() * moveEvaluationTimeEstimate) / 1e3;
-            if (logger.getLevel().isLessSpecificThan(Level.INFO)) {
-                String timeEstimate = "unknown.";
-                if (0 != thisTimeEstimate) {
-                    timeEstimate = (int) thisTimeEstimate + " seconds";
-                }
-                final String message = "Moving " +
-                                             entity.getChassis() +
-                                             ". " +
-                                             Long.toString(paths.size()) +
-                                             " paths to consider.  Estimated time to completion: " +
-                                             timeEstimate;
+            if (LOGGER.getLevel().isLessSpecificThan(Level.INFO)) {
+                final String message = getMessage(entity, thisTimeEstimate, paths);
                 sendChat(message);
             }
 
@@ -2379,18 +2354,31 @@ public class Princess extends BotClient {
                 return performPathPostProcessing(new MovePath(game, entity), 0);
             }
 
-            logger.debug("Path ranking took " + (stop_time - startTime) + " millis");
+            LOGGER.debug("Path ranking took " + (stop_time - startTime) + " millis");
 
             final RankedPath bestPath = getPathRanker(entity).getBestPath(rankedPaths);
-            logger.info("Best Path: " + bestPath.getPath() + "  Rank: " + bestPath.getRank());
+            LOGGER.info("Best Path: " + bestPath.getPath() + "  Rank: " + bestPath.getRank());
 
             return performPathPostProcessing(bestPath);
         } catch (Exception e) {
-            logger.error("MP is now null!", e);
+            LOGGER.error("MP is now null!", e);
             return null;
         } finally {
             precognition.unPause();
         }
+    }
+
+    private static String getMessage(Entity entity, double thisTimeEstimate, List<MovePath> paths) {
+        String timeEstimate = "unknown.";
+        if (0 != thisTimeEstimate) {
+            timeEstimate = (int) thisTimeEstimate + " seconds";
+        }
+        return "Moving " +
+                     entity.getChassis() +
+                     ". " +
+                     Long.toString(paths.size()) +
+                     " paths to consider.  Estimated time to completion: " +
+                     timeEstimate;
     }
 
     @Override
@@ -2404,7 +2392,7 @@ public class Princess extends BotClient {
             for (final Entity entity : entities) {
                 final String errors = getFireControl(entity).checkAllGuesses(entity, game);
                 if (!StringUtility.isNullOrBlank(errors)) {
-                    logger.warn(errors);
+                    LOGGER.warn(errors);
                 }
             }
             // -----------------------------------------------------------------------
@@ -2618,7 +2606,7 @@ public class Princess extends BotClient {
                 }
             }
         } finally {
-            logger.info(msg.toString());
+            LOGGER.info(msg.toString());
         }
     }
 
@@ -2991,7 +2979,7 @@ public class Princess extends BotClient {
             } else if (MINUS == tick) {
                 adjustment--;
             } else {
-                logger.warn("Invalid tick: {}", tick);
+                LOGGER.warn("Invalid tick: {}", tick);
             }
         }
         return adjustment;
@@ -3070,7 +3058,7 @@ public class Princess extends BotClient {
             super.handlePacket(c);
             getPrecognition().handlePacket(c);
         } finally {
-            logger.trace(msg.toString());
+            LOGGER.trace(msg.toString());
         }
     }
 
@@ -3458,7 +3446,7 @@ public class Princess extends BotClient {
 
     /**
      * Helper function that starts unloading a transport if it is crippled, doomed, unable to move, or otherwise no
-     * longer functional as a transport. We don't care if there are enemies on the board here; get the units out as soon
+     * longer functional as transport. We don't care if there are enemies on the board here; get the units out as soon
      * as possible. Returns after one unload b/c MovePathHandler will give us another Turn if we still have more to
      * unload (up to standard limits).
      *
@@ -3517,7 +3505,7 @@ public class Princess extends BotClient {
             List<WeaponMounted> activeAMS = curEntity.getWeaponList()
                                                   .stream()
                                                   .filter(w -> w.getType().hasFlag(AmmoWeapon.F_AMS) && w.hasModes())
-                                                  .collect(Collectors.toList());
+                                                  .toList();
 
             if (!activeAMS.isEmpty()) {
 
@@ -3765,7 +3753,7 @@ public class Princess extends BotClient {
 
 
     public void sendChat(final String message, final Level logLevel) {
-        if (logger.getLevel().isLessSpecificThan(logLevel)) {
+        if (LOGGER.getLevel().isLessSpecificThan(logLevel)) {
             super.sendChat(message);
         }
     }
@@ -3805,7 +3793,7 @@ public class Princess extends BotClient {
             if (waypoint.isPresent()) {
                 var wp = waypoint.get();
                 if (wp.distance(entity.getPosition()) <= DISTANCE_TO_WAYPOINT) {
-                    logger.debug(entity.getDisplayName() + " arrived at waypoint " + wp);
+                    LOGGER.debug(entity.getDisplayName() + " arrived at waypoint " + wp);
                     getUnitBehaviorTracker().removeHeadWaypoint(entity);
                 }
             }

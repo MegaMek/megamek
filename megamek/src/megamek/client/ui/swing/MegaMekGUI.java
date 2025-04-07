@@ -425,7 +425,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
               hd.getPlayerName());
     }
 
-    public void startHost(@Nullable String serverPassword, int port, boolean isRegister, @Nullable String metaServer, @Nullable String mailPropertiesFileName, @Nullable File savegame, String playerName) {
+    public void startHost(@Nullable String serverPassword, int port, boolean isRegister, @Nullable String metaServer,
+          @Nullable String mailPropertiesFileName, @Nullable File savegame, String playerName) {
         if (!startServer(serverPassword, port, isRegister, metaServer, mailPropertiesFileName, savegame)) {
             return;
         }
@@ -433,7 +434,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         startClient(playerName, MMConstants.LOCALHOST, server.getPort());
     }
 
-    public boolean startServer(@Nullable String serverPassword, int port, boolean isRegister, @Nullable String metaServer, @Nullable String mailPropertiesFileName, @Nullable File saveGameFile) {
+    public boolean startServer(@Nullable String serverPassword, int port, boolean isRegister,
+          @Nullable String metaServer, @Nullable String mailPropertiesFileName, @Nullable File saveGameFile) {
         return startServer(serverPassword,
               port,
               isRegister,
@@ -443,7 +445,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
               GameType.TW);
     }
 
-    public boolean startServer(@Nullable String serverPassword, int port, boolean isRegister, @Nullable String metaServer, @Nullable String mailPropertiesFileName, @Nullable File saveGameFile, GameType gameType) {
+    public boolean startServer(@Nullable String serverPassword, int port, boolean isRegister,
+          @Nullable String metaServer, @Nullable String mailPropertiesFileName, @Nullable File saveGameFile,
+          GameType gameType) {
         try {
             serverPassword = Server.validatePassword(serverPassword);
             port = Server.validatePort(port);
@@ -876,6 +880,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 if (playerTypes[x] == ScenarioDialog.T_BOT) {
                     logger.info("Adding bot " + pa[x].getName() + " as Princess");
                     Princess c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
+                    c.startPrecognition();
                     if (scenario.hasBotInfo(pa[x].getName()) &&
                               scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord princessRecord) {
                         c.setBehaviorSettings(princessRecord.behaviorSettings());
@@ -1130,7 +1135,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      *
      * @return String that represents the splash screen that should be displayed.
      */
-    private String determineSplashScreen(final List<String> splashScreens, final int screenWidth, final int screenHeight) {
+    private String determineSplashScreen(final List<String> splashScreens, final int screenWidth,
+          final int screenHeight) {
         // Ensure that the list is of appropriate size to contain HD, FHD, and UHD
         // splash screens.
         if (splashScreens.size() > 3) {
@@ -1149,7 +1155,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         return splashScreens.get(0);
     }
 
-    private @Nullable Image getSplashScreen(final List<String> splashScreens, final int screenWidth, final int screenHeight) {
+    private @Nullable Image getSplashScreen(final List<String> splashScreens, final int screenWidth,
+          final int screenHeight) {
         String filename = determineSplashScreen(splashScreens, screenWidth, screenHeight);
         File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
         if (!file.exists()) {

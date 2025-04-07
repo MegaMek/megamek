@@ -40,8 +40,9 @@ public class PlayerIDAndList<T> extends Vector<T> {
      *
      * @return a clone of {@link PlayerIDAndList} that is templated to type T
      */
+    @Override
     @SuppressWarnings("unchecked")
-    public PlayerIDAndList<T> clone() {
+    public synchronized PlayerIDAndList<T> clone() {
         PlayerIDAndList<T> playerIDandList = (PlayerIDAndList<T>) super.clone();
         playerIDandList.playerID = playerID;
         return playerIDandList;

@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id "org.sonarqube" version "6.0.1.5171"
 }
 
 java {
@@ -17,6 +17,14 @@ allprojects {
 subprojects {
     group = 'org.megamek'
     version = '0.50.05-SNAPSHOT'
+}
+
+sonar {
+  properties {
+    property "sonar.projectKey", "RTaleb1_megamek"
+    property "sonar.organization", "rtaleb1"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
 }
 
 

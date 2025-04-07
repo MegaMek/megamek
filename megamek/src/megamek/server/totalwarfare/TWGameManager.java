@@ -27263,12 +27263,16 @@ public class TWGameManager extends AbstractGameManager {
     private void receiveEntityActivateHidden(Packet c, int connIndex) {
         int entityId = c.getIntValue(0);
         GamePhase phase = (GamePhase) c.getObject(1);
-        Entity e = game.getEntity(entityId);
-        if (connIndex != e.getOwnerId()) {
-            logger.error("Player " + connIndex + " tried to activate a hidden unit owned by Player " + e.getOwnerId());
+        Entity activatingUnit = game.getEntity(entityId);
+        if (activatingUnit == null) {
+            logger.error("Unit #%d not found".formatted(entityId));
+            return;
+        } else if (connIndex != activatingUnit.getOwnerId()) {
+            logger.error("Player #%d tried to activate a hidden unit owned by Player #%d".formatted(connIndex,
+                  activatingUnit.getOwnerId()));
             return;
         }
-        e.setHiddenActivationPhase(phase);
+        activatingUnit.setHiddenActivationPhase(phase);
         entityUpdate(entityId);
     }
 

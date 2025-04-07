@@ -68,6 +68,12 @@ factions:
   - fullname: Locust LCT-1V
     board: 0
     at: [ 4,4 ]
+    status: hidden
+
+  - fullname: Locust LCT-1E
+    board: 0
+    at: [ 7,7 ]
+    status: hidden
 
 #  - fullname: Atlas AS7-D
 

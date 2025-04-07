@@ -20,8 +20,6 @@ package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,11 +32,14 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -49,8 +50,7 @@ import megamek.logging.MMLogger;
  * PrephaseDisplay for revealing hidden units. This occurs before Move and
  * Firing
  */
-public class PrephaseDisplay extends StatusBarPhaseDisplay implements
-        ItemListener, ListSelectionListener {
+public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelectionListener {
     private static final MMLogger logger = MMLogger.create(PrephaseDisplay.class);
 
     private static final long serialVersionUID = 3441669419807288865L;
@@ -123,9 +123,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     protected final ClientGUI clientgui;
 
     /**
-     * Creates and lays out a new Prefiring or PreMovement phase display for the
-     * specified
-     * clientgui.getClient().
+     * Creates and lays out a new Prefiring or PreMovement phase display for the specified clientgui.getClient().
      */
     public PrephaseDisplay(final ClientGUI clientgui, GamePhase phase) {
         super(clientgui);
@@ -133,15 +131,11 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         this.phase = phase;
 
         setupStatusBar(Messages.getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
-
         setButtons();
         setButtonsTooltips();
-
         butDone.setText(Messages.getString("PrephaseDisplay.Done"));
         butDone.setEnabled(false);
-
         setupButtonPanel();
-
         registerKeyCommands();
     }
 
@@ -184,10 +178,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * aren't on the panel itself.
      */
     public void initializeListeners() {
-        clientgui.getClient().getGame().addGameListener(this);
-        clientgui.getBoardView().addBoardViewListener(this);
-
-        // Mek display.
+        game().addGameListener(this);
+//        clientgui.getBoardView().addBoardViewListener(this);
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
     }
 
@@ -225,8 +217,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
                 // Walk through the list of entities for this player.
                 for (int nextId = client.getNextEntityNum(en); nextId != en; nextId = client.getNextEntityNum(nextId)) {
 
-                    if (null != clientgui.getClient().getGame()
-                            .getEntity(nextId).getPosition()) {
+                    if (null != game().getEntity(nextId).getPosition()) {
                         cen = nextId;
                         break;
                     }
@@ -240,14 +231,13 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
                 }
             }
 
-            clientgui.getBoardView().highlight(ce().getPosition());
-            clientgui.getBoardView().select(null);
-            clientgui.getBoardView().cursor(null);
+            clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
+            clientgui.getBoardView(ce()).highlight(ce().getPosition());
 
             refreshAll();
 
-            if (!clientgui.getBoardView().isMovingUnits() && !ce().isOffBoard()) {
-                clientgui.getBoardView().centerOnHex(ce().getPosition());
+            if (!clientgui.isCurrentBoardViewShowingAnimation() && !ce().isOffBoard()) {
+                clientgui.centerOnUnit(ce());
             }
         } else {
             logger.error("Tried to select non-existent entity: " + en);
@@ -275,7 +265,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
     @Override
     public void ready() {
-        // stop further input (hopefully)
         disableButtons();
         clientgui.getClient().sendPrePhaseData(cen);
         endMyTurn();
@@ -295,11 +284,10 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             selectEntity(clientgui.getClient().getFirstEntityNum());
         }
 
-        if (!clientgui.getBoardView().isMovingUnits()) {
+        if (!clientgui.isCurrentBoardViewShowingAnimation()) {
             clientgui.maybeShowUnitDisplay();
         }
 
-        clientgui.getBoardView().select(null);
         setupButtonPanel();
         refreshButtons();
     }
@@ -309,14 +297,11 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      */
     private void endMyTurn() {
         cen = Entity.NONE;
-        clientgui.getBoardView().select(null);
-        clientgui.getBoardView().highlight(null);
-        clientgui.getBoardView().cursor(null);
-        clientgui.getBoardView().clearMovementData();
+        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).clearMovementData());
         clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
         clientgui.setSelectedEntityNum(Entity.NONE);
-
         refreshButtons();
     }
 
@@ -352,7 +337,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        clientgui.getBoardView().redrawEntity(ce());
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(ce()));
         clientgui.getUnitDisplay().displayEntity(ce());
         if (GUIP.getFireDisplayTabDuringFiringPhases()) {
             clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.WEAPONS);
@@ -364,7 +349,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * Returns the current entity.
      */
     Entity ce() {
-        return clientgui.getClient().getGame().getEntity(cen);
+        return game().getEntity(cen);
     }
 
     // BoardListener
@@ -388,9 +373,9 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            clientgui.getBoardView().cursor(b.getCoords());
+            b.getBoardView().cursor(b.getCoords());
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
-            clientgui.getBoardView().select(b.getCoords());
+            b.getBoardView().select(b.getCoords());
         }
     }
 
@@ -398,7 +383,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase().isLounge()) {
+        if (game().getPhase().isLounge()) {
             endMyTurn();
         }
         // On simultaneous phases, each player ending their turn will generate a turn
@@ -406,9 +391,9 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         // We want to ignore turns from other players and only listen to events we
         // generated
         // Except on the first turn
-        if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
+        if (game().getPhase().isSimultaneous(game())
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
-                && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
+                && (game().getTurnIndex() != 0)) {
             return;
         }
 
@@ -417,7 +402,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase() == phase) {
+        if (game().getPhase() == phase) {
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
@@ -443,12 +428,11 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != phase)) {
+        if (isMyTurn() && (game().getPhase() != phase)) {
             endMyTurn();
         }
 
-        if (clientgui.getClient().getGame().getPhase() == phase) {
+        if (game().getPhase() == phase) {
             setStatusBarText(Messages
                     .getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
         }
@@ -461,8 +445,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        // Reviewers: Is this the right place to catch the change applied by a server
-        // packet
+        // Reviewers: Is this the right place to catch the change applied by a server packet
         // that changes an entity from done to not-done?
         if (ce().isDone()) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
@@ -474,23 +457,15 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     // ActionListener
     @Override
     public void actionPerformed(ActionEvent ev) {
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (!clientgui.getClient().isMyTurn()) {
+        if (isIgnoringEvents() || !isMyTurn()) {
             return;
         }
 
         if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_REVEAL.getCmd())) {
             reveal();
-        }
-
-        if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_CANCEL_REVEAL.getCmd())) {
+        } else if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_CANCEL_REVEAL.getCmd())) {
             cancelReveal();
-        }
-
-        if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_NEXT.getCmd())) {
+        } else if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
         }
     }
@@ -512,21 +487,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
     @Override
     public void clear() {
-        clientgui.getBoardView().select(null);
-        clientgui.getBoardView().cursor(null);
+        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         refreshAll();
-    }
-
-    //
-    // ItemListener
-    //
-    @Override
-    public void itemStateChanged(ItemEvent ev) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
     }
 
     // board view listener
@@ -539,7 +501,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
         if (clientgui.getClient().isMyTurn() && (ce() != null)) {
             clientgui.maybeShowUnitDisplay();
-            clientgui.getBoardView().centerOnHex(ce().getPosition());
+            clientgui.centerOnUnit(ce());
         }
     }
 
@@ -550,36 +512,34 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        Entity e = clientgui.getClient().getGame().getEntity(b.getEntityId());
-        if (clientgui.getClient().isMyTurn()) {
-            if (clientgui.getClient().getMyTurn()
-                    .isValidEntity(e, clientgui.getClient().getGame())) {
-                selectEntity(e.getId());
+        Entity selectedUnit = game().getEntity(b.getEntityId());
+        if (selectedUnit == null) {
+            return;
+        }
+        if (isMyTurn()) {
+            if (clientgui.getClient().getMyTurn().isValidEntity(selectedUnit, game())) {
+                selectEntity(selectedUnit.getId());
             }
         } else {
             clientgui.maybeShowUnitDisplay();
-            clientgui.getUnitDisplay().displayEntity(e);
-            if (e.isDeployed()) {
-                clientgui.getBoardView().centerOnHex(e.getPosition());
+            clientgui.getUnitDisplay().displayEntity(selectedUnit);
+            if (selectedUnit.isDeployed()) {
+                clientgui.centerOnUnit(selectedUnit);
             }
         }
     }
 
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
     @Override
     public void removeAllListeners() {
-        clientgui.getClient().getGame().removeGameListener(this);
-        clientgui.getBoardView().removeBoardViewListener(this);
+        game().removeGameListener(this);
+        clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
         clientgui.getUnitDisplay().wPan.weaponList.removeListSelectionListener(this);
     }
 
     @Override
-    public void valueChanged(ListSelectionEvent event) {
-        if (event.getValueIsAdjusting()) {
-            return;
-        }
-    }
+    public void valueChanged(ListSelectionEvent event) { }
 
+    private Game game() {
+        return clientgui.getClient().getGame();
+    }
 }

@@ -34,7 +34,6 @@ import java.text.AttributedString;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
@@ -45,7 +44,13 @@ import megamek.common.internationalization.Internationalization;
  * 
  * Provides a daily/random tip functionality
  */
-public class TipOfTheDay {
+public class TipOfTheDay {    
+    // Enum for positioning the tip text
+    public enum Position {
+        TOP_BORDER,
+        BOTTOM_BORDER
+    }
+
     private static final String TIP_BUNDLE_KEY = "TipOfTheDay.tip.";
     private static final String TIP_BUNDLE_TITLE_KEY = "TipOfTheDay.title.text";
     private static final int TIP_BORDER_MARGIN = 60;
@@ -120,7 +125,7 @@ public class TipOfTheDay {
     /**
      * Draws the Tip of the Day text with word wrap and styling.
      */
-    public void drawTipOfTheDay(Graphics2D graphics2D, Rectangle referenceBounds, boolean positionBottom) {
+    public void drawTipOfTheDay(Graphics2D graphics2D, Rectangle referenceBounds, Position position) {
         if (tipOfTheDay == null || tipOfTheDay.isEmpty() || tipLabelFont == null || tipFont == null) {
             return;
         }
@@ -172,7 +177,7 @@ public class TipOfTheDay {
             // Positioning// Positioning
             float totalBlockHeight = labelHeight + totalTipHeight;
             float startY;
-            if (positionBottom) {
+            if (position == Position.BOTTOM_BORDER) {
                 startY = referenceBounds.y + referenceBounds.height - TIP_BORDER_MARGIN - totalBlockHeight;
             } else {
                 startY = referenceBounds.y + TIP_BORDER_MARGIN;

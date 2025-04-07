@@ -1,6 +1,9 @@
 package megamek.common;
 
-public class EloRatingStrategy implements RatingStrategy {
+import java.io.Serializable;
+
+public class EloRatingStrategy implements RatingStrategy, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private static final double K_FACTOR = 32.0;
 

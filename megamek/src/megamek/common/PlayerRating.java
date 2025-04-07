@@ -1,9 +1,13 @@
 package megamek.common;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-public class PlayerRating {
+public class PlayerRating implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private final int INITIAL_RATING = 1500;
     private int playerId;
     private String playerName;
@@ -17,30 +21,19 @@ public class PlayerRating {
     // Elo Rating Strategy par défaut
     private RatingStrategy ratingStrategy = new EloRatingStrategy();
 
-    /**
-     * Constructeur de Rating.
-     *
-     * @param playerId Joueur pour lequel on veut le rating
-     */
-    public PlayerRating(int playerId) {
+    public PlayerRating(int playerId, String playerName, boolean isBot) {
         this.playerId = playerId;
-        //this.playerName = player.getName();
-        //this.isBot = player.isBot();
+        this.playerName = playerName;
+        this.isBot = isBot;
         this.currentRating = INITIAL_RATING;
         this.matchesPlayed = 0;
         this.wins = 0;
         this.draws = 0;
         this.losses = 0;
         this.history = new ArrayList<>();
+        this.ratingStrategy = new EloRatingStrategy(); // ← NÉCESSAIRE !
     }
 
-
-    /**
-     * Met à jour la note du joueur après un match, calcule la nouvelle note Elo et enregistre l'historique du changement.
-     *
-     * @param enemyTeamRating La note actuelle de l'adversaire.
-     * @param result Résultat du match : 1 (victoire), 0 (match nul), -1 (défaite).
-     */
     public void updateRating(double enemyTeamRating, int result) {
         double newRating = ratingStrategy.calculateNewRating(this.currentRating,enemyTeamRating,result);
 
@@ -120,5 +113,10 @@ public class PlayerRating {
               ", losses=" + losses +
               ", history=" + history +
               '}';
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.ratingStrategy = new EloRatingStrategy(); // Remet une stratégie par défaut
     }
 }

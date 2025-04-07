@@ -75,7 +75,7 @@ public class RatingPersistenceManager {
     public PlayerRating getPlayerRating(int playerId, Player player) {
         PlayerRating rating = playerRatings.get(playerId);
         if (rating == null) {
-            rating = new PlayerRating(playerId);
+            rating = new PlayerRating(playerId, player.getName(), player.isBot());
             playerRatings.put(playerId, rating);
         }
         return rating;

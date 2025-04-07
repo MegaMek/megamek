@@ -19,6 +19,8 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -40,4 +42,63 @@ class PlayerTest {
         player.setColour(PlayerColour.FUCHSIA);
         assertEquals("<B><font color='f000f0'>" + playerName + "</font></B>", player.getColorForPlayer());
     }
+
+    @Test
+    void testGetBVDelegatesToPlayerStats() {
+        Player player = new Player(1, "Refactored Player");
+
+        // Par défaut, getBV() retourne 0 sauf si tu changes la logique dans PlayerStats
+        assertEquals(0, player.getBV(), "Le BV doit être 0 par défaut pour un joueur sans unités");
+    }
+
+    @Test
+    void testSetAndGetIdAndTeam() {
+        Player player = new Player(42, "Team Player");
+        player.setTeam(5);
+        assertEquals(42, player.getId());
+        assertEquals(5, player.getTeam());
+    }
+
+    @Test
+    void testSetAndIsBot() {
+        Player player = new Player(3, "Bot Tester");
+        player.setBot(true);
+        assertTrue(player.isBot(), "Le joueur doit être marqué comme bot.");
+    }
+
+    @Test
+    void testSetAndGetColor() {
+        Player player = new Player(7, "Colorful Player");
+        player.setColour(PlayerColour.RED);
+        assertEquals(PlayerColour.RED, player.getColour());
+    }
+
+    @Test
+    void testPlayerTeamAndBotStatus() {
+        Player player = new Player(3, "TeamBot");
+        player.setTeam(15);
+        player.setBot(true);
+
+        assertEquals(15, player.getTeam());
+        assertTrue(player.isBot());
+    }
+
+    @Test
+    void testEqualsAndHashCode() {
+        Player p1 = new Player(9, "Test");
+        Player p2 = new Player(9, "Test");
+        Player p3 = new Player(10, "Diff");
+
+        assertEquals(p1, p2);
+        assertEquals(p1.hashCode(), p2.hashCode());
+        assertNotEquals(p1, p3);
+    }
+
+    @Test
+    void testGetIdAndName() {
+        Player player = new Player(42, "Tester");
+        assertEquals(42, player.getId());
+        assertEquals("Tester", player.getName());
+    }
+
 }

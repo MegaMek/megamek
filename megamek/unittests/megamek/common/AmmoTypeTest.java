@@ -18,14 +18,19 @@
  */
 package megamek.common;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -136,5 +141,30 @@ class AmmoTypeTest {
         assertTrue(AmmoType.canSwitchToAmmo(mockWeapon, mockInferno4AmmoType));
 
         assertFalse(AmmoType.canSwitchToAmmo(mockWeapon, mockSRM6AmmoType));
+    }
+
+    @Test
+    void testAddISMunitionAddsEntryToList() throws Exception {
+        List<Object> munitions = new ArrayList<>();
+        Method method = AmmoType.class.getDeclaredMethod(
+              "addISMunition",
+              List.class,
+              String.class,
+              AmmoType.Munitions.class,
+              int.class,
+              int[].class,
+              int[].class,
+              String.class,
+              String.class
+        );
+        method.setAccessible(true);
+        method.invoke(null, munitions, "TestAmmo", AmmoType.Munitions.M_STANDARD, 3,
+              new int[]{'C', 'C', 'C', 'C'},
+              new int[]{3025, 3030, 3040, 3050, 3060, 1, 0, 1, 1, 0},
+              "F_FS", "TestDoc");
+
+        // Vérifie que la liste a été remplie
+        assertEquals(1, munitions.size(), "Une munition doit avoir été ajoutée");
+        assertNotNull(munitions.get(0), "L'élément ne doit pas être null");
     }
 }

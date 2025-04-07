@@ -18,6 +18,7 @@
  */
 package megamek.common;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -74,6 +75,65 @@ class GameTest {
 
         assertSame(winningPlayer, victoryResult2.getWinningPlayer());
         assertSame(winningTeam, victoryResult2.getWinningTeam());
+    }
+
+    @Test
+    void testSetAndGetVictoryPlayerIdAndTeam() {
+        Game game = new Game();
+        game.setVictoryPlayerId(99);
+        game.setVictoryTeam(88);
+        assertEquals(99, game.getVictoryPlayerId());
+        assertEquals(88, game.getVictoryTeam());
+    }
+
+    @Test
+    void testAddAndRetrievePlayer() {
+        Game game = new Game();
+        Player player = new Player(1, "Add Player Test");
+        game.addPlayer(player.getId(), player);
+        assertEquals(player, game.getPlayer(1));
+    }
+
+    @Test
+    void testAddPlayerThenRemove() {
+        Game game = new Game();
+        Player player = new Player(2, "Remove Player Test");
+        game.addPlayer(2, player);
+        game.removePlayer(2);
+        assertFalse(game.getPlayersList().contains(player), "Le joueur doit être retiré.");
+    }
+
+    @Test
+    void testVictoryConfiguration() {
+        Game game = new Game();
+        game.setVictoryTeam(10);
+        game.setVictoryPlayerId(5);
+        game.setForceVictory(true);
+
+        assertTrue(game.isForceVictory());
+        assertEquals(10, game.getVictoryTeam());
+        assertEquals(5, game.getVictoryPlayerId());
+    }
+
+    @Test
+    void testAddAndGetPlayer() {
+        Game game = new Game();
+        Player player = new Player(7, "Joueur Test");
+        game.addPlayer(7, player);
+
+        assertEquals(player, game.getPlayer(7));
+    }
+
+    @Test
+    void testGetPlayersVector() {
+        Game game = new Game();
+        Player player1 = new Player(1, "Alpha");
+        Player player2 = new Player(2, "Bravo");
+        game.addPlayer(1, player1);
+        game.addPlayer(2, player2);
+
+        assertTrue(game.getPlayersList().contains(player1));
+        assertTrue(game.getPlayersList().contains(player2));
     }
 
 }

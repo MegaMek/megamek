@@ -20,6 +20,7 @@ package megamek.common.util;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -34,6 +35,8 @@ import java.text.AttributedString;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
@@ -69,10 +72,15 @@ public class TipOfTheDay {
     private Font tipLabelFont;
     private float dpiScaleFactor;
 
-    // Prevent instantiation
-    public TipOfTheDay(String bundleName, float dpiScaleFactor) {
+    /**
+     * Constructor for TipOfTheDay
+     * 
+     * @param bundleName The name of the resource bundle containing the tips
+     * @param referenceComponent A component to determine DPI scaling
+     */
+    public TipOfTheDay(String bundleName, Component referenceComponent) {
         this.bundleName = bundleName;
-        this.dpiScaleFactor = dpiScaleFactor;
+        this.dpiScaleFactor = UIUtil.getDpiScaleFactor(referenceComponent);
         countTips = countTips();
         tipLabel = Internationalization.getTextAt(bundleName, TIP_BUNDLE_TITLE_KEY);
         tipOfTheDay = getRandomTip();

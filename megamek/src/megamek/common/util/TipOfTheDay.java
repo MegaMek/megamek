@@ -80,11 +80,19 @@ public class TipOfTheDay {
      */
     public TipOfTheDay(String bundleName, Component referenceComponent) {
         this.bundleName = bundleName;
-        this.dpiScaleFactor = UIUtil.getDpiScaleFactor(referenceComponent);
         countTips = countTips();
         tipLabel = Internationalization.getTextAt(bundleName, TIP_BUNDLE_TITLE_KEY);
         tipOfTheDay = getRandomTip();
+        updateDPIScaleFactor(referenceComponent);
+    }
 
+    /**
+     * Updates the DPI scale factor and adjusts the font sizes accordingly.
+     * 
+     * @param referenceComponent A component to determine DPI scaling
+     */
+    public void updateDPIScaleFactor(Component referenceComponent) {
+        dpiScaleFactor = UIUtil.getDpiScaleFactorForMonitor(referenceComponent);
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(UIComponents.MainMenuBorder.getComp(), true);
         Font baseFont = new Font(skinSpec.fontName, Font.PLAIN, skinSpec.fontSize);
         tipLabelFont = baseFont.deriveFont(Font.BOLD, TIP_TITLE_FONT_SIZE * dpiScaleFactor); // Tip title font

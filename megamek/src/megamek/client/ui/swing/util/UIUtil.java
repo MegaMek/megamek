@@ -48,7 +48,6 @@ public final class UIUtil {
      * classes.
      */
     private static final int TOOLTIP_WIDTH = 300;
-    private static final int DEFAULT_DPI = 96;
 
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
     public static final int FONT_SCALE1 = 14;
@@ -535,7 +534,7 @@ public final class UIUtil {
      * @param component The component to check
      * @return The DPI scale factor for the containing monitor
      */
-    public static float getDpiScaleFactorForMonitor(Component component) {
+    public static float getMonitorScaleFactor(Component component) {
         // Get the GraphicsConfiguration for the monitor containing this component
         GraphicsConfiguration gc = (component != null) ? component.getGraphicsConfiguration() : null;
         if (gc == null) {
@@ -565,14 +564,28 @@ public final class UIUtil {
         // Get screen resolution
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
         // Calculate scale factor (compared to reference 96 DPI)
-        return (float) dpi / DEFAULT_DPI;
+        return (float) dpi / DEFAULT_DISPLAY_PPI;
     }
 
     /**
      * @return The height of the screen taking into account display scaling
      */
     public static Dimension getScaledScreenSize(Component component) {
-        return getScaledScreenSize(component.getGraphicsConfiguration().getDevice().getDisplayMode());
+        GraphicsConfiguration gc = null;
+        if (component != null) {
+            gc = component.getGraphicsConfiguration();
+        }
+        if (gc == null) {
+            try {
+                gc = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                    .getDefaultScreenDevice()
+                    .getDefaultConfiguration();
+            } catch (HeadlessException e) {
+                return new Dimension(800, 600); 
+            }
+        }
+        Rectangle bounds = gc.getBounds();
+        return new Dimension(bounds.width, bounds.height);
     }
 
     /**
@@ -587,7 +600,6 @@ public final class UIUtil {
         return new Dimension(DEFAULT_DISPLAY_PPI * monitorW / pixelPerInch,
                 DEFAULT_DISPLAY_PPI * monitorH / pixelPerInch);
     }
-
     /**
      * @return an image with the same aspect ratio that fits within the given
      *         bounds, or the existing image if it
@@ -621,9 +633,7 @@ public final class UIUtil {
     public static JLabel createSplashComponent(TreeMap<Integer, String> multiResImageMap, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
-        Dimension scaledMonitorSize = getScaledScreenSize(parent.getGraphicsConfiguration()
-                .getDevice()
-                .getDisplayMode());
+        Dimension scaledMonitorSize = getScaledScreenSize(parent);
         Image imgSplash = parent.getToolkit().getImage(multiResImageMap.floorEntry(scaledMonitorSize.width).getValue());
 
         // wait for splash image to load completely
@@ -647,9 +657,7 @@ public final class UIUtil {
     public static JLabel createSplashComponent(String imgSplashFile, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
-        Dimension scaledMonitorSize = getScaledScreenSize(parent.getGraphicsConfiguration()
-                .getDevice()
-                .getDisplayMode());
+        Dimension scaledMonitorSize = getScaledScreenSize(parent);
 
         Image imgSplash = parent.getToolkit().getImage(imgSplashFile);
 

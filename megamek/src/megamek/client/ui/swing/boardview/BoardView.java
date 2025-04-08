@@ -3754,19 +3754,22 @@ public final class BoardView extends AbstractBoardView
     /**
      * Adds an attack to the sprite list.
      */
-    public synchronized void addAttack(AttackAction attackAction) {
-        // Don'target make sprites for unknown entities and sensor returns
-        Entity attackingEntity = game.getEntity(attackAction.getEntityId());
+    public void addAttack(AttackAction attackAction) {
+        // Don't make sprites for unknown entities and sensor returns
+        // cross-board attacks don't get attack arrows (for now, must possibly allow some A2G, O2G, A2A attacks later
+        // when target/attacker hexes are not really but effectively on the same board)
+        Entity attacker = game.getEntity(attackAction.getEntityId());
         Targetable target = game.getTarget(attackAction.getTargetType(), attackAction.getTargetId());
-        if ((attackingEntity == null) ||
+        if ((attacker == null) ||
                   (target == null) ||
                   (target.getTargetType() == Targetable.TYPE_INARC_POD) ||
                   (target.getPosition() == null) ||
-                  (attackingEntity.getPosition() == null)) {
+                  (attacker.getPosition() == null)
+                  || !game.onTheSameBoard(attacker, target)) {
             return;
         }
-        EntitySprite entitySprite = entitySpriteIds.get(getIdAndLoc(attackingEntity.getId(),
-              (attackingEntity.getSecondaryPositions().isEmpty() ? -1 : 0)));
+        EntitySprite entitySprite = entitySpriteIds.get(getIdAndLoc(attacker.getId(),
+              (attacker.getSecondaryPositions().isEmpty() ? -1 : 0)));
         if (entitySprite != null && entitySprite.onlyDetectedBySensors()) {
             return;
         }
@@ -3782,7 +3785,7 @@ public final class BoardView extends AbstractBoardView
                 return;
             }
         }
-        // no re-use possible, add a new one don't target add a sprite for an artillery attack made by the other player
+        // no re-use possible, add a new one don't add a sprite for an artillery attack made by the other player
         if (attackAction instanceof WeaponAttackAction weaponAttackAction) {
             int ownerId = weaponAttackAction.getEntity(game).getOwner().getId();
             int teamId = weaponAttackAction.getEntity(game).getOwner().getTeam();

@@ -44,6 +44,7 @@ public class Board implements Serializable {
 
     public static final String BOARD_REQUEST_ROTATION = "rotate:";
     public static final int BOARD_NONE = -1;
+    public static final String BOARD_NAME_UNNAMED = "Unnamed";
 
     // starting positions
     public static final int START_NONE = -1;
@@ -156,7 +157,7 @@ public class Board implements Serializable {
      */
     private int enclosingBoard = -1;
 
-    private String mapName = "Unnamed";
+    private String mapName = BOARD_NAME_UNNAMED;
 
     // endregion Variable Declarations
 

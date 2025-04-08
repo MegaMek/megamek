@@ -196,7 +196,11 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      */
     public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable IClientGUI cg,
           int boardId) {
-        var result = new JDialog(parent, Messages.getString("ClientGUI.Minimap"), false);
+        String name = Messages.getString("ClientGUI.Minimap");
+        if (!Board.BOARD_NAME_UNNAMED.equals(game.getBoard(boardId).getBoardName())) {
+            name = game.getBoard(boardId).getBoardName();
+        }
+        var result = new JDialog(parent, name, false);
 
         result.setLocation(GUIP.getMinimapPosX(), GUIP.getMinimapPosY());
         result.setResizable(false);
@@ -1155,7 +1159,9 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         Entity source = game.getEntity(attack.getEntityId());
         Targetable target = game.getTarget(attack.getTargetType(), attack.getTargetId());
         // sanity check...
-        if ((null == source) || (null == target)) {
+        // cross-board attacks don't get attack arrows (for now, must possibly allow some A2G, O2G, A2A attacks later
+        // when target/attacker hexes are not really but effectively on the same board)
+        if ((null == source) || (null == target) || !game.onTheSameBoard(source, target)) {
             return;
         }
 

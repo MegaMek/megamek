@@ -25,8 +25,12 @@ map:
     id: 2
 
   - file: buildingsnobasement/Flughafen 6.board
-    name: Airport
+    name: Hangar
     id: 3
+
+  - file: unofficial/Cakefish/General/50x50 Grass QRF Airbase.board
+    name: Airport
+    id: 5
 
 
 options:
@@ -75,7 +79,9 @@ factions:
     at: [ 7,7 ]
     status: hidden
 
-#  - fullname: Atlas AS7-D
+  - fullname: Atlas AS7-D
+    board: 5
+    at: [ 35, 29]
 
   - fullname: Cheetah IIC
     at: [5, 6]

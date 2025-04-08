@@ -27332,11 +27332,7 @@ public class TWGameManager extends AbstractGameManager {
         if (activatingUnit == null) {
             logger.error("Unit #%d not found".formatted(entityId));
             return;
-        } else if (e == null) {
-            return;
-        }
-
-        if (connIndex != activatingUnit.getOwnerId()) {
+        } else if (connIndex != activatingUnit.getOwnerId()) {
             logger.error("Player #%d tried to activate a hidden unit owned by Player #%d".formatted(connIndex,
                   activatingUnit.getOwnerId()));
             return;

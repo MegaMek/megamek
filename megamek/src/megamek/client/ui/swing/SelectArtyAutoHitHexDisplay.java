@@ -305,7 +305,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     @Override
     public void ready() {
         endMyTurn();
-        PlayerIDandList<BoardLocation> finalAutoHits = new PlayerIDandList<>();
+        PlayerIDAndList<BoardLocation> finalAutoHits = new PlayerIDAndList<>();
         finalAutoHits.setPlayerID(player.getId());
         finalAutoHits.addAll(plannedAutoHits.keySet());
         plannedAutoHits.clear();

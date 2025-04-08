@@ -59,7 +59,7 @@ public class TipOfTheDay {
     private static final int TIP_BORDER_MARGIN = 40;
     private static final int TIP_SIDE_PADDING = 20;
     private static final float TIP_TITLE_FONT_SIZE = 14f;
-    private static final float TIP_FONT_SIZE = 24f;
+    private static final float TIP_FONT_SIZE = 18f;
     private static final float STROKE_WIDTH = 3.0f;
     private static final Color TIP_STROKE_COLOR = Color.BLACK;
     private static final Color TIP_TITLE_FONT_COLOR = Color.WHITE;

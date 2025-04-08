@@ -21,6 +21,7 @@ package megamek.common.util;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -70,33 +71,33 @@ public class TipOfTheDay {
     private final String tipLabel;
     private Font tipFont;
     private Font tipLabelFont;
-    private float dpiScaleFactor;
+    private float scaleFactor;
 
     /**
      * Constructor for TipOfTheDay
      * 
      * @param bundleName The name of the resource bundle containing the tips
-     * @param referenceComponent A component to determine DPI scaling
+     * @param referenceComponent A component to determine scaling
      */
     public TipOfTheDay(String bundleName, Component referenceComponent) {
         this.bundleName = bundleName;
         countTips = countTips();
         tipLabel = Internationalization.getTextAt(bundleName, TIP_BUNDLE_TITLE_KEY);
         tipOfTheDay = getRandomTip();
-        updateDPIScaleFactor(referenceComponent);
+        updateScaleFactor(referenceComponent);
     }
 
     /**
-     * Updates the DPI scale factor and adjusts the font sizes accordingly.
+     * Updates the scale factor and adjusts the font sizes accordingly.
      * 
-     * @param referenceComponent A component to determine DPI scaling
+     * @param referenceComponent A component to determine scaling
      */
-    public void updateDPIScaleFactor(Component referenceComponent) {
-        dpiScaleFactor = (float) UIUtil.getMonitorScaleFactor(referenceComponent);
+    public void updateScaleFactor(Component referenceComponent) {
+        scaleFactor = (float) UIUtil.getResolutionScaleFactor(referenceComponent);
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(UIComponents.MainMenuBorder.getComp(), true);
         Font baseFont = new Font(skinSpec.fontName, Font.PLAIN, skinSpec.fontSize);
-        tipLabelFont = baseFont.deriveFont(Font.BOLD, TIP_TITLE_FONT_SIZE * dpiScaleFactor); // Tip title font
-        tipFont = baseFont.deriveFont(Font.BOLD, TIP_FONT_SIZE * dpiScaleFactor); // Tip font
+        tipLabelFont = baseFont.deriveFont(Font.BOLD, TIP_TITLE_FONT_SIZE * scaleFactor); // Tip title font
+        tipFont = baseFont.deriveFont(Font.BOLD, TIP_FONT_SIZE * scaleFactor); // Tip font
     }
 
     /**
@@ -196,14 +197,14 @@ public class TipOfTheDay {
             float totalBlockHeight = labelHeight + totalTipHeight;
             float startY;
             if (position == Position.BOTTOM_BORDER) {
-                startY = referenceBounds.y + referenceBounds.height - (TIP_BORDER_MARGIN * dpiScaleFactor) - totalBlockHeight;
+                startY = referenceBounds.y + referenceBounds.height - (TIP_BORDER_MARGIN * scaleFactor) - totalBlockHeight;
             } else {
-                startY = referenceBounds.y + (TIP_BORDER_MARGIN * dpiScaleFactor);
+                startY = referenceBounds.y + (TIP_BORDER_MARGIN * scaleFactor);
             }
             float startX = referenceBounds.x + TIP_SIDE_PADDING;
 
             // Draw the text (outline then fill)
-            BasicStroke outlineStroke = new BasicStroke(STROKE_WIDTH * dpiScaleFactor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+            BasicStroke outlineStroke = new BasicStroke(STROKE_WIDTH * scaleFactor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
             tipGraphics.setStroke(outlineStroke);
 
             // Draw Label

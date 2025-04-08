@@ -42,6 +42,8 @@ public final class UIUtil {
 
     // The standard pixels-per-inch to compare against for display scaling
     private static final int DEFAULT_DISPLAY_PPI = 96;
+    private static final int REFERENCE_RESOLUTION_HEIGHT = 1080;
+    private static final double MINIMUM_RESOLUTION_SCALE_FACTOR = 0.7f;
 
     /**
      * The width for a tooltip displayed to the side of a dialog using one of TipXX classes.
@@ -499,7 +501,7 @@ public final class UIUtil {
      * @param component The component to check
      * @return The DPI scale factor for the containing monitor
      */
-    public static float getMonitorScaleFactor(Component component) {
+    public static double getMonitorScaleFactor(Component component) {
         // Get the GraphicsConfiguration for the monitor containing this component
         GraphicsConfiguration gc = (component != null) ? component.getGraphicsConfiguration() : null;
         if (gc == null) {
@@ -507,9 +509,20 @@ public final class UIUtil {
         }
         // Calculate the DPI scale for this specific monitor
         AffineTransform transform = gc.getDefaultTransform();
-        return (float) transform.getScaleX();
+        return transform.getScaleX();
     }
 
+    /**
+     * Gets the resolution scale factor for the monitor containing the specified component. 
+     * Baseline is 1080p (1920x1080).
+     * 
+     * @param component The component to check
+     * @return The resolution scale factor for the containing monitor
+     */
+    public static double getResolutionScaleFactor(Component component) {
+        final Dimension logicalScreenSize = UIUtil.getScaledScreenSize(component);
+        return Math.max(MINIMUM_RESOLUTION_SCALE_FACTOR, logicalScreenSize.height / REFERENCE_RESOLUTION_HEIGHT);
+    }
     /**
      * Calculate the DPI scale factor for a component
      * 

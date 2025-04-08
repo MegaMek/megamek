@@ -623,7 +623,7 @@ public class LosEffects {
         ai.targetPos = targetPosition;
         ai.targetEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         if (ai.targetEntity) {
-            ai.targetId = ((Entity) target).getId();
+            ai.targetId = target.getId();
         }
 
         // Adjust units' altitudes for low-altitude map LOS caclulations
@@ -866,7 +866,7 @@ public class LosEffects {
      */
     private static LosEffects losStraight(Game game, AttackInfo ai,
             boolean diagramLoS, boolean partialCover) {
-        ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos);
+        List<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos);
         LosEffects los = new LosEffects();
         boolean targetInBuilding = false;
         if (ai.targetEntity) {

@@ -26420,7 +26420,8 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         for (Entity spotter : vEntities) {
-            if (!spotter.isActive() || spotter.isOffBoard() || vCanDetect.contains(spotter.getOwner())) {
+            if (!spotter.isActive() || spotter.isOffBoard() || vCanDetect.contains(spotter.getOwner())
+                      || !game.onTheSameBoard(entity, spotter)) {
                 continue;
             }
             // See if the LosEffects is cached, and if not cache it

@@ -1452,7 +1452,7 @@ public class MovePath implements Cloneable, Serializable {
     public void findPathTo(final Coords dest, final MoveStepType type) {
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
 
-        ShortestPathFinder pf = ShortestPathFinder.newInstanceOfAStar(dest, type, game);
+        ShortestPathFinder pf = ShortestPathFinder.newInstanceOfAStar(dest, type, game, 0);
 
         AbstractPathFinder.StopConditionTimeout<MovePath> timeoutCondition = new AbstractPathFinder.StopConditionTimeout<>(
                 timeLimit);

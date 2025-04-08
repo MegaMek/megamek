@@ -334,12 +334,12 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             if (!mineClear) {
                 vPhaseReport.addElement(r);
             }
-            targetHex = game.getBoard().getHex(targetPos);
-            heights.add((targetHex != null) ? game.getBoard().getHex(targetPos).getLevel() : 0);
+            targetHex = game.getBoard(target.getBoardId()).getHex(targetPos);
+            heights.add((targetHex != null) ? game.getBoard(target.getBoardId()).getHex(targetPos).getLevel() : 0);
             artyMsg = "Artillery hit here on round " + game.getRoundCount()
                     + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
                     + " (this hex is now an auto-hit)";
-            game.getBoard().addSpecialHexDisplay(targetPos,
+            game.getBoard(target.getBoardId()).addSpecialHexDisplay(targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                             game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg));
         } else {

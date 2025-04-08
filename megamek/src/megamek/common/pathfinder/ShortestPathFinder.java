@@ -246,10 +246,10 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * @param game        The current {@link Game}
      */
     public static ShortestPathFinder newInstanceOfAStar(final Coords destination,
-            final MoveStepType stepType, final Game game) {
+            final MoveStepType stepType, final Game game, int boardId) {
         final ShortestPathFinder spf = new ShortestPathFinder(
                 new ShortestPathFinder.MovePathRelaxer(),
-                new ShortestPathFinder.MovePathAStarComparator(destination, stepType, game.getBoard()),
+                new ShortestPathFinder.MovePathAStarComparator(destination, stepType, game.getBoard(boardId)),
                 stepType, game);
 
         spf.addStopCondition(new DestinationReachedStopCondition(destination));

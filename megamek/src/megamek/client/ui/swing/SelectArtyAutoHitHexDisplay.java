@@ -35,7 +35,7 @@ import megamek.common.BoardLocation;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
-import megamek.common.containers.PlayerIDandList;
+import megamek.common.containers.PlayerIDAndList;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -97,8 +97,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     private int allowedNumberOfHexes;
 
     /**
-     * Creates and lays out a new select designated hex phase display for the specified
-     * clientgui.getClient().
+     * Creates and lays out a new select designated hex phase display for the specified clientgui.getClient().
      */
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
         super(clientgui);
@@ -121,7 +120,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         for (ArtyAutoHitCommand cmd : ArtyAutoHitCommand.values()) {
             String title = Messages.getString("SelectArtyAutoHitHexDisplay." + cmd.getCmd());
             MegaMekButton newButton = new MegaMekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+                  SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);

@@ -1259,6 +1259,7 @@ public final class BoardView extends AbstractBoardView
     private void renderMovementBoundingBox(Graphics2D graphics2D) {
         if (getSelectedEntity() != null) {
             Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
+            princess.startPrecognition();
             princess.getGame().setBoard(game.getBoard(boardId));
             PathEnumerator pathEnum = new PathEnumerator(princess, game);
             pathEnum.recalculateMovesFor(getSelectedEntity());

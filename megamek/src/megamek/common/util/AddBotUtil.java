@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 import javax.swing.JFrame;
 
 import megamek.client.AbstractClient;
@@ -42,15 +41,15 @@ public class AddBotUtil {
     private final List<String> results = new ArrayList<>();
     public static final String COMMAND = "replacePlayer";
     public static final String USAGE = "Replaces a player who is a ghost with a bot." +
-            "\nUsage /replacePlayer <-b:Princess> <-c:Config> <-v:Verbosity> " +
-            "<-p:>name." +
-            "\n  <-b> Specifies use if Princess. " +
-            "\n  <-c> Specifies a saved configuration to be used by Princess.  If left out" +
-            " DEFAULT will be used." +
-            "\n  <-v> Specifies the verbosity level for Princess " +
-            "(DEBUG/INFO/WARNING/ERROR)." +
-            "\n  <-p> Specifies the player name.  The '-p' is only required when the '-c' " +
-            "or '-v' parameters are also used.";
+                                             "\nUsage /replacePlayer <-b:Princess> <-c:Config> <-v:Verbosity> " +
+                                             "<-p:>name." +
+                                             "\n  <-b> Specifies use if Princess. " +
+                                             "\n  <-c> Specifies a saved configuration to be used by Princess.  If left out" +
+                                             " DEFAULT will be used." +
+                                             "\n  <-v> Specifies the verbosity level for Princess " +
+                                             "(DEBUG/INFO/WARNING/ERROR)." +
+                                             "\n  <-p> Specifies the player name.  The '-p' is only required when the '-c' " +
+                                             "or '-v' parameters are also used.";
 
     private String concatResults() {
         final StringBuilder output = new StringBuilder();
@@ -60,10 +59,7 @@ public class AddBotUtil {
         return output.toString();
     }
 
-    public String addBot(final String[] args,
-            final Game game,
-            final String host,
-            final int port) {
+    public String addBot(final String[] args, final Game game, final String host, final int port) {
         if (2 > args.length) {
             results.add(USAGE);
             return concatResults();
@@ -142,7 +138,7 @@ public class AddBotUtil {
             botClient = makeNewPrincessClient(target, host, port);
             if (!StringUtility.isNullOrBlank(configName)) {
                 final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
-                        .getBehavior(configName.toString());
+                                                        .getBehavior(configName.toString());
                 if (null != behavior) {
                     ((Princess) botClient).setBehaviorSettings(behavior);
                 } else {
@@ -174,16 +170,16 @@ public class AddBotUtil {
         final StringBuilder result = new StringBuilder(botName);
         result.append(" has replaced ").append(target.getName()).append(".");
         if (botClient instanceof Princess) {
-            result.append("  Config: ").append(((Princess) botClient).getBehaviorSettings().getDescription())
-                    .append(".");
+            result.append("  Config: ")
+                  .append(((Princess) botClient).getBehaviorSettings().getDescription())
+                  .append(".");
         }
         results.add(result.toString());
         return concatResults();
     }
 
     public @Nullable Princess replaceGhostWithBot(final BehaviorSettings behavior, final String playerName,
-            final Client client,
-            StringBuilder message) {
+          final Client client, StringBuilder message) {
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
 
@@ -193,8 +189,10 @@ public class AddBotUtil {
 
         Objects.requireNonNull(game);
 
-        Optional<Player> possible = game.getPlayersList().stream()
-                .filter(p -> p.getName().equals(playerName)).findFirst();
+        Optional<Player> possible = game.getPlayersList()
+                                          .stream()
+                                          .filter(p -> p.getName().equals(playerName))
+                                          .findFirst();
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
             return null;
@@ -205,6 +203,7 @@ public class AddBotUtil {
 
         final Player target = possible.get();
         final Princess princess = new Princess(target.getName(), host, port);
+        princess.startPrecognition();
         princess.setBehaviorSettings(behavior);
 
         try {
@@ -223,8 +222,7 @@ public class AddBotUtil {
      * @return the new Princess bot or null if not able to replace
      */
     public @Nullable Princess changeBotSettings(final BehaviorSettings behavior, final String playerName,
-            final Client client,
-            StringBuilder message) {
+          final Client client, StringBuilder message) {
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
 
@@ -234,8 +232,10 @@ public class AddBotUtil {
 
         Objects.requireNonNull(game);
 
-        Optional<Player> possible = game.getPlayersList().stream()
-                .filter(p -> p.getName().equals(playerName)).findFirst();
+        Optional<Player> possible = game.getPlayersList()
+                                          .stream()
+                                          .filter(p -> p.getName().equals(playerName))
+                                          .findFirst();
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
             return null;
@@ -271,16 +271,16 @@ public class AddBotUtil {
         }
     }
 
-    public boolean kickBot(final String playerName,
-            final Client client,
-            StringBuilder message) {
+    public boolean kickBot(final String playerName, final Client client, StringBuilder message) {
 
         Objects.requireNonNull(client);
         final Game game = client.getGame();
         Objects.requireNonNull(game);
 
-        Optional<Player> possible = game.getPlayersList().stream()
-                .filter(p -> p.getName().equals(playerName)).findFirst();
+        Optional<Player> possible = game.getPlayersList()
+                                          .stream()
+                                          .filter(p -> p.getName().equals(playerName))
+                                          .findFirst();
 
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
@@ -299,6 +299,8 @@ public class AddBotUtil {
     }
 
     BotClient makeNewPrincessClient(final Player target, final String host, final int port) {
-        return new Princess(target.getName(), host, port);
+        Princess princess = new Princess(target.getName(), host, port);
+        princess.startPrecognition();
+        return princess;
     }
 }

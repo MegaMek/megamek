@@ -792,7 +792,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     public void setEngineHits(int hits) {
         engineHits = hits;
-        if ((engineHits >= getMaxEngineHits()) && getEnginesLostRound() == Integer.MAX_VALUE) {
+        if ((engineHits >= getMaxEngineHits()) && getEnginesLostRound() == Integer.MAX_VALUE && game != null) {
             setEnginesLostRound(game.getCurrentRound());
         }
     }

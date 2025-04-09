@@ -26,7 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Vector;
-
 import javax.swing.*;
 
 import megamek.MMConstants;
@@ -37,6 +36,7 @@ import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.OkayAction;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -47,8 +47,8 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     private static final MMLogger logger = MMLogger.create(AbstractGameConnectionDialog.class);
 
     /**
-     * We need a way to access the action map for a JComboBox editor, so that we can
-     * have it fire an action when wenter is pressed. This simple class allows this.
+     * We need a way to access the action map for a JComboBox editor, so that we can have it fire an action when wenter
+     * is pressed. This simple class allows this.
      */
     public static class SimpleComboBoxEditor extends JTextField implements ComboBoxEditor {
 
@@ -94,7 +94,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     }
 
     protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName,
-            Vector<String> playerNames) {
+          Vector<String> playerNames) {
         super(owner, title, modal);
 
         this.playerNames = playerNames;
@@ -240,16 +240,20 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         try {
             setPlayerName(Server.validatePlayerName(playerName));
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.PlayerNameError"),
-                    Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getOwner(),
+                  Messages.getString("MegaMek.PlayerNameError"),
+                  Messages.getString(errorTitleKey),
+                  JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
         try {
             setPort(Server.validatePort(port));
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.PortError"),
-                    Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getOwner(),
+                  Messages.getFormattedString("MegaMek.PortError", MMConstants.MIN_PORT, MMConstants.MAX_PORT),
+                  Messages.getString(errorTitleKey),
+                  JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -262,13 +266,12 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         // reached from the Okay button or pressing Enter in the text fields
         setPlayerName(getPlayerNameFromUI());
         try {
-            setPort(Integer.parseInt(getPortField().getText()));
+            setPort(MathUtility.parseInt(getPortField().getText(), MMConstants.DEFAULT_PORT));
+            setConfirmed(true);
+            getClientPreferences().setLastPlayerName(getPlayerName());
+            getClientPreferences().setLastConnectPort(getPort());
         } catch (NumberFormatException ex) {
             logger.error(ex, "");
         }
-
-        setConfirmed(true);
-        getClientPreferences().setLastPlayerName(getPlayerName());
-        getClientPreferences().setLastConnectPort(getPort());
     }
 }

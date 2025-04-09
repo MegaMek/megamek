@@ -265,7 +265,7 @@ public class MekSummaryCache {
 
             // load units from the external user data dir
             String userDir = PreferenceManager.getClientPreferences().getUserDir();
-            File userDataUnits2 = new File(userDir, "");
+            File userDataUnits2 = new File(userDir, Configuration.unitsDir().toString());
             if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
                 bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, userDataUnits2, false);
             }

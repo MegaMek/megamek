@@ -49,7 +49,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.common.internationalization.Internationalization;
+import megamek.common.internationalization.I18n;
 
 /**
  * @author Drake
@@ -90,7 +90,7 @@ public class TipOfTheDay {
     public TipOfTheDay(String bundleName, Component referenceComponent) {
         this.bundleName = bundleName;
         countTips = countTips();
-        tipLabel = Internationalization.getTextAt(bundleName, TIP_BUNDLE_TITLE_KEY);
+        tipLabel = I18n.getTextAt(bundleName, TIP_BUNDLE_TITLE_KEY);
         tipOfTheDay = getRandomTip();
         updateScaleFactor(referenceComponent);
     }
@@ -116,7 +116,7 @@ public class TipOfTheDay {
         try {
             while (true) {
                 count++;
-                String tip = Internationalization.getTextAt(bundleName, TIP_BUNDLE_KEY + count);
+                String tip = I18n.getTextAt(bundleName, TIP_BUNDLE_KEY + count);
                 if (tip.startsWith("!") && tip.endsWith("!")) {
                     return count - 1;
                 }
@@ -136,7 +136,7 @@ public class TipOfTheDay {
         LocalDate today = LocalDate.now();
         int dayOfYear = today.getDayOfYear();
         int tipIndex = (dayOfYear % countTips) + 1;
-        return Internationalization.getTextAt(bundleName, TIP_BUNDLE_KEY + tipIndex);
+        return I18n.getTextAt(bundleName, TIP_BUNDLE_KEY + tipIndex);
     }
 
     /**
@@ -146,7 +146,7 @@ public class TipOfTheDay {
      */
     public String getRandomTip() {
         int randomIndex = (int) (Math.random() * countTips) + 1;
-        return Internationalization.getTextAt(bundleName, TIP_BUNDLE_KEY + randomIndex);
+        return I18n.getTextAt(bundleName, TIP_BUNDLE_KEY + randomIndex);
     }
 
     /**

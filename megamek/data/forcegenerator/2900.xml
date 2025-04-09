@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2900-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>0,0</pctOmni>
@@ -1144,16 +1141,16 @@
 			</model>
 		</chassis>
         <chassis name='Buster' unitType='Mek'>
-            <availability>CLAN:6,IS:5,Periphery:3,HL:0,Periphery.Deep:0,PIR:4,BAN:4-</availability>
+            <availability>CLAN:6,IS:5,Periphery:3,HL:4-,Periphery.Deep:5-,PIR:4,BAN:4-</availability>
             <model name='BC XV HaulerMech'>
                 <roles>cargo,civilian</roles>
-                <availability>CLAN:8,IS:4+,Periphery:2+,PIR:2+,BAN:0</availability>
+                <availability>CLAN:8,IS:4+,Periphery:2+,Periphery.Deep:0,PIR:2+,BAN:0</availability>
             </model>
             <model name='BC XV-M-B HaulerMech MOD'>
-                <availability>Periphery:3-,TC:3-,PIR:4+</availability>
+                <availability>Periphery:3-,HL:4+,Periphery.Deep!A:3!B:3!C:3!D:2!F:1,TC:3-,PIR:4+</availability>
             </model>
             <model name='BC XV-M HaulerMech MOD'>
-                <availability>Periphery:5-,TC:3-,PIR:8</availability>
+                <availability>Periphery:5-,TC:3-,HL:8,Periphery.Deep:8,PIR:8</availability>
             </model>
         </chassis>
 		<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
@@ -1243,7 +1240,7 @@
 				<availability>IS:3+,FS:4+,LA:5+,DC:6+,CC:2+,MERC:2+,CS:5+,Periphery:2+,HL:0,Periphery.Deep:0,PIR:2</availability>
 			</model>
 			<model name='CN9-AL'>
-				<availability>IS:4,FS:5,LA:8-,FWL:5,DC:7-,CC:7-,CS:3,Periphery:5,HL:5,Periphery.Deep:8,PIR:5</availability>
+				<availability>IS:4,FS:5,LA:8-,FWL:5,DC:7-,CC:7-,CS:3,Periphery:5:2916,HL:5:2917,Periphery.Deep:8:2917,PIR:5</availability>
 			</model>
 		</chassis>
 		<chassis name='Cestus' unitType='Mek'>
@@ -2966,10 +2963,10 @@
             </model>
             <model name='GLD-3R'>
                 <roles>fire_support</roles>
-                <availability>IS:5,Periphery.DD:5,HL:4+,Periphery.Deep:3+,PIR:5</availability>
+                <availability>MERC:5,Periphery.DD:5,HL:4+,Periphery.Deep:3+,PIR:5</availability>
             </model>
             <model name='GLD-4R'>
-                <availability>IS:8,Periphery.DD:8,HL!A:8!B:6!C:1,Periphery.Deep!A:8!B:6!C:1,PIR:8</availability>
+                <availability>MERC:8,Periphery.DD:8,HL!A:8!B:6!C:1,Periphery.Deep!A:8!B:6!C:1,PIR:8</availability>
             </model>
         </chassis>
 		<chassis name='Goblin Medium Tank' unitType='Tank'>
@@ -3503,7 +3500,7 @@
 			<availability>IS:4+,FS:4,LA:4,FWL:5+,DC:5+,CC:5+,MERC:5,CS:4,CLAN:1-,Periphery:3+,Periphery.ME:4+,Periphery.MW:4+,NIOPS:5-,HL:2+,Periphery.Deep:1+,PIR:4+</availability>
 			<model name='HBK-4G'>
                 <roles>urban</roles>
-				<availability>IS:7+,LA:8,FWL:8,DC:8+,CC:8+,MERC:8+,Periphery:7+,HL:5+,Periphery.Deep:5+,PIR:8</availability>
+				<availability>IS:7+,LA:8,FWL:8,DC:8+,CC:8+,MERC:8+,CLAN:8,Periphery:7+,HL:5+,Periphery.Deep:5+,PIR:8</availability>
 			</model>
 			<model name='HBK-4H'>
 				<availability>IS:7,LA:6,FWL:4,DC:6,CC:5,MERC:6-,CS:3,Periphery:7,HL:8,Periphery.Deep:8,PIR:5</availability>
@@ -5389,7 +5386,7 @@
 			</model>
 		</chassis>
 		<chassis name='Phoenix Hawk' unitType='Mek'>
-			<availability>IS:5,FS!A:6!B:6!C:6!D:5!F:5,LA:6,DC!A:6!B:6!C:6!D:5!F:5,MERC:8+,CS:6-,CLAN:2,Periphery:4,NIOPS:7,HL:2+,Periphery.Deep:2+,PIR:6+</availability>
+			<availability>IS:5,FS!A:6!B:6!C:6!D:5!F:5,LA:6,DC!A:6!B:6!C:6!D:5!F:5,CC!A:6!B:6!C:6!D:5!F:5,MERC:8+,CS:6-,CLAN:2,Periphery:4,NIOPS:7,HL:2+,Periphery.Deep:2+,PIR:6+</availability>
 			<model name='PXH-1'>
 				<roles>command,recon</roles>
 				<availability>IS:8,FS:5,DC:6,Periphery:8,HL:8,NIOPS:5,Periphery.Deep:8,PIR:8,BAN:6</availability>
@@ -5403,7 +5400,7 @@
 				<availability>DC:8+</availability>
 			</model>
 			<model name='PXH-1b &apos;Special&apos;'>
-				<roles>recon</roles>
+				<roles>command,recon</roles>
 				<availability>CLAN:7,NIOPS:3+,BAN:3</availability>
 			</model>
 			<model name='PXH-1c &apos;Special&apos;'>
@@ -5948,13 +5945,13 @@
                 <availability>CSA:6,CCC:6,CSV:6,CFM:6,CGS:6</availability>
             </model>
             <model name='SHD-1R'>
-                <availability>Periphery:2-,TC:1-,MOC:1-,NIOPS:0,HL:5-,Periphery.Deep:6,PIR:2-</availability>
+                <availability>IS:2-,LA:1-,MERC:3-,CS:0,Periphery:2-,TC:1-,MOC:1-,NIOPS:0,HL:5-,Periphery.Deep:6,PIR:2-</availability>
             </model>
 			<model name='SHD-2D'>
 				<availability>FS:8+</availability>
 			</model>
 			<model name='SHD-2H'>
-				<availability>IS:8,FS:6,DC:6,MERC!A:8!B:8!C:8!D:6!F:6,Periphery:8,HL:6,Periphery.Deep:3+,PIR:8,BAN:4</availability>
+				<availability>IS:8,FS:6,DC:6,MERC!A:8!B:8!C:8!D:6!F:6,CLAN:3-,Periphery:8,HL:6,Periphery.Deep:3+,PIR:8,BAN:4</availability>
 			</model>
 			<model name='SHD-2Hb'>
 				<availability>CLAN:5,NIOPS:8,BAN:4</availability>

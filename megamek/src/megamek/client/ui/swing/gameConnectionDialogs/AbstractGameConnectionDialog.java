@@ -18,6 +18,8 @@
  */
 package megamek.client.ui.swing.gameConnectionDialogs;
 
+import static megamek.codeUtilities.MathUtility.clamp;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -266,7 +268,8 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         // reached from the Okay button or pressing Enter in the text fields
         setPlayerName(getPlayerNameFromUI());
         try {
-            setPort(MathUtility.parseInt(getPortField().getText(), MMConstants.DEFAULT_PORT));
+            int port = MathUtility.parseInt(getPortField().getText(), MMConstants.DEFAULT_PORT);
+            setPort(clamp(port, MMConstants.MIN_PORT, MMConstants.MAX_PORT));
             setConfirmed(true);
             getClientPreferences().setLastPlayerName(getPlayerName());
             getClientPreferences().setLastConnectPort(getPort());

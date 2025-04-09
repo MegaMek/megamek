@@ -131,8 +131,10 @@ public class BLKVTOLFile extends BLKFile implements IMekLoader {
         } else {
             t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
         }
-        if (!patchworkArmor && dataFile.exists("armor_tech")) {
-            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        if (!patchworkArmor && dataFile.exists("armor_tech_level")) {
+            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech_level")[0]);
+        } else if (!patchworkArmor) {
+            t.setArmorTechLevel(t.getStaticTechLevel().getCompoundTechLevel(t.isClan()));
         }
         if (patchworkArmor) {
             for (int i = 1; i < t.locations(); i++) {

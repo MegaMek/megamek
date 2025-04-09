@@ -185,8 +185,10 @@ public class BLKWarshipFile extends BLKFile implements IMekLoader {
             }
         }
         a.setArmorType(at);
-        if (dataFile.exists("armor_tech")) {
-            a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        if (dataFile.exists("armor_tech_level")) {
+            a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech_level")[0]);
+        } else {
+            a.setArmorTechLevel(a.getStaticTechLevel().getCompoundTechLevel(a.isClan()));
         }
         if (dataFile.exists("internal_type")) {
             a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);

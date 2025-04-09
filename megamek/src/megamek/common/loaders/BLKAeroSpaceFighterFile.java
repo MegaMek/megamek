@@ -120,8 +120,8 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
         } else {
             a.setArmorType(EquipmentType.T_ARMOR_STANDARD);
         }
-        if (!patchworkArmor && dataFile.exists("armor_tech")) {
-            a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        if (!patchworkArmor) {
+            setArmorTechLevelFromDataFile(a);
         }
         if (patchworkArmor) {
             for (int i = 0; i < (a.locations() - 1); i++) {
@@ -160,9 +160,6 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
         a.recalculateTechAdvancement();
         // This is not working right for arrays for some reason
         a.autoSetThresh();
-
-        // add Transporters prior to equipment to simplify F_CARGO bay assignment
-        addTransports(a);
 
         for (int loc = 0; loc < a.locations(); loc++) {
             loadEquipment(a, a.getLocationName(loc), loc);

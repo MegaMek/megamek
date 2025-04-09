@@ -14,6 +14,16 @@
  */
 package megamek.common.loaders;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.Vector;
+import java.util.stream.Collectors;
+
 import megamek.common.*;
 import megamek.common.InfantryTransporter.PlatoonType;
 import megamek.common.equipment.AmmoMounted;
@@ -27,10 +37,6 @@ import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
-
-import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class BLKFile {
     private static final MMLogger logger = MMLogger.create(BLKFile.class);
@@ -1615,6 +1621,16 @@ public class BLKFile {
             } else {
                 throw new BLKDecodingException(String.format("Cannot determine platoon type from '%s'", typeString));
             }
+        }
+    }
+
+    protected void setArmorTechLevelFromDataFile(Entity entity) {
+        if (dataFile.exists("armor_tech_level")) {
+            entity.setArmorTechLevel(dataFile.getDataAsInt("armor_tech_level")[0]);
+        } else if (dataFile.exists("armor_tech")) {
+            entity.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        } else {
+            entity.setArmorTechLevel(entity.getStaticTechLevel().getCompoundTechLevel(entity.isClan()));
         }
     }
 }

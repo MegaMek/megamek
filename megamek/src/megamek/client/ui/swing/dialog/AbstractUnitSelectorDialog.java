@@ -32,7 +32,7 @@ import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
-import megamek.common.internationalization.Internationalization;
+import megamek.common.internationalization.I18n;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -679,9 +679,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     protected boolean matchesTextFilter(MekSummary unit) {
         if (!textFilter.getText().isBlank()) {
-            String text = Internationalization.normalizeTextToASCII(textFilter.getText(), false).toLowerCase();
+            String text = I18n.normalizeTextToASCII(textFilter.getText(), false).toLowerCase();
             String[] tokens = text.split(" ");
-            String searchText = Internationalization.normalizeTextToASCII(unit.getName() + "###" + unit.getModel(), true).toLowerCase();
+            String searchText = I18n.normalizeTextToASCII(unit.getName() + "###" + unit.getModel(), true).toLowerCase();
             for (String token : tokens) {
                 if (!searchText.contains(token)) {
                     return false;

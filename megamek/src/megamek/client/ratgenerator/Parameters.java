@@ -32,12 +32,16 @@ import java.util.Collection;
 import java.util.EnumSet;
 
 import megamek.common.EntityMovementMode;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 
 /*
  * A class that holds all the parameters used to generate a table and is used as the key for the cache.
  *
  */
 public final class Parameters implements Cloneable {
+    private static final MMLogger logger = MMLogger.create(Parameters.class);
+
     private FactionRecord faction;
     private FactionRecord deployingFaction;
 
@@ -100,7 +104,7 @@ public final class Parameters implements Cloneable {
     }
 
     @Override
-    public Parameters clone() {
+    public @Nullable Parameters clone() {
         try {
 
             Parameters parameters = (Parameters) super.clone();
@@ -120,6 +124,7 @@ public final class Parameters implements Cloneable {
             parameters.rolesExcluded = this.rolesExcluded;
             return parameters;
         } catch (CloneNotSupportedException e) {
+            logger.error("Failed to clone Parameters. State of the object: {}", this, e);
             return null;
         }
     }
@@ -349,4 +354,31 @@ public final class Parameters implements Cloneable {
               deployingFaction);
     }
 
+    @Override
+    public String toString() {
+        return "Parameters{" +
+                     "faction=" +
+                     (faction != null ? faction : "null") +
+                     ", deployingFaction=" +
+                     (deployingFaction != null ? deployingFaction : "null") +
+                     ", unitType=" +
+                     unitType +
+                     ", year=" +
+                     year +
+                     ", rating=" +
+                     (rating != null ? rating : "null") +
+                     ", weightClasses=" +
+                     (weightClasses != null ? weightClasses : "[]") +
+                     ", networkMask=" +
+                     networkMask +
+                     ", movementModes=" +
+                     (movementModes != null ? movementModes : "[]") +
+                     ", roles=" +
+                     (roles != null ? roles : "[]") +
+                     ", rolesExcluded=" +
+                     (rolesExcluded != null ? rolesExcluded : "[]") +
+                     ", roleStrictness=" +
+                     roleStrictness +
+                     '}';
+    }
 }

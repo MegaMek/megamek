@@ -17,7 +17,7 @@ import megamek.common.InGameObject;
 import megamek.common.TargetRoll;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.component.Formation;
-import megamek.common.internationalization.Internationalization;
+import megamek.common.internationalization.I18n;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.util.List;
@@ -30,12 +30,12 @@ public class AttackToHitData extends TargetRoll {
 
     public static AttackToHitData compileToHit(SimulationContext game, StandardUnitAttack attack) {
         if (!attack.isDataValid(game)) {
-            return new AttackToHitData(TargetRoll.IMPOSSIBLE, Internationalization.getText("acar.invalid_attack"));
+            return new AttackToHitData(TargetRoll.IMPOSSIBLE, I18n.getText("acar.invalid_attack"));
         }
 
         var attackingFormation = game.getFormation(attack.getEntityId()).orElseThrow();
         // var unit = attackingFormation.getUnits().get(attack.getUnitNumber());
-        var toHit = new AttackToHitData(attackingFormation.getSkill(), Internationalization.getText("acar.skill"));
+        var toHit = new AttackToHitData(attackingFormation.getSkill(), I18n.getText("acar.skill"));
 
         processCriticalDamage(toHit, attackingFormation, attack);
         processRange(toHit, attack);
@@ -51,45 +51,45 @@ public class AttackToHitData extends TargetRoll {
     private static void processCover(AttackToHitData toHit, SimulationContext game, StandardUnitAttack attack) {
         var target = game.getFormation(attack.getTargetId()).orElseThrow();
         if (target.getMemory().getBoolean("cover").orElse(false)) {
-            toHit.addModifier(+1, Internationalization.getText("acar.cover"));
+            toHit.addModifier(+1, I18n.getText("acar.cover"));
         }
     }
 
     private static void processCriticalDamage(AttackToHitData toHit, Formation formation, StandardUnitAttack attack) {
         SBFUnit combatUnit = formation.getUnits().get(attack.getUnitNumber());
         if (combatUnit.getTargetingCrits() > 0) {
-            toHit.addModifier(combatUnit.getTargetingCrits(), Internationalization.getText("acar.critical_target_damage"));
+            toHit.addModifier(combatUnit.getTargetingCrits(), I18n.getText("acar.critical_target_damage"));
         }
     }
 
     private static void processCombatUnit(AttackToHitData toHit, SBFUnit unit) {
         switch (unit.getSkill()) {
-            case 7 -> toHit.addModifier(+4, Internationalization.getText("acar.skill_7"));
-            case 6 -> toHit.addModifier(+3, Internationalization.getText("acar.skill_6"));
-            case 5 -> toHit.addModifier(+2, Internationalization.getText("acar.skill_5"));
-            case 4 -> toHit.addModifier(+1, Internationalization.getText("acar.skill_4"));
-            case 3 -> toHit.addModifier(0, Internationalization.getText("acar.skill_3"));
-            case 2 -> toHit.addModifier(-1, Internationalization.getText("acar.skill_2"));
-            case 1 -> toHit.addModifier(-2, Internationalization.getText("acar.skill_1"));
-            case 0 -> toHit.addModifier(-3, Internationalization.getText("acar.skill_0"));
-            default -> toHit.addModifier(TargetRoll.IMPOSSIBLE, Internationalization.getText("acar.invalid_skill"));
+            case 7 -> toHit.addModifier(+4, I18n.getText("acar.skill_7"));
+            case 6 -> toHit.addModifier(+3, I18n.getText("acar.skill_6"));
+            case 5 -> toHit.addModifier(+2, I18n.getText("acar.skill_5"));
+            case 4 -> toHit.addModifier(+1, I18n.getText("acar.skill_4"));
+            case 3 -> toHit.addModifier(0, I18n.getText("acar.skill_3"));
+            case 2 -> toHit.addModifier(-1, I18n.getText("acar.skill_2"));
+            case 1 -> toHit.addModifier(-2, I18n.getText("acar.skill_1"));
+            case 0 -> toHit.addModifier(-3, I18n.getText("acar.skill_0"));
+            default -> toHit.addModifier(TargetRoll.IMPOSSIBLE, I18n.getText("acar.invalid_skill"));
         }
     }
 
     private static void processRange(AttackToHitData toHit, StandardUnitAttack attack) {
         var range = attack.getRange();
         switch (range) {
-            case SHORT -> toHit.addModifier(-1, Internationalization.getText( "acar.short_range"));
-            case MEDIUM -> toHit.addModifier(+2, Internationalization.getText("acar.medium_range"));
-            case LONG -> toHit.addModifier(+4, Internationalization.getText("acar.long_range"));
-            default -> toHit.addModifier(TargetRoll.IMPOSSIBLE, Internationalization.getText( "acar.extreme_range"));
+            case SHORT -> toHit.addModifier(-1, I18n.getText( "acar.short_range"));
+            case MEDIUM -> toHit.addModifier(+2, I18n.getText("acar.medium_range"));
+            case LONG -> toHit.addModifier(+4, I18n.getText("acar.long_range"));
+            default -> toHit.addModifier(TargetRoll.IMPOSSIBLE, I18n.getText( "acar.extreme_range"));
         }
     }
 
     private static void processTMM(AttackToHitData toHit, SimulationContext game, StandardUnitAttack attack) {
         var target = game.getFormation(attack.getTargetId()).orElseThrow();
         if (target.getTmm() > 0) {
-            toHit.addModifier(target.getTmm(), Internationalization.getText( "acar.TMM"));
+            toHit.addModifier(target.getTmm(), I18n.getText( "acar.TMM"));
         }
     }
 
@@ -97,20 +97,20 @@ public class AttackToHitData extends TargetRoll {
         var attacker = game.getFormation(attack.getEntityId()).orElseThrow();
         var target = game.getFormation(attack.getTargetId()).orElseThrow();
         if (attacker.getJumpUsedThisTurn() > 0) {
-            toHit.addModifier(attacker.getJumpUsedThisTurn(), Internationalization.getText("acar.attacker_JUMP"));
+            toHit.addModifier(attacker.getJumpUsedThisTurn(), I18n.getText("acar.attacker_JUMP"));
         }
         if (target.getJumpUsedThisTurn() > 0) {
-            toHit.addModifier(attacker.getJumpUsedThisTurn(), Internationalization.getText("acar.target_JUMP"));
+            toHit.addModifier(attacker.getJumpUsedThisTurn(), I18n.getText("acar.target_JUMP"));
         }
     }
 
     private static void processMorale(AttackToHitData toHit, SimulationContext game, StandardUnitAttack attack) {
         var target = game.getFormation(attack.getTargetId()).orElseThrow();
         switch (target.moraleStatus()) {
-            case SHAKEN -> toHit.addModifier(1, Internationalization.getText("acar.shaken"));
-            case UNSTEADY -> toHit.addModifier(2, Internationalization.getText("acar.unsteady"));
-            case BROKEN -> toHit.addModifier(3, Internationalization.getText("acar.broken"));
-            case ROUTED -> toHit.addModifier(4, Internationalization.getText("acar.routed"));
+            case SHAKEN -> toHit.addModifier(1, I18n.getText("acar.shaken"));
+            case UNSTEADY -> toHit.addModifier(2, I18n.getText("acar.unsteady"));
+            case BROKEN -> toHit.addModifier(3, I18n.getText("acar.broken"));
+            case ROUTED -> toHit.addModifier(4, I18n.getText("acar.routed"));
             default -> toHit.doNothing();
         }
     }
@@ -118,9 +118,9 @@ public class AttackToHitData extends TargetRoll {
     private static void processSecondaryTarget(AttackToHitData toHit, SimulationContext game, StandardUnitAttack attack) {
         var attacker = game.getFormation(attack.getEntityId()).orElseThrow();
         if (targetsOfFormation(attacker, game).size() > 2) {
-            toHit.addModifier(TargetRoll.IMPOSSIBLE, Internationalization.getText("acar.more_than_two_targets"));
+            toHit.addModifier(TargetRoll.IMPOSSIBLE, I18n.getText("acar.more_than_two_targets"));
         } else if (targetsOfFormation(attacker, game).size() == 2) {
-            toHit.addModifier(+1, Internationalization.getText("acar.two_targets"));
+            toHit.addModifier(+1, I18n.getText("acar.two_targets"));
         }
     }
 

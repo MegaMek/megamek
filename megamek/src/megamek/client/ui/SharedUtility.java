@@ -19,11 +19,10 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.client.Client;
-import megamek.client.bot.princess.PathRanker;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
-import megamek.common.internationalization.Internationalization;
+import megamek.common.internationalization.I18n;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
@@ -353,7 +352,7 @@ public class SharedUtility {
                 && (entity.getMovementMode() != EntityMovementMode.HOVER)
                 && (entity.getMovementMode() != EntityMovementMode.WIGE)
                 && !(curPos.equals(lastPos))) {
-                nagReport.append(Internationalization
+                nagReport.append(I18n
                     .getTextAt("megamek.client.messages", "MovementDisplay.HazardousLiquidMoving"));
             }
 
@@ -363,7 +362,7 @@ public class SharedUtility {
                 && (entity.getMovementMode() != EntityMovementMode.HOVER)
                 && (entity.getMovementMode() != EntityMovementMode.WIGE)
                 && !(curPos.equals(lastPos))) {
-                nagReport.append(Internationalization
+                nagReport.append(I18n
                     .getTextAt("megamek.client.messages", "MovementDisplay.UltraSublevel"));
             }
 
@@ -625,12 +624,12 @@ public class SharedUtility {
             }
 
             if ((hex.containsTerrain(Terrains.HAZARDOUS_LIQUID)) && (lastElevation == 0)) {
-                nagReport.append(Internationalization
+                nagReport.append(I18n
                     .getTextAt("megamek.client.messages", "MovementDisplay.HazardousLiquidMoving"));
             }
 
             if ((hex.containsTerrain(Terrains.ULTRA_SUBLEVEL) && lastElevation == 0)) {
-                nagReport.append(Internationalization
+                nagReport.append(I18n
                     .getTextAt("megamek.client.messages", "MovementDisplay.UltraSublevel"));
             }
         }

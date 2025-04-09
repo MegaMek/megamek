@@ -26,7 +26,7 @@ import megamek.common.autoresolve.Resolver;
 import megamek.common.autoresolve.acar.SimulationOptions;
 import megamek.common.autoresolve.converter.SetupForces;
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
-import megamek.common.internationalization.Internationalization;
+import megamek.common.internationalization.I18n;
 import megamek.logging.MMLogger;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -107,7 +107,7 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
 
     private JProgressBar createProgressBar() {
         setProgressBar(new JProgressBar(0, 100));
-        getProgressBar().setString(Internationalization.getText("AutoResolveMethod.progress.0"));
+        getProgressBar().setString(I18n.getText("AutoResolveMethod.progress.0"));
         getProgressBar().setValue(0);
         getProgressBar().setStringPainted(true);
         getProgressBar().setVisible(true);
@@ -148,7 +148,7 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
 
         var index = clamp(progress % 98, 3, 98);
 
-        getProgressBar().setString(Internationalization.getText(progressText.get(index)));
+        getProgressBar().setString(I18n.getText(progressText.get(index)));
     }
 
     public static int clamp(long value, int min, int max) {
@@ -177,8 +177,8 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
             if (result == null) {
                 JOptionPane.showMessageDialog(
                     getFrame(),
-                    Internationalization.getText("AutoResolveDialog.messageScenarioError.text"),
-                    Internationalization.getText("AutoResolveDialog.messageScenarioError.title"),
+                    I18n.getText("AutoResolveDialog.messageScenarioError.text"),
+                    I18n.getText("AutoResolveDialog.messageScenarioError.title"),
                     JOptionPane.INFORMATION_MESSAGE);
                 return -1;
             }
@@ -192,10 +192,10 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
                 && (result.getVictoryResult().getWinningPlayer() == Player.PLAYER_NONE)) ?
                 "AutoResolveDialog.messageScenarioDraw" :
                 messageKey;
-            var message = Internationalization.getFormattedText(messageKey,
+            var message = I18n.getFormattedText(messageKey,
                 result.getVictoryResult().getWinningTeam(),
                 result.getVictoryResult().getWinningPlayer());
-            String title = Internationalization.getText("AutoResolveDialog.title");
+            String title = I18n.getText("AutoResolveDialog.title");
 
             logger.info("AutoResolve simulation took: " + stopWatch.getTime(TimeUnit.MILLISECONDS) + "ms");
 

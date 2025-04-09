@@ -18,12 +18,13 @@ import java.awt.image.RGBImageFilter;
 
 /**
  * Filters an image by rotating it. The image is rotated around its center. <p>
- * TODO : This could be optimized... oh, um... everywhere. It was pretty late at night when I
- * TODO : programmed most of this.
- * 
+ * TODO : This could be optimized... oh, um... everywhere. It was pretty late at night when I programmed most of this.
+ *
  * @author Ben
  * @since April 17, 2002, 5:13 PM
+ * @deprecated This should be removed and replaced with an AffineTransformation Filter instead.
  */
+@Deprecated(since = "0.50.05")
 public class RotateFilter extends RGBImageFilter {
     private static final int ALPHA_CLIP = 144;
 
@@ -42,6 +43,19 @@ public class RotateFilter extends RGBImageFilter {
     public RotateFilter(double angle) {
         this.sin = Math.sin(angle);
         this.cos = Math.cos(angle);
+    }
+
+    @Override
+    public RotateFilter clone() {
+        RotateFilter rotateFilter = (RotateFilter) super.clone();
+        rotateFilter.sin = sin;
+        rotateFilter.cos = cos;
+        rotateFilter.width = width;
+        rotateFilter.height = height;
+        rotateFilter.cx = cx;
+        rotateFilter.cy = cy;
+        rotateFilter.raster = raster;
+        return rotateFilter;
     }
 
     /**
@@ -86,13 +100,13 @@ public class RotateFilter extends RGBImageFilter {
      * Rotate all pixels.
      */
     private void rotate() {
-        int[] newpixels = new int[width * height];
+        int[] newPixels = new int[width * height];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                newpixels[y * width + x] = rotatedPixel(x, y);
+                newPixels[y * width + x] = rotatedPixel(x, y);
             }
         }
-        raster = newpixels;
+        raster = newPixels;
     }
 
     /**
@@ -139,8 +153,7 @@ public class RotateFilter extends RGBImageFilter {
     }
 
     /**
-     * Get the bilinearly calculated pixel at the coordinates. Lazy black &
-     * white mode.
+     * Get the BiLinear calculated pixel at the coordinates. Lazy black & white mode.
      */
     private int pixelBilinear(double x, double y) {
         int fx = (int) Math.floor(x);

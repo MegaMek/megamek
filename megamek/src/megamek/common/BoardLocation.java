@@ -164,7 +164,7 @@ public class BoardLocation implements Serializable {
 
     @Override
     public String toString() {
-        return coords + "; Map Id: " + boardId;
+        return coords + "; Board Id: " + boardId;
     }
 
     public String getBoardNum() {

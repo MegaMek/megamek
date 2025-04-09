@@ -1792,6 +1792,8 @@ public class Compute {
                 || (attacker.isBomber() && target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             // always a distance of zero
             return 0;
+        } else if (!game.onConnectedBoards(attacker, target)) {
+            return Integer.MAX_VALUE;
         }
 
         Vector<Coords> attackPos = new Vector<>();

@@ -38,28 +38,26 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     public ArtilleryAttackAction(int entityId, int targetType, int targetId,
                                  int weaponId, Game game) {
         super(entityId, targetType, targetId, weaponId);
-        this.playerId = game.getEntity(entityId).getOwnerId();
-        this.firingCoords = game.getEntity(entityId).getPosition();
-        int distance;
+        playerId = game.getEntity(entityId).getOwnerId();
+        firingCoords = game.getEntity(entityId).getPosition();
         Targetable target = getTarget(game);
         EquipmentType eType = getEntity(game).getEquipment(weaponId).getType();
         WeaponType wType = (WeaponType) eType;
         WeaponMounted mounted = (WeaponMounted) getEntity(game).getEquipment(weaponId);
         // Remove altitude from Artillery Flak and ADA distance calcs
         if ((target != null) && target.isAirborne() && (mounted.getLinkedAmmo() != null)
-                  && mounted.getLinkedAmmo().getType().countsAsFlak())
-        {
+                  && mounted.getLinkedAmmo().getType().countsAsFlak()) {
             turnsTilHit = 0;
             return;
-        } else {
-            distance = Compute.effectiveDistance(game, getEntity(game), target);
         }
+
+        int distance = Compute.effectiveDistance(game, getEntity(game), target);
 
         if (getEntity(game).usesWeaponBays() && wType.getAtClass() == WeaponType.CLASS_ARTILLERY) {
             for (WeaponMounted bayW : mounted.getBayWeapons()) {
+                // TO:AR p.149
                 WeaponType bayWType = bayW.getType();
                 if (bayWType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
-                    // See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)
                     turnsTilHit = 1 + (distance / Board.DEFAULT_BOARD_HEIGHT / 5);
                     break;
                 } else if (getEntity(game).isAirborne() && !getEntity(game).isSpaceborne()) {

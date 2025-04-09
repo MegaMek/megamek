@@ -28,7 +28,7 @@ public class HexTarget implements Targetable {
     private HexTarget originalTarget = null;
     private int targetLevel = 0;
 
-    // Legacy: Needs to be replaced with the other constructor
+    // Legacy: Needs to be replaced with the other constructors
     public HexTarget(Coords c, int nType) {
         coords = c;
         type = nType;
@@ -114,7 +114,7 @@ public class HexTarget implements Targetable {
 
     @Override
     public String getDisplayName() {
-        final String name = switch (type) {
+        final String typeString = switch (type) {
             case Targetable.TYPE_FLARE_DELIVER -> Messages.getString("HexTarget.DeliverFlare");
             case Targetable.TYPE_MINEFIELD_DELIVER -> Messages.getString("HexTarget.DeliverMinefield");
             case Targetable.TYPE_HEX_BOMB, Targetable.TYPE_HEX_AERO_BOMB -> Messages.getString("HexTarget.Bomb");
@@ -126,7 +126,8 @@ public class HexTarget implements Targetable {
             case Targetable.TYPE_HEX_TAG -> Messages.getString("HexTarget.Tag");
             default -> "";
         };
-        return "Hex: " + getBoardLocation() + name;
+        // When the board Id is 0, assume (for now) that there is only one board and no board info is necessary
+        return "Hex: " + ((boardId == 0) ? coords : getBoardLocation()) + typeString;
     }
 
     public boolean isIgniting() {

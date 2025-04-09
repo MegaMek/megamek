@@ -36,6 +36,7 @@ import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -805,47 +806,36 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         Entity attacker = ce();
         if ((attacker != null) && attacker.equals(clientgui.getUnitDisplay().getCurrentEntity())
                 && (target != null) && (weaponId != -1) && (attacker.getPosition() != null)) {
-            ToHitData toHit;
-            Mounted<?> m = attacker.getEquipment(weaponId);
+            clientgui.getUnitDisplay().wPan.setTarget(target, null);
 
-            int targetDistance = attacker.getPosition().distance(target.getPosition());
-
-            String distanceText = Integer.toString(targetDistance);
-            if (!game.onTheSameBoard(attacker, target) && game.isOnGroundMap(attacker) && game.isOnGroundMap(target)) {
-                targetDistance = CrossBoardAttackHelper.getCrossBoardGroundMapDistance(attacker, target, game);
-                distanceText = targetDistance / 17 + " Map Sheets";
-            } else if (attacker.isOffBoard() && game.onTheSameBoard(attacker, target)) {
-                distanceText = targetDistance / 17 + " Map Sheets";
+            Mounted<?> weapon = attacker.getEquipment(weaponId);
+            int effectiveDistance = Compute.effectiveDistance(game, attacker, target);
+            String distanceText = Integer.toString(effectiveDistance);
+            if (!game.onConnectedBoards(attacker, target)) {
+                distanceText = "Unreachable";
+            } else if (showDistanceAsMapsheets(attacker, target, weapon)) {
+                distanceText = effectiveDistance / Board.DEFAULT_BOARD_HEIGHT + " Map sheets";
+                if (isArtilleryAttack(weapon)) {
+                    ArtilleryAttackAction aaa = new ArtilleryAttackAction(attacker.getId(), target.getTargetType(),
+                          target.getId(), weaponId, game);
+                    distanceText += String.format(" (%d turns)", aaa.getTurnsTilHit());
+                }
             }
+            clientgui.getUnitDisplay().wPan.wRangeR.setText(distanceText);
 
-            boolean isArtilleryAttack = m.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    // For other weapons that can make artillery attacks
-                    || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
-
-            toHit = WeaponAttackAction.toHit(game,
+            ToHitData toHit = WeaponAttackAction.toHit(game,
                     currentEntity, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
 
-            String flightTimeText = "";
-            if (isArtilleryAttack) {
-                ArtilleryAttackAction aaa = new ArtilleryAttackAction(attacker.getId(), target.getTargetType(),
-                        target.getId(), weaponId, game);
-                flightTimeText = String.format("(%d turns)", aaa.getTurnsTilHit());
-            }
-
-            clientgui.getUnitDisplay().wPan.setTarget(target, null);
-            clientgui.getUnitDisplay().wPan.wRangeR.setText(String.format("%s %s", distanceText, flightTimeText));
-
-            int distance = Compute.effectiveDistance(game, attacker, target);
-            if (m.isUsedThisRound()) {
+            if (weapon.isUsedThisRound()) {
                 clientgui.getUnitDisplay().wPan.setToHit(
                         Messages.getString("TargetingPhaseDisplay.alreadyFired"));
                 setFireEnabled(false);
-            } else if (m.isInBearingsOnlyMode() && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+            } else if (weapon.isInBearingsOnlyMode() && effectiveDistance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
                 clientgui.getUnitDisplay().wPan.setToHit(
                         Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
                 setFireEnabled(false);
-            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
-                    && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
+            } else if ((weapon.getType().hasFlag(WeaponType.F_AUTO_TARGET)
+                    && !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 clientgui.getUnitDisplay().wPan.setToHit(
                         Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
                 setFireEnabled(false);
@@ -867,6 +857,17 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             clientgui.getUnitDisplay().wPan.clearToHit();
         }
         updateSearchlight();
+    }
+
+    private boolean showDistanceAsMapsheets(Entity attacker, Targetable target, Mounted<?> weapon) {
+        return (!game.onTheSameBoard(attacker, target) && game.isOnGroundMap(attacker) && game.isOnGroundMap(target))
+                     || attacker.isOffBoard() || isArtilleryAttack(weapon);
+    }
+
+    private boolean isArtilleryAttack(Mounted<?> weapon) {
+        return (weapon instanceof WeaponMounted && weapon.getType().hasFlag(WeaponType.F_ARTILLERY))
+                     // For other weapons that can make artillery attacks
+                     || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
     }
 
     /**

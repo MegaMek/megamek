@@ -81,10 +81,15 @@ factions:
 
   - fullname: Atlas AS7-D
     board: 5
-    at: [ 35, 29]
+    at: [ 35, 29 ]
 
   - fullname: Cheetah IIC
     at: [5, 6]
     board: 2
     facing: 2
     altitude: 7
+
+  - fullname: Mobile Long Tom Artillery LT-MOB-25
+    at: [ 30, 24 ]
+    board: 5
+    facing: 5

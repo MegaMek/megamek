@@ -32,6 +32,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6835: Fixed issue with Ammo Counts showing 0 when configuring from Lobby
 + PR #6837: Removes broken event from server
 + PR #6856: Updated Logging, Clone Handling, and Added toString Methods
++ PR #6840: fix: changed Internationalization to i18n 
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

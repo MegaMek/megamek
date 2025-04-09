@@ -31,6 +31,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6832: Corrects custom armor calculation required for megameklab#1820 that fixes megameklab#1808: Conventional infantry custom armor not appearring on record sheet
 + PR #6835: Fixed issue with Ammo Counts showing 0 when configuring from Lobby
 + PR #6837: Removes broken event from server
++ PR #6856: Updated Logging, Clone Handling, and Added toString Methods
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

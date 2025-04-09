@@ -35,7 +35,7 @@ public class ISBAGaussRifleTsunami extends Weapon {
         shortRange = 2;
         mediumRange = 4;
         longRange = 5;
-        extremeRange = 8;
+        extremeRange = 7;
         tonnage = 0.125;
         criticals = 2;
         cost = 9500;

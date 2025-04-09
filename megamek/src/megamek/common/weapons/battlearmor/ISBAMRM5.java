@@ -38,7 +38,7 @@ public class ISBAMRM5 extends MRMWeapon {
         this.shortRange = 3;
         this.mediumRange = 8;
         this.longRange = 15;
-        this.extremeRange = 16;
+        this.extremeRange = 22;
         this.bv = 28;
         cost = 25000;
         tonnage = .3;

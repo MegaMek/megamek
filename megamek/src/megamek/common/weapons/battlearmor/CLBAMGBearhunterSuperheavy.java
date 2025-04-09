@@ -38,7 +38,7 @@ public class CLBAMGBearhunterSuperheavy extends Weapon {
         shortRange = 0;
         mediumRange = 1;
         longRange = 2;
-        extremeRange = 2;
+        extremeRange = 3;
         tonnage = 0.15;
         criticals = 2;
         bv = 4;

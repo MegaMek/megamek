@@ -37,7 +37,7 @@ public class CLBALaserERMedium extends LaserWeapon {
         waterShortRange = 3;
         waterMediumRange = 7;
         waterLongRange = 10;
-        waterExtremeRange = 14;
+        waterExtremeRange = 15;
         tonnage = .8;
         criticals = 3;
         bv = 108;

@@ -39,7 +39,7 @@ public class ISMRM30IOS extends MRMWeapon {
         shortRange = 3;
         mediumRange = 8;
         longRange = 15;
-        extremeRange = 16;
+        extremeRange = 22;
         tonnage = 9.5;
         criticals = 5;
         bv = 34;

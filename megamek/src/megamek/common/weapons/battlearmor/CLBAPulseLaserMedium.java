@@ -39,7 +39,7 @@ public class CLBAPulseLaserMedium extends PulseLaserWeapon {
         waterShortRange = 3;
         waterMediumRange = 5;
         waterLongRange = 8;
-        waterExtremeRange = 10;
+        waterExtremeRange = 12;
         tonnage = .8;
         criticals = 3;
         bv = 111;

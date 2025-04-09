@@ -33,7 +33,7 @@ public class ISBAGaussRifleDavidLight extends Weapon {
         shortRange = 3;
         mediumRange = 5;
         longRange = 8;
-        extremeRange = 10;
+        extremeRange = 12;
         bv = 7;
         tonnage = 0.1;
         criticals = 1;

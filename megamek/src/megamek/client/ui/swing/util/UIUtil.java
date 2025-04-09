@@ -42,8 +42,8 @@ public final class UIUtil {
 
     // The standard pixels-per-inch to compare against for display scaling
     private static final int DEFAULT_DISPLAY_PPI = 96;
-    private static final int REFERENCE_RESOLUTION_HEIGHT = 1080;
-    private static final double MINIMUM_RESOLUTION_SCALE_FACTOR = 0.7f;
+    private static final Dimension REFERENCE_RESOLUTION = new Dimension(1920, 1080);
+    private static final double MINIMUM_RESOLUTION_SCALE_FACTOR = 0.5f;
 
     /**
      * The width for a tooltip displayed to the side of a dialog using one of TipXX classes.
@@ -520,9 +520,23 @@ public final class UIUtil {
      * @return The resolution scale factor for the containing monitor
      */
     public static double getResolutionScaleFactor(Component component) {
-        final Dimension logicalScreenSize = UIUtil.getScaledScreenSize(component);
-        return Math.max(MINIMUM_RESOLUTION_SCALE_FACTOR, logicalScreenSize.height / REFERENCE_RESOLUTION_HEIGHT);
+        return getResolutionScaleFactor(component, REFERENCE_RESOLUTION);
     }
+    
+    /**
+     * Gets the resolution scale factor for the monitor containing the specified component.
+     * 
+     * @param component The component to check
+     * @param referenceResolution The reference resolution width/height to use for scaling
+     * @return The resolution scale factor for the containing monitor
+     */
+    public static double getResolutionScaleFactor(Component component, Dimension referenceResolution) {
+        final Dimension logicalScreenSize = UIUtil.getScaledScreenSize(component);
+        final double scaleFactorX = logicalScreenSize.width / referenceResolution.getWidth();
+        final double scaleFactorY = logicalScreenSize.height / referenceResolution.getHeight();
+        return Math.max(MINIMUM_RESOLUTION_SCALE_FACTOR, Math.min(scaleFactorX, scaleFactorY));
+    }
+    
     /**
      * Calculate the DPI scale factor for a component
      * 

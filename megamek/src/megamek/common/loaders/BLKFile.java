@@ -1624,6 +1624,14 @@ public class BLKFile {
         }
     }
 
+    /**
+     * Sets the armor tech level for the entity based on the data file.
+     * The file should have "armor_tech_level", but it was changed from
+     * "armor_tech". And if this isn't found for some reason, it'll fall
+     * back and use the entity's tech base to determine this.
+     *
+     * @param entity entity that should have its armor tech level set based on the data file
+     */
     protected void setArmorTechLevelFromDataFile(Entity entity) {
         if (dataFile.exists("armor_tech_level")) {
             entity.setArmorTechLevel(dataFile.getDataAsInt("armor_tech_level")[0]);

@@ -5379,7 +5379,7 @@
 			</model>
 		</chassis>
 		<chassis name='Phoenix Hawk LAM' unitType='Mek'>
-			<availability>IS:2+,FWL:3+,MERC:1+,CS:3+</availability>
+			<availability>IS:2+,FWL:3+,MERC:1+,CS:3+,CIR:0</availability>
 			<model name='PHX-HK2'>
 				<roles>raider,recon,specops</roles>
 				<availability>IS:8</availability>

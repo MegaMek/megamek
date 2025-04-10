@@ -28,6 +28,7 @@
  */
 package megamek.ai.dataset;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import megamek.common.UnitRole;
@@ -37,6 +38,53 @@ import megamek.common.UnitRole;
  * @author Luana Coppio
  */
 public class UnitStateSerializer extends TabSeparatedValueSerializer<UnitState> {
+
+    private enum UnitStateField{
+        ROUND,
+        PHASE,
+        PLAYER_ID,
+        ENTITY_ID,
+        CHASSIS,
+        MODEL,
+        TYPE,
+        ROLE,
+        X,
+        Y,
+        FACING,
+        MP,
+        HEAT,
+        PRONE,
+        AIRBORNE,
+        OFF_BOARD,
+        CRIPPLED,
+        DESTROYED,
+        ARMOR_P,
+        INTERNAL_P,
+        DONE,
+        MAX_RANGE,
+        TOTAL_DAMAGE,
+        TEAM_ID,
+        ARMOR,
+        INTERNAL,
+        BV,
+        HAS_ECM,
+        IS_BOT,
+        ARMOR_FRONT_P,
+        ARMOR_LEFT_P,
+        ARMOR_RIGHT_P,
+        ARMOR_BACK_P,
+        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE,
+        ;
+
+        /**
+         * Builds the TSV header line (joined by tabs) by iterating over all enum constants.
+         */
+        public static String getHeaderLine() {
+            return Arrays.stream(values())
+                         .map(UnitStateField::name)
+                         .collect(Collectors.joining("\t"));
+        }
+    }
 
     @Override
     public String serialize(UnitState obj) {

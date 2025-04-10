@@ -30,7 +30,9 @@ package megamek.ai.dataset;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * Serializer and deserializer for UnitAttackAction to/from TSV format.
@@ -39,6 +41,43 @@ import java.util.Locale;
 public class UnitAttackSerializer extends TabSeparatedValueSerializer<UnitAttackAction> {
 
     private static final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
+
+    private enum UnitAttackField {
+        ROUND,
+        ENTITY_ID,
+        PLAYER_ID,
+        TYPE,
+        ROLE,
+        X,
+        Y,
+        FACING,
+        TARGET_PLAYER_ID,
+        TARGET_ID,
+        TARGET_TYPE,
+        TARGET_ROLE,
+        TARGET_X,
+        TARGET_Y,
+        TARGET_FACING,
+        AIMING_LOC,
+        AIMING_MODE,
+        WEAPON_ID,
+        AMMO_ID,
+        ATA,
+        ATG,
+        GTG,
+        GTA,
+        TO_HIT,
+        TURNS_TO_HIT,
+        SPOTTER_ID,
+        ;
+
+        /**
+         * Builds the TSV header line (joined by tabs) by iterating over all enum constants.
+         */
+        public static String getHeaderLine() {
+            return Arrays.stream(values()).map(UnitAttackField::name).collect(Collectors.joining("\t"));
+        }
+    }
 
     @Override
     public String serialize(UnitAttackAction obj) {

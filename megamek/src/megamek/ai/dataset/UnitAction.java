@@ -60,11 +60,6 @@ public record UnitAction(int id, int teamId, int playerId, String chassis, Strin
      */
     public static UnitAction fromMovePath(MovePath movePath) {
         Entity entity = movePath.getEntity();
-        double chanceOfFailure = SharedUtility.getPSRList(movePath).stream()
-                                       .map(psr -> psr.getValue() / 36d)
-                                       .reduce(1.0, (a, b) -> a * b);
-
-        var steps = movePath.getStepVector().stream().map(MoveStep::getType).toList();
 
         return new UnitAction(
               entity.getId(),
@@ -88,8 +83,10 @@ public record UnitAction(int id, int teamId, int playerId, String chassis, Strin
               movePath.isJumping(),
               movePath.getFinalProne(),
               movePath.isMoveLegal(),
-              chanceOfFailure,
-              steps,
+              SharedUtility.getPSRList(movePath).stream()
+                    .map(psr -> psr.getValue() / 36d)
+                    .reduce(1.0, (a, b) -> a * b),
+              movePath.getStepVector().stream().map(MoveStep::getType).toList(),
               entity.getOwner().isBot(),
               entity.hasActiveECM(),
               entity.getTotalArmor(),

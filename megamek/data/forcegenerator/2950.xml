@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2950-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>0,0</pctOmni>
@@ -1123,7 +1120,7 @@
 				<availability>IS:8,Periphery:8,HL:8,Periphery.Deep:8,PIR:8</availability>
 			</model>
             <model name='BJ-1X'>
-                <availability>FS!F:6</availability>
+                <availability>FS!F:6,Periphery.HR:2,Periphery.OS:2,PIR:5</availability>
 			</model>
 		</chassis>
 		<chassis name='Blood Kite' unitType='Mek'>
@@ -6030,11 +6027,11 @@
             </model>
             <model name='RFL-1N'>
                 <roles>anti_aircraft</roles>
-                <availability>IS!F:6,FS!D:6!F:6,FWL!D:6!F:6,MERC!D:6!F:6,CS:0</availability>
+                <availability>MERC!D:6!F:6,Periphery!D:4!F:4,HL!C:3!D:4!F:5,Periphery.Deep!C:4!D:5!F:6</availability>
             </model>
             <model name='RFL-2N'>
                 <roles>anti_aircraft</roles>
-                <availability>IS!F:8,FS!D:8!F:8,FWL!D:8!F:8,MERC!D:8!F:8,CS:0</availability>
+                <availability>MERC!D:8!F:8,Periphery!D:8!F:8,HL!C:8!D:8!F:8,Periphery.Deep!C:8!D:7!F:6</availability>
             </model>
 			<model name='RFL-3N'>
 				<roles>fire_support,anti_aircraft</roles>
@@ -6372,7 +6369,7 @@
 			</model>
 		</chassis>
 		<chassis name='Shadow Hawk' unitType='Mek'>
-			<availability>IS:7,LA:6,FWL:6,CC!A:7!B:7!C:7!D:6!F:6,CS:6-,CLAN:2,NIOPS:6-,Periphery:5,HL:4+,Periphery.Deep:4+,PIR:6,BAN:3</availability>
+			<availability>IS:7,LA:6,FWL:6,CC!A:7!B:7!C:7!D:6!F:6,CS:6-,CLAN:2,Periphery:5,NIOPS:6-,HL:4+,Periphery.Deep:4+,PIR:6,BAN:3</availability>
             <model name='C'>
                 <availability>CSA:6,CCC:6,CSV:6,CFM:6,CGS:6</availability>
             </model>
@@ -7564,10 +7561,10 @@
 		<chassis name='Wolverine' unitType='Mek'>
 			<availability>IS:6,DC:7,MERC:7+,CS:5,Periphery:4,TC:5,NIOPS:5-,HL:3,Periphery.Deep:3,PIR:5+</availability>
             <model name='WVR-1R'>
-                <availability>IS:2-,CC!D:4!F:6,CS:0,Periphery:2-,TC:1-,HL:6,Periphery.Deep:6,PIR:1-</availability>
+                <availability>Periphery:2-,TC:1-,HL:6,Periphery.Deep:6,PIR:1-</availability>
             </model>
             <model name='WVR-3R'>
-                <availability>IS:3-,LA:2-,FWL:2-,DC!D:2!F:3,CC!D:6!F:6,CS:0,Periphery:3-,TC:2-,HL:7,Periphery.Deep:6,PIR:2-</availability>
+                <availability>IS:2-,DC:2-,CC:2-,CS:0,Periphery:2-,TC:2-,HL:7,Periphery.Deep:6,PIR:2-</availability>
             </model>
 			<model name='WVR-6D'>
 				<availability>FS!A:8!B:7!C:3,Periphery.HR:2+,Periphery.OS:1+</availability>

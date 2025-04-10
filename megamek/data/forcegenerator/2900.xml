@@ -1036,7 +1036,7 @@
 				<availability>IS:8,Periphery:8,HL:8,Periphery.Deep:8,PIR:8</availability>
 			</model>
             <model name='BJ-1X'>
-                <availability>FS!F:6</availability>
+                <availability>FS!F:6,Periphery.HR:2,Periphery.OS:2,PIR:5</availability>
             </model>
 		</chassis>
 		<chassis name='Blood Kite' unitType='Mek'>
@@ -5637,11 +5637,11 @@
             </model>
             <model name='RFL-1N'>
                 <roles>anti_aircraft</roles>
-                <availability>IS!F:6,FS!D:6!F:6,FWL!D:6!F:6,MERC!D:6!F:6,CS:0</availability>
+                <availability>IS!F:6,FS!D:6!F:6,FWL!D:6!F:6,MERC!D:6!F:6,CS:0,Periphery!D:6!F:6,HL!C:3!D:4!F:5,Periphery.Deep!C:4!D:5!F:6</availability>
             </model>
             <model name='RFL-2N'>
                 <roles>anti_aircraft</roles>
-                <availability>IS!F:8,FS!D:8!F:8,FWL!D:8!F:8,MERC!D:8!F:8,CS:0</availability>
+                <availability>IS!F:8,FS!D:8!F:8,FWL!D:8!F:8,MERC!D:8!F:8,CS:0,Periphery!D:8!F:8,HL!C:8!D:8!F:8,Periphery.Deep!C:8!D:7!F:6</availability>
             </model>
 			<model name='RFL-3N'>
 				<roles>fire_support,anti_aircraft</roles>

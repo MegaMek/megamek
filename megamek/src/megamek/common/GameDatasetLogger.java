@@ -13,29 +13,26 @@
  */
 package megamek.common;
 
-import megamek.ai.dataset.UnitAttackAction;
-import megamek.ai.dataset.UnitAttackSerializer;
-import megamek.common.actions.*;
-import megamek.ai.dataset.UnitAction;
-import megamek.ai.dataset.UnitActionSerializer;
-import megamek.ai.dataset.UnitState;
-import megamek.ai.dataset.UnitStateSerializer;
-import megamek.common.enums.AimingMode;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
-import megamek.logging.MMLogger;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
+import megamek.ai.dataset.UnitAction;
+import megamek.ai.dataset.UnitActionSerializer;
+import megamek.ai.dataset.UnitAttackAction;
+import megamek.ai.dataset.UnitAttackSerializer;
+import megamek.ai.dataset.UnitStateMap;
+import megamek.ai.dataset.UnitStateMapSerializer;
+import megamek.common.actions.AbstractAttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
 
 /**
  * The GameDatasetLogger class is used to log game data to a file in the log directory
@@ -45,10 +42,10 @@ import java.util.Locale;
 public class GameDatasetLogger {
     private static final MMLogger logger = MMLogger.create(GameDatasetLogger.class);
     public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
-    private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
+
     private final UnitActionSerializer unitActionSerde = new UnitActionSerializer();
-    private final UnitStateSerializer unitStateSerde = new UnitStateSerializer();
     private final UnitAttackSerializer unitAttackSerializer = new UnitAttackSerializer();
+    private final UnitStateMapSerializer unitStateMapSerializer = new UnitStateMapSerializer();
     private final String prefix;
     private BufferedWriter writer;
     private boolean createNewFile = true;
@@ -263,14 +260,14 @@ public class GameDatasetLogger {
 
         try {
             if (withHeader) {
-                appendToFile(unitStateSerde.getHeaderLine());
+                appendToFile(unitStateMapSerializer.getHeaderLine());
             }
             for (var inGameObject : game.getInGameObjects()) {
                 if (!(inGameObject instanceof Entity entity)) {
                     continue;
                 }
-                UnitState unitState = UnitState.fromEntity(entity, game);
-                appendToFile(unitStateSerde.serialize(unitState));
+                UnitStateMap unitStateMap = UnitStateMap.fromEntity(entity, game);
+                appendToFile(unitStateMapSerializer.serialize(unitStateMap));
             }
         } catch (Exception ex) {
             logger.error("Error logging global Game UnitState", ex);

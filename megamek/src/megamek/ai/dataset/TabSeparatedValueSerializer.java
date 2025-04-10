@@ -38,7 +38,7 @@ import java.util.Locale;
  */
 public abstract class TabSeparatedValueSerializer<T> {
 
-    protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
+    protected static final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
 
     /**
      * Serializes an object to TSV format.

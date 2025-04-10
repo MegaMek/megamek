@@ -330,9 +330,9 @@ public class ForceDescriptor {
      *       the given parameters.
      */
     private List<ModelRecord> generateFormation(List<ForceDescriptor> subs, int networkMask, int numGroups) {
-        Map<UnitTable.Parameters, Integer> paramCount = new HashMap<>();
+        Map<Parameters, Integer> paramCount = new HashMap<>();
         for (ForceDescriptor sub : subs) {
-            paramCount.merge(new UnitTable.Parameters(sub.getFactionRec(),
+            paramCount.merge(new Parameters(sub.getFactionRec(),
                   sub.getUnitType(),
                   sub.getYear(),
                   sub.ratGeneratorRating(),
@@ -344,9 +344,9 @@ public class ForceDescriptor {
                   sub.getFactionRec()), 1, Integer::sum);
         }
 
-        List<UnitTable.Parameters> params = new ArrayList<>();
+        List<Parameters> params = new ArrayList<>();
         List<Integer> numUnits = new ArrayList<>();
-        for (Map.Entry<UnitTable.Parameters, Integer> e : paramCount.entrySet()) {
+        for (Map.Entry<Parameters, Integer> e : paramCount.entrySet()) {
             params.add(e.getKey());
             numUnits.add(e.getValue());
         }
@@ -595,7 +595,7 @@ public class ForceDescriptor {
 
         for (ForceDescriptor sub : subs) {
             boolean foundUnit = false;
-            if (baseModel == null || (ut != null && !ut.equals(sub.getUnitType()))) {
+            if (baseModel == null || !ut.equals(sub.getUnitType())) {
                 unit = sub.generate();
                 if (unit != null) {
                     sub.setUnit(unit);
@@ -1169,6 +1169,7 @@ public class ForceDescriptor {
         ForceDescriptor transports = createChild(subforces.size() + attached.size());
         transports.setUnitType(null);
         transports.setName("Transport");
+        
         // TODO: put this in the faction files
         transports.setEschelon(3);
         transports.setCoRank(35);

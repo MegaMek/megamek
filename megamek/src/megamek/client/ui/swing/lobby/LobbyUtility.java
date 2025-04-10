@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
-
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -45,11 +44,11 @@ import megamek.client.ui.dialogs.EntityReadoutDialog;
 import megamek.client.ui.swing.ForceGeneratorViewUi;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.RandomArmyDialog;
+import megamek.client.ui.swing.models.UnitTableModel;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.force.Force;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
@@ -57,18 +56,15 @@ import megamek.logging.MMLogger;
  * This class provides static helper functions for the Lobby aka ChatLounge.
  *
  * @author Simon
- *
  */
 public class LobbyUtility {
     private static final MMLogger logger = MMLogger.create(LobbyUtility.class);
 
     /**
-     * Returns true when the starting position of the given player is valid
-     * in the given game. This is not the case only when the options "Double Blind"
-     * and "Exclusive Starting Positions" are on and the starting position overlaps
-     * with that of other players, if "Teams Share Vision" is off, or enemy players,
-     * if "Teams Share Vision" is on.
-     * <P>
+     * Returns true when the starting position of the given player is valid in the given game. This is not the case only
+     * when the options "Double Blind" and "Exclusive Starting Positions" are on and the starting position overlaps with
+     * that of other players, if "Teams Share Vision" is off, or enemy players, if "Teams Share Vision" is on.
+     * <p>
      * See also {@link #startPosOverlap(int, int)}
      */
     static boolean isValidStartPos(Game game, Player player) {
@@ -76,13 +72,11 @@ public class LobbyUtility {
     }
 
     /**
-     * Returns true when the given starting position pos is valid for the given
-     * player
-     * in the given game. This is not the case only when the options "Double Blind"
-     * and "Exclusive Starting Positions" are on and the starting position overlaps
-     * with that of other players, if "Teams Share Vision" is off, or enemy players,
-     * if "Teams Share Vision" is on.
-     * <P>
+     * Returns true when the given starting position pos is valid for the given player in the given game. This is not
+     * the case only when the options "Double Blind" and "Exclusive Starting Positions" are on and the starting position
+     * overlaps with that of other players, if "Teams Share Vision" is off, or enemy players, if "Teams Share Vision" is
+     * on.
+     * <p>
      * See also {@link #startPosOverlap(int, int)}
      */
     static boolean isValidStartPos(Game game, Player player, int pos) {
@@ -92,8 +86,9 @@ public class LobbyUtility {
             final var gOpts = game.getOptions();
             List<Player> players = game.getPlayersList();
 
-            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0) && !player.isBot()
-                    && player.getId() != 0) {
+            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0) &&
+                      !player.isBot() &&
+                      player.getId() != 0) {
                 return true;
             }
 
@@ -102,23 +97,25 @@ public class LobbyUtility {
             }
 
             if (isTeamsShareVision(game)) {
-                return players.stream().filter(p -> p.isEnemyOf(player))
-                        .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
+                return players.stream()
+                             .filter(p -> p.isEnemyOf(player))
+                             .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
             } else {
-                return players.stream().filter(p -> !p.equals(player))
-                        .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
+                return players.stream()
+                             .filter(p -> !p.equals(player))
+                             .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
             }
         }
     }
 
     /**
-     * Returns true when double-blind and exclusive deployment are on,
-     * meaning that player's deployment zones may not overlap.
+     * Returns true when double-blind and exclusive deployment are on, meaning that player's deployment zones may not
+     * overlap.
      */
     static boolean isExclusiveDeployment(Game game) {
         final var gOpts = game.getOptions();
-        return gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT);
+        return gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
+                     gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT);
     }
 
     /**
@@ -138,8 +135,7 @@ public class LobbyUtility {
     }
 
     /**
-     * Returns true when teams share vision is on, regardless of whether
-     * double-blind is on.
+     * Returns true when teams share vision is on, regardless of whether double-blind is on.
      */
     static boolean isTeamsShareVision(Game game) {
         final var gOpts = game.getOptions();
@@ -152,37 +148,35 @@ public class LobbyUtility {
     }
 
     /**
-     * Returns true if any of the given entities are embarked (transported by
-     * something).
+     * Returns true if any of the given entities are embarked (transported by something).
      */
     static boolean containsTransportedUnit(Collection<Entity> entities) {
         return entities.stream().anyMatch(e -> e.getTransportId() != Entity.NONE);
     }
 
     /**
-     * Returns true when the given board name does not start with one of the control
-     * strings
-     * of MapSettings signalling a random, generated or surprise board.
+     * Returns true when the given board name does not start with one of the control strings of MapSettings signalling a
+     * random, generated or surprise board.
      */
     @SuppressWarnings("deprecation")
     static boolean isBoardFile(String board) {
-        return !board.startsWith(MapSettings.BOARD_GENERATED)
-                && !board.startsWith(MapSettings.BOARD_RANDOM)
-                && !board.startsWith(MapSettings.BOARD_SURPRISE);
+        return !board.startsWith(MapSettings.BOARD_GENERATED) &&
+                     !board.startsWith(MapSettings.BOARD_RANDOM) &&
+                     !board.startsWith(MapSettings.BOARD_SURPRISE);
     }
 
     /**
-     * Returns a formatted and colored tooltip string warning that a board is
-     * invalid.
+     * Returns a formatted and colored tooltip string warning that a board is invalid.
      */
     static String invalidBoardTip() {
-        return UIUtil.fontHTML(GUIPreferences.getInstance().getWarningColor())
-                + Messages.getString("ChatLounge.map.invalidTip") + "</FONT>";
+        return UIUtil.fontHTML(GUIPreferences.getInstance().getWarningColor()) +
+                     Messages.getString("ChatLounge.map.invalidTip") +
+                     "</FONT>";
     }
 
     /**
-     * Draws the given text (the board name or special text) as a label on the
-     * lower edge of the image for which the graphics g is given.
+     * Draws the given text (the board name or special text) as a label on the lower edge of the image for which the
+     * graphics g is given.
      */
     public static void drawMinimapLabel(String text, int w, int h, Graphics g, boolean invalid) {
         if (text.isBlank()) {
@@ -221,10 +215,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Removes the board size ("16x17") and file path from the given board name if
-     * it is
-     * a board file. Also, reconstructs the text if it's a surprise map or generated
-     * map.
+     * Removes the board size ("16x17") and file path from the given board name if it is a board file. Also,
+     * reconstructs the text if it's a surprise map or generated map.
      */
     public static String cleanBoardName(String boardName, MapSettings mapSettings) {
         // Remove the file path
@@ -246,8 +238,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Specialized method that returns a list of board names from the given
-     * boardsString that starts with the prefix for a Surprise board.
+     * Specialized method that returns a list of board names from the given boardsString that starts with the prefix for
+     * a Surprise board.
      */
     public static ArrayList<String> extractSurpriseMaps(String boardsString) {
         if (boardsString.startsWith(MapSettings.BOARD_SURPRISE)) {
@@ -260,9 +252,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Converts an id list of the form 1,2,4,12 to a set of corresponding entities.
-     * Ignores entity ids that don't exist. The resulting list may be empty but not
-     * null.
+     * Converts an id list of the form 1,2,4,12 to a set of corresponding entities. Ignores entity ids that don't exist.
+     * The resulting list may be empty but not null.
      */
     public static HashSet<Entity> getEntities(Game game, String idList) {
         StringTokenizer st = new StringTokenizer(idList, ",");
@@ -278,9 +269,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Converts an id list of the form 1,2,4,12 to a set of corresponding forces.
-     * Ignores force ids that don't exist. The resulting list may be empty but not
-     * null.
+     * Converts an id list of the form 1,2,4,12 to a set of corresponding forces. Ignores force ids that don't exist.
+     * The resulting list may be empty but not null.
      */
     public static HashSet<Force> getForces(Game game, String idList) {
         StringTokenizer st = new StringTokenizer(idList, ",");
@@ -296,39 +286,38 @@ public class LobbyUtility {
     }
 
     /**
-     * Returns true if a and b share at least one non-hierarchic C3 system
-     * (C3i, Naval C3, Nova CEWS). Symmetrical (the order of a and b does not
-     * matter).
+     * Returns true if a and b share at least one non-hierarchic C3 system (C3i, Naval C3, Nova CEWS). Symmetrical (the
+     * order of a and b does not matter).
      */
     public static boolean sameNhC3System(Entity a, Entity b) {
-        return (a.hasC3i() && b.hasC3i())
-                || (a.hasNavalC3() && b.hasNavalC3())
-                || (a.hasNovaCEWS() && b.hasNovaCEWS());
+        return (a.hasC3i() && b.hasC3i()) || (a.hasNavalC3() && b.hasNavalC3()) || (a.hasNovaCEWS() && b.hasNovaCEWS());
     }
 
     /** Returns the string with some content shortened like Battle Armor -> BA */
     static String abbreviateUnitName(String unitName) {
-        return unitName
-                .replace("(Standard)", "").replace("Battle Armor", "BA")
-                .replace("Standard", "Std.").replace("Vehicle", "Veh.")
-                .replace("Medium", "Med.").replace("Support", "Spt.")
-                .replace("Heavy", "Hvy.").replace("Light", "Lgt.");
+        return unitName.replace("(Standard)", "")
+                     .replace("Battle Armor", "BA")
+                     .replace("Standard", "Std.")
+                     .replace("Vehicle", "Veh.")
+                     .replace("Medium", "Med.")
+                     .replace("Support", "Spt.")
+                     .replace("Heavy", "Hvy.")
+                     .replace("Light", "Lgt.");
     }
 
     static boolean hasYellowWarning(Entity entity) {
-        return (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty())
-                || ((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
-                || (entity.hasNovaCEWS() && (entity.calculateFreeC3Nodes() == 2))
-                || ((entity.getC3Master() == null) && entity.hasC3S());
+        return (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty()) ||
+                     ((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5)) ||
+                     (entity.hasNovaCEWS() && (entity.calculateFreeC3Nodes() == 2)) ||
+                     ((entity.getC3Master() == null) && entity.hasC3S());
     }
 
     /**
-     * Returns true when the entities can embark onto loader given the other
-     * constraints.
-     * If false, the passed errorMsg contains a suitable error message for display.
+     * Returns true when the entities can embark onto loader given the other constraints. If false, the passed errorMsg
+     * contains a suitable error message for display.
      */
-    static boolean validateLobbyLoad(Collection<Entity> entities, Entity loader, int bayNumber,
-            boolean loadRear, StringBuilder errorMsg) {
+    static boolean validateLobbyLoad(Collection<Entity> entities, Entity loader, int bayNumber, boolean loadRear,
+          StringBuilder errorMsg) {
         // ProtoMek loading uses only 1 entity, get that (doesn't matter if it's
         // something else)
         Entity soleProtoMek = entities.stream().findAny().get();
@@ -343,9 +332,9 @@ public class LobbyUtility {
                 capacity = bay.getUnused();
                 hasEnoughCargoCapacity = loadSize <= capacity;
                 errorMessage = Messages.getString("LoadingBay.baytoomany",
-                        (int) bay.getUnusedSlots(), bay.getDefaultSlotDescription());
-            } else if (loader.hasETypeFlag(Entity.ETYPE_MEK)
-                    && soleProtoMek.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+                      (int) bay.getUnusedSlots(),
+                      bay.getDefaultSlotDescription());
+            } else if (loader.hasETypeFlag(Entity.ETYPE_MEK) && soleProtoMek.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                 // We're also using bay number to distinguish between front and rear locations
                 // for ProtoMek mag clamp systems
                 hasEnoughCargoCapacity = entities.size() == 1;
@@ -386,8 +375,9 @@ public class LobbyUtility {
                             if (potentialLoad.containsKey(t)) {
                                 loadWeight += potentialLoad.get(t);
                             }
-                            if (!(t instanceof BattleArmorHandlesTank) && t.canLoad(e)
-                                    && (loadWeight <= t.getUnused())) {
+                            if (!(t instanceof BattleArmorHandlesTank) &&
+                                      t.canLoad(e) &&
+                                      (loadWeight <= t.getUnused())) {
                                 hasTroopSpace = true;
                                 potentialLoad.put(t, loadWeight);
                                 break;
@@ -455,13 +445,15 @@ public class LobbyUtility {
                     } else {
                         messageName = "LoadingBay.nonbaytoomany";
                     }
-                    errorMessage = Messages.getString(messageName, currCount,
-                            Entity.getEntityTypeName(typeId), currCapacity);
+                    errorMessage = Messages.getString(messageName,
+                          currCount,
+                          Entity.getEntityTypeName(typeId),
+                          currCapacity);
                 }
             }
         }
-        if (loader instanceof FighterSquadron
-                && entities.stream().anyMatch(e -> !e.isFighter() || e instanceof FighterSquadron)) {
+        if (loader instanceof FighterSquadron &&
+                  entities.stream().anyMatch(e -> !e.isFighter() || e instanceof FighterSquadron)) {
             errorMessage = "Only aerospace and conventional fighters can join squadrons.";
             hasEnoughCargoCapacity = false;
         }
@@ -470,9 +462,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Returns true when the two starting positions overlap, i.e.
-     * if they are equal or adjacent (e.g. E and NE, SW and S).
-     * ANY overlaps all others.
+     * Returns true when the two starting positions overlap, i.e. if they are equal or adjacent (e.g. E and NE, SW and
+     * S). ANY overlaps all others.
      */
     private static boolean startPosOverlap(int pos1, int pos2) {
         if (pos1 > 10) {
@@ -504,9 +495,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Converts an id list of the form 1,2,4,12 to a set of corresponding entities.
-     * Ignores entity ids that don't exist. The resulting list may be empty but not
-     * null.
+     * Converts an id list of the form 1,2,4,12 to a set of corresponding entities. Ignores entity ids that don't exist.
+     * The resulting list may be empty but not null.
      */
     public static HashSet<Entity> getEntities(String idList, AbstractTableModel utm) {
         StringTokenizer st = new StringTokenizer(idList, ",");
@@ -522,8 +512,8 @@ public class LobbyUtility {
 
             MekSummary ms = null;
 
-            if (utm instanceof RandomArmyDialog.UnitTableModel) {
-                ms = ((RandomArmyDialog.UnitTableModel) utm).getUnitAt(id);
+            if (utm instanceof UnitTableModel) {
+                ms = ((UnitTableModel) utm).getUnitAt(id);
             } else if (utm instanceof RandomArmyDialog.RATTableModel) {
                 ms = ((RandomArmyDialog.RATTableModel) utm).getUnitAt(id);
             } else if (utm instanceof ForceGeneratorViewUi.ChosenEntityModel) {
@@ -536,8 +526,8 @@ public class LobbyUtility {
                     e.setId(id);
                     result.add(e);
                 } catch (EntityLoadingException ex) {
-                    logger.error(ex, String.format("Unable to load Mek: %s: %s",
-                            ms.getSourceFile(), ms.getEntryName()));
+                    logger.error(ex,
+                          String.format("Unable to load Mek: %s: %s", ms.getSourceFile(), ms.getEntryName()));
                 }
             }
         }
@@ -546,8 +536,7 @@ public class LobbyUtility {
     }
 
     /**
-     * Returns a list of the selected entities in the Mek table.
-     * The list may be empty but not null.
+     * Returns a list of the selected entities in the Mek table. The list may be empty but not null.
      */
     public static List<Integer> getSelectedEntities(JTable sTable) {
         ArrayList<Integer> result = new ArrayList<>();
@@ -561,9 +550,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Shows the unit summaries for the given units, but not for hidden units (blind
-     * drop)
-     * and not for more than 10 units at a time (because that's likely a misclick).
+     * Shows the unit summaries for the given units, but not for hidden units (blind drop) and not for more than 10
+     * units at a time (because that's likely a misclick).
      */
     public static void mekReadoutAction(Collection<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
         if (entities.size() > 10) {
@@ -580,9 +568,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Shows the unit summary for the given unit. Moves the dialog a bit depending
-     * on index
-     * so that multiple dialogs dont appear exactly on top of each other.
+     * Shows the unit summary for the given unit. Moves the dialog a bit depending on index so that multiple dialogs
+     * dont appear exactly on top of each other.
      */
     public static void mekReadout(Entity entity, int index, boolean modal, JFrame frame) {
         final EntityReadoutDialog dialog = new EntityReadoutDialog(frame, entity);
@@ -592,9 +579,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Shows the battle value calculation for the given units, but not for hidden
-     * units (blind drop)
-     * and not for more than 10 units at a time (because that's likely a misclick).
+     * Shows the battle value calculation for the given units, but not for hidden units (blind drop) and not for more
+     * than 10 units at a time (because that's likely a misclick).
      *
      * @param entities The units to the bv report for
      */
@@ -611,9 +597,8 @@ public class LobbyUtility {
     }
 
     /**
-     * Shows the cost calculation for the given units, but not for hidden units
-     * (blind drop)
-     * and not for more than 10 units at a time (because that's likely a misclick).
+     * Shows the cost calculation for the given units, but not for hidden units (blind drop) and not for more than 10
+     * units at a time (because that's likely a misclick).
      *
      * @param entities The units to the cost report for
      */
@@ -630,9 +615,7 @@ public class LobbyUtility {
     }
 
     /**
-     * Returns a command string token containing the IDs of the given entities and a
-     * leading |
-     * E.g. |2,14,44,22
+     * Returns a command string token containing the IDs of the given entities and a leading | E.g. |2,14,44,22
      */
     public static String enToken(Collection<Integer> entities) {
         if (entities.isEmpty()) {

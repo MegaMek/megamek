@@ -27,7 +27,7 @@ import megamek.common.autoresolve.Resolver;
 import megamek.common.autoresolve.acar.SimulationOptions;
 import megamek.common.autoresolve.converter.SetupForces;
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
-import megamek.common.internationalization.Internationalization;
+import megamek.common.internationalization.I18n;
 import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryResult;
 import org.apache.commons.lang3.time.StopWatch;
@@ -36,7 +36,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -169,7 +168,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
     private JProgressBar createProgressBar() {
         setProgressBar(new JProgressBar(0, 100));
 
-        getProgressBar().setString(Internationalization.getText("AutoResolveMethod.progress.0"));
+        getProgressBar().setString(I18n.getText("AutoResolveMethod.progress.0"));
         getProgressBar().setValue(0);
         getProgressBar().setStringPainted(true);
         getProgressBar().setVisible(true);
@@ -219,7 +218,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
 
         var index = clamp((long) (factor * progress) % 98, 3, 98);
 
-        getProgressBar().setString(Internationalization.getText(progressText.get(index)));
+        getProgressBar().setString(I18n.getText(progressText.get(index)));
     }
 
     public static int clamp(long value, int min, int max) {
@@ -251,7 +250,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
             var numberOfSimulations = dialog.numberOfSimulations;
 
             String messageKey = "AutoResolveDialog.messageSimulated";
-            String title = Internationalization.getText("AutoResolveDialog.title");
+            String title = I18n.getText("AutoResolveDialog.title");
             String message;
 
             if (simulatedVictories.getRuns() == 0 && simulatedVictories.getRuns() < numberOfSimulations) {
@@ -269,7 +268,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
                     stopWatch.toString());
             }
 
-            message = Internationalization.getFormattedText(messageKey,
+            message = I18n.getFormattedText(messageKey,
                 simulatedVictories.getRuns(),
                 simulatedVictories.getVictories(),
                 simulatedVictories.getLosses(),

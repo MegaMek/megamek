@@ -29,21 +29,21 @@ import megamek.MegaMek;
  * Class to handle internationalization (you will find online material on that looking for i18n)
  * It makes use of some short names to make it easier to use since it is used in many places
  */
-public class Internationalization {
+public class I18n {
 
     private final String defaultBundle;
     private final ConcurrentHashMap<String, ResourceBundle> resourceBundles = new ConcurrentHashMap<>();
-    protected static Internationalization instance;
+    protected static I18n instance;
 
     static {
-        instance = new Internationalization("megamek.common.messages");
+        instance = new I18n("megamek.common.messages");
     }
 
-    protected Internationalization(String defaultBundle) {
+    protected I18n(String defaultBundle) {
         this.defaultBundle = defaultBundle;
     }
 
-    public static Internationalization getInstance() {
+    public static I18n getInstance() {
         return instance;
     }
 
@@ -72,8 +72,8 @@ public class Internationalization {
      * @return the localized string
      */
     public static String getTextAt(String bundleName, String key) {
-        if (Internationalization.getInstance().getResourceBundle(bundleName).containsKey(key)) {
-            return Internationalization.getInstance().getResourceBundle(bundleName).getString(key);
+        if (I18n.getInstance().getResourceBundle(bundleName).containsKey(key)) {
+            return I18n.getInstance().getResourceBundle(bundleName).getString(key);
         }
         return "!" + key + "!";
     }

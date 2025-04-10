@@ -169,9 +169,7 @@ public class BLKJumpshipFile extends BLKFile implements IMekLoader {
             }
         }
         a.setArmorType(at);
-        if (dataFile.exists("armor_tech")) {
-            a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
+        setArmorTechLevelFromDataFile(a);
         if (dataFile.exists("internal_type")) {
             a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {

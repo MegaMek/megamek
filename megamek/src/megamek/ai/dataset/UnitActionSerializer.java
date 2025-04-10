@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
+ *
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
@@ -27,25 +28,68 @@
  */
 package megamek.ai.dataset;
 
-import megamek.common.MovePath;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
+
+import megamek.common.UnitRole;
 
 /**
  * <p>serializer and deserializer for UnitAction to/from TSV format.</p>
  * @author Luana Coppio
  */
-public class UnitActionSerde extends TsvSerde<UnitAction> {
+public class UnitActionSerializer extends TabSeparatedValueSerializer<UnitAction> {
 
-    private final DecimalFormat LOG_DECIMAL =
-        new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
+    private enum UnitActionField {
+        PLAYER_ID,
+        ENTITY_ID,
+        CHASSIS,
+        MODEL,
+        FACING,
+        FROM_X,
+        FROM_Y,
+        TO_X,
+        TO_Y,
+        HEXES_MOVED,
+        DISTANCE,
+        MP_USED,
+        MAX_MP,
+        MP_P,
+        HEAT_P,
+        ARMOR_P,
+        INTERNAL_P,
+        JUMPING,
+        PRONE,
+        LEGAL,
+        STEPS,
+        TEAM_ID,
+        CHANCE_OF_FAILURE,
+        IS_BOT,
+        HAS_ECM,
+        ARMOR,
+        INTERNAL,
+        BV,
+        MAX_RANGE,
+        ARMOR_FRONT_P,
+        ARMOR_LEFT_P,
+        ARMOR_RIGHT_P,
+        ARMOR_BACK_P,
+        TOTAL_DAMAGE,
+        ROLE,
+        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE,
+        ;
+
+        /**
+         * Builds the TSV header line (joined by tabs) by iterating over all enum constants.
+         */
+        public static String getHeaderLine() {
+            return Arrays.stream(values())
+                         .map(UnitActionField::name)
+                         .collect(Collectors.joining("\t"));
+        }
+    }
 
     @Override
-    public String toTsv(UnitAction obj) {
+    public String serialize(UnitAction obj) {
         String[] row = new String[UnitActionField.values().length];
         row[UnitActionField.ENTITY_ID.ordinal()] = String.valueOf(obj.id());
         row[UnitActionField.PLAYER_ID.ordinal()] = String.valueOf(obj.playerId());
@@ -70,11 +114,24 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
         row[UnitActionField.LEGAL.ordinal()] = obj.legal() ? "1" : "0";
         row[UnitActionField.CHANCE_OF_FAILURE.ordinal()] = LOG_DECIMAL.format(obj.chanceOfFailure());
         row[UnitActionField.IS_BOT.ordinal()] = obj.bot() ? "1" : "0";
-
-        // For STEPS, join the list of MoveStepType values with a space.
         row[UnitActionField.STEPS.ordinal()] = obj.steps().stream()
-            .map(Enum::name)
-            .collect(Collectors.joining(" "));
+                                                     .map(Enum::name)
+                                                     .collect(Collectors.joining(" "));
+        row[UnitActionField.HAS_ECM.ordinal()] = obj.hasEcm() ? "1" : "0";
+        row[UnitActionField.ARMOR.ordinal()] = String.valueOf(obj.armor());
+        row[UnitActionField.INTERNAL.ordinal()] = String.valueOf(obj.internal());
+        row[UnitActionField.BV.ordinal()] = String.valueOf(obj.bv());
+        row[UnitActionField.MAX_RANGE.ordinal()] = String.valueOf(obj.maxRange());
+        row[UnitActionField.TOTAL_DAMAGE.ordinal()] = String.valueOf(obj.totalDamage());
+        row[UnitActionField.ARMOR_FRONT_P.ordinal()] = LOG_DECIMAL.format(obj.armorFrontP());
+        row[UnitActionField.ARMOR_LEFT_P.ordinal()] = LOG_DECIMAL.format(obj.armorLeftP());
+        row[UnitActionField.ARMOR_RIGHT_P.ordinal()] = LOG_DECIMAL.format(obj.armorRightP());
+        row[UnitActionField.ARMOR_BACK_P.ordinal()] = LOG_DECIMAL.format(obj.armorBackP());
+        row[UnitActionField.ROLE.ordinal()] = obj.role() == null ? UnitRole.NONE.name() : obj.role().name();
+        row[UnitActionField.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE.ordinal()] =
+                obj.weaponDamageFacingShortMediumLongRange().stream()
+                      .map(Object::toString)
+                      .collect(Collectors.joining(" "));
 
         return String.join("\t", row);
     }

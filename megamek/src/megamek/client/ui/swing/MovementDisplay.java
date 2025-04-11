@@ -4555,8 +4555,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // A non-QuadVee 'Mek that is using tracked movement is limited to walking
             maxMP = en.getWalkMP();
         } else {
-            if (game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
                 maxMP = en.getSprintMP();
             } else {
                 maxMP = en.getRunMP();
@@ -4622,10 +4621,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Create a path finder to find possible moves; if aerodyne, use a custom Aero path finder.
         ShortestPathFinder pf;
-        if (!en.isAerodyne()) {
-            pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, game);
-        } else {
+        if (en.isAerodyne()) {
             pf = ShortestPathFinder.newInstanceOfOneToAllAero(maxMP, stepType, game);
+        } else {
+            pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, game);
         }
 
         pf.run(mp);

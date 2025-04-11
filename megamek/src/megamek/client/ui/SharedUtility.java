@@ -159,11 +159,9 @@ public class SharedUtility {
     }
 
     /**
-     * Checks to see if piloting skill rolls are needed for the currently
-     * selected movement. This code is basically a simplified version of
-     * Server.processMovement(), except that it just reads information (no
-     * writing). Note that MovePath.clipToPossible() is called though, which
-     * changes the md object.
+     * Checks to see if piloting skill rolls are needed for the currently selected movement. This code is basically a
+     * simplified version of Server.processMovement(), except that it just reads information (no writing). Note that
+     * MovePath.clipToPossible() is called though, which changes the md object.
      */
     private static Object doPSRCheck(MovePath md, boolean stringResult) {
 
@@ -175,6 +173,7 @@ public class SharedUtility {
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
+        int curBoardId = entity.getBoardId();
         int lastElevation = entity.getElevation();
         int curElevation = entity.getElevation();
         int curFacing = entity.getFacing();
@@ -183,7 +182,7 @@ public class SharedUtility {
         EntityMovementType overallMoveType = EntityMovementType.MOVE_NONE;
         boolean firstStep;
         int prevFacing = curFacing;
-        Hex prevHex = game.getBoard().getHex(curPos);
+        Hex prevHex = game.getBoard(curBoardId).getHex(curPos);
         final boolean isInfantry = (entity instanceof Infantry);
 
         PilotingRollData rollTarget;
@@ -228,8 +227,10 @@ public class SharedUtility {
             curPos = step.getPosition();
             curFacing = step.getFacing();
             curElevation = step.getElevation();
+            curBoardId = step.getTargetBoardId();
+            Board board = game.getBoard(curBoardId);
 
-            final Hex curHex = game.getBoard().getHex(curPos);
+            final Hex curHex = board.getHex(curPos);
 
             // check for vertical takeoff
             if ((step.getType() == MoveStepType.VTAKEOFF)
@@ -256,7 +257,7 @@ public class SharedUtility {
             if (!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mek)
                     && !entity.isAirborne() && (step.getClearance() <= 0) // Don't check airborne LAMs
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
-                int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
+                int leapDistance = (lastElevation + board.getHex(lastPos).getLevel())
                         - (curElevation + curHex.getLevel());
                 if (leapDistance > 2) {
                     rollTarget = entity.getBasePilotingRoll(moveType);
@@ -416,7 +417,7 @@ public class SharedUtility {
                             entity.addPilotingModifierForTerrain(rollTarget, step);
                             int gravMod = game.getPlanetaryConditions()
                                     .getGravityPilotPenalty();
-                            if ((gravMod != 0) && !game.getBoard().inSpace()) {
+                            if ((gravMod != 0) && !board.inSpace()) {
                                 rollTarget.addModifier(gravMod, game
                                         .getPlanetaryConditions().getGravity()
                                         + "G gravity");
@@ -485,7 +486,7 @@ public class SharedUtility {
                 Building bldg = null;
                 String reason = "entering";
                 if ((buildingMove & 2) == 2) {
-                    bldg = game.getBoard().getBuildingAt(curPos);
+                    bldg = board.getBuildingAt(curPos);
                 }
 
                 if (bldg != null) {
@@ -499,7 +500,7 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            Hex lastHex = game.getBoard().getHex(lastPos);
+            Hex lastHex = board.getHex(lastPos);
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
@@ -595,7 +596,7 @@ public class SharedUtility {
             rollTarget = entity.checkLandingWithPrototypeJJ(overallMoveType);
             checkNag(rollTarget, nagReport, psrList);
             // jumped into water?
-            Hex hex = game.getBoard().getHex(curPos);
+            Hex hex = game.getBoard(curBoardId).getHex(curPos);
             // check for jumping into heavy woods
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
@@ -642,7 +643,7 @@ public class SharedUtility {
             checkNag(rollTarget, nagReport, psrList);
 
             // Atmospheric checks
-            if (!game.getBoard().inSpace() && !md.contains(MoveStepType.LAND)
+            if (!game.getBoard(curBoardId).inSpace() && !md.contains(MoveStepType.LAND)
                     && !md.contains(MoveStepType.VLAND)) {
                 // check to see if velocity is 2x thrust
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);

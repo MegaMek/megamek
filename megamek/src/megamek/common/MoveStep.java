@@ -1022,6 +1022,7 @@ public class MoveStep implements Serializable {
               entity,
               getElevation(),
               getPosition(),
+              targetBoardId,
               null,
               climbMode);
         if ((violation != null) && (getType() != MoveStepType.CHARGE) && (getType() != MoveStepType.DFA)) {
@@ -1108,6 +1109,7 @@ public class MoveStep implements Serializable {
     public void setFromEntity(Entity entity, Game game) {
         this.entity = entity;
         position = entity.getPosition();
+        targetBoardId = entity.getBoardId();
         facing = entity.getFacing();
         // elevation
         mpUsed = entity.mpUsed;
@@ -3481,7 +3483,7 @@ public class MoveStep implements Serializable {
         // restrictions are lifted when moving along a road or bridge,
         // or when flying. Naval movement does not have the pavement
         // exemption.
-        if (entity.isLocationProhibited(dest, getElevation())
+        if (entity.isLocationProhibited(dest, targetBoardId, getElevation())
                   // Units in prohibited terran should still be able to unload/disconnect
                   &&
                   (type != MoveStepType.UNLOAD) &&
@@ -3515,7 +3517,7 @@ public class MoveStep implements Serializable {
         if ((entity instanceof Dropship) &&
                   !entity.isAirborne() &&
                   isPavementStep() &&
-                  entity.isLocationProhibited(dest, getElevation()) &&
+                  entity.isLocationProhibited(dest, targetBoardId, getElevation()) &&
                   (movementType != EntityMovementType.MOVE_SAFE_THRUST) &&
                   (type != MoveStepType.LOAD) &&
                   (type != MoveStepType.UNLOAD)) {
@@ -3544,7 +3546,7 @@ public class MoveStep implements Serializable {
                     continue;
                 }
 
-                prohibitedByTrailer = tr.isLocationProhibited(dest, getElevation());
+                prohibitedByTrailer = tr.isLocationProhibited(dest, targetBoardId, getElevation());
                 if (prohibitedByTrailer) {
                     return false;
                 }
@@ -3576,7 +3578,7 @@ public class MoveStep implements Serializable {
                   // leave
                   &&
                   (type != MoveStepType.CONVERT_MODE) &&
-                  entity.isLocationProhibited(src, srcEl) &&
+                  entity.isLocationProhibited(src, targetBoardId, srcEl) &&
                   !isPavementStep()) {
             return false;
         }
@@ -4071,7 +4073,7 @@ public class MoveStep implements Serializable {
         return entity instanceof Mek;
     }
 
-    int getTargetBoardId() {
+    public int getTargetBoardId() {
         return targetBoardId;
     }
 }

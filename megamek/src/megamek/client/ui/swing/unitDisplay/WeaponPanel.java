@@ -1120,14 +1120,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
         }
         Coords position = entity.getPosition();
-        if (!en.isOffBoard() && (position != null)) {
-            Hex hex = game.getBoard().getHex(position);
+        if ((game != null) && !en.isOffBoard() && game.hasBoardLocation(position, entity.getBoardId())) {
+            Hex hex = game.getBoard(entity.getBoardId()).getHex(position);
             if (hex != null) {
-                if (hex.containsTerrain(Terrains.FIRE)
-                        && (hex.getFireTurn() > 0)) {
+                if (hex.containsTerrain(Terrains.FIRE) && (hex.getFireTurn() > 0)) {
                     // standing in fire
-                    if ((en instanceof Mek)
-                            && ((Mek) en).hasIntactHeatDissipatingArmor()) {
+                    if ((en instanceof Mek) && ((Mek) en).hasIntactHeatDissipatingArmor()) {
                         currentHeatBuildup += 2;
                     } else {
                         currentHeatBuildup += 5;
@@ -1135,15 +1133,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
 
                 if (hex.terrainLevel(Terrains.MAGMA) == 1) {
-                    if ((en instanceof Mek)
-                            && ((Mek) en).hasIntactHeatDissipatingArmor()) {
+                    if ((en instanceof Mek) && ((Mek) en).hasIntactHeatDissipatingArmor()) {
                         currentHeatBuildup += 2;
                     } else {
                         currentHeatBuildup += 5;
                     }
                 } else if (hex.terrainLevel(Terrains.MAGMA) == 2) {
-                    if ((en instanceof Mek)
-                            && ((Mek) en).hasIntactHeatDissipatingArmor()) {
+                    if ((en instanceof Mek) && ((Mek) en).hasIntactHeatDissipatingArmor()) {
                         currentHeatBuildup += 5;
                     } else {
                         currentHeatBuildup += 10;

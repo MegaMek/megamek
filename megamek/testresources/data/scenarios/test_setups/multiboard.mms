@@ -64,20 +64,25 @@ factions:
 #    board: 1
 #    # offboard effective distance doesnt work yet
 #
-  - fullname: Mobile Long Tom Artillery LT-MOB-25
-    at: [13,10]
+#  - fullname: Mobile Long Tom Artillery LT-MOB-25
+#    at: [13,10]
+#    board: 1
+#    facing: 2
+
+  - fullname: Bulldog Medium Tank
+    at: [ 13,10 ]
     board: 1
     facing: 2
 
-  - fullname: Locust LCT-1V
-    board: 0
-    at: [ 4,4 ]
-    status: hidden
+#  - fullname: Locust LCT-1V
+#    board: 0
+#    at: [ 4,4 ]
+#    status: hidden
 
   - fullname: Locust LCT-1E
     board: 0
     at: [ 7,7 ]
-    status: hidden
+#    status: hidden
 
   - fullname: Atlas AS7-D
     board: 5
@@ -89,7 +94,7 @@ factions:
     facing: 2
     altitude: 7
 
-  - fullname: Mobile Long Tom Artillery LT-MOB-25
-    at: [ 30, 24 ]
-    board: 5
-    facing: 5
+#  - fullname: Mobile Long Tom Artillery LT-MOB-25
+#    at: [ 30, 24 ]
+#    board: 5
+#    facing: 5

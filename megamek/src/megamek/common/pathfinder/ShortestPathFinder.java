@@ -278,7 +278,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     }
 
     /**
-     * See {@link newInstanceOfOneToAll} - this returns a customized
+     * See {@link #newInstanceOfOneToAll(int, MoveStepType, Game)} - this returns a customized
      * ShortestPathFinder to support Aerodyne units.
      *
      * @param maxMP    maximum MP that entity can use

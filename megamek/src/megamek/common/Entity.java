@@ -7684,7 +7684,7 @@ public abstract class Entity extends TurnOrdered
         // If we aren't traveling along a road, apply terrain modifiers
         boolean previousStepCountsAsPavement = (prevStep == null) || prevStep.isPavementStep();
         if (!previousStepCountsAsPavement || !currStep.isPavementStep()) {
-            addPilotingModifierForTerrain(roll, lastPos);
+            addPilotingModifierForTerrain(roll, lastPos, currStep.getTargetBoardId());
         }
 
         boolean prevStepPavement = (prevStep != null) ?
@@ -7734,7 +7734,7 @@ public abstract class Entity extends TurnOrdered
     public PilotingRollData checkRubbleMove(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos,
           Coords curPos, boolean isLastStep, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
-        addPilotingModifierForTerrain(roll, curPos, true);
+        addPilotingModifierForTerrain(roll, curPos, step.getTargetBoardId(), true);
 
         if (!lastPos.equals(curPos) &&
                   ((moveType != EntityMovementType.MOVE_JUMP) || isLastStep) &&
@@ -7781,7 +7781,7 @@ public abstract class Entity extends TurnOrdered
                 roll.addModifier(-1, "Swamp Beast");
             }
 
-            addPilotingModifierForTerrain(roll, curPos, false);
+            addPilotingModifierForTerrain(roll, curPos, step.getTargetBoardId(), false);
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -7876,8 +7876,9 @@ public abstract class Entity extends TurnOrdered
         if ((prevPos == null) || (prevPos.equals(curPos) && !(this instanceof ProtoMek))) {
             return 0;
         }
-        Hex curHex = game.getBoard().getHex(curPos);
-        Hex prevHex = game.getBoard().getHex(prevPos);
+        Board board = game.getBoard(step.getTargetBoardId());
+        Hex curHex = board.getHex(curPos);
+        Hex prevHex = board.getHex(prevPos);
 
         // ineligible because of movement type or unit type
         if (isAirborne()) {
@@ -7895,7 +7896,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         // check for movement inside a hangar
-        Building curBldg = game.getBoard().getBuildingAt(curPos);
+        Building curBldg = board.getBuildingAt(curPos);
         if ((null != curBldg) &&
                   curBldg.isIn(prevPos) &&
                   (curBldg.getBldgClass() == Building.HANGAR) &&
@@ -7929,7 +7930,7 @@ public abstract class Entity extends TurnOrdered
         // check to see if its a wall
         if (rv > 1) {
             Building bldgEntered;
-            bldgEntered = game.getBoard().getBuildingAt(curPos);
+            bldgEntered = board.getBuildingAt(curPos);
             if (bldgEntered.getType() == BuildingType.WALL) {
                 return 4;
             }
@@ -10991,13 +10992,19 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * LEGACY use boardId versions
      * Apply PSR modifier for difficult terrain at the specified coordinates
      *
      * @param roll the PSR to modify
      * @param c    the coordinates where the PSR happens
+     *
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c) {
-        addPilotingModifierForTerrain(roll, c, false);
+        addPilotingModifierForTerrain(roll, c, 0, false);
+    }
+
+    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c, int boardId) {
+        addPilotingModifierForTerrain(roll, c, boardId, false);
     }
 
     /**
@@ -11005,18 +11012,20 @@ public abstract class Entity extends TurnOrdered
      *
      * @param roll           the PSR to modify
      * @param c              the coordinates where the PSR happens
-     * @param enteringRubble True if entering rubble, else false
+     * @param boardId        the board ID where the PSR happens
+     * @param enteringRubble True if entering rubble
      */
-    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c, boolean enteringRubble) {
-        if ((c == null) || (roll == null)) {
+    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c, int boardId, boolean enteringRubble) {
+        if ((c == null) || (roll == null) || isOffBoard() || !isDeployed()) {
             return;
         }
-        if (isOffBoard() || !(isDeployed())) {
+        Hex hex = game.getBoard(boardId).getHex(c);
+        if (hex == null) {
+            LOGGER.error("Tried to add piloting modifier for null hex");
             return;
         }
-        Hex hex = game.getBoard().getHex(c);
-        hex.applyTerrainPilotingModifiers(getMovementMode(), roll, enteringRubble);
 
+        hex.applyTerrainPilotingModifiers(getMovementMode(), roll, enteringRubble);
         if (hex.containsTerrain(Terrains.JUNGLE) && hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
             roll.addModifier(-1, "Forest Ranger");
         }
@@ -11029,10 +11038,9 @@ public abstract class Entity extends TurnOrdered
      * @param step the move step the PSR occurs at
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll, MoveStep step) {
-        if (step.getElevation() > 0) {
-            return;
+        if (step.getElevation() <= 0) {
+            addPilotingModifierForTerrain(roll, step.getPosition(), step.getTargetBoardId());
         }
-        addPilotingModifierForTerrain(roll, step.getPosition());
     }
 
     /**
@@ -11041,10 +11049,9 @@ public abstract class Entity extends TurnOrdered
      * @param roll the PSR to modify
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll) {
-        if (getElevation() > 0) {
-            return;
+        if (getElevation() <= 0) {
+            addPilotingModifierForTerrain(roll, getPosition(), getBoardId());
         }
-        addPilotingModifierForTerrain(roll, getPosition());
     }
 
     /**

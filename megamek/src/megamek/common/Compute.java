@@ -445,7 +445,7 @@ public class Compute {
      */
     public static Entity stackingViolation(Game game, Entity entering,
             Coords origPosition, int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode) {
-        // no stacking violations on the low-atmosphere and space maps
+        // no stacking violations on low-atmosphere and space maps
         if (!game.getBoard(destBoardId).onGround()) {
             return null;
         }
@@ -617,8 +617,9 @@ public class Compute {
             throw new IllegalArgumentException("Entity invalid. ID " + entityId);
         }
 
-        final Hex srcHex = game.getBoard().getHex(src);
-        final Hex destHex = game.getBoard().getHex(dest);
+        Board board = game.getBoard(moveStep.getTargetBoardId());
+        final Hex srcHex = board.getHex(src);
+        final Hex destHex = board.getHex(dest);
         final boolean isInfantry = (entity instanceof Infantry);
         int delta_alt = (destElevation + destHex.getLevel())
                 - (srcElevation + srcHex.getLevel());
@@ -753,7 +754,7 @@ public class Compute {
         // need to make a piloting check to avoid damage.
         if ((destElevation < destHex.terrainLevel(Terrains.BLDG_ELEV))
                 && !(entity instanceof Infantry)) {
-            Building bldg = game.getBoard().getBuildingAt(dest);
+            Building bldg = board.getBuildingAt(dest);
             boolean insideHangar = (null != bldg)
                     && bldg.isIn(src)
                     && (bldg.getBldgClass() == Building.HANGAR)
@@ -6005,8 +6006,9 @@ public class Compute {
      */
     public static boolean canMoveOnPavement(Game game, Coords src,
             Coords dest, MoveStep moveStep) {
-        final Hex srcHex = game.getBoard().getHex(src);
-        final Hex destHex = game.getBoard().getHex(dest);
+        Board board = game.getBoard(moveStep.getTargetBoardId());
+        final Hex srcHex = board.getHex(src);
+        final Hex destHex = board.getHex(dest);
         final int src2destDir = src.direction(dest);
         final int dest2srcDir = (src2destDir + 3) % 6;
         boolean result = false;

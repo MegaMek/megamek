@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3028-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>5,5</pctOmni>
@@ -797,10 +794,10 @@
 		<chassis name='Assassin' unitType='Mek'>
 			<availability>FS:2+,LA:2+,FWL:3+,DC:2+,FRR:2+,MERC:1+,CS:2+,FC:2+,Periphery:1+,HL:1,Periphery.Deep:0,PIR:1+</availability>
 			<model name='ASN-101'>
-				<availability>FS:1,FS.CMM:2</availability>
+				<availability>FS:1,FS.CMM:2,FC:1</availability>
 			</model>
 			<model name='ASN-21'>
-				<availability>IS:8,Periphery:8,HL:8,Periphery.Deep:8,PIR:8</availability>
+				<availability>IS:8,FC:8,Periphery:8,HL:8,Periphery.Deep:8,PIR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Asshur Artillery Spotter' unitType='Tank'>
@@ -1562,7 +1559,7 @@
 		<chassis name='Centurion' unitType='Mek'>
 			<availability>IS:4+,FS:6+,FRR:4,MERC:5+,CS:3-,FC:7+,Periphery:2+,Periphery.OS:3+,Periphery.HR:3+,NIOPS:2-,HL:2+,Periphery.Deep:1+,PIR:3+</availability>
 			<model name='CN9-A'>
-				<availability>IS:8,DC:7,Periphery:8,HL:8,Periphery.Deep:5,PIR:8</availability>
+				<availability>IS:8,DC:7,FRR:6,Periphery:8,HL:8,Periphery.Deep:5,PIR:8</availability>
 			</model>
 			<model name='CN9-AH'>
 				<availability>IS:3+,FS:4+,LA:5+,DC:6+,FRR:7+,CC:2+,MERC:2+,CS:5+,FC:3+,Periphery:2+,HL:1+,Periphery.Deep:0,PIR:2</availability>
@@ -1701,7 +1698,7 @@
 			<availability>IS:2,MERC:3,CS:3-,FC:2,Periphery:2,HL:1,Periphery.Deep:1,PIR:2</availability>
 			<model name='CDA-2A'>
 				<roles>recon</roles>
-				<availability>IS:8,Periphery:8,HL:8,Periphery.Deep:8,PIR:5</availability>
+				<availability>IS:8,FC:8,Periphery:8,HL:8,Periphery.Deep:8,PIR:5</availability>
 			</model>
 			<model name='CDA-2B'>
 				<roles>anti_infantry</roles>
@@ -2024,10 +2021,10 @@
 		<chassis name='Clint' unitType='Mek'>
 			<availability>IS:1+,FS:2+,CC:2+,MERC:1,CS:1-,FC:1-,Periphery:2,NIOPS:3-,HL:2+,Periphery.Deep:2,PIR:1</availability>
 			<model name='CLNT-1-2R'>
-				<availability>FS:1,CC:1+,SIC:1+</availability>
+				<availability>FS:1,CC:1+,SIC:1+,FC:0</availability>
 			</model>
 			<model name='CLNT-2-3T'>
-				<availability>IS:8,Periphery:8,NIOPS:8,HL:8,Periphery.Deep:8,PIR:8</availability>
+				<availability>IS:8,FC:8,Periphery:8,NIOPS:8,HL:8,Periphery.Deep:8,PIR:8</availability>
 			</model>
 			<model name='CLNT-2-4T'>
 				<availability>FS:3,CC:5,SIC:3,FC:0</availability>
@@ -2233,11 +2230,11 @@
 			<availability>IS:3+,FS:4+,LA:4+,FRR:0,MERC:4+,CS!A:8!B:7!C:7!D:7!F:7,FC:5+,CLAN:3,CGS:4,CDS:4,CW:4,CBS:4,Periphery:1+,NIOPS:5,HL:0,Periphery.Deep:0,PIR:2+</availability>
 			<model name='CRB-20'>
 				<roles>raider</roles>
-				<availability>IS:8,CS!B:1!C:2!D:3!F:8,Periphery:8,NIOPS:0,PIR:8</availability>
+				<availability>IS:8,FC:8,CS!B:1!C:2!D:3!F:8,Periphery:8,NIOPS:0,PIR:8</availability>
 			</model>
 			<model name='CRB-27'>
 				<roles>raider</roles>
-				<availability>DC:1:3035,CS!A:8!B:7!C:6!D:1,CLAN:6,NIOPS:8,BAN:8</availability>
+				<availability>DC:1+:3035,CS!A:8!B:7!C:6!D:1,CLAN:6,NIOPS:8,BAN:8</availability>
 			</model>
 			<model name='CRB-27b'>
 				<roles>raider</roles>
@@ -4045,7 +4042,7 @@
 				<availability>IS:7,LA:6,FWL:4,DC:6,FRR:5,CC:5,SIC:7,MERC:6-,CS:3,FC:5,Periphery:7,HL:8,Periphery.Deep:8,PIR:5</availability>
 			</model>
 			<model name='HBK-4J'>
-				<availability>IS:3,FS:3+,FWL:6,DC:2,FRR:3,CS:2,FC:3,Periphery:3,HL:5,Periphery.Deep:5,PIR:4</availability>
+				<availability>IS:3,FS:3+,FWL:6,DC:2,CS:2,FC:3,Periphery:3,HL:5,Periphery.Deep:5,PIR:4</availability>
 			</model>
 			<model name='HBK-4N'>
 				<availability>IS:5,FS:6,LA:3,DC:2,FRR:3,SIC:3,MERC:4,CS:3,FC:3,Periphery:5,HL:5,Periphery.Deep:5,PIR:3</availability>
@@ -4525,7 +4522,7 @@
 		<chassis name='Kintaro' unitType='Mek'>
 			<availability>FS:2+,DC:2,CS!A:7!B:5!C:4!D:3,FC:3+,CLAN:3,CHH:4,CDS:4,CSV:4,NIOPS:7</availability>
 			<model name='KTO-18'>
-				<availability>FS:8</availability>
+				<availability>FS:8,FC:8</availability>
 			</model>
 			<model name='KTO-19'>
 				<availability>CS:8,CLAN:6,NIOPS:8,BAN:7</availability>
@@ -6781,7 +6778,7 @@
 			</model>
 		</chassis>
 		<chassis name='Scorpion' unitType='Mek'>
-			<availability>IS:3-,FWL:4-,FRR:3,CC:4-,FC:3-,MERC:4-,Periphery:4,TC:4-,NIOPS:3-,HL:3,Periphery.Deep:4,PIR:5-</availability>
+			<availability>IS:3-,FWL:4-,FRR:3,CC:4-,FC:3-,MERC:4-,FC:3-,Periphery:4,TC:4-,NIOPS:3-,HL:3,Periphery.Deep:4,PIR:5-</availability>
 			<model name='SCP-1N'>
 				<availability>IS:8,Periphery:8,HL:8,Periphery.Deep:8,PIR:8</availability>
 			</model>

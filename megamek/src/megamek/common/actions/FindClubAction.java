@@ -14,7 +14,6 @@
 package megamek.common.actions;
 
 import megamek.common.BipedMek;
-import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Hex;
@@ -24,6 +23,8 @@ import megamek.common.TripodMek;
 import megamek.common.enums.BuildingType;
 import megamek.common.options.OptionsConstants;
 
+import java.io.Serial;
+
 /**
  * The entity tries to find a club.
  *
@@ -31,11 +32,9 @@ import megamek.common.options.OptionsConstants;
  * @since April 5, 2002, 4:00 PM
  */
 public class FindClubAction extends AbstractEntityAction {
+    @Serial
     private static final long serialVersionUID = -8948591442556777640L;
 
-    /**
-     * Creates new FindClubAction
-     */
     public FindClubAction(int entityId) {
         super(entityId);
     }
@@ -46,18 +45,12 @@ public class FindClubAction extends AbstractEntityAction {
      */
     public static boolean canMekFindClub(Game game, int entityId) {
         final Entity entity = game.getEntity(entityId);
-        if ((null == entity) || null == (entity.getPosition())) {
-            return false;
-        }
-        final Hex hex = game.getBoard().getHex(entity.getPosition());
-
         // Only biped and tripod 'Meks qualify at all.
         if (!(entity instanceof BipedMek || entity instanceof TripodMek)) {
             return false;
         }
 
-        // Is the entity active?
-        if (entity.isShutDown() || !entity.getCrew().isActive()) {
+        if (!game.hasBoardLocation(entity.getBoardLocation()) || entity.isShutDown() || !entity.getCrew().isActive()) {
             return false;
         }
 
@@ -67,9 +60,8 @@ public class FindClubAction extends AbstractEntityAction {
             return false;
         }
 
-        // The hex must contain woods or rubble from
-        // a medium, heavy, or hardened building,
-        // or a blown off limb
+        final Hex hex = game.getHex(entity.getBoardLocation());
+        // The hex must contain woods or rubble from a medium, heavy, or hardened building, or a blown off limb
         if ((hex.terrainLevel(Terrains.WOODS) < 1)
             && (hex.terrainLevel(Terrains.JUNGLE) < 1)
             && (hex.terrainLevel(Terrains.RUBBLE) < BuildingType.MEDIUM.getTypeValue())
@@ -78,8 +70,7 @@ public class FindClubAction extends AbstractEntityAction {
             return false;
         }
 
-        // also, need shoulders and hands
-        // Claws can substitute as hands --Torren
+        // also, need shoulders and hands; Claws can substitute as hands --Torren
         if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)
                 || !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)
                 || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) && !((Mek) entity).hasClaw(Mek.LOC_RARM))

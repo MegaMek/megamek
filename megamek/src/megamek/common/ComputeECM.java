@@ -386,7 +386,7 @@ public class ComputeECM {
         }
 
         // If either case is true, the rest is meaningless
-        if ((entities.size() < 1) || (game == null)) {
+        if (entities.isEmpty() || (game == null)) {
             return allEcmInfo;
         }
 

@@ -375,7 +375,7 @@ public class FovHighlightingAndDarkening {
         // present we use
         // the mekInSecond GUIPref.
         attackInfo.targetHeight = attackInfo.targetAbsHeight = Integer.MIN_VALUE;
-        for (Entity ent : boardView.game.getEntitiesVector(dest)) {
+        for (Entity ent : boardView.game.getEntitiesVector(dest, boardId)) {
             int trAbsHeight = (attackInfo.lowAltitude) ? ent.getAltitude() : dstHex.getLevel() + ent.relHeight();
             if (trAbsHeight > attackInfo.targetAbsHeight) {
                 attackInfo.targetHeight = ent.getHeight();

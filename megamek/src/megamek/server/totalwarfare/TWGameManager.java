@@ -16543,7 +16543,7 @@ public class TWGameManager extends AbstractGameManager {
                 Vector<GunEmplacement> gun = new Vector<>();
                 gun.add((GunEmplacement) entity);
 
-                Building building = getGame().getBoard().getBuildingAt(entity.getPosition());
+                Building building = getGame().getBuildingAt(entity.getBoardLocation()).get();
 
                 Report.addNewline(mainPhaseReport);
                 addReport(criticalGunEmplacement(gun, building, entity.getPosition()));
@@ -16850,14 +16850,14 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void checkForFlamingDamage() {
         for (Entity entity : getGame().inGameTWEntities()) {
-            if ((null == entity.getPosition()) ||
-                      (entity instanceof Mek) ||
-                      entity.isDoomed() ||
-                      entity.isDestroyed() ||
-                      entity.isOffBoard()) {
+            if ((entity instanceof Mek)
+                      || entity.isDoomed()
+                      || entity.isDestroyed()
+                      || entity.isOffBoard()
+                      || !getGame().hasBoardLocation(entity.getPosition(), entity.getBoardId())) {
                 continue;
             }
-            final Hex curHex = getGame().getBoard().getHex(entity.getPosition());
+            final Hex curHex = getGame().getHex(entity.getBoardLocation());
             final boolean underwater = curHex.containsTerrain(Terrains.WATER) &&
                                              (curHex.depth() > 0) &&
                                              (entity.getElevation() < curHex.getLevel());
@@ -17133,11 +17133,11 @@ public class TWGameManager extends AbstractGameManager {
     private Vector<Report> resolvePilotingRolls(Entity entity, boolean moving, Coords src, Coords dest) {
         Vector<Report> vPhaseReport = new Vector<>();
         // dead and undeployed and offboard units don't need to.
-        if (entity.isDoomed() ||
-                  entity.isDestroyed() ||
-                  entity.isOffBoard() ||
-                  !entity.isDeployed() ||
-                  (entity.getTransportId() != Entity.NONE)) {
+        if (entity.isDoomed()
+                  || entity.isDestroyed()
+                  || entity.isOffBoard()
+                  || !entity.isDeployed()
+                  || (entity.getTransportId() != Entity.NONE)) {
             return vPhaseReport;
         }
 
@@ -17266,7 +17266,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Meks with UMU float and don't have to roll???
         if (entity instanceof Mek) {
-            Hex hex = game.getBoard().getHex(dest);
+            Hex hex = game.getBoard(entity.getBoardId()).getHex(dest);
             int water = hex.terrainLevel(Terrains.WATER);
             if ((water > 0) &&
                       (entity.getElevation() != -hex.depth(true)) &&
@@ -30857,15 +30857,14 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveSinkVees() {
         Iterator<Entity> sinkableTanks = game.getSelectedEntities(entity -> {
-            if (entity.isOffBoard() || (entity.getPosition() == null) || !(entity instanceof Tank)) {
+            if (entity.isOffBoard() || !(entity instanceof Tank)
+                      || !game.hasBoardLocation(entity.getPosition(), entity.getBoardId())) {
                 return false;
             }
-            final Hex hex = game.getBoard().getHex(entity.getPosition());
+            final Hex hex = game.getHex(entity.getBoardLocation());
             final boolean onBridge = (hex.terrainLevel(Terrains.BRIDGE) > 0) &&
                                            (entity.getElevation() == hex.terrainLevel(Terrains.BRIDGE_ELEV));
-            return ((entity.getMovementMode() == EntityMovementMode.TRACKED) ||
-                          (entity.getMovementMode() == EntityMovementMode.WHEELED) ||
-                          ((entity.getMovementMode() == EntityMovementMode.HOVER))) &&
+            return entity.getMovementMode().isTrackedWheeledOrHover() &&
                          entity.isImmobile() &&
                          (hex.terrainLevel(Terrains.WATER) > 0) &&
                          !onBridge &&

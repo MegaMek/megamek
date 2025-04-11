@@ -53,6 +53,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private boolean sideslipped = false;
     private Coords lastPos;
     private Coords curPos;
+    private int curBoardId;
     private int curFacing;
     private int curVTOLElevation;
     private int curElevation;
@@ -246,6 +247,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // okay, proceed with movement calculations
         lastPos = entity.getPosition();
         curPos = entity.getPosition();
+        curBoardId = entity.getBoardId();
         boolean tookMagmaDamageAtStart = false; // Used to check for start/end magma damage
         curFacing = entity.getFacing();
         curVTOLElevation = entity.getElevation();
@@ -266,7 +268,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         dropshipStillUnloading = false;
         detectedHiddenHazard = false;
         prevFacing = curFacing;
-        prevHex = getGame().getBoard().getHex(curPos);
+        prevHex = getGame().getBoard(curBoardId).getHex(curPos);
         isInfantry = entity instanceof Infantry;
         // cache this here, otherwise changing MP in the turn causes
         // erroneous gravity PSRs
@@ -289,20 +291,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         overallMoveType = md.getLastStepMovementType();
 
+        Hex startingHex = getGame().getHex(entity.getBoardLocation());
         // check for starting in liquid magma
-        if ((getGame().getBoard().getHex(entity.getPosition())
-                .terrainLevel(Terrains.MAGMA) == 2)
-                && (entity.getElevation() == 0)) {
+        if ((startingHex.terrainLevel(Terrains.MAGMA) == 2) && (entity.getElevation() == 0)) {
             gameManager.doMagmaDamage(entity, false);
             tookMagmaDamageAtStart = true;
         }
 
         // check for starting in hazardous liquid
-        if ((getGame().getBoard().getHex(entity.getPosition())
-                .containsTerrain(Terrains.HAZARDOUS_LIQUID))
-                && (entity.getElevation() <= 0)) {
-            int depth = getGame().getBoard().getHex(entity.getPosition())
-                .containsTerrain(Terrains.WATER) ? getGame().getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) : 0;
+        if (startingHex.containsTerrain(Terrains.HAZARDOUS_LIQUID) && (entity.getElevation() <= 0)) {
+            int depth = startingHex.containsTerrain(Terrains.WATER) ? startingHex.terrainLevel(Terrains.WATER) : 0;
             gameManager.doHazardousLiquidDamage(entity, false, depth);
         }
 
@@ -495,7 +493,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         "Thrust spent during turn exceeds SI"));
             }
 
-            if (!getGame().getBoard().inSpace()) {
+            if (!getGame().getBoard(entity.getBoardId()).inSpace()) {
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
                         overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -623,7 +621,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 entity.setSwarmAttackerId(Entity.NONE);
                 swarmer.setSwarmTargetId(Entity.NONE);
 
-                Hex curHex = getGame().getBoard().getHex(curPos);
+                Hex curHex = getGame().getBoard(curBoardId).getHex(curPos);
 
                 // Did the infantry fall into water?
                 if (curHex.terrainLevel(Terrains.WATER) > 0) {
@@ -657,7 +655,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         // but the danger isn't over yet! landing from a jump can be risky!
         if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
-            final Hex curHex = getGame().getBoard().getHex(curPos);
+            final Hex curHex = getGame().getBoard(curBoardId).getHex(curPos);
 
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage(overallMoveType);
@@ -761,7 +759,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for building collapse
-            Building bldg = getGame().getBoard().getBuildingAt(curPos);
+            Building bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
             if (bldg != null) {
                 gameManager.checkForCollapse(bldg, getGame().getPositionMap(), curPos, true,
                         gameManager.getMainPhaseReport());
@@ -921,7 +919,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         entity.setElevation(entity.getAltitude() * 10);
                         entity.setAltitude(0);
                     } else {
-                        Hex hex = getGame().getBoard().getHex(entity.getPosition());
+                        Hex hex = getGame().getBoard(curBoardId).getHex(entity.getPosition());
                         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                             entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
                         } else {
@@ -960,7 +958,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         // update entity's locations' exposure
         gameManager.addReport(gameManager.doSetLocationsExposure(entity,
-                getGame().getBoard().getHex(curPos), false, entity.getElevation()));
+                getGame().getBoard(curBoardId).getHex(curPos), false, entity.getElevation()));
 
         // Check the falls_end_movement option to see if it should be able to
         // move on.
@@ -994,7 +992,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         } else {
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                Hex hex = getGame().getBoard().getHex(curPos);
+                Hex hex = getGame().getBoard(curBoardId).getHex(curPos);
                 if (md.automaticWiGELanding(false)) {
                     // try to land safely; LAMs require a psr when landing with gyro or leg actuator
                     // damage and ProtoMeks always require a roll
@@ -1014,7 +1012,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
 
                     if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
-                        Building bldg = getGame().getBoard().getBuildingAt(entity.getPosition());
+                        Building bldg = getGame().getBoard(curBoardId).getBuildingAt(entity.getPosition());
                         entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
                         gameManager.addAffectedBldg(bldg, gameManager.checkBuildingCollapseWhileMoving(bldg,
                                 entity, entity.getPosition()));
@@ -1069,7 +1067,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                     entity.setElevation(Math.min(entity.getElevation(),
                             1 + hex.maxTerrainFeatureElevation(
-                                    getGame().getBoard().inAtmosphere())));
+                                    getGame().getBoard(curBoardId).inAtmosphere())));
                 }
             }
 
@@ -1106,7 +1104,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             swarmer.setPosition(curPos);
             // If the hex is on fire, and the swarming infantry is
             // *not* Battle Armor, it drops off.
-            if (!(swarmer instanceof BattleArmor) && getGame().getBoard()
+            if (!(swarmer instanceof BattleArmor) && getGame().getBoard(curBoardId)
                     .getHex(curPos).containsTerrain(Terrains.FIRE)) {
                 swarmer.setSwarmTargetId(Entity.NONE);
                 entity.setSwarmAttackerId(Entity.NONE);
@@ -1209,10 +1207,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 && !entity.hasEnvironmentalSealing()
                 && (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             if ((!entity.isProne()
-                    && (getGame().getBoard().getHex(entity.getPosition())
+                    && (getGame().getBoard(curBoardId).getHex(entity.getPosition())
                             .terrainLevel(Terrains.WATER) >= 2))
                     || (entity.isProne()
-                            && (getGame().getBoard().getHex(entity.getPosition())
+                            && (getGame().getBoard(curBoardId).getHex(entity.getPosition())
                                     .terrainLevel(Terrains.WATER) == 1))) {
                 ((Mek) entity).setJustMovedIntoIndustrialKillingWater(true);
 
@@ -1584,7 +1582,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             fellDuringMovement = true;
                         }
                         // multiply forward by 16 when on ground hexes
-                        if (getGame().getBoard().onGround()) {
+                        if (getGame().getBoard(curBoardId).onGround()) {
                             forward *= 16;
                         }
                         while (forward > 0) {
@@ -1593,7 +1591,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             distance++;
                             a.setStraightMoves(a.getStraightMoves() + 1);
                             // make sure it didn't fly off the map
-                            if (!getGame().getBoard().contains(curPos)) {
+                            if (!getGame().getBoard(curBoardId).contains(curPos)) {
                                 curPos = nudgeOntoBoard(curPos, step.getFacing());
                                 a.setCurrentVelocity(md.getFinalVelocity());
                                 gameManager.processLeaveMap(md, true, Compute.roundsUntilReturn(getGame(), entity));
@@ -1637,7 +1635,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                 Entity ce = getGame().getEntity(id);
                                 // if we are in atmosphere and not the same altitude
                                 // then skip
-                                if (!getGame().getBoard().inSpace() && (ce.getAltitude() != curAltitude)) {
+                                if (!getGame().getBoard(curBoardId).inSpace() && (ce.getAltitude() != curAltitude)) {
                                     continue;
                                 }
                                 // you can't collide with yourself
@@ -2284,13 +2282,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // set climb mode in case of skid
             entity.setClimbMode(curClimbMode);
 
-            Hex curHex = getGame().getBoard().getHex(curPos);
+            Hex curHex = getGame().getBoard(curBoardId).getHex(curPos);
 
             // when first entering a building, we need to roll what type
             // of basement it has
             if (isOnGround && curHex.containsTerrain(Terrains.BUILDING)) {
-                Building bldg = getGame().getBoard().getBuildingAt(curPos);
-                if (bldg.rollBasement(curPos, getGame().getBoard(), gameManager.getMainPhaseReport())) {
+                Building bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
+                if (bldg.rollBasement(curPos, getGame().getBoard(curBoardId), gameManager.getMainPhaseReport())) {
                     gameManager.sendChangedHex(curPos);
                     Vector<Building> buildings = new Vector<>();
                     buildings.add(bldg);
@@ -2311,7 +2309,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     && !entity.isAirborne() && (step.getClearance() <= 0) // Don't check airborne LAMs
                     && getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
                 int leapDistance = (lastElevation
-                        + getGame().getBoard().getHex(lastPos).getLevel())
+                        + getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
                         - (curElevation + curHex.getLevel());
                 if (leapDistance > 2) {
                     // skill check for leg damage
@@ -2563,7 +2561,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (chaffDispensers.size() > 0) {
                     chaffDispensers.get(0).setFired(true);
                     gameManager.createSmoke(curPos, SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
-                    Hex hex = getGame().getBoard().getHex(curPos);
+                    Hex hex = getGame().getBoard(curBoardId).getHex(curPos);
                     hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
                     gameManager.sendChangedHex(curPos);
                     r = new Report(2512)
@@ -2615,7 +2613,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check to see if we are a mek and we've moved OUT of fire
-            Hex lastHex = getGame().getBoard().getHex(lastPos);
+            Hex lastHex = getGame().getBoard(curBoardId).getHex(lastPos);
             if (entity.tracksHeat() && !entity.isAirborne()) {
                 if (!lastPos.equals(curPos) && (prevStep != null)
                         && ((lastHex.containsTerrain(Terrains.FIRE) && (prevStep.getElevation() <= 1))
@@ -2656,11 +2654,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // check to see if we are not a mek and we've moved INTO fire
             if (!(entity instanceof Mek)) {
-                boolean underwater = getGame().getBoard().getHex(curPos)
+                boolean underwater = getGame().getBoard(curBoardId).getHex(curPos)
                         .containsTerrain(Terrains.WATER)
-                        && (getGame().getBoard().getHex(curPos).depth() > 0)
-                        && (step.getElevation() < getGame().getBoard().getHex(curPos).getLevel());
-                if (getGame().getBoard().getHex(curPos).containsTerrain(
+                        && (getGame().getBoard(curBoardId).getHex(curPos).depth() > 0)
+                        && (step.getElevation() < getGame().getBoard(curBoardId).getHex(curPos).getLevel());
+                if (getGame().getBoard(curBoardId).getHex(curPos).containsTerrain(
                         Terrains.FIRE) && !lastPos.equals(curPos)
                         && (stepMoveType != EntityMovementType.MOVE_JUMP)
                         && (step.getElevation() <= 1) && !underwater) {
@@ -2668,7 +2666,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            if ((getGame().getBoard().getHex(curPos).terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_GREEN)
+            if ((getGame().getBoard(curBoardId).getHex(curPos).terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_GREEN)
                     && !stepMoveType.equals(EntityMovementType.MOVE_JUMP) && entity.antiTSMVulnerable()) {
                 addReport(gameManager.doGreenSmokeDamage(entity));
             }
@@ -3223,7 +3221,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // PSR in this
                 // invocation of processMovement, then it can't fall again.
                 if ((entity instanceof Mek)
-                        && (curHex.getLevel() < getGame().getBoard().getHex(lastPos).getLevel())
+                        && (curHex.getLevel() < getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
                         && !entity.hasFallen()) {
                     rollTarget = entity.getBasePilotingRoll(overallMoveType);
                     rollTarget.addModifier(0, "moving backwards over an elevation change");
@@ -3248,18 +3246,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // Get the building being exited.
                 Building bldgExited = null;
                 if ((buildingMove & 1) == 1) {
-                    bldgExited = getGame().getBoard().getBuildingAt(lastPos);
+                    bldgExited = getGame().getBoard(curBoardId).getBuildingAt(lastPos);
                 }
 
                 // Get the building being entered.
                 Building bldgEntered = null;
                 if ((buildingMove & 2) == 2) {
-                    bldgEntered = getGame().getBoard().getBuildingAt(curPos);
+                    bldgEntered = getGame().getBoard(curBoardId).getBuildingAt(curPos);
                 }
 
                 // ProtoMeks changing levels within a building cause damage
                 if (((buildingMove & 8) == 8) && (entity instanceof ProtoMek)) {
-                    Building bldg = getGame().getBoard().getBuildingAt(curPos);
+                    Building bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
                     Vector<Report> vBuildingReport = gameManager.damageBuilding(bldg, 1, curPos);
                     for (Report report : vBuildingReport) {
                         report.subject = entity.getId();
@@ -3305,7 +3303,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             || (entity.getMovementMode().isWiGE() && (step.getClearance() == 1))
                             || curElevation == curHex.terrainLevel(Terrains.BLDG_ELEV)
                             || curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV))) {
-                Building bldg = getGame().getBoard().getBuildingAt(curPos);
+                Building bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
                 if ((bldg != null) && (entity.getElevation() >= 0)) {
                     boolean wigeFlyingOver = entity.getMovementMode() == EntityMovementMode.WIGE
                             && ((curHex.containsTerrain(Terrains.BLDG_ELEV)
@@ -3442,8 +3440,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Check for crushing buildings by Dropships/Mobile Structures
             for (Coords pos : step.getCrushedBuildingLocs()) {
-                Building bldg = getGame().getBoard().getBuildingAt(pos);
-                Hex hex = getGame().getBoard().getHex(pos);
+                Building bldg = getGame().getBoard(curBoardId).getBuildingAt(pos);
+                Hex hex = getGame().getBoard(curBoardId).getHex(pos);
 
                 r = new Report(3443);
                 r.subject = entity.getId();

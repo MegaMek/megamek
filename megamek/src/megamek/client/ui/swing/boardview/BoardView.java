@@ -3760,12 +3760,13 @@ public final class BoardView extends AbstractBoardView
         // when target/attacker hexes are not really but effectively on the same board)
         Entity attacker = game.getEntity(attackAction.getEntityId());
         Targetable target = game.getTarget(attackAction.getTargetType(), attackAction.getTargetId());
-        if ((attacker == null) ||
-                  (target == null) ||
-                  (target.getTargetType() == Targetable.TYPE_INARC_POD) ||
-                  (target.getPosition() == null) ||
-                  (attacker.getPosition() == null)
-                  || !game.onTheSameBoard(attacker, target)) {
+        if ((attacker == null)
+                  || (target == null)
+                  || (target.getTargetType() == Targetable.TYPE_INARC_POD)
+                  || (target.getPosition() == null)
+                  || (attacker.getPosition() == null)
+                  || !game.onTheSameBoard(attacker, target)
+                  || !isOnThisBord(target)) {
             return;
         }
         EntitySprite entitySprite = entitySpriteIds.get(getIdAndLoc(attacker.getId(),

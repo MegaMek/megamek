@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import megamek.common.Board;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.EntityMovementMode;
@@ -35,7 +36,7 @@ import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMin
  * @author NickAragua
  */
 public class PathDecorator {
-    
+
     public static Set<MovePath> decoratePath(BulldozerMovePath source) {
         Set<MovePath> result = new HashSet<>();
         
@@ -168,7 +169,8 @@ public class PathDecorator {
         
         // get the hex that is in the direction we're facing
         Coords destinationCoords = source.getFinalCoords().translated(source.getFinalFacing());
-        Hex destHex = source.getGame().getBoard().getHex(destinationCoords);
+        Board board = source.getGame().getBoard(source.getFinalBoardId());
+        Hex destHex = board.getHex(destinationCoords);
         if (destHex == null) {
             return;
         }
@@ -180,7 +182,7 @@ public class PathDecorator {
             return;
         }
         
-        Hex srcHex = source.getGame().getBoard().getHex(source.getFinalCoords());
+        Hex srcHex = board.getHex(source.getFinalCoords());
         int absHeight = srcHex.getLevel() + entityElevation;  
         int destElevation = absHeight - destHex.getLevel();
         int safeElevation = destHex.maxTerrainFeatureElevation(false);
@@ -211,4 +213,6 @@ public class PathDecorator {
             destElevation++;
         }
     }
+
+    private PathDecorator() { }
 }

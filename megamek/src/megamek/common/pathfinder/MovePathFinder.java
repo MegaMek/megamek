@@ -172,8 +172,8 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
                 previousElevation = entity.getElevation();
                 previousPosition = entity.getPosition();
             }
-            return (edge.getLastStep().isMovementPossible(
-                    game, previousPosition, previousElevation, edge.getCachedEntityState()));
+            return edge.getLastStep().isMovementPossible(
+                    game, previousPosition, previousElevation, edge.getCachedEntityState());
         }
     }
 
@@ -298,12 +298,13 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
                 }
             }
 
+            Board board = mp.getGame().getBoard(mp.getFinalBoardId());
             if (backwardsStep &&
-                    mp.getGame().getBoard().contains(mp.getFinalCoords().translated((mp.getFinalFacing() + 3) % 6))) {
+                      board.contains(mp.getFinalCoords().translated((mp.getFinalFacing() + 3) % 6))) {
                 MovePath newPath = mp.clone();
                 PathDecorator.AdjustElevationForForwardMovement(newPath);
                 result.add(newPath.addStep(MoveStepType.BACKWARDS));
-            } else if (mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
+            } else if (board.contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
                 MovePath newPath = mp.clone();
                 PathDecorator.AdjustElevationForForwardMovement(newPath);
                 result.add(newPath.addStep(MoveStepType.FORWARDS));

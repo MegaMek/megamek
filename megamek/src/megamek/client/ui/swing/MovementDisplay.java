@@ -4620,13 +4620,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         int maxMP = maxMP(en, mvMode);
 
-        // Create a path finder to find possible moves; if aerodyne, use a custom Aero
-        // path finder.
+        // Create a path finder to find possible moves; if aerodyne, use a custom Aero path finder.
         ShortestPathFinder pf;
         if (!en.isAerodyne()) {
-            pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, en.getGame());
+            pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, game);
         } else {
-            pf = ShortestPathFinder.newInstanceOfOneToAllAero(maxMP, stepType, en.getGame());
+            pf = ShortestPathFinder.newInstanceOfOneToAllAero(maxMP, stepType, game);
         }
 
         pf.run(mp);

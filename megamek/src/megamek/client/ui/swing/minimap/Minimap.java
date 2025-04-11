@@ -1161,7 +1161,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         // sanity check...
         // cross-board attacks don't get attack arrows (for now, must possibly allow some A2G, O2G, A2A attacks later
         // when target/attacker hexes are not really but effectively on the same board)
-        if ((null == source) || (null == target) || !game.onTheSameBoard(source, target)) {
+        if ((null == source) || (null == target) || !game.onTheSameBoard(source, target)
+                  || (target.getBoardId() != boardId)) {
             return;
         }
 

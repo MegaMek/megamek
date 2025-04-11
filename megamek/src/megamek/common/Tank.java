@@ -1772,7 +1772,10 @@ public class Tank extends Entity {
         // MoveStep line 2179 performs this same check
         // performing it here will allow us to disable the Hulldown button
         // if the movement is illegal
-        Hex occupiedHex = game.getBoard().getHex(getPosition());
+        if (!game.hasBoardLocation(getPosition(), getBoardId())) {
+            return false;
+        }
+        Hex occupiedHex = game.getHex(getBoardLocation());
         return occupiedHex.containsTerrain(Terrains.FORTIFIED) &&
                      game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
     }

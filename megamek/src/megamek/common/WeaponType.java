@@ -1,17 +1,32 @@
 /*
  * MegaMek - Copyright (C) 2002-2007 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
+
 package megamek.common;
 
 import java.util.List;
@@ -74,8 +89,7 @@ import megamek.logging.MMLogger;
 // TODO add XML support back in.
 
 /**
- * A type of mek or vehicle weapon. There is only one instance of this weapon
- * for all weapons of this type.
+ * A type of mek or vehicle weapon. There is only one instance of this weapon for all weapons of this type.
  */
 public class WeaponType extends EquipmentType {
 
@@ -214,8 +228,7 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_ARTEMIS_COMPATIBLE = WeaponTypeFlag.F_ARTEMIS_COMPATIBLE;
 
     /**
-     * This flag is used by mortar-type weapons that allow indirect fire without a
-     * spotter and/or with LOS.
+     * This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS.
      */
     public static final WeaponTypeFlag F_MORTARTYPE_INDIRECT = WeaponTypeFlag.F_MORTARTYPE_INDIRECT;
 
@@ -282,31 +295,15 @@ public class WeaponType extends EquipmentType {
     // Used for BA vs BA damage for BA Plasma Rifle
     public static final int WEAPON_PLASMA = 15;
 
-    public static String[] classNames = {
-            "Unknown",
-            "Laser",
-            "Point Defense",
-            "PPC",
-            "Pulse Laser",
-            "Artillery",
-            "Plasma",
-            "AC",
-            "LBX",
-            "LRM",
-            "SRM",
-            "MRM",
-            "ATM",
-            "Rocket Launcher",
-            "Capital Laser",
-            "Capital PPC",
-            "Capital AC",
-            "Capital Gauss",
-            "Capital Missile",
-            "AR10", "Screen",
-            "Sub Capital Cannon",
-            "Capital Mass Driver",
-            "AMS"
-    };
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
+    public static String[] classNames = { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artillery",
+                                          "Plasma", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher",
+                                          "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss",
+                                          "Capital Missile", "AR10", "Screen", "Sub Capital Cannon",
+                                          "Capital Mass Driver", "AMS" };
 
     public static final int BFCLASS_STANDARD = 0;
     public static final int BFCLASS_LRM = 1;
@@ -346,9 +343,8 @@ public class WeaponType extends EquipmentType {
     public int infDamageClass = WEAPON_DIRECT_FIRE;
 
     /**
-     * Used for the BA vs BA damage rules on TO pg 109. Determines how much
-     * damage a weapon will inflict on BA, where the default WEAPON_DIRECT_FIRE
-     * indicates normal weapon damage.
+     * Used for the BA vs BA damage rules on TO pg 109. Determines how much damage a weapon will inflict on BA, where
+     * the default WEAPON_DIRECT_FIRE indicates normal weapon damage.
      */
     protected int baDamageClass = WEAPON_DIRECT_FIRE;
 
@@ -366,7 +362,10 @@ public class WeaponType extends EquipmentType {
 
     /**
      * @return true if the weapon type is able to be fired indirectly.
+     *
+     * @deprecated no indicated uses.
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public boolean canIndirect() {
         return false;
     }
@@ -384,6 +383,10 @@ public class WeaponType extends EquipmentType {
         minimumRange = inMR;
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public void setRanges(int sho, int med, int lon, int ext) {
         shortRange = sho;
         mediumRange = med;
@@ -391,6 +394,10 @@ public class WeaponType extends EquipmentType {
         extremeRange = ext;
     }
 
+    /**
+     * @deprecated no indicated uses
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public void setWaterRanges(int sho, int med, int lon, int ext) {
         waterShortRange = sho;
         waterMediumRange = med;
@@ -475,15 +482,15 @@ public class WeaponType extends EquipmentType {
         boolean hasLoadedAmmo = (ammo != null);
         if ((getAmmoType() == AmmoType.T_ATM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_ATM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
+            if ((ammoType.getAmmoType() == AmmoType.T_ATM) &&
+                      (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
-            } else if ((ammoType.getAmmoType() == AmmoType.T_ATM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
+            } else if ((ammoType.getAmmoType() == AmmoType.T_ATM) &&
+                             (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
                 minRange = 0;
                 sRange = 3;
                 mRange = 6;
@@ -493,16 +500,16 @@ public class WeaponType extends EquipmentType {
         }
         if ((getAmmoType() == AmmoType.T_IATM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_IATM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
+            if ((ammoType.getAmmoType() == AmmoType.T_IATM) &&
+                      (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
-            } else if ((ammoType.getAmmoType() == AmmoType.T_IATM)
-                    && ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
-                            || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))) {
+            } else if ((ammoType.getAmmoType() == AmmoType.T_IATM) &&
+                             ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) ||
+                                    (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))) {
                 minRange = 0;
                 sRange = 3;
                 mRange = 6;
@@ -543,8 +550,8 @@ public class WeaponType extends EquipmentType {
         }
         if ((getAmmoType() == AmmoType.T_LRM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_LRM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
+            if ((ammoType.getAmmoType() == AmmoType.T_LRM) &&
+                      (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 4;
                 sRange = 5;
                 mRange = 10;
@@ -554,8 +561,8 @@ public class WeaponType extends EquipmentType {
         }
         if ((getAmmoType() == AmmoType.T_SRM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_SRM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
+            if ((ammoType.getAmmoType() == AmmoType.T_SRM) &&
+                      (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 0;
                 sRange = 2;
                 mRange = 4;
@@ -598,13 +605,7 @@ public class WeaponType extends EquipmentType {
     }
 
     public int[] getWRanges() {
-        return new int[] {
-                minimumRange,
-                waterShortRange,
-                waterMediumRange,
-                waterLongRange,
-                waterExtremeRange
-        };
+        return new int[] { minimumRange, waterShortRange, waterMediumRange, waterLongRange, waterExtremeRange };
     }
 
     public int getWShortRange() {
@@ -727,88 +728,65 @@ public class WeaponType extends EquipmentType {
     }
 
     // Probably not the best place for this
+
     /**
-     * @param capitalOnly If true, this will return the equivalent capital bay for
-     *                    subcapital weapons.
+     * @param capitalOnly If true, this will return the equivalent capital bay for sub capital weapons.
+     *
      * @return The type of weapon bay this weapon goes in
      */
     public EquipmentType getBayType(boolean capitalOnly) {
         // Return the correct weapons bay for the given type of weapon
-        switch (getAtClass()) {
-            case CLASS_LASER:
-                return EquipmentType.get(EquipmentTypeLookup.LASER_BAY);
-            case CLASS_AMS:
-                return EquipmentType.get(EquipmentTypeLookup.AMS_BAY);
-            case CLASS_POINT_DEFENSE:
-                return EquipmentType.get(EquipmentTypeLookup.POINT_DEFENSE_BAY);
-            case CLASS_PPC:
-                return EquipmentType.get(EquipmentTypeLookup.PPC_BAY);
-            case CLASS_PULSE_LASER:
-                return EquipmentType.get(EquipmentTypeLookup.PULSE_LASER_BAY);
-            case CLASS_ARTILLERY:
-                return EquipmentType.get(EquipmentTypeLookup.ARTILLERY_BAY);
-            case CLASS_PLASMA:
-                return EquipmentType.get(EquipmentTypeLookup.PLASMA_BAY);
-            case CLASS_AC:
-                return EquipmentType.get(EquipmentTypeLookup.AC_BAY);
-            case CLASS_LBX_AC:
-                return EquipmentType.get(EquipmentTypeLookup.LBX_AC_BAY);
-            case CLASS_LRM:
-                return EquipmentType.get(EquipmentTypeLookup.LRM_BAY);
-            case CLASS_SRM:
-                return EquipmentType.get(EquipmentTypeLookup.SRM_BAY);
-            case CLASS_MRM:
-                return EquipmentType.get(EquipmentTypeLookup.MRM_BAY);
-            case CLASS_MML:
-                return EquipmentType.get(EquipmentTypeLookup.MML_BAY);
-            case CLASS_THUNDERBOLT:
-                return EquipmentType.get(EquipmentTypeLookup.THUNDERBOLT_BAY);
-            case CLASS_ATM:
-                return EquipmentType.get(EquipmentTypeLookup.ATM_BAY);
-            case CLASS_ROCKET_LAUNCHER:
-                return EquipmentType.get(EquipmentTypeLookup.ROCKET_LAUNCHER_BAY);
-            case CLASS_CAPITAL_LASER:
-                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCL_BAY)
-                        : EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
-            case CLASS_CAPITAL_PPC:
-                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_PPC_BAY);
-            case CLASS_CAPITAL_AC:
-                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCC_BAY)
-                        : EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
-            case CLASS_CAPITAL_GAUSS:
-                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_GAUSS_BAY);
-            case CLASS_CAPITAL_MD:
-                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_MASS_DRIVER_BAY);
-            case CLASS_CAPITAL_MISSILE:
-                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY)
-                        : EquipmentType.get(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
-            case CLASS_TELE_MISSILE:
-                return EquipmentType.get(EquipmentTypeLookup.TELE_CAPITAL_MISSILE_BAY);
-            case CLASS_AR10:
-                return EquipmentType.get(EquipmentTypeLookup.AR10_BAY);
-            case CLASS_SCREEN:
-                return EquipmentType.get(EquipmentTypeLookup.SCREEN_LAUNCHER_BAY);
-            default:
-                return EquipmentType.get(EquipmentTypeLookup.MISC_BAY);
-        }
+        return switch (getAtClass()) {
+            case CLASS_LASER -> EquipmentType.get(EquipmentTypeLookup.LASER_BAY);
+            case CLASS_AMS -> EquipmentType.get(EquipmentTypeLookup.AMS_BAY);
+            case CLASS_POINT_DEFENSE -> EquipmentType.get(EquipmentTypeLookup.POINT_DEFENSE_BAY);
+            case CLASS_PPC -> EquipmentType.get(EquipmentTypeLookup.PPC_BAY);
+            case CLASS_PULSE_LASER -> EquipmentType.get(EquipmentTypeLookup.PULSE_LASER_BAY);
+            case CLASS_ARTILLERY -> EquipmentType.get(EquipmentTypeLookup.ARTILLERY_BAY);
+            case CLASS_PLASMA -> EquipmentType.get(EquipmentTypeLookup.PLASMA_BAY);
+            case CLASS_AC -> EquipmentType.get(EquipmentTypeLookup.AC_BAY);
+            case CLASS_LBX_AC -> EquipmentType.get(EquipmentTypeLookup.LBX_AC_BAY);
+            case CLASS_LRM -> EquipmentType.get(EquipmentTypeLookup.LRM_BAY);
+            case CLASS_SRM -> EquipmentType.get(EquipmentTypeLookup.SRM_BAY);
+            case CLASS_MRM -> EquipmentType.get(EquipmentTypeLookup.MRM_BAY);
+            case CLASS_MML -> EquipmentType.get(EquipmentTypeLookup.MML_BAY);
+            case CLASS_THUNDERBOLT -> EquipmentType.get(EquipmentTypeLookup.THUNDERBOLT_BAY);
+            case CLASS_ATM -> EquipmentType.get(EquipmentTypeLookup.ATM_BAY);
+            case CLASS_ROCKET_LAUNCHER -> EquipmentType.get(EquipmentTypeLookup.ROCKET_LAUNCHER_BAY);
+            case CLASS_CAPITAL_LASER -> (isSubCapital() && !capitalOnly) ?
+                                              EquipmentType.get(EquipmentTypeLookup.SCL_BAY) :
+                                              EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
+            case CLASS_CAPITAL_PPC -> EquipmentType.get(EquipmentTypeLookup.CAPITAL_PPC_BAY);
+            case CLASS_CAPITAL_AC -> (isSubCapital() && !capitalOnly) ?
+                                           EquipmentType.get(EquipmentTypeLookup.SCC_BAY) :
+                                           EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
+            case CLASS_CAPITAL_GAUSS -> EquipmentType.get(EquipmentTypeLookup.CAPITAL_GAUSS_BAY);
+            case CLASS_CAPITAL_MD -> EquipmentType.get(EquipmentTypeLookup.CAPITAL_MASS_DRIVER_BAY);
+            case CLASS_CAPITAL_MISSILE -> (isSubCapital() && !capitalOnly) ?
+                                                EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY) :
+                                                EquipmentType.get(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
+            case CLASS_TELE_MISSILE -> EquipmentType.get(EquipmentTypeLookup.TELE_CAPITAL_MISSILE_BAY);
+            case CLASS_AR10 -> EquipmentType.get(EquipmentTypeLookup.AR10_BAY);
+            case CLASS_SCREEN -> EquipmentType.get(EquipmentTypeLookup.SCREEN_LAUNCHER_BAY);
+            default -> EquipmentType.get(EquipmentTypeLookup.MISC_BAY);
+        };
     }
 
     /**
      * Damage calculation for BattleForce and AlphaStrike
      *
      * @param range The range in hexes
+     *
      * @return Damage in BattleForce scale
      */
-    // TODO : the calculations are superseded by the ASC table but correct most of
-    // the time, ideally should be replaced
+    // TODO : the calculations are superseded by the ASC table but correct most of the time, ideally should be replaced
     public double getBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {
-            // Variable damage weapons that cannot reach into the BF long range band use LR
-            // damage for the MR band
-            if (getDamage() == DAMAGE_VARIABLE
-                    && range == AlphaStrikeElement.MEDIUM_RANGE
-                    && getLongRange() < AlphaStrikeElement.LONG_RANGE) {
+            // Variable damage weapons that cannot reach into the BF long range band use LR damage for the MR band
+            if (getDamage() == DAMAGE_VARIABLE &&
+                      range == AlphaStrikeElement.MEDIUM_RANGE &&
+                      getLongRange() < AlphaStrikeElement.LONG_RANGE) {
                 damage = getDamage(AlphaStrikeElement.LONG_RANGE);
             } else {
                 damage = getDamage(range);
@@ -827,11 +805,11 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * Damage calculation for BattleForce and AlphaStrike for missile weapons that
-     * may have advanced fire control
+     * Damage calculation for BattleForce and AlphaStrike for missile weapons that may have advanced fire control
      *
      * @param range - the range in hexes
      * @param fcs   - linked Artemis or Apollo FCS (null for none)
+     *
      * @return - damage in BattleForce scale
      */
     public double getBattleForceDamage(int range, Mounted<?> fcs) {
@@ -843,12 +821,12 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * BattleForce-scale damage for BattleArmor, using cluster hits table based on
-     * squad size.
-     * AlphaStrike uses a different method.
+     * BattleForce-scale damage for BattleArmor, using cluster hits table based on squad size. AlphaStrike uses a
+     * different method.
      *
      * @param range       - the range in hexes
      * @param baSquadSize - the number of suits in the squad/point/level i
+     *
      * @return - damage in BattleForce scale
      */
     public double getBattleForceDamage(int range, int baSquadSize) {
@@ -856,60 +834,83 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * @return The class of weapons for those that are tracked separately from
-     *         standard damage (AlphaStrike)
+     * @return The class of weapons for those that are tracked separately from standard damage (AlphaStrike)
      */
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;
     }
 
     /**
-     * Returns the weapon's heat for AlphaStrike conversion. Overridden where it
-     * differs from TW heat.
+     * Returns the weapon's heat for AlphaStrike conversion. Overridden where it differs from TW heat.
      */
     public int getAlphaStrikeHeat() {
         return getHeat();
     }
 
     /**
-     * Returns the weapon's AlphaStrike heat damage for AlphaStrike conversion. ASC
-     * p.124.
+     * Returns the weapon's AlphaStrike heat damage for AlphaStrike conversion. ASC p.124.
      */
     public int getAlphaStrikeHeatDamage(int rangeBand) {
         return 0;
     }
 
     /**
-     * Returns true if this weapon type can be used for Total War LRM-type indirect
-     * fire.
+     * Returns true if this weapon type can be used for Total War LRM-type indirect fire.
      */
     public boolean hasIndirectFire() {
         return false;
     }
 
     /**
-     * Returns true if this weapon type contributes to the AlphaStrike IF ability.
-     * This is identical to TW indirect fire for most but not all weapons (see e.g.
-     * IATMs)
+     * Returns true if this weapon type contributes to the AlphaStrike IF ability. This is identical to TW indirect fire
+     * for most but not all weapons (see e.g. IATMs)
      */
     public boolean isAlphaStrikeIndirectFire() {
         return hasIndirectFire();
     }
 
     /**
-     * Returns true if this weapon type contributes to the AlphaStrike PNT ability.
-     * This is not identical to TW point defense, therefore implemented separately.
+     * Returns true if this weapon type contributes to the AlphaStrike PNT ability. This is not identical to TW point
+     * defense, therefore implemented separately.
      */
     public boolean isAlphaStrikePointDefense() {
         return false;
     }
 
+    public boolean isWeaponForAero() {
+        if (((this instanceof LRMWeapon) || (this instanceof LRTWeapon)) &&
+                  (getRackSize() != 5) &&
+                  (getRackSize() != 10) &&
+                  (getRackSize() != 15) &&
+                  (getRackSize() != 20)) {
+            return false;
+        }
+        if (((this instanceof SRMWeapon) || (this instanceof SRTWeapon)) &&
+                  (getRackSize() != 2) &&
+                  (getRackSize() != 4) &&
+                  (getRackSize() != 6)) {
+            return false;
+        }
+        if ((this instanceof MRMWeapon) && (getRackSize() < 10)) {
+            return false;
+        }
+
+        if ((this instanceof RLWeapon) && (getRackSize() < 10)) {
+            return false;
+        }
+
+        if (hasFlag(WeaponType.F_ENERGY) || (hasFlag(WeaponType.F_PLASMA) && (getAmmoType() == AmmoType.T_PLASMA))) {
+            return !hasFlag(WeaponType.F_ENERGY) || !hasFlag(WeaponType.F_PLASMA) || (getAmmoType() != AmmoType.T_NA);
+        }
+
+        return true;
+    }
+
     /**
      * Add all the types of weapons we can create to the list
-     *
-     * When a weapon class extends another, the subclass must be listed first to
-     * avoid clobbering the name lookup when calling the constructor of the
-     * superclass.
+     * <p>
+     * When a weapon class extends another, the subclass must be listed first to avoid clobbering the name lookup when
+     * calling the constructor of the superclass.
      */
     public static void initializeTypes() {
         // Laser types
@@ -967,7 +968,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISPPCPrimitive());
         EquipmentType.addType(new ISERPPC());
 
-        // EquipmentType.addType(new ISEHERPPC());
         EquipmentType.addType(new CLERPPC());
         EquipmentType.addType(new ISSnubNosePPC());
         EquipmentType.addType(new ISLightPPC());
@@ -1047,7 +1047,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISHVAC5());
         EquipmentType.addType(new ISHVAC10());
 
-        // Gausses
+        // Gauss's
         EquipmentType.addType(new ISGaussRifle());
         EquipmentType.addType(new ISGaussRiflePrototype());
         EquipmentType.addType(new ISSilverBulletGauss());
@@ -1075,18 +1075,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLHeavyMGA());
 
         // LRMs
-        /*
-         * These were BA versions and there are currently BA
-         * versions of these weapons. So they've been commented out.
-         * EquipmentType.addType(new ISLRM1());
-         * EquipmentType.addType(new ISLRM1OS());
-         * EquipmentType.addType(new ISLRM2());
-         * EquipmentType.addType(new ISLRM2OS());
-         * EquipmentType.addType(new ISLRM3());
-         * EquipmentType.addType(new ISLRM3OS());
-         * EquipmentType.addType(new ISLRM4());
-         * EquipmentType.addType(new ISLRM4OS());
-         */
         EquipmentType.addType(new ISLRM5());
         EquipmentType.addType(new ISLRM10());
         EquipmentType.addType(new ISLRM15());
@@ -1213,17 +1201,11 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLLRT20OS());
 
         // SRMs
-        // EquipmentType.addType(new ISSRM1());
         EquipmentType.addType(new ISSRM2());
-        // EquipmentType.addType(new ISSRM3());
         EquipmentType.addType(new ISSRM4());
-        // EquipmentType.addType(new ISSRM5());
         EquipmentType.addType(new ISSRM6());
-        // EquipmentType.addType(new ISSRM1OS());
         EquipmentType.addType(new ISSRM2OS());
-        // EquipmentType.addType(new ISSRM3OS());
         EquipmentType.addType(new ISSRM4OS());
-        // EquipmentType.addType(new ISSRM5OS());
         EquipmentType.addType(new ISSRM6OS());
         EquipmentType.addType(new CLSRM1());
         EquipmentType.addType(new CLSRM1OS());
@@ -1279,14 +1261,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLSRT6OS());
 
         // RLs
-        /*
-         * This is a duplicate of the ISBARL, and not available for meks.
-         * EquipmentType.addType(new ISRL1());
-         * EquipmentType.addType(new ISRL2());
-         * EquipmentType.addType(new ISRL3());
-         * EquipmentType.addType(new ISRL4());
-         * EquipmentType.addType(new ISRL5());
-         */
         EquipmentType.addType(new RocketLauncher10());
         EquipmentType.addType(new RocketLauncher15());
         EquipmentType.addType(new RocketLauncher20());
@@ -1351,7 +1325,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISC3MBS());
         EquipmentType.addType(new CLLightTAG());
         EquipmentType.addType(new CLTAG());
-        // EquipmentType.addType(new ISBALightTAG());
         EquipmentType.addType(new CLBALightTAG());
         EquipmentType.addType(new ISPrototypeTAG());
 
@@ -1391,11 +1364,8 @@ public class WeaponType extends EquipmentType {
         // MapPack Solaris VII
         EquipmentType.addType(new ISMagshotGaussRifle());
         EquipmentType.addType(new ISMPod());
-
-        // EquipmentType.addType(new CLMPod());
         EquipmentType.addType(new ISBPod());
 
-        // EquipmentType.addType(new CLBPod());
         // Thunderbolts
         EquipmentType.addType(new ISThunderBolt5());
         EquipmentType.addType(new ISThunderBolt10());
@@ -1413,9 +1383,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMekTaser());
 
         EquipmentType.addType(new ISNailandRivetGun());
-        // EquipmentType.addType(new ISRivetGun());
-        // EquipmentType.addType(new CLNailGun());
-        // EquipmentType.addType(new CLRivetGun());
 
         // rifles
         EquipmentType.addType(new ISRifleLight());
@@ -1927,30 +1894,21 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLBACompactNarc());
         EquipmentType.addType(new ISBALaserERMedium());
         EquipmentType.addType(new ISBALaserERSmall());
-        // EquipmentType.addType(new ISBAHeavyFlamer());
         EquipmentType.addType(new ISBAMGHeavy());
-        // EquipmentType.addType(new ISBAMGLight());
         EquipmentType.addType(new ISBAGaussRifleMagshot());
         EquipmentType.addType(new ISBALaserMedium());
         EquipmentType.addType(new ISBALaserPulseMedium());
-        // EquipmentType.addType(new ISBAMG());
         EquipmentType.addType(new ISBAPlasmaRifle());
         EquipmentType.addType(new ISBALaserSmall());
         EquipmentType.addType(new ISBALaserPulseSmall());
         EquipmentType.addType(new ISBALaserVSPSmall());
         EquipmentType.addType(new ISBALaserVSPMedium());
         EquipmentType.addType(new ISBATaser());
-        // EquipmentType.addType(new ISBACompactNarc());
         EquipmentType.addType(new ISBAGaussRifleDavidLight());
         EquipmentType.addType(new ISBAFiredrakeNeedler());
         EquipmentType.addType(new ISBAGaussRifleGrandMauler());
-        // EquipmentType.addType(new ISBAGrenadeLauncherHeavy());
-        // EquipmentType.addType(new ISBAMortarHeavy());
         EquipmentType.addType(new ISBAGaussRifleKingDavidLight());
-        // EquipmentType.addType(new ISBAMortarLight());
         EquipmentType.addType(new ISBAGrenadeLauncherMicro());
-        // EquipmentType.addType(new ISBAGrenadeLauncher()); //See note in
-        // ISBAGrenadeLauncher File.
         EquipmentType.addType(new ISBAPopUpMineLauncher());
         EquipmentType.addType(new ISBAGaussRifleTsunami());
         EquipmentType.addType(new ISBASRM1());
@@ -2013,15 +1971,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new NL35Weapon());
         EquipmentType.addType(new NL45Weapon());
         EquipmentType.addType(new NL55Weapon());
-        // EquipmentType.addType(new CLNL35Weapon());
-        // EquipmentType.addType(new CLNL45Weapon());
-        // EquipmentType.addType(new CLNL55Weapon());
         EquipmentType.addType(new NPPCWeaponLight());
         EquipmentType.addType(new NPPCWeaponMedium());
         EquipmentType.addType(new NPPCWeaponHeavy());
-        // EquipmentType.addType(new CLNPPCWeaponLight());
-        // EquipmentType.addType(new CLNPPCWeaponMedium());
-        // EquipmentType.addType(new CLNPPCWeaponHeavy());
         EquipmentType.addType(new NAC10Weapon());
         EquipmentType.addType(new NAC20Weapon());
         EquipmentType.addType(new NAC25Weapon());
@@ -2031,9 +1983,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new NGaussWeaponLight());
         EquipmentType.addType(new NGaussWeaponMedium());
         EquipmentType.addType(new NGaussWeaponHeavy());
-        // EquipmentType.addType(new CLNGaussWeaponLight());
-        // EquipmentType.addType(new CLNGaussWeaponMedium());
-        // EquipmentType.addType(new CLNGaussWeaponHeavy());
         EquipmentType.addType(new CapMissBarracudaWeapon());
         EquipmentType.addType(new CapMissWhiteSharkWeapon());
         EquipmentType.addType(new CapMissKillerWhaleWeapon());
@@ -2043,7 +1992,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CapMissTeleKrakenWeapon());
         EquipmentType.addType(new CapMissKrakenWeapon());
         EquipmentType.addType(new AR10Weapon());
-        // EquipmentType.addType(new CLAR10Weapon());
         EquipmentType.addType(new ScreenLauncherWeapon());
         EquipmentType.addType(new SubCapCannonWeaponLight());
         EquipmentType.addType(new SubCapCannonWeaponMedium());
@@ -2069,7 +2017,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLAAMissileWeapon());
         EquipmentType.addType(new CLLAAMissileWeapon());
         EquipmentType.addType(new BombArrowIV());
-        // EquipmentType.addType(new CLBombArrowIV());
         EquipmentType.addType(new ISBombTAG());
         EquipmentType.addType(new CLBombTAG());
         EquipmentType.addType(new BombISRL10());
@@ -2104,7 +2051,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CapitalMissileBayWeapon());
         EquipmentType.addType(new CapitalMDBayWeapon());
         EquipmentType.addType(new AR10BayWeapon());
-        // EquipmentType.addType(new CLAR10BayWeapon());
         EquipmentType.addType(new ScreenLauncherBayWeapon());
         EquipmentType.addType(new SubCapCannonBayWeapon());
         EquipmentType.addType(new SubCapLaserBayWeapon());

@@ -1,21 +1,38 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
- * MegaAero - Copyright (C) 2007 Jay Lawson This program is free software; you
- * can redistribute it and/or modify it under the terms of the GNU General
- * Public License as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.common;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.bays.CargoBay;
 import megamek.common.cost.SmallCraftCostCalculator;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
@@ -28,12 +45,13 @@ import megamek.common.options.OptionsConstants;
  */
 public class SmallCraft extends Aero {
 
+    @Serial
     private static final long serialVersionUID = 6708788176436555036L;
 
     public static final int LOC_HULL = 4;
 
-    private static String[] LOCATION_ABBRS = { "NOS", "LS", "RS", "AFT", "HULL" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
+    private static final String[] LOCATION_ABBREVIATIONS = { "NOS", "LS", "RS", "AFT", "HULL" };
+    private static final String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
 
     // crew and passengers
     private int nOfficers = 0;
@@ -43,8 +61,8 @@ public class SmallCraft extends Aero {
 
     // Maps transported crew, passengers, marines to a host ship so we can match
     // them up again post-game
-    private Map<String, Integer> nOtherCrew = new HashMap<>();
-    private Map<String, Integer> passengers = new HashMap<>();
+    private final Map<String, Integer> nOtherCrew = new HashMap<>();
+    private final Map<String, Integer> passengers = new HashMap<>();
 
     // escape pods and lifeboats
     private int escapePods = 0;
@@ -178,7 +196,7 @@ public class SmallCraft extends Aero {
     }
 
     /**
-     * Returns a mapping of how many crewmembers from other units this unit is carrying and what ship they're from by
+     * Returns a mapping of how many crew members from other units this unit is carrying and what ship they're from by
      * external ID
      */
     public Map<String, Integer> getNOtherCrew() {
@@ -186,9 +204,7 @@ public class SmallCraft extends Aero {
     }
 
     /**
-     * Convenience method to return all crew from other craft aboard from the above Map
-     *
-     * @return
+     * @return Convenience method to return all crew from other craft aboard from the above Map
      */
     public int getTotalOtherCrew() {
         int toReturn = 0;
@@ -199,7 +215,7 @@ public class SmallCraft extends Aero {
     }
 
     /**
-     * Adds a number of crewmembers from another ship keyed by that ship's external ID
+     * Adds a number of crew members from another ship keyed by that ship's external ID
      *
      * @param id The external ID of the ship these crew came from
      * @param n  The number to add
@@ -221,9 +237,7 @@ public class SmallCraft extends Aero {
     }
 
     /**
-     * Convenience method to return all passengers aboard from the above Map
-     *
-     * @return
+     * @return Convenience method to return all passengers aboard from the above Map
      */
     public int getTotalPassengers() {
         int toReturn = 0;
@@ -331,7 +345,7 @@ public class SmallCraft extends Aero {
 
     @Override
     public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override
@@ -354,8 +368,8 @@ public class SmallCraft extends Aero {
     public HitData rollHitLocation(int table, int side) {
 
         /*
-         * Unlike other units, ASFs determine potential crits based on the to-hit roll
-         * so I need to set this potential value as well as return the to hit data
+         * Unlike other units, ASFs determine potential critical slots based on the to-hit roll, so I need to set this
+         *  potential value as well as return the to hit data
          */
 
         int roll = Compute.d6(2);
@@ -363,14 +377,14 @@ public class SmallCraft extends Aero {
         // special rules for spheroids in atmosphere
         // http://www.classicbattletech.com/forums/index.php/topic,54077.0.html
         if (isSpheroid() && table != ToHitData.HIT_SPHEROID_CRASH && !game.getBoard().inSpace()) {
-            int preroll = Compute.d6(1);
-            if ((table == ToHitData.HIT_ABOVE) && (preroll < 4)) {
+            int preRoll = Compute.d6(1);
+            if ((table == ToHitData.HIT_ABOVE) && (preRoll < 4)) {
                 side = ToHitData.SIDE_FRONT;
-            } else if ((table == ToHitData.HIT_BELOW) && (preroll < 4)) {
+            } else if ((table == ToHitData.HIT_BELOW) && (preRoll < 4)) {
                 side = ToHitData.SIDE_REAR;
-            } else if (preroll == 1) {
+            } else if (preRoll == 1) {
                 side = ToHitData.SIDE_FRONT;
-            } else if (preroll == 6) {
+            } else if (preRoll == 6) {
                 side = ToHitData.SIDE_REAR;
             }
         }
@@ -378,10 +392,10 @@ public class SmallCraft extends Aero {
         if ((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
 
             // have to decide which wing
-            int wingloc = LOC_RWING;
-            int wingroll = Compute.d6(1);
-            if (wingroll > 3) {
-                wingloc = LOC_LWING;
+            int wingLocation = LOC_RWING;
+            int wingRoll = Compute.d6(1);
+            if (wingRoll > 3) {
+                wingLocation = LOC_LWING;
             }
             switch (roll) {
                 case 2:
@@ -393,27 +407,21 @@ public class SmallCraft extends Aero {
                 case 4:
                     setPotCrit(CRIT_SENSOR);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-                case 5:
+                case 5, 9:
                     setPotCrit(CRIT_RIGHT_THRUSTER);
-                    if (wingroll > 3) {
+                    if (wingRoll > 3) {
                         setPotCrit(CRIT_LEFT_THRUSTER);
                     }
-                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                    return new HitData(wingLocation, false, HitData.EFFECT_NONE);
                 case 6:
                     setPotCrit(CRIT_CARGO);
-                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                    return new HitData(wingLocation, false, HitData.EFFECT_NONE);
                 case 7:
                     setPotCrit(CRIT_WEAPON);
-                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                    return new HitData(wingLocation, false, HitData.EFFECT_NONE);
                 case 8:
                     setPotCrit(CRIT_DOOR);
-                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
-                case 9:
-                    setPotCrit(CRIT_RIGHT_THRUSTER);
-                    if (wingroll > 3) {
-                        setPotCrit(CRIT_LEFT_THRUSTER);
-                    }
-                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                    return new HitData(wingLocation, false, HitData.EFFECT_NONE);
                 case 10:
                     setPotCrit(CRIT_AVIONICS);
                     return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -461,7 +469,7 @@ public class SmallCraft extends Aero {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 12:
                     setPotCrit(CRIT_KF_BOOM);
-                    // Primitve dropships without kf-boom take avionics hit instead (IO, p. 119).
+                    // Primitive dropships without kf-boom take avionics hit instead (IO, p. 119).
                     if ((this instanceof Dropship) && (((Dropship) this).getCollarType() == Dropship.COLLAR_NO_BOOM)) {
                         setPotCrit(CRIT_AVIONICS);
                     }
@@ -479,7 +487,7 @@ public class SmallCraft extends Aero {
                 case 4:
                     setPotCrit(CRIT_SENSOR);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-                case 5:
+                case 5, 9:
                     setPotCrit(CRIT_LEFT_THRUSTER);
                     return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
                 case 6:
@@ -490,9 +498,6 @@ public class SmallCraft extends Aero {
                     return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
                 case 8:
                     setPotCrit(CRIT_DOOR);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-                case 9:
-                    setPotCrit(CRIT_LEFT_THRUSTER);
                     return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
                 case 10:
                     setPotCrit(CRIT_AVIONICS);
@@ -516,7 +521,7 @@ public class SmallCraft extends Aero {
                 case 4:
                     setPotCrit(CRIT_SENSOR);
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-                case 5:
+                case 5, 9:
                     setPotCrit(CRIT_RIGHT_THRUSTER);
                     return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
                 case 6:
@@ -527,9 +532,6 @@ public class SmallCraft extends Aero {
                     return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
                 case 8:
                     setPotCrit(CRIT_DOOR);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-                case 9:
-                    setPotCrit(CRIT_RIGHT_THRUSTER);
                     return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
                 case 10:
                     setPotCrit(CRIT_AVIONICS);
@@ -587,7 +589,7 @@ public class SmallCraft extends Aero {
     public int getWeaponArc(int wn) {
         final Mounted<?> mounted = getEquipment(wn);
 
-        int arc = Compute.ARC_NOSE;
+        int arc;
         if (!isSpheroid()) {
             switch (mounted.getLocation()) {
                 case LOC_NOSE:
@@ -688,22 +690,11 @@ public class SmallCraft extends Aero {
                         arc = Compute.ARC_360;
                 }
             } else {
-                switch (mounted.getLocation()) {
-                    case LOC_NOSE:
-                        arc = Compute.ARC_360;
-                        break;
-                    case LOC_RWING:
-                        arc = Compute.ARC_RIGHT_SPHERE_GROUND;
-                        break;
-                    case LOC_LWING:
-                        arc = Compute.ARC_LEFT_SPHERE_GROUND;
-                        break;
-                    case LOC_AFT:
-                        arc = Compute.ARC_360;
-                        break;
-                    default:
-                        arc = Compute.ARC_360;
-                }
+                arc = switch (mounted.getLocation()) {
+                    case LOC_RWING -> Compute.ARC_RIGHT_SPHERE_GROUND;
+                    case LOC_LWING -> Compute.ARC_LEFT_SPHERE_GROUND;
+                    default -> Compute.ARC_360;
+                };
             }
 
         }
@@ -729,11 +720,14 @@ public class SmallCraft extends Aero {
 
     public boolean hasWeaponInArc(int loc, boolean rearMount) {
         boolean hasWeapons = false;
-        for (Mounted<?> weap : getWeaponList()) {
-            if ((weap.getLocation() == loc) && (weap.isRearMounted() == rearMount)) {
+
+        for (Mounted<?> weaponMounted : getWeaponList()) {
+            if ((weaponMounted.getLocation() == loc) && (weaponMounted.isRearMounted() == rearMount)) {
                 hasWeapons = true;
+                break;
             }
         }
+
         return hasWeapons;
     }
 
@@ -782,17 +776,17 @@ public class SmallCraft extends Aero {
     @Override
     public boolean loadWeapon(WeaponMounted mounted, AmmoMounted mountedAmmo) {
         boolean success = false;
-        WeaponType wtype = mounted.getType();
-        AmmoType atype = mountedAmmo.getType();
+        WeaponType weaponType = mounted.getType();
+        AmmoType ammoType = mountedAmmo.getType();
 
         if (mounted.getLocation() != mountedAmmo.getLocation()) {
-            return success;
+            return false;
         }
 
         if (mountedAmmo.isAmmoUsable() &&
-                  !wtype.hasFlag(WeaponType.F_ONESHOT) &&
-                  (atype.getAmmoType() == wtype.getAmmoType()) &&
-                  (atype.getRackSize() == wtype.getRackSize())) {
+                  !weaponType.hasFlag(WeaponType.F_ONESHOT) &&
+                  (ammoType.getAmmoType() == weaponType.getAmmoType()) &&
+                  (ammoType.getRackSize() == weaponType.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
         }
@@ -880,11 +874,6 @@ public class SmallCraft extends Aero {
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }
 
-    @Override
-    public boolean isFighter() {
-        return false;
-    }
-
     /**
      * Fighters may carry external ordnance; Other Aerospace units with cargo bays and the Internal Bomb Bay quirk may
      * carry bombs internally.
@@ -894,11 +883,6 @@ public class SmallCraft extends Aero {
     @Override
     public boolean isBomber() {
         return (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB));
-    }
-
-    @Override
-    public boolean isAerospaceFighter() {
-        return false;
     }
 
     /**

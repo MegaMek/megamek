@@ -1,16 +1,30 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.common.verifier;
 
@@ -21,6 +35,9 @@ import java.util.Map;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.bays.BattleArmorBay;
+import megamek.common.bays.Bay;
+import megamek.common.bays.InfantryBay;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
@@ -61,20 +78,20 @@ public class TestTank extends TestEntity {
      *
      * @param movementMode The vehicle movement mode
      * @param techManager  The tech constraints
+     *
      * @return The armors legal for the unit
      */
     public static List<ArmorType> legalArmorsFor(EntityMovementMode movementMode, ITechManager techManager) {
         List<ArmorType> retVal = new ArrayList<>();
         for (ArmorType eq : ArmorType.allArmorTypes()) {
-            if ((eq.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK)
-                    || ((eq.getArmorType() == EquipmentType.T_ARMOR_HARDENED)
-                            && ((movementMode == EntityMovementMode.VTOL)
-                                    || (movementMode == EntityMovementMode.HOVER)
-                                    || (movementMode == EntityMovementMode.WIGE)))) {
+            if ((eq.getArmorType() == EquipmentType.T_ARMOR_PATCHWORK) ||
+                      ((eq.getArmorType() == EquipmentType.T_ARMOR_HARDENED) &&
+                             ((movementMode == EntityMovementMode.VTOL) ||
+                                    (movementMode == EntityMovementMode.HOVER) ||
+                                    (movementMode == EntityMovementMode.WIGE)))) {
                 continue;
             }
-            if (eq.hasFlag(MiscType.F_TANK_EQUIPMENT)
-                    && techManager.isLegal(eq)) {
+            if (eq.hasFlag(MiscType.F_TANK_EQUIPMENT) && techManager.isLegal(eq)) {
                 retVal.add(eq);
             }
         }
@@ -86,26 +103,18 @@ public class TestTank extends TestEntity {
      *
      * @param mode       The vehicle's movement mode
      * @param superheavy Whether the vehicle is superheavy
+     *
      * @return The maximum construction tonnage
      */
     public static double maxTonnage(EntityMovementMode mode, boolean superheavy) {
-        switch (mode) {
-            case WHEELED:
-            case WIGE:
-                return superheavy ? 160.0 : 80.0;
-            case HOVER:
-                return superheavy ? 100.0 : 50.0;
-            case VTOL:
-                return superheavy ? 60.0 : 30.0;
-            case NAVAL:
-            case SUBMARINE:
-                return superheavy ? 555.0 : 300.0;
-            case HYDROFOIL:
-                return 100.0; // not eligible for superheavy
-            case TRACKED:
-            default:
-                return superheavy ? 200.0 : 100.0;
-        }
+        return switch (mode) {
+            case WHEELED, WIGE -> superheavy ? 160.0 : 80.0;
+            case HOVER -> superheavy ? 100.0 : 50.0;
+            case VTOL -> superheavy ? 60.0 : 30.0;
+            case NAVAL, SUBMARINE -> superheavy ? 555.0 : 300.0;
+            case HYDROFOIL -> 100.0; // not eligible for superheavy
+            default -> superheavy ? 200.0 : 100.0;
+        };
     }
 
     @Override
@@ -152,10 +161,9 @@ public class TestTank extends TestEntity {
         } else {
             // For non-omnis, count up the weight of eq in the turret
             for (Mounted<?> m : tank.getEquipment()) {
-                if ((m.getLocation() == tank.getLocTurret())
-                        && !(m.getType() instanceof AmmoType)
-                        // Skip any patchwork armor mounts
-                        && (EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
+                if ((m.getLocation() == tank.getLocTurret()) && !(m.getType() instanceof AmmoType)
+                          // Skip any patchwork armor mounts
+                          && (EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
                     weight += m.getTonnage();
                 }
             }
@@ -183,8 +191,7 @@ public class TestTank extends TestEntity {
         } else {
             // For non-omnis, count up the weight of eq in the turret
             for (Mounted<?> m : tank.getEquipment()) {
-                if ((m.getLocation() == tank.getLocTurret2())
-                        && !(m.getType() instanceof AmmoType)) {
+                if ((m.getLocation() == tank.getLocTurret2()) && !(m.getType() instanceof AmmoType)) {
                     weight += m.getTonnage();
                 }
             }
@@ -195,17 +202,11 @@ public class TestTank extends TestEntity {
     }
 
     public double getTankWeightLifting() {
-        switch (tank.getMovementMode()) {
-            case HOVER:
-            case VTOL:
-            case HYDROFOIL:
-            case SUBMARINE:
-            case WIGE:
-                return TestEntity.ceilMaxHalf(tank.getWeight() / 10.0f,
-                        getWeightCeilingLifting());
-            default:
-                return 0f;
-        }
+        return switch (tank.getMovementMode()) {
+            case HOVER, VTOL, HYDROFOIL, SUBMARINE, WIGE ->
+                  TestEntity.ceilMaxHalf(tank.getWeight() / 10.0f, getWeightCeilingLifting());
+            default -> 0f;
+        };
     }
 
     @Override
@@ -218,8 +219,7 @@ public class TestTank extends TestEntity {
         if (tank.hasNoControlSystems()) {
             return 0;
         } else {
-            return TestEntity.ceilMaxHalf(tank.getWeight() / 20.0f,
-                    getWeightCeilingControls());
+            return TestEntity.ceilMaxHalf(tank.getWeight() / 20.0f, getWeightCeilingControls());
         }
     }
 
@@ -246,25 +246,35 @@ public class TestTank extends TestEntity {
 
     @Override
     public String printWeightMisc() {
-        String turretString = !tank.hasNoTurret() ? StringUtil.makeLength("Turret:",
-                getPrintSize() - 5)
-                + TestEntity.makeWeightString(getTankWeightTurret()) + "\n" : "";
-        String dualTurretString = !tank.hasNoDualTurret() ? StringUtil.makeLength("Front Turret:",
-                getPrintSize() - 5)
-                + TestEntity.makeWeightString(getTankWeightDualTurret()) + "\n" : "";
-        return turretString + dualTurretString
-                + (getTankWeightLifting() != 0 ? StringUtil.makeLength(
-                        "Lifting Equip:", getPrintSize() - 5)
-                        + TestEntity.makeWeightString(getTankWeightLifting()) + "\n" : "")
-                + (getWeightPowerAmp() != 0 ? StringUtil.makeLength(
-                        "Power Amp:", getPrintSize() - 5)
-                        + TestEntity.makeWeightString(getWeightPowerAmp()) + "\n" : "");
+        String turretString = !tank.hasNoTurret() ?
+                                    StringUtil.makeLength("Turret:", getPrintSize() - 5) +
+                                          TestEntity.makeWeightString(getTankWeightTurret()) +
+                                          "\n" :
+                                    "";
+        String dualTurretString = !tank.hasNoDualTurret() ?
+                                        StringUtil.makeLength("Front Turret:", getPrintSize() - 5) +
+                                              TestEntity.makeWeightString(getTankWeightDualTurret()) +
+                                              "\n" :
+                                        "";
+        return turretString +
+                     dualTurretString +
+                     (getTankWeightLifting() != 0 ?
+                            StringUtil.makeLength("Lifting Equip:", getPrintSize() - 5) +
+                                  TestEntity.makeWeightString(getTankWeightLifting()) +
+                                  "\n" :
+                            "") +
+                     (getWeightPowerAmp() != 0 ?
+                            StringUtil.makeLength("Power Amp:", getPrintSize() - 5) +
+                                  TestEntity.makeWeightString(getWeightPowerAmp()) +
+                                  "\n" :
+                            "");
     }
 
     @Override
     public String printWeightControls() {
-        return StringUtil.makeLength("Controls:", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightControls()) + "\n";
+        return StringUtil.makeLength("Controls:", getPrintSize() - 5) +
+                     TestEntity.makeWeightString(getWeightControls()) +
+                     "\n";
     }
 
     @Override
@@ -275,9 +285,10 @@ public class TestTank extends TestEntity {
     @Override
     public String printWeightCarryingSpace() {
         if (tank.getExtraCrewSeats() > 0) {
-            return super.printWeightCarryingSpace()
-                    + StringUtil.makeLength("Combat Seats:", getPrintSize() - 5)
-                    + TestEntity.makeWeightString(tank.getExtraCrewSeats() * 0.5) + "\n";
+            return super.printWeightCarryingSpace() +
+                         StringUtil.makeLength("Combat Seats:", getPrintSize() - 5) +
+                         TestEntity.makeWeightString(tank.getExtraCrewSeats() * 0.5) +
+                         "\n";
         } else {
             return super.printWeightCarryingSpace();
         }
@@ -332,8 +343,8 @@ public class TestTank extends TestEntity {
                 for (Mounted<?> m : tank.getEquipment()) {
                     // Units with patchwork armor place any armor slots in the same location
                     // as the armor. This is for accounting convenience.
-                    if ((m.getLocation() == VTOL.LOC_ROTOR)
-                            && EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN) {
+                    if ((m.getLocation() == VTOL.LOC_ROTOR) &&
+                              EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN) {
                         buff.append("rotor equipment must be placed in mast mount\n");
                         correct = false;
                     }
@@ -342,14 +353,16 @@ public class TestTank extends TestEntity {
             if (tank.getOArmor(VTOL.LOC_ROTOR) > VTOL_MAX_ROTOR_ARMOR) {
                 buff.append(tank.getOArmor(VTOL.LOC_ROTOR));
                 buff.append(" points of VTOL rotor armor exceed ")
-                        .append(VTOL_MAX_ROTOR_ARMOR).append("-point limit.\n\n");
+                      .append(VTOL_MAX_ROTOR_ARMOR)
+                      .append("-point limit.\n\n");
                 correct = false;
             }
         }
         for (Mounted<?> m : tank.getEquipment()) {
             if (!legalForMotiveType(m.getType(), tank.getMovementMode(), false)) {
-                buff.append(m.getType().getName()).append(" is incompatible with ")
-                        .append(tank.getMovementModeAsString());
+                buff.append(m.getType().getName())
+                      .append(" is incompatible with ")
+                      .append(tank.getMovementModeAsString());
                 correct = false;
             }
         }
@@ -359,8 +372,9 @@ public class TestTank extends TestEntity {
                     buff.append("combat vehicle escape pod must be placed in rear");
                     correct = false;
                 }
-            } else if (m.getType().hasFlag(MiscType.F_MASC) && m.getType().hasSubType(MiscType.S_SUPERCHARGER)
-                    && (tank instanceof VTOL)) {
+            } else if (m.getType().hasFlag(MiscType.F_MASC) &&
+                             m.getType().hasSubType(MiscType.S_SUPERCHARGER) &&
+                             (tank instanceof VTOL)) {
                 buff.append("VTOLS cannot mount superchargers.");
                 correct = false;
             }
@@ -394,7 +408,8 @@ public class TestTank extends TestEntity {
         if (!correctCriticals(buff)) {
             correct = false;
         }
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) ||
+                  getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -406,21 +421,20 @@ public class TestTank extends TestEntity {
      * @param eq            The equipment to check
      * @param mode          The vehicle's motive type
      * @param supporVehicle Whether the vehicle is a support vehicle.
+     *
      * @return Whether the equipment and motive type are compatible
      */
     public static boolean legalForMotiveType(EquipmentType eq, EntityMovementMode mode, boolean supporVehicle) {
-        final boolean isAero = mode.isAerodyne()
-                || mode.isAirship()
-                || mode.isStationKeeping();
+        final boolean isAero = mode.isAerodyne() || mode.isAirship() || mode.isStationKeeping();
         if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_FLOTATION_HULL)) {
                 // Per errata, WiGE vehicles automatically include flotation hull
                 return mode.isHoverVTOLOrWiGE();
             }
-            if (eq.hasFlag(MiscType.F_FULLY_AMPHIBIOUS)
-                    || eq.hasFlag(MiscType.F_LIMITED_AMPHIBIOUS)
-                    || eq.hasFlag(MiscType.F_BULLDOZER)
-                    || (eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_COMBINE))) {
+            if (eq.hasFlag(MiscType.F_FULLY_AMPHIBIOUS) ||
+                      eq.hasFlag(MiscType.F_LIMITED_AMPHIBIOUS) ||
+                      eq.hasFlag(MiscType.F_BULLDOZER) ||
+                      (eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_COMBINE))) {
                 return mode.isTrackedOrWheeled();
             }
             if (eq.hasFlag(MiscType.F_DUNE_BUGGY)) {
@@ -430,14 +444,14 @@ public class TestTank extends TestEntity {
             if (eq.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 return !mode.isSubmarine();
             }
-            if (eq.hasFlag(MiscType.F_JUMP_JET)
-                    || eq.hasFlag(MiscType.F_VEEDC)
-                    || (eq.hasFlag(MiscType.F_CLUB)
-                            && eq.hasSubType(MiscType.S_CHAINSAW | MiscType.S_DUAL_SAW | MiscType.S_MINING_DRILL))) {
+            if (eq.hasFlag(MiscType.F_JUMP_JET) ||
+                      eq.hasFlag(MiscType.F_VEEDC) ||
+                      (eq.hasFlag(MiscType.F_CLUB) &&
+                             eq.hasSubType(MiscType.S_CHAINSAW | MiscType.S_DUAL_SAW | MiscType.S_MINING_DRILL))) {
                 return mode.isTrackedWheeledOrHover() || mode.isWiGE();
             }
-            if (eq.hasFlag(MiscType.F_MINESWEEPER) || eq.hasFlag(MiscType.F_CLUB)
-                    && eq.hasSubType(MiscType.S_PILE_DRIVER)) {
+            if (eq.hasFlag(MiscType.F_MINESWEEPER) ||
+                      eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_PILE_DRIVER)) {
                 return mode.isTrackedOrWheeled() || mode.isMarine();
             }
             if (eq.hasFlag(MiscType.F_HITCH)) {
@@ -452,48 +466,44 @@ public class TestTank extends TestEntity {
                     return isAero;
                 }
             }
-            if (eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
-                    || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
-                    || (eq.hasFlag(MiscType.F_MASC) && eq.hasSubType(MiscType.S_SUPERCHARGER))
-                    || (eq.hasFlag(MiscType.F_CLUB)
-                            && eq.hasSubType(MiscType.S_BACKHOE | MiscType.S_ROCK_CUTTER
-                                    | MiscType.S_SPOT_WELDER | MiscType.S_WRECKING_BALL))) {
+            if (eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER) ||
+                      eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER) ||
+                      eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER) ||
+                      (eq.hasFlag(MiscType.F_MASC) && eq.hasSubType(MiscType.S_SUPERCHARGER)) ||
+                      (eq.hasFlag(MiscType.F_CLUB) &&
+                             eq.hasSubType(MiscType.S_BACKHOE |
+                                                 MiscType.S_ROCK_CUTTER |
+                                                 MiscType.S_SPOT_WELDER |
+                                                 MiscType.S_WRECKING_BALL))) {
                 return !mode.isVTOL() && !isAero;
             }
             if (eq.hasFlag(MiscType.F_AP_POD)) {
                 return !mode.isMarine() && !isAero;
             }
             if (eq.hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
-                return !isAero
-                        && !mode.isVTOL()
-                        && !mode.isTrain();
+                return !isAero && !mode.isVTOL() && !mode.isTrain();
             }
             if (eq.hasFlag(MiscType.F_MASH)) {
                 return !mode.isVTOL();
             }
-            if (eq.hasFlag(MiscType.F_SPONSON_TURRET)
-                    || eq.hasFlag(MiscType.F_LADDER)) {
+            if (eq.hasFlag(MiscType.F_SPONSON_TURRET) || eq.hasFlag(MiscType.F_LADDER)) {
                 return !isAero;
             }
             if (eq.hasFlag(MiscType.F_PINTLE_TURRET)) {
-                return !mode.isMarine() && !mode.equals(EntityMovementMode.AERODYNE)
-                        && !mode.isStationKeeping();
+                return !mode.isMarine() && !mode.equals(EntityMovementMode.AERODYNE) && !mode.isStationKeeping();
             }
-            if (eq.hasFlag(MiscType.F_LOOKDOWN_RADAR)
-                    || eq.hasFlag(MiscType.F_INFRARED_IMAGER)
-                    || eq.hasFlag(MiscType.F_HIRES_IMAGER)) {
+            if (eq.hasFlag(MiscType.F_LOOKDOWN_RADAR) ||
+                      eq.hasFlag(MiscType.F_INFRARED_IMAGER) ||
+                      eq.hasFlag(MiscType.F_HIRES_IMAGER)) {
                 return isAero || mode.isVTOL();
             }
             if (eq.hasFlag(MiscType.F_REFUELING_DROGUE)) {
-                return mode.isVTOL()
-                        || mode.isAerodyne()
-                        || mode.isAirship();
+                return mode.isVTOL() || mode.isAerodyne() || mode.isAirship();
             }
-            if (eq.hasFlag(MiscType.F_SASRCS)
-                    || eq.hasFlag(MiscType.F_LIGHT_SAIL)
-                    || eq.hasFlag(MiscType.F_SPACE_MINE_DISPENSER)
-                    || eq.hasFlag(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
+            if (eq.hasFlag(MiscType.F_SASRCS) ||
+                      eq.hasFlag(MiscType.F_LIGHT_SAIL) ||
+                      eq.hasFlag(MiscType.F_SPACE_MINE_DISPENSER) ||
+                      eq.hasFlag(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
                 return mode.isStationKeeping();
             }
             if (eq.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
@@ -502,8 +512,8 @@ public class TestTank extends TestEntity {
             if (eq.hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
                 return mode.isAerodyne();
             }
-            if (eq.hasFlag(MiscType.F_MAST_MOUNT)
-                    || (eq.hasFlag(MiscType.F_MASC) && eq.hasFlag(MiscType.F_VTOL_EQUIPMENT))) {
+            if (eq.hasFlag(MiscType.F_MAST_MOUNT) ||
+                      (eq.hasFlag(MiscType.F_MASC) && eq.hasFlag(MiscType.F_VTOL_EQUIPMENT))) {
                 return mode.isVTOL();
             }
         } else if (eq instanceof WeaponType) {
@@ -524,9 +534,11 @@ public class TestTank extends TestEntity {
             double max = maxTonnage(getEntity().getMovementMode(), getEntity().isSuperHeavy());
             if (getEntity().getWeight() > max) {
                 correct = false;
-                buff.append("Exceeds maximum tonnage of ").append(max).append(" for ")
-                        .append(getEntity().getMovementModeAsString())
-                        .append(" combat vehicle.\n");
+                buff.append("Exceeds maximum tonnage of ")
+                      .append(max)
+                      .append(" for ")
+                      .append(getEntity().getMovementModeAsString())
+                      .append(" combat vehicle.\n");
             }
             return correct;
         } else {
@@ -551,8 +563,7 @@ public class TestTank extends TestEntity {
         for (Mounted<?> mount : tank.getAmmo()) {
             int ammoType = ((AmmoType) mount.getType()).getAmmoType();
             if ((mount.getLocation() == Entity.LOC_NONE) &&
-                    (mount.getUsableShotsLeft() > 1
-                            || ammoType == AmmoType.T_CRUISE_MISSILE)) {
+                      (mount.getUsableShotsLeft() > 1 || ammoType == AmmoType.T_CRUISE_MISSILE)) {
                 unallocated.add(mount);
             }
         }
@@ -578,8 +589,7 @@ public class TestTank extends TestEntity {
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
-            buff.append("Weight: ").append(getWeight()).append(" (").append(
-                    calculateWeight()).append(")\n");
+            buff.append("Weight: ").append(getWeight()).append(" (").append(calculateWeight()).append(")\n");
         }
 
         buff.append(printWeightCalculation()).append("\n");
@@ -619,8 +629,7 @@ public class TestTank extends TestEntity {
 
         boolean addedCargo = false;
         for (Mounted<?> mount : tank.getEquipment()) {
-            if ((mount.getType() instanceof MiscType)
-                    && mount.getType().hasFlag(MiscType.F_CARGO)) {
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_CARGO)) {
                 if (!addedCargo) {
                     buff.append(StringUtil.makeLength(mount.getName(), 30));
                     buff.append(mount.getType().getTankSlots(tank)).append("\n");
@@ -640,13 +649,11 @@ public class TestTank extends TestEntity {
         // different armor types take different amount of slots
         if (!tank.hasPatchworkArmor()) {
             ArmorType armor = ArmorType.of(tank.getArmorType(tank.firstArmorIndex()),
-                    TechConstants.isClan(tank.getArmorTechLevel(tank.firstArmorIndex())));
-            if (armor != null) {
-                int armorSlots = armor.getTankSlots(tank);
-                if (armorSlots != 0) {
-                    buff.append(StringUtil.makeLength(armor.getName(), 30));
-                    buff.append(armorSlots).append("\n");
-                }
+                  TechConstants.isClan(tank.getArmorTechLevel(tank.firstArmorIndex())));
+            int armorSlots = armor.getTankSlots(tank);
+            if (armorSlots != 0) {
+                buff.append(StringUtil.makeLength(armor.getName(), 30));
+                buff.append(armorSlots).append("\n");
             }
         }
 
@@ -655,8 +662,7 @@ public class TestTank extends TestEntity {
         Map<String, Boolean> foundAmmo = new HashMap<>();
         for (Mounted<?> ammo : tank.getAmmo()) {
             // don't count oneshot ammo
-            if ((ammo.getLocation() == Entity.LOC_NONE)
-                    && (ammo.getBaseShotsLeft() == 1)) {
+            if ((ammo.getLocation() == Entity.LOC_NONE) && (ammo.getBaseShotsLeft() == 1)) {
                 continue;
             }
             AmmoType at = (AmmoType) ammo.getType();
@@ -679,8 +685,7 @@ public class TestTank extends TestEntity {
         }
         // unit transport bays take 1 slot each
         for (Bay bay : tank.getTransportBays()) {
-            if (((bay instanceof BattleArmorBay) || (bay instanceof InfantryBay))
-                    && !infantryBayCounted) {
+            if (((bay instanceof BattleArmorBay) || (bay instanceof InfantryBay)) && !infantryBayCounted) {
                 buff.append(StringUtil.makeLength("Infantry Bay", 30));
                 buff.append("1").append("\n");
                 infantryBayCounted = true;
@@ -707,12 +712,14 @@ public class TestTank extends TestEntity {
             double weight = 0;
             for (Mounted<?> m : tank.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
-                if (wt.hasFlag(WeaponType.F_ENERGY) && !(wt instanceof CLChemicalLaserWeapon)
-                        && !(wt instanceof VehicleFlamerWeapon)) {
+                if (wt.hasFlag(WeaponType.F_ENERGY) &&
+                          !(wt instanceof CLChemicalLaserWeapon) &&
+                          !(wt instanceof VehicleFlamerWeapon)) {
                     weight += m.getTonnage();
                 }
-                if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
-                        && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                if ((m.getLinkedBy() != null) &&
+                          (m.getLinkedBy().getType() instanceof MiscType) &&
+                          m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
                     weight += m.getLinkedBy().getTonnage();
                 }
             }
@@ -727,11 +734,10 @@ public class TestTank extends TestEntity {
     }
 
     /**
-     * Check if the unit has combinations of equipment which are not allowed in
-     * the construction rules.
+     * Check if the unit has combinations of equipment which are not allowed in the construction rules.
      *
-     * @param buff
-     *             diagnostics are appended to this
+     * @param buff diagnostics are appended to this
+     *
      * @return true if the entity is illegal
      */
     @Override
@@ -754,20 +760,20 @@ public class TestTank extends TestEntity {
                     buff.append("can't combine vehicular jump jets and sponson turret\n");
                     illegal = true;
                 }
-                if ((getEntity().getMovementMode() != EntityMovementMode.HOVER)
-                        && (getEntity().getMovementMode() != EntityMovementMode.WHEELED)
-                        && (getEntity().getMovementMode() != EntityMovementMode.TRACKED)
-                        && (getEntity().getMovementMode() != EntityMovementMode.WIGE)) {
+                if ((getEntity().getMovementMode() != EntityMovementMode.HOVER) &&
+                          (getEntity().getMovementMode() != EntityMovementMode.WHEELED) &&
+                          (getEntity().getMovementMode() != EntityMovementMode.TRACKED) &&
+                          (getEntity().getMovementMode() != EntityMovementMode.WIGE)) {
                     buff.append(
-                            "jump jets only possible on vehicles with hover, wheeled, tracked, or Wing-in-Ground Effect movement mode\n");
+                          "jump jets only possible on vehicles with hover, wheeled, tracked, or Wing-in-Ground Effect movement mode\n");
                     illegal = true;
                 }
             }
         }
 
-        if ((tank.getMovementMode() == EntityMovementMode.VTOL)
-                || (tank.getMovementMode() == EntityMovementMode.WIGE)
-                || (tank.getMovementMode() == EntityMovementMode.HOVER)) {
+        if ((tank.getMovementMode() == EntityMovementMode.VTOL) ||
+                  (tank.getMovementMode() == EntityMovementMode.WIGE) ||
+                  (tank.getMovementMode() == EntityMovementMode.HOVER)) {
             for (int i = 0; i < tank.locations(); i++) {
                 if (tank.getArmorType(i) == EquipmentType.T_ARMOR_HARDENED) {
                     buff.append("Hardened armor can't be mounted on WiGE/Hover/Wheeled vehicles\n");
@@ -782,12 +788,10 @@ public class TestTank extends TestEntity {
             double turretWeight = 0;
             double turret2Weight = 0;
             for (Mounted<?> m : tank.getEquipment()) {
-                if ((m.getLocation() == tank.getLocTurret2())
-                        && !(m.getType() instanceof AmmoType)) {
+                if ((m.getLocation() == tank.getLocTurret2()) && !(m.getType() instanceof AmmoType)) {
                     turret2Weight += m.getTonnage();
                 }
-                if ((m.getLocation() == tank.getLocTurret())
-                        && !(m.getType() instanceof AmmoType)) {
+                if ((m.getLocation() == tank.getLocTurret()) && !(m.getType() instanceof AmmoType)) {
                     turretWeight += m.getTonnage();
                 }
             }
@@ -802,26 +806,25 @@ public class TestTank extends TestEntity {
                     turret2Weight = TestEntity.ceil(turret2Weight, Ceil.HALFTON);
                 }
             } else {
-                turretWeight = TestEntity.ceil(turretWeight,
-                        getWeightCeilingTurret());
-                turret2Weight = TestEntity.ceil(turret2Weight,
-                        getWeightCeilingTurret());
+                turretWeight = TestEntity.ceil(turretWeight, getWeightCeilingTurret());
+                turret2Weight = TestEntity.ceil(turret2Weight, getWeightCeilingTurret());
             }
-            if ((tank.getBaseChassisTurretWeight() >= 0)
-                    && (turretWeight > tank.getBaseChassisTurretWeight())) {
+            if ((tank.getBaseChassisTurretWeight() >= 0) && (turretWeight > tank.getBaseChassisTurretWeight())) {
                 buff.append("Unit has more weight in the turret than allowed ")
-                        .append("by base chassis!  Current weight: ")
-                        .append(turretWeight)
-                        .append(", base chassis turret weight: ")
-                        .append(tank.getBaseChassisTurretWeight()).append("\n");
+                      .append("by base chassis!  Current weight: ")
+                      .append(turretWeight)
+                      .append(", base chassis turret weight: ")
+                      .append(tank.getBaseChassisTurretWeight())
+                      .append("\n");
                 illegal = true;
             }
-            if ((tank.getBaseChassisTurret2Weight() >= 0)
-                    && (turret2Weight > tank.getBaseChassisTurret2Weight())) {
+            if ((tank.getBaseChassisTurret2Weight() >= 0) && (turret2Weight > tank.getBaseChassisTurret2Weight())) {
                 buff.append("Unit has more weight in the second turret than ")
-                        .append("allowed by base chassis!  Current weight: ")
-                        .append(turret2Weight).append(", base chassis turret weight: ")
-                        .append(tank.getBaseChassisTurret2Weight()).append("\n");
+                      .append("allowed by base chassis!  Current weight: ")
+                      .append(turret2Weight)
+                      .append(", base chassis turret weight: ")
+                      .append(tank.getBaseChassisTurret2Weight())
+                      .append("\n");
                 illegal = true;
             }
         }
@@ -833,12 +836,12 @@ public class TestTank extends TestEntity {
      * @param tank     The Tank
      * @param eq       The equipment
      * @param location A location index on the Entity
-     * @param buffer   If non-null and the location is invalid, will be appended
-     *                 with an explanation
+     * @param buffer   If non-null and the location is invalid, will be appended with an explanation
+     *
      * @return Whether the equipment can be mounted in the location on the Tank
      */
     public static boolean isValidTankLocation(Tank tank, EquipmentType eq, int location,
-            @Nullable StringBuffer buffer) {
+          @Nullable StringBuffer buffer) {
         if (buffer == null) {
             buffer = new StringBuffer();
         }
@@ -858,18 +861,21 @@ public class TestTank extends TestEntity {
         }
         if (eq instanceof MiscType) {
             // Equipment explicitly forbidden to a mast mount
-            if ((eq.hasFlag(MiscType.F_MODULAR_ARMOR) || eq.hasFlag(MiscType.F_HARJEL)
-                    || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM) || eq.hasFlag(MiscType.F_LIFTHOIST)
-                    || eq.hasFlag(MiscType.F_MANIPULATOR) || eq.hasFlag(MiscType.F_FLUID_SUCTION_SYSTEM)
-                    || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM) || eq.hasFlag(MiscType.F_SPRAYER))
-                    && (tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
+            if ((eq.hasFlag(MiscType.F_MODULAR_ARMOR) ||
+                       eq.hasFlag(MiscType.F_HARJEL) ||
+                       eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM) ||
+                       eq.hasFlag(MiscType.F_LIFTHOIST) ||
+                       eq.hasFlag(MiscType.F_MANIPULATOR) ||
+                       eq.hasFlag(MiscType.F_FLUID_SUCTION_SYSTEM) ||
+                       eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM) ||
+                       eq.hasFlag(MiscType.F_SPRAYER)) && (tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_HARJEL) || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)
-                    || eq.hasFlag(MiscType.F_SPRAYER)
-                    || (eq.hasFlag(MiscType.F_LIFTHOIST) && !(tank instanceof VTOL)))
-                    && (location == Tank.LOC_BODY)) {
+            if ((eq.hasFlag(MiscType.F_HARJEL) ||
+                       eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM) ||
+                       eq.hasFlag(MiscType.F_SPRAYER) ||
+                       (eq.hasFlag(MiscType.F_LIFTHOIST) && !(tank instanceof VTOL))) && (location == Tank.LOC_BODY)) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
                 return false;
             }
@@ -877,8 +883,10 @@ public class TestTank extends TestEntity {
                 buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_PILE_DRIVER)
-                    && (location != Tank.LOC_FRONT) && !isRearLocation) {
+            if (eq.hasFlag(MiscType.F_CLUB) &&
+                      eq.hasSubType(MiscType.S_PILE_DRIVER) &&
+                      (location != Tank.LOC_FRONT) &&
+                      !isRearLocation) {
                 buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
                 return false;
             }
@@ -886,14 +894,18 @@ public class TestTank extends TestEntity {
                 buffer.append(eq.getName()).append(" must be mounted on a turret.\n");
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_CLUB) && !eq.hasSubType(MiscType.S_PILE_DRIVER | MiscType.S_SPOT_WELDER
-                    | MiscType.S_WRECKING_BALL)
-                    && (location != Tank.LOC_FRONT) && !isRearLocation && !isTurretLocation) {
+            if (eq.hasFlag(MiscType.F_CLUB) &&
+                      !eq.hasSubType(MiscType.S_PILE_DRIVER | MiscType.S_SPOT_WELDER | MiscType.S_WRECKING_BALL) &&
+                      (location != Tank.LOC_FRONT) &&
+                      !isRearLocation &&
+                      !isTurretLocation) {
                 buffer.append(eq.getName()).append(" must be mounted on the front, rear, or turret.\n");
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_LADDER) && ((location == Tank.LOC_FRONT) || isRearLocation
-                    || ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)))) {
+            if (eq.hasFlag(MiscType.F_LADDER) &&
+                      ((location == Tank.LOC_FRONT) ||
+                             isRearLocation ||
+                             ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)))) {
                 buffer.append(eq.getName()).append(" must be mounted on the side or turret.\n");
                 return false;
             }
@@ -911,24 +923,25 @@ public class TestTank extends TestEntity {
                 return false;
             }
         } else if (eq instanceof WeaponType) {
-            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
-                    && (location != Tank.LOC_FRONT) && !isRearLocation) {
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY) &&
+                      (location != Tank.LOC_FRONT) &&
+                      !isRearLocation) {
                 buffer.append(eq.getName()).append(" cannot be mounted on the sides or turret.\n");
                 return false;
             }
-            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
-                    && isTurretLocation) {
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) && isTurretLocation) {
                 buffer.append(eq.getName()).append(" cannot be mounted on a turret.\n");
                 return false;
             }
-            if (!eq.hasFlag(WeaponType.F_C3M) && !eq.hasFlag(WeaponType.F_C3MBS)
-                    && !eq.hasFlag(WeaponType.F_TAG) && (location == Tank.LOC_BODY)
-                    && !(tank instanceof GunEmplacement)) {
+            if (!eq.hasFlag(WeaponType.F_C3M) &&
+                      !eq.hasFlag(WeaponType.F_C3MBS) &&
+                      !eq.hasFlag(WeaponType.F_TAG) &&
+                      (location == Tank.LOC_BODY) &&
+                      !(tank instanceof GunEmplacement)) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
                 return false;
             }
-            if ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)
-                    && !eq.hasFlag(WeaponType.F_TAG)) {
+            if ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR) && !eq.hasFlag(WeaponType.F_TAG)) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
                 return false;
             }
@@ -937,20 +950,20 @@ public class TestTank extends TestEntity {
     }
 
     /**
-     * Determines whether a piece of equipment should be mounted in the body
-     * location.
+     * Determines whether a piece of equipment should be mounted in the body location.
      *
      * @param eq The equipment
+     *
      * @return Whether the equipment needs to be assigned to the body location.
      */
     public static boolean isBodyEquipment(EquipmentType eq) {
         if (eq instanceof MiscType) {
-            return eq.hasFlag(MiscType.F_CHASSIS_MODIFICATION)
-                    || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())
-                    || eq.hasFlag(MiscType.F_CASEII)
-                    || eq.hasFlag(MiscType.F_JUMP_JET)
-                    || eq.hasFlag(MiscType.F_FUEL)
-                    || eq.hasFlag(MiscType.F_BLUE_SHIELD);
+            return eq.hasFlag(MiscType.F_CHASSIS_MODIFICATION) ||
+                         (eq.hasFlag(MiscType.F_CASE) && !eq.isClan()) ||
+                         eq.hasFlag(MiscType.F_CASEII) ||
+                         eq.hasFlag(MiscType.F_JUMP_JET) ||
+                         eq.hasFlag(MiscType.F_FUEL) ||
+                         eq.hasFlag(MiscType.F_BLUE_SHIELD);
         } else {
             return eq instanceof AmmoType;
         }

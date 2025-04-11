@@ -1,20 +1,31 @@
 /*
-* MegaMek -
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ */
 package megamek.common.templates;
-
-import static megamek.client.ui.WrapLayout.wordWrap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,11 +49,12 @@ import freemarker.template.Template;
 import freemarker.template.TemplateMethodModelEx;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.bays.Bay;
+import megamek.common.bays.BayData;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
 import megamek.logging.MMLogger;
 
@@ -56,8 +68,8 @@ public class TROView {
 
     private Template template;
     private final Map<String, Object> model = new HashMap<>();
-    private final EntityVerifier verifier = EntityVerifier
-            .getInstance(new MegaMekFile(Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
+    private final EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(Configuration.unitsDir(),
+          EntityVerifier.CONFIG_FILENAME).getFile());
 
     private boolean includeFluff = true;
 
@@ -70,8 +82,7 @@ public class TROView {
             view = new MekTROView((Mek) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             view = new ProtoMekTROView((ProtoMek) entity);
-        } else if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK)
-                || (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL))) {
+        } else if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK) || (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL))) {
             view = new SupportVeeTROView((Tank) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
             view = new VehicleTROView((Tank) entity);
@@ -91,7 +102,8 @@ public class TROView {
         if (null != view.getTemplateFileName(formatting == ViewFormatting.HTML)) {
             try {
                 view.template = TemplateConfiguration.getInstance()
-                        .getTemplate("tro/" + view.getTemplateFileName(formatting == ViewFormatting.HTML));
+                                      .getTemplate("tro/" +
+                                                         view.getTemplateFileName(formatting == ViewFormatting.HTML));
             } catch (final IOException e) {
                 logger.error("", e);
             }
@@ -119,16 +131,15 @@ public class TROView {
     /**
      * Uses the template and supplied {@link Entity} to generate a TRO document
      *
-     * @return The generated document. Returns {@code null} if there was an error
-     *         that prevented the document from being generated. Check logs for
-     *         reason.
+     * @return The generated document. Returns {@code null} if there was an error that prevented the document from being
+     *       generated. Check logs for reason.
      */
     @Nullable
     public String processTemplate() {
         if (null != template) {
             model.put("includeFluff", includeFluff);
             try (final ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    final Writer out = new OutputStreamWriter(os)) {
+                  final Writer out = new OutputStreamWriter(os)) {
                 template.process(model, out);
                 return os.toString();
             } catch (Exception ex) {
@@ -139,8 +150,9 @@ public class TROView {
     }
 
     protected void addBasicData(Entity entity) {
-        model.put("formatBasicDataRow", new FormatTableRowMethod(new int[] { 30, 20, 5 },
-                new Justification[] { Justification.LEFT, Justification.LEFT, Justification.RIGHT }));
+        model.put("formatBasicDataRow",
+              new FormatTableRowMethod(new int[] { 30, 20, 5 },
+                    new Justification[] { Justification.LEFT, Justification.LEFT, Justification.RIGHT }));
         model.put("fullName", entity.getShortNameRaw());
         model.put("chassis", entity.getChassis());
         model.put("techBase", formatTechBase(entity));
@@ -148,12 +160,20 @@ public class TROView {
         model.put("battleValue", NumberFormat.getInstance().format(entity.calculateBattleValue()));
         model.put("cost", NumberFormat.getInstance().format(entity.getCost(false)));
 
+        final StringJoiner quirksList = getQuirksList(entity);
+        if (quirksList.length() > 0) {
+            model.put("quirks", quirksList.toString());
+        }
+
+    }
+
+    private static StringJoiner getQuirksList(Entity entity) {
         final StringJoiner quirksList = new StringJoiner(", ");
         final Quirks quirks = entity.getQuirks();
-        for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
+        for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements(); ) {
             final IOptionGroup group = optionGroups.nextElement();
             if (quirks.count(group.getKey()) > 0) {
-                for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                     final IOption option = options.nextElement();
                     if ((option != null) && option.booleanValue()) {
                         quirksList.add(option.getDisplayableNameWithValue());
@@ -161,10 +181,7 @@ public class TROView {
                 }
             }
         }
-        if (quirksList.length() > 0) {
-            model.put("quirks", quirksList.toString());
-        }
-
+        return quirksList;
     }
 
     protected void addEntityFluff(Entity entity) {
@@ -198,15 +215,12 @@ public class TROView {
     /**
      * Builds the fluff name for a system component.
      *
-     * @param system
-     *                The system component
-     * @param fluff
-     *                The {@link Entity}'s fluff object
-     * @param altText
-     *                Alternate text that will be used if neither fluff field is
-     *                set.
-     * @return The fluff display name, which consists of the manufacturer and the
-     *         model separated by a space. If either is missing it is left out.
+     * @param system  The system component
+     * @param fluff   The {@link Entity}'s fluff object
+     * @param altText Alternate text that will be used if neither fluff field is set.
+     *
+     * @return The fluff display name, which consists of the manufacturer and the model separated by a space. If either
+     *       is missing it is left out.
      */
     public static String formatSystemFluff(EntityFluff.System system, EntityFluff fluff, Supplier<String> altText) {
         final StringJoiner sj = new StringJoiner(" ");
@@ -223,11 +237,14 @@ public class TROView {
 
     protected void addMekVeeAeroFluff(Entity entity) {
         addEntityFluff(entity);
-        model.put("massDesc", NumberFormat.getInstance().format(entity.getWeight())
-                + Messages.getString(entity.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
+        model.put("massDesc",
+              NumberFormat.getInstance().format(entity.getWeight()) +
+                    Messages.getString(entity.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
         if (entity.hasEngine()) {
-            model.put("engineDesc", formatSystemFluff(EntityFluff.System.ENGINE, entity.getFluff(),
-                    () -> stripNotes(entity.getEngine().getEngineName())));
+            model.put("engineDesc",
+                  formatSystemFluff(EntityFluff.System.ENGINE,
+                        entity.getFluff(),
+                        () -> stripNotes(entity.getEngine().getEngineName())));
         } else {
             model.put("engineDesc", "None");
         }
@@ -236,11 +253,13 @@ public class TROView {
             model.put("maxSpeed", entity.getRunMP() * 10.8);
         }
         if (entity.isMek() || (entity.isProtoMek() && entity.getOriginalJumpMP() > 0)) {
-            model.put("jumpDesc", formatSystemFluff(EntityFluff.System.JUMPJET, entity.getFluff(),
-                    () -> Messages.getString("TROView.Unknown")));
+            model.put("jumpDesc",
+                  formatSystemFluff(EntityFluff.System.JUMPJET,
+                        entity.getFluff(),
+                        () -> Messages.getString("TROView.Unknown")));
         }
         model.put("armorDesc",
-                formatSystemFluff(EntityFluff.System.ARMOR, entity.getFluff(), () -> formatArmorType(entity, false)));
+              formatSystemFluff(EntityFluff.System.ARMOR, entity.getFluff(), () -> formatArmorType(entity, false)));
         final Map<String, Integer> weaponCount = new HashMap<>();
         double podSpace = 0.0;
         for (final Mounted<?> m : entity.getEquipment()) {
@@ -258,10 +277,14 @@ public class TROView {
             armaments.add(String.format(Messages.getString("TROView.podspace.format"), podSpace));
         }
         model.put("armamentList", armaments);
-        model.put("communicationDesc", formatSystemFluff(EntityFluff.System.COMMUNICATIONS, entity.getFluff(),
-                () -> Messages.getString("TROView.Unknown")));
-        model.put("targetingDesc", formatSystemFluff(EntityFluff.System.TARGETING, entity.getFluff(),
-                () -> Messages.getString("TROView.Unknown")));
+        model.put("communicationDesc",
+              formatSystemFluff(EntityFluff.System.COMMUNICATIONS,
+                    entity.getFluff(),
+                    () -> Messages.getString("TROView.Unknown")));
+        model.put("targetingDesc",
+              formatSystemFluff(EntityFluff.System.TARGETING,
+                    entity.getFluff(),
+                    () -> Messages.getString("TROView.Unknown")));
     }
 
     private String formatTechBase(Entity entity) {
@@ -278,8 +301,9 @@ public class TROView {
     }
 
     public static String formatArmorType(Entity entity, boolean trim) {
-        if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK) || entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL)
-                || entity.hasETypeFlag(Entity.ETYPE_FIXED_WING_SUPPORT)) {
+        if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK) ||
+                  entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL) ||
+                  entity.hasETypeFlag(Entity.ETYPE_FIXED_WING_SUPPORT)) {
             return "BAR " + entity.getBARRating(Tank.LOC_FRONT);
         }
         if (entity.hasPatchworkArmor()) {
@@ -315,30 +339,20 @@ public class TROView {
     }
 
     /**
-     * Convenience method to format armor and structure values, consolidating
-     * right/left values into a single entry. In most cases the right and left armor
-     * values are the same, in which case only a single value is used. If the values
-     * do not match they are both (or all, in the case of tripod mek legs) given
-     * separated by slashes.
+     * Convenience method to format armor and structure values, consolidating right/left values into a single entry. In
+     * most cases the right and left armor values are the same, in which case only a single value is used. If the values
+     * do not match they are both (or all, in the case of tripod mek legs) given separated by slashes.
      *
-     * @param entity
-     *                 The entity to collect structure or armor values for
-     * @param provider
-     *                 The function that retrieves the armor or structure value for
-     *                 the
-     *                 entity and location
-     * @param locSets
-     *                 A two-dimensional array that groups locations that should
-     *                 appear
-     *                 on the same line. Any location that is not legal for the unit
-     *                 (e.g. center leg on non-tripods) is ignored. If the first
-     *                 location
+     * @param entity   The entity to collect structure or armor values for
+     * @param provider The function that retrieves the armor or structure value for the entity and location
+     * @param locSets  A two-dimensional array that groups locations that should appear on the same line. Any location
+     *                 that is not legal for the unit (e.g. center leg on non-tripods) is ignored. If the first location
      *                 in a group is illegal, the entire group is skipped.
-     * @return A {@link Map} with the armor/structure value mapped to the
-     *         abbreviation of each of the location keys.
+     *
+     * @return A {@link Map} with the armor/structure value mapped to the abbreviation of each of the location keys.
      */
     protected Map<String, String> addArmorStructureEntries(Entity entity, BiFunction<Entity, Integer, Integer> provider,
-            int[][] locSets) {
+          int[][] locSets) {
         final Map<String, String> retVal = new HashMap<>();
         for (final int[] locs : locSets) {
             if ((locs.length == 0) || (locs[0] >= entity.locations())) {
@@ -347,12 +361,13 @@ public class TROView {
             String val = null;
             if (locs.length > 1) {
                 for (int i = 1; i < locs.length; i++) {
-                    if ((locs[i] < entity.locations())
-                            && ((!provider.apply(entity, locs[i]).equals(provider.apply(entity, locs[0])))
-                                    || !entity.hasETypeFlag(Entity.ETYPE_MEK))) {
-                        val = Arrays.stream(locs).filter(l -> l < entity.locations())
-                                .mapToObj(l -> String.valueOf(provider.apply(entity, l)))
-                                .collect(Collectors.joining("/"));
+                    if ((locs[i] < entity.locations()) &&
+                              ((!provider.apply(entity, locs[i]).equals(provider.apply(entity, locs[0]))) ||
+                                     !entity.hasETypeFlag(Entity.ETYPE_MEK))) {
+                        val = Arrays.stream(locs)
+                                    .filter(l -> l < entity.locations())
+                                    .mapToObj(l -> String.valueOf(provider.apply(entity, l)))
+                                    .collect(Collectors.joining("/"));
                         break;
                     }
                 }
@@ -378,10 +393,11 @@ public class TROView {
             String val = null;
             if (locs.length > 1) {
                 for (int i = 1; i < locs.length; i++) {
-                    if ((locs[i] < entity.locations())
-                            && (entity.getArmorType(locs[i]) != entity.getArmorType(locs[0]))) {
-                        val = Arrays.stream(locs).mapToObj(l -> formatArmorType(entity.getArmorType(l), true))
-                                .collect(Collectors.joining("/"));
+                    if ((locs[i] < entity.locations()) &&
+                              (entity.getArmorType(locs[i]) != entity.getArmorType(locs[0]))) {
+                        val = Arrays.stream(locs)
+                                    .mapToObj(l -> formatArmorType(entity.getArmorType(l), true))
+                                    .collect(Collectors.joining("/"));
                         break;
                     }
                 }
@@ -403,17 +419,17 @@ public class TROView {
     }
 
     /**
-     * Test for whether the mount should be included in the equipment inventory
-     * section.
+     * Test for whether the mount should be included in the equipment inventory section.
      *
      * @param mount       The equipment mount
      * @param includeAmmo Whether to include ammo in the list
+     *
      * @return Whether to list the equipment in the inventory section
      */
     protected boolean skipMount(Mounted<?> mount, boolean includeAmmo) {
-        return mount.getLocation() < 0
-                || mount.isWeaponGroup()
-                || (!includeAmmo && (mount.getType() instanceof AmmoType));
+        return mount.getLocation() < 0 ||
+                     mount.isWeaponGroup() ||
+                     (!includeAmmo && (mount.getType() instanceof AmmoType));
     }
 
     protected int addEquipment(Entity entity, boolean includeAmmo) {
@@ -427,12 +443,12 @@ public class TROView {
             }
             // Skip armor and structure
             if (!m.getType().isHittable() && (m.getLocation() >= 0)) {
-                if ((structure != EquipmentType.T_STRUCTURE_UNKNOWN)
-                        && (EquipmentType.getStructureType(m.getType()) == structure)) {
+                if ((structure != EquipmentType.T_STRUCTURE_UNKNOWN) &&
+                          (EquipmentType.getStructureType(m.getType()) == structure)) {
                     continue;
                 }
-                if ((m.getLocation() >= 0)
-                        && (entity.getArmorType(m.getLocation()) == EquipmentType.getArmorType(m.getType()))) {
+                if ((m.getLocation() >= 0) &&
+                          (entity.getArmorType(m.getLocation()) == EquipmentType.getArmorType(m.getType()))) {
                     continue;
                 }
             }
@@ -482,13 +498,13 @@ public class TROView {
                 if (eq.isSpreadable()) {
                     final Map<Integer, Integer> byLoc = getSpreadableLocations(entity, eq);
                     final StringJoiner locs = new StringJoiner("/");
-                    final StringJoiner crits = new StringJoiner("/");
+                    final StringJoiner criticalSlots = new StringJoiner("/");
                     byLoc.forEach((l, c) -> {
                         locs.add(entity.getLocationAbbr(l));
-                        crits.add(String.valueOf(c));
+                        criticalSlots.add(String.valueOf(c));
                     });
                     fields.put("location", locs.toString());
-                    fields.put("slots", crits.toString());
+                    fields.put("slots", criticalSlots.toString());
                 } else {
                     fields.put("location", loc);
                     fields.put("slots", eq.getCriticals(entity, entry.getValue()) * count);
@@ -504,8 +520,10 @@ public class TROView {
         final Map<Integer, Integer> retVal = new HashMap<>();
         for (int loc = 0; loc < entity.locations(); loc++) {
             for (int slot = 0; slot < entity.getNumberOfCriticals(loc); slot++) {
-                final CriticalSlot crit = entity.getCritical(loc, slot);
-                if ((crit != null) && (crit.getMount() != null) && (crit.getMount().getType() == eq)) {
+                final CriticalSlot criticalSlot = entity.getCritical(loc, slot);
+                if ((criticalSlot != null) &&
+                          (criticalSlot.getMount() != null) &&
+                          (criticalSlot.getMount().getType() == eq)) {
                     retVal.merge(loc, 1, Integer::sum);
                 }
             }
@@ -524,19 +542,19 @@ public class TROView {
             final Map<String, Integer> fixedCount = new HashMap<>();
             final Map<String, Double> fixedWeight = new HashMap<>();
             for (int slot = 0; slot < entity.getNumberOfCriticals(loc); slot++) {
-                final CriticalSlot crit = entity.getCritical(loc, slot);
-                if (null == crit) {
+                final CriticalSlot criticalSlot = entity.getCritical(loc, slot);
+                if (null == criticalSlot) {
                     remaining++;
-                } else if ((crit.getType() == CriticalSlot.TYPE_SYSTEM)
-                        && showFixedSystem(entity, crit.getIndex(), loc)) {
-                    fixedCount.merge(getSystemName(entity, crit.getIndex()), 1, Integer::sum);
-                } else if (crit.getMount() != null) {
-                    if (crit.getMount().isOmniPodMounted()) {
+                } else if ((criticalSlot.getType() == CriticalSlot.TYPE_SYSTEM) &&
+                                 showFixedSystem(entity, criticalSlot.getIndex(), loc)) {
+                    fixedCount.merge(getSystemName(entity, criticalSlot.getIndex()), 1, Integer::sum);
+                } else if (criticalSlot.getMount() != null) {
+                    if (criticalSlot.getMount().isOmniPodMounted()) {
                         remaining++;
-                    } else if (!crit.getMount().isWeaponGroup()) {
-                        final String key = stripNotes(crit.getMount().getName());
+                    } else if (!criticalSlot.getMount().isWeaponGroup()) {
+                        final String key = stripNotes(criticalSlot.getMount().getName());
                         fixedCount.merge(key, 1, Integer::sum);
-                        fixedWeight.merge(key, crit.getMount().getTonnage(), Double::sum);
+                        fixedWeight.merge(key, criticalSlot.getMount().getTonnage(), Double::sum);
                     }
                 }
             }
@@ -602,7 +620,7 @@ public class TROView {
             if (bay.isQuarters()) {
                 continue;
             }
-            final BayData bayData = BayData.getBayType(bay);
+            final BayData bayData = bay.getBayData();
             if (null != bayData) {
                 final Map<String, Object> bayRow = new HashMap<>();
                 bayRow.put("name", bayData.getDisplayName());
@@ -614,23 +632,20 @@ public class TROView {
                 bayRow.put("doors", bay.getDoors());
                 bays.add(bayRow);
             } else {
-                logger.warn("Could not determine bay type for " + bay);
+                logger.warn("Could not determine bay type for {}", bay);
             }
         }
         setModelData("bays", bays);
     }
 
     /**
-     * Used to determine whether system crits should be shown when detailing fixed
-     * equipment in an omni unit. By default this is false, but meks override it to
-     * show some systems.
+     * Used to determine whether system critical slots should be shown when detailing fixed equipment in an omni unit.
+     * By default, this is false, but meks override it to show some systems.
      *
-     * @param entity
-     *               The unit the TRO is for
-     * @param index
-     *               The system index of the critical slot
-     * @param loc
-     *               The slot location
+     * @param entity The unit the TRO is for
+     * @param index  The system index of the critical slot
+     * @param loc    The slot location
+     *
      * @return Whether to show this as a fixed system in an omni configuration
      */
     protected boolean showFixedSystem(Entity entity, int index, int loc) {
@@ -638,14 +653,12 @@ public class TROView {
     }
 
     /**
-     * Used to show the name of fixed system critical slots in an omni unit. This is
-     * only used for Meks, and returns a default value of "Unknown System" for
-     * other units.
+     * Used to show the name of fixed system critical slots in an omni unit. This is only used for Meks, and returns a
+     * default value of "Unknown System" for other units.
      *
-     * @param entity
-     *               The unit the TRO is for
-     * @param index
-     *               The system index of the critical slot
+     * @param entity The unit the TRO is for
+     * @param index  The system index of the critical slot
+     *
      * @return The name of the system to display in the fixed equipment table
      */
     protected String getSystemName(Entity entity, int index) {
@@ -653,15 +666,13 @@ public class TROView {
     }
 
     /**
-     * Formats displayable location name for use in equipment table. The format of
-     * the name can vary by unit type due to available space based on number of
-     * columns, and in some cases the official TROs have different location names
+     * Formats displayable location name for use in equipment table. The format of the name can vary by unit type due to
+     * available space based on number of columns, and in some cases the official TROs have different location names
      * than the ones used by MM.
      *
-     * @param entity
-     *                The entity the TRO is created for
-     * @param mounted
-     *                The mounted equipment
+     * @param entity  The entity the TRO is created for
+     * @param mounted The mounted equipment
+     *
      * @return The location name to use in the table.
      */
     protected String formatLocationTableEntry(Entity entity, Mounted<?> mounted) {
@@ -670,25 +681,22 @@ public class TROView {
     }
 
     /**
-     * Formats {@link Transporter} to display as a row in an equipment table. Any
-     * other than bays and troop space are skipped to avoid showing BA handles and
-     * such.
+     * Formats {@link Transporter} to display as a row in an equipment table. Any other than bays and troop space are
+     * skipped to avoid showing BA handles and such.
      *
-     * @param transporter
-     *                    The transporter to show.
-     * @param loc
-     *                    The location name to display on the table.
-     * @return A map of values used by the equipment tables (omni fixed and
-     *         pod/non-omni). Returns {@code null} for a type of {@link Transporter}
-     *         that should not be shown.
+     * @param transporter The transporter to show.
+     * @param loc         The location name to display on the table.
+     *
+     * @return A map of values used by the equipment tables (omni fixed and pod/non-omni). Returns {@code null} for a
+     *       type of {@link Transporter} that should not be shown.
      */
     protected @Nullable Map<String, Object> formatTransporter(Transporter transporter, String loc) {
         final Map<String, Object> retVal = new HashMap<>();
         if (transporter instanceof InfantryCompartment) {
             retVal.put("name", Messages.getString("TROView.TroopSpace"));
             retVal.put("tonnage", transporter.getUnused());
-        } else if (transporter instanceof Bay) {
-            final BayData bayType = BayData.getBayType((Bay) transporter);
+        } else if (transporter instanceof Bay transporterBay) {
+            final BayData bayType = transporterBay.getBayData();
             retVal.put("name", bayType.getDisplayName());
             retVal.put("tonnage", bayType.getWeight() * transporter.getUnused());
         } else {
@@ -729,16 +737,15 @@ public class TROView {
     }
 
     /**
-     * Removes parenthetical and bracketed notes from a String, with the exception
-     * of parenthetical notes that begin with a digit. These are assumed to be
-     * a marker of equipment size and left intact.
+     * Removes parenthetical and bracketed notes from a String, except parenthetical notes that begin with a digit.
+     * These are assumed to be a marker of equipment size and left intact.
      *
      * @param str The String to process
+     *
      * @return The same String with notes removed
      */
     protected String stripNotes(String str) {
-        return str.replaceAll("\\s+\\[.*?]", "")
-                .replaceAll("\\s+\\([^\\d].*?\\)", "");
+        return str.replaceAll("\\s+\\[.*?]", "").replaceAll("\\s+\\([^\\d].*?\\)", "");
     }
 
     protected static class FormatTableRowMethod implements TemplateMethodModelEx {
@@ -779,17 +786,14 @@ public class TROView {
     /**
      * Sets whether to include the fluff section when processing the template
      *
-     * @param includeFluff
-     *                     Whether to include the fluff section
+     * @param includeFluff Whether to include the fluff section
      */
     public void setIncludeFluff(boolean includeFluff) {
         this.includeFluff = includeFluff;
     }
 
     /**
-     *
-     * @return Whether the fluff section will be included when processing the
-     *         template
+     * @return Whether the fluff section will be included when processing the template
      */
     public boolean getIncludeFluff() {
         return includeFluff;
@@ -833,10 +837,10 @@ public class TROView {
 
         @Override
         public boolean equals(Object o) {
-            return (o instanceof EquipmentKey)
-                    && (etype.equals(((EquipmentKey) o).etype))
-                    && (size == ((EquipmentKey) o).size)
-                    && (armored == ((EquipmentKey) o).armored);
+            return (o instanceof EquipmentKey) &&
+                         (etype.equals(((EquipmentKey) o).etype)) &&
+                         (size == ((EquipmentKey) o).size) &&
+                         (armored == ((EquipmentKey) o).armored);
         }
 
         @Override

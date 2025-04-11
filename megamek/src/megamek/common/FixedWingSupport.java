@@ -1,17 +1,37 @@
 /*
- * MegaAero - Copyright (C) 2010 Jason Tighe This program is free software; you
- * can redistribute it and/or modify it under the terms of the GNU General
- * Public License as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * Copyright (C) 2010 Jason Tighe
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.common;
 
+import java.io.Serial;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.bays.CargoBay;
 import megamek.common.cost.FixedWingSupportCostCalculator;
 import megamek.common.equipment.ArmorType;
 
@@ -20,13 +40,14 @@ import megamek.common.equipment.ArmorType;
  * @since 10/31/2010
  */
 public class FixedWingSupport extends ConvFighter {
+    @Serial
     private static final long serialVersionUID = 347113432982248518L;
 
     public static final int LOC_BODY = 5;
 
-    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG", "BOD" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Body" };
-    private int[] barRating;
+    private static final String[] LOCATION_ABBREVIATIONS = { "NOS", "LWG", "RWG", "AFT", "WNG", "BOD" };
+    private static final String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Body" };
+    private final int[] barRating;
 
     public FixedWingSupport() {
         super();
@@ -83,17 +104,12 @@ public class FixedWingSupport extends ConvFighter {
 
     @Override
     public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override
     public String[] getLocationNames() {
         return LOCATION_NAMES;
-    }
-
-    @Override
-    public int locations() {
-        return 6;
     }
 
     @Override
@@ -103,7 +119,7 @@ public class FixedWingSupport extends ConvFighter {
 
     @Override
     public void autoSetSI() {
-        initializeSI(getOriginalWalkMP());
+        setOSI(getOriginalWalkMP());
     }
 
     @Override
@@ -121,19 +137,16 @@ public class FixedWingSupport extends ConvFighter {
     }
 
     /**
-     * The mass of each point of fuel in kg, based on weight class and engine tech
-     * rating.
+     * The mass of each point of fuel in kg, based on weight class and engine tech rating.
      */
-    private static final int[][] KG_PER_FUEL_POINT = {
-            { 50, 30, 23, 15, 13, 10 }, // small
-            { 63, 38, 25, 20, 18, 15 }, // medium
-            { 83, 50, 35, 28, 23, 20 } // large
+    private static final int[][] KG_PER_FUEL_POINT = { { 50, 30, 23, 15, 13, 10 }, // small
+                                                       { 63, 38, 25, 20, 18, 15 }, // medium
+                                                       { 83, 50, 35, 28, 23, 20 } // large
     };
 
     /**
-     * While most aerospace units measure fuel weight in points per ton, support
-     * vehicles measure
-     * in kg per point. Vehicles that do not require fuel return 0.
+     * While most aerospace units measure fuel weight in points per ton, support vehicles measure in kg per point.
+     * Vehicles that do not require fuel return 0.
      *
      * @return The mass of each point of fuel in kg.
      */
@@ -161,45 +174,90 @@ public class FixedWingSupport extends ConvFighter {
 
     @Override
     public boolean requiresFuel() {
-        return !((hasPropChassisMod() || getMovementMode().isAirship())
-                && hasEngine()
-                && (getEngine().isFusion() || getEngine().isFission() || getEngine().isSolar()));
+        return !((hasPropChassisMod() || getMovementMode().isAirship()) &&
+                       hasEngine() &&
+                       (getEngine().isFusion() || getEngine().isFission() || getEngine().isSolar()));
     }
 
-    private static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_AIRSHIP_SUPPORT_SMALL = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_A).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_AIRSHIP_SUPPORT_MEDIUM = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL).setAdvancement(
+                DATE_PS,
+                DATE_PS,
+                DATE_PS)
+                                                                       .setTechRating(RATING_B)
+                                                                       .setAvailability(RATING_C,
+                                                                             RATING_D,
+                                                                             RATING_C,
+                                                                             RATING_C)
+                                                                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL).setAdvancement(
+                DATE_PS,
+                DATE_PS,
+                DATE_PS)
+                                                                             .setTechRating(RATING_B)
+                                                                             .setAvailability(RATING_D,
+                                                                                   RATING_E,
+                                                                                   RATING_D,
+                                                                                   RATING_D)
+                                                                             .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_SMALL = new TechAdvancement(TECH_BASE_ALL).setAdvancement(
+                DATE_PS,
+                DATE_PS,
+                DATE_PS)
+                                                                          .setTechRating(RATING_A)
+                                                                          .setAvailability(RATING_C,
+                                                                                RATING_D,
+                                                                                RATING_C,
+                                                                                RATING_C)
+                                                                          .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_MEDIUM = new TechAdvancement(TECH_BASE_ALL).setAdvancement(
+                DATE_PS,
+                DATE_PS,
+                DATE_PS)
+                                                                           .setTechRating(RATING_B)
+                                                                           .setAvailability(RATING_D,
+                                                                                 RATING_E,
+                                                                                 RATING_D,
+                                                                                 RATING_D)
+                                                                           .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Availability missing from TO. Using medium
-    private static final TechAdvancement TA_AIRSHIP_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL).setAdvancement(
+                DATE_PS,
+                DATE_PS,
+                DATE_PS)
+                                                                          .setTechRating(RATING_C)
+                                                                          .setAvailability(RATING_D,
+                                                                                RATING_E,
+                                                                                RATING_D,
+                                                                                RATING_D)
+                                                                          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     // Also using early spaceflight for intro dates based on common sense.
-    private static final TechAdvancement TA_SATELLITE_SMALL = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-            .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    private static final TechAdvancement TA_SATELLITE_MEDIUM = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-            .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    private static final TechAdvancement TA_SATELLITE_LARGE = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    private static final TechAdvancement TA_SATELLITE_SMALL = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES,
+                DATE_ES,
+                DATE_ES)
+                                                                    .setTechRating(RATING_C)
+                                                                    .setAvailability(RATING_C,
+                                                                          RATING_D,
+                                                                          RATING_C,
+                                                                          RATING_C)
+                                                                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    private static final TechAdvancement TA_SATELLITE_MEDIUM = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES,
+                DATE_ES,
+                DATE_ES)
+                                                                     .setTechRating(RATING_C)
+                                                                     .setAvailability(RATING_C,
+                                                                           RATING_D,
+                                                                           RATING_D,
+                                                                           RATING_D)
+                                                                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    private static final TechAdvancement TA_SATELLITE_LARGE = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES,
+                DATE_ES,
+                DATE_ES)
+                                                                    .setTechRating(RATING_C)
+                                                                    .setAvailability(RATING_D,
+                                                                          RATING_E,
+                                                                          RATING_D,
+                                                                          RATING_D)
+                                                                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -237,21 +295,22 @@ public class FixedWingSupport extends ConvFighter {
 
     @Override
     public void autoSetMaxBombPoints() {
-        // fixed wing support craft need external stores hardpoints or the Internal Bomb
+        // fixed wing support craft need external stores hard points or the Internal Bomb
         // Bay quirk
         // to be able to carry bombs.
-        int bombpoints = 0;
+        int bombPoints = 0;
         for (Mounted<?> misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
-                bombpoints++;
+                bombPoints++;
             }
         }
-        maxExtBombPoints = bombpoints;
+        maxExtBombPoints = bombPoints;
 
         // fixed-wing support craft may also use internal transport bays as bomb bays
         // with Internal Bomb Bay quirk.
-        maxIntBombPoints = getTransportBays().stream().mapToInt(
-                tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0).sum();
+        maxIntBombPoints = getTransportBays().stream()
+                                 .mapToInt(tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0)
+                                 .sum();
     }
 
     @Override
@@ -288,6 +347,10 @@ public class FixedWingSupport extends ConvFighter {
         }
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);
     }

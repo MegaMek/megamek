@@ -1,16 +1,30 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019 The MegaMek Team
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.common.loaders;
 
@@ -24,8 +38,10 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.InfantryTransporter.PlatoonType;
+import megamek.common.bays.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
@@ -62,10 +78,8 @@ public class BLKFile {
     private static final int TRANSPORTER_FIELDS = 6;
 
     /**
-     * Bitmap fields; 2 of 32 used currently
-     * COMSTAR: bit 0
-     * IS/Clan tech (for mixed tech): bit 1
-     *
+     * Bitmap fields; 2 of 32 used currently COMSTAR: bit 0 IS/Clan tech (for mixed tech): bit 1
+     * <p>
      * Note: mutual exclusivity is _not_ enforced here.
      */
 
@@ -76,14 +90,12 @@ public class BLKFile {
     static final String BLK_EXTRA_SEATS = "extra_seats";
 
     /**
-     * If a vehicular grenade launcher does not have a facing provided, assign a
-     * default facing.
-     * For vehicles this is determined by location. For protomechs the only legal
-     * location is
-     * the torso, but it may be mounted rear-facing.
+     * If a vehicular grenade launcher does not have a facing provided, assign a default facing. For vehicles this is
+     * determined by location. For ProtoMeks the only legal location is the torso, but it may be mounted rear-facing.
      *
      * @param location The location where the VGL is mounted.
      * @param rear     Whether the VGL is rear-facing.
+     *
      * @return The facing to assign to the VGL.
      */
     protected int defaultVGLFacing(int location, boolean rear) {
@@ -172,21 +184,15 @@ public class BLKFile {
     }
 
     public int defaultAeroVGLFacing(int location, boolean rearFacing) {
-        switch (location) {
-            case Aero.LOC_LWING:
-                return rearFacing ? 4 : 5;
-            case Aero.LOC_RWING:
-                return rearFacing ? 2 : 1;
-            case Aero.LOC_AFT:
-                return 4;
-            case Aero.LOC_NOSE:
-            default:
-                return 0;
-        }
+        return switch (location) {
+            case Aero.LOC_LWING -> rearFacing ? 4 : 5;
+            case Aero.LOC_RWING -> rearFacing ? 2 : 1;
+            case Aero.LOC_AFT -> 4;
+            default -> 0;
+        };
     }
 
-    protected void loadEquipment(Entity t, String sName, int nLoc)
-            throws EntityLoadingException {
+    protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
         if (saEquip == null) {
             return;
@@ -219,7 +225,8 @@ public class BLKFile {
                     if (shotsEndIndex <= 0) {
                         throw new EntityLoadingException("Improperly formatted ammo count");
                     }
-                    shots = Integer.parseInt(equipName.substring(shotsIndex + ":Shots".length(), shotsIndex + shotsEndIndex));
+                    shots = Integer.parseInt(equipName.substring(shotsIndex + ":Shots".length(),
+                          shotsIndex + shotsEndIndex));
                     equipName = equipName.substring(0, shotsIndex);
                 }
                 if (equipName.toUpperCase().endsWith(":OMNI")) {
@@ -271,12 +278,17 @@ public class BLKFile {
 
                 if (etype != null) {
                     try {
-                        Mounted<?> mount = t.addEquipment(etype, nLoc, false,
-                                BattleArmor.MOUNT_LOC_NONE, false, false,
-                                isTurreted, isPintleTurreted, isOmniMounted);
+                        Mounted<?> mount = t.addEquipment(etype,
+                              nLoc,
+                              false,
+                              BattleArmor.MOUNT_LOC_NONE,
+                              false,
+                              false,
+                              isTurreted,
+                              isPintleTurreted,
+                              isOmniMounted);
                         // Need to set facing for VGLs
-                        if ((etype instanceof WeaponType)
-                                && etype.hasFlag(WeaponType.F_VGL)) {
+                        if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultVGLFacing(nLoc, false));
                             } else {
@@ -294,15 +306,14 @@ public class BLKFile {
                             }
 
                             mount.setSize(size);
-                        } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)
-                                && size > 1) {
+                        } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon) && size > 1) {
                             // The ammo bin is created by Entity#addEquipment but the size has not
                             // been set yet, so if the unit carries multiple clips the number of
                             // shots needs to be adjusted.
                             mount.setSize(size);
                             Objects.requireNonNull(mount.getLinked());
-                            mount.getLinked().setOriginalShots((int) size
-                                    * ((InfantryWeapon) mount.getType()).getShots());
+                            mount.getLinked()
+                                  .setOriginalShots((int) size * ((InfantryWeapon) mount.getType()).getShots());
                             mount.getLinked().setShotsLeft(mount.getLinked().getOriginalShots());
                         }
                     } catch (LocationFullException ex) {
@@ -316,16 +327,17 @@ public class BLKFile {
     }
 
     protected void loadSVArmor(Entity sv) throws EntityLoadingException {
-        boolean patchworkArmor = dataFile.exists("armor_type")
-                && dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK;
+        boolean patchworkArmor = dataFile.exists("armor_type") &&
+                                       dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK;
         if (patchworkArmor) {
             for (int i = 1; i < sv.locations(); i++) {
-                megamek.common.equipment.ArmorType armor = dataFile.exists(sv.getLocationName(i) + "_barrating")
-                        ? megamek.common.equipment.ArmorType
-                                .svArmor(dataFile.getDataAsInt(sv.getLocationName(i) + "_barrating")[0])
-                        : megamek.common.equipment.ArmorType.of(
-                                dataFile.getDataAsInt(sv.getLocationName(i) + "_armor_type")[0],
-                                TechConstants.isClan(dataFile.getDataAsInt(sv.getLocationName(i) + "_armor_tech")[0]));
+                megamek.common.equipment.ArmorType armor = dataFile.exists(sv.getLocationName(i) + "_barrating") ?
+                                                                 megamek.common.equipment.ArmorType.svArmor(dataFile.getDataAsInt(
+                                                                       sv.getLocationName(i) + "_barrating")[0]) :
+                                                                 megamek.common.equipment.ArmorType.of(dataFile.getDataAsInt(
+                                                                             sv.getLocationName(i) + "_armor_type")[0],
+                                                                       TechConstants.isClan(dataFile.getDataAsInt(sv.getLocationName(
+                                                                             i) + "_armor_tech")[0]));
                 sv.setArmorType(armor.getArmorType(), i);
                 sv.setBARRating(armor.getBAR(), i);
                 sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(sv.isClan()), i);
@@ -565,10 +577,9 @@ public class BLKFile {
                 break;
             case "Mixed":
                 throw new EntityLoadingException(
-                        "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+                      "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
             default:
-                throw new EntityLoadingException("Unsupported tech level: "
-                        + dataFile.getDataAsString("type")[0]);
+                throw new EntityLoadingException("Unsupported tech level: " + dataFile.getDataAsString("type")[0]);
         }
     }
 
@@ -627,67 +638,19 @@ public class BLKFile {
         if (t.getOriginalBuildYear() >= 0) {
             blk.writeBlockData("originalBuildYear", t.getOriginalBuildYear());
         }
-        String type;
-        if (t.isMixedTech()) {
-            if (!t.isClan()) {
-                type = "Mixed (IS Chassis)";
-            } else {
-                type = "Mixed (Clan Chassis)";
-            }
-            if ((t.getTechLevel() == TechConstants.T_IS_ADVANCED)
-                    || (t.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
-                type += " Advanced";
-            } else if ((t.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL)
-                    || (t.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
-                type += " Experimental";
-            }
-            if ((t.getTechLevel() == TechConstants.T_IS_UNOFFICIAL)
-                    || (t.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
-                type += " Unofficial";
-            }
-        } else {
-            switch (t.getTechLevel()) {
-                case TechConstants.T_INTRO_BOXSET:
-                    type = "IS Level 1";
-                    break;
-                case TechConstants.T_IS_TW_NON_BOX:
-                    type = "IS Level 2";
-                    break;
-                case TechConstants.T_IS_ADVANCED:
-                    type = "IS Level 3";
-                    break;
-                case TechConstants.T_IS_EXPERIMENTAL:
-                    type = "IS Level 4";
-                    break;
-                case TechConstants.T_CLAN_TW:
-                    type = "Clan Level 2";
-                    break;
-                case TechConstants.T_CLAN_ADVANCED:
-                    type = "Clan Level 3";
-                    break;
-                case TechConstants.T_CLAN_EXPERIMENTAL:
-                    type = "Clan Level 4";
-                    break;
-                case TechConstants.T_CLAN_UNOFFICIAL:
-                    type = "Clan Level 5";
-                    break;
-                case TechConstants.T_IS_UNOFFICIAL:
-                default:
-                    type = "IS Level 5";
-                    break;
-
-            }
-        }
+        String type = getType(t);
         blk.writeBlockData("type", type);
 
         if (t.hasRole()) {
             blk.writeBlockData("role", t.getRole().toString());
         }
 
-        List<String> quirkList = t.getQuirks().getOptionsList().stream()
-                .filter(IOption::booleanValue)
-                .map(IBasicOption::getName)
-                .collect(Collectors.toList());
+        List<String> quirkList = t.getQuirks()
+                                       .getOptionsList()
+                                       .stream()
+                                       .filter(IOption::booleanValue)
+                                       .map(IBasicOption::getName)
+                                       .collect(Collectors.toList());
 
         if (!quirkList.isEmpty()) {
             blk.writeBlockData("quirks", String.join("\n", quirkList));
@@ -696,8 +659,13 @@ public class BLKFile {
         List<String> weaponQuirkList = new ArrayList<>();
         for (Mounted<?> equipment : t.getEquipment()) {
             for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
-                weaponQuirkList.add(weaponQuirk.getName() + ":" + t.getLocationAbbr(equipment.getLocation()) + ":"
-                        + t.slotNumber(equipment) + ":" + equipment.getType().getInternalName());
+                weaponQuirkList.add(weaponQuirk.getName() +
+                                          ":" +
+                                          t.getLocationAbbr(equipment.getLocation()) +
+                                          ":" +
+                                          t.slotNumber(equipment) +
+                                          ":" +
+                                          equipment.getType().getInternalName());
             }
         }
         if (!weaponQuirkList.isEmpty()) {
@@ -710,9 +678,9 @@ public class BLKFile {
             blk.writeBlockData("motion_type", t.getMovementModeAsString());
         }
 
-        if (t.getTransports().size() > 0) {
-            // We should only write the transporters block for units that can and do
-            // have transporter bays. Empty Transporters blocks cause issues.
+        if (!t.getTransports().isEmpty()) {
+            // We should only write the transporters block for units that can and do have transporter bays. Empty
+            // Transporters blocks cause issues.
             String[] transporter_array = new String[t.getTransports().size()];
             int index = 0;
             for (Transporter transporter : t.getTransports()) {
@@ -730,10 +698,9 @@ public class BLKFile {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
                 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
-                if (t.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+                if (t.hasETypeFlag(Entity.ETYPE_PROTOMEK) && t instanceof ProtoMek protoMek) {
                     blk.writeBlockData("jumpingMP", t.getOriginalJumpMP());
-                    blk.writeBlockData("interface_cockpit",
-                            String.valueOf(((ProtoMek) t).hasInterfaceCockpit()));
+                    blk.writeBlockData("interface_cockpit", String.valueOf(protoMek.hasInterfaceCockpit()));
                 }
             }
         }
@@ -757,45 +724,7 @@ public class BLKFile {
                 blk.writeBlockData("fuel", ((Aero) t).getFuel());
             }
             if (t.hasEngine()) {
-                int engineCode = BLKFile.FUSION;
-                switch (t.getEngine().getEngineType()) {
-                    case Engine.COMBUSTION_ENGINE:
-                        engineCode = BLKFile.ICE;
-                        break;
-                    case Engine.LIGHT_ENGINE:
-                        engineCode = BLKFile.LIGHT;
-                        break;
-                    case Engine.XL_ENGINE:
-                        engineCode = BLKFile.XL;
-                        break;
-                    case Engine.XXL_ENGINE:
-                        engineCode = BLKFile.XXL;
-                        break;
-                    case Engine.FUEL_CELL:
-                        engineCode = BLKFile.FUELCELL;
-                        break;
-                    case Engine.FISSION:
-                        engineCode = BLKFile.FISSION;
-                        break;
-                    case Engine.NONE:
-                        engineCode = BLKFile.NONE;
-                        break;
-                    case Engine.MAGLEV:
-                        engineCode = BLKFile.MAGLEV;
-                        break;
-                    case Engine.STEAM:
-                        engineCode = BLKFile.STEAM;
-                        break;
-                    case Engine.BATTERY:
-                        engineCode = BLKFile.BATTERY;
-                        break;
-                    case Engine.SOLAR:
-                        engineCode = BLKFile.SOLAR;
-                        break;
-                    case Engine.EXTERNAL:
-                        engineCode = BLKFile.EXTERNAL;
-                        break;
-                }
+                int engineCode = getEngineCode(t);
                 blk.writeBlockData("engine_type", engineCode);
                 if (t.getEngine().isClan() != t.isClan()) {
                     blk.writeBlockData("clan_engine", Boolean.toString(t.getEngine().isClan()));
@@ -809,12 +738,12 @@ public class BLKFile {
                 blk.writeBlockData("armor_tech_rating", t.getArmorTechRating());
                 blk.writeBlockData("armor_tech_level", t.getArmorTechLevel(0));
             } else if (t.hasPatchworkArmor()) {
-                blk.writeBlockData("armor_type",
-                        EquipmentType.T_ARMOR_PATCHWORK);
+                blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
                 for (int i = 1; i < t.locations(); i++) {
                     ArmorType armor = ArmorType.forEntity(t, i);
                     blk.writeBlockData(t.getLocationName(i) + "_armor_type", armor.getArmorType());
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech", TechConstants.getTechName(t.getArmorTechLevel(i)));
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
+                          TechConstants.getTechName(t.getArmorTechLevel(i)));
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech_rating", armor.getTechRating());
                     if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
                         blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
@@ -841,7 +770,7 @@ public class BLKFile {
                     armor_array[i] = t.getOArmor(i);
                 }
             } else if (t.isHandheldWeapon()) {
-                armor_array = new int[] {t.getOArmor(HandheldWeapon.LOC_GUN)};
+                armor_array = new int[] { t.getOArmor(HandheldWeapon.LOC_GUN) };
             } else {
                 armor_array = new int[numLocs - 1];
                 for (int i = 1; i < numLocs; i++) {
@@ -863,7 +792,7 @@ public class BLKFile {
             eq.add(new Vector<>());
         }
         for (Mounted<?> m : t.getEquipment()) {
-            // Ignore Mounted's that represent a WeaponGroup
+            // Ignore Mounted that represent a WeaponGroup
             // BA anti-personnel weapons are written just after the mount
             if (m.isWeaponGroup() || m.isAPMMounted() || (m.getType() instanceof InfantryAttack)) {
                 continue;
@@ -907,8 +836,7 @@ public class BLKFile {
                 continue;
             }
 
-            if (t.usesWeaponBays() && ((m.getType() instanceof WeaponType)
-                    || (m.getType() instanceof AmmoType))) {
+            if (t.usesWeaponBays() && ((m.getType() instanceof WeaponType) || (m.getType() instanceof AmmoType))) {
                 continue;
             }
 
@@ -996,8 +924,7 @@ public class BLKFile {
             blk.writeBlockData("source", t.getSource());
         }
 
-        if (t instanceof BattleArmor) {
-            BattleArmor ba = (BattleArmor) t;
+        if (t instanceof BattleArmor ba) {
             if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_BIPED) {
                 blk.writeBlockData("chassis", "biped");
 
@@ -1005,7 +932,7 @@ public class BLKFile {
                 blk.writeBlockData("chassis", "quad");
                 if (ba.getTurretCapacity() > 0) {
                     blk.writeBlockData("turret",
-                            (ba.hasModularTurretMount() ? "Modular:" : "Standard:") + ba.getTurretCapacity());
+                          (ba.hasModularTurretMount() ? "Modular:" : "Standard:") + ba.getTurretCapacity());
                 }
             }
             if (ba.isExoskeleton()) {
@@ -1015,25 +942,21 @@ public class BLKFile {
             blk.writeBlockData("armor", new int[] { ba.getArmor(1) });
             blk.writeBlockData("Trooper Count", (int) t.getWeight());
             blk.writeBlockData("weightclass", ba.getWeightClass());
-        } else if (t instanceof Infantry) {
-            Infantry infantry = (Infantry) t;
+        } else if (t instanceof Infantry infantry) {
             blk.writeBlockData("squad_size", infantry.getSquadSize());
             blk.writeBlockData("squadn", infantry.getSquadCount());
             if (infantry.getSecondaryWeaponsPerSquad() > 0) {
                 blk.writeBlockData("secondn", infantry.getSecondaryWeaponsPerSquad());
             }
             if (null != infantry.getPrimaryWeapon()) {
-                blk.writeBlockData("Primary", infantry.getPrimaryWeapon()
-                        .getInternalName());
+                blk.writeBlockData("Primary", infantry.getPrimaryWeapon().getInternalName());
             }
             if (null != infantry.getSecondaryWeapon()) {
-                blk.writeBlockData("Secondary", infantry.getSecondaryWeapon()
-                        .getInternalName());
+                blk.writeBlockData("Secondary", infantry.getSecondaryWeapon().getInternalName());
             }
 
             if (infantry.getArmorDamageDivisor() != 1) {
-                blk.writeBlockData("armordivisor",
-                        Double.toString(infantry.getArmorDamageDivisor()));
+                blk.writeBlockData("armordivisor", Double.toString(infantry.getArmorDamageDivisor()));
             }
             if (infantry.isArmorEncumbering()) {
                 blk.writeBlockData("encumberingarmor", "true");
@@ -1057,8 +980,8 @@ public class BLKFile {
                 blk.writeBlockData("specialization", infantry.getSpecializations());
             }
             ArrayList<String> augmentations = new ArrayList<>();
-            for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES); e
-                    .hasMoreElements();) {
+            for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
+                  e.hasMoreElements(); ) {
                 final IOption o = e.nextElement();
                 if (o.booleanValue()) {
                     augmentations.add(o.getName());
@@ -1075,15 +998,12 @@ public class BLKFile {
             blk.writeBlockData("bv", t.getManualBV());
         }
 
-        if ((t instanceof Tank) && t.isOmni()) {
-            Tank tank = (Tank) t;
+        if ((t instanceof Tank tank) && t.isOmni()) {
             if (tank.getBaseChassisTurretWeight() >= 0) {
-                blk.writeBlockData("baseChassisTurretWeight",
-                        tank.getBaseChassisTurretWeight());
+                blk.writeBlockData("baseChassisTurretWeight", tank.getBaseChassisTurretWeight());
             }
             if (tank.getBaseChassisTurret2Weight() >= 0) {
-                blk.writeBlockData("baseChassisTurret2Weight",
-                        tank.getBaseChassisTurret2Weight());
+                blk.writeBlockData("baseChassisTurret2Weight", tank.getBaseChassisTurret2Weight());
             }
         }
 
@@ -1092,12 +1012,10 @@ public class BLKFile {
         }
 
         if (t.isSupportVehicle() && t.isOmni()) {
-            blk.writeBlockData("baseChassisFireConWeight",
-                    t.getBaseChassisFireConWeight());
+            blk.writeBlockData("baseChassisFireConWeight", t.getBaseChassisFireConWeight());
         }
 
-        if (t instanceof Tank) {
-            Tank tank = (Tank) t;
+        if (t instanceof Tank tank) {
             if (tank.isSupportVehicle()) {
                 blk.writeBlockData("fuel", tank.getFuelTonnage());
             }
@@ -1115,8 +1033,7 @@ public class BLKFile {
             }
         }
 
-        if (t instanceof SmallCraft) {
-            SmallCraft sc = (SmallCraft) t;
+        if (t instanceof SmallCraft sc) {
             blk.writeBlockData("designtype", sc.getDesignType());
             blk.writeBlockData("crew", sc.getNCrew());
             blk.writeBlockData("officers", sc.getNOfficers());
@@ -1129,19 +1046,16 @@ public class BLKFile {
             blk.writeBlockData("escape_pod", sc.getEscapePods());
         }
 
-        if (t instanceof Warship) {
-            Warship ws = (Warship) t;
+        if (t instanceof Warship ws) {
             blk.writeBlockData("kf_core", ws.getDriveCoreType());
             if (ws.getDriveCoreType() == Warship.DRIVE_CORE_PRIMITIVE) {
                 blk.writeBlockData("jump_range", ws.getJumpRange());
             }
-        } else if ((t instanceof SpaceStation)
-                && ((SpaceStation) t).isModularOrKFAdapter()) {
+        } else if ((t instanceof SpaceStation) && ((SpaceStation) t).isModularOrKFAdapter()) {
             blk.writeBlockData("modular", 1);
         }
 
-        if (t instanceof Jumpship) {
-            Jumpship js = (Jumpship) t;
+        if (t instanceof Jumpship js) {
             if (js.hasHPG()) {
                 blk.writeBlockData("hpg", 1);
             }
@@ -1150,9 +1064,11 @@ public class BLKFile {
             }
             blk.writeBlockData("sail", js.hasSail() ? 1 : 0);
             if (js.getTotalGravDeck() > 0) {
-                blk.writeBlockData("grav_decks", (Vector<String>) js.getGravDecks().stream()
-                        .map(String::valueOf)
-                        .collect(Collectors.toCollection(Vector::new)));
+                blk.writeBlockData("grav_decks",
+                      (Vector<String>) js.getGravDecks()
+                                             .stream()
+                                             .map(String::valueOf)
+                                             .collect(Collectors.toCollection(Vector::new)));
             }
             blk.writeBlockData("designtype", js.getDesignType());
             blk.writeBlockData("crew", js.getNCrew());
@@ -1173,9 +1089,65 @@ public class BLKFile {
             blk.writeBlockData("fluffimage", t.getFluff().getBase64FluffImage().getBase64String());
         }
         if (t.canonUnitWithInvalidBuild()) {
-            blk.writeBlockData("invalidSourceBuildReasons", t.getInvalidSourceBuildReasons().stream().map(Enum::name).toList());
+            blk.writeBlockData("invalidSourceBuildReasons",
+                  t.getInvalidSourceBuildReasons().stream().map(Enum::name).toList());
         }
         return blk;
+    }
+
+    private static int getEngineCode(Entity t) {
+        int engineCode = BLKFile.FUSION;
+        engineCode = switch (t.getEngine().getEngineType()) {
+            case Engine.COMBUSTION_ENGINE -> BLKFile.ICE;
+            case Engine.LIGHT_ENGINE -> BLKFile.LIGHT;
+            case Engine.XL_ENGINE -> BLKFile.XL;
+            case Engine.XXL_ENGINE -> BLKFile.XXL;
+            case Engine.FUEL_CELL -> BLKFile.FUELCELL;
+            case Engine.FISSION -> BLKFile.FISSION;
+            case Engine.NONE -> BLKFile.NONE;
+            case Engine.MAGLEV -> BLKFile.MAGLEV;
+            case Engine.STEAM -> BLKFile.STEAM;
+            case Engine.BATTERY -> BLKFile.BATTERY;
+            case Engine.SOLAR -> BLKFile.SOLAR;
+            case Engine.EXTERNAL -> BLKFile.EXTERNAL;
+            default -> engineCode;
+        };
+        return engineCode;
+    }
+
+    private static String getType(Entity t) {
+        String type;
+        if (t.isMixedTech()) {
+            if (!t.isClan()) {
+                type = "Mixed (IS Chassis)";
+            } else {
+                type = "Mixed (Clan Chassis)";
+            }
+            if ((t.getTechLevel() == TechConstants.T_IS_ADVANCED) ||
+                      (t.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
+                type += " Advanced";
+            } else if ((t.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) ||
+                             (t.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
+                type += " Experimental";
+            }
+            if ((t.getTechLevel() == TechConstants.T_IS_UNOFFICIAL) ||
+                      (t.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
+                type += " Unofficial";
+            }
+        } else {
+            type = switch (t.getTechLevel()) {
+                case TechConstants.T_INTRO_BOXSET -> "IS Level 1";
+                case TechConstants.T_IS_TW_NON_BOX -> "IS Level 2";
+                case TechConstants.T_IS_ADVANCED -> "IS Level 3";
+                case TechConstants.T_IS_EXPERIMENTAL -> "IS Level 4";
+                case TechConstants.T_CLAN_TW -> "Clan Level 2";
+                case TechConstants.T_CLAN_ADVANCED -> "Clan Level 3";
+                case TechConstants.T_CLAN_EXPERIMENTAL -> "Clan Level 4";
+                case TechConstants.T_CLAN_UNOFFICIAL -> "Clan Level 5";
+                default -> "IS Level 5";
+            };
+        }
+        return type;
     }
 
     private static String encodeEquipmentLine(Mounted<?> m) {
@@ -1217,13 +1189,14 @@ public class BLKFile {
             name += ":TU";
         }
         // For BattleArmor and ProtoMeks, we need to save how many shots are in this
-        // location but they have different formats, yay!
-        if ((m.getEntity() instanceof BattleArmor || m.getEntity() instanceof HandheldWeapon) && (m.getType() instanceof AmmoType)) {
+        // location, but they have different formats, yay!
+        if ((m.getEntity() instanceof BattleArmor || m.getEntity() instanceof HandheldWeapon) &&
+                  (m.getType() instanceof AmmoType)) {
             name += ":Shots" + m.getBaseShotsLeft() + "#";
         } else if (m.getEntity() instanceof ProtoMek && (m.getType() instanceof AmmoType)) {
             name += " (" + m.getBaseShotsLeft() + ")";
-        } else if (m.getType().isVariableSize()
-                || (m.getEntity().isSupportVehicle() && (m.getType() instanceof InfantryWeapon))) {
+        } else if (m.getType().isVariableSize() ||
+                         (m.getEntity().isSupportVehicle() && (m.getType() instanceof InfantryWeapon))) {
             name += ":SIZE:" + m.getSize();
         }
         return name;
@@ -1257,15 +1230,15 @@ public class BLKFile {
                 String[] transporterParts = transporter.split(Bay.FIELD_SEPARATOR, 2);
                 String startsWith = transporterParts[0];
                 String numbers = transporterParts.length > 1 ? transporterParts[1] : "";
-                ParsedBayInfo pbi = null;
+                ParsedBayInfo pbi;
 
                 // TroopSpace:
                 try {
                     switch (startsWith) {
                         case "troopspace":
                             // Everything after the ':' should be the space's size.
-                            double fsize = Double.parseDouble(numbers);
-                            e.addTransporter(new InfantryCompartment(fsize), isPod);
+                            double size = MathUtility.parseDouble(numbers, 0);
+                            e.addTransporter(new InfantryCompartment(size), isPod);
                             break;
                         case "cargobay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
@@ -1274,33 +1247,35 @@ public class BLKFile {
                         case "liquidcargobay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                             e.addTransporter(new LiquidCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
-                                    isPod);
+                                  isPod);
                             break;
                         case "insulatedcargobay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                             e.addTransporter(new InsulatedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
-                                    isPod);
+                                  isPod);
                             break;
                         case "refrigeratedcargobay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(
-                                    new RefrigeratedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                            e.addTransporter(new RefrigeratedCargoBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber()), isPod);
                             break;
                         case "livestockcargobay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                             e.addTransporter(new LivestockCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
-                                    isPod);
+                                  isPod);
                             break;
                         case "asfbay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                             e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), hasARTS),
-                                    isPod);
+                                  isPod);
                             break;
                         case "smallcraftbay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(
-                                    new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), hasARTS),
-                                    isPod);
+                            e.addTransporter(new SmallCraftBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  hasARTS), isPod);
                             break;
                         case "mekbay":
                         case "mechbay":
@@ -1310,27 +1285,33 @@ public class BLKFile {
                         case "lightvehiclebay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                             e.addTransporter(new LightVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
-                                    isPod);
+                                  isPod);
                             break;
                         case "heavyvehiclebay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                             e.addTransporter(new HeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
-                                    isPod);
+                                  isPod);
                             break;
                         case "superheavyvehiclebay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(
-                                    new SuperHeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                            e.addTransporter(new SuperHeavyVehicleBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber()), isPod);
                             break;
                         case "infantrybay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new InfantryBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(),
-                                    pbi.getPlatoonType()), isPod);
+                            e.addTransporter(new InfantryBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  pbi.getPlatoonType()), isPod);
                             break;
                         case "battlearmorbay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers, e.isClan());
-                            e.addTransporter(new BattleArmorBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(),
-                                    pbi.isClan(), pbi.isComstarBay()), isPod);
+                            e.addTransporter(new BattleArmorBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  pbi.isClan(),
+                                  pbi.isComstarBay()), isPod);
                             break;
                         case "bay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
@@ -1341,28 +1322,37 @@ public class BLKFile {
                         case "protomechbay":
                             // Backward compatibility
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new ProtoMekBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()),
-                                    isPod);
+                            e.addTransporter(new ProtoMekBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                             break;
                         case "dropshuttlebay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new DropshuttleBay(pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()),
-                                    isPod);
+                            e.addTransporter(new DropShuttleBay(pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()),
+                                  isPod);
                             break;
                         case "navalrepairpressurized":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(),
-                                    pbi.getFacing(), true, hasARTS), isPod);
+                            e.addTransporter(new NavalRepairFacility(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  pbi.getFacing(),
+                                  true,
+                                  hasARTS), isPod);
                             break;
                         case "navalrepairunpressurized":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(),
-                                    pbi.getBayNumber(), pbi.getFacing(), false, hasARTS), isPod);
+                            e.addTransporter(new NavalRepairFacility(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  pbi.getFacing(),
+                                  false,
+                                  hasARTS), isPod);
                             break;
                         case "reinforcedrepairfacility":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new ReinforcedRepairFacility(pbi.getSize(), pbi.getDoors(),
-                                    pbi.getBayNumber(), pbi.getFacing()), isPod);
+                            e.addTransporter(new ReinforcedRepairFacility(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber(),
+                                  pbi.getFacing()), isPod);
                             break;
                         case "crewquarters":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
@@ -1404,9 +1394,9 @@ public class BLKFile {
                             break;
                     } // End switch-case
                 } catch (BLKDecodingException | NumberFormatException x) {
-                    throw new EntityLoadingException(
-                            String.format(
-                                    "Error decoding transporter '%s' (was '%s')", transporter, x));
+                    throw new EntityLoadingException(String.format("Error decoding transporter '%s' (was '%s')",
+                          transporter,
+                          x));
                 }
 
             } // Handle the next transportation component.
@@ -1415,21 +1405,18 @@ public class BLKFile {
     }
 
     /**
-     * Class that holds data relating to transport bays
-     * and functionality to parse .blk file transport bay entries
+     * Class that holds data relating to transport bays and functionality to parse .blk file transport bay entries
      *
      * @author NickAragua
-     *
      */
     public static class ParsedBayInfo {
-        private double size;
-        private int doors;
-        private int bayNumber = -1;
-        private PlatoonType platoonType = InfantryTransporter.PlatoonType.FOOT;
-        private boolean isComstarBay;
-        private boolean isClanBay;
-        private int facing = Entity.LOC_NONE;
-        private int tech_base = 0;
+        private final double size;
+        private final int doors;
+        private int bayNumber;
+        private final PlatoonType platoonType;
+        private final boolean isComstarBay;
+        private final boolean isClanBay;
+        private final int facing;
 
         public ParsedBayInfo(String numbers, HashSet<Integer> usedBayNumbers) throws BLKDecodingException {
             // Overloaded constructor that assumes IS tech base
@@ -1437,7 +1424,7 @@ public class BLKFile {
         }
 
         public ParsedBayInfo(String numbers, HashSet<Integer> usedBayNumbers, boolean clanTechBase)
-                throws BLKDecodingException {
+              throws BLKDecodingException {
             // expected format of "numbers" string:
             // 0:1:2:3:4:5
             // Field 0 is the size of the bay, in tons or # of units and is required
@@ -1451,7 +1438,7 @@ public class BLKFile {
             // To facilitate loading older .blk files, we first convert them to current
             // format
 
-            String[] fields = {};
+            String[] fields;
             try {
                 // Turn 2-, 3-, or 4-field number lines into standardized 6-field line.
                 fields = normalizeTransporterNumbers(numbers, clanTechBase);
@@ -1469,9 +1456,7 @@ public class BLKFile {
                 isClanBay = (TECH_CLAN_BASE & bitmap) > 0;
 
             } catch (BLKDecodingException | NumberFormatException e) {
-                throw new BLKDecodingException(
-                        String.format(
-                                "Failure to load '%s' (was '%s'", numbers, e.toString()));
+                throw new BLKDecodingException(String.format("Failure to load '%s' (was '%s'", numbers, e));
             }
 
             // if a positive bay number was not specified, assign one
@@ -1523,13 +1508,11 @@ public class BLKFile {
         }
 
         public static String[] normalizeTransporterNumbers(String numbers, boolean clanTechBase)
-                throws BLKDecodingException {
-            /**
-             * In order to make all transporter bays use the same number of data fields,
-             * but maintain compatibility with older blk files, we will do some
-             * pre-processing to check what format of field we are looking at, and convert
-             * it
-             * to the new format.
+              throws BLKDecodingException {
+            /*
+             * In order to make all transporter bays use the same number of data fields, but maintain compatibility
+             * with older blk files, we will do some pre-processing to check what format of field we are looking at,
+             * and convert it  to the new format.
              */
             String[] numbersArray = numbers.split(Bay.FIELD_SEPARATOR);
 
@@ -1553,9 +1536,8 @@ public class BLKFile {
             // If 2-field format, return with default values set.
             if (numbersArray.length == 2) {
                 return temp;
-            } else if (numbersArray.length > 2) {
-                // Attempt to parse index 2 as an integer bay number, otherwise leave it as
-                // default
+            } else {
+                // Attempt to parse index 2 as an integer bay number, otherwise leave it as default
                 try {
                     temp[2] = String.valueOf(Integer.parseInt(numbersArray[2]));
                 } catch (NumberFormatException e) {
@@ -1569,9 +1551,8 @@ public class BLKFile {
                 bitmap |= TECH_CLAN_BASE;
             }
 
-            // the bay type indicator will be either the third or fourth item, but the bay
-            // number always comes before it,
-            // so we make sure to pick the last item in the array
+            // the bay type indicator will be either the third or fourth item, but the bay number always comes before
+            // it, so we make sure to pick the last item in the array
             String potentialBayTypeIndicator = "";
             if (numbersArray.length == 3) {
                 potentialBayTypeIndicator = numbersArray[2];
@@ -1583,9 +1564,8 @@ public class BLKFile {
             if (!potentialBayTypeIndicator.isEmpty()) {
                 if (potentialBayTypeIndicator.equalsIgnoreCase(COMSTAR_BAY)) {
                     bitmap |= COMSTAR_BIT;
-                } else if (Set.of(
-                        new String[] { "jump", "foot", "motorized", "mechanized" })
-                        .contains(potentialBayTypeIndicator.toLowerCase())) {
+                } else if (Set.of(new String[] { "jump", "foot", "motorized", "mechanized" })
+                                 .contains(potentialBayTypeIndicator.toLowerCase())) {
                     // Found an infantry type in the last field (2 or 3)
                     // Assign to field 3
                     temp[3] = potentialBayTypeIndicator;
@@ -1625,10 +1605,9 @@ public class BLKFile {
     }
 
     /**
-     * Sets the armor tech level for the entity based on the data file.
-     * The file should have "armor_tech_level", but it was changed from
-     * "armor_tech". And if this isn't found for some reason, it'll fall
-     * back and use the entity's tech base to determine this.
+     * Sets the armor tech level for the entity based on the data file. The file should have "armor_tech_level", but it
+     * was changed from "armor_tech". And if this isn't found for some reason, it'll fall back and use the entity's tech
+     * base to determine this.
      *
      * @param entity entity that should have its armor tech level set based on the data file
      */

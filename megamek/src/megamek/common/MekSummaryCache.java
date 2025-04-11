@@ -1,17 +1,31 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.common;
 
@@ -24,14 +38,15 @@ import java.util.zip.ZipFile;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.bays.*;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
 import megamek.logging.MMLogger;
 
 /**
- * Cache of the Mek summary information. Implemented as Singleton so a client
- * and server running in the same process can share it
+ * Cache of the Mek summary information. Implemented as Singleton so a client and server running in the same process can
+ * share it
  *
  * @author arlith
  */
@@ -45,8 +60,13 @@ public class MekSummaryCache {
     public static final String FILENAME_UNITS_CACHE = "units.cache";
     public static final String FILENAME_LOOKUP = "name_changes.txt";
 
-    private static final List<String> SUPPORTED_FILE_EXTENSIONS = List.of(".mtf", ".blk", ".mep", ".hmv", ".tdb",
-            ".hmp", ".zip");
+    private static final List<String> SUPPORTED_FILE_EXTENSIONS = List.of(".mtf",
+          ".blk",
+          ".mep",
+          ".hmv",
+          ".tdb",
+          ".hmp",
+          ".zip");
 
     private static MekSummaryCache instance;
     private static boolean disposeInstance = false;
@@ -90,9 +110,8 @@ public class MekSummaryCache {
     }
 
     /**
-     * Checks the unit files directory for any changes since the last time the unit
-     * cache was
-     * loaded. If there are any updates, the new cache is saved.
+     * Checks the unit files directory for any changes since the last time the unit cache was loaded. If there are any
+     * updates, the new cache is saved.
      *
      * @param ignoreUnofficial If true, skips unofficial directories
      */
@@ -105,8 +124,7 @@ public class MekSummaryCache {
         File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
         long lastModified = unit_cache_path.exists() ? unit_cache_path.lastModified() : 0L;
 
-        instance.loader = new Thread(() -> instance.refreshCache(lastModified, ignoreUnofficial),
-                "Mek Cache Loader");
+        instance.loader = new Thread(() -> instance.refreshCache(lastModified, ignoreUnofficial), "Mek Cache Loader");
         instance.loader.setPriority(Thread.NORM_PRIORITY - 1);
         instance.loader.start();
     }
@@ -199,8 +217,7 @@ public class MekSummaryCache {
         loadReport.append("Reading unit files:\n");
 
         if (!ignoreUnofficial) {
-            File unit_cache_path = new MegaMekFile(getUnitCacheDir(),
-                    FILENAME_UNITS_CACHE).getFile();
+            File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
             // check the cache
             try {
                 if (unit_cache_path.exists()) {
@@ -234,8 +251,7 @@ public class MekSummaryCache {
                     inputStream.close();
                 }
             } catch (Exception ex) {
-                loadReport.append("  Unable to load unit cache: ")
-                        .append(ex.getMessage()).append("\n");
+                loadReport.append("  Unable to load unit cache: ").append(ex.getMessage()).append("\n");
                 logger.error(loadReport.toString(), ex);
             }
         }
@@ -248,11 +264,14 @@ public class MekSummaryCache {
         done();
     }
 
-    private void checkForChanges(boolean ignoreUnofficial, Vector<MekSummary> vMeks,
-            Set<String> sKnownFiles, long lLastCheck) {
+    private void checkForChanges(boolean ignoreUnofficial, Vector<MekSummary> vMeks, Set<String> sKnownFiles,
+          long lLastCheck) {
         // load any changes since the last check time
-        boolean bNeedsUpdate = loadMeksFromDirectory(vMeks, sKnownFiles,
-                lLastCheck, Configuration.unitsDir(), ignoreUnofficial);
+        boolean bNeedsUpdate = loadMeksFromDirectory(vMeks,
+              sKnownFiles,
+              lLastCheck,
+              Configuration.unitsDir(),
+              ignoreUnofficial);
 
         // Official units are in the internal dir, not in the user dirs or story arcs
         // dir
@@ -271,16 +290,19 @@ public class MekSummaryCache {
             }
 
             // load units from story arcs
-            File storyarcsDir = Configuration.storyarcsDir();
-            if (storyarcsDir.exists() && storyarcsDir.isDirectory()) {
-                File[] storyArcsFiles = storyarcsDir.listFiles();
+            File storyArcsDir = Configuration.storyarcsDir();
+            if (storyArcsDir.exists() && storyArcsDir.isDirectory()) {
+                File[] storyArcsFiles = storyArcsDir.listFiles();
                 if (storyArcsFiles != null) {
                     for (File file : storyArcsFiles) {
                         if (file.isDirectory()) {
                             File storyArcUnitsDir = new File(file.getPath() + "/data/mekfiles");
                             if (storyArcUnitsDir.exists() && storyArcUnitsDir.isDirectory()) {
-                                bNeedsUpdate |= loadMeksFromDirectory(vMeks, sKnownFiles, lLastCheck, storyArcUnitsDir,
-                                        false);
+                                bNeedsUpdate |= loadMeksFromDirectory(vMeks,
+                                      sKnownFiles,
+                                      lLastCheck,
+                                      storyArcUnitsDir,
+                                      false);
                             }
                         }
                     }
@@ -331,8 +353,7 @@ public class MekSummaryCache {
         loadReport.append(data.length).append(" units loaded.\n");
 
         if (!failedFiles.isEmpty()) {
-            loadReport.append("  ").append(failedFiles.size())
-                    .append(" units failed to load...\n");
+            loadReport.append("  ").append(failedFiles.size()).append(" units failed to load...\n");
         }
 
         logger.debug(loadReport.toString());
@@ -357,10 +378,10 @@ public class MekSummaryCache {
 
     private void saveCache(List<MekSummary> data) {
         loadReport.append("Saving unit cache.\n");
-        try (FileOutputStream fos = new FileOutputStream(
-                new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile());
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+        try (FileOutputStream fos = new FileOutputStream(new MegaMekFile(getUnitCacheDir(),
+              FILENAME_UNITS_CACHE).getFile());
+              BufferedOutputStream bos = new BufferedOutputStream(fos);
+              ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(data.size());
             for (MekSummary element : data) {
                 oos.writeObject(element);
@@ -436,13 +457,13 @@ public class MekSummaryCache {
             ms.setAltTypes(alt);
         } else if (e.isClan()) {
             ms.setAltTypes(new int[] { TechConstants.T_CLAN_TW, TechConstants.T_CLAN_ADVANCED,
-                    TechConstants.T_CLAN_EXPERIMENTAL });
+                                       TechConstants.T_CLAN_EXPERIMENTAL });
         } else if (e.getTechLevel() == TechConstants.T_INTRO_BOXSET) {
             ms.setAltTypes(new int[] { TechConstants.T_INTRO_BOXSET, TechConstants.T_IS_ADVANCED,
-                    TechConstants.T_IS_EXPERIMENTAL });
+                                       TechConstants.T_IS_EXPERIMENTAL });
         } else {
             ms.setAltTypes(new int[] { TechConstants.T_IS_TW_NON_BOX, TechConstants.T_IS_ADVANCED,
-                    TechConstants.T_IS_EXPERIMENTAL });
+                                       TechConstants.T_IS_EXPERIMENTAL });
         }
         ms.setTons(e.getWeight());
         if (e instanceof BattleArmor) {
@@ -500,7 +521,7 @@ public class MekSummaryCache {
         ms.setDoomedInExtremeTemp(e.doomedInExtremeTemp());
         ms.setDoomedInVacuum(e.doomedInVacuum());
 
-        // Check to see if this entity has a cockpit, and if so, set it's type
+        // Check to see if this entity has a cockpit, and if so, set its type
         if ((e instanceof Mek)) {
             ms.setCockpitType(((Mek) e).getCockpitType());
         } else if ((e instanceof Aero)) {
@@ -650,9 +671,9 @@ public class MekSummaryCache {
                 shvDoors += ((SuperHeavyVehicleBay) t).getCurrentDoors();
                 shvUnits += t.getUnused();
             }
-            if (t instanceof DropshuttleBay) {
+            if (t instanceof DropShuttleBay) {
                 dBays++;
-                dDoors += ((DropshuttleBay) t).getCurrentDoors();
+                dDoors += ((DropShuttleBay) t).getCurrentDoors();
                 dUnits += t.getUnused();
             }
             if (t instanceof BattleArmorHandles) {
@@ -728,22 +749,20 @@ public class MekSummaryCache {
     }
 
     /**
-     * Loading a complete {@link Entity} object for each summary is a bear and
-     * should be
-     * changed, but it lets me use the existing parsers
+     * Loading a complete {@link Entity} object for each summary is a bear and should be changed, but it lets me use the
+     * existing parsers
      *
      * @param vMeks       List to add units to as they are loaded
      * @param sKnownFiles Files that have been processed so far and can be skipped
      * @param lLastCheck  The timestamp of the last time the cache was updated
      * @param fDir        The directory to load units from
+     *
      * @return Whether the list of units has changed, requiring rewriting the cache
      */
-    private boolean loadMeksFromDirectory(Vector<MekSummary> vMeks,
-            Set<String> sKnownFiles, long lLastCheck, File fDir,
-            boolean ignoreUnofficial) {
+    private boolean loadMeksFromDirectory(Vector<MekSummary> vMeks, Set<String> sKnownFiles, long lLastCheck, File fDir,
+          boolean ignoreUnofficial) {
         boolean bNeedsUpdate = false;
-        loadReport.append("  Looking in ").append(fDir.getPath())
-                .append("...\n");
+        loadReport.append("  Looking in ").append(fDir.getPath()).append("...\n");
         int thisDirectoriesFileCount = 0;
         String[] sa = fDir.list();
 
@@ -759,20 +778,17 @@ public class MekSummaryCache {
                 }
                 if (f.isDirectory()) {
                     if (f.getName().equalsIgnoreCase("unsupported") || f.getName().equalsIgnoreCase(".mml_tmp")) {
-                        // Meks in "unsupported" are ignored because
-                        // they have features not implemented in MM yet.
+                        // Meks in "unsupported" are ignored because they have features not implemented in MM yet.
                         //
-                        // Meks in ".mml_tmp" are created by MML to back up unsaved work,
-                        // and should only be loaded by the MML unit recovery process.
+                        // Meks in ".mml_tmp" are created by MML to back up unsaved work, and should only be loaded
+                        // by the MML unit recovery process.
                         continue;
                     } else if (f.getName().equalsIgnoreCase("unofficial") && ignoreUnofficial) {
-                        // Meks in this directory are ignored because
-                        // they are unofficial and we don't want those right
+                        // Meks in this directory are ignored because they are unofficial, and we don't want those right
                         // now.
                         continue;
-                    } else if (f.getName().equalsIgnoreCase("_svn")
-                            || f.getName().equalsIgnoreCase(".svn")) {
-                        // This is a Subversion work directory. Lets ignore it.
+                    } else if (f.getName().equalsIgnoreCase("_svn") || f.getName().equalsIgnoreCase(".svn")) {
+                        // This is a Subversion work directory. Let's ignore it.
                         continue;
                     }
                     // recursion is fun
@@ -809,7 +825,8 @@ public class MekSummaryCache {
                         loadReport.append("    Loading from ").append(f).append("\n");
                         while (failedEquipment.hasNext()) {
                             loadReport.append("      Failed to load equipment: ")
-                                    .append(failedEquipment.next()).append("\n");
+                                  .append(failedEquipment.next())
+                                  .append("\n");
                         }
                     }
                 } catch (Exception ex) {
@@ -828,26 +845,24 @@ public class MekSummaryCache {
         return bNeedsUpdate;
     }
 
-    private boolean loadMeksFromZipFile(Vector<MekSummary> vMeks,
-            Set<String> sKnownFiles, long lLastCheck, File fZipFile) {
+    private boolean loadMeksFromZipFile(Vector<MekSummary> vMeks, Set<String> sKnownFiles, long lLastCheck,
+          File fZipFile) {
         boolean bNeedsUpdate = false;
         ZipFile zFile;
         int thisZipFileCount = 0;
         try {
             zFile = new ZipFile(fZipFile);
         } catch (Exception ex) {
-            loadReport.append("  Unable to load file ")
-                    .append(fZipFile.getName()).append(": ");
+            loadReport.append("  Unable to load file ").append(fZipFile.getName()).append(": ");
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);
             ex.printStackTrace(printWriter);
             loadReport.append(stringWriter.getBuffer()).append("\n");
             return false;
         }
-        loadReport.append("  Looking in zip file ").append(fZipFile.getPath())
-                .append("...\n");
+        loadReport.append("  Looking in zip file ").append(fZipFile.getPath()).append("...\n");
 
-        for (Enumeration<?> i = zFile.entries(); i.hasMoreElements();) {
+        for (Enumeration<?> i = zFile.entries(); i.hasMoreElements(); ) {
             if (interrupted) {
                 done();
                 try {
@@ -862,7 +877,7 @@ public class MekSummaryCache {
             if (zEntry.isDirectory()) {
                 if (zEntry.getName().equalsIgnoreCase("unsupported")) {
                     loadReport.append(
-                            " Do not place special 'unsupported' type folders in zip files, they must \nbe uncompressed directories to work properly. Note that you may place \nzip files inside of 'unsupported' type folders, though.\n");
+                          " Do not place special 'unsupported' type folders in zip files, they must \nbe uncompressed directories to work properly. Note that you may place \nzip files inside of 'unsupported' type folders, though.\n");
                 }
                 continue;
             }
@@ -870,14 +885,13 @@ public class MekSummaryCache {
             if (SUPPORTED_FILE_EXTENSIONS.stream().noneMatch(lowerCaseName::endsWith)) {
                 continue;
             }
-            if ((Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck)
-                    && sKnownFiles.contains(zEntry.getName())) {
+            if ((Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck) &&
+                      sKnownFiles.contains(zEntry.getName())) {
                 continue;
             }
 
             try {
-                MekFileParser mfp = new MekFileParser(
-                        zFile.getInputStream(zEntry), zEntry.getName());
+                MekFileParser mfp = new MekFileParser(zFile.getInputStream(zEntry), zEntry.getName());
                 Entity e = mfp.getEntity();
                 MekSummary ms = getSummary(e, fZipFile, zEntry.getName());
                 vMeks.addElement(ms);
@@ -887,16 +901,15 @@ public class MekSummaryCache {
                 zipCount++;
                 Iterator<String> failedEquipment = e.getFailedEquipment();
                 if (failedEquipment.hasNext()) {
-                    loadReport.append("    Loading from zip file")
-                            .append(" >> ").append(zEntry.getName()).append("\n");
+                    loadReport.append("    Loading from zip file").append(" >> ").append(zEntry.getName()).append("\n");
                     while (failedEquipment.hasNext()) {
                         loadReport.append("      Failed to load equipment: ")
-                                .append(failedEquipment.next()).append("\n");
+                              .append(failedEquipment.next())
+                              .append("\n");
                     }
                 }
             } catch (Exception ex) {
-                loadReport.append("    Loading from zip file").append(" >> ")
-                        .append(zEntry.getName()).append("\n");
+                loadReport.append("    Loading from zip file").append(" >> ").append(zEntry.getName()).append("\n");
                 loadReport.append("      Unable to load file: ");
                 StringWriter stringWriter = new StringWriter();
                 PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -914,8 +927,7 @@ public class MekSummaryCache {
             logger.error("", ex);
         }
 
-        loadReport.append("  ...loaded ").append(thisZipFileCount)
-                .append(" files.\n");
+        loadReport.append("  ...loaded ").append(thisZipFileCount).append(" files.\n");
 
         return bNeedsUpdate;
     }
@@ -924,8 +936,8 @@ public class MekSummaryCache {
         File lookupNames = new MegaMekFile(getUnitCacheDir(), FILENAME_LOOKUP).getFile();
         if (lookupNames.exists()) {
             try (FileInputStream fis = new FileInputStream(lookupNames);
-                    InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                    BufferedReader br = new BufferedReader(isr)) {
+                  InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                  BufferedReader br = new BufferedReader(isr)) {
                 String line;
                 String lookupName;
                 String entryName;

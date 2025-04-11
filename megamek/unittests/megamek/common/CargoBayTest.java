@@ -1,21 +1,45 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 
 package megamek.common;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.common.bays.CargoBay;
 import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
@@ -26,11 +50,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class CargoBayTest {
 
@@ -129,7 +148,8 @@ class CargoBayTest {
     }
 
     @ParameterizedTest()
-    @EnumSource(names = {"INF_LEG", "INF_MOTORIZED", "INF_JUMP", "INF_UMU", "HOVER", "SUBMARINE", "TRACKED", "VTOL", "WHEELED"})
+    @EnumSource(names = { "INF_LEG", "INF_MOTORIZED", "INF_JUMP", "INF_UMU", "HOVER", "SUBMARINE", "TRACKED", "VTOL",
+                          "WHEELED" })
     void testCargoBayCanLoadInfantry(EntityMovementMode mode) {
         CargoBay bay = new CargoBay(100.0, 1, 1);
         Infantry unit = createInfantry(mode.name(), "", "John Q. Test");
@@ -138,7 +158,8 @@ class CargoBayTest {
     }
 
     @ParameterizedTest()
-    @EnumSource(names = {"INF_LEG", "INF_MOTORIZED", "INF_JUMP", "INF_UMU", "HOVER", "SUBMARINE", "TRACKED", "VTOL", "WHEELED"})
+    @EnumSource(names = { "INF_LEG", "INF_MOTORIZED", "INF_JUMP", "INF_UMU", "HOVER", "SUBMARINE", "TRACKED", "VTOL",
+                          "WHEELED" })
     void testCargoBayCanUnLoadInfantry(EntityMovementMode mode) {
         CargoBay bay = new CargoBay(100.0, 1, 1);
         Infantry unit = createInfantry(mode.name(), "", "John Q. Test");
@@ -147,7 +168,8 @@ class CargoBayTest {
     }
 
     @ParameterizedTest()
-    @EnumSource(names = {"INF_LEG", "INF_MOTORIZED", "INF_JUMP", "INF_UMU", "HOVER", "SUBMARINE", "TRACKED", "VTOL", "WHEELED"})
+    @EnumSource(names = { "INF_LEG", "INF_MOTORIZED", "INF_JUMP", "INF_UMU", "HOVER", "SUBMARINE", "TRACKED", "VTOL",
+                          "WHEELED" })
     void testCargoBaySpaceUsage(EntityMovementMode mode) {
         Infantry unit = createInfantry(mode.name(), "", "John Q. Test");
         unit.setMovementMode(mode);

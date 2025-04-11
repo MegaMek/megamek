@@ -1,24 +1,34 @@
 /*
  * Copyright (c) 2007 - Jay Lawson
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.common;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +40,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.bays.CargoBay;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
@@ -46,16 +57,17 @@ import megamek.logging.MMLogger;
 public class FighterSquadron extends AeroSpaceFighter {
     private static final MMLogger logger = MMLogger.create(FighterSquadron.class);
 
+    @Serial
     private static final long serialVersionUID = 3491212296982370726L;
 
     public static final int MAX_SIZE = 6;
-    // Value is arbitrary, but StratOps shows up to 10, so we'll use that as an
-    // alternate MAX_SIZE
-    // when using the option for larger squadrons
+    // Value is arbitrary, but StratOps shows up to 10, so we'll use that as an alternate MAX_SIZE when using the
+    // option for larger squadrons
     public static final int ALTERNATE_MAX_SIZE = 10;
 
-    private static final Predicate<Entity> ACTIVE_CHECK = ent -> !((ent == null) || ent.isDestroyed()
-            || ent.isDoomed());
+    private static final Predicate<Entity> ACTIVE_CHECK = ent -> !((ent == null) ||
+                                                                         ent.isDestroyed() ||
+                                                                         ent.isDoomed());
 
     private final List<Integer> fighters = new ArrayList<>();
 
@@ -79,9 +91,7 @@ public class FighterSquadron extends AeroSpaceFighter {
     @Override
     public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
         CostCalculator.addNoReportNote(calcReport, this);
-        return getSubEntities().stream()
-                .mapToDouble(entity -> entity.getCost(ignoreAmmo))
-                .sum();
+        return getSubEntities().stream().mapToDouble(entity -> entity.getCost(ignoreAmmo)).sum();
     }
 
     @Override
@@ -91,38 +101,27 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public int getOSI() {
-        return getActiveSubEntities().stream()
-                .mapToInt(ent -> ((IAero) ent).getOSI())
-                .min()
-                .orElse(0);
+        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getOSI()).min().orElse(0);
     }
 
     @Override
     public int getSI() {
-        return getActiveSubEntities().stream()
-                .mapToInt(ent -> ((IAero) ent).getSI())
-                .min()
-                .orElse(0);
+        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getSI()).min().orElse(0);
     }
 
     @Override
     public int getTotalArmor() {
-        return getSubEntities().stream()
-                .mapToInt(entity -> ((IAero) entity).getCapArmor())
-                .sum();
+        return getSubEntities().stream().mapToInt(entity -> ((IAero) entity).getCapArmor()).sum();
     }
 
     @Override
     public int getTotalOArmor() {
-        return getSubEntities().stream()
-                .mapToInt(entity -> ((IAero) entity).getCap0Armor())
-                .sum();
+        return getSubEntities().stream().mapToInt(entity -> ((IAero) entity).getCap0Armor()).sum();
     }
 
     /**
-     * Per SO, fighter squadrons can't actually be crippled
-     * Individual crippled fighters should be detached and sent home, but it isn't
-     * required by the rules
+     * Per SO, fighter squadrons can't actually be crippled Individual crippled fighters should be detached and sent
+     * home, but it isn't required by the rules
      *
      * @see megamek.common.Aero#isCrippled()
      */
@@ -141,39 +140,26 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
-        return getActiveSubEntities().stream()
-                .mapToInt(ent -> ent.getWalkMP(mpCalculationSetting))
-                .min()
-                .orElse(0);
+        return getActiveSubEntities().stream().mapToInt(ent -> ent.getWalkMP(mpCalculationSetting)).min().orElse(0);
     }
 
     @Override
     public int getCurrentThrust() {
-        return getActiveSubEntities().stream()
-                .mapToInt(ent -> ((IAero) ent).getCurrentThrust())
-                .min()
-                .orElse(0);
+        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getCurrentThrust()).min().orElse(0);
     }
 
     @Override
     public int getFuel() {
-        return getActiveSubEntities().stream()
-                .mapToInt(ent -> ((IAero) ent).getFuel())
-                .min()
-                .orElse(0);
+        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getFuel()).min().orElse(0);
     }
 
     @Override
     public int getCurrentFuel() {
-        return getActiveSubEntities().stream()
-                .mapToInt(ent -> ((IAero) ent).getCurrentFuel())
-                .min()
-                .orElse(0);
+        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getCurrentFuel()).min().orElse(0);
     }
 
     /**
-     * Squadrons have an SI for PSR purposes, but don't take SI damage. This should
-     * return 100%.
+     * Squadrons have an SI for PSR purposes, but don't take SI damage. This should return 100%.
      */
     @Override
     public double getInternalRemainingPercent() {
@@ -189,8 +175,8 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
+                  !game.getBoard().inSpace()) {
             return super.hasActiveECM();
         } else {
             return getActiveSubEntities().stream().anyMatch(Entity::hasActiveECM);
@@ -211,52 +197,52 @@ public class FighterSquadron extends AeroSpaceFighter {
             prd.addModifier(+1, "Used more than safe thrust");
         }
         int vel = getCurrentVelocity();
-        int vmod = vel - (2 * getWalkMP());
-        if (!getGame().getBoard().inSpace() && (vmod > 0)) {
-            prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
+        int velocityMod = vel - (2 * getWalkMP());
+        if (!getGame().getBoard().inSpace() && (velocityMod > 0)) {
+            prd.addModifier(velocityMod, "Velocity greater than 2x safe thrust");
         }
 
         // add in atmospheric effects later
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (!(game.getBoard().inSpace()
-                || conditions.getAtmosphere().isVacuum())) {
+        if (!(game.getBoard().inSpace() || conditions.getAtmosphere().isVacuum())) {
             prd.addModifier(+2, "Atmospheric operations");
             prd.addModifier(-1, "fighter/ small craft");
         }
 
-        // according to personal communication with Welshman, the normal crit
+        // according to personal communication with Welshman, the normal critical slot
         // penalties are added up across the fighter squadron
         fighters.stream()
-                .map(fid -> game.getEntity(fid))
-                .filter(ACTIVE_CHECK).map(ent -> (IAero) ent)
-                .forEachOrdered(
-                        ent -> {
-                            int avihits = ent.getAvionicsHits();
-                            if ((avihits > 0) && (avihits < 3)) {
-                                prd.addModifier(avihits, "Avionics Damage");
-                            } else if (avihits >= 3) {
-                                // this should probably be replaced with some kind of AVI_DESTROYED boolean
-                                prd.addModifier(5, "Avionics Destroyed");
-                            }
+              .map(fid -> game.getEntity(fid))
+              .filter(ACTIVE_CHECK)
+              .map(ent -> (IAero) ent)
+              .filter(Objects::nonNull)
+              .forEachOrdered(ent -> {
+                  int avionicsHits = ent.getAvionicsHits();
+                  if ((avionicsHits > 0) && (avionicsHits < 3)) {
+                      prd.addModifier(avionicsHits, "Avionics Damage");
+                  } else if (avionicsHits >= 3) {
+                      // this should probably be replaced with some kind of AVI_DESTROYED boolean
+                      prd.addModifier(5, "Avionics Destroyed");
+                  }
 
-                            // life support (only applicable to non-ASFs)
-                            if (!ent.hasLifeSupport()) {
-                                prd.addModifier(2, "No life support");
-                            }
+                  // life support (only applicable to non-ASFs)
+                  if (!ent.hasLifeSupport()) {
+                      prd.addModifier(2, "No life support");
+                  }
 
-                            if (((Entity) ent).hasModularArmor()) {
-                                prd.addModifier(1, "Modular Armor");
-                            }
-                        });
+                  if (((Entity) ent).hasModularArmor()) {
+                      prd.addModifier(1, "Modular Armor");
+                  }
+              });
         return prd;
     }
 
     @Override
     public int getClusterMods() {
         return getActiveSubEntities().stream()
-                .filter(ent -> (((IAero) ent).getFCSHits() <= 2))
-                .mapToInt(ent -> ((IAero) ent).getClusterMods())
-                .sum();
+                     .filter(ent -> (((IAero) ent).getFCSHits() <= 2))
+                     .mapToInt(ent -> ((IAero) ent).getClusterMods())
+                     .sum();
     }
 
     @Override
@@ -290,8 +276,7 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-            int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover) {
         List<Entity> activeFighters = getActiveSubEntities();
 
         // If this squadron is doomed or is of size 1 then just return the first one
@@ -320,10 +305,8 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     /**
-     * Update sensors. Use the active sensor of the first fighter in the squadron
-     * that hasn't taken 3 sensor hits
-     * BAPs don't count as active sensors in space, but they do make detection rolls
-     * easier
+     * Update sensors. Use the active sensor of the first fighter in the squadron that hasn't taken 3 sensor hits BAPs
+     * don't count as active sensors in space, but they do make detection rolls easier
      */
     public void updateSensors() {
         if (getActiveSensor() == null) {
@@ -349,15 +332,15 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     /**
-     * instead of trying to track the individual units weapons, just recompile
-     * the weapon groups for this squadron each round
+     * instead of trying to track the individual units weapons, just recompile the weapon groups for this squadron each
+     * round
      */
     @Override
     public void updateWeaponGroups() {
         // first we need to reset all the weapons in our existing mounts to zero
         // until proven otherwise
         for (Integer group : weaponGroups.values()) {
-            Mounted groupEquipment = getEquipment(group);
+            Mounted<?> groupEquipment = getEquipment(group);
             if (groupEquipment != null) {
                 groupEquipment.setNWeapons(0);
             }
@@ -399,12 +382,12 @@ public class FighterSquadron extends AeroSpaceFighter {
                 String name = key.split(":")[0];
                 int loc = Integer.parseInt(key.split(":")[1]);
                 EquipmentType etype = EquipmentType.get(name);
-                WeaponMounted newmount;
+                WeaponMounted newMount;
                 if (etype != null) {
                     try {
-                        newmount = addWeaponGroup(etype, loc);
-                        newmount.setNWeapons(groups.get(key));
-                        weaponGroups.put(key, getEquipmentNum(newmount));
+                        newMount = addWeaponGroup(etype, loc);
+                        newMount.setNWeapons(groups.get(key));
+                        weaponGroups.put(key, getEquipmentNum(newMount));
                     } catch (LocationFullException ex) {
                         logger.error("Unable to compile weapon groups.", ex);
                         return;
@@ -470,8 +453,9 @@ public class FighterSquadron extends AeroSpaceFighter {
             int currBombPoints = (int) Math.round(fighter.getWeight() / 5);
             maxExtBombPoints = Math.min(maxExtBombPoints, currBombPoints);
             // Internal (cargo bay) bomb points; requires IBB to utilize
-            currBombPoints = getTransportBays().stream().mapToInt(
-                    tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0).sum();
+            currBombPoints = getTransportBays().stream()
+                                   .mapToInt(tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0)
+                                   .sum();
             maxIntBombPoints = Math.min(maxIntBombPoints, currBombPoints);
         }
     }
@@ -489,11 +473,9 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     /**
-     * Produce an int array of the number of bombs of each type based on the
-     * current bomblist. Since this is a FighterSquadron, these numbers
-     * represent the number of bombs in a salvo. That is, it is a count of the
-     * number of fighters in the squadron that have a bomb of the particular
-     * type mounted.
+     * Produce an int array of the number of bombs of each type based on the current bomb list. Since this is a
+     * FighterSquadron, these numbers represent the number of bombs in a salvo. That is, it is a count of the number of
+     * fighters in the squadron that have a bomb of the particular type mounted.
      */
     @Override
     public int[] getBombLoadout() {
@@ -508,7 +490,7 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public void applyBombs() {
-        // Make sure all of the aeros have their bombs applied, otherwise problems
+        // Make sure all the aerospace have their bombs applied, otherwise problems
         // once the bombs are applied, the choices are cleared, so it's not an
         // issue if the bombs are applied twice for an Aero
         for (Entity fighter : getSubEntities()) {
@@ -518,10 +500,9 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     /**
-     * This method looks at the bombs equipped on all the fighters in the
-     * squadron and determines what possible bombing attacks the squadrons
-     * can make.
-     *
+     * This method looks at the bombs equipped on all the fighters in the squadron and determines what possible bombing
+     * attacks the squadrons can make.
+     * <p>
      * TODO: Make this into a generic "clean up bomb loadout" method
      */
     public void computeSquadronBombLoadout() {
@@ -532,9 +513,10 @@ public class FighterSquadron extends AeroSpaceFighter {
             int finalBombType = bombType;
             int maxBombCount = 0;
             for (Entity fighter : getSubEntities()) {
-                int bombCount = (int) fighter.getBombs().stream()
-                        .filter(m -> m.getType().getBombType() == finalBombType)
-                        .count();
+                int bombCount = (int) fighter.getBombs()
+                                            .stream()
+                                            .filter(m -> m.getType().getBombType() == finalBombType)
+                                            .count();
                 maxBombCount = Math.max(bombCount, maxBombCount);
             }
             extBombChoices[bombType] = maxBombCount;
@@ -544,8 +526,8 @@ public class FighterSquadron extends AeroSpaceFighter {
         int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
         for (int type = 0; type < BombType.B_NUM; type++) {
             for (int i = 0; i < extBombChoices[type]; i++) {
-                if ((type == BombType.B_ALAMO)
-                        && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
+                if ((type == BombType.B_ALAMO) &&
+                          !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;
                 } else if ((type > BombType.B_TAG) && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
                     continue;
@@ -553,8 +535,9 @@ public class FighterSquadron extends AeroSpaceFighter {
 
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
-                if ((null != BombType.getBombWeaponName(type)) && (type != BombType.B_ARROW)
-                        && (type != BombType.B_HOMING)) {
+                if ((null != BombType.getBombWeaponName(type)) &&
+                          (type != BombType.B_ARROW) &&
+                          (type != BombType.B_HOMING)) {
                     try {
                         addBomb(EquipmentType.get(BombType.getBombWeaponName(type)), LOC_NOSE);
                     } catch (Exception ignored) {
@@ -562,7 +545,7 @@ public class FighterSquadron extends AeroSpaceFighter {
                     }
                 }
                 // If the bomb was added as a weapon, don't add the ammo
-                // The ammo will end up never getting removed from the squadron
+                //  will end up never getting removed from the squadron
                 // because it doesn't count as a weapon.
                 if ((type != BombType.B_TAG) && (null == BombType.getBombWeaponName(type))) {
                     try {
@@ -576,8 +559,9 @@ public class FighterSquadron extends AeroSpaceFighter {
             extBombChoices[type] = 0;
         }
         // add the space bomb attack
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
-                && game.getBoard().inSpace() && !getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB) &&
+                  game.getBoard().inSpace() &&
+                  !getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
             try {
                 addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (Exception ignored) {
@@ -606,13 +590,12 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     /**
-     * @return The maximum fighter count of a fighter squadron. This depends on game
-     *         options ("Large Squadrons").
+     * @return The maximum fighter count of a fighter squadron. This depends on game options ("Large Squadrons").
      */
     public int getMaxSize() {
-        return game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)
-                ? ALTERNATE_MAX_SIZE
-                : MAX_SIZE;
+        return game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS) ?
+                     ALTERNATE_MAX_SIZE :
+                     MAX_SIZE;
     }
 
     @Override
@@ -620,18 +603,13 @@ public class FighterSquadron extends AeroSpaceFighter {
         if (!unit.isEnemyOf(this) && unit.isFighter() && (fighters.size() < getMaxSize())) {
             return true;
         }
-        // fighter squadrons can also load other fighter squadrons provided there is
-        // enough space
-        // and the loadee is not empty
-        if ((unit instanceof FighterSquadron)
-                && !unit.isEnemyOf(this)
-                && (getId() != unit.getId())
-                && !((FighterSquadron) unit).fighters.isEmpty()
-                && ((fighters.size() + ((FighterSquadron) unit).fighters.size()) <= getMaxSize())) {
-            return true;
-        }
-
-        return false;
+        // fighter squadrons can also load other fighter squadrons provided there is enough space and the loaded is
+        // not empty
+        return (unit instanceof FighterSquadron) &&
+                     !unit.isEnemyOf(this) &&
+                     (getId() != unit.getId()) &&
+                     !((FighterSquadron) unit).fighters.isEmpty() &&
+                     ((fighters.size() + ((FighterSquadron) unit).fighters.size()) <= getMaxSize());
     }
 
     @Override
@@ -748,17 +726,16 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public List<Entity> getSubEntities() {
-        return fighters.stream().map(fid -> game.getEntity(fid))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        return fighters.stream().map(fid -> game.getEntity(fid)).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override
     public List<Entity> getActiveSubEntities() {
-        return fighters.stream().map(fid -> game.getEntity(fid))
-                .filter(Objects::nonNull)
-                .filter(ACTIVE_CHECK)
-                .collect(Collectors.toList());
+        return fighters.stream()
+                     .map(fid -> game.getEntity(fid))
+                     .filter(Objects::nonNull)
+                     .filter(ACTIVE_CHECK)
+                     .collect(Collectors.toList());
     }
 
     @Override
@@ -777,9 +754,8 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     /**
-     * Override of Entity method.
-     * This needs to be set or we can't do a reverse lookup from a Capital Fighter
-     * to its Squadron.
+     * Override of Entity method. This needs to be set, or we can't do a reverse lookup from a Capital Fighter to its
+     * Squadron.
      *
      * @param transportId - the <code>int</code> ID of our transport. The ID is
      *                    <b>not</b> validated. This value should be
@@ -787,23 +763,24 @@ public class FighterSquadron extends AeroSpaceFighter {
      */
     @Override
     public void setTransportId(int transportId) {
-        fighters.stream().map(fid -> game.getEntity(fid))
-                .forEach(f -> f.setTransportId(transportId));
+        fighters.stream()
+              .map(fid -> game.getEntity(fid))
+              .filter(Objects::nonNull)
+              .forEach(f -> f.setTransportId(transportId));
     }
 
     /**
-     * Damage a capital fighter's weapons. WeaponGroups are damaged by critical
-     * hits.
-     * This matches up the individual fighter's weapons and critical slots and
-     * damages those
-     * for MHQ resolution
+     * Damage a capital fighter's weapons. WeaponGroups are damaged by critical hits. This matches up the individual
+     * fighter's weapons and critical slots and damages those for MHQ resolution
      *
      * @param loc - Int corresponding to the location struck
      */
     public void damageCapFighterWeapons(int loc) {
         for (int fid : fighters) {
-            AeroSpaceFighter fighter = (AeroSpaceFighter) game.getEntity(fid);
-            fighter.damageLocation(loc);
+            Entity entity = game.getEntity(fid);
+            if (entity instanceof AeroSpaceFighter fighter) {
+                fighter.damageLocation(loc);
+            }
         }
     }
 

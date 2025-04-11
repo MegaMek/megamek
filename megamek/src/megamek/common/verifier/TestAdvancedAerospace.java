@@ -1,16 +1,29 @@
 /*
- * MegaMek -
- * Copyright (C) 2018 - The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.common.verifier;
 
@@ -23,6 +36,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
+import megamek.common.bays.Bay;
+import megamek.common.bays.BayData;
+import megamek.common.bays.NavalRepairFacility;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
@@ -550,6 +566,10 @@ public class TestAdvancedAerospace extends TestAero {
         return vessel;
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public Jumpship getAdvancedAerospace() {
         return vessel;
     }
@@ -835,7 +855,7 @@ public class TestAdvancedAerospace extends TestAero {
         for (Bay bay : vessel.getTransportBays()) {
             bayDoors += bay.getDoors();
             if (bay.getDoors() == 0) {
-                BayData data = BayData.getBayType(bay);
+                BayData data = bay.getBayData();
                 if ((data != null) && !data.isCargoBay() && !data.isInfantryBay()) {
                     buff.append("Transport bays other than cargo and infantry require at least one door.\n");
                     illegal = true;

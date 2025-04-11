@@ -1,16 +1,30 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.common;
 
@@ -41,6 +55,10 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
+import megamek.common.bays.ASFBay;
+import megamek.common.bays.Bay;
+import megamek.common.bays.DropShuttleBay;
+import megamek.common.bays.SmallCraftBay;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
@@ -112,7 +130,7 @@ public abstract class Entity extends TurnOrdered
     public static final int UNLIMITED_JUMP_DOWN = 999;
 
     /**
-     * Entity Type Id Definitions These are used to identify the type of Entity, such as 'Mek or aero.
+     * Entity Type ID Definitions These are used to identify the type of Entity, such as `Mek or aero.
      */
     public static final long ETYPE_MEK = 1L;
     public static final long ETYPE_BIPED_MEK = 1L << 1;
@@ -301,8 +319,8 @@ public abstract class Entity extends TurnOrdered
     private Coords position = null;
 
     /**
-     * Used for Entities that are bigger than a single hex. This contains the central hex plus all of the other hexes
-     * this entity occupies. The central hex is important for drawing multi-hex sprites.
+     * Used for Entities that are bigger than a single hex. This contains the central hex plus all the other hexes this
+     * entity occupies. The central hex is important for drawing multi-hex sprites.
      */
     protected Map<Integer, Coords> secondaryPositions = null;
 
@@ -325,7 +343,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean selfDestructedThisTurn = false;
 
     /**
-     * True when the entity has an undestroyed searchlight that is neither a Quirk searchlight nor a mounted (0.5t /
+     * True when the entity has an un-destroyed searchlight that is neither a Quirk searchlight nor a mounted (0.5t /
      * 1slot) searchlight.
      */
     protected boolean hasExternalSearchlight = false;
@@ -408,9 +426,9 @@ public abstract class Entity extends TurnOrdered
     /**
      * Stores the player selected hex ground to air targeting. For ground to air, distance to target for the ground unit
      * is determined by the closest hex in the flight path of the airborne unit. It's possible that there are multiple
-     * equidistance hexes in the flight path and in some cases, one of those hexes will be better than the other (ie,
-     * one could be side arc and one rear). By default, MM picks the first hex, but the user should be able to
-     * distinguish between multiple equi-distant hexes.
+     * equidistant hexes in the flight path and in some cases, one of those hexes will be better than the other (ie, one
+     * could be side arc and one rear). By default, MM picks the first hex, but the user should be able to distinguish
+     * between multiple equidistant hexes.
      */
     private Map<Integer, Coords> playerPickedPassThrough = new HashMap<>();
 
@@ -643,7 +661,7 @@ public abstract class Entity extends TurnOrdered
     private Vector<Player> entitySeenBy = new Vector<>();
 
     /**
-     * Check to see what players have detected this entity with sensors, for double blind play.
+     * Check to see what players have detected this entity with sensors, for double-blind play.
      */
     private Vector<Player> entityDetectedBy = new Vector<>();
 
@@ -756,7 +774,7 @@ public abstract class Entity extends TurnOrdered
     protected int taserInterferenceRounds = 0;
     protected boolean taserInterferenceHeat = false;
 
-    // for how many rounds has blueshield been active?
+    // for how many rounds has blue shield been active?
     private int blueShieldRounds = 0;
 
     // Entity fluff object for use with MegaMekLab
@@ -801,8 +819,8 @@ public abstract class Entity extends TurnOrdered
     protected boolean military;
 
     /**
-     * Keeps track of whether or not this Entity has a critically hit radical heat sink. Using a flag will prevent
-     * having to iterate over all of the Entity's mounted equipment
+     * Keeps track of whether this Entity has a critically hit radical heat sink. Using a flag will prevent having to
+     * iterate over all the Entity's mounted equipment
      */
     protected boolean hasDamagedRHS = false;
 
@@ -827,7 +845,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Flag that indicates weapon sort order has changed (included ordering for custom sort order).
      */
-    private boolean weapOrderChanged = false;
+    private boolean weaponOrderChanged = false;
 
     /**
      * Set of team IDs that have observed this entity making attacks from off-board
@@ -995,8 +1013,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * This returns the external ID.
      * <p>
-     * Taharqa: I am changing externalId to a string so I can use UUIDs in MHQ. It should only require a simple parseInt
-     * to be added to it to return an integer for other programs (i.e. MekWars).
+     * Taharqa: I am changing externalId to a string, so I can use UUIDs in MHQ. It should only require a simple
+     * parseInt to be added to it to return an integer for other programs (i.e. MekWars).
      *
      * @return the ID settable by external sources (such as mm.net)
      *
@@ -1324,9 +1342,8 @@ public abstract class Entity extends TurnOrdered
                                                            .setTechRating(RATING_E)
                                                            .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
                                                            .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    // This is not in the rules anywhere, but is implied by the existence of the
-    // Badger and Bandit
-    // tanks used by Wolf's Dragoons and sold to the merc market as early as 3008.
+    // This is not in the rules anywhere, but is implied by the existence of the Badger and Bandit tanks used by
+    // Wolf's Dragoons and sold to the mercenary market as early as 3008.
     private static final TechAdvancement TA_OMNIVEHICLE = new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3008,
                 DATE_NONE,
                 3052)
@@ -1479,7 +1496,7 @@ public abstract class Entity extends TurnOrdered
             return;
         }
         setManualShutdown(false);
-        // Can't startup if a taser shutdown or a TSEMP shutdown
+        // Can't start up if a taser shutdown or a TSEMP shutdown
         if ((getTaserShutdownRounds() == 0) && (getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
             setShutDown(false);
             setStartupThisPhase(true);
@@ -1602,19 +1619,12 @@ public abstract class Entity extends TurnOrdered
      */
     public Player getOwner() {
         // Replaced 24 NOV 2020
-        // Server and other central classes already used
-        // game.getplayer(entity.getownerID())
-        // instead of entity.getowner() and it is noted that getOwner is not reliable.
-        // The entity owner object would have to be replaced whenever a player is
-        // updated
-        // which does not happen. The player ID on the other hand stays the same and the
-        // game
-        // object is not usually replaced. I expect entity.game to be up to date much
-        // more than owner.
-        // Unfortunately, entities freshly created may not have the game set. Therefore,
-        // fall
-        // back to the old version when game == null or the player is no longer in the
-        // game
+        // Server and other central classes already used {@link Game#getPlayer()} with {@link Entity#getOwnerId()}
+        // instead of {@link Entity#getowner()} and it is noted that getOwner is not reliable. The entity owner object
+        // would have to be replaced whenever a player is updated which does not happen. The player ID on the other
+        // hand stays the same and the game object is not usually replaced. I expect entity.game to be up to date much
+        // more than owner. Unfortunately, entities freshly created may not have the game set. Therefore, fall back
+        // to the old version when game == null or the player is no longer in the game
         if ((game != null) && (game.getPlayer(ownerId) != null)) {
             return game.getPlayer(ownerId);
         } else {
@@ -1663,8 +1673,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return The total number of crew available to supplement marines on boarding actions. Includes officers,
-     *       enlisted, and bay personnel, but not marines/ba or passengers.
+     * @return The total number of crew available to supplement marines onboarding actions. Includes officers, enlisted,
+     *       and bay personnel, but not marines/ba or passengers.
      */
     public int getNCrew() {
         return nCrew;
@@ -1983,7 +1993,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Set whether or not the Mek's arms are flipped to the rear
+     * Set whether the Mek's arms are flipped to the rear
      */
     public void setArmsFlipped(boolean armsFlipped) {
         GamePhase phase = getGame().getPhase();
@@ -2002,8 +2012,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Set whether or not the Mek's arms are flipped to the rear. Does not fire the game event, useful for when it's
-     * called repeatedly such as during bot turn calculations
+     * Set whether the Mek's arms are flipped to the rear. Does not fire the game event, useful for when it's called
+     * repeatedly such as during bot turn calculations
      */
     public void setArmsFlipped(boolean armsFlipped, boolean fireEvent) {
         this.armsFlipped = armsFlipped;
@@ -2521,8 +2531,7 @@ public abstract class Entity extends TurnOrdered
                 if ((assumedAlt < 0) && (hex.depth(true) > 0)) {
                     return true;
                 }
-                // Meks, protos and infantry can occupy any floor in the
-                // building
+                // Meks, ProtoMeks and infantry can occupy any floor in the building
                 if ((this instanceof Mek) || (this instanceof ProtoMek) || (this instanceof Infantry)) {
                     return (assumedAlt >= (hex.getLevel() - hex.depth(true))) && (assumedAlt <= hex.ceiling());
                 }
@@ -2597,7 +2606,7 @@ public abstract class Entity extends TurnOrdered
      *
      * @param removedMarker The marker of the removed entity.
      *
-     * @return A value indicating whether or not this entity updated its duplicate marker.
+     * @return A value indicating whether this entity updated its duplicate marker.
      */
     public synchronized boolean updateDuplicateMarkerAfterDelete(int removedMarker) {
         if (duplicateMarker > removedMarker) {
@@ -2633,7 +2642,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Generates the display name for this entity.
      * <p>
-     * Sub-classes are allowed to override this method. The display name is in the format [Chassis] [Model] ([Player
+     * Subclasses are allowed to override this method. The display name is in the format [Chassis] [Model] ([Player
      * Name]).
      */
     public synchronized void generateDisplayName() {
@@ -2672,7 +2681,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Generate the short name for a unit
      * <p>
-     * Sub-classes are allowed to override this method. The display name is in the format [Chassis] [Model].
+     * Subclasses are allowed to override this method. The display name is in the format [Chassis] [Model].
      */
     public synchronized void generateShortName() {
         shortName = createShortName(duplicateMarker);
@@ -2832,7 +2841,7 @@ public abstract class Entity extends TurnOrdered
         for (WeaponMounted mounted : getTotalWeaponList()) {
 
             // Tanks can suffer a "weapon malfunction" critical. The weapon is marked
-            // as jammed but it should not be unjammed in the movement phase, it should
+            // as jammed, but it should not be unjammed in the movement phase, it should
             // be unjammed in the firing phase - that is, if this weapon is jammed from
             // a weapon malfunction critical, we shouldn't unjam it using this method.
             if (isVehicle() && this instanceof Tank tank) {
@@ -2974,7 +2983,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * A list of all the locations that the entity can use to pick up cargo following the TacOps "one handed" pickup
+     * A list of all the locations that the entity can use to pick up cargo following the TacOps "one-handed" pickup
      * rules
      */
     public List<Integer> getValidHalfWeightPickupLocations(ICarryable cargo) {
@@ -3427,7 +3436,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Joins the abbreviations for the locations into a String with / as the separator. If the number of locations
-     * exceeds the provided limit, the result is abbreviated. By default the abbreviation is simply an asterisk, but
+     * exceeds the provided limit, the result is abbreviated. By default, the abbreviation is simply an asterisk, but
      * Meks have specific abbreviations locations that include all torso or leg positions.
      *
      * @param locations A list of location indices
@@ -3549,7 +3558,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Sets the amount of armor in the location specified.
      *
-     * @param val  the value of the armor (eg how many armor points)
+     * @param val  the value of the armor (e.g. how many armor points)
      * @param loc  the location of the armor
      * @param rear true iff the armor is rear mounted.
      */
@@ -3570,7 +3579,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return The index of the first armored location (skipping vehicle body, et. al.)
+     * @return The index of the first armored location (skipping vehicle body, et al.)
      */
     public int firstArmorIndex() {
         return 0;
@@ -3751,7 +3760,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * sets location exposure
      *
-     * @param loc    the location who's exposure is to be set
+     * @param loc    the location whose exposure is to be set
      * @param status the status to set
      */
     public void setLocationStatus(int loc, int status) {
@@ -3761,7 +3770,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * sets location exposure
      *
-     * @param loc         the location who's exposure is to be set
+     * @param loc         the location whose exposure is to be set
      * @param status      the status to set
      * @param allowChange allow change of breached locations
      */
@@ -4646,7 +4655,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns true when the entity has a MiscType equipment with the given MiscTypeFlag, regardless of its state. Note
-     * that both the flags given in MiscType as well as the "actual" flags in MiscTypeFlag can be used.
+     * that both the flags given in MiscType and the "actual" flags in MiscTypeFlag can be used.
      *
      * @param flag The MiscTypeFlag flag to look for, e.g. F_VTOL_EQUIPMENT
      *
@@ -5237,7 +5246,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if the entity has a hip critical slot. Overridden by sub-classes.
+     * Returns true if the entity has a hip critical slot. Overridden by subclasses.
      */
     public boolean hasHipCrit() {
         return false;
@@ -5324,7 +5333,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Check to see how many shields of a certain size a mek has. you can have up to shields per Mek. However they can
+     * Check to see how many shields of a certain size a mek has. you can have up to shields per Mek. However, they can
      * be of different size and each size has its own draw backs. So check each size and add modifiers based on the
      * number shields of that size.
      */
@@ -5361,7 +5370,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Does the Mek have an shield in no defense mode
+     * Does the Mek have a shield in no defense mode
      */
     public boolean hasNoDefenseShield(int location) {
         return false;
@@ -5499,8 +5508,9 @@ public abstract class Entity extends TurnOrdered
     /**
      * Checks to see if this entity has a functional ECM unit that is using ECCM.
      *
-     * @return <code>true</code> if the entity has AngeleCM and it is in ECCM
-     *       mode <code>false</code> if the entity does not have angel ecm or it is not in eccm mode or it is damaged.
+     * @return <code>true</code> if the entity has AngeleCM, and it is in ECCM
+     *       mode <code>false</code> if the entity does not have angel ecm, or it is not in eccm mode, or it is
+     *       damaged.
      */
     public boolean hasActiveECCM() {
         // no ECM in space unless strat op option enabled
@@ -5703,7 +5713,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether or not this entity has a Targeting Computer.
+     * Returns whether this entity has a Targeting Computer.
      */
     public boolean hasTargComp() {
         for (MiscMounted m : getMisc()) {
@@ -5715,7 +5725,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether or not this entity has a Targeting Computer that is in aimed shot mode.
+     * Returns whether this entity has a Targeting Computer that is in aimed shot mode.
      */
     public boolean hasAimModeTargComp() {
         if (hasActiveEiCockpit()) {
@@ -5736,7 +5746,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether this 'Mek has a C3 Slave or not.
+     * Returns whether this `Mek has a C3 Slave or not.
      */
     public boolean hasC3S() {
         if (isShutDown() || isOffBoard()) {
@@ -5929,7 +5939,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if the unit has a non hierarchic C3 system (C3i, NC3 or Nova CEWS).
+     * Returns true if the unit has a non-hierarchic C3 system (C3i, NC3 or Nova CEWS).
      */
     public boolean hasNhC3() {
         return hasC3i() || hasNavalC3() || hasNovaCEWS();
@@ -5962,7 +5972,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Switches the C3 network Id to the new network ID.
+     * Switches the C3 network ID to the new network ID.
      */
     public void newRoundNovaNetSwitch() {
         if (hasNovaCEWS()) {
@@ -6554,7 +6564,7 @@ public abstract class Entity extends TurnOrdered
             taserFeedBackRounds--;
         }
 
-        // If we are affected by the TSEMP Shutdown effect, we should remove it now, so we can startup during the end
+        // If we are affected by the TSEMP Shutdown effect, we should remove it now, so we can start up during the end
         // phase
         if (getTsempEffect() == MMConstants.TSEMP_EFFECT_SHUTDOWN) {
             setTsempEffect(MMConstants.TSEMP_EFFECT_NONE);
@@ -7054,7 +7064,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Helper function to determine if a entity is a quad
+     * Helper function to determine if an entity is a quad
      */
     public boolean entityIsQuad() {
         return (getMovementMode() == EntityMovementMode.QUAD);
@@ -7474,7 +7484,7 @@ public abstract class Entity extends TurnOrdered
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CT);
-        // Heavy duty gyro does not force PSR until second hit
+        // Heavy-duty gyro does not force PSR until second hit
         if (getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) {
             gyroHits--;
         }
@@ -7865,7 +7875,7 @@ public abstract class Entity extends TurnOrdered
             }
         }
 
-        // check to see if its a wall
+        // check to see if it's a wall
         if (rv > 1) {
             Building bldgEntered;
             bldgEntered = game.getBoard().getBuildingAt(curPos);
@@ -8419,8 +8429,8 @@ public abstract class Entity extends TurnOrdered
      * Get a <code>List</code> of the units currently loaded into this payload.
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This list will never be <code>null</code>, but
-     *       it may be empty. The returned <code>List</code> is independent from the under- lying data structure;
-     *       modifying one does not affect the other.
+     *       it may be empty. The returned <code>List</code> is independent of the under-lying data structure; modifying
+     *       one does not affect the other.
      */
     @Override
     public List<Entity> getLoadedUnits() {
@@ -8459,7 +8469,7 @@ public abstract class Entity extends TurnOrdered
     public int getDocks(boolean forCost) {
         int n = 0;
         for (Transporter next : transports) {
-            if ((next instanceof DockingCollar) || (forCost && (next instanceof DropshuttleBay))) {
+            if ((next instanceof DockingCollar) || (forCost && (next instanceof DropShuttleBay))) {
                 n += next.hardpointCost();
             }
         }
@@ -8885,10 +8895,10 @@ public abstract class Entity extends TurnOrdered
     /**
      * Determine if this unit has an active and working stealth system.
      * <p>
-     * Sub-classes are encouraged to override this method.
+     * Subclasses are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
-     *       currently active and it's actually working, <code>false</code> if there is no stealth system or if it is
+     *       currently active, and it's actually working, <code>false</code> if there is no stealth system or if it is
      *       inactive.
      */
     public boolean isStealthActive() {
@@ -8898,10 +8908,10 @@ public abstract class Entity extends TurnOrdered
     /**
      * Determine if this unit has an active and working stealth system.
      * <p>
-     * Sub-classes are encouraged to override this method.
+     * Subclasses are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
-     *       currently active and it's actually working, <code>false</code> if there is no stealth system or if it is
+     *       currently active, and it's actually working, <code>false</code> if there is no stealth system or if it is
      *       inactive.
      */
     public boolean isStealthOn() {
@@ -8911,7 +8921,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Determine if this unit has an active null-signature system.
      * <p>
-     * Sub-classes are encouraged to override this method.
+     * Subclasses are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a null signature system that
      *       is currently active, <code>false</code> if there is no stealth system or if it is inactive.
@@ -8923,7 +8933,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Determine if this unit has an active null-signature system.
      * <p>
-     * Sub-classes are encouraged to override this method.
+     * Subclasses are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a null signature system that
      *       is currently active, <code>false</code> if there is no stealth system or if it is inactive.
@@ -8935,7 +8945,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Determine if this unit has an active void signature system that is providing its benefits.
      * <p>
-     * Sub-classes are encouraged to override this method.
+     * Subclasses are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a void signature system that
      *       is currently active, <code>false</code> if there is no stealth system or if it is inactive.
@@ -8947,7 +8957,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Determine if this unit has an active void signature system.
      * <p>
-     * Sub-classes are encouraged to override this method.
+     * Subclasses are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a void signature system that
      *       is currently active, <code>false</code> if there is no stealth system or if it is turned off.
@@ -8959,7 +8969,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Determine if this unit has an active chameleon light polarization field.
      * <p>
-     * Sub-classes are encouraged to override this method.
+     * Subclasses are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a void signature system that
      *       is currently active, <code>false</code> if there is no stealth system or if it is inactive.
@@ -8971,7 +8981,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Determine if this unit has an active chameleon light polarization field.
      * <p>
-     * Sub-classes are encouraged to override this method.
+     * Subclasses are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a void signature system that
      *       is currently active, <code>false</code> if there is no stealth system or if it is inactive.
@@ -8986,7 +8996,7 @@ public abstract class Entity extends TurnOrdered
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown.
      * <p>
-     * Sub-classes are encouraged to override this method.
+     * Subclasses are encouraged to override this method.
      *
      * @param range - an <code>int</code> value that must match one of the
      *              <code>Compute</code> class range constants.
@@ -9395,8 +9405,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether an entity can flee from its current position. Currently returns true if the entity is on the edge
-     * of the board.
+     * Returns whether an entity can flee from its current position. Currently, returns true if the entity is on the
+     * edge of the board.
      */
     public boolean canFlee(Coords pos) {
         return ((getWalkMP() > 0) || (this instanceof Infantry)) &&
@@ -9470,7 +9480,7 @@ public abstract class Entity extends TurnOrdered
         if (p == null) {
             return false;
         }
-        // A Player can always see their own 'Meks
+        // A Player can always see their own `Meks
         if (getOwner().equals(p)) {
             return true;
         }
@@ -9752,7 +9762,7 @@ public abstract class Entity extends TurnOrdered
      * Pretty much anybody's eligible for movement. If the game option is toggled on, inactive and immobile entities are
      * not eligible. OffBoard units are always ineligible
      *
-     * @return whether or not the entity is allowed to move
+     * @return whether the entity is allowed to move
      */
     public boolean isEligibleForMovement() {
         // check if entity is off board
@@ -10183,7 +10193,7 @@ public abstract class Entity extends TurnOrdered
             }
         }
 
-        // Turn off the light all spot lights were destroyed
+        // Turn off the light all spotlights were destroyed
         if (!hasSearchlight()) {
             setSearchlightState(false);
         }
@@ -10273,7 +10283,7 @@ public abstract class Entity extends TurnOrdered
             return sb.toString();
         }
 
-        // working under the assumption that entity was neither doomed or destroyed before from here on out
+        // working under the assumption that entity was neither doomed nor destroyed before from here on out
 
         setDoomed(true);
 
@@ -10552,7 +10562,7 @@ public abstract class Entity extends TurnOrdered
      *
      * @param ignoreAmmo When true, the cost of ammo on the unit will be excluded from the cost
      *
-     * @return The cost in C-Bills of the 'Mek in question.
+     * @return The cost in C-Bills of the `Mek in question.
      */
     public final double getCost(boolean ignoreAmmo) {
         return getCost(new DummyCalculationReport(), ignoreAmmo);
@@ -10566,7 +10576,7 @@ public abstract class Entity extends TurnOrdered
      * @param calcReport A CalculationReport to write the report for the cost calculation to
      * @param ignoreAmmo When true, the cost of ammo on the unit will be excluded from the cost
      *
-     * @return The cost in C-Bills of the 'Mek in question.
+     * @return The cost in C-Bills of the `Mek in question.
      */
     public abstract double getCost(CalculationReport calcReport, boolean ignoreAmmo);
 
@@ -12278,7 +12288,7 @@ public abstract class Entity extends TurnOrdered
      * @return the initiative bonus this Entity grants for quirks
      */
     public int getQuirkIniBonus() {
-        // command battleMek and and battle computer are not cumulative
+        // command battleMek and battle computer are not cumulative
         if (hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_COMP) && !getCrew().isDead() && !getCrew().isUnconscious()) {
             return 2;
         } else if (hasQuirk(OptionsConstants.QUIRK_POS_COMMAND_MEK) &&
@@ -12424,7 +12434,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Do units loaded onto this entity still have active ECM/ECCM/etc.?
+     * Do units load onto this entity still have active ECM/ECCM/etc.?
      */
     public boolean loadedUnitsHaveActiveECM() {
         return false;
@@ -12508,7 +12518,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Check for uninstalling of this Entity's engine (only used for ICE-powered 'Meks).
+     * Check for uninstalling of this Entity's engine (only used for ICE-powered `Meks).
      *
      * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phase reports
      */
@@ -12692,7 +12702,7 @@ public abstract class Entity extends TurnOrdered
 
     public boolean isSpaceborne() {
         // for now if you are in space, you are space borne, but this will become more complicated when we start
-        // adding multiple maps to the same game and so I should try to replace most calls to `game.getBoard()
+        // adding multiple maps to the same game, and so I should try to replace most calls to `game.getBoard()
         // .inSpace()` with this one
         return game != null && game.getBoard().inSpace();
     }
@@ -13598,14 +13608,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if a unit was physically struck (punch, kick, DFA, etc).
+     * @return True if a unit was physically struck (punch, kick, DFA, etc.).
      */
     public boolean wasStruck() {
         return struck;
     }
 
     /**
-     * Sets if a unit was physically struck (punch, kick, DFA, etc).
+     * Sets if a unit was physically struck (punch, kick, DFA, etc.).
      */
     public void setStruck(boolean struck) {
         this.struck = struck;
@@ -13637,8 +13647,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Are we trapped inside of a destroyed transport? If so we shouldn't count for BV, which is why we have this
-     * check.
+     * Are we trapped inside a destroyed transport? If so we shouldn't count for BV, which is why we have this check.
      */
     public boolean isTrapped() {
         if (getTransportId() != Entity.NONE) {
@@ -13989,7 +13998,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Given an Entity type, return the name of the major class it belongs to (eg: Mek, Aero, Tank, Infantry).
      *
-     * @param typeId The type Id to get a major name for
+     * @param typeId The type ID to get a major name for
      *
      * @return The major class name for the given type id
      */
@@ -14341,11 +14350,11 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean isWeapOrderChanged() {
-        return weapOrderChanged;
+        return weaponOrderChanged;
     }
 
     public void setWeapOrderChanged(boolean weaponOrderChanged) {
-        this.weapOrderChanged = weaponOrderChanged;
+        this.weaponOrderChanged = weaponOrderChanged;
     }
 
     public int getMpUsedLastRound() {
@@ -14549,7 +14558,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Matches up a trailer hitch transporter with its Id #
+     * Matches up a trailer hitch transporter with its ID #
      *
      * @param bayNumber - the index of the transporter we're trying to find.
      *
@@ -14904,8 +14913,8 @@ public abstract class Entity extends TurnOrdered
      * Get a <code>List</code> of the trailers currently loaded into this payload.
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This list will never be <code>null</code>, but
-     *       it may be empty. The returned <code>List</code> is independent from the under- lying data structure;
-     *       modifying one does not affect the other.
+     *       it may be empty. The returned <code>List</code> is independent of the under-lying data structure; modifying
+     *       one does not affect the other.
      *       <p>
      *       This will only return loaded trailers
      */

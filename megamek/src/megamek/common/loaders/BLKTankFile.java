@@ -290,9 +290,7 @@ public class BLKTankFile extends BLKFile implements IMekLoader {
         } else {
             t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
         }
-        if (!patchworkArmor && dataFile.exists("armor_tech")) {
-            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
+        setArmorTechLevelFromDataFile(t);
         if (patchworkArmor) {
             for (int i = 1; i < t.locations(); i++) {
                 var armorTypeId = dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0];

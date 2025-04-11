@@ -1,20 +1,29 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.common.alphaStrike.conversion;
 
@@ -37,6 +46,7 @@ import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.bays.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 
@@ -65,8 +75,8 @@ public class ASSpecialAbilityConverter {
     }
 
     /**
-     * Do not call this directly. Use the static getASDamageConverter instead.
-     * Constructs a damage converter for ground units.
+     * Do not call this directly. Use the static getASDamageConverter instead. Constructs a damage converter for ground
+     * units.
      *
      * @param entity  The entity to convert damage for
      * @param element The partially-converted element corresponding to the entity
@@ -141,9 +151,9 @@ public class ASSpecialAbilityConverter {
             }
         } else if (miscType.hasFlag(F_BOOBY_TRAP) && !element.isType(PM, CI, BA)) {
             assign(misc, BT);
-        } else if (miscType.hasFlag(F_LIGHT_BRIDGE_LAYER)
-                || miscType.hasFlag(F_MEDIUM_BRIDGE_LAYER)
-                || miscType.hasFlag(F_HEAVY_BRIDGE_LAYER)) {
+        } else if (miscType.hasFlag(F_LIGHT_BRIDGE_LAYER) ||
+                         miscType.hasFlag(F_MEDIUM_BRIDGE_LAYER) ||
+                         miscType.hasFlag(F_HEAVY_BRIDGE_LAYER)) {
             assign(misc, BRID);
         } else if (miscType.hasFlag(F_C3S)) {
             assign(misc, C3S);
@@ -173,10 +183,10 @@ public class ASSpecialAbilityConverter {
             assign(misc, CASEII);
         } else if (miscType.hasFlag(F_DRONE_OPERATING_SYSTEM)) {
             assign(misc, DRO);
-        } else if (miscType.hasFlag(F_SRCS)
-                || miscType.hasFlag(F_SASRCS)
-                || miscType.hasFlag(F_CASPAR)
-                || miscType.hasFlag(F_CASPARII)) {
+        } else if (miscType.hasFlag(F_SRCS) ||
+                         miscType.hasFlag(F_SASRCS) ||
+                         miscType.hasFlag(F_CASPAR) ||
+                         miscType.hasFlag(F_CASPARII)) {
             assign(misc, RBT);
             if (miscType.hasFlag(F_CASPAR)) {
                 assign(misc, SDCS);
@@ -200,12 +210,10 @@ public class ASSpecialAbilityConverter {
             assign(misc, MEL);
         } else if (miscType.hasFlag(F_CLUB)) {
             assign(misc, MEL);
-            if ((miscType.getSubType() & (S_BACKHOE | S_PILE_DRIVER
-                    | S_MINING_DRILL | S_ROCK_CUTTER
-                    | S_WRECKING_BALL)) != 0) {
+            if ((miscType.getSubType() &
+                       (S_BACKHOE | S_PILE_DRIVER | S_MINING_DRILL | S_ROCK_CUTTER | S_WRECKING_BALL)) != 0) {
                 assign(misc, ENG);
-            } else if ((miscType.getSubType() & (S_DUAL_SAW | S_CHAINSAW
-                    | S_BUZZSAW | S_RETRACTABLE_BLADE)) != 0) {
+            } else if ((miscType.getSubType() & (S_DUAL_SAW | S_CHAINSAW | S_BUZZSAW | S_RETRACTABLE_BLADE)) != 0) {
                 assign(misc, SAW);
             }
             if (miscType.isShield()) {
@@ -225,11 +233,11 @@ public class ASSpecialAbilityConverter {
         } else if (miscType.hasFlag(F_SENSOR_DISPENSER)) {
             assign(misc, RSD, 1);
             assign(misc, RCN);
-        } else if (miscType.hasFlag(F_LOOKDOWN_RADAR)
-                || miscType.hasFlag(F_RECON_CAMERA)
-                || miscType.hasFlag(F_HIRES_IMAGER)
-                || miscType.hasFlag(F_HYPERSPECTRAL_IMAGER)
-                || miscType.hasFlag(F_INFRARED_IMAGER)) {
+        } else if (miscType.hasFlag(F_LOOKDOWN_RADAR) ||
+                         miscType.hasFlag(F_RECON_CAMERA) ||
+                         miscType.hasFlag(F_HIRES_IMAGER) ||
+                         miscType.hasFlag(F_HYPERSPECTRAL_IMAGER) ||
+                         miscType.hasFlag(F_INFRARED_IMAGER)) {
             assign(misc, RCN);
         } else if (miscType.hasFlag(F_SEARCHLIGHT) || miscType.hasFlag(F_BA_SEARCHLIGHT)) {
             assign(misc, SRCH);
@@ -257,8 +265,7 @@ public class ASSpecialAbilityConverter {
             assign(misc, TSM);
         } else if (miscType.hasFlag(F_VOIDSIG)) {
             assign(misc, MAS);
-        } else if (miscType.hasFlag(F_NULLSIG)
-                || miscType.hasFlag(F_CHAMELEON_SHIELD)) {
+        } else if (miscType.hasFlag(F_NULLSIG) || miscType.hasFlag(F_CHAMELEON_SHIELD)) {
             assign(misc, STL);
         } else if (miscType.hasFlag(F_UMU)) {
             assign(misc, UMU);
@@ -268,8 +275,9 @@ public class ASSpecialAbilityConverter {
             assign(misc, AFC);
         } else if (miscType.hasFlag(F_BASIC_FIRECONTROL)) {
             assign(misc, BFC);
-        } else if (miscType.hasFlag(F_AMPHIBIOUS) || miscType.hasFlag(F_FULLY_AMPHIBIOUS)
-                || miscType.hasFlag(F_LIMITED_AMPHIBIOUS)) {
+        } else if (miscType.hasFlag(F_AMPHIBIOUS) ||
+                         miscType.hasFlag(F_FULLY_AMPHIBIOUS) ||
+                         miscType.hasFlag(F_LIMITED_AMPHIBIOUS)) {
             assign(misc, AMP);
         } else if (miscType.hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
             assign(misc, ARS);
@@ -285,9 +293,9 @@ public class ASSpecialAbilityConverter {
             assign(misc, ORO);
         } else if (miscType.hasFlag(F_DUNE_BUGGY)) {
             assign(misc, DUN);
-        } else if (miscType.hasFlag(F_TRACTOR_MODIFICATION)
-                || miscType.hasFlag(F_TRAILER_MODIFICATION)
-                || miscType.hasFlag(F_HITCH)) {
+        } else if (miscType.hasFlag(F_TRACTOR_MODIFICATION) ||
+                         miscType.hasFlag(F_TRAILER_MODIFICATION) ||
+                         miscType.hasFlag(F_HITCH)) {
             assign(misc, HTC);
         } else if (miscType.hasFlag(F_COMMAND_CONSOLE)) {
             assign(misc, MHQ, 1);
@@ -425,13 +433,13 @@ public class ASSpecialAbilityConverter {
     protected void processARM() {
         for (int location = 0; location < entity.locations(); location++) {
             for (int slot = 0; slot < entity.getNumberOfCriticals(location); slot++) {
-                CriticalSlot crit = entity.getCritical(location, slot);
-                if (null != crit) {
-                    if (crit.isArmored()) {
+                CriticalSlot criticalSlot = entity.getCritical(location, slot);
+                if (null != criticalSlot) {
+                    if (criticalSlot.isArmored()) {
                         assign("Armored Critical Slot", ARM);
                         return;
-                    } else if (crit.getType() == CriticalSlot.TYPE_EQUIPMENT) {
-                        Mounted<?> mount = crit.getMount();
+                    } else if (criticalSlot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
+                        Mounted<?> mount = criticalSlot.getMount();
                         if (mount.isArmored()) {
                             assign(mount, ARM);
                             return;
@@ -448,8 +456,10 @@ public class ASSpecialAbilityConverter {
                 assign("Fighter Bay", AT, (int) ((ASFBay) t).getCapacity());
                 assign("Fighter Bay", ATxD, ((ASFBay) t).getDoors());
                 processMFB(t);
-            } else if ((t instanceof CargoBay) || (t instanceof LiquidCargoBay)
-                || (t instanceof RefrigeratedCargoBay) || (t instanceof InsulatedCargoBay)) {
+            } else if ((t instanceof CargoBay) ||
+                             (t instanceof LiquidCargoBay) ||
+                             (t instanceof RefrigeratedCargoBay) ||
+                             (t instanceof InsulatedCargoBay)) {
                 // ASC p.122: assign CT/CK for all cargo that is not specifically for units
                 assign("Cargo Bay", CT, ((Bay) t).getCapacity());
                 assign("Cargo Bay", CTxD, ((Bay) t).getDoors());
@@ -487,8 +497,7 @@ public class ASSpecialAbilityConverter {
     }
 
     /**
-     * Assign MFB for certain types of Bay. Overridden for Large Aero that do not
-     * assign MFB.
+     * Assign MFB for certain types of Bay. Overridden for Large Aero that do not assign MFB.
      */
     protected void processMFB(Transporter transporter) {
         assign(transporter.toString(), MFB, 1);
@@ -500,20 +509,19 @@ public class ASSpecialAbilityConverter {
         if ((equipment.getType() instanceof MiscType) && equipment.getType().hasFlag(F_BOMB_BAY)) {
             return true;
         }
-        // According to ASC p.123 Booby Traps count as explosive contrary to TO AUE
-        // p.109
+        // According to ASC p.123 Booby Traps count as explosive contrary to TO AUE p.109
         if ((equipment.getType() instanceof MiscType) && equipment.getType().hasFlag(F_BOOBY_TRAP)) {
             return true;
         }
-        // Oneshot weapons internally have normal ammo allocated to them which must
-        // be disqualified as explosive; such ammo has no location
-        return equipment.getType().isExplosive(null) && (equipment.getExplosionDamage() > 0)
-                && (equipment.getLocation() != Entity.LOC_NONE);
+        // One shot weapons internally have normal ammo allocated to them which must be disqualified as explosive;
+        // such ammo has no location
+        return equipment.getType().isExplosive(null) &&
+                     (equipment.getExplosionDamage() > 0) &&
+                     (equipment.getLocation() != Entity.LOC_NONE);
     }
 
     protected void finalizeSpecials() {
-        // For MHQ, the values may contain decimals, but the the final MHQ value is
-        // rounded down to an int.
+        // For MHQ, the values may contain decimals, but the final MHQ value is rounded down to an int.
         if (element.getSUA(MHQ) instanceof Double) {
             double mhqValue = (double) element.getSUA(MHQ);
             element.getSpecialAbilities().replaceSUA(MHQ, (int) mhqValue);
@@ -565,13 +573,13 @@ public class ASSpecialAbilityConverter {
                 element.getSpecialAbilities().removeSUA(CT);
                 element.getSpecialAbilities().removeSUA(CTxD);
                 report.addLine("Replace CT with CK",
-                        AlphaStrikeHelper.formatAbility(CK, element.getSpecialAbilities(), element, ", "));
+                      AlphaStrikeHelper.formatAbility(CK, element.getSpecialAbilities(), element, ", "));
             } else if (element.isLargeAerospace()) {
                 // Replace CT with a rounded value on large aerospace
                 if (ctValue != (int) ctValue) {
                     element.getSpecialAbilities().replaceSUA(CT, (int) Math.round(ctValue));
                     report.addLine("Final CT value",
-                            AlphaStrikeHelper.formatAbility(CT, element.getSpecialAbilities(), element, ", "));
+                          AlphaStrikeHelper.formatAbility(CT, element.getSpecialAbilities(), element, ", "));
                 }
             }
         }
@@ -590,8 +598,7 @@ public class ASSpecialAbilityConverter {
     }
 
     /**
-     * Adds the sua(s) to the element and writes a report line for each, if it is
-     * not yet present.
+     * Adds the sua(s) to the element and writes a report line for each, if it is not yet present.
      */
     protected void assign(Mounted<?> equipment, BattleForceSUA firstSua, BattleForceSUA... moreSuas) {
         assign(equipment.getType().getName(), firstSua);
@@ -599,16 +606,15 @@ public class ASSpecialAbilityConverter {
     }
 
     /**
-     * Adds the sua to the element and writes a report line using the name of the
-     * given equipment if the sua is not yet present.
+     * Adds the sua to the element and writes a report line using the name of the given equipment if the sua is not yet
+     * present.
      */
     protected void assign(Mounted<?> equipment, BattleForceSUA sua) {
         assign(equipment.getType().getName(), sua);
     }
 
     /**
-     * Adds the sua to the element and writes a report line using the given text -
-     * only if the sua is not yet present.
+     * Adds the sua to the element and writes a report line using the given text - only if the sua is not yet present.
      */
     protected void assign(String text, BattleForceSUA sua) {
         if (!element.hasSUA(sua)) {
@@ -618,24 +624,24 @@ public class ASSpecialAbilityConverter {
     }
 
     /**
-     * Writes a report line for adding the sua using the name of the given
-     * equipment.
+     * Writes a report line for adding the sua using the name of the given equipment.
+     *
+     * @deprecated no indicated uses.
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     protected void addReportLine(Mounted<?> equipment, BattleForceSUA sua) {
         addReportLine(equipment, sua, "");
     }
 
     /**
-     * Adds the sua with the given value to the element and writes a report line
-     * using the name of the given equipment.
+     * Adds the sua with the given value to the element and writes a report line using the name of the given equipment.
      */
     protected void assign(Mounted<?> equipment, BattleForceSUA sua, double doubleAbilityValue) {
         assign(equipment.getType().getName(), sua, doubleAbilityValue);
     }
 
     /**
-     * Adds the sua with the given value to the element and writes a report line
-     * using the given text.
+     * Adds the sua with the given value to the element and writes a report line using the given text.
      */
     protected void assign(String text, BattleForceSUA sua, double doubleAbilityValue) {
         addReportLine(text, sua, formatForReport(doubleAbilityValue));
@@ -643,16 +649,14 @@ public class ASSpecialAbilityConverter {
     }
 
     /**
-     * Adds the sua with the given value to the element and writes a report line
-     * using the name of the given equipment.
+     * Adds the sua with the given value to the element and writes a report line using the name of the given equipment.
      */
     protected void assign(Mounted<?> equipment, BattleForceSUA sua, int intAbilityValue) {
         assign(equipment.getType().getName(), sua, intAbilityValue);
     }
 
     /**
-     * Adds the sua with the given value to the element and writes a report line
-     * using the given text.
+     * Adds the sua with the given value to the element and writes a report line using the given text.
      */
     protected void assign(String text, BattleForceSUA sua, int intAbilityValue) {
         addReportLine(text, sua, intAbilityValue + "");
@@ -660,16 +664,14 @@ public class ASSpecialAbilityConverter {
     }
 
     /**
-     * Writes a report line for adding the sua with the given value using the name
-     * of the given equipment.
+     * Writes a report line for adding the sua with the given value using the name of the given equipment.
      */
     protected void addReportLine(Mounted<?> equipment, BattleForceSUA sua, String abilityValue) {
         addReportLine(equipment.getType().getName(), sua, abilityValue);
     }
 
     /**
-     * Writes a report line for adding the sua with the given value using the given
-     * text.
+     * Writes a report line for adding the sua with the given value using the given text.
      */
     protected void addReportLine(String text, BattleForceSUA sua, String abilityValue) {
         String hiddenText = AlphaStrikeHelper.hideSpecial(sua, element) ? "(hidden)" : "";

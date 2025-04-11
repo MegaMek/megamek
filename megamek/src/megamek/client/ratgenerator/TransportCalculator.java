@@ -1,20 +1,29 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.client.ratgenerator;
 
@@ -24,7 +33,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.InfantryTransporter;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummary;
+import megamek.common.UnitType;
+import megamek.common.bays.*;
 import megamek.common.loaders.EntityLoadingException;
 
 /**
@@ -159,13 +174,13 @@ public class TransportCalculator {
 
         while (transportCollars * ratio > (double) currentCapacity) {
             // It's possible to have a jump ship with no docking collars, e.g. for scout use
-            MekSummary jumpship = table.generateUnit(ms -> countHardpoints(ms) > 0);
+            MekSummary jumpship = table.generateUnit(ms -> countHardPoints(ms) > 0);
 
             if (null == jumpship) {
                 break; // Could not find any transport for the unit type; skip
             }
 
-            currentCapacity += countHardpoints(jumpship);
+            currentCapacity += countHardPoints(jumpship);
             retVal.add(jumpship);
         }
         return retVal;
@@ -255,7 +270,7 @@ public class TransportCalculator {
      *
      * @return The number of docking hard points on the unit.
      */
-    private int countHardpoints(MekSummary ms) {
+    private int countHardPoints(MekSummary ms) {
         try {
             Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
             // TODO: count drop shuttle bays

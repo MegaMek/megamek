@@ -1,30 +1,51 @@
 /*
- * MegaMek - Copyright (C) 2018 - The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 
-package megamek.common;
+package megamek.common.bays;
 
+import java.io.Serial;
 import java.text.DecimalFormat;
+import java.util.Objects;
+
+import megamek.common.Entity;
+import megamek.common.RoundWeight;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechAdvancement;
 
 /**
- * Standard naval repair facilities for space stations (jumpships and warships can also carry a single facility).
- * See TacOps 334-5 for rules.
+ * Standard naval repair facilities for space stations (jump ships and warships can also carry a single facility). See
+ * TacOps 334-5 for rules.
  *
  * @author Neoancient
- *
  */
 public class NavalRepairFacility extends UnitBay {
 
+    @Serial
     private static final long serialVersionUID = -5983197195382933671L;
 
     // No more than one bay is allowed per armor facing
@@ -45,41 +66,42 @@ public class NavalRepairFacility extends UnitBay {
     /**
      * Create a new repair facility
      *
-     * @param size   Maximum capacity in tons
-     * @param doors The number of bay doors
-     * @param bayNumber The id number for the bay
-     * @param facing The armor facing of the facility
+     * @param size        Maximum capacity in tons
+     * @param doors       The number of bay doors
+     * @param bayNumber   The id number for the bay
+     * @param facing      The armor facing of the facility
      * @param pressurized Whether the bay is pressurized
      */
     public NavalRepairFacility(double size, int doors, int bayNumber, int facing, boolean pressurized) {
         this(size, doors, bayNumber, facing, pressurized, false);
     }
-        /**
-         * Create a new repair facility
-         *
-         * @param size   Maximum capacity in tons
-         * @param doors The number of bay doors
-         * @param bayNumber The id number for the bay
-         * @param facing The armor facing of the facility
-         * @param pressurized Whether the bay is pressurized
-         * @param arts       Whether the bay has the advanced robotic transport system
-         */
-    public NavalRepairFacility(double size, int doors, int bayNumber, int facing,
-                               boolean pressurized, boolean arts) {
+
+    /**
+     * Create a new repair facility
+     *
+     * @param size        Maximum capacity in tons
+     * @param doors       The number of bay doors
+     * @param bayNumber   The id number for the bay
+     * @param facing      The armor facing of the facility
+     * @param pressurized Whether the bay is pressurized
+     * @param arts        Whether the bay has the advanced robotic transport system
+     */
+    public NavalRepairFacility(double size, int doors, int bayNumber, int facing, boolean pressurized, boolean arts) {
         totalSpace = size;
         currentSpace = size;
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
-        currentdoors = doors;
+        currentDoors = doors;
         this.facing = facing;
         this.pressurized = pressurized;
         this.arts = arts;
     }
 
     /**
-     * Pressurized facility allows crew to work without encumbrance of life support gear. No game effect
-     * that I could find.
+     * Pressurized facility allows crew to work without encumbrance of life support gear. No game effect that I could
+     * find.
+     *
      * @return Whether the facility is pressurized.
      */
     public boolean isPressurized() {
@@ -95,6 +117,10 @@ public class NavalRepairFacility extends UnitBay {
         return arts;
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public void setPressurized(boolean pressurized) {
         this.pressurized = pressurized;
     }
@@ -121,10 +147,11 @@ public class NavalRepairFacility extends UnitBay {
         }
         // We can carry two dropships or one JS/WS/SS.
         if (unit.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-            return troops.isEmpty()
-                    || ((troops.size() == 1)
-                            && (null != unit.getGame().getEntity(troops.get(0)))
-                            && (unit.getGame().getEntity(troops.get(0)).hasETypeFlag(Entity.ETYPE_DROPSHIP)));
+            return troops.isEmpty() ||
+                         ((troops.size() == 1) &&
+                                (null != unit.getGame().getEntity(troops.get(0))) &&
+                                (Objects.requireNonNull(unit.getGame().getEntity(troops.get(0)))
+                                       .hasETypeFlag(Entity.ETYPE_DROPSHIP)));
         } else if (unit.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             return troops.isEmpty();
         } else {
@@ -153,6 +180,7 @@ public class NavalRepairFacility extends UnitBay {
 
     /**
      * Sets the bay location
+     *
      * @param facing The armor facing (location) of the bay
      */
     @Override
@@ -162,12 +190,16 @@ public class NavalRepairFacility extends UnitBay {
 
     @Override
     public String toString() {
-        return (arts ? "artsnavalrepair" : "navalrepair")
-                + (pressurized? "pressurized:" : "unpressurized:")
-                + totalSpace + FIELD_SEPARATOR
-                + doors + FIELD_SEPARATOR
-                + bayNumber + FIELD_SEPARATOR
-                + FACING_PREFIX + getFacing();
+        return (arts ? "artsNavalRepair" : "navalRepair") +
+                     (pressurized ? "pressurized:" : "unpressurized:") +
+                     totalSpace +
+                     FIELD_SEPARATOR +
+                     doors +
+                     FIELD_SEPARATOR +
+                     bayNumber +
+                     FIELD_SEPARATOR +
+                     FACING_PREFIX +
+                     getFacing();
     }
 
     @Override
@@ -193,9 +225,9 @@ public class NavalRepairFacility extends UnitBay {
 
     public static TechAdvancement techAdvancement() {
         return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_C, RATING_E, RATING_D, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                     .setTechRating(RATING_C)
+                     .setAvailability(RATING_C, RATING_E, RATING_D, RATING_D)
+                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     @Override
@@ -219,4 +251,12 @@ public class NavalRepairFacility extends UnitBay {
         return cost;
     }
 
+    @Override
+    public BayData getBayData() {
+        if (isPressurized()) {
+            return hasARTS() ? BayData.ARTS_REPAIR_PRESSURIZED : BayData.REPAIR_PRESSURIZED;
+        } else {
+            return hasARTS() ? BayData.ARTS_REPAIR_UNPRESSURIZED : BayData.REPAIR_UNPRESSURIZED;
+        }
+    }
 }

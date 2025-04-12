@@ -37,6 +37,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6845: moved the acar hide to a better spot
 + PR #6865: data logging turned on by default
 + PR #6859: Fix MML #1818: Correct "armor_tech" to "armor_tech_level" when applicable
++ PR #6869: Added @Nullable to getEngine
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

@@ -21,15 +21,10 @@
 package megamek;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputFilter;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -83,7 +78,9 @@ public class MegaMek {
             options.setEnableExternalConfiguration(true);
             options.setDsn("https://b1720cb789ec56df7df9610dfa463c09@sentry.tapenvy.us/8");
             options.setEnvironment("production");
-            options.setTracesSampleRate(0.2);
+            options.setTracesSampleRate(1.0);
+            options.setProfilesSampleRate(1.0);
+            options.setEnableAppStartProfiling(true);
             options.setDebug(true);
             options.setServerName("MegaMekClient");
             options.setRelease(SuiteConstants.VERSION.toString());
@@ -161,50 +158,6 @@ public class MegaMek {
 
     public static MMOptions getMMOptions() {
         return mmOptions;
-    }
-
-    /**
-     * Calculates the SHA-256 hash of the MegaMek.jar file Used primarily for purposes of checksum comparison when
-     * connecting a new client.
-     *
-     * @return String representing the SHA-256 hash
-     */
-    public static @Nullable String getMegaMekSHA256() {
-        StringBuilder sb = new StringBuilder();
-
-        String filename = "MegaMek.jar";
-        if (new File("lib/" + filename).exists()) {
-            filename = "lib/" + filename;
-        }
-
-        if (!new File(filename).exists()) {
-            logger.warn("MegaMek.jar not found. Returning null checksum.");
-            return null;
-        }
-
-        MessageDigest md;
-        try {
-            md = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            logger.error(e, "SHA-256 Algorithm Can't be Found");
-            return null;
-        }
-
-        try (InputStream is = new FileInputStream(filename); InputStream dis = new DigestInputStream(is, md)) {
-            while (0 < dis.read()) {
-                // Idle Timer...
-            }
-
-            byte[] digest = md.digest();
-            for (byte d : digest) {
-                sb.append(String.format("%02x", d));
-            }
-        } catch (Exception e) {
-            logger.error(e, "Error Calculating Hash");
-            return null;
-        }
-
-        return sb.toString();
     }
 
     /**

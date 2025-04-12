@@ -27,9 +27,12 @@
  */
 package megamek.ai.dataset;
 
+import megamek.common.Pathing;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Coords;
+import megamek.common.CubeCoords;
 import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 
@@ -57,43 +60,51 @@ import java.util.List;
  * @author Luana Coppio
  */
 public record UnitAction(int id, int teamId, int playerId, String chassis, String model, int facing, int fromX, int fromY, int toX, int toY, int hexesMoved, int distance, int mpUsed,
-                         int maxMp, double mpP, double heatP, double armorP, double internalP, boolean jumping, boolean prone,
-                         boolean legal, double chanceOfFailure, List<MovePath.MoveStepType> steps, boolean bot) {
+      int maxMp, double mpP, double heatP, double armorP, double internalP, boolean jumping, boolean prone,
+      boolean legal, double chanceOfFailure, List<MovePath.MoveStepType> steps, boolean bot) {
 
     public static  UnitAction fromMovePath(MovePath movePath) {
         Entity entity = movePath.getEntity();
         double chanceOfFailure = SharedUtility.getPSRList(movePath).stream().map(psr -> psr.getValue() / 36d).reduce(0.0, (a, b) -> a * b);
         var steps = movePath.getStepVector().stream().map(MoveStep::getType).toList();
         return new UnitAction(
-            entity.getId(),
-            entity.getOwner() != null ? entity.getOwner().getTeam() : -1,
-            entity.getOwner() != null ? entity.getOwner().getId() : -1,
-            entity.getChassis(),
-            entity.getModel(),
-            movePath.getFinalFacing(),
-            movePath.getStartCoords() != null ? movePath.getStartCoords().getX() : -1,
-            movePath.getStartCoords() != null ? movePath.getStartCoords().getY() : -1,
-            movePath.getFinalCoords() != null ? movePath.getFinalCoords().getX() : -1,
-            movePath.getFinalCoords() != null ? movePath.getFinalCoords().getY() : -1,
-            movePath.getHexesMoved(),
-            movePath.getDistanceTravelled(),
-            movePath.getMpUsed(),
-            movePath.getMaxMP(),
-            movePath.getMaxMP() > 0 ? (double) movePath.getMpUsed() / movePath.getMaxMP() : 0.0,
-            entity.getHeatCapacity() > 0 ? entity.getHeat() / (double) entity.getHeatCapacity() : 0.0,
-            entity.getArmorRemainingPercent(),
-            entity.getInternalRemainingPercent(),
-            movePath.isJumping(),
-            movePath.getFinalProne(),
-            movePath.isMoveLegal(),
-            chanceOfFailure,
-            steps,
-            entity.getOwner().isBot()
+              entity.getId(),
+              entity.getOwner() != null ? entity.getOwner().getTeam() : -1,
+              entity.getOwner() != null ? entity.getOwner().getId() : -1,
+              entity.getChassis(),
+              entity.getModel(),
+              movePath.getFinalFacing(),
+              movePath.getStartCoords() != null ? movePath.getStartCoords().getX() : -1,
+              movePath.getStartCoords() != null ? movePath.getStartCoords().getY() : -1,
+              movePath.getFinalCoords() != null ? movePath.getFinalCoords().getX() : -1,
+              movePath.getFinalCoords() != null ? movePath.getFinalCoords().getY() : -1,
+              movePath.getHexesMoved(),
+              movePath.getDistanceTravelled(),
+              movePath.getMpUsed(),
+              movePath.getMaxMP(),
+              movePath.getMaxMP() > 0 ? (double) movePath.getMpUsed() / movePath.getMaxMP() : 0.0,
+              entity.getHeatCapacity() > 0 ? entity.getHeat() / (double) entity.getHeatCapacity() : 0.0,
+              entity.getArmorRemainingPercent(),
+              entity.getInternalRemainingPercent(),
+              movePath.isJumping(),
+              movePath.getFinalProne(),
+              movePath.isMoveLegal(),
+              chanceOfFailure,
+              steps,
+              entity.getOwner().isBot()
         );
     }
 
     public Coords currentPosition() {
         return new Coords(fromX, fromY);
+    }
+
+    public CubeCoords currentCubePosition() {
+        return currentPosition().toCube();
+    }
+
+    public CubeCoords finalCubePosition() {
+        return finalPosition().toCube();
     }
 
     public boolean isHuman() {
@@ -102,5 +113,9 @@ public record UnitAction(int id, int teamId, int playerId, String chassis, Strin
 
     public Coords finalPosition() {
         return new Coords(toX, toY);
+    }
+
+    public Pathing movePath(Entity entity) {
+        return new UnitPath(this, entity);
     }
 }

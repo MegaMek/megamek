@@ -154,6 +154,26 @@ public class MathUtility {
     }
     // endregion Clamp
 
+    // region Clamp01
+    /**
+     * Clamp a value between 0 and 1.0 (inclusive).
+     * @param value the float value to clamp
+     * @return The value clamped
+     */
+    public static float clamp01(float value) {
+        return clamp(value, 0f, 1f);
+    }
+
+    /**
+     * Clamp a value between 0 and 1.0 (inclusive).
+     * @param value the float value to clamp
+     * @return The value clamped
+     */
+    public static double clamp01(double value) {
+        return clamp(value, 0d, 1d);
+    }
+    // endregion Clamp01
+
     /**
      * Utility function to handle parsing strings into Integers and to handle the possible NumberFormatException with
      * logging and to return defaultValue.

@@ -27,15 +27,10 @@
  */
 package megamek.ai.dataset;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.MekSummary;
-import megamek.common.UnitRole;
-import megamek.common.enums.GamePhase;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Map;
+
+import megamek.common.UnitRole;
 
 /**
  * <p>serializer and deserializer for UnitState to/from TSV format.</p>

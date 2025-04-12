@@ -1,26 +1,36 @@
 /*
- * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek;
 
 import java.io.PrintWriter;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ResourceBundle;
 
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
@@ -36,12 +46,13 @@ public final class Version implements Comparable<Version>, Serializable {
     @Serial
     private static final long serialVersionUID = 3121116859864232639L;
 
-    private static final MMLogger logger = MMLogger.create(Version.class);
+    private static final MMLogger LOGGER = MMLogger.create(Version.class);
+    private static ResourceBundle VERSION_BUNDLE = null;
 
     private int release;
     private int major;
     private int minor;
-    private boolean snapshot;
+    private String extra;
     // endregion Variable Declarations
 
     // region Constructors
@@ -53,20 +64,62 @@ public final class Version implements Comparable<Version>, Serializable {
         setRelease(0);
         setMajor(0);
         setMinor(0);
-        setSnapshot(false);
+
+        try {
+            VERSION_BUNDLE = ResourceBundle.getBundle("extraVersion");
+        } catch (Exception ignored) {
+        }
     }
 
+    /**
+     * Sets the version with Extra data.
+     *
+     * @param text The Version string to parse.
+     */
     public Version(final @Nullable String text) {
         this();
         fillFromText(text);
     }
 
-    public Version(final String release, final String major, final String minor, final String snapshot) {
+    /**
+     * Sets the version.
+     *
+     * @param release Release Version
+     * @param major   "Major" Version
+     * @param minor   "Minor" Version
+     */
+    public Version(final int release, final int major, final int minor) {
+        this();
+        setRelease(release);
+        setMajor(major);
+        setMinor(minor);
+    }
+
+    /**
+     * Sets the version.
+     *
+     * @param release Release Version
+     * @param major   "Major" Version
+     * @param minor   "Minor" Version
+     */
+    public Version(final String release, final String major, final String minor) {
         this();
         setRelease(MathUtility.parseInt(release, 0));
         setMajor(MathUtility.parseInt(major, 50));
         setMinor(MathUtility.parseInt(minor, 5));
-        setSnapshot(MathUtility.parseBoolean(snapshot, false));
+    }
+
+    /**
+     * Sets the version with Extra data.
+     *
+     * @param release Release Version
+     * @param major   "Major" Version
+     * @param minor   "Minor" Version
+     * @param extra   Extra would be PR or nightly with git hash.
+     */
+    public Version(final String release, final String major, final String minor, @Nullable final String extra) {
+        this(release, major, minor);
+        setExtra(extra);
     }
     // endregion Constructors
 
@@ -95,12 +148,20 @@ public final class Version implements Comparable<Version>, Serializable {
         this.minor = minor;
     }
 
-    public boolean isSnapshot() {
-        return snapshot;
+    @Nullable
+    public String getExtra() {
+        if (extra == null && VERSION_BUNDLE != null) {
+            String branch = VERSION_BUNDLE.getString("branch");
+            String gitHash = VERSION_BUNDLE.getString("gitHash");
+
+            extra = branch + "-" + gitHash;
+        }
+
+        return extra;
     }
 
-    public void setSnapshot(final boolean snapshot) {
-        this.snapshot = snapshot;
+    public void setExtra(@Nullable final String extra) {
+        this.extra = extra;
     }
     // endregion Getters
 
@@ -215,13 +276,7 @@ public final class Version implements Comparable<Version>, Serializable {
             return -1;
         }
 
-        // Return 0 if the snapshots equal, otherwise this is lower is this is the
-        // snapshot version
-        if (isSnapshot() == other.isSnapshot()) {
-            return 0;
-        } else {
-            return (isSnapshot() ? -1 : 1);
-        }
+        return getExtra().compareTo(other.getExtra());
     }
 
     // Added to complete the Java specification for the contract between compareTo
@@ -231,7 +286,7 @@ public final class Version implements Comparable<Version>, Serializable {
             return (getRelease() == other.getRelease() &&
                           getMajor() == other.getMajor() &&
                           getMinor() == other.getMinor() &&
-                          isSnapshot() == other.isSnapshot());
+                          getExtra().equals(other.getExtra()));
         }
 
         return false;
@@ -252,16 +307,16 @@ public final class Version implements Comparable<Version>, Serializable {
             final String nullOrBlank = ((text == null) ? "a null string" : "a blank string");
             final String message = String.format(MMLoggingConstants.VERSION_ERROR_CANNOT_PARSE_VERSION_FROM_STRING,
                   nullOrBlank);
-            logger.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            LOGGER.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
-        final String[] snapshotSplit = text.split("-");
-        final String[] versionSplit = snapshotSplit[0].split("\\.");
+        final String[] extraSplit = text.split("-", 2);
+        final String[] versionSplit = extraSplit[0].split("\\.");
 
-        if ((snapshotSplit.length > 2) || (versionSplit.length < 3)) {
+        if ((extraSplit.length > 2) || (versionSplit.length < 3)) {
             final String message = String.format(MMLoggingConstants.VERSION_ILLEGAL_VERSION_FORMAT, text);
-            logger.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            LOGGER.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -269,7 +324,7 @@ public final class Version implements Comparable<Version>, Serializable {
             setRelease(MathUtility.parseInt(versionSplit[0], 0));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_RELEASE, text);
-            logger.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            LOGGER.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -277,7 +332,7 @@ public final class Version implements Comparable<Version>, Serializable {
             setMajor(MathUtility.parseInt(versionSplit[1], 50));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MAJOR, text);
-            logger.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            LOGGER.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -285,16 +340,20 @@ public final class Version implements Comparable<Version>, Serializable {
             setMinor(MathUtility.parseInt(versionSplit[2], 5));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MINOR, text);
-            logger.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            LOGGER.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
-        setSnapshot(snapshotSplit.length == 2);
+        setExtra(extraSplit.length == 2 ? extraSplit[1] : null);
     }
     // endregion File I/O
 
     @Override
     public String toString() {
-        return String.format("%d.%02d.%02d%s", getRelease(), getMajor(), getMinor(), (isSnapshot() ? "-SNAPSHOT" : ""));
+        return String.format("%d.%02d.%02d%s",
+              getRelease(),
+              getMajor(),
+              getMinor(),
+              (getExtra() != null ? "-" + getExtra() : ""));
     }
 }

@@ -1,26 +1,34 @@
 /*
- * Copyright (c) 2021-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek;
 
 /**
- * These are constants that hold across the entire MegaMek Suite of MegaMek,
- * MegaMekLab, and MekHQ.
+ * These are constants that hold across the entire MegaMek Suite of MegaMek, MegaMekLab, and MekHQ.
  */
 public abstract class SuiteConstants {
     protected SuiteConstants() {
@@ -29,7 +37,7 @@ public abstract class SuiteConstants {
 
     // region General Constants
     public static final String PROJECT_NAME = "MegaMek Suite";
-    public static final Version VERSION = new Version("0.50.05-SNAPSHOT");
+    public static final Version VERSION = new Version("0.50.05");
     public static final Version LAST_MILESTONE = new Version("0.49.19.1");
     public static final int MAXIMUM_D6_VALUE = 6;
 
@@ -38,10 +46,8 @@ public abstract class SuiteConstants {
     // endregion General Constants
 
     // region Font Constants
-    // FIXME : These uses all need to be converted into SuiteOptions, and this step
-    // was done to
-    // FIXME : simplify and isolate places that will be required
-    // FIXME : This is an accessibility issue
+    // FIXME : These uses all need to be converted into SuiteOptions, and this step was done to simplify and isolate
+    //  places that will be required This is an accessibility issue
     public static final String FONT_ARIAL = "Arial";
     public static final String FONT_COURIER_NEW = "Courier New";
     public static final String FONT_DIALOG = "Dialog";

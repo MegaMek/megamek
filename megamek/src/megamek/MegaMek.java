@@ -1,22 +1,31 @@
 /*
  * MegaMek - Copyright (C) 2005, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2014-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek;
 
@@ -65,7 +74,7 @@ public class MegaMek {
 
     private static final NumberFormat numberFormatter = NumberFormat.getInstance();
 
-    private static final MMLogger logger = MMLogger.create(MegaMek.class);
+    private static final MMLogger LOGGER = MMLogger.create(MegaMek.class);
     private static final SanityInputFilter sanityInputFilter = new SanityInputFilter();
 
     public static void main(String... args) {
@@ -93,7 +102,7 @@ public class MegaMek {
             final String name = t.getClass().getName();
             final String message = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION, name);
             final String title = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION_TITLE, name);
-            logger.errorDialog(t, message, title);
+            LOGGER.errorDialog(t, message, title);
         });
 
         // Second, let's handle logging
@@ -106,12 +115,12 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            logger.fatal(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
+            LOGGER.fatal(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
             System.exit(1);
         }
 
         // log jvm parameters
-        logger.info(ManagementFactory.getRuntimeMXBean().getInputArguments());
+        LOGGER.info(ManagementFactory.getRuntimeMXBean().getInputArguments());
 
         String[] restArgs = parser.getRestArgs();
 
@@ -149,7 +158,7 @@ public class MegaMek {
     }
 
     public static void initializeLogging(final String originProject) {
-        logger.info(getUnderlyingInformation(originProject));
+        LOGGER.info(getUnderlyingInformation(originProject));
     }
 
     public static SuitePreferences getMMPreferences() {
@@ -178,7 +187,7 @@ public class MegaMek {
      * @param args the arguments to the dedicated server.
      */
     private static void startDedicatedServer(String... args) {
-        logger.info(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args));
+        LOGGER.info(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args));
         DedicatedServer.start(args);
     }
 
@@ -198,7 +207,7 @@ public class MegaMek {
             final String message = String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS,
                   e.getMessage(),
                   parser.help());
-            logger.error(e, message);
+            LOGGER.error(e, message);
             System.exit(1);
         }
 
@@ -207,7 +216,7 @@ public class MegaMek {
               MMConstants.LOCALHOST,
               PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        logger.info(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
+        LOGGER.info(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -237,7 +246,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            logger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
+            LOGGER.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
             System.exit(1);
         }
 
@@ -246,7 +255,7 @@ public class MegaMek {
               MMConstants.LOCALHOST,
               PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        logger.info(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
+        LOGGER.info(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -277,7 +286,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            logger.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
+            LOGGER.error(e, String.format(MMLoggingConstants.AP_INCORRECT_ARGUMENTS, e.getMessage(), parser.help()));
             System.exit(1);
         }
 
@@ -286,7 +295,7 @@ public class MegaMek {
               MMConstants.LOCALHOST,
               PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        logger.info(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args));
+        LOGGER.info(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -299,7 +308,7 @@ public class MegaMek {
         try {
             GifWriter.createGifFromGameSummary(args[0]);
         } catch (IOException e) {
-            logger.error(e, "Error creating GIF");
+            LOGGER.error(e, "Error creating GIF");
         }
     }
 
@@ -307,7 +316,7 @@ public class MegaMek {
      * Starts MegaMek's splash GUI
      */
     private static void startGUI() {
-        logger.info("Starting MegaMekGUI.");
+        LOGGER.info("Starting MegaMekGUI.");
         SwingUtilities.invokeLater(() -> new MegaMekGUI().start(true));
     }
 

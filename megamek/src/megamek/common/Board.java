@@ -1557,6 +1557,32 @@ public class Board implements Serializable {
     }
 
     /**
+     * Update a locally stored building with CF and other values from a building received from the server.
+     *
+     * @param receivedBuilding The Building received from the server
+     */
+    public void updateBuilding(Building receivedBuilding) {
+        Building localBuilding = getLocalBuilding(receivedBuilding);
+
+        if ((receivedBuilding.getBoardId() != boardId) || (localBuilding == null)) {
+            logger.error("Could not find a match for " + receivedBuilding + " to update.");
+            return;
+        }
+        Enumeration<Coords> coordsEnum = localBuilding.getCoords();
+        while (coordsEnum.hasMoreElements()) {
+            // Set the current and phase CFs of the building hexes.
+            final Coords coords = coordsEnum.nextElement();
+            localBuilding.setCurrentCF(receivedBuilding.getCurrentCF(coords), coords);
+            localBuilding.setPhaseCF(receivedBuilding.getPhaseCF(coords), coords);
+            localBuilding.setArmor(receivedBuilding.getArmor(coords), coords);
+            localBuilding.setBasement(coords,
+                  BasementType.getType(getHex(coords).terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+            localBuilding.setBasementCollapsed(coords, receivedBuilding.getBasementCollapsed(coords));
+            localBuilding.setDemolitionCharges(receivedBuilding.getDemolitionCharges());
+        }
+    }
+
+    /**
      * Get the current value of the "road auto-exit" option.
      *
      * @return <code>true</code> if roads should automatically exit onto all
@@ -2135,10 +2161,14 @@ public class Board implements Serializable {
     }
 
     /**
-     * Sets the board's ID. Within an MM game, the ID must be unique. For now (March 25), only the ID = 0 is used.
+     * Sets the board's ID. Within an MM game, the ID must be unique. To preserve "normal" games, 0 is the default.
      */
     public void setBoardId(int boardId) {
         this.boardId = boardId;
+        // must update buildings that have already been created.
+        for (Building building : buildings) {
+            building.setBoardId(boardId);
+        }
     }
 
     public int getBoardId() {

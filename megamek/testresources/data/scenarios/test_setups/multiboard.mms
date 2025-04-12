@@ -84,7 +84,7 @@ factions:
     at: [ 7,7 ]
 #    status: hidden
 
-  - fullname: Atlas AS7-D
+  - fullname: Brave BRV-1Y
     board: 5
     at: [ 35, 29 ]
 
@@ -94,8 +94,7 @@ factions:
     facing: 2
     altitude: 7
 
-  - fullname: AC/10 Turret (Dual)
-    board: 5
+#  - fullname: AC/10 Turret (Dual)
 
 #  - fullname: Mobile Long Tom Artillery LT-MOB-25
 #    at: [ 30, 24 ]

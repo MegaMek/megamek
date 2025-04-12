@@ -10992,17 +10992,12 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * LEGACY use boardId versions
-     * Apply PSR modifier for difficult terrain at the specified coordinates
+     * Apply PSR modifier for difficult terrain at the specified coordinates.
      *
-     * @param roll the PSR to modify
-     * @param c    the coordinates where the PSR happens
-     *
+     * @param roll    the PSR to modify
+     * @param c       the coordinates where the PSR happens
+     * @param boardId the board ID where the PSR happens
      */
-    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c) {
-        addPilotingModifierForTerrain(roll, c, 0, false);
-    }
-
     public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c, int boardId) {
         addPilotingModifierForTerrain(roll, c, boardId, false);
     }

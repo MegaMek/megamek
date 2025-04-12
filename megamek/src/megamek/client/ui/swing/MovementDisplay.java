@@ -403,7 +403,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             Coords target = curPos.translated(dir);
             // We need to set this to get the rotate behavior
             shiftheld = true;
-            currentMove(target);
+            currentMove(target, cmd.getFinalBoardId());
             shiftheld = false;
             updateMove();
         }
@@ -417,7 +417,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             Coords target = curPos.translated(dir);
             // We need to set this to get the rotate behavior
             shiftheld = true;
-            currentMove(target);
+            currentMove(target, cmd.getFinalBoardId());
             shiftheld = false;
             updateMove();
         }
@@ -1720,12 +1720,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
     /**
      * Returns new MovePath for the currently selected movement type
      */
-    private void currentMove(Coords dest) {
+    private void currentMove(Coords dest, int boardId) {
         if (shiftheld || (gear == GEAR_TURN)) {
             if (buttons.get(MoveCommand.MOVE_TURN).isEnabled()) {
                 cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false, ManeuverType.MAN_NONE);
             }
         } else if ((gear == GEAR_JUMP) && (jumpSubGear == GEAR_SUB_MEKBOOSTERS)) {
+            if (cmd.getFinalBoardId() != boardId) {
+                // only extend the path when staying on the same board
+                return;
+            }
             // Jumps with mechanical jump boosters are special
             Coords src;
             if (cmd.getLastStep() != null) {
@@ -1773,7 +1777,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (gear == GEAR_STRAFE) {
             // Only set the steps that enter new hexes.
             int start = cmd.length();
-            cmd.findPathTo(dest, MoveStepType.FORWARDS);
+            extendPathTo(dest, boardId, MoveStepType.FORWARDS);
             // Skip turns at the beginning of the new part of the path unless we're
             // extending
             // an existing strafing pattern.
@@ -1789,11 +1793,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             cmd.compile(game, ce(), false);
             gear = GEAR_LAND;
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
-            cmd.findPathTo(dest, MoveStepType.FORWARDS);
+            extendPathTo(dest, boardId, MoveStepType.FORWARDS);
         } else if (gear == GEAR_BACKUP) {
-            cmd.findPathTo(dest, MoveStepType.BACKWARDS);
+            extendPathTo(dest, boardId, MoveStepType.BACKWARDS);
         } else if (gear == GEAR_CHARGE) {
-            cmd.findPathTo(dest, MoveStepType.CHARGE);
+            extendPathTo(dest, boardId, MoveStepType.CHARGE);
             // The path planner shouldn't actually add the charge step
             if (cmd.getFinalCoords().equals(dest)
                   && (cmd.getLastStep().getType() != MoveStepType.CHARGE)) {
@@ -1801,7 +1805,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 addStepToMovePath(MoveStepType.CHARGE);
             }
         } else if (gear == GEAR_DFA) {
-            cmd.findPathTo(dest, MoveStepType.DFA);
+            extendPathTo(dest, boardId, MoveStepType.DFA);
             // The path planner shouldn't actually add the DFA step
             if (cmd.getFinalCoords().equals(dest)
                   && (cmd.getLastStep().getType() != MoveStepType.DFA)) {
@@ -1809,9 +1813,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 addStepToMovePath(MoveStepType.DFA);
             }
         } else if (gear == GEAR_SWIM) {
-            cmd.findPathTo(dest, MoveStepType.SWIM);
+            extendPathTo(dest, boardId, MoveStepType.SWIM);
         } else if (gear == GEAR_RAM) {
-            cmd.findPathTo(dest, MoveStepType.FORWARDS);
+            extendPathTo(dest, boardId, MoveStepType.FORWARDS);
         } else if (gear == GEAR_IMMEL) {
             addStepsToMovePath(true, true, ManeuverType.MAN_IMMELMAN,
                   MoveStepType.UP,
@@ -1861,6 +1865,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.updateFiringArc(ce());
     }
 
+    /**
+     * Tries to extend the existing path (cmd) to the given location, but only, if the current path ends on the same
+     * board.
+     *
+     * @param dest The destination
+     * @param boardId The destination
+     * @param type The step type to use
+     */
+    private void extendPathTo(Coords dest, int boardId, MoveStepType type) {
+        if (cmd.getFinalBoardId() == boardId) {
+            cmd.findPathTo(dest, type);
+        }
+    }
+
     //
     // BoardListener
     //
@@ -1904,7 +1922,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 b.getBoardView().cursor(b.getCoords());
                 // either turn or move
                 if (ce != null) {
-                    currentMove(b.getCoords());
+                    currentMove(b.getCoords(), b.getBoardId());
                     updateMove();
                 }
             }

@@ -83,7 +83,7 @@ public class Building implements Serializable {
      * The coordinates of every hex of this building.
      */
     private final Vector<Coords> coordinates = new Vector<>();
-    private final int boardId;
+    private int boardId;
 
     /**
      * The Basement type of the building.
@@ -804,5 +804,9 @@ public class Building implements Serializable {
 
     public int getBoardId() {
         return boardId;
+    }
+
+    public void setBoardId(int boardId) {
+        this.boardId = boardId;
     }
 }

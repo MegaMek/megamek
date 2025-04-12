@@ -183,7 +183,8 @@ public class Precognition implements Runnable {
                     getGame().addSmokeCloud(cloud);
                     break;
                 case CHANGE_HEX:
-                    getGame().getBoard().setHex((Coords) c.getObject(0), (Hex) c.getObject(1));
+                    game.getBoard((int) c.getObject(1)).setHex((Coords) c.getObject(0),
+                          (Hex) c.getObject(2));
                     break;
                 case CHANGE_HEXES:
                     List<Coords> coords = new ArrayList<>((Set<Coords>) c.getObject(0));
@@ -810,7 +811,9 @@ public class Precognition implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void receiveBuildingUpdate(Packet packet) {
-        getGame().getBoard().updateBuildings((Vector<Building>) packet.getObject(0));
+        for (Building building : (List<Building>) packet.getObject(0)) {
+            game.getBoard(building.getBoardId()).updateBuilding(building);
+        }
     }
 
     @SuppressWarnings("unchecked")

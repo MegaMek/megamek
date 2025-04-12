@@ -261,7 +261,7 @@ public class SharedUtility {
                         - (curElevation + curHex.getLevel());
                 if (leapDistance > 2) {
                     rollTarget = entity.getBasePilotingRoll(moveType);
-                    entity.addPilotingModifierForTerrain(rollTarget, curPos);
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getTargetBoardId());
                     rollTarget.append(
                         new PilotingRollData(
                             entity.getId(),
@@ -271,7 +271,7 @@ public class SharedUtility {
                     );
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                     rollTarget = entity.getBasePilotingRoll(moveType);
-                    entity.addPilotingModifierForTerrain(rollTarget, curPos);
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getTargetBoardId());
                     rollTarget.append(
                         new PilotingRollData(
                             entity.getId(),

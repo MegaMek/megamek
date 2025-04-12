@@ -639,7 +639,9 @@ public class Client extends AbstractClient {
 
     @SuppressWarnings("unchecked")
     protected void receiveBuildingUpdate(Packet packet) {
-        game.getBoard().updateBuildings((Vector<Building>) packet.getObject(0));
+        for (Building building : (List<Building>) packet.getObject(0)) {
+            game.getBoard(building.getBoardId()).updateBuilding(building);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -913,7 +915,8 @@ public class Client extends AbstractClient {
                 game.addSmokeCloud(cloud);
                 break;
             case CHANGE_HEX:
-                game.getBoard().setHex((Coords) packet.getObject(0), (Hex) packet.getObject(1));
+                game.getBoard((int) packet.getObject(1)).setHex((Coords) packet.getObject(0),
+                      (Hex) packet.getObject(2));
                 break;
             case CHANGE_HEXES:
                 List<Coords> coords = new ArrayList<>((Set<Coords>) packet.getObject(0));

@@ -3331,7 +3331,10 @@ public final class BoardView extends AbstractBoardView
      * settings.
      */
     public void centerOnSelected() {
-        centerOn(getSelectedEntity());
+        if (isOnThisBord(getSelectedEntity())) {
+            clientgui.showBoardView(boardId);
+            centerOn(getSelectedEntity());
+        }
     }
 
     /**

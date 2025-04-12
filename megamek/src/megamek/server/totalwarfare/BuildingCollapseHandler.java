@@ -292,7 +292,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 // all entities should fall
                 // ASSUMPTION: PSR to avoid pilot damage
                 PilotingRollData psr = entity.getBasePilotingRoll();
-                entity.addPilotingModifierForTerrain(psr, coords);
+                entity.addPilotingModifierForTerrain(psr, coords, bldg.getBoardId());
 
                 // fall into basement
                 switch (bldg.getBasement(coords)) {
@@ -332,7 +332,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             bldg.setCurrentCF(runningCFTotal, coords);
             bldg.setPhaseCF(runningCFTotal, coords);
         }
-        gameManager.sendChangedHex(coords);
+        gameManager.sendChangedHex(coords, bldg.getBoardId());
         Vector<Building> buildings = new Vector<>();
         buildings.add(bldg);
         gameManager.sendChangedBuildings(buildings);
@@ -375,7 +375,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             if (topFloor && numFloors > 1) {
                 curHex.removeTerrain(Terrains.BLDG_ELEV);
                 curHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, numFloors - 1));
-                gameManager.sendChangedHex(coords);
+                gameManager.sendChangedHex(coords, bldg.getBoardId());
             } else {
                 bldg.setCurrentCF(0, coords);
                 bldg.setPhaseCF(0, coords);
@@ -473,7 +473,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     // should use mods for entity damage and
                     // 20+ points of collapse damage (if any).
                     PilotingRollData psr = entity.getBasePilotingRoll();
-                    entity.addPilotingModifierForTerrain(psr, coords);
+                    entity.addPilotingModifierForTerrain(psr, coords, bldg.getBoardId());
                     if (damage >= 20) {
                         psr.addModifier(1, "20+ damage");
                     }

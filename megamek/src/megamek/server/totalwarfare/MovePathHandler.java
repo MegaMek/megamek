@@ -880,7 +880,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             } // End try-to-dislodge-swarmers
 
             // one more check for inferno wash-off
-            gameManager.checkForWashedInfernos(entity, curPos);
+            gameManager.checkForWashedInfernos(entity, curPos, entity.getBoardId());
 
             // a jumping tank needs to roll for movement damage
             if (entity instanceof Tank) {
@@ -2314,7 +2314,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (leapDistance > 2) {
                     // skill check for leg damage
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
-                    entity.addPilotingModifierForTerrain(rollTarget, curPos);
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getTargetBoardId());
                     rollTarget.append(new PilotingRollData(entity.getId(),
                             2 * leapDistance, Messages.getString("TacOps.leaping.leg_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
@@ -2337,7 +2337,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
                     // skill check for fall
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
-                    entity.addPilotingModifierForTerrain(rollTarget, curPos);
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getTargetBoardId());
                     rollTarget.append(new PilotingRollData(entity.getId(),
                             leapDistance, Messages.getString("TacOps.leaping.fall_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
@@ -2798,7 +2798,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
 
                 // check for inferno wash-off
-                gameManager.checkForWashedInfernos(entity, curPos);
+                gameManager.checkForWashedInfernos(entity, curPos, step.getTargetBoardId());
             }
 
             // In water, may or may not be a new hex, necessary to
@@ -3413,7 +3413,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // Not being swarmed
                     entity.setProne(true);
                     // check to see if we washed off infernos
-                    gameManager.checkForWashedInfernos(entity, curPos);
+                    gameManager.checkForWashedInfernos(entity, curPos, step.getTargetBoardId());
                 } else {
                     // Being swarmed
                     entity.setPosition(curPos);
@@ -3427,7 +3427,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // roll failed, go prone but don't dislodge swarmers
                     entity.setProne(true);
                     // check to see if we washed off infernos
-                    gameManager.checkForWashedInfernos(entity, curPos);
+                    gameManager.checkForWashedInfernos(entity, curPos, step.getTargetBoardId());
                     break;
                 }
             }

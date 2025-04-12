@@ -11074,7 +11074,7 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
-    public Engine getEngine() {
+    public @Nullable Engine getEngine() {
         return engine;
     }
 

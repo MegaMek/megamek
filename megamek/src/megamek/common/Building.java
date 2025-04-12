@@ -15,6 +15,7 @@
 */
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,15 +44,15 @@ import megamek.logging.MMLogger;
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class Building implements Serializable {
-    private static final MMLogger logger = MMLogger.create(Building.class);
-
+    @Serial
     private static final long serialVersionUID = -8236017592012683793L;
+
+    private static final MMLogger logger = MMLogger.create(Building.class);
 
     /**
      * Generic flag for uninitialized values.
      */
     protected static final int UNKNOWN = -1;
-
 
     /**
      * The Building Type of the building; equal to the terrain elevation of the
@@ -81,7 +82,8 @@ public class Building implements Serializable {
     /**
      * The coordinates of every hex of this building.
      */
-    private Vector<Coords> coordinates = new Vector<>();
+    private final Vector<Coords> coordinates = new Vector<>();
+    private final int boardId;
 
     /**
      * The Basement type of the building.
@@ -267,7 +269,7 @@ public class Building implements Serializable {
         // The building occupies the given coords, at least.
         coordinates.addElement(coords);
         originalHexes++;
-
+        boardId = board.getBoardId();
         burning.put(coords, false);
 
         // Get the Hex for those coords.
@@ -798,5 +800,9 @@ public class Building implements Serializable {
 
     public void setBasementCollapsed(Coords coords, boolean collapsed) {
         basementCollapsed.put(coords, collapsed);
+    }
+
+    public int getBoardId() {
+        return boardId;
     }
 }

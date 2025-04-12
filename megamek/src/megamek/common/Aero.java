@@ -1050,7 +1050,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         }
 
         // if in atmosphere, then halve next turn's velocity
-        if (!game.getBoard().inSpace() && isDeployed() && (roundNumber > 0)) {
+        if (!isSpaceborne() && isDeployed()) {
             setNextVelocity((int) Math.floor(getNextVelocity() / 2.0));
         }
 

@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.*;
@@ -68,7 +69,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         Wind windStrength = game.getPlanetaryConditions().getWind();
 
         // Get the position map of all entities in the game.
-        Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
+        Map<BoardLocation, List<Entity>> positionMap = game.getPositionMapMulti();
 
         // process smoke FIRST, before any fires spread or
         // smoke is produced.

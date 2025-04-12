@@ -64,7 +64,7 @@ class FlyOverSprite extends Sprite {
         double nextAngle = curr.radian(next);
         double prevAngle = prev.radian(curr);
 
-        Point currPoint = this.bv.getCentreHexLocation(curr, true);
+        Point currPoint = bv.getCentreHexLocation(curr, true);
         final double lw = bv.scale * BoardView.FLY_OVER_LINE_WIDTH;
 
         // This is a bend
@@ -74,7 +74,6 @@ class FlyOverSprite extends Sprite {
         } else {
             diff = prevAngle - nextAngle;
         }
-        diff = nextAngle - prevAngle;
         if (Math.abs(diff) > 0.001) {
             // Inside Corner - Add one point
             double bendAngle = (Math.PI + diff);
@@ -215,9 +214,7 @@ class FlyOverSprite extends Sprite {
 
     @Override
     public Rectangle getBounds() {
-        if (true) {
-            makePoly();
-        }
+        makePoly();
         // set bounds
         bounds = new Rectangle(flyOverPoly.getBounds());
         bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
@@ -242,10 +239,10 @@ class FlyOverSprite extends Sprite {
         Polygon drawPoly = new Polygon(flyOverPoly.xpoints, flyOverPoly.ypoints,
                 flyOverPoly.npoints);
 
+        Graphics2D g2 = (Graphics2D) g;
         g.setColor(spriteColor);
         g.fillPolygon(drawPoly);
-        if (en.equals(bv.getSelectedEntity()) && (g instanceof Graphics2D)) {
-            Graphics2D g2 = (Graphics2D) g;
+        if (en.equals(bv.getSelectedEntity())) {
             Stroke oldStroke = g2.getStroke();
             g2.setStroke(new BasicStroke(1));
             g2.setColor(Color.blue);

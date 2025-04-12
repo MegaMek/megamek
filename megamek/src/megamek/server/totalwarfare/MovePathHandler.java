@@ -761,7 +761,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check for building collapse
             Building bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
             if (bldg != null) {
-                gameManager.checkForCollapse(bldg, getGame().getPositionMap(), curPos, true,
+                gameManager.checkForCollapse(bldg, curPos, true,
                         gameManager.getMainPhaseReport());
             }
 

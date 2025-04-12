@@ -1009,32 +1009,38 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Returns a <code>Hashtable</code> that maps the <code>Coords</code> of each unit in this <code>Game</code> to a
-     * <code>Vector</code> of
-     * <code>Entity</code>s at that positions. Units that have no position (e.g.
-     * loaded units) will not be in the map.
-     *
-     * @return a <code>Hashtable</code> that maps the <code>Coords</code> positions or each unit in the game to a
-     *       <code>Vector</code> of
-     *       <code>Entity</code>s at that position.
+     * Returns a Hashtable that maps the Coords of each unit in this Game to a Vector of Entitys at that positions.
+     * Units that have no position (e.g. loaded units) will not be in the map.
+     * LEGACY - should be replaced with getPositionMapMulti()
+     * @return a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys at that
+     *       position.
      */
     public Hashtable<Coords, Vector<Entity>> getPositionMap() {
         Hashtable<Coords, Vector<Entity>> positionMap = new Hashtable<>();
-        Vector<Entity> atPos;
-
-        // Walk through the entities in this game.
         for (Entity entity : inGameTWEntities()) {
-            // Get the vector for this entity's position.
             final Coords coords = entity.getPosition();
             if (coords != null) {
-                atPos = positionMap.computeIfAbsent(coords, k -> new Vector<>());
+                Vector<Entity> atPos = positionMap.computeIfAbsent(coords, k -> new Vector<>());
                 // Add the entity to the vector for this position.
                 atPos.addElement(entity);
-
             }
-        } // Handle the next entity.
+        }
+        return positionMap;
+    }
 
-        // Return the map.
+    /**
+     * @return a Map that maps the location of each unit in this game to a list of Entitys at the same location.
+     * Units that have no position (e.g. loaded units) will not be in the map.
+     */
+    public Map<BoardLocation, List<Entity>> getPositionMapMulti() {
+        var positionMap = new HashMap<BoardLocation, List<Entity>>();
+        for (Entity entity : inGameTWEntities()) {
+            final BoardLocation location = entity.getBoardLocation();
+            if (hasBoardLocation(location)) {
+                List<Entity> listForLocation = positionMap.computeIfAbsent(location, k -> new ArrayList<>());
+                listForLocation.add(entity);
+            }
+        }
         return positionMap;
     }
 

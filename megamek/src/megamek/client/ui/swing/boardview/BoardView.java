@@ -971,7 +971,7 @@ public final class BoardView extends AbstractBoardView
     }
 
     void addMovingUnit(Entity entity, Vector<UnitLocation> movePath) {
-        if (!movePath.isEmpty()) {
+        if (!movePath.isEmpty() && isOnThisBord(entity)) {
             MovingUnit m = new MovingUnit(entity, movePath);
             movingUnits.add(m);
 
@@ -1004,10 +1004,8 @@ public final class BoardView extends AbstractBoardView
         if (!isTileImagesLoaded()) {
             MetalTheme theme = new DefaultMetalTheme();
             graphics2D.setColor(theme.getControl());
-            graphics2D.fillRect(-boardPanel.getX(),
-                  -boardPanel.getY(),
-                  (int) viewRect.getWidth(),
-                  (int) viewRect.getHeight());
+            graphics2D.fillRect(-boardPanel.getX(), -boardPanel.getY(),
+                  (int) viewRect.getWidth(), (int) viewRect.getHeight());
             graphics2D.setColor(theme.getControlTextColor());
             graphics2D.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50);
 
@@ -1073,19 +1071,13 @@ public final class BoardView extends AbstractBoardView
                 y += h - yRem;
             }
         } else if (bvBgImage != null) {
-            graphics2D.drawImage(bvBgImage,
-                  -boardPanel.getX(),
-                  -boardPanel.getY(),
-                  (int) viewRect.getWidth(),
-                  (int) viewRect.getHeight(),
-                  boardPanel);
+            graphics2D.drawImage(bvBgImage, -boardPanel.getX(), -boardPanel.getY(),
+                  (int) viewRect.getWidth(), (int) viewRect.getHeight(), boardPanel);
         } else {
             MetalTheme theme = new DefaultMetalTheme();
             graphics2D.setColor(theme.getControl());
-            graphics2D.fillRect(-boardPanel.getX(),
-                  -boardPanel.getY(),
-                  (int) viewRect.getWidth(),
-                  (int) viewRect.getHeight());
+            graphics2D.fillRect(-boardPanel.getX(), -boardPanel.getY(),
+                  (int) viewRect.getWidth(), (int) viewRect.getHeight());
         }
 
         // Used to pad the board edge
@@ -3198,7 +3190,8 @@ public final class BoardView extends AbstractBoardView
         flyOverSprites.removeIf(flyOverSprite -> flyOverSprite.getEntityId() == entity.getId());
 
         // Add Flyover path, if necessary
-        if ((entity.isAirborne() || entity.isMakingVTOLGroundAttack()) && (entity.getPassedThrough().size() > 1)) {
+        if (isOnThisBord(entity) && (entity.isAirborne() || entity.isMakingVTOLGroundAttack())
+                  && (entity.getPassedThrough().size() > 1)) {
             addFlyOverPath(entity);
         }
 
@@ -3570,25 +3563,25 @@ public final class BoardView extends AbstractBoardView
      * This will add sprites along the forward path for the remaining velocity and indicate what point along it's
      * forward path the unit can turn.
      *
-     * @param md - Current MovePath that represents the current units movement state
+     * @param movePath - Current MovePath that represents the current units movement state
      */
-    private void displayFlightPathIndicator(MovePath md) {
+    private void displayFlightPathIndicator(MovePath movePath) {
         // Don't attempt displaying Flight Path Indicators if using advanced aero movement.
         if (game.useVectorMove()) {
             return;
         }
 
         // Don't calculate any kind of flight path indicators if the move is not legal.
-        if (md.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL) {
+        if (movePath.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL) {
             return;
         }
 
         // If the unit has remaining aerodyne velocity display the flight path indicators for remaining velocity.
-        if ((md.getFinalVelocityLeft() > 0) && !md.nextForwardStepOffBoard()) {
-            ArrayList<MoveStep> fpiSteps = new ArrayList<>();
+        if ((movePath.getFinalVelocityLeft() > 0) && !movePath.nextForwardStepOffBoard()) {
+            List<MoveStep> fpiSteps = new ArrayList<>();
 
-            // Cloning the current movement path because we don't want to change it's state.
-            MovePath fpiPath = md.clone();
+            // Cloning the current movement path because we don't want to change its state.
+            MovePath fpiPath = movePath.clone();
 
             // While velocity remains, add a forward step to the cloned movement path.
             while (fpiPath.getFinalVelocityLeft() > 0) {
@@ -3601,8 +3594,7 @@ public final class BoardView extends AbstractBoardView
                 }
             }
 
-            // For each hex in the entities forward trajectory, add a flight turn indicator
-            // sprite.
+            // For each hex in the entities forward trajectory, add a flight turn indicator sprite.
             for (MoveStep moveStep : fpiSteps) {
                 fpiSprites.add(new FlightPathIndicatorSprite(this,
                       fpiSteps,

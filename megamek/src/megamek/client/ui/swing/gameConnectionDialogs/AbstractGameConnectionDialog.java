@@ -267,14 +267,10 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     public void actionPerformed(ActionEvent e) {
         // reached from the Okay button or pressing Enter in the text fields
         setPlayerName(getPlayerNameFromUI());
-        try {
-            int port = MathUtility.parseInt(getPortField().getText(), MMConstants.DEFAULT_PORT);
-            setPort(clamp(port, MMConstants.MIN_PORT, MMConstants.MAX_PORT));
-            setConfirmed(true);
-            getClientPreferences().setLastPlayerName(getPlayerName());
-            getClientPreferences().setLastConnectPort(getPort());
-        } catch (NumberFormatException ex) {
-            logger.error(ex, "");
-        }
+        int port = MathUtility.parseInt(getPortField().getText(), MMConstants.DEFAULT_PORT);
+        setPort(clamp(port, MMConstants.MIN_PORT, MMConstants.MAX_PORT));
+        setConfirmed(true);
+        getClientPreferences().setLastPlayerName(getPlayerName());
+        getClientPreferences().setLastConnectPort(getPort());
     }
 }

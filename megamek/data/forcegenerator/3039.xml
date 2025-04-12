@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3039-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>5,5</pctOmni>
@@ -1649,7 +1646,7 @@
 		<chassis name='Centurion' unitType='Mek'>
 			<availability>IS:4+,FS:6+,FRR:4,MERC:5+,CS:3-,FC:7+,Periphery:2+,Periphery.OS:3+,Periphery.HR:3+,NIOPS:2-,HL:2+,Periphery.Deep:1+,PIR:3+</availability>
 			<model name='CN9-A'>
-				<availability>IS:8,DC:7,FRR:6,Periphery:8,HL:8,Periphery.Deep:5,PIR:8</availability>
+				<availability>IS:8,DC:7,FRR:6,FC:8,Periphery:8,HL:8,Periphery.Deep:5,PIR:8</availability>
 			</model>
 			<model name='CN9-AH'>
 				<availability>IS:3+,FS:4+,LA:5+,DC:6+,FRR:7+,CC:2+,MERC:2+,CS:5+,FC:3+,Periphery:2+,HL:1+,Periphery.Deep:0,PIR:2</availability>
@@ -1658,6 +1655,7 @@
 				<availability>IS:4,FS:5,LA:8-,FWL:5,DC:7-,FRR:4-,CC:7-,SIC:5-,CS:3,FC:6-,Periphery:5,HL:5,Periphery.Deep:8,PIR:5</availability>
 			</model>
             <model name='CN9-D'>
+                <roles>cavalry</roles>
                 <availability>FS!A:7!B:3,LA!A:4!B:3,FWL!A:6!B:3</availability>
             </model>
 		</chassis>
@@ -2363,7 +2361,7 @@
 		<chassis name='Cronus' unitType='Mek'>
 			<availability>FWL:3-,Periphery.CM:3,Periphery.MW:3,Periphery.ME:3,MOC:3,Periphery.Deep:0,PIR:1+</availability>
 			<model name='CNS-3M'>
-				<availability>IS:8,Periphery:8,PIR:8</availability>
+				<availability>FWL:8,Periphery:8,PIR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Crossbow' unitType='Mek' omni='Clan'>
@@ -4091,11 +4089,11 @@
             <availability>FS:3+,LA!A:4!B:3!C:2,FC:1+</availability>
 			<model name='HCT-3F'>
 				<roles>urban</roles>
-                <availability>FS:8,LA:8,FC:0</availability>
+                <availability>FS:8,LA:8,FC:8</availability>
 			</model>
             <model name='HCT-5S'>
                 <roles>urban</roles>
-                <availability>LA:1+,FC:8</availability>
+                <availability>LA!A:3,FC!A:3</availability>
             </model>
 		</chassis>
         <chassis name='Hawk Hover Tank' unitType='Tank'>
@@ -7594,12 +7592,12 @@
 			</model>
 		</chassis>
 		<chassis name='Scorpion' unitType='Mek'>
-			<availability>IS:3-,FWL:4-,FRR:3,CC:4-,FC:3-,MERC:4-,FC:3-,Periphery:4,TC:4-,NIOPS:3-,HL:3,Periphery.Deep:4,PIR:5-</availability>
+			<availability>IS:3-,FWL:4-,FRR:3,CC:4-,MERC:4-,FC:3-,Periphery:4,TC:4-,NIOPS:3-,HL:3,Periphery.Deep:4,PIR:5-</availability>
 			<model name='SCP-1N'>
 				<availability>IS:8,Periphery:8,HL:8,Periphery.Deep:8,PIR:8</availability>
 			</model>
             <model name='SCP-1O'>
-                <availability>FS!C:1,LA!C:1,FWL!C:1,DC!C:1,MERC!C:1,FC!C:1</availability>
+                <availability>FS!C:3,LA!C:3,FWL!C:3,DC!C:3,MERC!C:3,FC!C:3</availability>
             </model>
 		</chassis>
 		<chassis name='Scout JumpShip' unitType='Jumpship'>

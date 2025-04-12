@@ -250,6 +250,7 @@ public class AddBotUtil {
             princess.setBehaviorSettings(behavior);
             try {
                 princess.connect();
+                princess.startPrecognition();
             } catch (final Exception ex) {
                 message.append("Princess failed to connect.");
             }

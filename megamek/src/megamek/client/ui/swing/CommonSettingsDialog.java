@@ -726,7 +726,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(showDamageLevel, null));
         comps.add(checkboxEntry(showDamageDecal, null));
         comps.add(checkboxEntry(showUnitId, null));
-        comps.add(checkboxEntry(showAutoResolvePanel, null));
         comps.add(checkboxEntry(entityOwnerColor, Messages.getString("CommonSettingsDialog.entityOwnerColor.tooltip")));
         comps.add(checkboxEntry(useSoftCenter, Messages.getString("CommonSettingsDialog.useSoftCenter.tooltip")));
         comps.add(checkboxEntry(useAutoCenter, Messages.getString("CommonSettingsDialog.useAutoCenter.tooltip")));
@@ -1910,6 +1909,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(useGPinUnitSelection,
                 "This changes the BV/PV displayed in the unit selection list. It does not change the pilot/gunnery of the mek once selected. Request restart of Megamek."));
         comps.add(checkboxEntry(generateNames, null));
+        comps.add(checkboxEntry(showAutoResolvePanel, null));
         addLineSpacer(comps);
         comps.add(checkboxEntry(datasetLogging, null));
         comps.add(checkboxEntry(keepGameLog, null));

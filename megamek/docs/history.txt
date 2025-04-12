@@ -31,6 +31,12 @@ MEGAMEK VERSION HISTORY:
 + PR #6832: Corrects custom armor calculation required for megameklab#1820 that fixes megameklab#1808: Conventional infantry custom armor not appearring on record sheet
 + PR #6835: Fixed issue with Ammo Counts showing 0 when configuring from Lobby
 + PR #6837: Removes broken event from server
++ PR #6856: Updated Logging, Clone Handling, and Added toString Methods
++ PR #6840: fix: changed Internationalization to i18n
++ Fix #6860: Fixed Princess Not Acting During Their Rounds
++ Fix #6845: moved the acar hide to a better spot
++ PR #6865: data logging turned on by default
++ PR #6859: Fix MML #1818: Correct "armor_tech" to "armor_tech_level" when applicable
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

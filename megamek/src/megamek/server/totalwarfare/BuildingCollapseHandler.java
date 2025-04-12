@@ -96,7 +96,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
         // Are there any Entities at these coords?
         if (unitsInHex != null) {
             // How many levels does this building have in this hex?
-            final Hex curHex = getGame().getBoard().getHex(coords);
+            final Hex curHex = getGame().getBoard(bldg.getBoardId()).getHex(coords);
             final int numFloors = Math.max(0, curHex.terrainLevel(Terrains.BLDG_ELEV));
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
             int numLoads = numFloors;
@@ -267,7 +267,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
         if (bldg.getBasement(coords).isNone()) {
             return;
         } else {
-            bldg.collapseBasement(coords, getGame().getBoard(), vPhaseReport);
+            bldg.collapseBasement(coords, getGame().getBoard(bldg.getBoardId()), vPhaseReport);
         }
 
         // Are there any Entities at these coords?
@@ -366,7 +366,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
         // Are there any Entities at these coords?
         if (vector != null) {
             // How many levels does this building have in this hex?
-            final Hex curHex = getGame().getBoard().getHex(coords);
+            final Hex curHex = getGame().getBoard(bldg.getBoardId()).getHex(coords);
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
             final int numFloors = Math.max(bridgeEl, curHex.terrainLevel(Terrains.BLDG_ELEV));
 
@@ -380,7 +380,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 bldg.setCurrentCF(0, coords);
                 bldg.setPhaseCF(0, coords);
                 gameManager.send(createCollapseBuildingPacket(coords));
-                getGame().getBoard().collapseBuilding(coords);
+                getGame().getBoard(bldg.getBoardId()).collapseBuilding(coords);
             }
 
             // Sort in elevation order
@@ -488,7 +488,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             bldg.setCurrentCF(0, coords);
             bldg.setPhaseCF(0, coords);
             gameManager.send(createCollapseBuildingPacket(coords));
-            getGame().getBoard().collapseBuilding(coords);
+            getGame().getBoard(bldg.getBoardId()).collapseBuilding(coords);
         }
         // if more than half of the hexes are gone, collapse all
         if (bldg.getCollapsedHexCount() > (bldg.getOriginalHexCount() / 2)) {

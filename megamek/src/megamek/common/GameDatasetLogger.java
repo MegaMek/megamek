@@ -23,10 +23,10 @@ import java.util.List;
 
 import megamek.ai.dataset.UnitAction;
 import megamek.ai.dataset.UnitActionSerializer;
-import megamek.ai.dataset.UnitAttackAction;
+import megamek.ai.dataset.UnitAttack;
 import megamek.ai.dataset.UnitAttackSerializer;
-import megamek.ai.dataset.UnitStateMap;
-import megamek.ai.dataset.UnitStateMapSerializer;
+import megamek.ai.dataset.UnitState;
+import megamek.ai.dataset.UnitStateSerializer;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -43,13 +43,14 @@ public class GameDatasetLogger {
     private static final MMLogger logger = MMLogger.create(GameDatasetLogger.class);
     public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
 
-    private final UnitActionSerializer unitActionSerde = new UnitActionSerializer();
+    private final UnitActionSerializer unitActionSerializer = new UnitActionSerializer();
     private final UnitAttackSerializer unitAttackSerializer = new UnitAttackSerializer();
-    private final UnitStateMapSerializer unitStateMapSerializer = new UnitStateMapSerializer();
+    private final UnitStateSerializer unitStateSerializer = new UnitStateSerializer();
     private final String prefix;
     private BufferedWriter writer;
     private boolean createNewFile = true;
     private int counter = 0;
+
     /**
      * Creates Game Dataset Log named
      */
@@ -241,7 +242,7 @@ public class GameDatasetLogger {
             return;
         }
         try {
-            UnitAttackAction unitAttackAction = UnitAttackAction.fromAttackAction(attackAction, game);
+            UnitAttack unitAttackAction = UnitAttack.fromAttackAction(attackAction, game);
             if (withHeader) {
                 appendToFile(unitAttackSerializer.getHeaderLine());
             }
@@ -260,14 +261,14 @@ public class GameDatasetLogger {
 
         try {
             if (withHeader) {
-                appendToFile(unitStateMapSerializer.getHeaderLine());
+                appendToFile(unitStateSerializer.getHeaderLine());
             }
             for (var inGameObject : game.getInGameObjects()) {
                 if (!(inGameObject instanceof Entity entity)) {
                     continue;
                 }
-                UnitStateMap unitStateMap = UnitStateMap.fromEntity(entity, game);
-                appendToFile(unitStateMapSerializer.serialize(unitStateMap));
+                UnitState unitState = UnitState.fromEntity(entity, game);
+                appendToFile(unitStateSerializer.serialize(unitState));
             }
         } catch (Exception ex) {
             logger.error("Error logging global Game UnitState", ex);
@@ -323,9 +324,9 @@ public class GameDatasetLogger {
         try {
             UnitAction unitAction = UnitAction.fromMovePath(movePath);
             if (withHeader) {
-                appendToFile(unitActionSerde.getHeaderLine());
+                appendToFile(unitActionSerializer.getHeaderLine());
             }
-            appendToFile(unitActionSerde.serialize(unitAction));
+            appendToFile(unitActionSerializer.serialize(unitAction));
         } catch (Exception ex) {
             logger.error(ex, "Error logging MovePath unit action");
         }

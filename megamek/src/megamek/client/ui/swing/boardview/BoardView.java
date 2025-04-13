@@ -402,8 +402,6 @@ public final class BoardView extends AbstractBoardView
         this.clientgui = clientgui;
         boardViewId = hashCode();
 
-        LOGGER.warn("Created BoardView, boardId " + boardId + "; BV ID " + boardViewId);
-
         hexImageCache = new ImageCache<>();
         tileManager = new TilesetManager(game);
         ToolTipManager.sharedInstance().registerComponent(boardPanel);

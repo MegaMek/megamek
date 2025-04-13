@@ -1659,15 +1659,16 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return Messages.getString("WeaponAttackAction.CantShootThruBuilding");
         }
 
+        if (game.getPhase().isFiring() && !game.onTheSameBoard(ae, target)
+                  && !CrossBoardAttackHelper.isCrossBoardAttackPossible(ae, target, game)) {
+            return Messages.getString("WeaponAttackAction.CantAttackOtherBoard");
+        }
+
         // if LOS is blocked, block the shot except in the case of artillery fire
         // fall through in the targeting phase to show a more specific reason than "no LOS"
         if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect && !isArtilleryDirect
                    && !game.getPhase().isTargeting()) {
             return losMods.getDesc();
-        }
-
-        if (game.getPhase().isFiring() && !game.onTheSameBoard(ae, target)) {
-            return Messages.getString("WeaponAttackAction.CantAttackOtherBoard");
         }
 
         // If using SO advanced sensors, the firing unit or one on its NC3 network must

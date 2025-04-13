@@ -8730,8 +8730,9 @@ public class TWGameManager extends AbstractGameManager {
     Vector<Report> doEntityFallsInto(Entity entity, int entitySrcElevation, Coords origSrc, Coords origDest,
           PilotingRollData roll, boolean causeAffa, int fallReduction) {
         Vector<Report> vPhaseReport = new Vector<>();
-        Hex srcHex = game.getBoard().getHex(origSrc);
-        Hex destHex = game.getBoard().getHex(origDest);
+        // use the entity's board ID; can't image a x-board movepath that includes a fall opportunity (aero unit!)
+        Hex srcHex = game.getBoard(entity.getBoardId()).getHex(origSrc);
+        Hex destHex = game.getBoard(entity.getBoardId()).getHex(origDest);
         Coords src, dest;
         // We need to fall into the lower of the two hexes, TW pg 68
         if (srcHex.getLevel() < destHex.getLevel()) {
@@ -25100,7 +25101,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vPhaseReport = new Vector<>();
         Report r;
 
-        Hex fallHex = game.getBoard().getHex(fallPos);
+        Hex fallHex = game.getBoard(entity.getBoardId()).getHex(fallPos);
 
         boolean handlingBasement = false;
         int damageTable = ToHitData.HIT_NORMAL;
@@ -25172,7 +25173,7 @@ public class TWGameManager extends AbstractGameManager {
             // If we are in a basement, we are at a negative elevation, and so
             // setting newElevation = 0 will cause us to "fall up"
         } else if ((entity.getMovementMode() != EntityMovementMode.VTOL) &&
-                         (game.getBoard().getBuildingAt(fallPos) != null)) {
+                         (game.getBoard(entity.getBoardId()).getBuildingAt(fallPos) != null)) {
             newElevation = entity.getElevation();
         }
         // HACK: if the destination hex is water, assume that the fall height given is
@@ -25184,7 +25185,7 @@ public class TWGameManager extends AbstractGameManager {
         // only do these basement checks if we didn't fall onto the building
         // from above
         if (intoBasement) {
-            Building bldg = game.getBoard().getBuildingAt(fallPos);
+            Building bldg = game.getBoard(entity.getBoardId()).getBuildingAt(fallPos);
             BasementType basement = bldg.getBasement(fallPos);
             if (!basement.isNone() &&
                       !basement.isOneDeepNormalInfantryOnly() &&
@@ -25552,7 +25553,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean fallToSurface = false;
         // on ice
         int toSubtract = 0;
-        Hex currHex = game.getBoard().getHex(entity.getPosition());
+        Hex currHex = game.getBoard(entity.getBoardId()).getHex(entity.getPosition());
         if (currHex.containsTerrain(Terrains.ICE) && (entity.getElevation() != -currHex.depth())) {
             fallToSurface = true;
         }

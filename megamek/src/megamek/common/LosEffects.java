@@ -459,10 +459,35 @@ public class LosEffects {
             targetPositions.add(target.getPosition());
         }
 
+        int boardId = target.getBoardId();
+
+        if (Compute.isAirToAir(game, attacker, target)) {
+            // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
+            // position of the unit on the ground map with the position of the ground map itself in the atmo map
+            if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
+                attackerPositions.clear();
+                attackerPositions.add(BoardHelper.positionOnEnclosingBoard(game, attacker.getBoardId()));
+
+            } else if (game.isOnAtmosphericMap(attacker) && game.isOnGroundMap(target)) {
+                targetPositions.clear();
+                targetPositions.add(BoardHelper.positionOnEnclosingBoard(game, target.getBoardId()));
+                boardId = attacker.getBoardId();
+
+            } else if (BoardHelper.onDifferentGroundMaps(game, attacker, target)) {
+                // Different ground maps, here replace both positions with their respective atmo map hexes
+                attackerPositions.clear();
+                attackerPositions.add(BoardHelper.positionOnEnclosingBoard(game, attacker.getBoardId()));
+                targetPositions.clear();
+                targetPositions.add(BoardHelper.positionOnEnclosingBoard(game, target.getBoardId()));
+                boardId = game.getEnclosingBoard(boardId).map(Board::getBoardId).orElse(boardId);
+            }
+        }
+
         LosEffects bestLOS = null;
         for (final Coords attackerPosition : attackerPositions) {
             for (final Coords targetPosition : targetPositions) {
-                LosEffects newLos = calculateLOS(game, attacker, target, attackerPosition, targetPosition, spotting);
+                LosEffects newLos = calculateLOS(game, attacker, target, attackerPosition, targetPosition, boardId,
+                      spotting);
                 // is the new one better?
                 if ((bestLOS == null) || bestLOS.isBlocked()
                         || (newLos.losModifiers(game).getValue() < bestLOS.losModifiers(game).getValue())) {
@@ -480,16 +505,42 @@ public class LosEffects {
     }
 
     public static LosEffects calculateLOS(final Game game, final @Nullable Entity attacker,
+          final @Nullable Targetable target,
+          final @Nullable Coords attackerPosition,
+          final @Nullable Coords targetPosition,
+          final boolean spotting) {
+        // LEGACY - in time, replace with the correct boardId
+        return  calculateLOS(game, attacker, target, attackerPosition, targetPosition, 0, spotting);
+    }
+
+    /**
+     * This calculates LOS effects with the assumption that attackerPosition and targetPosition are on the same
+     * board, either because attacker and target really are on the same board or because the actual positions have
+     * been replaced with nominal positions; e.g. a fighter on a ground map shooting at another on the surrounding
+     * atmo map will have its position replaced with the hex of the atmo board that its ground board is in.
+     * Additionally, the given positions may be any of the secondary positions of a multi-hex unit to find the best
+     * LOS effects for an attacker.
+     * <p>
+     * Note that if any of the parameters are null or invalid, a "blocked" LOS effects will be returned.
+     *
+     * @param attackerPosition The nominal position of the attacker on the board with the given board ID
+     * @param targetPosition The nominal position of the target on the board with the given board ID
+     * @param boardId The board on which the nominal positions are
+     * @param spotting
+     * @return LOS effects between the given positions
+     */
+    public static LosEffects calculateLOS(final Game game, final @Nullable Entity attacker,
             final @Nullable Targetable target,
             final @Nullable Coords attackerPosition,
             final @Nullable Coords targetPosition,
+            int boardId,
             final boolean spotting) {
 
         // LOS fails if one of the entities is not deployed.
         if ((attacker == null) || (target == null) || (attackerPosition == null)
                 || (targetPosition == null) || attacker.isOffBoard() || target.isOffBoard()
-                  || !game.hasBoardLocation(attackerPosition, attacker.getBoardId())
-                  || !game.hasBoardLocation(targetPosition, target.getBoardId())) {
+                  || !game.hasBoardLocation(attackerPosition, boardId)
+                  || !game.hasBoardLocation(targetPosition, boardId)) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
             los.hasLoS = false;
@@ -498,12 +549,12 @@ public class LosEffects {
         }
 
         // Handle Low Atmosphere maps separately
-        if (game.getBoard(attacker.getBoardId()).inAtmosphere()) {
-            return calculateLowAtmoLOS(game, attacker, target, attackerPosition, targetPosition);
+        if (game.getBoard(boardId).inAtmosphere()) {
+            return calculateLowAtmoLOS(game, attacker, target, attackerPosition, targetPosition, boardId);
         }
 
-        final Hex attackerHex = game.getHex(attackerPosition, attacker.getBoardId());
-        final Hex targetHex = game.getHex(targetPosition, target.getBoardId());
+        final Hex attackerHex = game.getHex(attackerPosition, boardId);
+        final Hex targetHex = game.getHex(targetPosition, boardId);
 
         // this will adjust the effective height of a building target by 1 if the hex
         // contains a rooftop gun emplacement
@@ -512,7 +563,7 @@ public class LosEffects {
         final AttackInfo ai = new AttackInfo();
         ai.attackerIsMek = attacker instanceof Mek;
         ai.attackPos = attackerPosition;
-        ai.boardId = attacker.getBoardId();
+        ai.boardId = boardId;
         ai.attackerId = attacker.getId();
         ai.targetPos = targetPosition;
         ai.targetEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
@@ -523,7 +574,7 @@ public class LosEffects {
 
         // Adjust units' altitudes for low-altitude map LOS caclulations
         // Revisit once we have ground units on low-alt and dual-map functional
-        final boolean lowAlt = game.getBoard(attacker).inAtmosphere();
+        final boolean lowAlt = game.getBoard(boardId).inAtmosphere();
         if (attacker.isAirborne() && lowAlt) {
             ai.attLowAlt = true;
         }
@@ -609,7 +660,7 @@ public class LosEffects {
     public static LosEffects calculateLowAtmoLOS(final Game game, final @Nullable Entity attacker,
             final @Nullable Targetable target,
             final @Nullable Coords attackerPosition,
-            final @Nullable Coords targetPosition) {
+            final @Nullable Coords targetPosition, int boardId) {
 
         // Should not need to check unit types; only Aeros or acting Aeros can be up
         // here currently.
@@ -621,7 +672,7 @@ public class LosEffects {
         ai.attackPos = attackerPosition;
         ai.attackerId = attacker.getId();
         ai.targetPos = targetPosition;
-        ai.boardId = attacker.getBoardId();
+        ai.boardId = boardId;
         ai.targetEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         if (ai.targetEntity) {
             ai.targetId = target.getId();

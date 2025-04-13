@@ -1351,7 +1351,7 @@ public class Compute {
         }
 
         // determine base distance & range bracket
-        int distance = Compute.effectiveDistance(game, ae, target, false);
+        int distance = effectiveDistance(game, ae, target, false);
         int range = RangeType.rangeBracket(distance, weaponRanges,
                 useExtremeRange, useLOSRange);
 
@@ -1839,17 +1839,9 @@ public class Compute {
                 targetPos.add(target.getSecondaryPositions().get(key));
             }
         }
-        int distance = Integer.MAX_VALUE;
-        for (Coords apos : attackPos) {
-            for (Coords tpos : targetPos) {
-                if ((tpos != null) && (apos != null)
-                        && (apos.distance(tpos) < distance)) {
-                    distance = apos.distance(tpos);
-                }
-            }
-        }
+        int distance = smallestDistance(attackPos, targetPos);
 
-        if (Compute.isGroundToAir(attacker, target) && (target instanceof Entity)) {
+        if (isGroundToAir(attacker, target) && (target instanceof Entity)) {
             // distance is determined by closest point on flight path
             distance = attacker.getPosition().distance(getClosestFlightPath(attacker.getId(),
                     attacker.getPosition(), (Entity) target));
@@ -1864,32 +1856,32 @@ public class Compute {
             }
         }
 
-        // if this is an air-to-air attack on the ground map, then divide
-        // distance by 16
-        if (Compute.isAirToAir(game, attacker, target) && game.getBoard().onGround() && !useGroundDistance) {
+        // if this is an air-to-air attack on the ground map, then divide distance by 16
+        if (isAirToAir(game, attacker, target) && game.isOnGroundMap(attacker)
+                  && game.onTheSameBoard(attacker, target) && !useGroundDistance) {
             distance = (int) Math.ceil(distance / 16.0);
         }
 
         // If the attack is completely inside a building, add the difference
         // in elevations between the attacker and target to the range.
         // TODO: should the player be explicitly notified?
-        if (Compute.isInSameBuilding(game, attacker, target)) {
+        if (isInSameBuilding(game, attacker, target)) {
             int aElev = attacker.getElevation();
             int tElev = target.getElevation();
             distance += Math.abs(aElev - tElev);
         }
 
         // air-to-air attacks add one for altitude differences
-        if (Compute.isAirToAir(game, attacker, target) && !attacker.isSpaceborne()) {
+        if (isAirToAir(game, attacker, target) && !attacker.isSpaceborne()) {
             int aAlt = attacker.getAltitude();
             int tAlt = target.getAltitude();
-            if (target.isAirborneVTOLorWIGE()) {
+            if (target.isAirborneVTOLorWIGE()) { //FIXME VTOLs cannot be A2A
                 tAlt++;
             }
             distance += Math.abs(aAlt - tAlt);
         }
 
-        if (Compute.isGroundToAir(attacker, target)) {
+        if (isGroundToAir(attacker, target)) {
             if (attacker.usesWeaponBays() && game.getBoard().onGround()) {
                 distance += (target.getAltitude());
             } else {
@@ -1902,6 +1894,18 @@ public class Compute {
             distance += (2 * attacker.getAltitude());
         }
 
+        return distance;
+    }
+
+    static int smallestDistance(Collection<Coords> firstList, Collection<Coords> secondList) {
+        int distance = Integer.MAX_VALUE;
+        for (Coords first : firstList) {
+            for (Coords second : secondList) {
+                if ((second != null) && (first != null) && (first.distance(second) < distance)) {
+                    distance = first.distance(second);
+                }
+            }
+        }
         return distance;
     }
 
@@ -6852,13 +6856,14 @@ public class Compute {
     }
 
     /**
-     * Returns true when an attack of the given units would be an A2A attack. Checks for null units and
-     * if both units are airborne, {@link Entity#isAirborne()}. Also checks if they're either on the same
-     * map or on connected maps (atmo/ground or ground/ground within one atmo map).
+     * Returns true when an attack of the given units would be an A2A attack. Checks for null units and if both units
+     * are airborne, {@link Entity#isAirborne()}. Also checks if they're either on the same map or on connected maps
+     * (atmo/ground or ground/ground within one atmo map).
      *
-     * @param game The game
+     * @param game     The game
      * @param attacker The attacking unit
      * @param target   The target
+     *
      * @return True when the supposed attack would be an A2A attack
      */
     public static boolean isAirToAir(Game game, Entity attacker, Targetable target) {

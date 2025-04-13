@@ -34,9 +34,11 @@ map:
 
 
 options:
+  on:
+    - friendly_fire
   off:
     - check_victory
-    - aero_ground_move
+#    - aero_ground_move
 
 factions:
 - name: P1
@@ -79,7 +81,7 @@ factions:
 #    at: [ 4,4 ]
 #    status: hidden
 
-  - fullname: Locust LCT-1E
+  - fullname: Atlas AS7-D
     board: 0
     at: [ 7,7 ]
 #    status: hidden
@@ -92,7 +94,25 @@ factions:
     at: [5, 6]
     board: 2
     facing: 2
-    altitude: 7
+    altitude: 5
+
+  - fullname: Chippewa CHP-W7T
+    at: [ 20, 12 ]
+    board: 2
+    facing: 4
+    altitude: 5
+
+  - fullname: Cheetah IIC
+    at: [8, 12]
+    board: 0
+    facing: 0
+    altitude: 5
+
+  - fullname: Cheetah IIC
+    at: [ 8, 2 ]
+    board: 0
+    facing: 3
+    altitude: 5
 
 #  - fullname: AC/10 Turret (Dual)
 

@@ -5942,7 +5942,7 @@ public abstract class Entity extends TurnOrdered
         return hasC3() || hasNhC3();
     }
 
-    public String getC3NetId() {
+    public @Nullable String getC3NetId() {
         if (c3NetIdString == null) {
             if (hasC3()) {
                 c3NetIdString = "C3." + getId();
@@ -6010,6 +6010,16 @@ public abstract class Entity extends TurnOrdered
         } else {
             c3NetIdString = "C3i." + getId();
         }
+    }
+
+    /**
+     * Explicitly set the C3 Net ID using a string.
+     * @see megamek.common.util.C3Util
+     * @see #setC3NetId(Entity)
+     * @param c3NetId string value the id should be set to
+     */
+    public void setC3NetId(@Nullable String c3NetId) {
+        c3NetIdString = c3NetId;
     }
 
     /**

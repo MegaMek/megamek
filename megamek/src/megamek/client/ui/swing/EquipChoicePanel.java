@@ -126,7 +126,7 @@ public class EquipChoicePanel extends JPanel {
         this.entity = entity;
         this.clientgui = clientgui;
         this.client = client;
-        Game game = this.clientgui == null ? client.getGame() : clientgui.getClient().getGame();
+        Game game = (clientgui == null) ? client.getGame() : clientgui.getClient().getGame();
 
         GridBagLayout g = new GridBagLayout();
         setLayout(g);

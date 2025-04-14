@@ -127,7 +127,7 @@ public class UnitDisplay extends JPanel {
     }
 
     public UnitDisplay(@Nullable ClientGUI clientgui, @Nullable MegaMekController controller) {
-        this(clientgui == null ? null : clientgui.getClient(), controller);
+        this(clientgui.getClient(), controller);
         this.clientgui = clientgui;
     }
 

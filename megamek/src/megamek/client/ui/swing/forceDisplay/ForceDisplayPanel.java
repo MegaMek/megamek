@@ -33,6 +33,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.lobby.LobbyUtility;
@@ -233,9 +234,17 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
                     Entity entity = (Entity) path.getLastPathComponent();
                     if (clientgui != null) { 
                         clientgui.getUnitDisplay().displayEntity(entity);
-                    } else {
-                        UnitDisplay unitDisplay = new UnitDisplay(null, null);
+                    } else {                    
+                        JFrame frame = null;
+                        Window windowAncestor = SwingUtilities.getWindowAncestor(ForceDisplayPanel.this);
+                        if (windowAncestor instanceof JFrame) {
+                            frame = (JFrame) windowAncestor;
+                        }
+                        UnitDisplayDialog unitDisplayDialog = new UnitDisplayDialog(frame, null);
+                        UnitDisplay unitDisplay = new UnitDisplay(client, null);
                         unitDisplay.displayEntity(entity);
+                        unitDisplayDialog.add(unitDisplay, BorderLayout.CENTER);
+                        unitDisplayDialog.setVisible(true);
                     }
                     GUIP.setUnitDisplayEnabled(true);
 

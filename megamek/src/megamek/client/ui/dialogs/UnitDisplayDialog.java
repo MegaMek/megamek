@@ -76,7 +76,9 @@ public class UnitDisplayDialog extends JDialog {
                 GUIP.setUnitDisplayNontabbedPosY(getLocation().y);
                 GUIP.setUnitDisplayNonTabbedSizeWidth(getSize().width);
                 GUIP.setUnitDisplayNonTabbedSizeHeight(getSize().height);
-                clientGUI.getUnitDisplay().saveSplitterLoc();
+                if (clientGUI != null) {
+                    clientGUI.getUnitDisplay().saveSplitterLoc();
+                }
             }
         }
     }
@@ -96,11 +98,13 @@ public class UnitDisplayDialog extends JDialog {
      */
     @Override
     protected void processKeyEvent(KeyEvent evt) {
-        evt.setSource(clientGUI);
-        clientGUI.getMenuBar().dispatchEvent(evt);
-        // Make the source be the ClientGUI and not the dialog
-        // This prevents a ClassCastException in ToolTipManager
-        clientGUI.getCurrentPanel().dispatchEvent(evt);
+        if (clientGUI != null) {
+            evt.setSource(clientGUI);
+            clientGUI.getMenuBar().dispatchEvent(evt);
+            // Make the source be the ClientGUI and not the dialog
+            // This prevents a ClassCastException in ToolTipManager
+            clientGUI.getCurrentPanel().dispatchEvent(evt);
+        }
         if (!evt.isConsumed()) {
             super.processKeyEvent(evt);
         }

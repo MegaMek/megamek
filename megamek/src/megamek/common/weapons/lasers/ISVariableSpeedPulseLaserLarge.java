@@ -38,11 +38,11 @@ public class ISVariableSpeedPulseLaserLarge extends VariableSpeedPulseLaserWeapo
         shortRange = 4;
         mediumRange = 8;
         longRange = 15;
-        extremeRange = 16;
+        extremeRange = 22;
         waterShortRange = 2;
         waterMediumRange = 5;
         waterLongRange = 9;
-        waterExtremeRange = 10;
+        waterExtremeRange = 13;
         damageShort = 11;
         damageMedium = 9;
         damageLong = 7;
@@ -54,7 +54,7 @@ public class ISVariableSpeedPulseLaserLarge extends VariableSpeedPulseLaserWeapo
         medAV = 7;
         maxRange = RANGE_MED;
         rulesRefs = "321, TO";
-        //Nov 22 - CGL requested we move to Standard for Simple Tech Level 
+        //Nov 22 - CGL requested we move to Standard for Simple Tech Level
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(3070, 3072, 3080).setPrototypeFactions(F_FW,F_WB)

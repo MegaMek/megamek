@@ -37,7 +37,7 @@ public class CLBASupportPPC extends PPCWeapon {
         waterShortRange = 1;
         waterMediumRange = 3;
         waterLongRange = 5;
-        waterExtremeRange = 6;
+        waterExtremeRange = 7;
         bv = 14;
         tonnage = 0.240;
         criticals = 2;

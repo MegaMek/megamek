@@ -6,6 +6,8 @@ on:
 
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
+  PR_NUMBER: ${{ github.event.number }}
+  PR_HASH: ${{ github.sha }}
 
 jobs:
   ci_cd:
@@ -23,6 +25,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: megamek
+
+      - name: "Output branch information to Version file"
+        run: |
+          echo "branch=PR-${{ github.event.number }}\ngitHash=${{ github.sha }}" >> megamek/megamek/resources/extraVersion.properties
 
       - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4

@@ -104,3 +104,4 @@ equipment.txt
 # Testing Temp Folder
 /megamek/testresources/tmp/*
 !/megamek/testresources/tmp/.keep
+/megamek/resources/extraVersion.properties

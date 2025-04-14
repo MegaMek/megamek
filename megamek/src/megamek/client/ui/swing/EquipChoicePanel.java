@@ -42,6 +42,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
@@ -125,6 +126,7 @@ public class EquipChoicePanel extends JPanel {
         this.entity = entity;
         this.clientgui = clientgui;
         this.client = client;
+        Game game = this.clientgui == null ? client.getGame() : clientgui.getClient().getGame();
 
         GridBagLayout g = new GridBagLayout();
         setLayout(g);
@@ -135,14 +137,14 @@ public class EquipChoicePanel extends JPanel {
         JLabel labCondEjectAmmo = new JLabel(Messages.getString("CustomMekDialog.labConditional_Ejection_Ammo"),
               SwingConstants.RIGHT);
         if (entity instanceof Mek mek) {
-            if (mek.hasEjectSeat()) {
+            if (mek.hasEjectSeat() && clientgui != null) {
                 add(labAutoEject, GBC.std());
                 add(chAutoEject, GBC.eol());
                 chAutoEject.setSelected(!mek.isAutoEject());
             }
 
             // Conditional Ejections
-            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+            if (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
                       mek.hasEjectSeat()) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
@@ -174,7 +176,7 @@ public class EquipChoicePanel extends JPanel {
             }
 
             // Conditional Ejections
-            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+            if (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
                       aero.hasEjectSeat()) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
@@ -259,7 +261,7 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // Set up rapid fire mg; per errata infantry of any kind cannot use them
-        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST) &&
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST) &&
                   !(entity instanceof Infantry)) {
             setupRapidFireMGs();
             add(panRapidFireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -407,8 +409,15 @@ public class EquipChoicePanel extends JPanel {
         // Weapons that can be used in an Armored Glove
         ArrayList<WeaponType> agWeaponTypes = new ArrayList<>(100);
         Enumeration<EquipmentType> allTypes = EquipmentType.getAllTypes();
-        int gameYear = clientgui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
-        SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(clientgui.getClient().getGame());
+        int gameYear = 0;
+        SimpleTechLevel legalLevel;
+        if (clientgui == null) {
+            gameYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+            legalLevel = SimpleTechLevel.getGameTechLevel(client.getGame());
+        } else {
+            clientgui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+            legalLevel = SimpleTechLevel.getGameTechLevel(clientgui.getClient().getGame());
+        }
         while (allTypes.hasMoreElements()) {
             EquipmentType eq = allTypes.nextElement();
 
@@ -526,7 +535,7 @@ public class EquipChoicePanel extends JPanel {
     private void setupMunitions() {
         GridBagLayout gridBagLayout = new GridBagLayout();
         panMunitions.setLayout(gridBagLayout);
-        Game game = clientgui.getClient().getGame();
+        Game game = clientgui == null ? client.getGame() : clientgui.getClient().getGame();
         IGameOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
 
@@ -637,7 +646,7 @@ public class EquipChoicePanel extends JPanel {
                   vTypes,
                   m_vWeaponAmmoChoice,
                   entity,
-                  clientgui);
+                  game);
             panMunitions.add(munitionChoicePanel, GBC.eol());
             m_vMunitions.add(munitionChoicePanel);
         }
@@ -858,7 +867,11 @@ public class EquipChoicePanel extends JPanel {
                       entC3nodeCount,
                       choC3nodeCount,
                       Entity.MAX_C3_NODES);
-                clientgui.doAlertDialog(Messages.getString("CustomMekDialog.NetworkTooBig.title"), message);
+                if (clientgui == null) {
+                    JOptionPane.showMessageDialog(this, Messages.getString("CustomMekDialog.NetworkTooBig.title"), message, JOptionPane.WARNING_MESSAGE);
+                } else {
+                    clientgui.doAlertDialog(Messages.getString("CustomMekDialog.NetworkTooBig.title"), message);
+                }
                 refreshC3();
             }
         } else if (entity.hasC3i() && (choC3.getSelectedIndex() > -1)) {

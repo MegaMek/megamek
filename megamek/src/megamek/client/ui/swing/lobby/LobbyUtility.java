@@ -285,14 +285,6 @@ public class LobbyUtility {
         return result;
     }
 
-    /**
-     * Returns true if a and b share at least one non-hierarchic C3 system (C3i, Naval C3, Nova CEWS). Symmetrical (the
-     * order of a and b does not matter).
-     */
-    public static boolean sameNhC3System(Entity a, Entity b) {
-        return (a.hasC3i() && b.hasC3i()) || (a.hasNavalC3() && b.hasNavalC3()) || (a.hasNovaCEWS() && b.hasNovaCEWS());
-    }
-
     /** Returns the string with some content shortened like Battle Armor -> BA */
     static String abbreviateUnitName(String unitName) {
         return unitName.replace("(Standard)", "")

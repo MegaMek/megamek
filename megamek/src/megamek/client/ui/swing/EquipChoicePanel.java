@@ -247,12 +247,15 @@ public class EquipChoicePanel extends JPanel {
                   TitledBorder.DEFAULT_POSITION));
             add(panMunitions, GBC.eop().anchor(GridBagConstraints.CENTER));
 
-            setupWeaponAmmoChoice();
-            panWeaponAmmoSelector.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
-                  Messages.getString("CustomMekDialog.WeaponSelectionTitle"),
-                  TitledBorder.TOP,
-                  TitledBorder.DEFAULT_POSITION));
-            add(panWeaponAmmoSelector, GBC.eop().anchor(GridBagConstraints.CENTER));
+            // We have a starting loadout only if we have a ClientGUI
+            if (clientgui != null) {
+                setupWeaponAmmoChoice();
+                panWeaponAmmoSelector.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+                      Messages.getString("CustomMekDialog.WeaponSelectionTitle"),
+                      TitledBorder.TOP,
+                      TitledBorder.DEFAULT_POSITION));
+                add(panWeaponAmmoSelector, GBC.eop().anchor(GridBagConstraints.CENTER));
+            }
         }
 
         if (entity.isBomber()) {

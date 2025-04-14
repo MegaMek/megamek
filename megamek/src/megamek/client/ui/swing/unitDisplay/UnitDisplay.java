@@ -122,11 +122,11 @@ public class UnitDisplay extends JPanel {
      *                  This could be null, if there is no ClientGUI, such as with
      *                  MekWars.
      */
-    public UnitDisplay(@Nullable ClientGUI clientgui) {
+    public UnitDisplay(ClientGUI clientgui) {
         this(clientgui, null);
     }
 
-    public UnitDisplay(@Nullable ClientGUI clientgui, @Nullable MegaMekController controller) {
+    public UnitDisplay(ClientGUI clientgui, @Nullable MegaMekController controller) {
         this(clientgui.getClient(), controller);
         this.clientgui = clientgui;
     }

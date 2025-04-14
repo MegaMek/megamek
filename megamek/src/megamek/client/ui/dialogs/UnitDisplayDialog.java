@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.dialogs;
 
+import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -25,16 +26,43 @@ import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Entity;
 
 public class UnitDisplayDialog extends JDialog {
+    static private UnitDisplayDialog dialogInstance = null;
+    static private UnitDisplay unitDisplay = null;
+    
     //region Variable Declarations
     private final ClientGUI clientGUI;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
+
+    public static void showEntity(final JFrame frame, final Client client, Entity entity, final boolean newInstance) {
+        UnitDisplayDialog localDialogInstance = null;
+        UnitDisplay localUnitDisplay = null;
+        if (!newInstance) {
+            localDialogInstance = dialogInstance;
+            localUnitDisplay = unitDisplay;
+        }
+        if (localDialogInstance == null || unitDisplay == null) {
+            localDialogInstance = new UnitDisplayDialog(frame, null);
+            localUnitDisplay = new UnitDisplay(client, null);
+            localDialogInstance.add(localUnitDisplay, BorderLayout.CENTER);
+            localDialogInstance.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+            if (!newInstance) {
+                dialogInstance = localDialogInstance;
+                unitDisplay = localUnitDisplay;
+            }
+        }
+        localUnitDisplay.displayEntity(entity);
+        localDialogInstance.setVisible(true);
+    }
 
     //region Constructors
     public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {

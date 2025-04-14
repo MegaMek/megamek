@@ -234,17 +234,13 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
                     Entity entity = (Entity) path.getLastPathComponent();
                     if (clientgui != null) { 
                         clientgui.getUnitDisplay().displayEntity(entity);
-                    } else {                    
+                    } else {
                         JFrame frame = null;
                         Window windowAncestor = SwingUtilities.getWindowAncestor(ForceDisplayPanel.this);
                         if (windowAncestor instanceof JFrame) {
                             frame = (JFrame) windowAncestor;
                         }
-                        UnitDisplayDialog unitDisplayDialog = new UnitDisplayDialog(frame, null);
-                        UnitDisplay unitDisplay = new UnitDisplay(client, null);
-                        unitDisplay.displayEntity(entity);
-                        unitDisplayDialog.add(unitDisplay, BorderLayout.CENTER);
-                        unitDisplayDialog.setVisible(true);
+                        UnitDisplayDialog.showEntity(frame, client, entity, e.isShiftDown());
                     }
                     GUIP.setUnitDisplayEnabled(true);
 

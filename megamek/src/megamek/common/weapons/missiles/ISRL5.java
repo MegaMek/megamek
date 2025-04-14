@@ -39,7 +39,7 @@ public class ISRL5 extends RLWeapon {
         shortRange = 3;
         mediumRange = 7;
         longRange = 12;
-        extremeRange = 14;
+        extremeRange = 18;
         bv = 6;
         tonnage = 7.0;
         criticals = 2;

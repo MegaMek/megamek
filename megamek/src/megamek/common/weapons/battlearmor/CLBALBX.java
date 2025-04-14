@@ -46,7 +46,7 @@ public class CLBALBX extends Weapon {
         shortRange = 2;
         mediumRange = 5;
         longRange = 8;
-        extremeRange = 10;
+        extremeRange = 12;
         tonnage = 0.4;
         criticals = 2;
         toHitModifier = -1;

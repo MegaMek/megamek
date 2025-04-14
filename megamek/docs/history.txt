@@ -39,6 +39,9 @@ MEGAMEK VERSION HISTORY:
 + PR #6859: Fix MML #1818: Correct "armor_tech" to "armor_tech_level" when applicable
 + PR #6869: Added @Nullable to getEngine
 + PR #6877: Added Missing Camo for MekHQ New Player Quickstart
++ PR #6834: Slightly better serializer for unit actions and state, added attack action too
++ PR #6873: Data updates - IS faction Medium Mek review 2900-3049
++ Fix #6547: Fixed Extended Range Distances
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width
@@ -164,6 +167,9 @@ MEGAMEK VERSION HISTORY:
 + PR #6729: Removed deprecated logger method.
 + PR #6745: Remove reference to frame, which was extraneous, but keep pack(), which cleans up dialog display
 + PR #6744: Cache results from text normalization
++ Fix #6857: Fixed Port Validation (Sentry)
++ Fix MekHQ#6619: Move RestoreUnitAction::copyC3Networks from MekHQ to MegaMek's C3Utils
++ Fix #6867: Excluded Infantry Attack From Edit Unit Damage Dialog
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

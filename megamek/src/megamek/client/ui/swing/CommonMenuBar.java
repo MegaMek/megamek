@@ -290,18 +290,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(viewDecGUIScale, menu, VIEW_DECGUISCALE);
         menu.addSeparator();
 
-        initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY, VK_D, false);
         GUIP.setUnitDisplayEnabled(false);
-        initMenuItem(viewMinimap, menu, VIEW_MINI_MAP, VK_M, false);
+        initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY, VK_D, GUIP.getUnitDisplayEnabled());
         GUIP.setMinimapEnabled(false);
-        initMenuItem(gameRoundReport, menu, VIEW_ROUND_REPORT, false);
+        initMenuItem(viewMinimap, menu, VIEW_MINI_MAP, VK_M, GUIP.getMinimapEnabled());
         GUIP.setMiniReportEnabled(false);
-        initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST, false);
+        initMenuItem(gameRoundReport, menu, VIEW_ROUND_REPORT, GUIP.getMiniReportEnabled());
         GUIP.setPlayerListEnabled(false);
-        initMenuItem(viewForceDisplay, menu, VIEW_FORCE_DISPLAY, false);
+        initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST, GUIP.getPlayerListEnabled());
         GUIP.setForceDisplayEnabled(false);
-        initMenuItem(viewBotCommands, menu, VIEW_BOT_COMMANDS, VK_G, false);
+        initMenuItem(viewForceDisplay, menu, VIEW_FORCE_DISPLAY, GUIP.getForceDisplayEnabled());
         GUIP.setBotCommandsEnabled(false);
+        initMenuItem(viewBotCommands, menu, VIEW_BOT_COMMANDS, VK_G, GUIP.getBotCommandsEnabled());
         menu.addSeparator();
 
         initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY, GUIP.getShowKeybindsOverlay());

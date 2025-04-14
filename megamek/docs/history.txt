@@ -40,6 +40,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6869: Added @Nullable to getEngine
 + PR #6877: Added Missing Camo for MekHQ New Player Quickstart
 + PR #6834: Slightly better serializer for unit actions and state, added attack action too
++ PR #6873: Data updates - IS faction Medium Mek review 2900-3049
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

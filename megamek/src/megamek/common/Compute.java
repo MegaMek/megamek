@@ -6532,17 +6532,21 @@ public class Compute {
      * @return the maximum damage that a set of weapons can generate.
      */
     public static int computeTotalDamage(List<WeaponMounted> weaponList) {
+        return weaponList.stream().map(Compute::computeTotalDamage).mapToInt(e -> e).sum();
+    }
+
+
+    /**
+     * @return the maximum damage that a weapon can generate.
+     */
+    public static int computeTotalDamage(WeaponMounted weapon) {
         int totalDmg = 0;
-        for (WeaponMounted weapon : weaponList) {
-            if (!weapon.isBombMounted() && weapon.isCrippled()) {
-                continue;
-            }
+        if (weapon.isBombMounted() || !weapon.isCrippled()) {
             WeaponType type = weapon.getType();
             if (type.getDamage() == WeaponType.DAMAGE_VARIABLE) {
                 // Estimate rather than compute exact bay / trooper damage sum.
                 totalDmg += type.getRackSize();
-            } else if (type.getDamage() == WeaponType.DAMAGE_ARTILLERY
-                    || type.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+            } else if (type.getDamage() == WeaponType.DAMAGE_ARTILLERY || type.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 totalDmg += type.getRackSize();
             } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {// Handle dive bomb attacks here!
                 if (type instanceof DiveBombAttack) {
@@ -6558,6 +6562,7 @@ public class Compute {
 
         return totalDmg;
     }
+
 
     /**
      * Method replicates the Non-Conventional Damage against Infantry damage
@@ -7725,4 +7730,4 @@ public class Compute {
         // No enemies in the volume == all outside
         return entities;
     }
-} // End public class Compute
+}

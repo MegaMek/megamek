@@ -13,26 +13,19 @@
  */
 package megamek.common;
 
-import megamek.common.actions.*;
-import megamek.ai.dataset.UnitAction;
-import megamek.ai.dataset.UnitActionSerde;
-import megamek.ai.dataset.UnitState;
-import megamek.ai.dataset.UnitStateSerde;
-import megamek.common.enums.AimingMode;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
-import megamek.logging.MMLogger;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
+import megamek.ai.dataset.*;
+import megamek.common.actions.AbstractAttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
 
 /**
  * The GameDatasetLogger class is used to log game data to a file in the log directory
@@ -42,13 +35,19 @@ import java.util.List;
 public class GameDatasetLogger {
     private static final MMLogger logger = MMLogger.create(GameDatasetLogger.class);
     public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
-    private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
-    private final UnitActionSerde unitActionSerde = new UnitActionSerde();
-    private final UnitStateSerde unitStateSerde = new UnitStateSerde();
+
+    private final UnitActionSerializer unitActionSerializer = new UnitActionSerializer();
+    private final UnitAttackSerializer unitAttackSerializer = new UnitAttackSerializer();
+    private final BoardDataSerializer boardDataSerializer = new BoardDataSerializer();
+    private final MapSettingsDataSerializer mapSettingsDataSerializer = new MapSettingsDataSerializer();
+    private final PlanetaryConditionsDataSerializer planetaryConditionsDataSerializer = new PlanetaryConditionsDataSerializer();
+    private final GameDataSerializer gameDataSerializer = new GameDataSerializer();
+
     private final String prefix;
     private BufferedWriter writer;
     private boolean createNewFile = true;
     private int counter = 0;
+
     /**
      * Creates Game Dataset Log named
      */
@@ -90,7 +89,7 @@ public class GameDatasetLogger {
             writer = new BufferedWriter(new FileWriter(logfile));
             initialize();
         } catch (Exception ex) {
-            logger.error("", ex);
+            logger.error("An error happened while setting up a new log file, writer is being shut down", ex);
             writer = null;
         }
     }
@@ -109,28 +108,16 @@ public class GameDatasetLogger {
             if (planetaryConditions == null) {
                 return;
             }
+
+            PlanetaryConditionsData data = PlanetaryConditionsData.fromPlanetaryConditions(planetaryConditions);
+
             if (withHeader) {
-                appendToFile(
-                    String.join(
-                        "\t",
-                        "TEMPERATURE", "WEATHER", "GRAVITY", "WIND", "ATMOSPHERE", "FOG", "LIGHT"
-                    )
-                );
+                appendToFile(planetaryConditionsDataSerializer.getHeaderLine());
             }
-            appendToFile(
-                String.join(
-                    "\t",
-                    planetaryConditions.getTemperature() + "",
-                    planetaryConditions.getWeather().name(),
-                    planetaryConditions.getGravity() + "",
-                    planetaryConditions.getWind() + "",
-                    planetaryConditions.getAtmosphere() + "",
-                    planetaryConditions.getFog() + "",
-                    planetaryConditions.getLight() + ""
-                )
-            );
+
+            appendToFile(planetaryConditionsDataSerializer.serialize(data));
         } catch (Exception ex) {
-            logger.error(ex, "Error logging entity action");
+            logger.error("Error logging planetary conditions", ex);
         }
     }
 
@@ -144,38 +131,18 @@ public class GameDatasetLogger {
             if (board == null) {
                 return;
             }
-            if (withHeader) {
-                appendToFile(
-                    String.join(
-                        "\t",
-                        "BOARD_NAME", "WIDTH", "HEIGHT"
-                    )
-                );
-            }
-            appendToFile(
-                String.join(
-                    "\t",
-                    board.getBoardName(), board.getWidth() + "", board.getHeight() + ""
-                )
-            );
 
-            StringBuilder sb = new StringBuilder(1024);
-            for (int x = 0; x < board.getWidth(); x++) {
-                sb.append("COL_").append(x).append("\t");
-            }
-            appendToFile(sb.toString());
-
-            List<Hex> lineHexes = new ArrayList<>();
-            for (int x = 0; x < board.getWidth(); x++) {
-                lineHexes.clear();
-                for (int y = 0; y < board.getHeight(); y++) {
-                    lineHexes.add(board.getHex(x, y));
-                }
-                appendToFile("ROW_" + x + "\t" + String.join("\t", lineHexes.stream().map(Hex::toString).toList()));
-            }
+            BoardData data = BoardData.fromBoard(board);
+            String lines = boardDataSerializer.serialize(data);
+            appendToFile(lines);
+            // Write all lines from the board serializer
+            // maybe its not necessary to split by new line
+//            for (String line : lines.split("\n")) {
+//                appendToFile(line);
+//            }
 
         } catch (Exception ex) {
-            logger.error(ex, "Error logging entity action");
+            logger.error("Error logging board", ex);
         }
     }
 
@@ -189,25 +156,17 @@ public class GameDatasetLogger {
             if (mapSettings == null) {
                 return;
             }
+
+            MapSettingsData data = MapSettingsData.fromMapSettings(mapSettings);
+
             if (withHeader) {
-                appendToFile(
-                    String.join(
-                        "\t",
-                        "THEME", "CITY_TYPE", "MAP_SIZE", "MAP_WIDTH", "MAP_HEIGHT"
-                    )
-                );
+                appendToFile(mapSettingsDataSerializer.getHeaderLine());
             }
-            appendToFile(
-                String.join(
-                    "\t",
-                    mapSettings.getTheme(),
-                    mapSettings.getCityType(),
-                    mapSettings.getMapWidth() + "",
-                    mapSettings.getMapHeight() + ""
-                )
-            );
+
+            appendToFile(mapSettingsDataSerializer.serialize(data));
+
         } catch (Exception ex) {
-            logger.error(ex, "Error logging entity action");
+            logger.error("Error logging map settings", ex);
         }
     }
 
@@ -239,142 +198,30 @@ public class GameDatasetLogger {
         if (attackAction == null) {
             return;
         }
-        String currentRound = game.getCurrentRound() + "";
-        String entityId = "-1";
-        String playerId = "-1";
-        String type;
-        String role = UnitRole.NONE.name();
-        String coords = "-1\t-1";
-        String facing = "-1";
-        String targetPlayerId = "-1";
-        String targetId = "-1";
-        String targetType = "UNKNOWN";
-        String targetRole = UnitRole.NONE.name();
-        String targetCoords = "-1\t-1";
-        String targetFacing = "-1";
-        String aimingLoc = "-1";
-        String aimingMode = AimingMode.NONE.name();
-        String weaponId = "-1";
-        String ammoId = "-1";
-        String ata = "0";
-        String atg = "0";
-        String gtg = "0";
-        String gta = "0";
-        String toHit = "0";
-        String turnsToHit = "0";
-        String spotterId = "-1";
-        var attacker = attackAction.getEntity(game);
-        if (attacker != null) {
-            entityId = attacker.getId() + "";
-            playerId = attacker.getOwner().getId() + "";
-            type = attacker.getClass().getSimpleName();
-            role = attacker.getRole() == null ? UnitRole.NONE.name() : attacker.getRole().name();
-            coords = attacker.isDeployed() ? attacker.getPosition().toTSV() : "-1\t-1";
-            facing = attacker.getFacing() + "";
-        } else {
-            type = "UNKNOWN";
-        }
-        var target = attackAction.getTarget(game);
-        if (target != null ) {
-            targetId = target.getId() + "";
-            targetType = target.getClass().getSimpleName();
-            targetCoords = !(target instanceof INarcPod) && target.getPosition() != null ? target.getPosition().toTSV() : "-1\t-1";
-            if (target instanceof Entity entity) {
-                targetPlayerId = entity.getOwner().getId() + "";
-                targetRole = entity.getRole() == null ? UnitRole.NONE.name() : entity.getRole().name();
-                targetFacing = entity.getFacing() + "";
+        try {
+            UnitAttack unitAttackAction = UnitAttack.fromAttackAction(attackAction, game);
+            if (withHeader) {
+                appendToFile(unitAttackSerializer.getHeaderLine());
             }
+            appendToFile(unitAttackSerializer.serialize(unitAttackAction));
+        } catch (Exception ex) {
+            logger.error(ex, "Error logging Attack unit action");
         }
-        if (attackAction instanceof ArtilleryAttackAction artilleryAttackAction) {
-            if (!artilleryAttackAction.getSpotterIds().isEmpty()) {
-                spotterId = artilleryAttackAction.getSpotterIds().get(0) + "";
-            }
-            turnsToHit = artilleryAttackAction.getTurnsTilHit() + "";
-            toHit = LOG_DECIMAL.format(artilleryAttackAction.toHit(game).getValue());
-            ammoId = artilleryAttackAction.getAmmoId() + "";
-
-        } else if (attackAction instanceof WeaponAttackAction weaponAttackAction) {
-            toHit = LOG_DECIMAL.format(weaponAttackAction.toHit(game).getValue());
-            aimingLoc = weaponAttackAction.getAimedLocation() + "";
-            aimingMode = weaponAttackAction.getAimingMode().name();
-            ammoId = weaponAttackAction.getAmmoId() + "";
-            ata = weaponAttackAction.isAirToAir(game) ? "1" : "0";
-            atg = weaponAttackAction.isAirToGround(game) ? "1" : "0";
-            gta = weaponAttackAction.isGroundToAir(game) ? "1" : "0";
-            gtg = (!weaponAttackAction.isAirToAir(game) && !weaponAttackAction.isGroundToAir(game)
-                && !weaponAttackAction.isAirToGround(game)) ? "1" : "0";
-            weaponId = weaponAttackAction.getWeaponId() + "";
-        }
-        if (withHeader) {
-            appendToFile(
-                String.join(
-                    "\t",
-                    "ROUND", "PLAYER_ID", "ENTITY_ID", "TYPE", "ROLE", "X", "Y", "FACING",
-                    "TARGET_PLAYER_ID", "TARGET_ID", "TARGET_TYPE", "TARGET_ROLE", "TARGET_X", "TARGET_Y", "TARGET_FACING",
-                    "AIMING_LOC", "AIMING_MODE", "WEAPON_ID", "AMMO_ID", "ATA", "ATG", "GTG", "GTA", "TO_HIT", "TURNS_TO_HIT", "SPOTTER_ID"
-                )
-            );
-        }
-        appendToFile(
-            String.join(
-                "\t",
-                currentRound, playerId, entityId, type, role, coords, facing, targetPlayerId, targetId, targetType, targetRole, targetCoords, targetFacing,
-                aimingLoc, aimingMode, weaponId, ammoId, ata, atg, gtg, gta, toHit, turnsToHit, spotterId)
-        );
     }
 
+
     /**
-     * Appends a game state to the log file
-     * @param game the game
-     * @param withHeader whether to include the header in the log file
+     * Appends a game state to the log file.
+     * @param game The game
+     * @param withHeader Whether to include the header in the log file
      */
     public void append(Game game, boolean withHeader) {
-
         try {
-            if (withHeader) {
-                appendToFile(unitStateSerde.getHeaderLine());
-            }
-            for (var inGameObject : game.getInGameObjects()) {
-                if (!(inGameObject instanceof Entity entity)) {
-                    continue;
-                }
-                UnitState unitState = UnitState.fromEntity(entity, game);
-                appendToFile(unitStateSerde.toTsv(unitState));
-            }
+            GameData gameData = GameData.fromGame(game);
+            String lines = gameDataSerializer.serialize(gameData);
+            appendToFile(lines);
         } catch (Exception ex) {
-            logger.error("Error logging global Game UnitState", ex);
-        }
-
-        try {
-            // Example of also logging minefields, which might have different columns
-            var minefields = game.getMinedCoords();
-            if (minefields != null && minefields.hasMoreElements()) {
-                if (withHeader) {
-                    // This is optional, or you can define a separate enum if you want a strict schema
-                    appendToFile("ROUND\tPHASE\tOBJECT\tX\tY");
-                }
-
-                String currentRound = String.valueOf(game.getCurrentRound());
-                String gamePhase = game.getPhase().name();
-
-                while (minefields.hasMoreElements()) {
-                    var minefield = minefields.nextElement();
-                    if (minefield == null) {
-                        continue;
-                    }
-                    // You’d define the line any way you like
-                    appendToFile(String.join(
-                        "\t",
-                        currentRound,
-                        gamePhase,
-                        "MINEFIELD",
-                        String.valueOf(minefield.getX()),
-                        String.valueOf(minefield.getY())
-                    ));
-                }
-            }
-        } catch (Exception ex) {
-            logger.error("Error logging Game UnitState Minefield", ex);
+            logger.error("Error logging game state", ex);
         }
     }
 
@@ -395,9 +242,9 @@ public class GameDatasetLogger {
         try {
             UnitAction unitAction = UnitAction.fromMovePath(movePath);
             if (withHeader) {
-                appendToFile(unitActionSerde.getHeaderLine());
+                appendToFile(unitActionSerializer.getHeaderLine());
             }
-            appendToFile(unitActionSerde.toTsv(unitAction));
+            appendToFile(unitActionSerializer.serialize(unitAction));
         } catch (Exception ex) {
             logger.error(ex, "Error logging MovePath unit action");
         }

@@ -317,6 +317,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(viewTurnDetailsOverlay, menu, VIEW_TURN_DETAILS_OVERLAY);
         viewTurnDetailsOverlay.setSelected(GUIP.getTurnDetailsOverlay());
         initMenuItem(viewUnitOverview, menu, VIEW_UNIT_OVERVIEW);
+        viewUnitOverview.setSelected(GUIP.getShowUnitOverview());
         menu.addSeparator();
 
         initMenuItem(viewResetWindowPositions, menu, VIEW_RESET_WINDOW_POSITIONS);
@@ -324,12 +325,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewAccessibilityWindow.setMnemonic(KeyEvent.VK_A);
         menu.addSeparator();
 
-        viewUnitOverview.setSelected(GUIP.getShowUnitOverview());
         initMenuItem(viewZoomIn, menu, VIEW_ZOOM_IN);
         initMenuItem(viewZoomOut, menu, VIEW_ZOOM_OUT);
         initMenuItem(toggleIsometric, menu, VIEW_TOGGLE_ISOMETRIC, VK_T);
         toggleIsometric.setSelected(GUIP.getIsometricEnabled());
         initMenuItem(toggleHexCoords, menu, VIEW_TOGGLE_HEXCOORDS, VK_G);
+        toggleHexCoords.setSelected(GUIP.getCoordsEnabled());
         initMenuItem(viewLabels, menu, VIEW_LABELS);
         menu.addSeparator();
 

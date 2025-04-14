@@ -77,7 +77,7 @@ public class FiringSolutionSpriteHandler extends BoardViewSpriteHandler implemen
         }
 
         solutions.values().stream().map(sln -> new FiringSolutionSprite((BoardView) clientGUI.boardViews().get(0), sln)).forEach(currentSprites::add);
-        clientGUI.boardViews().get(0).addSprites(currentSprites);
+        clientGUI.getBoardView(entity).addSprites(currentSprites);
     }
 
     protected boolean shouldShowTarget(Entity target, Entity ce) {

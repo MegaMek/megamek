@@ -121,7 +121,7 @@ class EntitySprite extends Sprite {
 
     private String getAdjShortName() {
         Coords position = entity.getPosition();
-        boolean multipleUnits = bv.game.getEntitiesVector(position, true).size() > 4;
+        boolean multipleUnits = bv.game.getEntitiesVector(position, entity.getBoardId(), true).size() > 4;
 
         if (onlyDetectedBySensors()) {
             return Messages.getString("BoardView1.sensorReturn");
@@ -282,18 +282,18 @@ class EntitySprite extends Sprite {
         Coords position = entity.getPosition();
 
         if (position != null) {
-            if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
+            if (bv.game.getEntitiesVector(position.translated("SE"), entity.getBoardId(), true).isEmpty()) {
                 labelRect.setLocation((int) (bv.hex_size.width * 0.55), (int) (0.75 * bv.hex_size.height));
                 labelPos = Positioning.RIGHT;
-            } else if (bv.game.getEntitiesVector(position.translated("NW"), true).isEmpty()) {
+            } else if (bv.game.getEntitiesVector(position.translated("NW"), entity.getBoardId(), true).isEmpty()) {
                 labelRect.setLocation((int) (bv.hex_size.width * 0.45) - labelRect.width,
                       (int) (0.25 * bv.hex_size.height) - labelRect.height);
                 labelPos = Positioning.LEFT;
-            } else if (bv.game.getEntitiesVector(position.translated("NE"), true).isEmpty()) {
+            } else if (bv.game.getEntitiesVector(position.translated("NE"), entity.getBoardId(), true).isEmpty()) {
                 labelRect.setLocation((int) (bv.hex_size.width * 0.55),
                       (int) (0.25 * bv.hex_size.height) - labelRect.height);
                 labelPos = Positioning.RIGHT;
-            } else if (bv.game.getEntitiesVector(position.translated("SW"), true).isEmpty()) {
+            } else if (bv.game.getEntitiesVector(position.translated("SW"), entity.getBoardId(), true).isEmpty()) {
                 labelRect.setLocation((int) (bv.hex_size.width * 0.45) - labelRect.width,
                       (int) (0.75 * bv.hex_size.height));
                 labelPos = Positioning.LEFT;
@@ -305,8 +305,8 @@ class EntitySprite extends Sprite {
 
         // If multiple units are present in a hex, fan out the labels
         // In the deployment phase, indexOf returns -1 for the current unit
-        int indexEntity = bv.game.getEntitiesVector(position, true).indexOf(entity);
-        int numEntity = bv.game.getEntitiesVector(position, true).size();
+        int indexEntity = bv.game.getEntitiesVector(position, entity.getBoardId(), true).indexOf(entity);
+        int numEntity = bv.game.getEntitiesVector(position, entity.getBoardId(), true).size();
 
         if ((indexEntity != -1) && (numEntity <= 4)) {
             labelRect.y += (bv.getPanel().getFontMetrics(labelFont).getAscent() + 4) * indexEntity;
@@ -874,7 +874,7 @@ class EntitySprite extends Sprite {
      * and can still move.
      */
     private boolean shouldIndicateNotDone() {
-        var hexEntities = bv.game.getEntitiesVector(entity.getPosition());
+        var hexEntities = bv.game.getEntitiesVector(entity.getPosition(), entity.getBoardId());
         return hexEntities.stream()
                      .filter(e -> hexEntities.indexOf(entity) > hexEntities.indexOf(e))
                      .filter(e -> e.getFacing() == entity.getFacing())

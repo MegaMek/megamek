@@ -82,8 +82,9 @@ factions:
 #    status: hidden
 
   - fullname: Atlas AS7-D
-    board: 0
-    at: [ 7,7 ]
+    board: 1
+    at: [ 26,14 ]
+    facing: 5
 #    status: hidden
 
   - fullname: Brave BRV-1Y

@@ -154,12 +154,10 @@ public class CustomPilotView extends JPanel {
         add(fldNick, GBC.eol());
         fldNick.setText(entity.getCrew().getNickname(slot));
 
-        if (parent.getClientGUI() != null) {
-            label = new JLabel(Messages.getString("CustomMekDialog.labHits"), SwingConstants.RIGHT);
-            add(label, GBC.std());
-            add(fldHits, GBC.eop());
-            fldHits.setText(String.valueOf(entity.getCrew().getHits()));
-        }
+        label = new JLabel(Messages.getString("CustomMekDialog.labHits"), SwingConstants.RIGHT);
+        add(label, GBC.std());
+        add(fldHits, GBC.eop());
+        fldHits.setText(String.valueOf(entity.getCrew().getHits()));
 
         if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             label = new JLabel(Messages.getString("CustomMekDialog.labGunneryL"), SwingConstants.RIGHT);

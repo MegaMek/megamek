@@ -44,7 +44,7 @@ public class ISBAMRM5OS extends MRMWeapon {
         shortRange = 3;
         mediumRange = 8;
         longRange = 15;
-        extremeRange = 16;
+        extremeRange = 22;
         bv = 6;
         cost = 12500;
         tonnage = .25;

@@ -38,7 +38,7 @@ public class ISRL2 extends RLWeapon {
         shortRange = 3;
         mediumRange = 7;
         longRange = 12;
-        extremeRange = 14;
+        extremeRange = 18;
         bv = 3;
         rulesRefs = "229, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)

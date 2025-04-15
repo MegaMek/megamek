@@ -37,7 +37,7 @@ public class ISBALaserERMedium extends LaserWeapon {
         waterShortRange = 3;
         waterMediumRange = 5;
         waterLongRange = 8;
-        waterExtremeRange = 10;
+        waterExtremeRange = 12;
         tonnage = 0.8;
         criticals = 3;
         bv = 62;

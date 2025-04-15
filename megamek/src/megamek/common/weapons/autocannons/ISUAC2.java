@@ -33,7 +33,7 @@ public class ISUAC2 extends UACWeapon {
         shortRange = 8;
         mediumRange = 17;
         longRange = 25;
-        extremeRange = 34;
+        extremeRange = 37;
         tonnage = 7.0;
         criticals = 3;
         bv = 56;

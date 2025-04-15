@@ -16,12 +16,15 @@ package megamek.common.autoresolve.acar.phase;
 import megamek.common.BoardLocation;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.IEntityRemovalConditions;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.report.DeploymentReport;
 import megamek.common.autoresolve.acar.report.IDeploymentReport;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.autoresolve.damage.EntityFinalState;
 import megamek.common.enums.GamePhase;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static megamek.common.Board.*;
@@ -50,7 +53,7 @@ public class DeploymentPhase extends PhaseHandler {
         getSimulationManager().getGame().getActiveFormations().stream()
             .filter( f-> !f.isDeployed())
             .filter( f-> f.getDeployRound() == getSimulationManager().getGame().getCurrentRound())
-            .forEach( this::deployUnit);
+            .forEach(this::deployUnit);
     }
 
     private void deployUnit(Formation formation) {
@@ -109,6 +112,20 @@ public class DeploymentPhase extends PhaseHandler {
 
         getSimulationManager().setFormationAt(formation, new BoardLocation(new Coords(startingPos, 0), 0));
         formation.setDeployed(true);
+        var formationEntity = formation.getEntity();
+        if (formationEntity != null) {
+            formationEntity.setDeployed(true);
+        }
+        for (var unit : formation.getUnits()) {
+            for (var element : unit.getElements()) {
+                var optEntity = getSimulationManager().getGame().getEntity(element.getId());
+                if (optEntity.isPresent()) {
+                    var entity = optEntity.get();
+                    entity.setDeployed(true);
+                }
+            }
+        }
+
         deploymentReporter.reportDeployment(formation, new Coords(startingPos, 0));
     }
 }

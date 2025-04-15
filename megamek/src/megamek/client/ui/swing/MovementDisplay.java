@@ -4681,6 +4681,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * @param entity - Suggested entity to use to compute Aero move envelope.
      */
     public void computeAeroMovementEnvelope(Entity entity) {
+        // do nothing if deactivated in the settings
+        if (!GUIP.getMoveEnvelope()) {
+            // Issue #6880 : Move envelope doesn't clear when turning off move envelopes
+            // from menu or shortcut.
+            clientgui.clearMovementEnvelope();
+            return;
+        }
+
         if ((entity == null) || !(entity.isAero()) || (cmd == null)) {
             return;
         }

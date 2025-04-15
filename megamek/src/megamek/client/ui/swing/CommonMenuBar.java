@@ -290,33 +290,24 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(viewDecGUIScale, menu, VIEW_DECGUISCALE);
         menu.addSeparator();
 
-        initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY, VK_D);
         GUIP.setUnitDisplayEnabled(false);
-        viewMekDisplay.setSelected(false);
-        initMenuItem(viewMinimap, menu, VIEW_MINI_MAP, VK_M);
+        initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY, VK_D, GUIP.getUnitDisplayEnabled());
         GUIP.setMinimapEnabled(false);
-        viewMinimap.setSelected(false);
-        initMenuItem(gameRoundReport, menu, VIEW_ROUND_REPORT);
+        initMenuItem(viewMinimap, menu, VIEW_MINI_MAP, VK_M, GUIP.getMinimapEnabled());
         GUIP.setMiniReportEnabled(false);
-        gameRoundReport.setSelected(false);
-        initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST);
+        initMenuItem(gameRoundReport, menu, VIEW_ROUND_REPORT, GUIP.getMiniReportEnabled());
         GUIP.setPlayerListEnabled(false);
-        gamePlayerList.setSelected(false);
-        initMenuItem(viewForceDisplay, menu, VIEW_FORCE_DISPLAY);
+        initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST, GUIP.getPlayerListEnabled());
         GUIP.setForceDisplayEnabled(false);
-        viewForceDisplay.setSelected(false);
-        initMenuItem(viewBotCommands, menu, VIEW_BOT_COMMANDS, VK_G);
+        initMenuItem(viewForceDisplay, menu, VIEW_FORCE_DISPLAY, GUIP.getForceDisplayEnabled());
         GUIP.setBotCommandsEnabled(false);
-        viewBotCommands.setSelected(false);
+        initMenuItem(viewBotCommands, menu, VIEW_BOT_COMMANDS, VK_G, GUIP.getBotCommandsEnabled());
         menu.addSeparator();
 
-        initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY);
-        viewKeybindsOverlay.setSelected(GUIP.getShowKeybindsOverlay());
-        initMenuItem(viewPlanetaryConditionsOverlay, menu, VIEW_PLANETARYCONDITIONS_OVERLAY);
-        viewPlanetaryConditionsOverlay.setSelected(GUIP.getShowPlanetaryConditionsOverlay());
-        initMenuItem(viewTurnDetailsOverlay, menu, VIEW_TURN_DETAILS_OVERLAY);
-        viewTurnDetailsOverlay.setSelected(GUIP.getTurnDetailsOverlay());
-        initMenuItem(viewUnitOverview, menu, VIEW_UNIT_OVERVIEW);
+        initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY, GUIP.getShowKeybindsOverlay());
+        initMenuItem(viewPlanetaryConditionsOverlay, menu, VIEW_PLANETARYCONDITIONS_OVERLAY, GUIP.getShowPlanetaryConditionsOverlay());
+        initMenuItem(viewTurnDetailsOverlay, menu, VIEW_TURN_DETAILS_OVERLAY, GUIP.getTurnDetailsOverlay());
+        initMenuItem(viewUnitOverview, menu, VIEW_UNIT_OVERVIEW, GUIP.getShowUnitOverview());
         menu.addSeparator();
 
         initMenuItem(viewResetWindowPositions, menu, VIEW_RESET_WINDOW_POSITIONS);
@@ -324,41 +315,32 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewAccessibilityWindow.setMnemonic(KeyEvent.VK_A);
         menu.addSeparator();
 
-        viewUnitOverview.setSelected(GUIP.getShowUnitOverview());
         initMenuItem(viewZoomIn, menu, VIEW_ZOOM_IN);
         initMenuItem(viewZoomOut, menu, VIEW_ZOOM_OUT);
-        initMenuItem(toggleIsometric, menu, VIEW_TOGGLE_ISOMETRIC, VK_T);
-        toggleIsometric.setSelected(GUIP.getIsometricEnabled());
-        initMenuItem(toggleHexCoords, menu, VIEW_TOGGLE_HEXCOORDS, VK_G);
+        initMenuItem(toggleIsometric, menu, VIEW_TOGGLE_ISOMETRIC, VK_T, GUIP.getIsometricEnabled());
+        initMenuItem(toggleHexCoords, menu, VIEW_TOGGLE_HEXCOORDS, VK_G, GUIP.getCoordsEnabled());
         initMenuItem(viewLabels, menu, VIEW_LABELS);
         menu.addSeparator();
 
-        initMenuItem(toggleFovDarken, menu, VIEW_TOGGLE_FOV_DARKEN);
-        toggleFovDarken.setSelected(GUIP.getFovDarken());
+        initMenuItem(toggleFovDarken, menu, VIEW_TOGGLE_FOV_DARKEN, GUIP.getFovDarken());
         toggleFovDarken.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFovDarkenTooltip"));
         initMenuItem(viewLOSSetting, menu, VIEW_LOS_SETTING);
-        initMenuItem(toggleFovHighlight, menu, VIEW_TOGGLE_FOV_HIGHLIGHT);
-        toggleFovHighlight.setSelected(GUIP.getFovHighlight());
-        initMenuItem(viewMovementEnvelope, menu, VIEW_MOVE_ENV);
-        viewMovementEnvelope.setSelected(GUIP.getMoveEnvelope());
+        initMenuItem(toggleFovHighlight, menu, VIEW_TOGGLE_FOV_HIGHLIGHT, GUIP.getFovHighlight());
+        initMenuItem(viewMovementEnvelope, menu, VIEW_MOVE_ENV, GUIP.getMoveEnvelope());
         initMenuItem(viewMovModEnvelope, menu, VIEW_MOVE_MOD_ENV);
         menu.addSeparator();
 
-        initMenuItem(toggleSensorRange, menu, VIEW_TOGGLE_SENSOR_RANGE);
-        toggleSensorRange.setSelected(GUIP.getShowSensorRange());
+        initMenuItem(toggleSensorRange, menu, VIEW_TOGGLE_SENSOR_RANGE, GUIP.getShowSensorRange());
         toggleSensorRange.setToolTipText(Messages.getString("CommonMenuBar.viewToggleSensorRangeToolTip"));
-        initMenuItem(toggleFieldOfFire, menu, VIEW_TOGGLE_FIELD_OF_FIRE);
-        toggleFieldOfFire.setSelected(GUIP.getShowFieldOfFire());
+        initMenuItem(toggleFieldOfFire, menu, VIEW_TOGGLE_FIELD_OF_FIRE, GUIP.getShowFieldOfFire());
         toggleFieldOfFire.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFieldOfFireToolTip"));
         initMenuItem(toggleFleeZone, menu, VIEW_TOGGLE_FLEE_ZONE);
         toggleFleeZone.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFleeZoneToolTip"));
-        initMenuItem(toggleFiringSolutions, menu, VIEW_TOGGLE_FIRING_SOLUTIONS);
+        initMenuItem(toggleFiringSolutions, menu, VIEW_TOGGLE_FIRING_SOLUTIONS, GUIP.getShowFiringSolutions());
         toggleFiringSolutions.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFiringSolutionsToolTip"));
-        toggleFiringSolutions.setSelected(GUIP.getShowFiringSolutions());
 
-        initMenuItem(toggleCFWarning, menu, VIEW_TOGGLE_CF_WARNING);
+        initMenuItem(toggleCFWarning, menu, VIEW_TOGGLE_CF_WARNING, GUIP.getShowCFWarnings());
         toggleCFWarning.setToolTipText(Messages.getString("CommonMenuBar.viewToggleCFWarningToolTip"));
-        toggleCFWarning.setSelected(GUIP.getShowCFWarnings());
 
         // Create the Help menu
         menu = new JMenu(Messages.getString("CommonMenuBar.HelpMenu"));
@@ -639,6 +621,17 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private void initMenuItem(JMenuItem item, JMenu menu, String command, int mnemonic) {
         initMenuItem(item, menu, command);
         item.setMnemonic(mnemonic);
+    }
+
+    private void initMenuItem(JMenuItem item, JMenu menu, String command, boolean selected) {
+        initMenuItem(item, menu, command);
+        item.setSelected(selected);
+    }
+
+    private void initMenuItem(JMenuItem item, JMenu menu, String command, int mnemonic, boolean selected) {
+        initMenuItem(item, menu, command);
+        item.setMnemonic(mnemonic);
+        item.setSelected(selected);
     }
 
     /**

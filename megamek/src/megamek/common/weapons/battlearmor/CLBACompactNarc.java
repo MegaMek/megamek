@@ -34,7 +34,7 @@ public class CLBACompactNarc extends NarcWeapon {
         shortRange = 2;
         mediumRange = 4;
         longRange = 5;
-        extremeRange = 8;
+        extremeRange = 7;
         bv = 16;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         tonnage = .15;

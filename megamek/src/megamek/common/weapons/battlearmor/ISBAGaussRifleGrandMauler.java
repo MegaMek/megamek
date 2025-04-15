@@ -34,7 +34,7 @@ public class ISBAGaussRifleGrandMauler extends Weapon {
         shortRange = 2;
         mediumRange = 4;
         longRange = 5;
-        extremeRange = 8;
+        extremeRange = 7;
         tonnage = 0.125;
         cost = 8000;
         criticals = 2;

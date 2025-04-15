@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
+ *
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
@@ -27,80 +28,177 @@
  */
 package megamek.ai.dataset;
 
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import megamek.ai.utility.EntityFeatureUtils;
 import megamek.client.ui.SharedUtility;
-import megamek.common.Coords;
+import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.IAero;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
-
-import java.util.List;
+import megamek.common.UnitRole;
 
 /**
- * Represents a unit action.
- * @param id unit id
- * @param facing facing direction
- * @param fromX x coordinate of the starting position
- * @param fromY y coordinate of the starting position
- * @param toX x coordinate of the final position
- * @param toY y coordinate of the final position
- * @param hexesMoved number of hexes moved
- * @param distance distance moved
- * @param mpUsed movement points used
- * @param maxMp maximum movement points
- * @param mpP movement points percentage
- * @param heatP heat percentage
- * @param armorP armor percentage
- * @param internalP internal percentage
- * @param jumping jumping
- * @param prone prone
- * @param legal is move legal
+ * Flexible container for unit action data using a map-based approach with enum keys.
  * @author Luana Coppio
  */
-public record UnitAction(int id, int teamId, int playerId, String chassis, String model, int facing, int fromX, int fromY, int toX, int toY, int hexesMoved, int distance, int mpUsed,
-                         int maxMp, double mpP, double heatP, double armorP, double internalP, boolean jumping, boolean prone,
-                         boolean legal, double chanceOfFailure, List<MovePath.MoveStepType> steps, boolean bot) {
+public class UnitAction extends EntityDataMap<UnitAction.Field> {
 
-    public static  UnitAction fromMovePath(MovePath movePath) {
+    /**
+     * Enum defining all available unit action fields.
+     */
+    public enum Field {
+        ID,
+        TEAM_ID,
+        PLAYER_ID,
+        CHASSIS,
+        MODEL,
+        FACING,
+        FROM_X,
+        FROM_Y,
+        TO_X,
+        TO_Y,
+        HEXES_MOVED,
+        DISTANCE,
+        MP_USED,
+        MAX_MP,
+        MP_P,
+        HEAT_P,
+        ARMOR_P,
+        INTERNAL_P,
+        JUMPING,
+        PRONE,
+        LEGAL,
+        CHANCE_OF_FAILURE,
+        STEPS,
+        IS_BOT,
+        HAS_ECM,
+        ARMOR,
+        INTERNAL,
+        BV,
+        MAX_RANGE,
+        TOTAL_DAMAGE,
+        ARMOR_FRONT_P,
+        ARMOR_LEFT_P,
+        ARMOR_RIGHT_P,
+        ARMOR_BACK_P,
+        ROLE,
+        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE;
+    }
+
+    /**
+     * Creates an empty UnitActionMap.
+     */
+    public UnitAction() {
+        super(Field.class);
+    }
+
+    /**
+     * Creates a UnitActionMap from a MovePath.
+     * @param movePath The MovePath to extract data from
+     * @return A populated UnitActionMap
+     */
+    public static UnitAction fromMovePath(MovePath movePath) {
         Entity entity = movePath.getEntity();
-        double chanceOfFailure = SharedUtility.getPSRList(movePath).stream().map(psr -> psr.getValue() / 36d).reduce(0.0, (a, b) -> a * b);
-        var steps = movePath.getStepVector().stream().map(MoveStep::getType).toList();
-        return new UnitAction(
-            entity.getId(),
-            entity.getOwner() != null ? entity.getOwner().getTeam() : -1,
-            entity.getOwner() != null ? entity.getOwner().getId() : -1,
-            entity.getChassis(),
-            entity.getModel(),
-            movePath.getFinalFacing(),
-            movePath.getStartCoords() != null ? movePath.getStartCoords().getX() : -1,
-            movePath.getStartCoords() != null ? movePath.getStartCoords().getY() : -1,
-            movePath.getFinalCoords() != null ? movePath.getFinalCoords().getX() : -1,
-            movePath.getFinalCoords() != null ? movePath.getFinalCoords().getY() : -1,
-            movePath.getHexesMoved(),
-            movePath.getDistanceTravelled(),
-            movePath.getMpUsed(),
-            movePath.getMaxMP(),
-            movePath.getMaxMP() > 0 ? (double) movePath.getMpUsed() / movePath.getMaxMP() : 0.0,
-            entity.getHeatCapacity() > 0 ? entity.getHeat() / (double) entity.getHeatCapacity() : 0.0,
-            entity.getArmorRemainingPercent(),
-            entity.getInternalRemainingPercent(),
-            movePath.isJumping(),
-            movePath.getFinalProne(),
-            movePath.isMoveLegal(),
-            chanceOfFailure,
-            steps,
-            entity.getOwner().isBot()
-        );
-    }
+        UnitAction map = new UnitAction();
 
-    public Coords currentPosition() {
-        return new Coords(fromX, fromY);
-    }
+        // Basic entity information
+        map.put(Field.ID, entity.getId())
+              .put(Field.TEAM_ID, entity.getOwner() != null ? entity.getOwner().getTeam() : -1)
+              .put(Field.PLAYER_ID, entity.getOwner() != null ? entity.getOwner().getId() : -1)
+              .put(Field.CHASSIS, entity.getChassis())
+              .put(Field.MODEL, entity.getModel())
+              .put(Field.FACING, movePath.getFinalFacing())
+              .put(Field.ROLE, firstNonNull(entity.getRole(), UnitRole.NONE));
 
-    public boolean isHuman() {
-        return !bot;
-    }
+        // Position information
+        if (movePath.getStartCoords() != null) {
+            map.put(Field.FROM_X, movePath.getStartCoords().getX())
+                  .put(Field.FROM_Y, movePath.getStartCoords().getY());
+        } else {
+            map.put(Field.FROM_X, -1)
+                  .put(Field.FROM_Y, -1);
+        }
 
-    public Coords finalPosition() {
-        return new Coords(toX, toY);
+        if (movePath.getFinalCoords() != null) {
+            map.put(Field.TO_X, movePath.getFinalCoords().getX())
+                  .put(Field.TO_Y, movePath.getFinalCoords().getY());
+        } else {
+            map.put(Field.TO_X, -1)
+                  .put(Field.TO_Y, -1);
+        }
+
+        // Movement information
+        map.put(Field.HEXES_MOVED, movePath.getHexesMoved())
+              .put(Field.DISTANCE, movePath.getDistanceTravelled())
+              .put(Field.MP_USED, movePath.getMpUsed())
+              .put(Field.MAX_MP, movePath.getMaxMP())
+              .put(Field.MP_P, movePath.getMaxMP() > 0 ? (double) movePath.getMpUsed() / movePath.getMaxMP() : 0.0)
+              .put(Field.HEAT_P, entity.getHeatCapacity() > 0 ? entity.getHeat() / (double) entity.getHeatCapacity() : 0.0);
+
+        // Status information
+        map.put(Field.ARMOR_P, entity.getArmorRemainingPercent())
+              .put(Field.INTERNAL_P, entity.getInternalRemainingPercent())
+              .put(Field.JUMPING, movePath.isJumping())
+              .put(Field.PRONE, movePath.getFinalProne())
+              .put(Field.LEGAL, movePath.isMoveLegal());
+
+        // Failure chance calculation
+        map.put(Field.CHANCE_OF_FAILURE, SharedUtility.getPSRList(movePath).stream()
+                                               .map(psr -> psr.getValue() / 36d)
+                                               .reduce(1.0, (a, b) -> a * b));
+
+        // Movement steps
+        map.put(Field.STEPS, movePath.getStepVector().stream()
+                                   .map(MoveStep::getType)
+                                   .collect(Collectors.toList()));
+
+        // Entity capabilities
+        map.put(Field.IS_BOT, entity.getOwner().isBot())
+              .put(Field.HAS_ECM, entity.hasActiveECM())
+              .put(Field.ARMOR, entity.getTotalArmor());
+
+        // Internal structure
+        if (entity instanceof IAero aero) {
+            map.put(Field.INTERNAL, aero.getSI());
+        } else {
+            map.put(Field.INTERNAL, entity.getTotalInternal());
+        }
+
+        // Combat stats
+        map.put(Field.BV, entity.getInitialBV())
+              .put(Field.MAX_RANGE, entity.getMaxWeaponRange())
+              .put(Field.TOTAL_DAMAGE, Compute.computeTotalDamage(entity.getWeaponList()));
+
+        // Directional armor
+        map.put(Field.ARMOR_FRONT_P, EntityFeatureUtils.getTargetFrontHealthStats(entity))
+              .put(Field.ARMOR_LEFT_P, EntityFeatureUtils.getTargetLeftSideHealthStats(entity))
+              .put(Field.ARMOR_RIGHT_P, EntityFeatureUtils.getTargetRightSideHealthStats(entity))
+              .put(Field.ARMOR_BACK_P, EntityFeatureUtils.getTargetBackHealthStats(entity));
+
+        // Weapon information
+        List<Integer> weaponData = new ArrayList<>();
+        entity.getWeaponList().forEach(weapon -> {
+            int damage = Compute.computeTotalDamage(weapon);
+            int facing = weapon.isRearMounted() ? -entity.getWeaponArc(weapon.getLocation()) :
+                               entity.getWeaponArc(weapon.getLocation());
+            int shortRange = weapon.getType().getShortRange();
+            int mediumRange = weapon.getType().getMediumRange();
+            int longRange = weapon.getType().getLongRange();
+
+            weaponData.add(damage);
+            weaponData.add(facing);
+            weaponData.add(shortRange);
+            weaponData.add(mediumRange);
+            weaponData.add(longRange);
+        });
+        map.put(Field.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE, weaponData);
+
+        return map;
     }
 }

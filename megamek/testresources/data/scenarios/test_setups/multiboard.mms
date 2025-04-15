@@ -32,6 +32,15 @@ map:
     name: Airport
     id: 5
 
+  - type: space
+    width: 15
+    height: 15
+    name: Orbit
+    embed:
+      - at: [ 1, 7 ]
+        id: 2
+    id: 6
+
 
 options:
   on:
@@ -81,39 +90,44 @@ factions:
 #    at: [ 4,4 ]
 #    status: hidden
 
-  - fullname: Atlas AS7-D
-    board: 1
-    at: [ 26,14 ]
-    facing: 5
-#    status: hidden
-
-  - fullname: Brave BRV-1Y
-    board: 5
-    at: [ 35, 29 ]
-
-  - fullname: Cheetah IIC
-    at: [5, 6]
-    board: 2
-    facing: 2
-    altitude: 5
-
-  - fullname: Chippewa CHP-W7T
-    at: [ 20, 12 ]
-    board: 2
-    facing: 4
-    altitude: 5
-
-  - fullname: Cheetah IIC
-    at: [8, 12]
-    board: 0
-    facing: 0
-    altitude: 5
+#  - fullname: Atlas AS7-D
+#    board: 1
+#    at: [ 26,14 ]
+#    facing: 5
+##    status: hidden
+#
+#  - fullname: Brave BRV-1Y
+#    board: 5
+#    at: [ 35, 29 ]
+#
+#  - fullname: Cheetah IIC
+#    at: [5, 6]
+#    board: 2
+#    facing: 2
+#    altitude: 5
+#
+#  - fullname: Chippewa CHP-W7T
+#    at: [ 20, 12 ]
+#    board: 2
+#    facing: 4
+#    altitude: 5
+#
+#  - fullname: Cheetah IIC
+#    at: [8, 12]
+#    board: 0
+#    facing: 0
+#    altitude: 5
+#
+#  - fullname: Cheetah IIC
+#    at: [ 8, 2 ]
+#    board: 0
+#    facing: 3
+#    altitude: 5
 
   - fullname: Cheetah IIC
     at: [ 8, 2 ]
-    board: 0
+    board: 6
     facing: 3
-    altitude: 5
 
 #  - fullname: AC/10 Turret (Dual)
 

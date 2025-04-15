@@ -181,9 +181,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     // HACK : track when we want to show the target choice dialog.
     protected boolean showTargetChoice = true;
 
-    // is the shift key held?
-//    protected boolean shiftheld = false;
-
     protected boolean twisting;
 
     protected Entity[] visibleTargets = null;

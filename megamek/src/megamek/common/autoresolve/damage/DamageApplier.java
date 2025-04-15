@@ -14,6 +14,7 @@
 package megamek.common.autoresolve.damage;
 
 import megamek.common.*;
+import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;
 
 import java.util.ArrayList;
@@ -40,7 +41,10 @@ public interface DamageApplier<E extends Entity> {
             return new HitDetails(hit, damageToApply, setArmorValueTo, hitInternal, Math.min(hitCrew + 1, Crew.DEATH));
         }
         public HitDetails withDamage(int damage) {
-            return new HitDetails(hit, damage, setArmorValueTo, hitInternal, Math.min(hitCrew + 1, Crew.DEATH));
+            return new HitDetails(hit, damage, setArmorValueTo, hitInternal, hitCrew);
+        }
+        public HitDetails redirectedTo(HitData nextLocation) {
+            return new HitDetails(nextLocation, damageToApply, setArmorValueTo, hitInternal, hitCrew);
         }
     }
 
@@ -107,7 +111,7 @@ public interface DamageApplier<E extends Entity> {
         int damageApplied = 0;
         while (totalDamage > 0) {
             var clusterDamage = Math.min(totalDamage, clusterSize);
-            applyDamage(hitDetails.withDamage(clusterDamage));
+            hitDetails = applyDamage(hitDetails.withDamage(clusterDamage));
             totalDamage -= clusterDamage;
             damageApplied += clusterDamage;
         }
@@ -163,11 +167,15 @@ public interface DamageApplier<E extends Entity> {
      *
      * @param hitDetails the hit details
      */
-    default void applyDamage(HitDetails hitDetails) {
+    default HitDetails applyDamage(HitDetails hitDetails) {
         hitDetails = damageArmor(hitDetails);
         hitDetails = damageInternals(hitDetails);
         tryToDamageCrew(hitDetails.hitCrew());
         entity().applyDamage();
+        if (entity().isDoomed()) {
+            setEntityDestroyed(entity());
+        }
+        return hitDetails;
     }
 
     /**
@@ -185,14 +193,21 @@ public interface DamageApplier<E extends Entity> {
         }
 
         entity.setArmor(0, hit);
-        int newInternalValue = Math.max(currentInternalValue + hitDetails.setArmorValueTo(), entityMustSurvive() ? 1 : 0);
-
+        int newInternalValue = currentInternalValue + hitDetails.setArmorValueTo();
+        if (newInternalValue <= 0 && entityMustSurvive()) {
+            newInternalValue = 1;
+        }
         logger.trace("[{}] Damage: {} - Internal at: {}", entity.getDisplayName(), hitDetails.damageToApply(), newInternalValue);
-        entity.setInternal(newInternalValue, hit);
         if (newInternalValue > 0) {
+            entity.setInternal(newInternalValue, hit);
             hitDetails = applyDamageToEquipments(hitDetails);
         } else {
+            entity.setInternal(0, hit);
             hitDetails = destroyLocation(hitDetails);
+            if (newInternalValue < 0) {
+                hitDetails = hitDetails.redirectedTo(entity.getTransferLocation(hit));
+                hitDetails = hitDetails.withDamage(newInternalValue * -1);
+            }
         }
         return hitDetails;
     }
@@ -216,7 +231,6 @@ public interface DamageApplier<E extends Entity> {
         var entity = entity();
         logger.trace("[{}] Destroying location {}", entity.getDisplayName(), location);
         entity.destroyLocation(location);
-        entity.setDestroyed(true);
         setEntityDestroyed(entity);
     }
 
@@ -284,11 +298,10 @@ public interface DamageApplier<E extends Entity> {
      * @param <E> the type of the entity
      */
     static <E extends Entity> void setEntityDestroyed(E entity) {
-        if (entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_DEVASTATED) {
-            entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_SALVAGEABLE);
-            entity.setSalvage(true);
-            logger.trace("[{}] Entity destroyed", entity.getDisplayName());
-        }
+        entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_SALVAGEABLE);
+        boolean salvageable = entity.getRemovalCondition() < IEntityRemovalConditions.REMOVE_DEVASTATED;
+        entity.setSalvage(salvageable);
+        entity.setDestroyed(true);
     }
 
     /**
@@ -300,7 +313,6 @@ public interface DamageApplier<E extends Entity> {
         entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
         entity.setSalvage(false);
         entity.setDestroyed(true);
-        logger.trace("[{}] Entity devastated", entity.getDisplayName());
     }
 
     /**
@@ -315,7 +327,7 @@ public interface DamageApplier<E extends Entity> {
         Collections.shuffle(criticalSlots);
         for (CriticalSlot slot : criticalSlots) {
             if (slot != null && slot.isHittable() && !slot.isHit() && !slot.isDestroyed()) {
-                slot.setHit(true);
+                slot.setDestroyed(true);
                 logger.trace("[{}] Equipment destroyed: {}", entity.getDisplayName(), slot);
                 break;
             }

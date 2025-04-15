@@ -182,6 +182,7 @@ public class SimulationContext implements IGame {
             id = getNextEntityId();
             entity.setId(id);
         }
+
         inGameObjects.put(id, entity);
         if (id > lastEntityId) {
             lastEntityId = id;

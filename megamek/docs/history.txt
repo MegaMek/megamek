@@ -42,6 +42,8 @@ MEGAMEK VERSION HISTORY:
 + PR #6834: Slightly better serializer for unit actions and state, added attack action too
 + PR #6873: Data updates - IS faction Medium Mek review 2900-3049
 + Fix #6547: Fixed Extended Range Distances
++ Fix #6633: fixed the file entity conversion for ACAR by adding move by copy
++ Fix#6880: correct issue with show possible moves and show coords
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

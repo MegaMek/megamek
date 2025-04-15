@@ -3583,12 +3583,12 @@ public class MoveStep implements Serializable {
             return false;
         }
         if (type == MoveStepType.UP) {
-            if (!(entity.canGoUp(elevation - 1, getPosition()))) {
+            if (!(entity.canGoUp(elevation - 1, getPosition(), getTargetBoardId()))) {
                 return false;
             }
         }
         if (type == MoveStepType.DOWN) {
-            if (!(entity.canGoDown(elevation + 1, getPosition()))) {
+            if (!(entity.canGoDown(elevation + 1, getPosition(), getTargetBoardId()))) {
                 return false;// We can't intentionally crash.
             }
         }

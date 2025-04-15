@@ -3218,7 +3218,7 @@ public final class BoardView extends AbstractBoardView
         while (e.hasMoreElements()) {
             Entity entity = e.nextElement();
             Coords position = entity.getPosition();
-            if (!(entity instanceof Infantry) && (position != null) && board.contains(position)) {
+            if (isOnThisBord(entity) && !(entity instanceof Infantry) && (position != null) && board.contains(position)) {
                 WreckSprite wreckSprite;
                 IsometricWreckSprite isometricWreckSprite;
                 if (entity.getSecondaryPositions().isEmpty()) {

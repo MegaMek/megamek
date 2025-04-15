@@ -526,7 +526,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             "stalled out"));
                     entity.setAltitude(entity.getAltitude() - 1);
                     // check for crash
-                    if (gameManager.checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
+                    if (gameManager.checkCrash(entity)) {
                         addReport(gameManager.processCrash(entity, 0, entity.getPosition()));
                     }
                 }
@@ -540,7 +540,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     addReport(r);
                     entity.setAltitude(entity.getAltitude() - 1);
                     // check for crash
-                    if (gameManager.checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
+                    if (gameManager.checkCrash(entity)) {
                         addReport(gameManager.processCrash(entity, 0, entity.getPosition()));
                     }
                 } else if (entity instanceof EscapePods && entity.isAirborne() && md.getFinalVelocity() < 2) {
@@ -1597,7 +1597,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                 gameManager.processLeaveMap(md, true, Compute.roundsUntilReturn(getGame(), entity));
                                 return;
                                 // make sure it didn't crash
-                            } else if (gameManager.checkCrash(entity, curPos, step.getAltitude())) {
+                            } else if (gameManager.checkCrash(entity, curPos, curBoardId, step.getAltitude())) {
                                 addReport(gameManager.processCrash(entity, step.getVelocity(), curPos));
                                 forward = 0;
                                 fellDuringMovement = false;
@@ -1719,7 +1719,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
 
                 // if in the atmosphere, check for a potential crash
-                if (gameManager.checkCrash(entity, step.getPosition(), step.getAltitude())) {
+                if (gameManager.checkCrash(entity, step.getPosition(), step.getTargetBoardId(), step.getAltitude())) {
                     addReport(gameManager.processCrash(entity, md.getFinalVelocity(), curPos));
                     crashedDuringMovement = true;
                     // don't do the rest

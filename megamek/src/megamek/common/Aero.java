@@ -2473,7 +2473,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean canGoDown() {
-        return canGoDown(altitude, getPosition());
+        return canGoDown(altitude, getPosition(), getBoardId());
     }
 
     @Override

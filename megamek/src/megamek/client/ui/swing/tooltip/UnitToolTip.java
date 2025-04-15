@@ -207,7 +207,8 @@ public final class UnitToolTip {
             result = UnitToolTip.addPlayerColorBoarder(GUIP, targetEntity, result);
             return result;
         } else if (target instanceof BuildingTarget) {
-            return HexTooltip.getOneLineSummary((BuildingTarget) target, (client != null) ? client.getBoard() : null);
+            return HexTooltip.getOneLineSummary((BuildingTarget) target, (client != null)
+                                       ? client.getGame().getBoard(target) : null);
         }
         return target.getDisplayName();
     }
@@ -1446,7 +1447,7 @@ public final class UnitToolTip {
             return Messages.getString("NONE");
         }
 
-        if (e.isAirborne() && e.getGame().getBoard().onGround()) {
+        if (e.isAirborneAeroOnGroundMap()) {
             return e.getActiveSensor().getDisplayName() + " (" + srh.minSensorRange + "-"
                     + srh.maxSensorRange + ")" + " {"
                     + Messages.getString("BoardView1.Tooltip.sensor_range_vs_ground_target")

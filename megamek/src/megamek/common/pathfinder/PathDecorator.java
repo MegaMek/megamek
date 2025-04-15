@@ -177,7 +177,7 @@ public class PathDecorator {
         
         // If the unit cannot go up in it's current hex, nothing can be done
         int entityElevation = source.getFinalElevation();
-        boolean canGoUp = source.getEntity().canGoUp(entityElevation, source.getFinalCoords());
+        boolean canGoUp = source.getEntity().canGoUp(entityElevation, source.getFinalCoords(), source.getFinalBoardId());
         if (!canGoUp) {
             return;
         }

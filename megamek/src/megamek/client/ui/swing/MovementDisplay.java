@@ -2277,8 +2277,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (ce.isAirborne()) {
             // then use altitude not elevation
-            setRaiseEnabled(ce.canGoUp(cmd.getFinalAltitude(), cmd.getFinalCoords()));
-            setLowerEnabled(ce.canGoDown(cmd.getFinalAltitude(), cmd.getFinalCoords()));
+            setRaiseEnabled(ce.canGoUp(cmd.getFinalAltitude(), cmd.getFinalCoords(), cmd.getFinalBoardId()));
+            setLowerEnabled(ce.canGoDown(cmd.getFinalAltitude(), cmd.getFinalCoords(), cmd.getFinalBoardId()));
             return;
         }
         // WiGEs (and LAMs and glider protomeks) cannot go up if they've used ground
@@ -2287,9 +2287,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 && !cmd.contains(MoveStepType.UP)) {
             setRaiseEnabled(false);
         } else {
-            setRaiseEnabled(ce.canGoUp(cmd.getFinalElevation(), cmd.getFinalCoords()));
+            setRaiseEnabled(ce.canGoUp(cmd.getFinalElevation(), cmd.getFinalCoords(), cmd.getFinalBoardId()));
         }
-        setLowerEnabled(ce.canGoDown(cmd.getFinalElevation(), cmd.getFinalCoords()));
+        setLowerEnabled(ce.canGoDown(cmd.getFinalElevation(), cmd.getFinalCoords(), cmd.getFinalBoardId()));
     }
 
     private synchronized void updateTakeOffButtons() {

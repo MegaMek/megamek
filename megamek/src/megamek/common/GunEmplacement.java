@@ -243,7 +243,7 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public boolean canGoDown(int assumed, Coords coords) {
+    public boolean canGoDown(int assumed, Coords coords, int boardId) {
         return false;
     }
 

@@ -2029,10 +2029,6 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
-    /**
-     * Returns the current position of this entity on the board. This is not named getLocation(), since I want the word
-     * location to refer to hit locations on a Mek or vehicle.
-     */
     @Override
     public Coords getPosition() {
         return position;
@@ -2271,17 +2267,18 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean canGoDown() {
-        return canGoDown(elevation, getPosition());
+        return canGoDown(elevation, position, boardId);
     }
 
     /**
      * is it possible to go down, or are we landed/just above the water/treeline? assuming passed elevation.
      */
-    public boolean canGoDown(int assumedElevation, Coords assumedPos) {
-        if (!getGame().getBoard().contains(assumedPos)) {
+    public boolean canGoDown(int assumedElevation, Coords assumedPos, int boardId) {
+        if ((game == null) || !game.hasBoardLocation(assumedPos, boardId) || game.getBoard(boardId).isSpaceMap()) {
             return false;
         }
-        Hex hex = getGame().getBoard().getHex(assumedPos);
+
+        Hex hex = game.getBoard(boardId).getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.getLevel();
         int minAlt = hex.getLevel();
         switch (getMovementMode()) {
@@ -2291,10 +2288,8 @@ public abstract class Entity extends TurnOrdered
                 minAlt -= Math.max(0, BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth());
                 break;
             case WIGE:
-                // Per errata, WiGEs have flotation hull, which makes no sense unless it changes
-                // the rule
+                // Per errata, WiGEs have flotation hull, which makes no sense unless it changes the rule
                 // in TW that they cannot land on water.
-                // See
                 if (isAirborne()) {
                     return false;
                 }
@@ -2369,12 +2364,12 @@ public abstract class Entity extends TurnOrdered
     /**
      * is it possible to go up, or are we at maximum altitude? assuming passed elevation.
      */
-    public boolean canGoUp(int assumedElevation, Coords assumedPos) {
-        // Could have a hex off the board
-        if (!getGame().getBoard().contains(assumedPos)) {
+    public boolean canGoUp(int assumedElevation, Coords assumedPos, int boardId) {
+        if ((game == null) || !game.hasBoardLocation(assumedPos, boardId) || game.getBoard(boardId).isSpaceMap()) {
             return false;
         }
-        Hex hex = getGame().getBoard().getHex(assumedPos);
+
+        Hex hex = game.getBoard(boardId).getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.getLevel();
         int maxAlt = hex.getLevel();
         switch (getMovementMode()) {
@@ -2394,10 +2389,8 @@ public abstract class Entity extends TurnOrdered
                 break;
             case AERODYNE:
             case SPHEROID:
-                if (!game.getBoard().inSpace()) {
-                    assumedAlt = assumedElevation;
-                    maxAlt = 10;
-                }
+                assumedAlt = assumedElevation;
+                maxAlt = 10;
                 break;
             case SUBMARINE:
                 maxAlt = hex.getLevel() - getHeight();
@@ -2405,8 +2398,7 @@ public abstract class Entity extends TurnOrdered
             case INF_UMU:
             case BIPED_SWIM:
             case QUAD_SWIM:
-                // UMU's won't allow the entity to break the surface of the
-                // water
+                // UMU's won't allow the entity to break the surface of the water
                 maxAlt = hex.getLevel() - (getHeight() + 1);
                 break;
             case WIGE:
@@ -2568,7 +2560,7 @@ public abstract class Entity extends TurnOrdered
      * @return True if this is an airborne aircraft on a ground map.
      */
     public boolean isAirborneAeroOnGroundMap() {
-        return isAero() && isAirborne() && getGame() != null && getGame().getBoard().onGround();
+        return isAero() && isAirborne() && (game != null) && game.isOnGroundMap(this);
     }
 
     /**

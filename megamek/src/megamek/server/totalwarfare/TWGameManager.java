@@ -5184,27 +5184,29 @@ public class TWGameManager extends AbstractGameManager {
         return true;
     }
 
-    boolean checkCrash(Entity entity, Coords pos, int altitude) {
+    boolean checkCrash(Entity entity) {
+        return checkCrash(entity, entity.getPosition(), entity.getBoardId(), entity.getAltitude());
+    }
+
+    boolean checkCrash(Entity entity, Coords pos, int boardId, int altitude) {
         // only Aeros can crash
         if (!entity.isAero()) {
             return false;
         }
-        // no crashing in space
-        if (game.getBoard().inSpace()) {
+        Board board = game.getBoard(boardId);
+        if ((board == null) || board.inSpace()) {
             return false;
-        }
-        // if aero on the ground map, then only crash if elevation is zero
-        else if (game.getBoard().onGround()) {
+        } else if (board.onGround()) {
             return altitude <= 0;
+        } else { // atmospheric board
+            // if we're off the map, assume hex ceiling 0
+            // Hexes with elevations < 0 are treated as 0 altitude
+            int ceiling = 0;
+            if (board.getHex(pos) != null) {
+                ceiling = Math.max(0, board.getHex(pos).ceiling(true));
+            }
+            return ceiling >= altitude;
         }
-        // we must be in atmosphere
-        // if we're off the map, assume hex ceiling 0
-        // Hexes with elevations < 0 are treated as 0 altitude
-        int ceiling = 0;
-        if (game.getBoard().getHex(pos) != null) {
-            ceiling = Math.max(0, game.getBoard().getHex(pos).ceiling(true));
-        }
-        return ceiling >= altitude;
     }
 
     /**
@@ -16078,7 +16080,7 @@ public class TWGameManager extends AbstractGameManager {
                     addReport(r);
                     entity.setAltitude(entity.getAltitude() - diceRoll2.getIntValue());
                     // check for crash
-                    if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
+                    if (checkCrash(entity)) {
                         addReport(processCrash(entity, a.getCurrentVelocity(), entity.getPosition()));
                     }
                 }
@@ -17400,7 +17402,7 @@ public class TWGameManager extends AbstractGameManager {
                                     r.add(diceRoll2);
                                     vReport.add(r);
                                     // check for crash
-                                    if (checkCrash(e, e.getPosition(), e.getAltitude())) {
+                                    if (checkCrash(e)) {
                                         vReport.addAll(processCrash(e, a.getCurrentVelocity(), e.getPosition()));
                                         break;
                                     }

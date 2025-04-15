@@ -598,7 +598,8 @@ public interface IGame {
      * @param targetable The target to check
      * @return True when the targetable is considered to be on a ground board (not an atmospheric or space board).
      * This is true for units that are deployed either offboard or on a valid ground board location; for other
-     * targets such as hexes or buildings, this is true when on a valid ground board location.
+     * targets such as hexes or buildings, this is true when on a valid ground board location. This is safe to call
+     * regardless of what the position or board ID of the targetable might be.
      */
     default boolean isOnGroundMap(Targetable targetable) {
         // offboard artillery, when deployed, can only be "on" a ground map

@@ -48,7 +48,6 @@ class EntitySprite extends Sprite {
     private static final Color LABEL_CRITICAL_BACK = new Color(200, 0, 0, 200);
     private static final Color LABEL_SPACE_BACK = new Color(0, 0, 200, 200);
     private static final Color LABEL_GROUND_BACK = new Color(50, 50, 50, 200);
-    private static Color LABEL_BACK;
 
     enum Positioning {
         LEFT, RIGHT
@@ -66,6 +65,7 @@ class EntitySprite extends Sprite {
     private Point hexOrigin;
     private boolean criticalStatus;
     private Positioning labelPos;
+    private final Color labelBack;
     /** Used to color the label when this unit is selected for movement etc. */
     private boolean isSelected;
 
@@ -111,10 +111,10 @@ class EntitySprite extends Sprite {
         this.entity = entity;
         this.radarBlipImage = radarBlipImage;
         this.secondaryPos = secondaryPos;
-        if (bv.game.getBoard().inSpace()) {
-            LABEL_BACK = LABEL_SPACE_BACK;
+        if (bv.getBoard().inSpace()) {
+            labelBack = LABEL_SPACE_BACK;
         } else {
-            LABEL_BACK = LABEL_GROUND_BACK;
+            labelBack = LABEL_GROUND_BACK;
         }
         getBounds();
     }
@@ -389,7 +389,7 @@ class EntitySprite extends Sprite {
                 } else {
                     stR.translate(labelRect.height + 2, 0);
                 }
-                g.setColor(LABEL_BACK);
+                g.setColor(labelBack);
                 g.fillRoundRect(stR.x, stR.y, stR.width, stR.height, 5, 5);
                 if (curStatus.status == null) {
                     Color damageColor = getDamageColor();
@@ -440,7 +440,7 @@ class EntitySprite extends Sprite {
      */
     @Override
     public void prepare() {
-        final Board board = bv.game.getBoard();
+        final Board board = bv.getBoard();
         // recalculate bounds & label
         getBounds();
 
@@ -695,7 +695,7 @@ class EntitySprite extends Sprite {
                 if (criticalStatus) {
                     graph.setColor(LABEL_CRITICAL_BACK);
                 } else {
-                    graph.setColor(LABEL_BACK);
+                    graph.setColor(labelBack);
                 }
                 graph.fillRoundRect(labelRect.x, labelRect.y, labelRect.width, labelRect.height, 5, 10);
 

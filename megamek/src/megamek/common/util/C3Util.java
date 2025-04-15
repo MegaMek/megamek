@@ -140,6 +140,9 @@ public class C3Util {
         }
         // Also disconnect all units connected *to* that entity
         for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getC3Master() == null) {
+                continue;
+            }
             if (entities.contains(entity.getC3Master())) {
                 entity.setC3Master(null, true);
                 updateCandidates.add(entity);

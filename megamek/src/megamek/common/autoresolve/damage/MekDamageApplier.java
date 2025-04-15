@@ -20,7 +20,6 @@ import megamek.common.util.weightedMaps.WeightedDoubleMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static megamek.common.Compute.rollD6;
 import static megamek.common.CriticalSlot.TYPE_SYSTEM;
@@ -50,11 +49,10 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
             if (entity.getOArmor(i) <= 0) {
                 continue;
             }
-            var locationIsNotBlownOff = !entity.isLocationBlownOff(i);
-            var locationIsNotDestroyed = entity.getInternal(i) > 0;
+            var locationIsNotDestroyed = (entity.getInternal(i) > 0) && !entity.isLocationBlownOff(i);
             var locationIsNotHead = Mek.LOC_HEAD != i;
             var weight = locationIsNotHead ? 6.0 : 1.0;
-            if (locationIsNotBlownOff && locationIsNotDestroyed) {
+            if (locationIsNotDestroyed) {
                 weightedDoubleMap.add(weight, i);
             }
         }
@@ -104,8 +102,8 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
         };
     }
 
-    private HitDetails destroyHead(HitDetails hitDetails, boolean blownOff) {
-        entity.destroyLocation(Mek.LOC_HEAD, blownOff);
+    private HitDetails destroyHead(HitDetails hitDetails) {
+        entity.destroyLocation(Mek.LOC_HEAD, false);
         if (entity.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) {
             tryToEjectCrew(false);
             hitDetails = hitDetails.killsCrew();
@@ -124,13 +122,13 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
             hitDetails = hitDetails.killsCrew();
         }
         entity.destroyLocation(hitDetails.hit().getLocation());
-        DamageApplier.setEntityDestroyed(entity);
+        DamageApplier.setEntityDevastated(entity);
         return hitDetails;
     }
 
-    private HitDetails destroyLeg(HitDetails hitDetails, boolean blownOff) {
+    private HitDetails destroyLeg(HitDetails hitDetails) {
         hitDetails = avoidFallingDamage(hitDetails);
-        entity.destroyLocation(hitDetails.hit().getLocation(), blownOff);
+        entity.destroyLocation(hitDetails.hit().getLocation(), false);
         if (entity.isLocationBlownOff(Mek.LOC_LLEG) && entity.isLocationBlownOff(Mek.LOC_RLEG) && !(entity instanceof QuadMek)) {
             DamageApplier.setEntityDestroyed(entity);
         }
@@ -148,8 +146,8 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
         return hitDetails;
     }
 
-    private HitDetails destroyArm(HitDetails hitDetails, boolean blownOff) {
-        entity.destroyLocation(hitDetails.hit().getLocation(), blownOff);
+    private HitDetails destroyArm(HitDetails hitDetails) {
+        entity.destroyLocation(hitDetails.hit().getLocation(), false);
         return hitDetails;
     }
 
@@ -161,18 +159,14 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
     @Override
     public HitDetails destroyLocation(HitDetails hitDetails) {
         var hit = hitDetails.hit();
-        if (canLoseLocation(hit)) {
-            return switch (hit.getLocation()) {
-                case Mek.LOC_HEAD -> destroyHead(hitDetails, false);
-                case Mek.LOC_CT -> destroyCt(hitDetails);
-                case Mek.LOC_LT, Mek.LOC_RT -> destroySideTorso(hitDetails);
-                case Mek.LOC_LARM, Mek.LOC_RARM -> destroyArm(hitDetails, false);
-                case Mek.LOC_LLEG, Mek.LOC_RLEG -> destroyLeg(hitDetails, false);
-                default -> hitDetails;
-            };
-        }
-
-        return hitDetails;
+        return switch (hit.getLocation()) {
+            case Mek.LOC_HEAD -> destroyHead(hitDetails);
+            case Mek.LOC_CT -> destroyCt(hitDetails);
+            case Mek.LOC_LT, Mek.LOC_RT -> destroySideTorso(hitDetails);
+            case Mek.LOC_LARM, Mek.LOC_RARM -> destroyArm(hitDetails);
+            case Mek.LOC_LLEG, Mek.LOC_RLEG -> destroyLeg(hitDetails);
+            default -> hitDetails;
+        };
     }
 
 
@@ -194,18 +188,16 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
         Collections.shuffle(critSlots);
         var damageToApply = hitDetails.hitInternal();
         while (damageToApply > 0) {
-
             if (damageToApply == 3
                 && List.of(Mek.LOC_HEAD, Mek.LOC_LARM, Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_RARM).contains(hit.getLocation()))
             {
                 return switch (hit.getLocation()) {
-                    case Mek.LOC_HEAD -> destroyHead(hitDetails, true);
-                    case Mek.LOC_LARM, Mek.LOC_RARM -> destroyArm(hitDetails, true);
-                    case Mek.LOC_LLEG, Mek.LOC_RLEG -> destroyLeg(hitDetails, true);
+                    case Mek.LOC_HEAD -> destroyHead(hitDetails);
+                    case Mek.LOC_LARM, Mek.LOC_RARM -> destroyArm(hitDetails);
+                    case Mek.LOC_LLEG, Mek.LOC_RLEG -> destroyLeg(hitDetails);
                     default -> throw new IllegalStateException("Unexpected value: " + hit.getLocation());
                 };
             }
-
 
             damageToApply--;
             var crit = Compute.randomListElement(critSlots);
@@ -269,8 +261,12 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
             hitDetails = hitDetails.withDamage(damage);
             tryToEjectCrew(true);
             applyDamageInClusters(hitDetails, 5);
-            if (entity.isDestroyed()) {
-                DamageApplier.setEntityDevastated(entity);
+            if (entity.getInternal(Mek.LOC_CT) == 0 || entity.getArmor(Mek.LOC_LT) == 0 || entity.getArmor(Mek.LOC_RT) == 0) {
+                if (!entity.hasCase() && !entity.hasCASEII()) {
+                    DamageApplier.setEntityDevastated(entity);
+                } else {
+                    DamageApplier.setEntityDestroyed(entity);
+                }
             }
         }
         return hitDetails;
@@ -312,25 +308,34 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
 
     @Override
     public  HitDetails damageInternals(HitDetails hitDetails) {
+        if (hitDetails.setArmorValueTo() > 0) {
+            return hitDetails;
+        }
+
         HitData hit = hitDetails.hit();
         var entity = entity();
         int currentInternalValue = entity.getInternal(hit);
-
-        if (hitDetails.setArmorValueTo()  > 0) {
-            return hitDetails;
-        }
         entity.setArmor(0, hit);
-        int newInternalValue = currentInternalValue + hitDetails.setArmorValueTo();
-        if (entityMustSurvive() && !canLoseLocation(hit) && newInternalValue <= 0) {
-            newInternalValue = Math.min(Compute.d6(), currentInternalValue);
-        }
-        entity.setInternal(newInternalValue, hit);
-        if (newInternalValue > 0 && newInternalValue != currentInternalValue) {
+
+        int newInternalValue = getNewInternalValue(hitDetails, currentInternalValue, hit);
+        if ((newInternalValue > 0) && newInternalValue != currentInternalValue) {
+            entity.setInternal(newInternalValue, hit);
             hitDetails = applyDamageToEquipments(hitDetails);
         } else if (newInternalValue <= 0) {
+            entity.setInternal(0, hit);
             hitDetails = destroyLocation(hitDetails);
+            hitDetails = hitDetails.redirectedTo(entity.getTransferLocation(hit));
         }
+
         return hitDetails;
+    }
+
+    private int getNewInternalValue(HitDetails hitDetails, int currentInternalValue, HitData hit) {
+        int newInternalValue = currentInternalValue + hitDetails.setArmorValueTo();
+        if (entityMustSurvive() && newInternalValue <= 0 && !canLoseLocation(hit)) {
+            newInternalValue = 1;
+        }
+        return newInternalValue;
     }
 
     private boolean canLoseLocation(HitData hitData) {
@@ -344,18 +349,21 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
         if (!entityMustSurvive()) {
             return true;
         }
-
+        // If the unit must survive, then it may not lose either head of CT
         if (location == Mek.LOC_CT || location == Mek.LOC_HEAD) {
             return false;
         }
+        // If the unit must survive, then it cant lose side torso if there is an engine in there
         if (location == Mek.LOC_LT || location == Mek.LOC_RT) {
-            if (entity.getCritical(location, Mek.SYSTEM_ENGINE) == null) {
-                return true;
-            }
+            return entity.getCritical(location, Mek.SYSTEM_ENGINE) == null;
         }
+
+        // If the unit must survive, then it cant lose both legs
         if (location == Mek.LOC_LLEG || location == Mek.LOC_RLEG) {
-            return !entity.isLocationBlownOff(Mek.LOC_LLEG) && !entity.isLocationBlownOff(Mek.LOC_RLEG);
+            return entity.getInternal(Mek.LOC_LLEG) > 0 && entity.getInternal(Mek.LOC_RLEG) > 0;
         }
+
+        // ok for damage
         return true;
     }
 
@@ -382,11 +390,14 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
         if (mos < 0) {
             crewDamage += (int) Math.floor(mos / 2.0d);
         }
-        entity.setInternal(0, Mek.LOC_HEAD);
-        entity.setArmor(0, Mek.LOC_HEAD);
 
-        entity.setDestroyed(true);
-        entity.destroyLocation(Mek.LOC_HEAD);
+        if (entity.hasFullHeadEject()) {
+            entity.destroyLocation(Mek.LOC_HEAD, true);
+        } else {
+            for (CriticalSlot slot : (entity.getCockpit())) {
+                slot.setDestroyed(true);
+            }
+        }
 
         if (entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_DEVASTATED) {
             entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_EJECTED);

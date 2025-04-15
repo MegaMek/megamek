@@ -233,6 +233,18 @@ public final class Team extends TurnOrdered {
         return constantBonus + dynamicBonus + getInitCompensationBonus(bInitiativeCompensationBonus);
     }
 
+    /**
+     * Checks whether the team has any specials causing it to win ties on initiative rolls.
+     */
+    public boolean winsInitTies()
+    {
+        boolean winsTies = false;
+        for (Player player : players) {
+            winsTies |= player.winsInitTiesForTeam();
+        }
+        return winsTies;
+    }
+
     @Override
     public int getInitCompensationBonus() {
         return getInitCompensationBonus(true);

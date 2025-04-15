@@ -18575,6 +18575,9 @@ public class TWGameManager extends AbstractGameManager {
                              ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_BA)) {
                 critBonus += 1;
             }
+            if(ae.hasAbility(OptionsConstants.MISSIONS_FA_CS_I_DOWNLOADED_SARNA)) {
+                critBonus += 1;
+            }
         }
 
         HitData nextHit = null;

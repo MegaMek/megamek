@@ -531,6 +531,105 @@ public class OptionsConstants {
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
 
+    // BattleTech: Missions Faction Abilities
+    public static final String MISSIONS_FA_FS_TACTICAL_GENIUS = "btm_fa_tactical_genius";
+    public static final String MISSIONS_FA_FS_TACTICAL_GENIUS_CURRENT = "btm_fa_tactical_genius_current";
+    public static final String MISSIONS_FA_FS_CALL_THEM_OUT = "btm_fa_call_them_out";
+    public static final String MISSIONS_FA_FS_CALL_THEM_OUT_CURRENT = "btm_fa_call_them_out_current";
+    public static final String MISSIONS_FA_FS_COMBAT_INTUITION = "btm_fa_combat_intuition";
+    public static final String MISSIONS_FA_CC_FOR_THE_CHANCELLOR = "btm_fa_for_the_chancellor";
+    public static final String MISSIONS_FA_CC_AFTER_YOU_I_INSIST = "btm_fa_after_you_i_insist";
+    public static final String MISSIONS_FA_CC_FANATICISM = "btm_fa_fanaticism";
+    public static final String MISSIONS_FA_CC_FANATICISM_CURRENT = "btm_fa_fanaticism_current";
+    public static final String MISSIONS_FA_FW_PLAYS_WELL_WITH_OTHERS = "btm_fa_plays_well_with_others";
+    public static final String MISSIONS_FA_FW_PLAYS_WELL_WITH_OTHERS_CURRENT = "btm_fa_plays_well_with_others_current";
+    public static final String MISSIONS_FA_FW_TAKE_THE_HIT = "btm_fa_take_the_hit";
+    public static final String MISSIONS_FA_FW_TAKE_THE_HIT_CURRENT = "btm_fa_take_the_hit_current";
+    public static final String MISSIONS_FA_FW_SHARE_THE_WEALTH = "btm_fa_share_the_wealth";
+    public static final String MISSIONS_FA_DC_BUSHIDO = "btm_fa_bushido";
+    public static final String MISSIONS_FA_DC_BUSHIDO_CURRENT = "btm_fa_bushido_current";
+    public static final String MISSIONS_FA_DC_FIGHT_ME = "btm_fa_fight_me";
+    public static final String MISSIONS_FA_DC_FIGHT_ME_CURRENT = "btm_fa_fight_me_current";
+    public static final String MISSIONS_FA_DC_AGGRESSIVE_CHARGER = "btm_fa_aggressive_charger";
+    public static final String MISSIONS_FA_LC_INTIMIDATE = "btm_fa_intimidate";
+    public static final String MISSIONS_FA_LC_INTIMIDATE_CURRENT = "btm_fa_intimidate_current";
+    public static final String MISSIONS_FA_LC_BULL_RUSH = "btm_fa_bull_rush";
+    public static final String MISSIONS_FA_LC_PANIC = "btm_fa_panic";
+    public static final String MISSIONS_FA_ME_PAYDAY = "btm_fa_payday";
+    public static final String MISSIONS_FA_ME_DOC_WAGON_CONTRACT = "btm_fa_doc_wagon_contract";
+    public static final String MISSIONS_FA_ME_DOC_WAGON_CONTRACT_CURRENT = "btm_fa_doc_wagon_contract_current";
+    public static final String MISSIONS_FA_ME_SHIFTING_LOYALTIES = "btm_fa_shifting_loyalties";
+    public static final String MISSIONS_FA_ME_SHIFTING_LOYALTIES_CURRENT = "btm_fa_shifting_loyalties_current";
+    public static final String MISSIONS_FA_CS_I_DOWNLOADED_SARNA = "btm_fa_i_downloaded_sarna";
+    public static final String MISSIONS_FA_CS_PORTABLE_SCANNER = "btm_fa_portable_scanner";
+    public static final String MISSIONS_FA_CS_THIS_ITS_JUST_SOMETHING_I_HAD_LYING_AROUND = "btm_fa_this_its_just_something_i_had_lying_around";
+    public static final String MISSIONS_FA_PE_SALVAGE_EXPERT = "btm_fa_salvage_expert";
+    public static final String MISSIONS_FA_PE_FRONTIER_MEDICINE = "btm_fa_frontier_medicine";
+    public static final String MISSIONS_FA_PE_FRONTIER_MEDICINE_CURRENT = "btm_fa_frontier_medicine_current";
+    public static final String MISSIONS_FA_PE_HOW_ARE_YOU_STILL_ALIVE = "btm_fa_how_are_you_still_alive";
+
+    // BattleTech: Missions Special Pilot Abilities
+    public static final String MISSIONS_SPA_EDGE_USES = "btm_spa_edge_max";
+    public static final String MISSIONS_SPA_EDGE_CURRENT = "btm_spa_edge_current";
+    public static final String MISSIONS_SPA_EDGE_1 = "btm_spa_edge_1";
+    public static final String MISSIONS_SPA_EDGE_2 = "btm_spa_edge_2";
+    public static final String MISSIONS_SPA_EDGE_3 = "btm_spa_edge_3";
+    public static final String MISSIONS_SPA_LUCK_USES = "btm_spa_luck_max";
+    public static final String MISSIONS_SPA_LUCK_CURRENT = "btm_spa_luck_current";
+    public static final String MISSIONS_SPA_LUCK_1 = "btm_spa_luck_1";
+    public static final String MISSIONS_SPA_LUCK_2 = "btm_spa_luck_2";
+    public static final String MISSIONS_SPA_LUCK_3 = "btm_spa_luck_3";
+    public static final String MISSIONS_SPA_THE_SABOTEUR_USES = "btm_spa_the_saboteur_max";
+    public static final String MISSIONS_SPA_THE_SABOTEUR_CURRENT = "btm_spa_the_saboteur_current";
+    public static final String MISSIONS_SPA_THE_SABOTEUR_1 = "btm_spa_the_saboteur_1";
+    public static final String MISSIONS_SPA_THE_SABOTEUR_2 = "btm_spa_the_saboteur_2";
+    public static final String MISSIONS_SPA_THE_SABOTEUR_3 = "btm_spa_the_saboteur_3";
+    public static final String MISSIONS_SPA_RAPID_SHOT = "btm_spa_rapid_shot";
+    public static final String MISSIONS_SPA_DODGE = "btm_spa_dodge";
+    public static final String MISSIONS_SPA_SWORDSMAN = "btm_spa_swordsman";
+    public static final String MISSIONS_SPA_HATCHETMAN = "btm_spa_hatchetman";
+    public static final String MISSIONS_SPA_SWEEP_THE_LEG = "btm_spa_sweep_the_leg";
+    public static final String MISSIONS_SPA_FIELD_REPAIR_KIT_USES = "btm_spa_field_repair_kit_max";
+    public static final String MISSIONS_SPA_FIELD_REPAIR_KIT_CURRENT = "btm_spa_field_repair_kit_current";
+    public static final String MISSIONS_SPA_FIELD_REPAIR_KIT_1 = "btm_spa_field_repair_kit_1";
+    public static final String MISSIONS_SPA_FIELD_REPAIR_KIT_2 = "btm_spa_field_repair_kit_2";
+    public static final String MISSIONS_SPA_FIELD_REPAIR_KIT_3 = "btm_spa_field_repair_kit_3";
+    // Mech Mastery
+    public static final String MISSIONS_SPA_LIGHT_MECH_MASTER = "btm_spa_light_mech_master";
+    public static final String MISSIONS_SPA_MEDIUM_MECH_MASTER = "btm_spa_medium_mech_master";
+    public static final String MISSIONS_SPA_HEAVY_MECH_MASTER = "btm_spa_heavy_mech_master";
+    public static final String MISSIONS_SPA_ASSAULT_MECH_MASTER = "btm_spa_assault_mech_master";
+    // The Steely-Eyed Missile Man
+    public static final String MISSIONS_SPA_CLUSTER_HITTER = "btm_spa_cluster_hitter";
+    public static final String MISSIONS_SPA_NICE_GROUPING = "btm_spa_nice_grouping";
+    public static final String MISSIONS_SPA_OBLIQUE_ATTACKER = "btm_spa_oblique_attacker";
+    // The Range-Master
+    public static final String MISSIONS_SPA_RANGE_MASTER = "btm_spa_range_master";
+    public static final String MISSIONS_SPA_SAFETY_WHO_NEEDS_IT_AC = "btm_spa_safety_who_needs_it_ac";
+    public static final String MISSIONS_SPA_SAFETY_WHO_NEEDS_IT_LRM = "btm_spa_safety_who_needs_it_lrm";
+    public static final String MISSIONS_SPA_SAFETY_WHO_NEEDS_IT_PPC = "btm_spa_safety_who_needs_it_ppc";
+    public static final String MISSIONS_SPA_EXTREME_RANGE = "btm_spa_extreme_range";
+    // The Ballerina
+    public static final String MISSIONS_SPA_BURST_OF_SPEED = "btm_spa_burst_of_speed";
+    public static final String MISSIONS_SPA_MANEUVERING_ACE = "btm_spa_maneuvering_ace";
+    public static final String MISSIONS_SPA_NATURAL_GRACE = "btm_spa_natural_grace";
+    // The Redline Pilot
+    public static final String MISSIONS_SPA_HOT_DOG = "btm_spa_hot_dog";
+    public static final String MISSIONS_SPA_THE_SWEAT_HELPS_ME_SEE_BETTER = "btm_spa_the_sweat_helps_me_see_better";
+    public static final String MISSIONS_SPA_TSM_WHO_NEEDS_IT = "btm_spa_tsm_who_needs_it";
+    // The Sniper
+    public static final String MISSIONS_SPA_SNIPER = "btm_spa_sniper";
+    public static final String MISSIONS_SPA_MARKSMAN = "btm_spa_marksman";
+    public static final String MISSIONS_SPA_SHARPSHOOTER = "btm_spa_sharpshooter";
+    // The Boxer
+    public static final String MISSIONS_SPA_MELEE_SPECIALIST = "btm_spa_melee_specialist";
+    public static final String MISSIONS_SPA_MELEE_MASTER = "btm_spa_melee_master";
+    public static final String MISSIONS_SPA_FIST_FIRE = "btm_spa_fist_fire";
+    // The Jumper
+    public static final String MISSIONS_SPA_I_AM_A_LEAF_ON_THE_WIND = "btm_spa_i_am_a_leaf_on_the_wind";
+    public static final String MISSIONS_SPA_JUMPING_JACK = "btm_spa_jumping_jack";
+    public static final String MISSIONS_SPA_DONT_LOOK_UP = "btm_spa_dont_look_up";
+
     private OptionsConstants() {
     }
 }

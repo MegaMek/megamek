@@ -29,6 +29,7 @@ import megamek.common.hexarea.BorderHexArea;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
 
 /**
  * Represents a player in the game.
@@ -783,5 +784,45 @@ public final class Player extends TurnOrdered {
      */
     public void setFleeZone(HexArea fleeArea) {
         this.fleeArea = fleeArea;
+    }
+
+    /**
+     * Checks whether the player has any specials causing it to win ties on initiative rolls.
+     */
+    public boolean winsInitTies()
+    {
+        boolean winsTies = false;
+        if (game == null) {
+            return false;
+        }
+        for (InGameObject unit : game.getInGameObjects()) {
+            if (unit instanceof Entity entity) {
+                if(isMyUnit(unit)) {
+                    PilotOptions options = entity.getCrew().getOptions();
+                    winsTies |= options.getOption(OptionsConstants.MISSIONS_FA_FS_TACTICAL_GENIUS).booleanValue();
+                }
+            }
+        }
+        return winsTies;
+    }
+
+    /**
+     * Checks whether the player has any specials causing it's team to win ties on initiative rolls.
+     */
+    public boolean winsInitTiesForTeam()
+    {
+        boolean winsTies = false;
+        if (game == null) {
+            return false;
+        }
+        for (InGameObject unit : game.getInGameObjects()) {
+            if (unit instanceof Entity entity) {
+                if(isMyUnit(unit)) {
+                    PilotOptions options = entity.getCrew().getOptions();
+                    winsTies |= options.getOption(OptionsConstants.MISSIONS_FA_FS_TACTICAL_GENIUS).booleanValue();
+                }
+            }
+        }
+        return winsTies;
     }
 }

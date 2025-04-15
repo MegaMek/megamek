@@ -29,6 +29,8 @@ public class PilotOptions extends AbstractOptions {
     public static final String LVL3_ADVANTAGES = "lvl3Advantages";
     public static final String EDGE_ADVANTAGES = "edgeAdvantages";
     public static final String MD_ADVANTAGES = "MDAdvantages";
+    public static final String BTM_FACTION_ABILITIES = "BTM_FactionAbilities";
+    public static final String BTM_SPECIAL_PILOT_ABILITIES = "BTM_SpecialPilotAbilities";
 
     public PilotOptions() {
         super();
@@ -183,6 +185,106 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);
 
         //TODO - Prototype DNI IO pg 83
+
+        // BattleTech: Missions - Should this section be a conditional add based on a setting?
+        // BattleTech: Missions Faction Abilities
+        IBasicOptionGroup btm_fa = addGroup("btm_fa", BTM_FACTION_ABILITIES);
+
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_FS_TACTICAL_GENIUS, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_FS_TACTICAL_GENIUS_CURRENT, 0);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_FS_CALL_THEM_OUT, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_FS_CALL_THEM_OUT_CURRENT, 0);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_FS_COMBAT_INTUITION, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_CC_FOR_THE_CHANCELLOR, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_CC_AFTER_YOU_I_INSIST, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_CC_FANATICISM, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_CC_FANATICISM_CURRENT, 0);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_FW_PLAYS_WELL_WITH_OTHERS, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_FW_PLAYS_WELL_WITH_OTHERS_CURRENT, 0);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_FW_TAKE_THE_HIT, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_FW_TAKE_THE_HIT_CURRENT, 0);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_FW_SHARE_THE_WEALTH, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_DC_BUSHIDO, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_DC_BUSHIDO_CURRENT, 0);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_DC_FIGHT_ME, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_DC_FIGHT_ME_CURRENT, 0);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_DC_AGGRESSIVE_CHARGER, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_LC_INTIMIDATE, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_LC_INTIMIDATE_CURRENT, 0);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_LC_BULL_RUSH, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_LC_PANIC, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_ME_PAYDAY, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_ME_DOC_WAGON_CONTRACT, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_ME_DOC_WAGON_CONTRACT_CURRENT, 0);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_ME_SHIFTING_LOYALTIES, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_ME_SHIFTING_LOYALTIES_CURRENT, 0);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_CS_I_DOWNLOADED_SARNA, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_CS_PORTABLE_SCANNER, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_CS_THIS_ITS_JUST_SOMETHING_I_HAD_LYING_AROUND, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_PE_SALVAGE_EXPERT, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_PE_FRONTIER_MEDICINE, false);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_PE_FRONTIER_MEDICINE_CURRENT, 0);
+        addOption(btm_fa, OptionsConstants.MISSIONS_FA_PE_HOW_ARE_YOU_STILL_ALIVE, false);
+
+        // BattleTech: Missions Special Pilot Abilities
+        IBasicOptionGroup btm_spa = addGroup("btm_spa", BTM_SPECIAL_PILOT_ABILITIES);
+
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_EDGE_1, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_EDGE_2, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_EDGE_3, false);
+        // number of times Edge is taken (0-3)
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_EDGE_USES, 0);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_EDGE_CURRENT, 0);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_LUCK_1, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_LUCK_2, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_LUCK_3, false);
+        // number of times Luck is taken (0-3)
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_LUCK_USES, 0);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_LUCK_CURRENT, 0);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_THE_SABOTEUR_1, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_THE_SABOTEUR_2, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_THE_SABOTEUR_3, false);
+        // number of times The Saboteur is taken (0-3)
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_THE_SABOTEUR_USES, 0);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_THE_SABOTEUR_CURRENT, 0);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_RAPID_SHOT, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_DODGE, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_SWORDSMAN, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_HATCHETMAN, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_SWEEP_THE_LEG, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_FIELD_REPAIR_KIT_1, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_FIELD_REPAIR_KIT_2, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_FIELD_REPAIR_KIT_3, false);
+        // number of times Field Repair Kit is taken (0-3)
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_FIELD_REPAIR_KIT_USES, 0);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_FIELD_REPAIR_KIT_CURRENT, 0);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_LIGHT_MECH_MASTER, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_MEDIUM_MECH_MASTER, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_HEAVY_MECH_MASTER, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_ASSAULT_MECH_MASTER, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_CLUSTER_HITTER, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_NICE_GROUPING, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_OBLIQUE_ATTACKER, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_RANGE_MASTER, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_SAFETY_WHO_NEEDS_IT_AC, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_SAFETY_WHO_NEEDS_IT_LRM, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_SAFETY_WHO_NEEDS_IT_PPC, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_EXTREME_RANGE, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_BURST_OF_SPEED, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_MANEUVERING_ACE, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_NATURAL_GRACE, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_HOT_DOG, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_THE_SWEAT_HELPS_ME_SEE_BETTER, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_TSM_WHO_NEEDS_IT, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_SNIPER, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_MARKSMAN, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_SHARPSHOOTER, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_MELEE_SPECIALIST, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_MELEE_MASTER, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_FIST_FIRE, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_I_AM_A_LEAF_ON_THE_WIND, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_JUMPING_JACK, false);
+        addOption(btm_spa, OptionsConstants.MISSIONS_SPA_DONT_LOOK_UP, false);
     }
 
     /*

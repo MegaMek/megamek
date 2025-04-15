@@ -2162,6 +2162,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 nMissilesModifier += 2;
             } else if (ae.hasAbility(OptionsConstants.GUNNERY_CLUSTER_HITTER)) {
                 nMissilesModifier += 1;
+            } else if (ae.hasAbility(OptionsConstants.MISSIONS_SPA_CLUSTER_HITTER)) {
+                nMissilesModifier += 2;
             }
         }
         return nMissilesModifier;

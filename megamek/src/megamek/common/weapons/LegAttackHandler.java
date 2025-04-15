@@ -101,6 +101,9 @@ public class LegAttackHandler extends WeaponHandler {
         if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO,Crew.HUMANTRO_MEK)) {
             critMod += 1;
         }
+        if(ae.hasAbility(OptionsConstants.MISSIONS_FA_CS_I_DOWNLOADED_SARNA)) {
+            critMod += 1;
+        }
         vPhaseReport.addAll(gameManager.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));
     }
 }

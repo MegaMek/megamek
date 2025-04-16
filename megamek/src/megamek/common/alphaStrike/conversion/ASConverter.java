@@ -62,49 +62,24 @@ public final class ASConverter {
     }
 
     public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
-        return standardConversion(entity, false, true, conversionReport);
+        return performConversion(entity, true, conversionReport, entity.getCrew());
     }
 
     public static AlphaStrikeElement convert(Entity entity) {
-        return standardConversion(entity, false, true, new DummyCalculationReport());
+        return performConversion(entity, true, new DummyCalculationReport(), entity.getCrew());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot) {
-        return standardConversion(entity, false, includePilot, new DummyCalculationReport());
+        return performConversion(entity, includePilot, new DummyCalculationReport(), entity.getCrew());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot, CalculationReport conversionReport) {
-        return standardConversion(entity, false, includePilot, conversionReport);
-    }
-
-    /**
-     * Converts the given entity to Alpha Strike, keeping the references to the original Entity
-     * @param entity The entity to convert
-     * @return The converted Alpha Strike element
-     */
-    public static AlphaStrikeElement convertAndKeepRefs(Entity entity) {
-        return standardConversion(entity, true, true, new DummyCalculationReport());
-    }
-
-    private static AlphaStrikeElement standardConversion(Entity entity, boolean keepRefs, boolean includePilot,
-            CalculationReport conversionReport) {
-        Entity undamagedEntity = getUndamagedEntity(entity);
-        if (undamagedEntity == null) {
-            logger.error("Could not obtain clean Entity for AlphaStrike conversion.");
-            return null;
-        }
-        if (entity.getGame() != null) {
-            undamagedEntity.setGame(entity.getGame());
-        }
-        if (keepRefs) {
-            undamagedEntity.setId(entity.getId());
-            undamagedEntity.setOwner(entity.getOwner());
-        }
-        return performConversion(undamagedEntity, includePilot, conversionReport, entity.getCrew());
+        return performConversion(entity, includePilot, conversionReport, entity.getCrew());
     }
 
     private static AlphaStrikeElement performConversion(Entity entity, boolean includePilot,
             CalculationReport conversionReport, Crew originalCrew) {
+
         Objects.requireNonNull(entity);
         if (!canConvert(entity)) {
             logger.error("Cannot convert this type of Entity: " + entity.getShortName());
@@ -168,8 +143,10 @@ public final class ASConverter {
             element.setPrimaryMovementMode(element.getMovementModes().iterator().next());
         }
         element.setTMM(ASMovementConverter.convertTMM(conversionData));
-        element.setFullArmor(ASArmStrConverter.convertArmor(conversionData));
-        element.setFullStructure(ASArmStrConverter.convertStructure(conversionData));
+        element.setFullArmor(ASArmStrConverter.convertArmor(conversionData, false));
+        element.setCurrentArmor(ASArmStrConverter.convertArmor(conversionData, true));
+        element.setFullStructure(ASArmStrConverter.convertStructure(conversionData, false));
+        element.setCurrentStructure(ASArmStrConverter.convertStructure(conversionData, true));
         element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
         ASDamageConverter.getASDamageConverter(entity, element, conversionReport).convert();
         ASSpecialAbilityConverter.getConverter(entity, element, conversionReport).processAbilities();

@@ -41,7 +41,6 @@ public record TankDamageApplier(Tank entity, EntityFinalState entityFinalState) 
         HitData hit = hitDetails.hit();
         var entity = entity();
 
-
         int currentInternalValue = entity.getInternal(hit);
         if (hitDetails.setArmorValueTo() > 0) {
             return hitDetails;

@@ -46,7 +46,7 @@ public class EntityAsFormation extends BaseFormationConverter<Formation> {
         if (entity instanceof GunEmplacement gun) {
             gun.initializeArmor(50, 0);
         }
-        var element = ASConverter.convertAndKeepRefs(entity);
+        var element = ASConverter.convert(entity);
         if (element != null) {
             thisUnit.add(element);
         } else {

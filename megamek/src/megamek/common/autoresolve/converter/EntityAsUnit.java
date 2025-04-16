@@ -57,8 +57,9 @@ public class EntityAsUnit extends BaseFormationConverter<Formation> {
                 var unitName = "UNKNOWN";
                 if (entity instanceof Entity entityCast) {
                     entityCast.setOwner(player);
+                    formation.setEntity(entityCast);
                     unitName = entityCast.getDisplayName() + " ID:" + entityCast.getId();
-                    var element = ASConverter.convertAndKeepRefs(entityCast);
+                    var element = ASConverter.convert(entityCast);
                     if (element != null) {
                         thisUnit.add(element);
                         counter.add(Role.getRole(entityCast.getRole()));

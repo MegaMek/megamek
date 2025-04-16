@@ -50,7 +50,7 @@ final class ASArmStrConverter {
                     5, 5, 5, 5 }
     };
 
-    static int convertArmor(ASConverter.ConversionData conversionData) {
+    static int convertArmor(ASConverter.ConversionData conversionData, boolean currentIntegrity) {
         Entity entity = conversionData.entity;
         CalculationReport report = conversionData.conversionReport;
         report.addEmptyLine();
@@ -63,9 +63,15 @@ final class ASArmStrConverter {
                 divisor /= 2.0;
                 report.addLine("Mechanized", "/ 2", "= ", divisor);
             }
-            int finalArmor = (int) Math.round(divisor / 15.0d * ((Infantry) entity).getShootingStrength());
-            report.addLine("Armor:", "#Men x Divisor / 2", "= " + finalArmor);
-            return finalArmor;
+            if (currentIntegrity) {
+                int finalArmor = (int) Math.round(divisor / 15.0d * ((Infantry) entity).getShootingStrength());
+                report.addLine("Armor:", "#Men x Divisor / 2", "= " + finalArmor);
+                return finalArmor;
+            } else {
+                int finalArmor = (int) Math.round(divisor / 15.0d * ((Infantry) entity).getOInternal(0));
+                report.addLine("Armor:", "#Men x Divisor / 2", "= " + finalArmor);
+                return finalArmor;
+            }
         }
 
         double armorPoints = 0;
@@ -95,16 +101,36 @@ final class ASArmStrConverter {
 
             // Some empty locations report -1 armor!
             if (entity.getArmor(loc) > 0) {
-                armorPoints += Math.max(0, armorMod * entity.getArmor(loc));
-                report.addLine(entity.getLocationAbbr(loc),
-                        calculation.isBlank() ? "" : calculation + entity.getArmor(loc),
-                        "", armorMod * entity.getArmor(loc));
+                if (currentIntegrity) {
+                    armorPoints += Math.max(0, armorMod * entity.getArmor(loc));
+                    report.addLine(entity.getLocationAbbr(loc),
+                          calculation.isBlank() ? "" : calculation + entity.getArmor(loc),
+                          "",
+                          armorMod * entity.getArmor(loc));
+                } else {
+                    armorPoints += Math.max(0, armorMod * entity.getOArmor(loc));
+                    report.addLine(entity.getLocationAbbr(loc),
+                          calculation.isBlank() ? "" : calculation + entity.getOArmor(loc),
+                          "",
+                          armorMod * entity.getOArmor(loc));
+                }
             }
-            if (entity.hasRearArmor(loc) && (entity.getArmor(loc, true) > 0)) {
-                armorPoints += armorMod * entity.getArmor(loc, true);
-                report.addLine(entity.getLocationAbbr(loc) + "(R)",
-                        calculation.isBlank() ? "" : calculation + entity.getArmor(loc, true),
-                        "", armorMod * entity.getArmor(loc, true));
+            if (currentIntegrity) {
+                if (entity.hasRearArmor(loc) && (entity.getArmor(loc, true) > 0)) {
+                    armorPoints += armorMod * entity.getArmor(loc, true);
+                    report.addLine(entity.getLocationAbbr(loc) + "(R)",
+                          calculation.isBlank() ? "" : calculation + entity.getArmor(loc, true),
+                          "",
+                          armorMod * entity.getArmor(loc, true));
+                }
+            } else {
+                if (entity.hasRearArmor(loc) && (entity.getOArmor(loc, true) > 0)) {
+                    armorPoints += armorMod * entity.getOArmor(loc, true);
+                    report.addLine(entity.getLocationAbbr(loc) + "(R)",
+                          calculation.isBlank() ? "" : calculation + entity.getOArmor(loc, true),
+                          "",
+                          armorMod * entity.getOArmor(loc, true));
+                }
             }
         }
 
@@ -158,7 +184,7 @@ final class ASArmStrConverter {
     /**
      * Calculates the Structure value, AlphaStrike Companion p.97
      */
-    static int convertStructure(ASConverter.ConversionData conversionData) {
+    static int convertStructure(ASConverter.ConversionData conversionData, boolean currentIntegrity) {
         Entity entity = conversionData.entity;
         CalculationReport report = conversionData.conversionReport;
         report.addEmptyLine();
@@ -175,10 +201,20 @@ final class ASArmStrConverter {
                 structure *= 2;
                 report.addLine("Reinforced", "x 2", "= " + structure);
             }
+            if (entity.getInternalRemainingPercent() < 1.0f && currentIntegrity) {
+                structure = (int) Math.max(1, Math.ceil(structure * entity.getInternalRemainingPercent()));
+                report.addLine("Current Integrity", "x " + formatForReport(entity.getInternalRemainingPercent()),
+                        "= " + formatForReport(structure * entity.getInternalRemainingPercent()));
+            }
             return structure;
         } else if (entity instanceof Warship) {
-            structure = ((Warship) entity).getSI();
+            if (currentIntegrity) {
+                structure = ((Warship) entity).getSI();
+            } else {
+                structure = ((Warship) entity).getOSI();
+            }
             report.addLine("WS", "(SI)", "", structure);
+
             return structure;
         } else if (entity instanceof BattleArmor) {
             report.addLine("BA", "2");
@@ -211,13 +247,23 @@ final class ASArmStrConverter {
             }
             double struct = 0;
             for (int i = 0; i < entity.getLocationNames().length; i++) {
-                struct += entity.getInternal(i);
+                if (currentIntegrity) {
+                    struct += entity.getInternal(i);
+                } else {
+                    struct += entity.getOInternal(i);
+                }
             }
             return (int) Math.ceil(struct / divisor);
         } else if (entity instanceof Aero) {
-            report.addLine("Aero", ((Aero) entity).getSI() + " x 0.5, round up",
-                    "= " + (int) Math.ceil(0.5 * ((Aero) entity).getSI()));
-            return (int) Math.ceil(0.5 * ((Aero) entity).getSI());
+            if (currentIntegrity) {
+                report.addLine("Aero", ((Aero) entity).getSI() + " x 0.5, round up",
+                      "= " + (int) Math.ceil(0.5 * ((Aero) entity).getSI()));
+                return (int) Math.ceil(0.5 * ((Aero) entity).getSI());
+            } else {
+                report.addLine("Aero", ((Aero) entity).getOSI() + " x 0.5, round up",
+                      "= " + (int) Math.ceil(0.5 * ((Aero) entity).getOSI()));
+                return (int) Math.ceil(0.5 * ((Aero) entity).getOSI());
+            }
         }
 
         // Error: should not arrive here

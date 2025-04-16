@@ -947,8 +947,8 @@ public class ClientGUI extends AbstractClientGUI
                 CollapseWarning.handleActionPerformed();
                 break;
             case VIEW_MOVE_ENV:
+                GUIP.setMoveEnvelope(!GUIP.getMoveEnvelope());
                 if (curPanel instanceof MovementDisplay) {
-                    GUIP.setMoveEnvelope(!GUIP.getMoveEnvelope());
                     Entity entity = getUnitDisplay().getCurrentEntity();
                     if (!entity.isAero()) {
                         ((MovementDisplay) curPanel).computeMovementEnvelope(entity);

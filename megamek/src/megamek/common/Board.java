@@ -1810,35 +1810,9 @@ public class Board implements Serializable {
      * @param shd The new map of SpecialHexDisplays
      */
     public void setSpecialHexDisplayTable(Map<Coords, Collection<SpecialHexDisplay>> shd) {
+        // save the former SHDs to redraw their hexes if they've vanished
         Set<Coords> toRedraw = new HashSet<>(specialHexes.keySet());
-        //TODO: TEST: There was a mistake in TWGameManager that sent filtered SHDs for all players to all players,
-        // meaning that each player would see what the last player (highest id) should see. This is fixed and the
-        // saving of ARTY MISS and DRIFT should not be necessary. The server has the master list.
-//        Hashtable<Coords, Collection<SpecialHexDisplay>> temp = new Hashtable<>();
-
-        // Grab all current ARTILLERY_MISS and ARTILLERY_DRIFT instances
-//        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e : specialHexes.entrySet()) {
-//            for (SpecialHexDisplay special : e.getValue()) {
-//                if (Set.of(ARTILLERY_MISS, ARTILLERY_DRIFT).contains(special.getType())) {
-//                    temp.computeIfAbsent(e.getKey(), k -> new LinkedList<>()).add(special);
-//                }
-//            }
-//        }
-
-        // Swap new Hashtable in for old
         specialHexes = shd;
-
-        // Add miss instances back
-//        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e : temp.entrySet()) {
-//            for (SpecialHexDisplay miss : e.getValue()) {
-//                if (!specialHexes.containsKey(e.getKey())) {
-//                    specialHexes.put(e.getKey(), new LinkedList<>());
-//                }
-//                if (!specialHexes.get(e.getKey()).contains(miss)) {
-//                    specialHexes.get(e.getKey()).add(miss);
-//                }
-//            }
-//        }
         toRedraw.addAll(shd.keySet());
         toRedraw.forEach(coords ->
                processBoardEvent(new BoardEvent(this, coords, BoardEvent.BOARD_CHANGED_HEX)));
@@ -1847,6 +1821,11 @@ public class Board implements Serializable {
 
     public void setType(int t) {
         mapType = t;
+        setBoardType(switch (t) {
+            case T_ATMOSPHERE -> BoardType.SKY_WITH_TERRAIN;
+            case T_SPACE -> BoardType.FAR_SPACE;
+            default -> BoardType.GROUND;
+        });
     }
 
     public int getType() {
@@ -1857,17 +1836,16 @@ public class Board implements Serializable {
         return typeNames[t];
     }
 
-    // some convenience functions
     public boolean onGround() {
-        return (mapType == T_GROUND);
+        return boardType.isGround();
     }
 
     public boolean inAtmosphere() {
-        return (mapType == T_ATMOSPHERE);
+        return boardType.isLowAtmospheric();
     }
 
     public boolean inSpace() {
-        return (mapType == T_SPACE);
+        return boardType.isSpace();
     }
 
     /**
@@ -2225,7 +2203,7 @@ public class Board implements Serializable {
     }
 
     public boolean isLowAtmosphereMap() {
-        return (boardType.isLowAtmo());
+        return (boardType.isLowAtmospheric());
     }
 
     public boolean isSpaceMap() {
@@ -2234,6 +2212,10 @@ public class Board implements Serializable {
 
     public void setBoardType(BoardType boardType) {
         this.boardType = boardType;
+    }
+
+    public BoardType getBoardType() {
+        return boardType;
     }
 
     public boolean isHighAltitudeMap() {

@@ -4441,7 +4441,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             case ManeuverType.MAN_SIDE_SLIP_LEFT:
                 // If we are on a ground map, slide slip works slightly differently
                 // See Total Warfare pg 85
-                if (game.getBoard(ce()).getType() == Board.T_GROUND) {
+                if (game.getBoard(ce()).isGroundMap()) {
                     for (int i = 0; i < 8; i++) {
                         addStepToMovePath(MoveStepType.LATERAL_LEFT, true, true, type);
                     }
@@ -4455,7 +4455,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             case ManeuverType.MAN_SIDE_SLIP_RIGHT:
                 // If we are on a ground map, slide slip works slightly differently
                 // See Total Warfare pg 85
-                if (game.getBoard(ce()).getType() == Board.T_GROUND) {
+                if (game.getBoard(ce()).isGroundMap()) {
                     for (int i = 0; i < 8; i++) {
                         addStepToMovePath(MoveStepType.LATERAL_RIGHT, true, true, type);
                     }

@@ -3384,17 +3384,17 @@ public abstract class Entity extends TurnOrdered
     /**
      * @return True if the given board is prohibited to this unit.
      */
-    public boolean isBoardProhibited(int mapType) {
-        return ((mapType == Board.T_GROUND) && doomedOnGround()) ||
-                     ((mapType == Board.T_ATMOSPHERE) && doomedInAtmosphere()) ||
-                     ((mapType == Board.T_SPACE) && doomedInSpace());
+    public boolean isBoardProhibited(Board board) {
+        return isBoardProhibited(board.getBoardType());
     }
 
     /**
      * @return True if the given board is prohibited to this unit.
      */
-    public boolean isBoardProhibited(Board board) {
-        return isBoardProhibited(board.getType());
+    public boolean isBoardProhibited(BoardType boardType) {
+        return (boardType.isGround() && doomedOnGround()) ||
+                     (boardType.isLowAtmospheric() && doomedInAtmosphere()) ||
+                     (boardType.isSpace() && doomedInSpace());
     }
 
     /**

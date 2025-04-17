@@ -36,10 +36,10 @@ public enum BoardType implements Serializable {
     NEAR_SPACE("NS"), // space with planetary surface, aka high atmospheric
     SKY("SA"), // low atmosphere without ground terrain
     SKY_WITH_TERRAIN("GA"), // low atmosphere with ground terrain
-    
-    RADAR("R"),
-    CAPITAL_RADAR("C");
 
+    // usable in SBF
+    RADAR("R"), 
+    CAPITAL_RADAR("C");
 
     private final String code;
 
@@ -47,14 +47,25 @@ public enum BoardType implements Serializable {
         this.code = code;
     }
 
+    /**
+     * @return True if this board type is a space map, either close to a planet with some atmospheric hexes ("high
+     * altitude") or in deeper space.
+     */
     public boolean isSpace() {
         return this == FAR_SPACE || this == NEAR_SPACE;
     }
 
-    public boolean isLowAtmo() {
+    /**
+     * @return True if this board type is an atmospheric map, either with or without terrain ("sky"). This has
+     * nothing to do with planetary conditions, only the type of board.
+     */
+    public boolean isLowAtmospheric() {
         return this == SKY_WITH_TERRAIN || this == SKY;
     }
 
+    /**
+     * @return True if this board type is a ground map.
+     */
     public boolean isGround() {
         return this == GROUND;
     }
@@ -99,13 +110,13 @@ public enum BoardType implements Serializable {
     @Override
     public String toString() {
         return switch (this) {
-            case CAPITAL_RADAR -> "Board Type: Capital Radar";
-            case SKY -> "Board Type: Low Atmosphere (Sky)";
-            case SKY_WITH_TERRAIN -> "Board Type: Low Atmosphere (Terrain)";
-            case FAR_SPACE -> "Board Type: Space";
-            case NEAR_SPACE -> "Board Type: High Atmosphere";
-            case RADAR -> "Board Type: Radar";
-            case GROUND -> "Board Type: Ground";
+            case CAPITAL_RADAR -> "Capital Radar";
+            case SKY -> "Low Atmosphere (Sky)";
+            case SKY_WITH_TERRAIN -> "Low Atmosphere (Terrain)";
+            case FAR_SPACE -> "Space";
+            case NEAR_SPACE -> "High Atmosphere";
+            case RADAR -> "Radar";
+            case GROUND -> "Ground";
         };
     }
 }

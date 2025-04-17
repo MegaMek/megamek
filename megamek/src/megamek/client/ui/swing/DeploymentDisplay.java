@@ -480,7 +480,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             if ((entity.getPosition() != null) && (b.getBoardId() == previousBoardId) && (shiftHeld || turnMode)) {
                 processTurn(entity, coords);
                 return;
-            } else if (entity.isBoardProhibited(board.getType())) {
+            } else if (entity.isBoardProhibited(board)) {
                 showWrongBoardTypeMessage(board.getType());
                 return;
             } else if (!(board.isLegalDeployment(coords, entity) || assaultDropPreference)) {

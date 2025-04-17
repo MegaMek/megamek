@@ -24683,7 +24683,7 @@ public class TWGameManager extends AbstractGameManager {
         // For smaller carriers, only takes one pass to check same-hex legality
         for (Coords candidate : candidateCoords) {
             // this condition is a simple check that we're not unloading units into fatal conditions
-            unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType()) ||
+            unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard()) ||
                                 loadedEntity.isLocationProhibited(candidate) ||
                                 loadedEntity.isLocationDeadly(candidate);
 

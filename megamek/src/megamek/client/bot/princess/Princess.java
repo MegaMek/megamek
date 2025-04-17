@@ -3248,7 +3248,7 @@ public class Princess extends BotClient {
 
                 // this condition is a simple check that we're not unloading infantry into deep space
                 // or into lava or some other such nonsense
-                boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType()) ||
+                boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard()) ||
                                             loadedEntity.isLocationProhibited(pathEndpoint) ||
                                             loadedEntity.isLocationDeadly(pathEndpoint);
 
@@ -3411,7 +3411,7 @@ public class Princess extends BotClient {
                 if (unitsUnloaded < maxDismountsPerBay) {
                     while (dismountIndex < dismountLocations.size()) {
                         // this condition is a simple check that we're not unloading units into fatal conditions
-                        boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType()) ||
+                        boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard()) ||
                                                     loadedEntity.isLocationProhibited(dismountLocation) ||
                                                     loadedEntity.isLocationDeadly(dismountLocation);
 

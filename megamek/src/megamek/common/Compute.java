@@ -4141,7 +4141,7 @@ public class Compute {
                 // In Low Altitude, Airborne aeros can only see ground targets
                 // they overfly, and only at Alt <=8. It should also spot units
                 // next to this; Low-atmo board with ground units isn't implemented
-                if (game.getBoard().getType() == Board.T_ATMOSPHERE) {
+                if (game.getBoard().isLowAtmosphereMap()) {
                     if (attackingEntity.getAltitude() > 8) {
                         return false;
                     }

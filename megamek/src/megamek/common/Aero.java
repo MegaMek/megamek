@@ -1121,8 +1121,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     // need to figure out aft-pointed wing weapons
     // need to figure out new arcs
     @Override
-    public int getWeaponArc(int wn) {
-        final Mounted<?> mounted = getEquipment(wn);
+    public int getWeaponArc(int weaponNumber) {
+        final Mounted<?> mounted = getEquipment(weaponNumber);
         if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) ||
                   mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) ||
                   mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {

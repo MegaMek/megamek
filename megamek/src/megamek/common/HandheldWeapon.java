@@ -127,7 +127,7 @@ public class HandheldWeapon extends Entity {
     }
 
     @Override
-    public int getWeaponArc(int wn) {
+    public int getWeaponArc(int weaponNumber) {
         throw new UnsupportedOperationException("Construction only.");
     }
 

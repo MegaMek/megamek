@@ -26,7 +26,6 @@ import java.util.Vector;
 import javax.swing.SwingUtilities;
 
 import megamek.MMConstants;
-import megamek.MegaMek;
 import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.generator.RandomUnitGenerator;
@@ -433,7 +432,7 @@ public abstract class AbstractClient implements IClient {
                 disconnected();
                 break;
             case SERVER_VERSION_CHECK:
-                send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION, MegaMek.getMegaMekSHA256()));
+                send(new Packet(PacketCommand.CLIENT_VERSIONS, SuiteConstants.VERSION));
                 break;
             case ILLEGAL_CLIENT_VERSION:
                 final Version serverVersion = (Version) packet.getObject(0);

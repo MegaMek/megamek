@@ -594,8 +594,8 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public int getWeaponArc(int wn) {
-        final Mounted<?> mounted = getEquipment(wn);
+    public int getWeaponArc(int weaponNumber) {
+        final Mounted<?> mounted = getEquipment(weaponNumber);
         if (mounted.isRearMounted()) {
             return Compute.ARC_REAR;
         } else if (mounted.getType().hasFlag(WeaponType.F_VGL)) {

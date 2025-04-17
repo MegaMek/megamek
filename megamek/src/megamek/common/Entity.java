@@ -4235,8 +4235,10 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns the Rules.ARC that the weapon, specified by number, fires into.
+     * @param weaponNumber integer equipment number, index from equipment list
+     * @return arc the specified weapon is in
      */
-    public abstract int getWeaponArc(int wn);
+    public abstract int getWeaponArc(int weaponNumber);
 
     /**
      * Returns true if this weapon fires into the secondary facing arc. If false, assume it fires into the primary.

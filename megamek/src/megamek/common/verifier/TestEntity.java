@@ -36,6 +36,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.battlearmor.BAFlamerWeapon;
+import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
 /**
  * Abstract parent class for testing and validating instantiations of
@@ -1644,7 +1645,10 @@ public abstract class TestEntity implements TestEntityOption {
                     ((m.getLinked() == null)
                             || (m.getLinked().getLocation() != m.getLocation())
                             || !(m.getLinked().getType() instanceof WeaponType)
-                            || !m.getLinked().getType().hasFlag(WeaponType.F_LASER))) {
+                            || !(
+                                    m.getLinked().getType().hasFlag(WeaponType.F_LASER)
+                                    || m.getLinked().getType() instanceof CLChemicalLaserWeapon
+                                ))) {
                 buff.append("Laser insulator requires a laser in the same location.\n");
                 illegal = true;
             }

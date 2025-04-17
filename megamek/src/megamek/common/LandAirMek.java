@@ -1420,11 +1420,11 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * In fighter mode the weapon arcs need to be translated to Aero arcs.
      */
     @Override
-    public int getWeaponArc(int wn) {
+    public int getWeaponArc(int weaponNumber) {
         if (getConversionMode() != CONV_MODE_FIGHTER) {
-            return super.getWeaponArc(wn);
+            return super.getWeaponArc(weaponNumber);
         }
-        final Mounted<?> mounted = getEquipment(wn);
+        final Mounted<?> mounted = getEquipment(weaponNumber);
         if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) ||
                   mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) ||
                   mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {

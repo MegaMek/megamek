@@ -145,10 +145,14 @@ public class ScenarioV2 implements Scenario {
 
         game.setupTeams();
 
+        game.receiveBoards(new HashMap<>());
+
         int id = 0;
-        for (Board board : createBoard()) {
+        for (Board board : parseBoards()) {
             int boardId = board.getBoardId();
-            if (boardId == 0) { // default to 0 instead of -1 to keep compatibility with single-board!
+            // when the scenario does not give an ID, it will be 0; then assign an ID
+            // default to 0 instead of -1 to keep compatibility with single-board!
+            if (boardId == 0) {
                 boardId = id;
                 id++;
                 board.setBoardId(boardId);
@@ -467,7 +471,7 @@ public class ScenarioV2 implements Scenario {
         return units.stream().mapToInt(InGameObject::getId).max().orElse(0) + 1;
     }
 
-    private List<Board> createBoard() throws ScenarioLoaderException {
+    private List<Board> parseBoards() throws ScenarioLoaderException {
         if (!node.has(MAP) && !node.has(MAPS)) {
             throw new ScenarioLoaderException("ScenarioLoaderException.missingMap");
         }
@@ -476,7 +480,6 @@ public class ScenarioV2 implements Scenario {
             mapNode = node.get(MAPS);
         }
 
-        // TODO: currently, the first parsed board is used
         return BoardDeserializer.parse(mapNode, scenarioDirectory());
     }
 

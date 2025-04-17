@@ -27,6 +27,7 @@ import megamek.common.options.IGameOptions;
 import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.TriggeredEvent;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -470,7 +471,10 @@ public interface IGame {
         }
     }
 
-    /** @return True when both given units are not null and reside on the same board. */
+    /**
+     * @return True when both given units are not null and reside on the same board. Only checks the board IDs, not
+     * the positions (which could be null or invalid).
+     */
     default boolean onTheSameBoard(@Nullable Targetable entity1, @Nullable Targetable entity2) {
         return (entity1 != null) && (entity2 != null) && (entity1.getBoardId() == entity2.getBoardId());
     }
@@ -622,8 +626,15 @@ public interface IGame {
         return hasBoardLocation(boardLocation) && getBoard(boardLocation).isLowAtmosphereMap();
     }
 
+    /**
+     * Returns true when the given targetable is in a hex of an atmospheric board. Returns false if it is null or
+     * has an invalid position (invalid board ID or position not on the board).
+     *
+     * @param targetable The object/unit/target to check
+     * @return True when the targetable is on an atmospheric board
+     */
     default boolean isOnAtmosphericMap(Targetable targetable) {
-        return isOnAtmosphericMap(targetable.getBoardLocation());
+        return (targetable != null) && isOnAtmosphericMap(targetable.getBoardLocation());
     }
 
     /**
@@ -670,7 +681,7 @@ public interface IGame {
 
     /**
      * Returns a list of IDs of all enclosing boards of the given board. These are at most two other boards;
-     * for a ground board, the enclosing atmospheric board (if present) and that one's enclosing high-atmo
+     * for a ground board, the enclosing atmospheric board (if present) and that one's enclosing high-altitude
      * map (if present). For an atmospheric map, this will be at most the enclosing high-altitude map (if present);
      * for any space map, the returned List will be empty.
      *
@@ -690,7 +701,6 @@ public interface IGame {
         }
         return allEnclosingBoards;
     }
-
 
     default @Nullable Board getEnclosingBoard(Board board) {
         return getBoard(board.getEnclosingBoardId());

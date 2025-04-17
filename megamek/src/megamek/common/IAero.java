@@ -705,35 +705,36 @@ public interface IAero {
     }
 
     default String hasRoomForHorizontalLanding() {
-        Coords pos = ((Entity) this).getPosition();
+        Entity thisEntity = ((Entity) this);
+        Coords pos = thisEntity.getPosition();
         // walk along the hexes in the facing of the unit
-        Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
+        Board board = thisEntity.getGame().getBoard(thisEntity);
+        Hex hex = board.getHex(pos);
         int elev = hex.getLevel();
-        int facing = ((Entity) this).getFacing();
+        int facing = thisEntity.getFacing();
         String lenString = " (" + getLandingLength() + " hexes required)";
         // dropships need a a landing strip three hexes wide
         Vector<Coords> startingPos = new Vector<>();
-        startingPos.add(((Entity) this).getPosition());
+        startingPos.add(thisEntity.getPosition());
         if (this instanceof Dropship) {
-            startingPos.add(((Entity) this).getPosition().translated((facing + 5) % 6));
-            startingPos.add(((Entity) this).getPosition().translated((facing + 1) % 6));
+            startingPos.add(thisEntity.getPosition().translated((facing + 5) % 6));
+            startingPos.add(thisEntity.getPosition().translated((facing + 1) % 6));
         }
         for (Coords position : startingPos) {
             for (int i = 0; i < getLandingLength(); i++) {
                 position = position.translated(facing);
                 // check for buildings
-                if (((Entity) this).getGame().getBoard().getBuildingAt(position) != null) {
+                if (board.getBuildingAt(position) != null) {
                     return "Buildings in the way" + lenString;
                 }
                 // no units in the way
-                for (Entity en : ((Entity) this).getGame().getEntitiesVector(position)) {
+                for (Entity en : thisEntity.getGame().getEntitiesVector(position, thisEntity.getBoardId())) {
                     if (!en.isAirborne()) {
                         return "Ground units in the way" + lenString;
                     }
                 }
-                hex = ((Entity) this).getGame().getBoard().getHex(position);
-                // if the hex is null, then we are offboard. Don't let units
-                // land offboard.
+                hex = board.getHex(position);
+                // if the hex is null, then we are offboard. Don't let units land offboard.
                 if (null == hex) {
                     return "Not enough room on map" + lenString;
                 }

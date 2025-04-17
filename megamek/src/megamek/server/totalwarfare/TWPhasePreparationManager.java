@@ -92,12 +92,8 @@ public class TWPhasePreparationManager {
                 gameManager.checkForConditionDeath();
 
                 gameManager.checkForBlueShieldDamage();
-                if (gameManager.getGame().getBoard().inAtmosphere()) {
-                    gameManager.checkForAtmosphereDeath();
-                }
-                if (gameManager.getGame().getBoard().inSpace()) {
-                    gameManager.checkForSpaceDeath();
-                }
+                gameManager.checkForAtmosphereDeath();
+                gameManager.checkForSpaceDeath();
 
                 gameManager.bvReports(true);
 

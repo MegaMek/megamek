@@ -2202,4 +2202,9 @@ public class Board implements Serializable {
     public boolean isHighAltitudeMap() {
         return boardType.isHighAltitude();
     }
+
+    @Override
+    public String toString() {
+        return "[Board-%s] (%s) %dx%d".formatted(boardType, mapName, width, height);
+    }
 }

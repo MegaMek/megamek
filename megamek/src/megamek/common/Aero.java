@@ -2460,13 +2460,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public int getElevation() {
-        if ((game != null) && game.getBoard().inSpace()) {
+        if ((game != null) && isSpaceborne()) {
             return 0;
         }
-        // Altitude is not the same as elevation. If an aero is at 0 altitude, then it
-        // is grounded
-        // and uses elevation normally. Otherwise, just set elevation to a very large
-        // number so that
+        // Altitude is not the same as elevation. If an aero is at 0 altitude, then it is grounded
+        // and uses elevation normally. Otherwise, just set elevation to a very large number so that
         // a flying aero won't interact with the ground maps in any way
         return isAirborne() ? AERO_EFFECTIVE_ELEVATION : super.getElevation();
     }

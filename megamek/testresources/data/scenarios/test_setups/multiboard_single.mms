@@ -1,53 +1,18 @@
 MMSVersion: 2
-name: Test Setup no 1 for multiple boards
+name: Test Setup no 2 for multiple boards
 planet: None
-description: uses several boards
+description: uses a single board of ID != 0 (multiboard requires this to no longer break anywhere)
 map:
-  - file: Beginner Box/16x17 Grassland 1.board
-    name: Grassland
-    id: 0
-
-  - file: Battle of Tukayyid Pack/32x17 Pozoristu Mountains (CW).board
-    name: Mountain Pass
-    id: 1
-
-  - type: sky
-    width: 35
-    height: 20
-    name: Sky
-    embed:
-      - at: [ 5, 5 ]
-        id: 0
-      - at: [ 8, 9 ]
-        id: 1
-      - at: [ 31, 11 ]
-        id: 3
-    id: 2
-
-  - file: buildingsnobasement/Flughafen 6.board
-    name: Hangar
-    id: 3
-
   - file: unofficial/Cakefish/General/50x50 Grass QRF Airbase.board
     name: Airport
     id: 5
 
-  - type: space
-    width: 15
-    height: 15
-    name: Orbit
-    embed:
-      - at: [ 1, 7 ]
-        id: 2
-    id: 6
-
-
 options:
   on:
     - friendly_fire
+    - aero_ground_move
   off:
     - check_victory
-#    - aero_ground_move
 
 factions:
 - name: P1
@@ -81,9 +46,9 @@ factions:
 #    facing: 2
 
   - fullname: Bulldog Medium Tank
-    at: [ 13,10 ]
-    board: 1
-    facing: 2
+#    at: [ 13,10 ]
+#    board: 1
+#    facing: 2
 
 #  - fullname: Locust LCT-1V
 #    board: 0
@@ -125,9 +90,9 @@ factions:
 #    altitude: 5
 
   - fullname: Cheetah IIC
-    at: [ 8, 2 ]
-    board: 6
-    facing: 3
+#    at: [ 8, 2 ]
+#    board: 6
+#    facing: 3
 
 #  - fullname: AC/10 Turret (Dual)
 

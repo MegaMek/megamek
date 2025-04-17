@@ -126,7 +126,7 @@ public class EntityImage {
             DecalImages = null;
             logger.warn("Failed to find the damage decal images." + e.getMessage());
         }
-        dmgEmpty = TilesetManager.LoadSpecificImage(DECAL_PATH, FILE_DAMAGEDECAL_EMPTY.toString());
+        dmgEmpty = TilesetManager.loadSpecificImage(DECAL_PATH, FILE_DAMAGEDECAL_EMPTY.toString());
     }
 
     /** The base (unit) image used for this icon. */

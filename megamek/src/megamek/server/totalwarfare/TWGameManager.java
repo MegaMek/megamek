@@ -2956,7 +2956,8 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // we don't much care about wind direction and such in a hard vacuum
-            if (!game.getBoard().inSpace()) {
+            boolean spaceGame = game.getBoards().values().stream().allMatch(Board::isSpaceMap);
+            if (!spaceGame) {
                 // Wind direction and strength
                 PlanetaryConditions conditions = game.getPlanetaryConditions();
                 Report rWindDir = new Report(1025, Report.PUBLIC);
@@ -10086,18 +10087,16 @@ public class TWGameManager extends AbstractGameManager {
      * calculated
      */
     void detectSpacecraft() {
-        // Don't bother if we're not in space or if the game option isn't on
-        if (!game.getBoard().inSpace() ||
-                  !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+        // Don't bother if the game option isn't on
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             return;
         }
 
         // Now, run the detection rolls
         for (Entity detector : game.getEntitiesVector()) {
-            // Don't process for invalid units
-            // in the case of squadrons and transports, we want the 'host'
+            // Don't process for invalid units; in the case of squadrons and transports, we want the 'host'
             // unit, not the component entities
-            if (detector.getPosition() == null ||
+            if (!detector.isSpaceborne() ||
                       detector.isDestroyed() ||
                       detector.isDoomed() ||
                       detector.isOffBoard() ||
@@ -10110,10 +10109,10 @@ public class TWGameManager extends AbstractGameManager {
                 if (detector.hasSensorContactFor(target.getId())) {
                     continue;
                 }
-                // Don't process for invalid units
-                // in the case of squadrons and transports, we want the 'host'
+                // Don't process for invalid units; in the case of squadrons and transports, we want the 'host'
                 // unit, not the component entities
-                if (target.getPosition() == null ||
+                if (!game.onTheSameBoard(detector, target) ||
+                          target.getPosition() == null ||
                           target.isDestroyed() ||
                           target.isDoomed() ||
                           target.isOffBoard() ||
@@ -10143,7 +10142,7 @@ public class TWGameManager extends AbstractGameManager {
             // Don't process for invalid units
             // in the case of squadrons and transports, we want the 'host'
             // unit, not the component entities
-            if (detector.getPosition() == null ||
+            if (!detector.isSpaceborne() ||
                       detector.isDestroyed() ||
                       detector.isDoomed() ||
                       detector.isOffBoard() ||
@@ -10160,7 +10159,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Don't process for invalid units
                 // in the case of squadrons and transports, we want the 'host'
                 // unit, not the component entities
-                if (target == null ||
+                if (!game.onTheSameBoard(detector, target) ||
                           target.getPosition() == null ||
                           target.isDestroyed() ||
                           target.isDoomed() ||
@@ -16703,17 +16702,13 @@ public class TWGameManager extends AbstractGameManager {
      * Check to see if anyone dies due to being in atmosphere.
      */
     void checkForAtmosphereDeath() {
-        Report r;
         for (Entity entity : game.inGameTWEntities()) {
-            if ((null == entity.getPosition()) || entity.isOffBoard()) {
+            if ((null == entity.getPosition()) || entity.isOffBoard() || !game.isOnAtmosphericMap(entity)) {
                 // If it's not on the board - aboard something else, for example...
                 continue;
             }
             if (entity.doomedInAtmosphere() && (entity.getAltitude() == 0)) {
-                r = new Report(6016);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                addReport(r);
+                addReport(new Report(6016).subject(entity.getId()).addDesc(entity));
                 addReport(destroyEntity(entity, "being in atmosphere where it can't survive", true, true));
             }
         }
@@ -16791,7 +16786,7 @@ public class TWGameManager extends AbstractGameManager {
     void checkForSpaceDeath() {
         Report r;
         for (Entity entity : game.inGameTWEntities()) {
-            if ((null == entity.getPosition()) || entity.isOffBoard()) {
+            if ((null == entity.getPosition()) || entity.isOffBoard() || !entity.isSpaceborne()) {
                 // If it's not on the board - aboard something else, for
                 // example...
                 continue;

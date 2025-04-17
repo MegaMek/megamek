@@ -198,7 +198,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         if (wreckageDecals.containsKey(filename)) {
             marker = wreckageDecals.get(filename);
         } else {
-            marker = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
+            marker = TilesetManager.loadSpecificImage(wreckDecalDir, filename);
             wreckageDecals.put(filename, marker);
         }
 
@@ -228,7 +228,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         if (wreckageDecals.containsKey(filename)) {
             marker = wreckageDecals.get(filename);
         } else {
-            marker = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
+            marker = TilesetManager.loadSpecificImage(wreckDecalDir, filename);
             wreckageDecals.put(filename, marker);
         }
 
@@ -248,7 +248,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         String imageKey = String.format("%s%s", filename, rotationKey);
 
         if (!wreckageDecals.containsKey(imageKey)) {
-            Image baseImage = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
+            Image baseImage = TilesetManager.loadSpecificImage(wreckDecalDir, filename);
 
             for (double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                 RotateFilter rf = new RotateFilter(x * 90);
@@ -281,7 +281,7 @@ public class TilesetManager implements IPreferenceChangeListener {
             String imageKey = String.format("%s%s", filename, rotationKey);
 
             if (!wreckageDecals.containsKey(imageKey)) {
-                Image baseImage = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
+                Image baseImage = TilesetManager.loadSpecificImage(wreckDecalDir, filename);
 
                 for (double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                     RotateFilter rf = new RotateFilter(x * 90);
@@ -489,20 +489,20 @@ public class TilesetManager implements IPreferenceChangeListener {
 
         }
 
-        minefieldSign = LoadSpecificImage(Configuration.hexesDir(), Minefield.FILENAME_IMAGE);
-        hexMask = LoadSpecificImage(Configuration.hexesDir(), FILENAME_HEX_MASK);
+        minefieldSign = loadSpecificImage(Configuration.hexesDir(), Minefield.FILENAME_IMAGE);
+        hexMask = loadSpecificImage(Configuration.hexesDir(), FILENAME_HEX_MASK);
 
-        artilleryAutohit = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE);
-        artilleryAdjusted = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE);
-        artilleryIncoming = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE);
-        orbitalBombardmentIncoming = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE);
-        orbitalBombardmentHit = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_HIT_IMAGE);
+        artilleryAutohit = loadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE);
+        artilleryAdjusted = loadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE);
+        artilleryIncoming = loadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE);
+        orbitalBombardmentIncoming = loadSpecificImage(Configuration.hexesDir(), FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE);
+        orbitalBombardmentHit = loadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_HIT_IMAGE);
 
         started = true;
     }
 
     /** Local method. Loads and returns the image. */
-    public static Image LoadSpecificImage(File path, String name) {
+    public static Image loadSpecificImage(File path, String name) {
         Image result = ImageUtil.loadImageFromFile(new MegaMekFile(path, name).toString());
         if ((result == null) || (result.getWidth(null) <= 0) || (result.getHeight(null) <= 0)) {
             logger.error("Error opening image: " + name);

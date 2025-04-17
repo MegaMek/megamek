@@ -5483,7 +5483,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasActiveECM(boolean stealth) {
         // no ECM in space unless strat op option enabled
-        if (game.getBoard().inSpace() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if (!isShutDown()) {
@@ -5559,7 +5559,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasActiveECCM() {
         // no ECM in space unless strat op option enabled
-        if (game.getBoard().inSpace() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM) ||
@@ -12773,10 +12773,13 @@ public abstract class Entity extends TurnOrdered
                      (getMovementMode() == EntityMovementMode.SPHEROID);
     }
 
+    /**
+     * @return True when this unit is currently on a space board, either close to a planet ("high altitude") or in deep
+     * space but only if its position is valid, i.e. not when it is transported or otherwise has a null position or
+     * is somehow off board. On a high altitude board, a unit is spaceborne even if it happens to be on an atmosphere
+     * hex.
+     */
     public boolean isSpaceborne() {
-        // for now if you are in space, you are space borne, but this will become more complicated when we start
-        // adding multiple maps to the same game and so I should try to replace most calls to `game.getBoard()
-        // .inSpace()` with this one
         return (game != null) && game.isOnSpaceMap(getBoardLocation());
     }
 

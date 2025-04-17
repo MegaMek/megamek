@@ -299,12 +299,12 @@ public final class Version implements Comparable<Version>, Serializable {
             return -1;
         }
 
-        if (getExtra() == null && other.getExtra() == null) {
+        if (getExtra().isEmpty() && other.getExtra().isEmpty()) {
             return 0;
-        } else if (getExtra() == null) {
-            return -1;
-        } else if (other.getExtra() == null) {
+        } else if (getExtra().isEmpty()) {
             return 1;
+        } else if (other.getExtra().isEmpty()) {
+            return -1;
         }
 
         return getExtra().compareTo(other.getExtra());
@@ -339,6 +339,6 @@ public final class Version implements Comparable<Version>, Serializable {
               getMajor(),
               getMinor(),
               getPatch(),
-              (getExtra() != null ? "-" + getExtra() : ""));
+              (!getExtra().isEmpty() ? "-" + getExtra() : ""));
     }
 }

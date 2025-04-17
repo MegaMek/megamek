@@ -1,20 +1,29 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.client.ratgenerator;
 
@@ -63,11 +72,13 @@ public class FormationType {
                                                 FLAG_PROTOMEK |
                                                 FLAG_VTOL |
                                                 FLAG_NAVAL;
+
     public static final int FLAG_GROUND_NO_LIGHT = FLAG_MEK |
                                                          FLAG_TANK |
                                                          FLAG_BATTLE_ARMOR |
                                                          FLAG_PROTOMEK |
                                                          FLAG_NAVAL;
+
     public static final int FLAG_FIGHTER = FLAG_CONV_FIGHTER | FLAG_AERO;
     public static final int FLAG_AIR = FLAG_CONV_FIGHTER | FLAG_AERO | FLAG_SMALL_CRAFT | FLAG_DROPSHIP;
     public static final int FLAG_VEHICLE = FLAG_TANK | FLAG_NAVAL | FLAG_VTOL;
@@ -101,17 +112,20 @@ public class FormationType {
     private final String name;
     private final String category;
     private int allowedUnitTypes = FLAG_GROUND;
-    // Some formation types allow units not normally generated for general combat
-    // roles (e.g. artillery, cargo)
+
+    // Some formation types allow units not normally generated for general combat roles (e.g., artillery, cargo)
     private final EnumSet<MissionRole> missionRoles = EnumSet.noneOf(MissionRole.class);
+
     // If all units in the force have this role, other constraints can be ignored.
     private UnitRole idealRole = UnitRole.UNDETERMINED;
     private String exclusiveFaction = null;
 
     private int minWeightClass = 0;
     private int maxWeightClass = EntityWeightClass.WEIGHT_COLOSSAL;
+
     // Used as a filter when generating units
     private Predicate<MekSummary> mainCriteria = ms -> true;
+
     // Additional criteria that have to be fulfilled by a portion of the force
     private final List<Constraint> otherCriteria = new ArrayList<>();
     private GroupingConstraint groupingCriteria = null;
@@ -278,11 +292,11 @@ public class FormationType {
     }
 
     public List<MekSummary> generateFormation(Parameters params, int numUnits, int networkMask, boolean bestEffort) {
-        List<Parameters> p = new ArrayList<>();
-        p.add(params);
-        List<Integer> n = new ArrayList<>();
-        n.add(numUnits);
-        return generateFormation(p, n, networkMask, bestEffort, -1, -1);
+        List<Parameters> parametersArrayList = new ArrayList<>();
+        parametersArrayList.add(params);
+        List<Integer> numUnitsIDList = new ArrayList<>();
+        numUnitsIDList.add(numUnits);
+        return generateFormation(parametersArrayList, numUnitsIDList, networkMask, bestEffort, -1, -1);
     }
 
     public List<MekSummary> generateFormation(List<Parameters> params, List<Integer> numUnits, int networkMask,
@@ -296,6 +310,7 @@ public class FormationType {
             throw new IllegalArgumentException(
                   "Formation parameter list and numUnit list must have the same number of elements.");
         }
+
         final GroupingConstraint useGrouping;
         if (null == groupingCriteria) {
             useGrouping = null;
@@ -311,30 +326,28 @@ public class FormationType {
             }
         }
 
-        List<Integer> wcs = IntStream.rangeClosed(minWeightClass,
+        List<Integer> weightClasses = IntStream.rangeClosed(minWeightClass,
               Math.min(maxWeightClass, EntityWeightClass.WEIGHT_SUPER_HEAVY)).boxed().collect(Collectors.toList());
-        List<Integer> airWcs = wcs.stream()
+        List<Integer> airWcs = weightClasses.stream()
                                      .filter(wc -> wc < EntityWeightClass.WEIGHT_ASSAULT)
                                      .collect(Collectors.toList());
+
         params.forEach(p -> {
-            p.getRoles().addAll(missionRoles);
-            p.setWeightClasses(p.getUnitType() < UnitType.CONV_FIGHTER ? wcs : airWcs);
+            p.addRoles(missionRoles);
+            p.setWeightClasses(p.getUnitType() < UnitType.CONV_FIGHTER ? weightClasses : airWcs);
         });
+
         List<UnitTable> tables = params.stream().map(UnitTable::findTable).toList();
-        // If there are any parameter sets that cannot generate a table, return an empty
-        // list.
+
+        // If there are any parameter sets that cannot generate a table, return an empty list.
         if (!tables.stream().allMatch(UnitTable::hasUnits) && !bestEffort) {
             return new ArrayList<>();
         }
 
         /*
-         * Check whether we have vees or infantry that do not have the movement mode(s)
-         * set. If so,
-         * we will attempt to conform them to a single type. Any that are set are
-         * ignored;
-         * there is no attempt to conform to mode already in the force. If they are
-         * intended
-         * to conform, they ought to be set.
+         * Check whether we have vees or infantry that do not have the movement mode(s) set. If so, we will attempt
+         * to conform them to a single type. Any that are a set are ignored; there is no attempt to conform to the mode
+         * already in the force. If they are intended to conform, they ought to be set.
          */
         List<Integer> undeterminedVees = new ArrayList<>();
         List<Integer> undeterminedInfantry = new ArrayList<>();
@@ -349,12 +362,12 @@ public class FormationType {
             }
         }
         /*
-         * Look at the table for each group of parameters and determine the motive type
-         * ratio, then weight those values according to the number of units using those
-         * parameters.
+         * Look at the table for each group of parameters and determine the motive type ratio, then weight those
+         * values according to the number of units using those parameters.
          */
         Map<String, Integer> veeMap = new HashMap<>();
         Map<String, Integer> infMap = new HashMap<>();
+
         for (int i = 0; i < undeterminedVees.size(); i++) {
             for (int j = 0; j < tables.get(i).getNumEntries(); j++) {
                 if (tables.get(i).getMekSummary(j) != null) {
@@ -364,6 +377,7 @@ public class FormationType {
                 }
             }
         }
+
         for (int i = 0; i < undeterminedInfantry.size(); i++) {
             for (int j = 0; j < tables.get(i).getNumEntries(); j++) {
                 if (tables.get(i).getMekSummary(j) != null) {
@@ -375,12 +389,11 @@ public class FormationType {
         }
 
         /*
-         * Order modes in a way that those modes that are better represented are more
-         * likely to
-         * be attempted first.
+         * Order modes in a way that those modes that are better represented are more likely to be attempted first.
          */
         List<String> veeModeAttemptOrder = new ArrayList<>();
         List<String> infModeAttemptOrder = new ArrayList<>();
+
         while (!veeMap.isEmpty()) {
             int total = veeMap.values().stream().mapToInt(Integer::intValue).sum();
             int r = Compute.randomInt(total);
@@ -396,6 +409,7 @@ public class FormationType {
             veeModeAttemptOrder.add(mode);
             veeMap.remove(mode);
         }
+
         while (!infMap.isEmpty()) {
             int total = infMap.values().stream().mapToInt(Integer::intValue).sum();
             int r = Compute.randomInt(total);
@@ -413,8 +427,7 @@ public class FormationType {
         }
 
         /*
-         * if there are no units of a given type, we want to make sure we have at least
-         * one iteration
+         * if there are no units of a given type, we want to make sure we have at least one iteration
          */
         if (veeModeAttemptOrder.isEmpty() && !infModeAttemptOrder.isEmpty()) {
             veeModeAttemptOrder.add("Tracked");
@@ -426,10 +439,10 @@ public class FormationType {
             for (String infMode : infModeAttemptOrder) {
                 List<Parameters> tempParams = params.stream().map(Parameters::copy).collect(Collectors.toList());
                 for (int index : undeterminedVees) {
-                    tempParams.get(index).getMovementModes().add(EntityMovementMode.parseFromString(veeMode));
+                    tempParams.get(index).addMovementMode(EntityMovementMode.parseFromString(veeMode));
                 }
                 for (int index : undeterminedInfantry) {
-                    tempParams.get(index).getMovementModes().add(EntityMovementMode.parseFromString(infMode));
+                    tempParams.get(index).addMovementMode(EntityMovementMode.parseFromString(infMode));
                 }
                 List<MekSummary> list = generateFormation(tempParams, numUnits, networkMask, false);
                 if (!list.isEmpty()) {
@@ -439,7 +452,7 @@ public class FormationType {
         }
         /*
          * If we cannot meet all criteria with a specific motive type, try without
-         * respect to motive type
+         * respect to the motive type
          */
 
         int cUnits = numUnits.stream().mapToInt(Integer::intValue).sum();
@@ -459,7 +472,7 @@ public class FormationType {
             return retVal;
         }
 
-        /* Simple case: single set of parameters and single additional criterion. */
+        /* Simple case: a single set of parameters and a single additional criterion. */
         if (params.size() == 1 &&
                   otherCriteria.size() == 1 &&
                   useGrouping == null &&
@@ -484,13 +497,9 @@ public class FormationType {
         }
 
         /*
-         * If a network is indicated, we decide which units are part of the network
-         * (usually
-         * all, but not necessarily) and which combination to use, then assign one of
-         * them
-         * to the master role if any. A company command lance has two configuration
-         * options:
-         * a unit with two masters, or two master and two slaves.
+         * If a network is indicated, we decide which units are part of the network (usually all, but not
+         * necessarily) and which combination to use, then assign one of them to the primary role if any. A company
+         * command lance has two configuration options: a unit with two masters, or two masters and two slaves.
          */
         int numNetworked = 0;
         int numMasters = 0;
@@ -528,47 +537,32 @@ public class FormationType {
 
         /*
          * General case:
-         * Select randomly from all unique combinations of the various criteria. Each
-         * combination
-         * is represented by a Map<Integer,Integer in which the various criteria are
-         * encoded as the keys
-         * and the value mapped to the index is the number of units that must fulfill
-         * those criteria.
-         * The lowest order bits map to otherCriteria, one bit for each constraint.
-         * These are built
-         * by shifting left for each new one added, so the one at index 0 is the
-         * leftmost bit of this
-         * section. A 1 indicates that the number of units at that index must meet the
-         * constraint, while
-         * a 0 means the constraint is not tested, and a unit may or may not fulfill it.
-         * Example: if otherCriteria.size() == 3, then the value of combinations[6] is
-         * the number of
-         * units that must meet the first two constraints (110), while combinations[7]
-         * must meet all
-         * three and combinations[0] need not meet any.
+         * Select randomly from all unique combinations of the various criteria. Each combination is represented by a
+         * <code>Map&lt;Integer, Integer&gt;</code> in which the various criteria are encoded as the keys and the
+         * value mapped to the index is the number of units that must fulfill those criteria. The lowest order bits
+         * map to otherCriteria, one bit for each constraint. These are built by shifting left for each new one
+         * added, so the one at index 0 is the leftmost bit of this section. A 1 indicates that the number of units
+         * at that index must meet the constraint, while a 0 means the constraint is not tested, and a unit may or
+         * may not fulfill it.
          *
-         * The next three bits indicate C3 network requirements. The lowest order is the
-         * number that
-         * must have a C3 slave, C3i, NC3, or Nova, depending on the value of
-         * networkMask. The middle bit
-         * is the number of required C3 masters, and the highest bit is the number of
-         * dual-C3M units.
-         * Note that only one of these three bits can be set; while a unit can have a
-         * C3M and a C3S,
-         * only one can fulfill its role in the network.
+         * Example: if otherCriteria.size() == 3, then the value of combinations[6] is the number of units that must
+         * meet the first two constraints (110), while combinations[7] must meet all three and combinations[0] need
+         * not meet any.
          *
-         * The highest order section is the unit type. Each element of the params list
-         * has one
-         * bit, beginning with the lowest order bit at index 0. As with networks, only
-         * one
-         * bit in this section can be set.
+         * The next three bits indicate C3 network requirements. The lowest order is the number that must have a C3
+         * slave, C3i, NC3, or Nova, depending on the value of networkMask. The middle bit is the number of required
+         * C3 masters, and the highest bit is the number of dual-C3M units. Note that only one of these three bits
+         * can be set; while a unit can have a C3M and a C3S, only one can fulfill its role in the network.
+         *
+         * The highest order section is the unit type. Each element of the params list has one bit, beginning with
+         * the lowest order a bit at index 0. As with networks, only one bit in this section can be set.
          */
 
         do {
             List<Map<Integer, Integer>> combinations;
             /*
-             * We can get here with an empty otherCriteria if there is a groupingConstraint,
-             * which is the case with the Order formation.
+             * We can get here with an empty otherCriteria if there is a groupingConstraint, which is the case with
+             * the Order formation.
              */
             if (otherCriteria.isEmpty()) {
                 Map<Integer, Integer> combo = new HashMap<>();
@@ -578,7 +572,7 @@ public class FormationType {
             } else {
                 combinations = findCombinations(cUnits);
             }
-            // Group units by param index so they can be returned in the order requested.
+            // Group units by param index, so they can be returned in the order requested.
             Map<Integer, List<MekSummary>> list = new TreeMap<>();
             final int POS_C3S = 0;
             final int POS_C3M = 1;
@@ -647,11 +641,10 @@ public class FormationType {
                                 Map<Integer, Integer> workingCombo = new HashMap<>(combo);
                                 for (Map<Integer, Integer> g : groups.get(gIndex)) {
                                     /*
-                                     * The first unit selected may lead to a dead end, if the constraints
-                                     * for the other group members cannot be met in a unit that matches the
-                                     * base. To deal with this we make a second attempt if necessary
-                                     * subjecting all members of the group to all constraints assigned
-                                     * to any group member.
+                                     * The first unit selected may lead to a dead end if the constraints for the
+                                     * other group members cannot be met in a unit that matches the base. To deal
+                                     * with this, we make a second attempt if necessary, subjecting all members of
+                                     * the group to all constraints assigned to any group member.
                                      */
                                     int extraCriteria = 0;
                                     int attempts = 0;
@@ -661,14 +654,7 @@ public class FormationType {
                                         for (int i : combo.keySet()) {
                                             if (g.containsKey(i)) {
                                                 // Decode unit type
-                                                int tableIndex = 0;
-                                                if (!params.isEmpty()) {
-                                                    int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
-                                                    while (tmp != 0 && (tmp & 1) == 0) {
-                                                        tableIndex++;
-                                                        tmp >>= 1;
-                                                    }
-                                                }
+                                                int tableIndex = getTableIndex(params, i, POS_C3_NUM);
                                                 final Predicate<MekSummary> filter = getFilterFromIndex(i |
                                                                                                               extraCriteria,
                                                       slaveType,
@@ -722,14 +708,7 @@ public class FormationType {
                                 for (int i : workingCombo.keySet()) {
                                     if (workingCombo.get(i) > 0) {
                                         // Decode unit type
-                                        int tableIndex = 0;
-                                        if (!params.isEmpty()) {
-                                            int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
-                                            while (tmp != 0 && (tmp & 1) == 0) {
-                                                tableIndex++;
-                                                tmp >>= 1;
-                                            }
-                                        }
+                                        int tableIndex = getTableIndex(params, i, POS_C3_NUM);
                                         final Predicate<MekSummary> filter = getFilterFromIndex(i,
                                               slaveType,
                                               masterType);
@@ -755,14 +734,7 @@ public class FormationType {
                         } else {
                             for (int i : combo.keySet()) {
                                 // Decode unit type
-                                int tableIndex = 0;
-                                if (!params.isEmpty()) {
-                                    int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
-                                    while (tmp != 0 && (tmp & 1) == 0) {
-                                        tableIndex++;
-                                        tmp >>= 1;
-                                    }
-                                }
+                                int tableIndex = getTableIndex(params, i, POS_C3_NUM);
                                 final Predicate<MekSummary> filter = getFilterFromIndex(i, slaveType, masterType);
                                 for (int j = 0; j < combo.get(i); j++) {
                                     MekSummary unit = tables.get(tableIndex).generateUnit(filter::test);
@@ -802,6 +774,18 @@ public class FormationType {
         return (onRole == null) ? new ArrayList<>() : onRole;
     }
 
+    private int getTableIndex(List<Parameters> params, int index, int posC3Num) {
+        int tableIndex = 0;
+        if (!params.isEmpty()) {
+            int tmp = index >> (otherCriteria.size() + posC3Num);
+            while (tmp != 0 && (tmp & 1) == 0) {
+                tableIndex++;
+                tmp >>= 1;
+            }
+        }
+        return tableIndex;
+    }
+
     private Predicate<MekSummary> getFilterFromIndex(int index, int slaveType, int masterType) {
         Predicate<MekSummary> retVal = mainCriteria;
         int mask = 1 << (otherCriteria.size() - 1);
@@ -827,14 +811,14 @@ public class FormationType {
     }
 
     /**
-     * Attempts to build unit entirely on ideal role. Returns null if unsuccessful.
+     * Attempts to build a unit entirely on an ideal role. Returns null if unsuccessful.
      */
     private @Nullable List<MekSummary> tryIdealRole(List<Parameters> params, List<Integer> numUnits) {
         if (idealRole.equals(UnitRole.UNDETERMINED)) {
             return null;
         }
         List<Parameters> tmpParams = params.stream().map(Parameters::copy).toList();
-        tmpParams.forEach(p -> p.getWeightClasses().clear());
+        tmpParams.forEach(Parameters::clearWeightClasses);
         List<MekSummary> retVal = new ArrayList<>();
         for (int i = 0; i < tmpParams.size(); i++) {
             UnitTable t = UnitTable.findTable(tmpParams.get(i));
@@ -847,8 +831,8 @@ public class FormationType {
     }
 
     /**
-     * Finds all unique distributions of constraints among the units that fulfills the minimum number for each
-     * constraint. The map keys indicate a combination of constraints, with the highest order bit being the first
+     * Finds all unique distributions of constraints among the units that fulfill the minimum number for each
+     * constraint. The map keys indicate a combination of constraints, with the highest order a bit being the first
      * constraint in the list, and the value mapped to that key being the number of units that must meet the
      * constraint.
      */
@@ -862,7 +846,7 @@ public class FormationType {
         for (Constraint c : otherCriteria) {
             int req = c.getMinimum(numUnits);
             /*
-             * If this is the first pass, we simply need to initialize the frequencies list
+             * If this is the first pass, we simply need to initialize the frequency list
              */
             if (frequencies.isEmpty()) {
                 Map<Integer, Integer> freq = new LinkedHashMap<>();
@@ -919,9 +903,9 @@ public class FormationType {
                             newFrequencies.add(result);
                             index--;
                             /*
-                             * Keep backing up until we find one we can decrease or we reach the beginning.
-                             * We can decrease if the current value is > 0 and the remaining slots are
-                             * big enough to hold toAllocate + 1.
+                             * Keep backing up until we find one we can decrease, or we reach the beginning. We can
+                             * decrease if the current value is > 0 and the remaining slots are big enough to hold
+                             * toAllocate + 1.
                              */
                             while (index >= 0) {
                                 if (current[index] == 0 ||
@@ -958,7 +942,7 @@ public class FormationType {
      *                      that group.
      *
      * @return A map the same format as <code>combination</code> in which higher order bits in the key indicate a group.
-     *       For example: in a formation with two criteria,
+     *       For example, in a formation with two criteria,
      *       <code>combination.length</code> == 2^2. If there are three additional
      *       groups, the return value will be 2 ^ (2+3). The value mapped to 11 (== 01011) will be the number of units
      *       that are in the second group and fulfill both formation criteria.
@@ -984,14 +968,12 @@ public class FormationType {
              */
             List<int[][]> newList = new ArrayList<>();
             /*
-             * Cycle through all previous combinations and add all combinations for current
-             * group
+             * Cycle through all previous combinations and add all combinations for the current group
              */
             for (int[][] prev : list) {
                 /*
-                 * Initialize array with the number of units at each position that have already
-                 * been
-                 * assigned to groups.
+                 * Initialize an array with the number of units at each position that have already been assigned to
+                 * groups.
                  */
                 int[] total = new int[keyList.size()];
                 for (int[] integers : prev) {
@@ -1005,8 +987,7 @@ public class FormationType {
                 /* Shift values through the array until they are all in the final position */
                 while (dist[dist.length - 1] <= itemsPerGroup[group]) {
                     /*
-                     * Test whether there is room for the current distribution, and if so add it to
-                     * the list
+                     * Test whether there is room for the current distribution, and if so, add it to the list
                      */
                     boolean hasRoom = true;
                     for (int i = 0; i < dist.length; i++) {
@@ -1023,12 +1004,9 @@ public class FormationType {
                         newList.add(newVal);
                     }
                     /*
-                     * Shift the values in the current distribution. Find the value > 0 closest to
-                     * the
-                     * end (not counting the final position), decrease it by 1, and set the value in
-                     * the next position to 1 plus whatever was in the tail position (which becomes
-                     * 0
-                     * prior to incrementing
+                     * Shift the values in the current distribution. Find the value > 0 closest to the end (not
+                     * counting the final position), decrease it by 1, and set the value in the next position to 1
+                     * plus whatever was in the tail position (which becomes 0 before incrementing
                      */
                     if (dist[dist.length - 1] == itemsPerGroup[group]) {
                         break;
@@ -1069,7 +1047,7 @@ public class FormationType {
 
     /**
      * Special case version of <code>findGroups</code> for matched units (such as paired ASFs). Because each group has
-     * identical criteria the number of possible results can be reduced.
+     * identical criteria, the number of possible results can be reduced.
      *
      * @param combination The current criteria distribution as generated by
      *                    <code>findCombinations</code>
@@ -1109,14 +1087,12 @@ public class FormationType {
              */
             List<int[][]> newList = new ArrayList<>();
             /*
-             * Cycle through all previous combinations and add all combinations for current
-             * group
+             * Cycle through all previous combinations and add all combinations for the current group
              */
             for (int[][] prev : list) {
                 /*
-                 * Initialize array with the number of units at each position that have already
-                 * been
-                 * assigned to groups.
+                 * Initialize an array with the number of units at each position that have already been assigned to
+                 * groups.
                  */
                 int[] total = new int[keyList.size()];
                 for (int[] integers : prev) {
@@ -1125,11 +1101,9 @@ public class FormationType {
                     }
                 }
                 /*
-                 * Find the starting position for the current group. We don't want to start
-                 * earlier
-                 * that the first position that has been assigned to a group; that will be a
-                 * permutation
-                 * of a result that has already been calculated.
+                 * Find the starting position for the current group. We don't want to start earlier than the first
+                 * position that has been assigned to a group; that will be a permutation of a result that has
+                 * already been calculated.
                  */
 
                 int startPos = -1;
@@ -1147,8 +1121,7 @@ public class FormationType {
                 /* Shift values through the array until they are all in the final position */
                 while (dist[dist.length - 1] <= size) {
                     /*
-                     * Test whether there is room for the current distribution, and if so add it to
-                     * the list
+                     * Test whether there is room for the current distribution, and if so, add it to the list
                      */
                     boolean hasRoom = true;
                     for (int i = 0; i < dist.length; i++) {
@@ -1166,12 +1139,9 @@ public class FormationType {
                         newList.add(newVal);
                     }
                     /*
-                     * Shift the values in the current distribution. Find the value > 0 closest to
-                     * the
-                     * end (not counting the final position), decrease it by 1, and set the value in
-                     * the next position to 1 plus whatever was in the tail position (which becomes
-                     * 0
-                     * prior to incrementing
+                     * Shift the values in the current distribution. Find the value > 0 closest to the end (not
+                     * counting the final position), decrease it by 1, and set the value in the next position to 1
+                     * plus whatever was in the tail position (which becomes 0 before incrementing
                      */
                     if (dist[dist.length - 1] == size) {
                         break;
@@ -1190,6 +1160,11 @@ public class FormationType {
             /* Replace the old list with one from this iteration */
             list = newList;
         }
+
+        return getRetValForMatchedGroups(list, keyList);
+    }
+
+    private static List<List<Map<Integer, Integer>>> getRetValForMatchedGroups(List<int[][]> list, List<Integer> keyList) {
         List<List<Map<Integer, Integer>>> retVal = new ArrayList<>();
         for (int[][] grouping : list) {
             List<Map<Integer, Integer>> newGrouping = new ArrayList<>();
@@ -1202,7 +1177,6 @@ public class FormationType {
             }
             retVal.add(newGrouping);
         }
-
         return retVal;
     }
 
@@ -2099,7 +2073,7 @@ public class FormationType {
     }
 
     /**
-     * base class for limitations on formation type
+     * base class for limitations on a formation type
      */
     public static abstract class Constraint {
         Predicate<MekSummary> criterion;
@@ -2123,13 +2097,9 @@ public class FormationType {
         }
 
         /*
-         * In cases where a constraint has multiple possible fulfillment's requiring
-         * different
-         * numbers of units (e.g. Assault requires one juggernaut or two snipers), they
-         * must
-         * be assigned to separate Constraints consecutively in the list and marked with
-         * the
-         * appropriate flag.
+         * In cases where a constraint has multiple possible fulfillment requiring different numbers of units (e.g.,
+         * Assault requires one juggernaut or two snipers), they must be assigned to separate Constraints
+         * consecutively in the list and marked with the appropriate flag.
          */
         public boolean isPairedWithPrevious() {
             return pairedWithPrevious;

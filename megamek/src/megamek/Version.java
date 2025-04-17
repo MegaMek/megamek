@@ -168,13 +168,16 @@ public final class Version implements Comparable<Version>, Serializable {
         this.patch = patch;
     }
 
-    @Nullable
     public String getExtra() {
         if (extra == null && EXTRA_VERSION_INFORMATION_BUNDLE != null) {
             String branch = EXTRA_VERSION_INFORMATION_BUNDLE.getString("branch");
             String gitHash = EXTRA_VERSION_INFORMATION_BUNDLE.getString("gitHash");
 
             extra = branch + "-" + gitHash;
+        }
+
+        if (extra == null) {
+            return "";
         }
 
         return extra;
@@ -294,6 +297,14 @@ public final class Version implements Comparable<Version>, Serializable {
             return 1;
         } else if (getPatch() < other.getPatch()) {
             return -1;
+        }
+
+        if (getExtra() == null && other.getExtra() == null) {
+            return 0;
+        } else if (getExtra() == null) {
+            return -1;
+        } else if (other.getExtra() == null) {
+            return 1;
         }
 
         return getExtra().compareTo(other.getExtra());

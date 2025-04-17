@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.common.enums.GamePhase;
@@ -108,7 +109,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         setupButtonPanel();
 
         clientgui.getClient().getGame().addGameListener(this);
-        clientgui.getBoardView().addBoardViewListener(this);
+//        clientgui.getBoardView().addBoardViewListener(this);
     }
 
     @Override
@@ -150,9 +151,9 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
 
     @Override
     public void ready() {
-        if (!clientgui.getBoardView().isTileImagesLoaded()) {
+//        if (!clientgui.getBoardView().isTileImagesLoaded()) {
 //            return;
-        }
+//        }
 
         butDone.setEnabled(false);
         setReportEnabled(false);
@@ -249,6 +250,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
-        clientgui.getBoardView().removeBoardViewListener(this);
+        clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
     }
 }

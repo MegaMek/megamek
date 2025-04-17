@@ -2351,7 +2351,7 @@ public final class BoardView extends AbstractBoardView
 
         // Darken the hex for nighttime, if applicable
         if (GUIP.getDarkenMapAtNight() &&
-                  IlluminationLevel.determineIlluminationLevel(game, coords).isNone() &&
+                  IlluminationLevel.determineIlluminationLevel(game, boardId, coords).isNone() &&
                   conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
             for (int x = 0; x < hexImage.getWidth(); ++x) {
                 for (int y = 0; y < hexImage.getHeight(); ++y) {
@@ -2590,7 +2590,7 @@ public final class BoardView extends AbstractBoardView
                 // Darken the hex for nighttime, if applicable
                 PlanetaryConditions conditions = game.getPlanetaryConditions();
                 if (GUIP.getDarkenMapAtNight() &&
-                          IlluminationLevel.determineIlluminationLevel(game, coords).isNone() &&
+                          IlluminationLevel.determineIlluminationLevel(game, boardId, coords).isNone() &&
                           conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                     for (int x = 0; x < Objects.requireNonNull(scaledImage).getWidth(null); ++x) {
                         for (int y = 0; y < scaledImage.getHeight(); ++y) {

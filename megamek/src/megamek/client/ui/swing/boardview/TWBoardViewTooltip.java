@@ -74,7 +74,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 Board embeddedBoard = game.getBoard(bv.getBoard().getEmbeddedBoardAt(coords));
                 sbTerrain.append("Embedded Map: ").append(embeddedBoard.getBoardName()).append("<BR>");
             }
-            appendTerrainTooltip(sbTerrain, mhex, GUIP);
+            appendTerrainTooltip(sbTerrain, mhex, bv.boardId);
             String sTerrain = sbTerrain.toString();
 
             // Distance from the selected unit and a planned movement end point
@@ -119,7 +119,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             result += table;
 
             StringBuffer sbBuildings = new StringBuffer();
-            appendBuildingsTooltip(sbBuildings, mhex);
+            appendBuildingsTooltip(sbBuildings, mhex, bv.boardId);
             result += sbBuildings.toString();
 
             if (bv.displayInvalidFields()) {
@@ -345,20 +345,24 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
     /**
      * Appends HTML describing the terrain of a given hex
      */
-    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex, GUIPreferences GUIP) {
+    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex, int boardId) {
         if (mhex == null) {
             return;
         }
 
-        txt.append(HexTooltip.getTerrainTip(mhex, GUIP, game));
+        txt.append(HexTooltip.getTerrainTip(mhex, boardId, game));
     }
 
+    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
+        // LEGACY replace with board Id version
+        appendBuildingsTooltip(txt, mhex, 0);
+    }
     /**
      * Appends HTML describing the buildings and minefields in a given hex
      */
-    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
+    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex, int boardId) {
         if ((mhex != null) && (clientGui != null)) {
-            String result = HexTooltip.getHexTip(mhex, clientGui.getClient());
+            String result = HexTooltip.getHexTip(mhex, clientGui.getClient(), boardId);
             txt.append(result);
         }
     }

@@ -30,6 +30,9 @@ import megamek.MMConstants;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.IBoardView;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
@@ -155,7 +158,9 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
             Entity e = v.get(i);
             unitIds[i] = e.getId();
             String name = getIconName(e, fm);
-            Image i1 = clientgui.getBoardView().getTilesetManager().iconFor(e);
+            Image i1 = clientgui.getCurrentBoardView()
+                             .map(bv -> ((BoardView) bv).getTilesetManager().iconFor(e))
+                             .orElse(null);
 
             graph.drawImage(i1, x, y, null);
             printLine(graph, x + 3, y + 46, name);
@@ -464,7 +469,7 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
             if (scrollOffset < 0) {
                 scrollOffset = 0;
             }
-            clientgui.getBoardView().refreshDisplayables();
+            clientgui.getCurrentBoardView().ifPresent(IBoardView::refreshDisplayables);
         }
     }
 
@@ -474,21 +479,21 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
             if (scrollOffset > unitIds.length - actUnitsPerPage) {
                 scrollOffset = unitIds.length - actUnitsPerPage;
             }
-            clientgui.getBoardView().refreshDisplayables();
+            clientgui.getCurrentBoardView().ifPresent(IBoardView::refreshDisplayables);
         }
     }
 
     private void scrollUp() {
         if (scrollOffset > 0) {
             scrollOffset--;
-            clientgui.getBoardView().refreshDisplayables();
+            clientgui.getCurrentBoardView().ifPresent(IBoardView::refreshDisplayables);
         }
     }
 
     private void scrollDown() {
         if (scrollOffset < unitIds.length - actUnitsPerPage) {
             scrollOffset++;
-            clientgui.getBoardView().refreshDisplayables();
+            clientgui.getCurrentBoardView().ifPresent(IBoardView::refreshDisplayables);
         }
     }
 
@@ -541,7 +546,7 @@ public class UnitOverview implements IDisplayable, IPreferenceChangeListener {
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
             visible = GUIP.getShowUnitOverview();
-            clientgui.getBoardView().refreshDisplayables();
+            clientgui.getCurrentBoardView().ifPresent(IBoardView::refreshDisplayables);
         }
     }
 }

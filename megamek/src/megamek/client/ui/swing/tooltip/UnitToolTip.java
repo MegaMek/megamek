@@ -193,7 +193,8 @@ public final class UnitToolTip {
             Board board = (client != null) ? client.getBoard(target.getBoardId()) : null;
             return HexTooltip.getBuildingTargetTip(buildingTarget, board);
         } else if (target instanceof Hex hex) {
-            return HexTooltip.getHexTip(hex, client);
+            // LEGACY replace with real board Id
+            return HexTooltip.getHexTip(hex, client, 0);
         } else {
             return getTargetTipSummary(target, client);
         }

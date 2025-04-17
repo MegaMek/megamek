@@ -31674,13 +31674,13 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     void clearBombIcons() {
-        game.getBoard().clearBombIcons();
+        game.getBoards().values().forEach(Board::clearBombIcons);
     }
 
     /**
      * Convenience function to send a ground object update.
      */
     public void sendGroundObjectUpdate() {
-        send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
+        send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, game.getGroundObjects()));
     }
 }

@@ -26,12 +26,11 @@ import megamek.common.Terrains;
 import java.util.Objects;
 
 public enum IlluminationLevel {
-    // region Enum Declarations
+
     NONE(""),
     FIRE("\uD83D\uDD25"),
     FLARE("\uD83C\uDF86"),
     SEARCHLIGHT("\uD83D\uDD26");
-    // endregion Enum Declarations
 
     private final String indicator;
 
@@ -39,7 +38,6 @@ public enum IlluminationLevel {
         this.indicator = indicator;
     }
 
-    // region Boolean Comparison Methods
     public boolean isNone() {
         return this == NONE;
     }
@@ -55,26 +53,25 @@ public enum IlluminationLevel {
     public boolean isSearchlight() {
         return this == SEARCHLIGHT;
     }
-    // endregion Boolean Comparison Methods
 
     public String getIndicator() {
         return indicator;
     }
 
-    /**
-     * @return the level of illumination for a given coords. Different light sources
-     *         affect how much
-     *         the nighttime penalties are reduced.
-     *         Note: this method should be used for determining if a Coords/Hex is
-     *         illuminated, not
-     *         Game::getIlluminatedPositions, as that just returns the hexes that
-     *         are effected by
-     *         searchlights, whereas this one considers searchlights as well as
-     *         other light sources.
-     */
+    // LEGACY replace with board ID version
     public static IlluminationLevel determineIlluminationLevel(final Game game, final Coords coords) {
+        return determineIlluminationLevel(game, 0, coords);
+    }
+
+    /**
+     * @return the level of illumination for a given coords. Different light sources affect how much the nighttime
+     *       penalties are reduced. Note: this method should be used for determining if a Coords/Hex is illuminated, not
+     *       Game::getIlluminatedPositions, as that just returns the hexes that are effected by searchlights, whereas
+     *       this one considers searchlights as well as other light sources.
+     */
+    public static IlluminationLevel determineIlluminationLevel(final Game game, int boardId, final Coords coords) {
         // fix for NPE when recovering spacecraft while in visual range of enemy
-        if (game.getBoard().inSpace()) {
+        if (game.getBoard(boardId).inSpace()) {
             return IlluminationLevel.NONE;
         }
 
@@ -89,14 +86,14 @@ public enum IlluminationLevel {
         }
 
         // Fires can reduce nighttime penalties by up to 2 points.
-        final Hex hex = game.getBoard().getHex(coords);
+        final Hex hex = game.getBoard(boardId).getHex(coords);
         if ((hex != null) && hex.containsTerrain(Terrains.FIRE)) {
             return IlluminationLevel.FIRE;
         }
 
         // If we are adjacent to a burning hex, we are also illuminated
         final boolean neighbouringFire = coords.allAdjacent().stream()
-                .map(adjacent -> game.getBoard().getHex(adjacent))
+                .map(adjacent -> game.getBoard(boardId).getHex(adjacent))
                 .filter(Objects::nonNull)
                 .anyMatch(adjacent -> adjacent.containsTerrain(Terrains.FIRE));
 

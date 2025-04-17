@@ -1512,8 +1512,9 @@ public abstract class Mek extends Entity {
                     && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) || (etype
                             .hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes))) {
                 sinks += 2;
-            } else 
-            if (etype.hasFlag(MiscType.F_HEAT_SINK)) {
+            } else if (etype.hasFlag(MiscType.F_HEAT_SINK)
+            || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+            || (etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes)) {
                 sinks++;
             }
         }
@@ -1531,10 +1532,12 @@ public abstract class Mek extends Entity {
             }
             EquipmentType etype = mounted.getType();
             if (etype.hasFlag(MiscType.F_COMPACT_HEAT_SINK)
-                    && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) || (etype
-                            .hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)))) {
+                    && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) || etype
+                            .hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE))) {
                 sinks += 2;
-            } else if (etype.hasFlag(MiscType.F_HEAT_SINK)) {
+            } else if (etype.hasFlag(MiscType.F_HEAT_SINK)
+            || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+            || etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 sinks++;
             }
         }

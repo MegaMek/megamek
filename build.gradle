@@ -15,8 +15,16 @@ allprojects {
 }
 
 subprojects {
+    Properties versionProperties = new Properties()
+    versionProperties.load(rootProject.file("megamek/resources/Version.properties").newDataInputStream())
+    def processedVersion = String.format("%d.%02d.%02d", Integer.parseInt(versionProperties.getProperty("major")), Integer.parseInt(versionProperties.getProperty("minor")), Integer.parseInt(versionProperties.getProperty("patch")))
+
+    if (project.hasProperty("extraVersion")) {
+        processedVersion = String.format("%s-%s", processedVersion, project.getProperty('extraVersion'))
+    }
+
     group = 'org.megamek'
-    version = (project.hasProperty('extraVersion') ? "0.50.05-${{ project.getProperty('extraVersion') }}" : "0.50.05")
+    version = processedVersion
 }
 
 

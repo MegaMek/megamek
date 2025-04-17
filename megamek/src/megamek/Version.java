@@ -47,11 +47,12 @@ public final class Version implements Comparable<Version>, Serializable {
     private static final long serialVersionUID = 3121116859864232639L;
 
     private static final MMLogger LOGGER = MMLogger.create(Version.class);
-    private static ResourceBundle VERSION_BUNDLE = null;
+    private static final ResourceBundle VERSION_BUNDLE = ResourceBundle.getBundle("Version");
+    private static ResourceBundle EXTRA_VERSION_INFORMATION_BUNDLE = null;
 
-    private int release;
     private int major;
     private int minor;
+    private int patch;
     private String extra;
     // endregion Variable Declarations
 
@@ -61,12 +62,12 @@ public final class Version implements Comparable<Version>, Serializable {
      * This Constructor is not to be used outside of unit testing
      */
     public Version() {
-        setRelease(0);
-        setMajor(0);
-        setMinor(0);
+        setMajor(MathUtility.parseInt(VERSION_BUNDLE.getString("major")));
+        setMinor(MathUtility.parseInt(VERSION_BUNDLE.getString("minor")));
+        setPatch(MathUtility.parseInt(VERSION_BUNDLE.getString("patch")));
 
         try {
-            VERSION_BUNDLE = ResourceBundle.getBundle("extraVersion");
+            EXTRA_VERSION_INFORMATION_BUNDLE = ResourceBundle.getBundle("extraVersion");
         } catch (Exception ignored) {
         }
     }
@@ -77,61 +78,72 @@ public final class Version implements Comparable<Version>, Serializable {
      * @param text The Version string to parse.
      */
     public Version(final @Nullable String text) {
-        this();
-        fillFromText(text);
+        if (StringUtility.isNullOrBlank(text)) {
+            final String nullOrBlank = ((text == null) ? "a null string" : "a blank string");
+            final String message = String.format(MMLoggingConstants.VERSION_ERROR_CANNOT_PARSE_VERSION_FROM_STRING,
+                  nullOrBlank);
+            LOGGER.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            return;
+        }
+
+        final String[] extraSplit = text.split("-", 2);
+        final String[] versionSplit = extraSplit[0].split("\\.");
+
+        if ((extraSplit.length > 2) || (versionSplit.length < 3)) {
+            final String message = String.format(MMLoggingConstants.VERSION_ILLEGAL_VERSION_FORMAT, text);
+            LOGGER.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            return;
+        }
+
+        setMajor(MathUtility.parseInt(versionSplit[0]));
+        setMinor(MathUtility.parseInt(versionSplit[1]));
+        setPatch(MathUtility.parseInt(versionSplit[2]));
+        setExtra(extraSplit.length == 2 ? extraSplit[1] : null);
     }
 
     /**
      * Sets the version.
      *
-     * @param release Release Version
-     * @param major   "Major" Version
-     * @param minor   "Minor" Version
+     * @param major Major Version
+     * @param minor Minor Version
+     * @param patch Patch Version
      */
-    public Version(final int release, final int major, final int minor) {
+    public Version(final int major, final int minor, final int patch) {
         this();
-        setRelease(release);
         setMajor(major);
         setMinor(minor);
+        setPatch(patch);
     }
 
     /**
      * Sets the version.
      *
-     * @param release Release Version
-     * @param major   "Major" Version
-     * @param minor   "Minor" Version
+     * @param major Major Version
+     * @param minor Minor Version
+     * @param patch Patch Version
      */
-    public Version(final String release, final String major, final String minor) {
+    public Version(final String major, final String minor, final String patch) {
         this();
-        setRelease(MathUtility.parseInt(release, 0));
-        setMajor(MathUtility.parseInt(major, 50));
-        setMinor(MathUtility.parseInt(minor, 5));
+        setMajor(MathUtility.parseInt(major, 0));
+        setMinor(MathUtility.parseInt(minor, 50));
+        setPatch(MathUtility.parseInt(patch, 5));
     }
 
     /**
      * Sets the version with Extra data.
      *
-     * @param release Release Version
-     * @param major   "Major" Version
-     * @param minor   "Minor" Version
-     * @param extra   Extra would be PR or nightly with git hash.
+     * @param major Major Version
+     * @param minor Minor Version
+     * @param patch Patch Version
+     * @param extra Extra would be PR or nightly with git hash.
      */
-    public Version(final String release, final String major, final String minor, @Nullable final String extra) {
-        this(release, major, minor);
+    public Version(final String major, final String minor, final String patch, @Nullable final String extra) {
+        this(major, minor, patch);
         setExtra(extra);
     }
     // endregion Constructors
 
     // region Getters
-    public int getRelease() {
-        return release;
-    }
-
-    public void setRelease(final int release) {
-        this.release = release;
-    }
-
     public int getMajor() {
         return major;
     }
@@ -148,11 +160,19 @@ public final class Version implements Comparable<Version>, Serializable {
         this.minor = minor;
     }
 
+    public int getPatch() {
+        return patch;
+    }
+
+    public void setPatch(final int patch) {
+        this.patch = patch;
+    }
+
     @Nullable
     public String getExtra() {
-        if (extra == null && VERSION_BUNDLE != null) {
-            String branch = VERSION_BUNDLE.getString("branch");
-            String gitHash = VERSION_BUNDLE.getString("gitHash");
+        if (extra == null && EXTRA_VERSION_INFORMATION_BUNDLE != null) {
+            String branch = EXTRA_VERSION_INFORMATION_BUNDLE.getString("branch");
+            String gitHash = EXTRA_VERSION_INFORMATION_BUNDLE.getString("gitHash");
 
             extra = branch + "-" + gitHash;
         }
@@ -256,23 +276,23 @@ public final class Version implements Comparable<Version>, Serializable {
     @Override
     public int compareTo(final Version other) {
         // Check Release version
-        if (getRelease() > other.getRelease()) {
-            return 1;
-        } else if (getRelease() < other.getRelease()) {
-            return -1;
-        }
-
-        // Release version is equal, try with Major
         if (getMajor() > other.getMajor()) {
             return 1;
         } else if (getMajor() < other.getMajor()) {
             return -1;
         }
 
-        // Major version is also equal, try Minor
+        // Release version is equal, try with Major
         if (getMinor() > other.getMinor()) {
             return 1;
         } else if (getMinor() < other.getMinor()) {
+            return -1;
+        }
+
+        // Major version is also equal, try Minor
+        if (getPatch() > other.getPatch()) {
+            return 1;
+        } else if (getPatch() < other.getPatch()) {
             return -1;
         }
 
@@ -283,9 +303,9 @@ public final class Version implements Comparable<Version>, Serializable {
     // and equals
     public boolean equals(Object obj) {
         if (obj instanceof Version other) {
-            return (getRelease() == other.getRelease() &&
-                          getMajor() == other.getMajor() &&
+            return (getMajor() == other.getMajor() &&
                           getMinor() == other.getMinor() &&
+                          getPatch() == other.getPatch() &&
                           getExtra().equals(other.getExtra()));
         }
 
@@ -302,58 +322,12 @@ public final class Version implements Comparable<Version>, Serializable {
         MMXMLUtility.writeSimpleXMLTag(pw, indent, "version", toString());
     }
 
-    public void fillFromText(final @Nullable String text) {
-        if (StringUtility.isNullOrBlank(text)) {
-            final String nullOrBlank = ((text == null) ? "a null string" : "a blank string");
-            final String message = String.format(MMLoggingConstants.VERSION_ERROR_CANNOT_PARSE_VERSION_FROM_STRING,
-                  nullOrBlank);
-            LOGGER.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
-            return;
-        }
-
-        final String[] extraSplit = text.split("-", 2);
-        final String[] versionSplit = extraSplit[0].split("\\.");
-
-        if ((extraSplit.length > 2) || (versionSplit.length < 3)) {
-            final String message = String.format(MMLoggingConstants.VERSION_ILLEGAL_VERSION_FORMAT, text);
-            LOGGER.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
-            return;
-        }
-
-        try {
-            setRelease(MathUtility.parseInt(versionSplit[0], 0));
-        } catch (Exception e) {
-            final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_RELEASE, text);
-            LOGGER.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
-            return;
-        }
-
-        try {
-            setMajor(MathUtility.parseInt(versionSplit[1], 50));
-        } catch (Exception e) {
-            final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MAJOR, text);
-            LOGGER.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
-            return;
-        }
-
-        try {
-            setMinor(MathUtility.parseInt(versionSplit[2], 5));
-        } catch (Exception e) {
-            final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MINOR, text);
-            LOGGER.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
-            return;
-        }
-
-        setExtra(extraSplit.length == 2 ? extraSplit[1] : null);
-    }
-    // endregion File I/O
-
     @Override
     public String toString() {
         return String.format("%d.%02d.%02d%s",
-              getRelease(),
               getMajor(),
               getMinor(),
+              getPatch(),
               (getExtra() != null ? "-" + getExtra() : ""));
     }
 }

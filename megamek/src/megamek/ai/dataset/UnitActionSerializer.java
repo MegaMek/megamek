@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
+ *
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
@@ -27,14 +28,19 @@
  */
 package megamek.ai.dataset;
 
-
-import java.util.List;
+import megamek.ai.dataset.UnitAction.Field;
 
 /**
- * Represents an action and the state of the board after the action is performed.
- * @param round game round
- * @param unitAction unit action performed
- * @param boardUnitState state of the board when the action is performed
+ * <p>Serializer for UnitAction to TSV format.</p>
+ * <p>Uses a flexible map-based approach with enum fields.</p>
  * @author Luana Coppio
  */
-public record ActionAndState(int round, UnitAction unitAction, List<UnitState> boardUnitState){}
+public class UnitActionSerializer extends EntityDataSerializer<UnitAction.Field, UnitAction> {
+
+    /**
+     * Creates a serializer with default field order.
+     */
+    public UnitActionSerializer() {
+        super(Field.class);
+    }
+}

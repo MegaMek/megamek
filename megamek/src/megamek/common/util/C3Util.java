@@ -99,4 +99,24 @@ public class C3Util {
 
         return affectedUnits;
     }
+
+    /**
+     * Copies the C3 network setup from the source to the target.
+     *
+     * @param source The source {@link Entity}.
+     * @param target The target {@link Entity}.
+     */
+    public static void copyC3Networks(Entity source, Entity target) {
+        target.setC3UUIDAsString(source.getC3UUIDAsString());
+        target.setC3Master(source.getC3Master(), false);
+        target.setC3MasterIsUUIDAsString(source.getC3MasterIsUUIDAsString());
+
+        // Reassign the C3NetId
+        target.setC3NetId(source.getC3NetId());
+
+        for (int pos = 0; pos < Entity.MAX_C3i_NODES; ++pos) {
+            target.setC3iNextUUIDAsString(pos, source.getC3iNextUUIDAsString(pos));
+            target.setNC3NextUUIDAsString(pos, source.getNC3NextUUIDAsString(pos));
+        }
+    }
 }

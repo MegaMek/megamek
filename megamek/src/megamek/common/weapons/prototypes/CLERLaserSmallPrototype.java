@@ -34,7 +34,7 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
         shortRange = 2;
         mediumRange = 4;
         longRange = 5;
-        extremeRange = 8;
+        extremeRange = 7;
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 3;

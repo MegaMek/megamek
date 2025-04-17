@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
+ *
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
@@ -27,24 +28,19 @@
  */
 package megamek.ai.dataset;
 
+import megamek.ai.dataset.MapSettingsData.Field;
+
 /**
- * <p>Abstract class to serialize/deserialize objects to/from TSV format.</p>
- * <p>It does not have a fromTsv function because I could not find a way to make a good API for it.</p>
- * @param <T> type of object to serialize/deserialize
+ * <p>Serializer for MapSettingsData to TSV format.</p>
  * @author Luana Coppio
  */
-public abstract class TsvSerde<T> {
+public class MapSettingsDataSerializer
+      extends EntityDataSerializer<MapSettingsData.Field, MapSettingsData>{
 
     /**
-     * Serializes an object to TSV format.
-     * @param obj object to serialize
-     * @return the object serialized in TSV format
+     * Creates a serializer with default field order.
      */
-    public abstract String toTsv(T obj);
-
-    /**
-     * Returns the header line for the TSV format.
-     * @return the header line
-     */
-    public abstract String getHeaderLine();
+    public MapSettingsDataSerializer() {
+        super(Field.class);
+    }
 }

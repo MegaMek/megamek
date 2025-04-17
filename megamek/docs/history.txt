@@ -172,6 +172,8 @@ MEGAMEK VERSION HISTORY:
 + Fix #6857: Fixed Port Validation (Sentry)
 + Fix MekHQ#6619: Move RestoreUnitAction::copyC3Networks from MekHQ to MegaMek's C3Utils
 + Fix #6867: Excluded Infantry Attack From Edit Unit Damage Dialog
++ PR #6885: fix: wrong access for weapon arc
++ PR #6886: Change getWeaponArc signature and add JavaDocs 
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

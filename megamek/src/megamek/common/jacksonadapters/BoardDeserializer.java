@@ -35,6 +35,7 @@ import megamek.common.BoardType;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Coords;
+import megamek.common.MapSettings;
 import megamek.common.board.postprocess.BoardProcessor;
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
@@ -202,7 +203,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             List<Boolean> isRotatedList = new ArrayList<>();
             Collections.fill(isRotatedList, Boolean.FALSE);
             board = BoardUtilities.combine(mapWidth, mapHeight, columns, rows, boardsList, isRotatedList,
-                    Board.T_GROUND);
+                  MapSettings.MEDIUM_GROUND);
         }
         parseBoardProcessors(board, mapNode);
         parseEmbeddedBoards(board, mapNode);

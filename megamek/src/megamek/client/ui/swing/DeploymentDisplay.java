@@ -481,7 +481,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 processTurn(entity, coords);
                 return;
             } else if (entity.isBoardProhibited(board)) {
-                showWrongBoardTypeMessage(board.getType());
+                showWrongBoardTypeMessage(board);
                 return;
             } else if (!(board.isLegalDeployment(coords, entity) || assaultDropPreference)) {
                 showOutsideDeployAreaMessage();
@@ -591,10 +591,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 .anyMatch(o -> o.elevation() <= elevation);
     }
 
-    private void showWrongBoardTypeMessage(int boardType) {
+    private void showWrongBoardTypeMessage(Board board) {
         String title = Messages.getString("DeploymentDisplay.alertDialog.title");
-        String msg = Messages.getString("DeploymentDisplay.wrongMapType", ce().getShortName(),
-                Board.getTypeName(boardType));
+        String boardType = switch (board.getBoardType()) {
+            case CAPITAL_RADAR, RADAR -> "Radar";
+            case SKY, SKY_WITH_TERRAIN -> "Atmospheric";
+            case FAR_SPACE, NEAR_SPACE -> "Space";
+            case GROUND -> "Ground";
+        };
+        String msg = Messages.getString("DeploymentDisplay.wrongMapType", ce().getShortName(), boardType);
         JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
     }
 

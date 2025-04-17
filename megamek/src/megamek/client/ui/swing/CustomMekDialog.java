@@ -193,7 +193,7 @@ public class CustomMekDialog extends AbstractButtonDialog
         this.entities = entities;
         this.clientGUI = clientgui;
         this.client = client;
-        this.space = clientgui.getClient().getMapSettings().getMedium() == Board.T_SPACE;
+        this.space = clientgui.getClient().getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE;
         this.editable = editable;
         this.editableDeployment = editableDeployment;
 

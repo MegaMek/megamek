@@ -3073,6 +3073,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return game().getBoard(ce().getBoardId()).contains(cmd == null ? ce().getPosition() : cmd.getFinalCoords());
     }
 
+    private int finalBoardId() {
+        return cmd == null ? ce().getBoardId() : cmd.getFinalBoardId();
+    }
+
     private void updateLayMineButton() {
         final Entity ce = ce();
         if (null == ce) {
@@ -5324,15 +5328,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             MoveStep last = cmd.getLastStep();
             int vel = a.getCurrentVelocity();
             int altitude = ce.getAltitude();
-            Coords pos = ce.getPosition();
+            Coords pos = finalPosition();
             int distance = 0;
             if (null != last) {
                 vel = last.getVelocityLeft();
                 altitude = last.getAltitude();
-                pos = last.getPosition();
                 distance = last.getDistance();
             }
-            Board board = game.getBoard(ce);
+            Board board = game.getBoard(finalBoardId());
             // On Atmospheric maps, elevations are treated as altitudes, so
             // hex ceiling is the ground
             int ceil = board.getHex(pos).ceiling(board.inAtmosphere());
@@ -5340,8 +5343,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (board.onGround()) {
                 ceil = 0;
             }
-            choiceDialog.checkPerformability(vel, altitude, ceil, a.isVSTOL(),
-                    distance, game, cmd);
+            choiceDialog.checkPerformability(vel, altitude, ceil, a.isVSTOL(), distance, board, cmd);
             choiceDialog.setVisible(true);
             int manType = choiceDialog.getChoice();
             updateMove((manType > ManeuverType.MAN_NONE) && addManeuver(manType));

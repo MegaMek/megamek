@@ -63,26 +63,15 @@ public class Board implements Serializable {
     public static final int NUM_ZONES_X2 = 22;
 
     // Board Dimensions
-    // Used for things like artillery rules that reference the standard mapsheet
-    // dimensions
+    // Used for things like artillery rules that reference the standard mapsheet dimensions
     public static final int DEFAULT_BOARD_HEIGHT = 17;
     public static final int DEFAULT_BOARD_WIDTH = 16;
-    // Variable board width and height. Used for most everything else since we're
-    // not restricted to paper map sizes
-    protected int width;
-    protected int height;
 
-    // MapType
-    public static final int T_GROUND = 0;
-    public static final int T_ATMOSPHERE = 1;
-    public static final int T_SPACE = 2;
+    // Variable board width and height. Used for most everything else since we're not restricted to paper map sizes
+    private int width;
+    private int height;
 
-    public static final int MAX_DEPLOYMENT_ZONE_NUMBER = 31;
-
-    private static final String[] typeNames = { "Ground", "Low Atmosphere", "Space" };
-
-    // Min and Max elevation values for when they are undefined (since you can't set
-    // an int to null).
+    // Min and Max elevation values for when they are undefined (since you can't set an int to null).
     private static final int UNDEFINED_MIN_ELEV = 10000;
     private static final int UNDEFINED_MAX_ELEV = -10000;
 
@@ -91,7 +80,6 @@ public class Board implements Serializable {
     private int minElevation = UNDEFINED_MIN_ELEV;
     private int maxElevation = UNDEFINED_MAX_ELEV;
 
-    private int mapType = T_GROUND;
     private BoardType boardType = BoardType.GROUND;
 
     private Hex[] data;
@@ -131,6 +119,8 @@ public class Board implements Serializable {
 
     private int boardId = 0;
 
+    public static final int MAX_DEPLOYMENT_ZONE_NUMBER = 31;
+
     /**
      * The board's deployment zones. These may come as terrains from the board file or they may be set by code. The field is
      * transient as zones can be reconstructed from terrain and the areas field and may have many coords.
@@ -144,8 +134,8 @@ public class Board implements Serializable {
 
     /**
      * At each Coords, one other, lower type board can be located, e.g. a ground board can be embedded in a
-     * low atmosphere map hex or a low atmosphere board can be embedded in a ground row hex of a high
-     * atmosphere map. The map gives the board ID for each affected Coords. This and
+     * low atmosphere board hex or a low atmosphere board can be embedded in a ground row hex of a high
+     * altitude board. This map gives the board ID for each affected Coords. This and
      * {@link #enclosingBoard} should correspond to each other across the boards of a game.
      */
     private final Map<Coords, Integer> embeddedBoards = new HashMap<>();
@@ -215,7 +205,6 @@ public class Board implements Serializable {
             }
         }
         Board result = new Board(width, height, data);
-        result.setType(Board.T_ATMOSPHERE);
         result.setBoardType(BoardType.SKY);
         return result;
     }
@@ -236,7 +225,6 @@ public class Board implements Serializable {
             }
         }
         Board result = new Board(width, height, data);
-        result.setType(Board.T_SPACE);
         result.setBoardType(BoardType.FAR_SPACE);
         return result;
     }
@@ -983,18 +971,13 @@ public class Board implements Serializable {
      * @return Constant representing the opposite edge
      */
     public int getOppositeEdge(int cardinalEdge) {
-        switch (cardinalEdge) {
-            case Board.START_E:
-                return Board.START_W;
-            case Board.START_N:
-                return Board.START_S;
-            case Board.START_W:
-                return Board.START_E;
-            case Board.START_S:
-                return Board.START_N;
-            default:
-                return Board.START_NONE;
-        }
+        return switch (cardinalEdge) {
+            case Board.START_E -> Board.START_W;
+            case Board.START_N -> Board.START_S;
+            case Board.START_W -> Board.START_E;
+            case Board.START_S -> Board.START_N;
+            default -> Board.START_NONE;
+        };
     }
 
     /**
@@ -1820,20 +1803,11 @@ public class Board implements Serializable {
     }
 
     public void setType(int t) {
-        mapType = t;
         setBoardType(switch (t) {
-            case T_ATMOSPHERE -> BoardType.SKY_WITH_TERRAIN;
-            case T_SPACE -> BoardType.FAR_SPACE;
+            case MapSettings.MEDIUM_ATMOSPHERE -> BoardType.SKY_WITH_TERRAIN;
+            case MapSettings.MEDIUM_SPACE -> BoardType.FAR_SPACE;
             default -> BoardType.GROUND;
         });
-    }
-
-    public int getType() {
-        return mapType;
-    }
-
-    public static String getTypeName(int t) {
-        return typeNames[t];
     }
 
     public boolean onGround() {
@@ -1978,10 +1952,7 @@ public class Board implements Serializable {
      * @return true when the given Coord c is on the edge of the board.
      */
     public boolean isOnBoardEdge(Coords c) {
-        return (c.getX() == 0)
-                || (c.getY() == 0)
-                || (c.getX() == (width - 1))
-                || (c.getY() == (height - 1));
+        return (c.getX() == 0) || (c.getY() == 0) || (c.getX() == (width - 1)) || (c.getY() == (height - 1));
     }
 
     public static Board createEmptyBoard(int width, int height) {
@@ -2162,9 +2133,19 @@ public class Board implements Serializable {
         return enclosingBoard;
     }
 
+    /**
+     * Sets the given board ID as an embedded board at the given coords of this board. The board ID is not checked
+     * nor the board type. The coords are checked against the size of this board.
+     *
+     * @param boardId The board ID to embed
+     * @param coords The location to place the given board
+     * @throws IllegalArgumentException When this board does not contain the given coords
+     */
     public void setEmbeddedBoard(int boardId, Coords coords) {
         if (contains(coords)) {
             embeddedBoards.put(coords, boardId);
+        } else {
+            throw new IllegalArgumentException("Board does not contain the given coords.");
         }
     }
 

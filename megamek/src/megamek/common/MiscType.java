@@ -1383,6 +1383,7 @@ public class MiscType extends EquipmentType {
             return (int) Math.ceil(size);
         }
         // right, well I'll just guess then
+        LOGGER.error("Failed to calculate crit slots for equipment %s".formatted(this.getName()));
         return 1;
     }
 

@@ -63,7 +63,6 @@ public class TechLevelCompareTool {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException ignored) {
-                logger.error(ignored, "Ignored Exception");
             }
         }
 

@@ -6108,7 +6108,7 @@ public class TWGameManager extends AbstractGameManager {
                     while (cfrPacketQueue.isEmpty()) {
                         cfrPacketQueue.wait();
                     }
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     return false;
                 }
                 // Get the packet, if there's something to get
@@ -6221,7 +6221,7 @@ public class TWGameManager extends AbstractGameManager {
                     while (cfrPacketQueue.isEmpty()) {
                         cfrPacketQueue.wait();
                     }
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     return 0;
                 }
 
@@ -6254,7 +6254,7 @@ public class TWGameManager extends AbstractGameManager {
                     while (cfrPacketQueue.isEmpty()) {
                         cfrPacketQueue.wait();
                     }
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     return 0;
                 }
                 // Get the packet, if there's something to get

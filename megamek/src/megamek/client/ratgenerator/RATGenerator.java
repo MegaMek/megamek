@@ -1343,7 +1343,7 @@ public class RATGenerator {
         while (!interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis()) {
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
                 // Ignore
             }
         }

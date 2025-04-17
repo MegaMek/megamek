@@ -5033,8 +5033,7 @@ public final class BoardView extends AbstractBoardView
                 tracker.addImage(base, 0);
                 try {
                     tracker.waitForID(0);
-                } catch (InterruptedException e) {
-                    LOGGER.error(e, "");
+                } catch (InterruptedException ignored) {
                 }
                 if (tracker.isErrorAny()) {
                     return null;
@@ -5053,8 +5052,7 @@ public final class BoardView extends AbstractBoardView
             // Wait for image to load
             try {
                 tracker.waitForID(1);
-            } catch (InterruptedException e) {
-                LOGGER.error(e, "");
+            } catch (InterruptedException ignored) {
             }
 
             tracker.removeImage(scaled);

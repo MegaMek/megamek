@@ -101,8 +101,8 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
             awaitMillis = (targetFrameTimeNanos - elapsedNanos) / 1_000_000;
             try {
                 Thread.sleep(Math.max(1, awaitMillis));
-            } catch (InterruptedException e) {
-                logger.error("Interrupted while waiting for next frame", e);
+            } catch (InterruptedException ignored) {
+                logger.error("Interrupted while waiting for next frame");
                 alive = false;
             }
         }

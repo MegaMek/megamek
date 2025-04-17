@@ -234,8 +234,8 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
                                     throw new TimeoutException("Timeout");
                                 }
                             }
-                        } catch (InterruptedException e) {
-                            logger.error("While waiting for countdown latch", e);
+                        } catch (InterruptedException ignored) {
+                            logger.error("While waiting for countdown latch");
                         }
                     }
                     return null;

@@ -147,8 +147,7 @@ public class PathEnumerator {
                 retryCount++;
                 try {
                     Thread.sleep(Compute.randomInt(1000) + 500);
-                } catch (InterruptedException e) {
-                    logger.error(e, "recalculateMovesFor");
+                } catch (InterruptedException ignored) {
                 } catch (Exception e) {
                     logger.error(e, "Unexpected (non-interrupt) exception!");
                 }

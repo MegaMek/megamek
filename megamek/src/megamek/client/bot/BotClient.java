@@ -532,15 +532,13 @@ public abstract class BotClient extends Client {
             success = calculateMyTurnWorker();
 
             if (!success) {
-                // if we fail, take a nap for 500-1500 milliseconds, then try again
-                // as it may be due to some kind of thread-related issue
-                // limit number of retries, so we're not endlessly spinning
-                // if we can't recover from the error
+                // if we fail, take a nap for 500-1500 milliseconds, then try again as it may be due to some kind of
+                // thread-related issue limit number of retries, so we're not endlessly spinning if we can't recover
+                // from the error
                 retryCount++;
                 try {
                     Thread.sleep(Compute.randomInt(1000) + 500);
-                } catch (InterruptedException e) {
-                    logger.error(e, "calculateMyTurn");
+                } catch (InterruptedException ignored) {
                 }
             }
         }

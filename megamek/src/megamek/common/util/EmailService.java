@@ -191,8 +191,8 @@ public class EmailService {
                         message = mailQueue.poll();
                     }
                 }
-            } catch (InterruptedException ex) {
-                // All good, just shut down
+            } catch (InterruptedException ignored) {
+                // All good, shut down
                 running = false;
             } catch (Exception ex) {
                 logger.error("Error sending email", ex);

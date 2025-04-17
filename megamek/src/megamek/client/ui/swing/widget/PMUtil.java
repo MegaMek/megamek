@@ -34,8 +34,7 @@ public final class PMUtil {
         mt.addImage(im, 0);
         try {
             mt.waitForID(0);
-        } catch (InterruptedException e) {
-            logger.error("", e);
+        } catch (InterruptedException ignored) {
             return false;
         }
 

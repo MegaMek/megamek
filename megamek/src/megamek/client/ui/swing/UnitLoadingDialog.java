@@ -74,7 +74,7 @@ public class UnitLoadingDialog extends JDialog {
                 updateCounts();
                 try {
                     Thread.sleep(UPDATE_FREQUENCY);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     // not supposed to come here
                 }
             }

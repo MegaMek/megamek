@@ -396,7 +396,7 @@ public class Ruleset {
         while (!RATGenerator.getInstance().isInitialized()) {
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
                 // Ignore
             }
         }

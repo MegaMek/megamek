@@ -92,7 +92,7 @@ public class GifWriterThread extends Thread {
                         }
                         gifWriter.appendFrame(frame.image(), frame.duration());
                     }
-                } catch (InterruptedException | IOException e) {
+                } catch (InterruptedException | IOException ignored) {
                     break;
                 }
             }

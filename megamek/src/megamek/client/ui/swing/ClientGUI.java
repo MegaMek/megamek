@@ -2230,8 +2230,7 @@ public class ClientGUI extends AbstractClientGUI
             new Thread(() -> {
                 try {
                     p.waitFor();
-                } catch (InterruptedException e) {
-                    logger.error(e);
+                } catch (InterruptedException ignored) {
                 } finally {
                     button.setText(Messages.getString("ChatLounge.butPrintList"));
                 }

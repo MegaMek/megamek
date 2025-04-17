@@ -622,7 +622,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                 } else {
                     try {
                         Thread.sleep(50);
-                    } catch (InterruptedException ie) {
+                    } catch (InterruptedException ignored) {
                         // should never happen
                     }
                     SwingUtilities.invokeLater(drawMapable);

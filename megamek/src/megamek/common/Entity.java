@@ -14061,7 +14061,7 @@ public abstract class Entity extends TurnOrdered
             return "Small Craft";
         } else if ((typeId & ETYPE_TELEMISSILE) == ETYPE_TELEMISSILE) {
             return "Telemissile";
-        } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
+        } else if ((typeId & ETYPE_AEROSPACEFIGHTER) == ETYPE_AEROSPACEFIGHTER) {
             return "Aerospace fighter";
         } else if ((typeId & ETYPE_BATTLEARMOR) == ETYPE_BATTLEARMOR) {
             return "Battlearmor";

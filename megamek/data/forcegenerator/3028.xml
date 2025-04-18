@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3028-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>5,5</pctOmni>
@@ -2904,11 +2901,11 @@
                 <availability>FWL:2+</availability>
             </model>
             <model name='(Wheeled Sniper 3035+)'>
-                <roles>mixed_artillery</roles>
+                <roles>mixed_artillery,urban</roles>
                 <availability>FWL:1+</availability>
             </model>
             <model name='(Wheeled Thumper 3035+)'>
-                <roles>mixed_artillery</roles>
+                <roles>mixed_artillery,urban</roles>
                 <availability>FWL:2+</availability>
             </model>
         </chassis>
@@ -3264,6 +3261,13 @@
             <model name='(Laser XCT 2880+)'>
                 <roles>xct</roles>
                 <availability>FWL:1+</availability>
+            </model>
+            <model name='(Rifle 3035+)'>
+                <availability>FWL:6:3035</availability>
+            </model>
+            <model name='(Sappers 2315+)'>
+                <roles>engineer,minesweeper</roles>
+                <availability>FWL:3+</availability>
             </model>
             <model name='(Sniper Detachment 2505+)'>
                 <roles>specops</roles>
@@ -4449,6 +4453,10 @@
             <model name='(Laser 3035+)'>
                 <availability>FWL!A:5</availability>
             </model>
+            <model name='(Rifle 2500+)'>
+                <roles>anti_mek</roles>
+                <availability>FWL!A:6</availability>
+            </model>
             <model name='(SRM 3035+)'>
                 <availability>FWL!A:5</availability>
             </model>
@@ -5420,6 +5428,13 @@
             <model name='(Laser 3035+)'>
                 <availability>FWL!A:6</availability>
             </model>
+            <model name='(Rifle 3035+)'>
+                <availability>FWL:3:3035</availability>
+            </model>
+            <model name='(Sappers 2315+)'>
+                <roles>engineer,minesweeper</roles>
+                <availability>FWL:2+</availability>
+            </model>
             <model name='(SRM 3035+)'>
                 <availability>FWL!A:5</availability>
             </model>
@@ -5520,11 +5535,15 @@
         <chassis name='Mechanized Wheeled Platoon (FWLM)' unitType='Infantry'>
             <availability>FWL:1+,DA:0</availability>
             <model name='(Laser 3035+)'>
-                <availability>FWL:5+!3035</availability>
+                <availability>FWL:5+:3035</availability>
             </model>
             <model name='(Laser XCT 2880+)'>
                 <roles>xct</roles>
                 <availability>FWL:1+</availability>
+            </model>
+            <model name='(Rifle 3035+)'>
+                <roles>urban</roles>
+                <availability>FWL:3:3035</availability>
             </model>
             <model name='(SRM 3035+)'>
                 <availability>FWL:4+:3035</availability>
@@ -5759,7 +5778,7 @@
 				<availability>CS:5,IS:2,Periphery:2</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>IS:8,FWL!A:7!B:7!C:7!D:6!F:5,CS:7,Periphery:8,TC:7,HL:8,Periphery.Deep:8</availability>
+				<availability>IS:8,FWL!A:7!B:7!C:7!D:6!F:5,DA:7,CS:7,Periphery:8,TC:7,HL:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='(SRM)'>
 				<availability>IS:5,FWL:5+,DA:4+,CS:2+,Periphery:5,TC:4+,HL:5+,Periphery.Deep:5+</availability>
@@ -5783,6 +5802,23 @@
             </model>
             <model name='(SRM)'>
                 <availability>CS:5+</availability>
+            </model>
+        </chassis>
+        <chassis name='Motorized Platoon (FWLM)' unitType='Infantry'>
+            <availability>FWL:1+,DA:0</availability>
+            <model name='(Laser XCT 2880+)'>
+                <roles>xct</roles>
+                <availability>FWL:1</availability>
+            </model>
+            <model name='(Laser 3035+)'>
+                <availability>FWL:3+:3035</availability>
+            </model>
+            <model name='(Rifle 3035+)'>
+                <availability>FWL:4:3035</availability>
+            </model>
+            <model name='(Sappers 2315+)'>
+                <roles>engineer,minesweeper</roles>
+                <availability>FWL:8</availability>
             </model>
         </chassis>
         <chassis name='Motorized Platoon (Taurian)' unitType='Infantry'>

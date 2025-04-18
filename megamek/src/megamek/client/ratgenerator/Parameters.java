@@ -268,6 +268,10 @@ public final class Parameters implements Cloneable {
         return new ArrayList<>(weightClasses);
     }
 
+    public void clearWeightClasses() {
+        weightClasses.clear();
+    }
+
     public void setWeightClasses(Collection<Integer> weightClasses) {
         this.weightClasses = weightClasses;
     }
@@ -288,12 +292,20 @@ public final class Parameters implements Cloneable {
         return new ArrayList<>(movementModes);
     }
 
+    public void addMovementMode(EntityMovementMode newMovementMode) {
+        movementModes.add(newMovementMode);
+    }
+
     public void setMovementModes(Collection<EntityMovementMode> movementModes) {
         this.movementModes = movementModes;
     }
 
     public Collection<MissionRole> getRoles() {
         return new ArrayList<>(roles);
+    }
+
+    public void addRoles(Collection<MissionRole> newRoles) {
+        roles.addAll(newRoles);
     }
 
     public void setRoles(Collection<MissionRole> roles) {

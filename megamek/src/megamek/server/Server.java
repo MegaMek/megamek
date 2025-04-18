@@ -45,7 +45,6 @@ import java.util.zip.GZIPInputStream;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.MMConstants;
-import megamek.MegaMek;
 import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.ui.swing.util.PlayerColour;
@@ -362,7 +361,7 @@ public class Server implements Runnable {
     }
 
     public Server(@Nullable String password, int port, IGameManager gameManager, boolean registerWithServerBrowser,
-                  @Nullable String metaServerUrl) throws IOException {
+          @Nullable String metaServerUrl) throws IOException {
         this(password, port, gameManager, registerWithServerBrowser, metaServerUrl, null, false);
     }
 
@@ -378,7 +377,7 @@ public class Server implements Runnable {
      * @param dedicated                 set to true if this server is started from a GUI-less context
      */
     public Server(@Nullable String password, int port, IGameManager gameManager, boolean registerWithServerBrowser,
-                  @Nullable String metaServerUrl, @Nullable EmailService mailer, boolean dedicated) throws IOException {
+          @Nullable String metaServerUrl, @Nullable EmailService mailer, boolean dedicated) throws IOException {
         this.metaServerUrl = StringUtility.isNullOrBlank(metaServerUrl) ? null : metaServerUrl;
         this.password = StringUtility.isNullOrBlank(password) ? null : password;
         this.gameManager = gameManager;
@@ -655,40 +654,6 @@ public class Server implements Runnable {
                   System.lineSeparator(),
                   message));
             return false;
-        }
-
-        final String clientChecksum = (String) packet.getObject(1);
-        final String serverChecksum = MegaMek.getMegaMekSHA256();
-        String message = "";
-
-        // print a message indicating client doesn't have jar file
-        if (clientChecksum == null) {
-            message = "Client Checksum is null. Client may not have a jar file";
-            LOGGER.info(message);
-            // print message indicating server doesn't have jar file
-        } else if (serverChecksum == null) {
-            message = "Server Checksum is null. Server may not have a jar file";
-            LOGGER.info(message);
-            // print message indicating a client/server checksum mismatch
-        } else if (!clientChecksum.equals(serverChecksum)) {
-            message = String.format("Client/Server checksum mismatch. Server reports: %s, Client reports %s",
-                  serverChecksum,
-                  clientChecksum);
-            LOGGER.warn(message);
-        }
-
-        // Now, if we need to, send message!
-        if (message.isEmpty()) {
-            message = String.format("SUCCESS: Client/Server Version (%s) and Checksum (%s) matched",
-                  version,
-                  clientChecksum);
-            LOGGER.info(message);
-        } else {
-            Player player = getPlayer(connId);
-            sendServerChat(String.format("For %s, Server reports:%s%s",
-                  ((player == null) ? "unknown player" : player.getName()),
-                  System.lineSeparator(),
-                  message));
         }
 
         return true;

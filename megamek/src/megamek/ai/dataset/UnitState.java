@@ -164,8 +164,9 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         List<Integer> weaponData = new ArrayList<>();
         entity.getWeaponList().forEach(weapon -> {
             int damage = Compute.computeTotalDamage(weapon);
-            int facing = weapon.isRearMounted() ? -entity.getWeaponArc(weapon.getLocation()) :
-                               entity.getWeaponArc(weapon.getLocation());
+            int equipmentId = entity.getEquipmentNum(weapon);
+            int facing = weapon.isRearMounted() ? -entity.getWeaponArc(equipmentId) :
+                               entity.getWeaponArc(equipmentId);
             int shortRange = weapon.getType().getShortRange();
             int mediumRange = weapon.getType().getMediumRange();
             int longRange = weapon.getType().getLongRange();

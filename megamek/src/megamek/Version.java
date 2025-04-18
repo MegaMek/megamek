@@ -299,15 +299,8 @@ public final class Version implements Comparable<Version>, Serializable {
             return -1;
         }
 
-        if (getExtra().isEmpty() && other.getExtra().isEmpty()) {
-            return 0;
-        } else if (getExtra().isEmpty()) {
-            return 1;
-        } else if (other.getExtra().isEmpty()) {
-            return -1;
-        }
-
-        return getExtra().compareTo(other.getExtra());
+        // Extra version is not compared
+        return 0;
     }
 
     // Added to complete the Java specification for the contract between compareTo

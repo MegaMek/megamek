@@ -98,7 +98,7 @@ import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.TWBoardViewTooltip;
+import megamek.client.ui.swing.boardview.toolTip.TWBoardViewTooltip;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;

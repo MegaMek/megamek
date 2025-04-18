@@ -58,7 +58,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
 import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.swing.boardview.BoardEditorTooltip;
+import megamek.client.ui.swing.boardview.toolTip.BoardEditorTooltip;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.swing.dialog.FloodDialog;

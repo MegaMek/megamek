@@ -56,6 +56,7 @@ import megamek.client.ui.swing.EntityChoiceDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.swing.boardview.sprite.*;
+import megamek.client.ui.swing.boardview.toolTip.BoardViewTooltipProvider;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.ImageCache;

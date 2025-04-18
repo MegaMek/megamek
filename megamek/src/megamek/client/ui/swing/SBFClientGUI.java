@@ -27,6 +27,7 @@ import megamek.client.ui.swing.boardview.spriteHandler.BoardViewSpriteHandler;
 import megamek.client.ui.swing.boardview.spriteHandler.MovePathSpriteHandler;
 import megamek.client.ui.swing.boardview.spriteHandler.MovementEnvelopeSpriteHandler;
 import megamek.client.ui.swing.boardview.spriteHandler.SBFFormationSpriteHandler;
+import megamek.client.ui.swing.boardview.toolTip.SBFBoardViewTooltip;
 import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
 import megamek.client.ui.swing.phaseDisplay.SBFReportDisplay;
 import megamek.client.ui.swing.phaseDisplay.StatusBarPhaseDisplay;

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.boardview;
+package megamek.client.ui.swing.boardview.toolTip;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -30,7 +30,9 @@ import java.util.Set;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.sprite.AttackSprite;
+import megamek.client.ui.swing.boardview.toolTip.BoardViewTooltipProvider;
 import megamek.client.ui.swing.tooltip.HexTooltip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
@@ -85,7 +87,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
                     LosEffects los = bv.getFovHighlighting().getCachedLosEffects(selectedEntity.getPosition(), coords);
                     int bracket = Compute.getSensorRangeBracket(selectedEntity, null,
-                        bv.getFovHighlighting().cachedAllECMInfo);
+                        bv.getFovHighlighting().getCachedECMInfo());
                     int range = Compute.getSensorRangeByBracket(game, selectedEntity, null, los);
 
                     maxSensorRange = bracket * range;

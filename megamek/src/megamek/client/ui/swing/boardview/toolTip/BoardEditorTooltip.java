@@ -16,10 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.boardview;
+package megamek.client.ui.swing.boardview.toolTip;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.IBoardView;
+import megamek.client.ui.swing.boardview.toolTip.BoardViewTooltipProvider;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
@@ -33,7 +35,7 @@ import java.util.stream.Collectors;
 import static megamek.client.ui.swing.util.UIUtil.*;
 
 /**
- * This class is a {@link megamek.client.ui.swing.boardview.BoardViewTooltipProvider} that is tailored
+ * This class is a {@link BoardViewTooltipProvider} that is tailored
  * to the Board Editor and lists detailed terrain info about the hovered hex.
  */
 public class BoardEditorTooltip implements BoardViewTooltipProvider {

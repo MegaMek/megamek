@@ -75,6 +75,7 @@ import megamek.client.ui.swing.boardview.overlay.PlanetaryConditionsOverlay;
 import megamek.client.ui.swing.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.swing.boardview.overlay.UnitOverviewOverlay;
 import megamek.client.ui.swing.boardview.spriteHandler.*;
+import megamek.client.ui.swing.boardview.toolTip.TWBoardViewTooltip;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayPanel;

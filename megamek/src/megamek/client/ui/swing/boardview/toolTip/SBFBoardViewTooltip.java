@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.boardview;
+package megamek.client.ui.swing.boardview.toolTip;
 
+import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.toolTip.BoardViewTooltipProvider;
 import megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip;
 import megamek.common.BoardLocation;
 import megamek.common.Coords;

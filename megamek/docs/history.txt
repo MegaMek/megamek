@@ -176,6 +176,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6867: Excluded Infantry Attack From Edit Unit Damage Dialog
 + PR #6885: fix: wrong access for weapon arc
 + PR #6886: Change getWeaponArc signature and add JavaDocs 
++ Fix #6899: fix can not load save in same version 
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

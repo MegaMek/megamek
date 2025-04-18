@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.client.ui.swing.phaseDisplay;
+package megamek.client.ui.swing;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;

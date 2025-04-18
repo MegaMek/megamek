@@ -4871,8 +4871,7 @@ public class Compute {
      *                   needed, however passing in the pre-computed
      *                   collection is much faster
      */
-    public static int getSensorRangeBracket(Entity ae, Targetable target,
-            List<ECMInfo> allECMInfo) {
+    public static int getSensorRangeBracket(Entity ae, Targetable target, List<ECMInfo> allECMInfo) {
 
         Sensor sensor = ae.getActiveSensor();
         if (null == sensor) {
@@ -4895,7 +4894,7 @@ public class Compute {
         // In space, sensors don't have brackets, so we should always return the range
         // for bracket 1.
         if (ae.isSpaceborne()) {
-            return Compute.getSensorBracket(7);
+            return getSensorBracket(7);
         }
 
         int check = ae.getSensorCheck();
@@ -4915,8 +4914,7 @@ public class Compute {
         // ECM bubbles
         check += sensor.getModForECM(ae, allECMInfo);
 
-
-        return Compute.getSensorBracket(check);
+        return getSensorBracket(check);
     }
 
     /**
@@ -4952,13 +4950,9 @@ public class Compute {
         if (null == sensor) {
             return 0;
         }
-        // only works for entities
-        Entity te = null;
-        if (null != target) {
-            if (target.getTargetType() != Targetable.TYPE_ENTITY) {
-                return 0;
-            }
-            te = (Entity) target;
+
+        if (!(target instanceof Entity te)) {
+            return 0;
         }
 
         // if this sensor is an active probe and it is critted, then no can see
@@ -4968,11 +4962,11 @@ public class Compute {
 
         // if we are crossing water then only magscan will work unless we are a
         // naval vessel
-        if ((null != te) && los.isBlockedByWater()
-                && (sensor.getType() != Sensor.TYPE_MEK_MAGSCAN)
-                && (sensor.getType() != Sensor.TYPE_VEE_MAGSCAN)
-                && (ae.getMovementMode() != EntityMovementMode.HYDROFOIL)
-                && (ae.getMovementMode() != EntityMovementMode.NAVAL)) {
+        if (los.isBlockedByWater()
+                  && sensor.getType() != Sensor.TYPE_MEK_MAGSCAN
+                  && sensor.getType() != Sensor.TYPE_VEE_MAGSCAN
+                  && ae.getMovementMode() != EntityMovementMode.HYDROFOIL
+                  && ae.getMovementMode() != EntityMovementMode.NAVAL) {
             return 0;
         }
 
@@ -4986,7 +4980,7 @@ public class Compute {
         // the flightline against ground targets
         // TO:AR Errata forum post clarifies that ground
         // mapsheet aero use ground sensor table
-        if (!game.getBoard().onGround() && (te != null && ae.isAirborne() && !te.isAirborne()) ) {
+        if (!game.getBoard(ae).onGround() && ae.isAirborne() && !te.isAirborne()) {
             // Can't see anything if above Alt 8.
             if (ae.getAltitude() > 8) {
                 range = 0;
@@ -5001,16 +4995,8 @@ public class Compute {
         }
 
         // now adjust for anything about the target entity (size, heat, etc)
-        if (null != te) {
-            range = sensor.entityAdjustments(range, te, game);
-        }
-
-        if (range < 0) {
-            range = 0;
-        }
-
-        return range;
-
+        range = sensor.entityAdjustments(range, te, game);
+        return Math.max(range, 0);
     }
 
     public static int getADARangeModifier(int distance) {
@@ -6063,21 +6049,16 @@ public class Compute {
      * @return true if the target can and does occupy the same building, false
      *         otherwise.
      */
-    public static boolean isInSameBuilding(Game game, Entity attacker,
-            Targetable target) {
-        if (!(target instanceof Entity)) {
+    public static boolean isInSameBuilding(Game game, Entity attacker, Targetable target) {
+        if (!(target instanceof Entity targetEntity)) {
             return false;
         }
-        Entity targetEntity = (Entity) target;
-        if (!Compute.isInBuilding(game, attacker)
-                || !Compute.isInBuilding(game, targetEntity)) {
+        if (!isInBuilding(game, attacker) || !isInBuilding(game, targetEntity)) {
             return false;
         }
 
-        Building attkBldg = game.getBoard().getBuildingAt(
-                attacker.getPosition());
+        Building attkBldg = game.getBoard().getBuildingAt(attacker.getPosition());
         Building targBldg = game.getBoard().getBuildingAt(target.getPosition());
-
         return attkBldg.equals(targBldg);
     }
 
@@ -6093,18 +6074,7 @@ public class Compute {
      *         above the building, or if any input argument is <code>null</code>
      */
     public static boolean isInBuilding(@Nullable Game game, @Nullable Entity entity) {
-        // No game, no building.
-        if (game == null) {
-            return false;
-        }
-
-        // Null entities can't be in a building.
-        if (entity == null) {
-            return false;
-        }
-
-        // Call the version of the function that requires coordinates.
-        return Compute.isInBuilding(game, entity, entity.getPosition());
+        return (entity != null) && isInBuilding(game, entity, entity.getPosition());
     }
 
     /**
@@ -6120,62 +6090,41 @@ public class Compute {
      *         those coordinates or if the entity is on the roof or in the air
      *         above the building, or if any input argument is <code>null</code>
      */
-    public static boolean isInBuilding(@Nullable Game game, @Nullable Entity entity,
-            @Nullable Coords coords) {
-        // No game, no building.
-        if (game == null) {
-            return false;
-        }
-
-        // Null entities can't be in a building.
-        if (entity == null) {
-            return false;
-        }
-
-        // Null coordinates can't have buildings.
-        if (coords == null) {
-            return false;
-        }
-
-        // Get the Hex at those coordinates.
-
-        return Compute.isInBuilding(game, entity.getElevation(), coords);
+    public static boolean isInBuilding(@Nullable Game game, @Nullable Entity entity, @Nullable Coords coords) {
+        return (game != null) && (entity != null) && (coords != null)
+                     && isInBuilding(game, entity.getElevation(), coords, entity.getBoardId());
     }
 
-    public static boolean isInBuilding(Game game, int entityElev, Coords coords) {
-
-        // Get the Hex at those coordinates.
-        final Hex curHex = game.getBoard().getHex(coords);
-
-        if (curHex == null) {
-            // probably off board artillery or reinforcement
+    /**
+     * Returns true when the given place is inside of a building, false when the location is not on a board, has no
+     * building or the elevation is below the basement or on or above the building. Note that it is safe to pass in any
+     * values for elevation, coords and board ID.
+     *
+     * @param game      The game (not null)
+     * @param elevation The elevation to test
+     * @param coords    The coords of the location
+     * @param boardId   The board Id of the location
+     *
+     * @return True if the given place is inside a building
+     */
+    public static boolean isInBuilding(@Nullable Game game, int elevation, @Nullable Coords coords, int boardId) {
+        if ((game == null) || !game.hasBoardLocation(coords, boardId)) {
             return false;
         }
+        final Hex hex = game.getBoard(boardId).getHex(coords);
 
-        // The entity can't be inside of a building that isn't there.
-        if (!curHex.containsTerrain(Terrains.BLDG_ELEV)) {
-            return false;
-        }
-
-        // The entity can't be inside of a building that isn't there.
-        if (!curHex.containsTerrain(Terrains.BUILDING)) {
+        if (!hex.containsTerrain(Terrains.BLDG_ELEV)) {
             return false;
         }
 
         // Get the elevations occupied by the building.
-        int bldgHeight = curHex.terrainLevel(Terrains.BLDG_ELEV);
-        int basement = 0;
-        if (curHex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {
-            basement = BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
+        int buildingHeight = hex.terrainLevel(Terrains.BLDG_ELEV);
+        int basementDepth = 0;
+        if (hex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {
+            basementDepth = BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
         }
-
-        // Return true if the entity is in the range of building elevations.
-        if ((entityElev >= (-basement)) && (entityElev < (bldgHeight))) {
-            return true;
-        }
-
-        // Entity is not *inside* of the building.
-        return false;
+        // When the elevation is equal to the building's height, the unit stands on top (not inside)
+        return (elevation >= -basementDepth) && (elevation < buildingHeight);
     }
 
     /**
@@ -7730,4 +7679,6 @@ public class Compute {
         // No enemies in the volume == all outside
         return entities;
     }
+
+    private Compute() { }
 }

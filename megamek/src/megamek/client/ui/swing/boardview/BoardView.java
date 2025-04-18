@@ -3844,22 +3844,26 @@ public final class BoardView extends AbstractBoardView
 
     public void refreshMoveVectors() {
         clearAllMoveVectors();
-        for (Entity entity : game.getEntitiesVector()) {
-            if (entity.getPosition() != null) {
-                movementSprites.add(new MovementSprite(this, entity, entity.getVectors(), Color.GRAY, false));
+        if (game.useVectorMove()) {
+            for (Entity entity : game.getEntitiesVector()) {
+                if (entity.getPosition() != null) {
+                    movementSprites.add(new MovementSprite(this, entity, entity.getVectors(), Color.GRAY, false));
+                }
             }
         }
     }
 
     public void refreshMoveVectors(Entity entity, MovePath movePath, Color color) {
         clearAllMoveVectors();
-        // same as normal but when I find the active entity I used the MovePath to get vector
-        for (Entity entity1 : game.getEntitiesVector()) {
-            if (entity1.getPosition() != null) {
-                if ((entity != null) && (entity1.getId() == entity.getId())) {
-                    movementSprites.add(new MovementSprite(this, entity1, movePath.getFinalVectors(), color, true));
-                } else {
-                    movementSprites.add(new MovementSprite(this, entity1, entity1.getVectors(), color, false));
+        if (game.useVectorMove()) {
+            // same as normal but when I find the active entity I used the MovePath to get vector
+            for (Entity entity1 : game.getEntitiesVector()) {
+                if (entity1.getPosition() != null) {
+                    if ((entity != null) && (entity1.getId() == entity.getId())) {
+                        movementSprites.add(new MovementSprite(this, entity1, movePath.getFinalVectors(), color, true));
+                    } else {
+                        movementSprites.add(new MovementSprite(this, entity1, entity1.getVectors(), color, false));
+                    }
                 }
             }
         }

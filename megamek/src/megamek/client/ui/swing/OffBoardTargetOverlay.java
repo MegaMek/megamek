@@ -170,6 +170,10 @@ public class OffBoardTargetOverlay implements IDisplayable {
 
     @Override
     public boolean isHit(Point point, Dimension size) {
+        if (!shouldBeVisible()) {
+            return false;
+        }
+
         point.x = (int) (point.getX() + clientgui.getBoardView().getDisplayablesRect().getX());
         point.y = (int) (point.getY() + clientgui.getBoardView().getDisplayablesRect().getY());
 

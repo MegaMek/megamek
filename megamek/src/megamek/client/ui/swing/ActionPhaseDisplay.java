@@ -101,7 +101,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         return ((clientgui.getClient().isMyTurn()
                 || (game.getTurn() == null)
                 || (game.getPhase().isReport())))
-                && !clientgui.getBoardView().getChatterBoxActive()
+                && !clientgui.isChatBoxActive()
                 && !isIgnoringEvents()
                 && isVisible()
                 && (butDone.isEnabled() || butSkipTurn.isEnabled());
@@ -268,9 +268,13 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
             butSkipTurn.setEnabled(true);
         }
 
-        TurnDetailsOverlay turnDetailsOverlay = clientgui.getBoardView().getTurnDetailsOverlay();
-        if (turnDetailsOverlay != null) {
-            turnDetailsOverlay.setLines(turnDetails);
+        for (IBoardView ibv : clientgui.boardViews()) {
+            if (ibv instanceof BoardView bv) {
+                TurnDetailsOverlay turnDetailsOverlay = bv.getTurnDetailsOverlay();
+                if (turnDetailsOverlay != null) {
+                    turnDetailsOverlay.setLines(turnDetails);
+                }
+            }
         }
     }
 

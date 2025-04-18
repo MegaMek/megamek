@@ -1593,15 +1593,19 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @param c The coordinates to check
      */
-    public boolean hasRooftopGunEmplacement(Coords c) {
-        Building building = getBoard().getBuildingAt(c);
+    public boolean hasRooftopGunEmplacement(Coords c, int boardId) {
+        if (!hasBoardLocation(c, boardId)) {
+            return false;
+        }
+        Board board = getBoard(boardId);
+        Building building = board.getBuildingAt(c);
         if (building == null) {
             return false;
         }
 
-        Hex hex = getBoard().getHex(c);
+        Hex hex = board.getHex(c);
 
-        for (Entity entity : getEntitiesVector(c, true)) {
+        for (Entity entity : getEntitiesVector(c, boardId, true)) {
             if (entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT) && entity.getElevation() == hex.ceiling()) {
                 return true;
             }

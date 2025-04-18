@@ -558,7 +558,7 @@ public class LosEffects {
 
         // this will adjust the effective height of a building target by 1 if the hex
         // contains a rooftop gun emplacement
-        final int targetHeightAdjustment = game.hasRooftopGunEmplacement(targetHex.getCoords()) ? 1 : 0;
+        final int targetHeightAdjustment = game.hasRooftopGunEmplacement(targetHex.getCoords(), boardId) ? 1 : 0;
 
         final AttackInfo ai = new AttackInfo();
         ai.attackerIsMek = attacker instanceof Mek;
@@ -923,14 +923,14 @@ public class LosEffects {
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
             targetInBuilding = Compute.isInBuilding(game, ai.targetAbsHeight
-                    - game.getHex(ai.targetPos, ai.boardId).getLevel(), ai.targetPos);
+                    - game.getHex(ai.targetPos, ai.boardId).getLevel(), ai.targetPos, ai.boardId);
         }
 
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
         if (targetInBuilding
                 && Compute.isInBuilding(game, ai.attackAbsHeight
-                        - game.getHex(ai.attackPos, ai.boardId).getLevel(), ai.attackPos)) {
+                        - game.getHex(ai.attackPos, ai.boardId).getLevel(), ai.attackPos, ai.boardId)) {
             los.setThruBldg(game.getBoard(ai.boardId).getBuildingAt(in.get(0)));
             // elevation differences count as building hexes passed through
             los.buildingLevelsOrHexes += (Math
@@ -982,14 +982,14 @@ public class LosEffects {
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
             targetInBuilding = Compute.isInBuilding(game, ai.targetAbsHeight
-                    - game.getHex(ai.targetPos, ai.boardId).getLevel(), ai.targetPos);
+                    - game.getHex(ai.targetPos, ai.boardId).getLevel(), ai.targetPos, ai.boardId);
         }
 
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
         if (targetInBuilding
                 && Compute.isInBuilding(game, ai.attackAbsHeight
-                        - game.getHex(ai.attackPos, ai.boardId).getLevel(), ai.attackPos)) {
+                        - game.getHex(ai.attackPos, ai.boardId).getLevel(), ai.attackPos, ai.boardId)) {
             los.setThruBldg(game.getBoard(ai.boardId).getBuildingAt(in.get(0)));
             // elevation differences count as building hexes passed through
             los.buildingLevelsOrHexes += (Math

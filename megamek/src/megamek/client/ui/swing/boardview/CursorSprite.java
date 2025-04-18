@@ -75,7 +75,7 @@ class CursorSprite extends Sprite {
     }
 
     public boolean isOffScreen() {
-        return !bv.game.getBoard().contains(hexLoc);
+        return !bv.getBoard().contains(hexLoc);
     }
 
     public void setHexLocation(Coords hexLoc) {

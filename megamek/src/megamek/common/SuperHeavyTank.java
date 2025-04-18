@@ -294,8 +294,7 @@ public class SuperHeavyTank extends Tank {
                         1, getElevation(), srcHex.floor(), curHex.floor());
                 ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos,
                         true);
-                leftBetter = LosEffects.dividedLeftBetter(in, game, ai,
-                        Compute.isInBuilding(game, this), new LosEffects());
+                leftBetter = LosEffects.dividedLeftBetter(in, game, ai, isInBuilding(), new LosEffects());
             }
         }
 

@@ -631,7 +631,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateUnitDisplay(ce);
 
         gear = MovementDisplay.GEAR_LAND;
-        clientgui.getBoardView().setHighlightColor(GUIP.getMoveDefaultColor());
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).setHighlightColor(GUIP.getMoveDefaultColor()));
 
         clear();
         updateButtonsLater();
@@ -1142,7 +1142,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         currentEntity = Entity.NONE;
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         // Return the highlight sprite back to its original color
-        clientgui.getBoardView().setHighlightColor(Color.white);
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).setHighlightColor(Color.WHITE));
         clientgui.setSelectedEntityNum(Entity.NONE);
         clearMovementSprites();
         clientgui.clearFieldOfFire();
@@ -4812,7 +4812,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 clear();
             }
             Color walkColor = GUIP.getMoveDefaultColor();
-            clientgui.getBoardView().setHighlightColor(walkColor);
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).setHighlightColor(walkColor));
             gear = MovementDisplay.GEAR_LAND;
             computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_JUMP.getCmd())) {
@@ -4841,7 +4841,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 initializeJumpMovePath();
             }
             Color jumpColor = GUIP.getMoveJumpColor();
-            clientgui.getBoardView().setHighlightColor(jumpColor);
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).setHighlightColor(jumpColor));
             computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_SWIM.getCmd())) {
             if (gear != MovementDisplay.GEAR_SWIM) {
@@ -4894,7 +4894,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             gear = MovementDisplay.GEAR_BACKUP; // on purpose...
             Color backColor = GUIP.getMoveBackColor();
-            clientgui.getBoardView().setHighlightColor(backColor);
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).setHighlightColor(backColor));
             computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_LONGEST_RUN.getCmd())) {
             if (gear == MovementDisplay.GEAR_JUMP) {
@@ -5241,7 +5241,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     initializeJumpMovePath();
                     gear = GEAR_JUMP;
                     Color jumpColor = GUIP.getMoveJumpColor();
-                    clientgui.getBoardView().setHighlightColor(jumpColor);
+                    clientgui.boardViews().forEach(bv -> ((BoardView) bv).setHighlightColor(jumpColor));
                     computeMovementEnvelope(ce);
                 }
                 addStepToMovePath(MoveStepType.LAY_MINE, i);

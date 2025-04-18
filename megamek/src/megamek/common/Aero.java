@@ -2241,7 +2241,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getECMRange() {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
-                  !game.getBoard().inSpace()) {
+                  !isSpaceborne()) {
             return super.getECMRange();
         }
         return Math.min(super.getECMRange(), 0);
@@ -2253,7 +2253,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public double getECCMStrength() {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
-                  !game.getBoard().inSpace()) {
+                  !isSpaceborne()) {
             return super.getECCMStrength();
         }
         if (hasActiveECCM()) {

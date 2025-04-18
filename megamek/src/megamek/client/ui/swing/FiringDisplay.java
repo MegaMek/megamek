@@ -1028,7 +1028,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 }
                 // Can't shoot at infantry in the building
                 // Instead, strafe will hit the building, which could damage Inf
-                if (Compute.isInBuilding(game, t) && (t instanceof Infantry)) {
+                if ((t instanceof Infantry) && t.isInBuilding()) {
                     continue;
                 }
 

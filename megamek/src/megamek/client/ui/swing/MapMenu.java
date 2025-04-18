@@ -289,7 +289,7 @@ public class MapMenu extends JPopupMenu {
     private JMenu touchOffExplosivesMenu() {
         JMenu menu = new JMenu("Touch off explosives");
 
-        Building bldg = client.getBoard().getBuildingAt(coords);
+        Building bldg = board.getBuildingAt(coords);
         if ((bldg != null)) {
             for (final DemolitionCharge charge : bldg.getDemolitionCharges()) {
                 if (charge.playerId == client.getLocalPlayer().getId() && coords.equals(charge.pos)) {
@@ -555,7 +555,7 @@ public class MapMenu extends JPopupMenu {
                 client.sendChat(String.format("%s: aw : %s %s",
                     bot.getName(),
                     entity.getId() + "",
-                    coords.hexCode(client.getGame().getBoard())
+                    coords.hexCode(board)
                 ))
             );
             setWaypointMenu.add(waypoint);
@@ -568,7 +568,7 @@ public class MapMenu extends JPopupMenu {
                 client.sendChat(String.format("%s: sw : %s %s",
                     bot.getName(),
                     entity.getId() + "",
-                    coords.hexCode(client.getGame().getBoard())
+                    coords.hexCode(board)
                 ))
             );
             addWaypointMenu.add(waypoint);
@@ -923,7 +923,7 @@ public class MapMenu extends JPopupMenu {
             }
 
             if (game.getPlanetaryConditions().isRecklessConditions()
-                    && !game.getBoard().inSpace()
+                    && !board.inSpace()
                     && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
                 item.setActionCommand(MovementDisplay.MoveCommand.MOVE_RECKLESS.getCmd());
@@ -1013,7 +1013,7 @@ public class MapMenu extends JPopupMenu {
             }
 
             if (game.getPlanetaryConditions().isRecklessConditions()
-                    && !game.getBoard().inSpace()
+                    && !board.inSpace()
                     && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
                 item.setActionCommand(MovementDisplay.MoveCommand.MOVE_RECKLESS.getCmd());

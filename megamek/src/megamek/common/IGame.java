@@ -525,7 +525,8 @@ public interface IGame {
 
     /**
      * Returns true if the given coords and boardID really exist, are not null, the board ID is an actual board in
-     * the game and the coords are contained in that board. This means that a hex can be found for these values.
+     * the game and the coords are contained in that board. This means that a hex can be found for these values and
+     * it will not be null (unless the board data is corrupted).
      *
      * @param coords The coords to test
      * @param boardId The board ID to test

@@ -2412,7 +2412,7 @@ public class Princess extends BotClient {
                         // Want to target buildings with hostile infantry / BA inside them, since
                         // there's no other way to attack them.
                         if (isEnemyInfantry(entity, coords) &&
-                                  Compute.isInBuilding(game, entity) &&
+                                  entity.isInBuilding() &&
                                   !entity.isHidden()) {
                             fireControlState.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex " +

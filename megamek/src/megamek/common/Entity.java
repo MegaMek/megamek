@@ -5587,13 +5587,17 @@ public abstract class Entity extends TurnOrdered
      *       <code>Entity.NONE</code> if no ECM is active.
      */
     public int getECMRange() {
+        if (game == null) {
+            return NONE;
+        }
+
         // no ECM in space unless strat op option enabled
-        if (game.getBoard().inSpace() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-            return Entity.NONE;
+        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+            return NONE;
         }
         // If we have stealth up and running, there's no bubble.
         if (isStealthOn()) {
-            return Entity.NONE;
+            return NONE;
         }
 
         if (!isShutDown()) {
@@ -10884,7 +10888,7 @@ public abstract class Entity extends TurnOrdered
                 leftBetter = LosEffects.dividedLeftBetter(in,
                       game,
                       ai,
-                      Compute.isInBuilding(game, this),
+                      isInBuilding(),
                       new LosEffects());
             }
         }
@@ -12101,16 +12105,14 @@ public abstract class Entity extends TurnOrdered
      *
      * @param amount Amount of Coolant to add
      */
-    public void addCoolantFailureAmount(int amount) {
-    }
+    public void addCoolantFailureAmount(int amount) { }
 
     /**
      * This is implemented in subclasses, do nothing in general
      * <p>
      * Resets the coolant failure amount
      */
-    public void resetCoolantFailureAmount() {
-    }
+    public void resetCoolantFailureAmount() { }
 
     /**
      * @return the tonnage of additional mounted communications equipment
@@ -12126,161 +12128,30 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return information (range, location, strength) about ECM if the unit has active ECM or null if it doesn't. In
-     *       the case of multiple ECCM system, the best one takes precedence, as a unit can only have one active ECCM at
-     *       a time.
+     * @return True if this unit is being transported by another.
      */
-    public ECMInfo getECMInfo() {
-        // If we don't have a position, ECM doesn't have an effect
-        if ((getPosition() == null) || isShutDown() || isStealthOn() || (getTransportId() != Entity.NONE)) {
-            return null;
-        }
-
-        // E(C)CM operates differently in space (SO pg 110)
-        if (game.getBoard().inSpace()) {
-            // No ECM in space unless SO rule is on
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-                return null;
-            }
-            int range = getECMRange();
-            if ((range >= 0) && hasActiveECM()) {
-                return new ECMInfo(range, 1, this);
-            } else {
-                return null;
-            }
-        }
-
-        // ASF ECM only has an effect if the unit is NOE
-        if (isAirborne() && !isNOE()) {
-            return null;
-        }
-
-        ECMInfo bestInfo = null;
-        Comparator<ECMInfo> ecmComparator;
-        ecmComparator = new ECMInfo.ECCMComparator();
-        for (MiscMounted m : getMisc()) {
-            // Ignore if inoperable
-            if (m.isInoperable()) {
-                continue;
-            }
-            ECMInfo newInfo = null;
-            // Angel ECM
-            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
-                if (m.curMode().equals("ECM")) {
-                    newInfo = new ECMInfo(6, 0, this);
-                    newInfo.setAngelECMStrength(1);
-                } else if (m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECM & Ghost Targets")) {
-                    newInfo = new ECMInfo(6, 1, this);
-                    // Doesn't count as Angel ECM
-                }
-                // BA Angel ECM has a shorter range
-                if ((newInfo != null) && (this instanceof BattleArmor)) {
-                    newInfo.setRange(2);
-                }
-                // Anything that's not Angel ECM
-            } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECM")) {
-                int range = 6;
-                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                    range = 0;
-                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                                 m.getType().hasFlag(MiscType.F_NOVA) ||
-                                 m.getType().hasFlag(MiscType.F_WATCHDOG)) {
-                    range = 3;
-                }
-                newInfo = new ECMInfo(range, 1, this);
-                newInfo.setECMNova(m.getType().hasFlag(MiscType.F_NOVA));
-            }
-            // In some type of ECM mode...
-            if (newInfo != null) {
-                if ((bestInfo == null) || (ecmComparator.compare(newInfo, bestInfo) > 0)) {
-                    bestInfo = newInfo;
-                }
-            }
-        }
-        return bestInfo;
+    public boolean isTransported() {
+        return getTransportId() != Entity.NONE;
     }
 
     /**
-     * @return information (range, location, strength) about ECCM if the unit has active ECCM or null if it doesn't. In
+     * @return Information (range, location, strength) about ECM if the unit has active ECM or null if it doesn't. In
+     *       the case of multiple ECCM systems, the best one takes precedence, as a unit can only have one active
+     *       ECCM at a time.
+     */
+    @Nullable
+    public ECMInfo getECMInfo() {
+        return ComputeECM.getECMInfo(this);
+    }
+
+    /**
+     * @return Information (range, location, strength) about ECCM if the unit has active ECCM or null if it doesn't. In
      *       the case of multiple ECCM system, the best one takes precedence, as a unit can only have one active ECCM at
      *       a time.
      */
+    @Nullable
     public ECMInfo getECCMInfo() {
-        // If we don't have a position, ECM doesn't have an effect
-        if ((getPosition() == null) || isShutDown() || isStealthOn() || (getTransportId() != Entity.NONE)) {
-            return null;
-        }
-        // E(C)CM operates differently in space (SO pg 110)
-        if (game.getBoard().inSpace()) {
-            // No ECCM in space unless SO rule is on
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-                return null;
-            }
-            int bapRange = getBAPRange();
-            int range = getECMRange();
-            ECMInfo eccmInfo = new ECMInfo(0, 0, this);
-            eccmInfo.setECCMStrength(1);
-            if (bapRange > 0) {
-                eccmInfo.setRange(bapRange);
-                // Medium range band only effects the nose, so set direction
-                if (bapRange > 6) {
-                    eccmInfo.setDirection(getFacing());
-                }
-            } else if ((range >= 0) && hasActiveECCM()) {
-                eccmInfo.setRange(range);
-            } else {
-                eccmInfo = null;
-            }
-            return eccmInfo;
-        }
-
-        ECMInfo bestInfo = null;
-        Comparator<ECMInfo> ecmComparator;
-        ecmComparator = new ECMInfo.ECCMComparator();
-        for (MiscMounted m : getMisc()) {
-            ECMInfo newInfo = null;
-            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS) && m.curMode().equals("ECCM")) {
-                if ((getTotalCommGearTons() > 3)) {
-                    newInfo = new ECMInfo(6, 0.5, this);
-                }
-                if ((getTotalCommGearTons() > 6)) {
-                    newInfo = new ECMInfo(6, 1, this);
-                }
-            }
-            // Angel ECM
-            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
-                if (m.curMode().equals("ECCM")) {
-                    newInfo = new ECMInfo(6, 0, this);
-                    newInfo.setAngelECCMStrength(1);
-                } else if (m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECCM & Ghost Targets")) {
-                    newInfo = new ECMInfo(6, 1, this);
-                    // Doesn't count as Angel
-                }
-                // BA Angel ECM has a shorter range
-                if ((newInfo != null) && (this instanceof BattleArmor)) {
-                    newInfo.setRange(2);
-                }
-                // Anything that's not Angel ECM
-            } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECCM")) {
-                int range = 6;
-                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                    range = 0;
-                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                                 m.getType().hasFlag(MiscType.F_NOVA) ||
-                                 m.getType().hasFlag(MiscType.F_WATCHDOG)) {
-                    range = 3;
-                }
-                newInfo = new ECMInfo(range, 0, this);
-                newInfo.setECCMStrength(1);
-            }
-            // In some type of ECCM mode...
-            if (newInfo != null) {
-                if ((bestInfo == null) || (ecmComparator.compare(newInfo, bestInfo) > 0)) {
-                    bestInfo = newInfo;
-                }
-            }
-        }
-        return bestInfo;
+        return ComputeECM.getECCMInfo(this);
     }
 
     /**
@@ -12774,30 +12645,34 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True when this unit is currently on a space board, either close to a planet ("high altitude") or in deep
-     * space but only if its position is valid, i.e. not when it is transported or otherwise has a null position or
-     * is somehow off board. On a high altitude board, a unit is spaceborne even if it happens to be on an atmosphere
+     * Returns true when this unit is currently on a space board, either close to a planet ("high altitude") or in deep
+     * space but only if its position is valid, i.e. not when it is transported or otherwise has a null position or is
+     * off board or undeployed. On a high altitude board, a unit is spaceborne even if it happens to be on an atmosphere
      * hex.
+     *
+     * @return True when in space
      */
     public boolean isSpaceborne() {
         return (game != null) && game.isOnSpaceMap(getBoardLocation());
     }
 
     /**
-     * is the unit flying Nap of the Earth? (i.e. one elevation above ground)
+     * @return True if this unit is flying at the Nap of the Earth (NOE), i.e. one altitude above ground.
      */
-    public boolean isNOE() {
-
-        if (!isAirborne()) {
+    public final boolean isNOE() {
+        if ((game == null) || !game.hasBoardLocation(position, boardId) || !isAirborne()) {
             return false;
         }
-        if (game.getBoard().inAtmosphere()) {
-            return (1 == (getAltitude() - game.getBoard().getHex(getPosition()).ceiling(true)));
+        Board board = game.getBoard(this);
+        if (board.inAtmosphere()) {
+            return (1 == (getAltitude() - board.getHex(position).ceiling(true)));
+            //FIXME the ceiling method and this seem to be in disagreement
+            // the hex ceiling method is there so the distinction between ground and atmo maps isnt necessary
+        } else if (board.onGround()) {
+            return getAltitude() == 1;
+        } else {
+            return false;
         }
-        if (game.getBoard().onGround()) {
-            return 1 == getAltitude();
-        }
-        return false;
     }
 
     public int getStartingPos() {
@@ -15691,5 +15566,13 @@ public abstract class Entity extends TurnOrdered
 
     public void setBoardId(int boardId) {
         this.boardId = boardId;
+    }
+
+    /**
+     * @return True when this unit is inside of a building. Returns false when it does not have a game, is not on a
+     *       board, its hex has no building or its elevation is below the basement or on or above the building.
+     */
+    public boolean isInBuilding() {
+        return Compute.isInBuilding(game, elevation, position, boardId);
     }
 }

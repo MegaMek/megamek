@@ -1185,7 +1185,7 @@ public class Infantry extends Entity {
     public void newRound(int roundNumber) {
         if (turnsLayingExplosives >= 0) {
             turnsLayingExplosives++;
-            if (!Compute.isInBuilding(game, this)) {
+            if (!isInBuilding()) {
                 turnsLayingExplosives = -1; // give up if no longer in a building
             }
         }

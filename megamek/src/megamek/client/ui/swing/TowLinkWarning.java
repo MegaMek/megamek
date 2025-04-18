@@ -19,6 +19,7 @@
 
 package megamek.client.ui.swing;
 
+import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
 import megamek.common.*;
 
 import java.util.ArrayList;

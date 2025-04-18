@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import megamek.client.ui.swing.phaseDisplay.DeploymentDisplay;
+import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
 import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.Coords;

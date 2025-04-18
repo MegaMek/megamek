@@ -18,8 +18,6 @@
  */
 package megamek.client.ui.swing.boardview;
 
-import static megamek.client.ui.swing.util.UIUtil.uiWhite;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,15 +26,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.sprite.AttackSprite;
 import megamek.client.ui.swing.tooltip.HexTooltip;
-import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;

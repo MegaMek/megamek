@@ -24,12 +24,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.phaseDisplay.FiringDisplay;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.WeaponMounted;
 
-class AimedShotHandler implements ActionListener, ItemListener {
+public class AimedShotHandler implements ActionListener, ItemListener {
     private final FiringDisplay firingDisplay;
 
     private int aimingAt = Entity.LOC_NONE;
@@ -56,24 +57,24 @@ class AimedShotHandler implements ActionListener, ItemListener {
             String[] options;
             boolean[] enabled;
 
-            if (this.firingDisplay.target instanceof GunEmplacement) {
+            if (this.firingDisplay.getTarget() instanceof GunEmplacement) {
                 return;
             }
-            if (this.firingDisplay.target instanceof Entity) {
-                options = ((Entity) this.firingDisplay.target).getLocationNames();
+            if (this.firingDisplay.getTarget() instanceof Entity) {
+                options = ((Entity) this.firingDisplay.getTarget()).getLocationNames();
                 enabled = createEnabledMask(options.length);
             } else {
                 return;
             }
-            if (this.firingDisplay.target instanceof Mek) {
+            if (this.firingDisplay.getTarget() instanceof Mek) {
                 if (aimingMode.isImmobile()) {
                     aimingAt = Mek.LOC_HEAD;
                 } else if (aimingMode.isTargetingComputer()) {
                     aimingAt = Mek.LOC_CT;
                 }
-            } else if (this.firingDisplay.target instanceof Tank) {
-                int side = Compute.targetSideTable(this.firingDisplay.ce(), this.firingDisplay.target);
-                if (this.firingDisplay.target instanceof LargeSupportTank) {
+            } else if (this.firingDisplay.getTarget() instanceof Tank) {
+                int side = Compute.targetSideTable(this.firingDisplay.ce(), this.firingDisplay.getTarget());
+                if (this.firingDisplay.getTarget() instanceof LargeSupportTank) {
                     if (side == ToHitData.SIDE_FRONTLEFT) {
                         aimingAt = LargeSupportTank.LOC_FRONTLEFT;
                     } else if (side == ToHitData.SIDE_FRONTRIGHT) {
@@ -91,16 +92,16 @@ class AimedShotHandler implements ActionListener, ItemListener {
                     aimingAt = Tank.LOC_RIGHT;
                 }
                 if (side == ToHitData.SIDE_REAR) {
-                    aimingAt = (this.firingDisplay.target instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR
-                            : this.firingDisplay.target instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
+                    aimingAt = (this.firingDisplay.getTarget() instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR
+                            : this.firingDisplay.getTarget() instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
                                     : Tank.LOC_REAR;
                 }
                 if (side == ToHitData.SIDE_FRONT) {
                     aimingAt = Tank.LOC_FRONT;
                 }
-            } else if (this.firingDisplay.target instanceof ProtoMek) {
+            } else if (this.firingDisplay.getTarget() instanceof ProtoMek) {
                 aimingAt = ProtoMek.LOC_TORSO;
-            } else if (this.firingDisplay.target instanceof BattleArmor) {
+            } else if (this.firingDisplay.getTarget() instanceof BattleArmor) {
                 aimingAt = BattleArmor.LOC_TROOPER_1;
             } else {
                 // no aiming allowed for MekWarrior or BattleArmor
@@ -108,11 +109,11 @@ class AimedShotHandler implements ActionListener, ItemListener {
             }
 
             asd = new AimedShotDialog(
-                    this.firingDisplay.clientgui.frame,
+                    this.firingDisplay.getClientgui().getFrame(),
                     Messages.getString("FiringDisplay.AimedShotDialog.title"),
                     Messages.getString("FiringDisplay.AimedShotDialog.message"),
                     options, enabled, aimingAt,
-                    this.firingDisplay.clientgui, this.firingDisplay.target,
+                    (ClientGUI) this.firingDisplay.getClientgui(), this.firingDisplay.getTarget(),
                     this, this);
 
             asd.setVisible(true);
@@ -127,19 +128,19 @@ class AimedShotHandler implements ActionListener, ItemListener {
             mask[i] = true;
         }
 
-        int side = Compute.targetSideTable(this.firingDisplay.ce(), this.firingDisplay.target);
+        int side = Compute.targetSideTable(this.firingDisplay.ce(), this.firingDisplay.getTarget());
 
         // on a tank, remove turret if its missing
         // also, remove body
-        if (this.firingDisplay.target instanceof Tank) {
+        if (this.firingDisplay.getTarget() instanceof Tank) {
             mask[Tank.LOC_BODY] = false;
-            Tank tank = (Tank) this.firingDisplay.target;
+            Tank tank = (Tank) this.firingDisplay.getTarget();
             if (tank.hasNoTurret()) {
                 int turretLoc = tank.getLocTurret();
                 mask[turretLoc] = false;
             }
             // remove non-visible sides
-            if (this.firingDisplay.target instanceof LargeSupportTank) {
+            if (this.firingDisplay.getTarget() instanceof LargeSupportTank) {
                 if (side == ToHitData.SIDE_FRONT) {
                     mask[LargeSupportTank.LOC_FRONTLEFT] = false;
                     mask[LargeSupportTank.LOC_REARLEFT] = false;
@@ -176,7 +177,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
                     mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
                     mask[LargeSupportTank.LOC_REARRIGHT] = false;
                 }
-            } else if (this.firingDisplay.target instanceof SuperHeavyTank) {
+            } else if (this.firingDisplay.getTarget() instanceof SuperHeavyTank) {
                 if (side == ToHitData.SIDE_FRONT) {
                     mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
                     mask[SuperHeavyTank.LOC_REARLEFT] = false;
@@ -230,15 +231,15 @@ class AimedShotHandler implements ActionListener, ItemListener {
         }
 
         // remove main gun on protos that don't have one
-        if (this.firingDisplay.target instanceof ProtoMek) {
-            if (!((ProtoMek) this.firingDisplay.target).hasMainGun()) {
+        if (this.firingDisplay.getTarget() instanceof ProtoMek) {
+            if (!((ProtoMek) this.firingDisplay.getTarget()).hasMainGun()) {
                 mask[ProtoMek.LOC_MAINGUN] = false;
             }
         }
 
         // remove squad location on BAs
         // also remove dead troopers
-        if (this.firingDisplay.target instanceof BattleArmor) {
+        if (this.firingDisplay.getTarget() instanceof BattleArmor) {
             mask[BattleArmor.LOC_SQUAD] = false;
         }
 
@@ -321,12 +322,12 @@ class AimedShotHandler implements ActionListener, ItemListener {
      * Returns the name of aimed location.
      */
     public String getAimingLocation() {
-        if ((this.firingDisplay.target != null) && (aimingAt != Entity.LOC_NONE)
+        if ((this.firingDisplay.getTarget() != null) && (aimingAt != Entity.LOC_NONE)
                 && !getAimingMode().isNone()) {
-            if (this.firingDisplay.target instanceof GunEmplacement) {
+            if (this.firingDisplay.getTarget() instanceof GunEmplacement) {
                 return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
-            } else if (this.firingDisplay.target instanceof Entity) {
-                return ((Entity) this.firingDisplay.target).getLocationName(aimingAt);
+            } else if (this.firingDisplay.getTarget() instanceof Entity) {
+                return ((Entity) this.firingDisplay.getTarget()).getLocationName(aimingAt);
             }
         }
         return null;
@@ -343,21 +344,21 @@ class AimedShotHandler implements ActionListener, ItemListener {
         boolean allowAim;
 
         // TC against a mek
-        allowAim = ((this.firingDisplay.target != null) && (this.firingDisplay.ce() != null)
-                && this.firingDisplay.ce().hasAimModeTargComp() && ((this.firingDisplay.target instanceof Mek)
-                        || (this.firingDisplay.target instanceof Tank)
-                        || (this.firingDisplay.target instanceof BattleArmor)
-                        || (this.firingDisplay.target instanceof ProtoMek)));
+        allowAim = ((this.firingDisplay.getTarget() != null) && (this.firingDisplay.ce() != null)
+                && this.firingDisplay.ce().hasAimModeTargComp() && ((this.firingDisplay.getTarget() instanceof Mek)
+                        || (this.firingDisplay.getTarget() instanceof Tank)
+                        || (this.firingDisplay.getTarget() instanceof BattleArmor)
+                        || (this.firingDisplay.getTarget() instanceof ProtoMek)));
         if (allowAim) {
             aimingMode = AimingMode.TARGETING_COMPUTER;
             return;
         }
         // immobile mek or gun emplacement
-        allowAim = ((this.firingDisplay.target != null)
-                && ((this.firingDisplay.target.isImmobile()
-                        && ((this.firingDisplay.target instanceof Mek)
-                                || (this.firingDisplay.target instanceof Tank)))
-                        || (this.firingDisplay.target instanceof GunEmplacement)));
+        allowAim = ((this.firingDisplay.getTarget() != null)
+                && ((this.firingDisplay.getTarget().isImmobile()
+                        && ((this.firingDisplay.getTarget() instanceof Mek)
+                                || (this.firingDisplay.getTarget() instanceof Tank)))
+                        || (this.firingDisplay.getTarget() instanceof GunEmplacement)));
         if (allowAim) {
             aimingMode = AimingMode.IMMOBILE;
             return;

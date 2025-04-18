@@ -60,7 +60,7 @@ import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.boardview.BoardEditorTooltip;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.KeyBindingsOverlay;
+import megamek.client.ui.swing.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.swing.dialog.FloodDialog;
 import megamek.client.ui.swing.dialog.LevelChangeDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;

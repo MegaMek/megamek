@@ -50,10 +50,12 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ChatterBox2;
+import megamek.client.ui.swing.boardview.overlay.ChatterBox2;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.EntityChoiceDialog;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.overlay.TurnDetailsOverlay;
+import megamek.client.ui.swing.boardview.sprite.*;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.ImageCache;
@@ -105,7 +107,7 @@ public final class BoardView extends AbstractBoardView
     public static final int HEX_DIAG = (int) Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
 
     static final int HEX_WC = HEX_W - (HEX_W / 4);
-    static final int HEX_ELEV = 12;
+    public static final int HEX_ELEV = 12;
 
     private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f, 0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f,
                                                   1.3f, 1.6f, 2.0f, 3.0f };
@@ -123,7 +125,7 @@ public final class BoardView extends AbstractBoardView
     // Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = GUIPreferences.getInstance().getIsometricEnabled();
 
-    int DROP_SHADOW_DISTANCE = 20;
+    public int DROP_SHADOW_DISTANCE = 20;
 
     // the index of zoom factor 1.00f
     static final int BASE_ZOOM_INDEX = 7;
@@ -132,10 +134,10 @@ public final class BoardView extends AbstractBoardView
     public int zoomIndex = BASE_ZOOM_INDEX;
 
     // line width of the c3 network lines
-    static final int C3_LINE_WIDTH = 1;
+    public static final int C3_LINE_WIDTH = 1;
 
     // line width of the fly over lines
-    static final int FLY_OVER_LINE_WIDTH = 3;
+    public static final int FLY_OVER_LINE_WIDTH = 3;
     private static final Font FONT_7 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 7);
     private static final Font FONT_8 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 8);
     private static final Font FONT_9 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 9);
@@ -2872,7 +2874,7 @@ public final class BoardView extends AbstractBoardView
         return getHexLocationLargeTile(x, y, scale);
     }
 
-    Point getHexLocation(Coords coords) {
+    public Point getHexLocation(Coords coords) {
         return coords == null ? null : getHexLocation(coords.getX(), coords.getY(), false);
     }
 
@@ -3071,7 +3073,7 @@ public final class BoardView extends AbstractBoardView
             spriteIter = entitySprites.iterator();
             while (spriteIter.hasNext()) {
                 EntitySprite sprite = spriteIter.next();
-                if (sprite.entity.equals(entity)) {
+                if (sprite.getEntity().equals(entity)) {
                     spriteIter.remove();
                 }
             }
@@ -3080,7 +3082,7 @@ public final class BoardView extends AbstractBoardView
             spriteIter = entitySpriteIds.values().iterator();
             while (spriteIter.hasNext()) {
                 EntitySprite sprite = spriteIter.next();
-                if (sprite.entity.equals(entity)) {
+                if (sprite.getEntity().equals(entity)) {
                     spriteIter.remove();
                 }
             }
@@ -3091,7 +3093,7 @@ public final class BoardView extends AbstractBoardView
             isoSpriteIter = isometricSprites.iterator();
             while (isoSpriteIter.hasNext()) {
                 IsometricSprite sprite = isoSpriteIter.next();
-                if (sprite.entity.equals(entity)) {
+                if (sprite.getEntity().equals(entity)) {
                     isoSpriteIter.remove();
                 }
             }
@@ -3100,7 +3102,7 @@ public final class BoardView extends AbstractBoardView
             isoSpriteIter = isometricSpriteIds.values().iterator();
             while (isoSpriteIter.hasNext()) {
                 IsometricSprite sprite = isoSpriteIter.next();
-                if (sprite.entity.equals(entity)) {
+                if (sprite.getEntity().equals(entity)) {
                     isoSpriteIter.remove();
                 }
             }
@@ -3181,7 +3183,7 @@ public final class BoardView extends AbstractBoardView
         }
 
         // Remove C3 sprites
-        c3Sprites.removeIf(c3sprite -> (c3sprite.entityId == entity.getId()) || (c3sprite.masterId == entity.getId()));
+        c3Sprites.removeIf(c3sprite -> (c3sprite.getEntityId() == entity.getId()) || (c3sprite.getMasterId() == entity.getId()));
 
         // Update C3 link, if necessary
         if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
@@ -3634,6 +3636,38 @@ public final class BoardView extends AbstractBoardView
 
     public Player getLocalPlayer() {
         return localPlayer;
+    }
+
+    public ClientGUI getClientgui() {
+        return clientgui;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public Dimension getHex_size() {
+        return hex_size;
+    }
+
+    public TilesetManager getTileManager() {
+        return tileManager;
+    }
+
+    public Shape[] getFacingPolys() {
+        return facingPolys;
+    }
+
+    public Shape[] getMovementPolys() {
+        return movementPolys;
+    }
+
+    public Shape getUpArrow() {
+        return upArrow;
+    }
+
+    public Shape getDownArrow() {
+        return downArrow;
     }
 
     /**
@@ -4350,7 +4384,7 @@ public final class BoardView extends AbstractBoardView
 
     public synchronized void highlightSelectedEntity(Entity entity) {
         for (EntitySprite sprite : entitySprites) {
-            sprite.setSelected(sprite.entity.equals(entity));
+            sprite.setSelected(sprite.getEntity().equals(entity));
         }
     }
 
@@ -5010,7 +5044,7 @@ public final class BoardView extends AbstractBoardView
      * @param useCache This flag determines whether the scaled image should be stored in a cache for later retrieval.
      */
     @Nullable
-    Image getScaledImage(Image base, boolean useCache) {
+    public Image getScaledImage(Image base, boolean useCache) {
         if (base == null) {
             return null;
         }
@@ -5098,7 +5132,7 @@ public final class BoardView extends AbstractBoardView
         boardPanel.repaint();
     }
 
-    BufferedImage createShadowMask(Image image) {
+    public BufferedImage createShadowMask(Image image) {
         int hashCode = image.hashCode();
         BufferedImage mask = shadowImageCache.get(hashCode);
         if (mask != null) {
@@ -5270,7 +5304,7 @@ public final class BoardView extends AbstractBoardView
     }
 
     @Nullable
-    Entity getSelectedEntity() {
+    public Entity getSelectedEntity() {
         return clientgui != null ? clientgui.getDisplayedUnit() : null;
     }
 
@@ -5286,7 +5320,7 @@ public final class BoardView extends AbstractBoardView
         return isometricWreckSprites;
     }
 
-    ArrayList<AttackSprite> getAttackSprites() {
+    public ArrayList<AttackSprite> getAttackSprites() {
         return attackSprites;
     }
 

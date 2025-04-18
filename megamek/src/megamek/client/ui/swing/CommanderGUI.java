@@ -25,6 +25,7 @@ import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.minimap.BoardviewlessMinimap;
 import megamek.client.ui.swing.overlay.ChatOverlay;
+import megamek.client.ui.swing.phaseDisplay.MiniReportDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;

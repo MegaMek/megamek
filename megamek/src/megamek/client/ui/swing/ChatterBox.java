@@ -16,6 +16,8 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.commands.ClientCommand;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.overlay.ChatterBox2;
+import megamek.client.ui.swing.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.event.*;
 import megamek.common.preference.PreferenceManager;

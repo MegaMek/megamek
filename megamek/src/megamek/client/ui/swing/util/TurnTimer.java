@@ -14,10 +14,9 @@
 package megamek.client.ui.swing.util;
 
 import megamek.client.IClient;
-import megamek.client.ui.swing.AbstractPhaseDisplay;
+import megamek.client.ui.swing.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.enums.GamePhase;
-import megamek.common.options.BasicGameOptions;
 import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;

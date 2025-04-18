@@ -37,7 +37,7 @@ public class DeployElevationChoiceDialog extends AbstractChoiceDialog<ElevationO
 
     private static final int BASE_PADDING = 10;
 
-    protected DeployElevationChoiceDialog(JFrame parent, List<ElevationOption> elevationOptions) {
+    public DeployElevationChoiceDialog(JFrame parent, List<ElevationOption> elevationOptions) {
         super(parent, "DeploymentDisplay.choiceDialogTitle", titleMessage(), elevationOptions, false);
         setColumns(elevationOptions.size() > 6 ? 2 : 1);
         initialize();

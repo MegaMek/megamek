@@ -27,7 +27,7 @@ import javax.swing.AbstractAction;
 
 import megamek.client.ui.swing.MegaMekGUI;
 import megamek.client.ui.swing.SBFClientGUI;
-import megamek.client.ui.swing.StatusBarPhaseDisplay;
+import megamek.client.ui.swing.phaseDisplay.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;

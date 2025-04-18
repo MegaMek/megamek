@@ -68,12 +68,20 @@ import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.boardview.*;
+import megamek.client.ui.swing.boardview.overlay.ChatterBox2;
+import megamek.client.ui.swing.boardview.overlay.KeyBindingsOverlay;
+import megamek.client.ui.swing.boardview.overlay.OffBoardTargetOverlay;
+import megamek.client.ui.swing.boardview.overlay.PlanetaryConditionsOverlay;
+import megamek.client.ui.swing.boardview.overlay.TurnDetailsOverlay;
+import megamek.client.ui.swing.boardview.overlay.UnitOverviewOverlay;
+import megamek.client.ui.swing.boardview.spriteHandler.*;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
 import megamek.client.ui.swing.forceDisplay.ForceDisplayPanel;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.minimap.Minimap;
+import megamek.client.ui.swing.phaseDisplay.*;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -554,7 +562,7 @@ public class ClientGUI extends AbstractClientGUI
             cb2 = new ChatterBox2(this, bv, controller);
             bv.addOverlay(cb2);
             bv.getPanel().addKeyListener(cb2);
-            bv.addOverlay(new UnitOverview(this));
+            bv.addOverlay(new UnitOverviewOverlay(this));
             offBoardOverlay = new OffBoardTargetOverlay(this);
             bv.addOverlay(offBoardOverlay);
 
@@ -1170,7 +1178,7 @@ public class ClientGUI extends AbstractClientGUI
         return conditionsDialog;
     }
 
-    void switchPanel(GamePhase phase) {
+    public void switchPanel(GamePhase phase) {
         // Clear the old panel's listeners.
         if (curPanel instanceof BoardViewListener) {
             bv.removeBoardViewListener((BoardViewListener) curPanel);
@@ -1196,7 +1204,7 @@ public class ClientGUI extends AbstractClientGUI
             case LOUNGE:
                 // reset old report tabs and images, if any
                 ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(GamePhase.LOUNGE));
-                cb.setDoneButton(cl.butDone);
+                cb.setDoneButton(cl.getButDone());
                 cl.setBottom(cb.getComponent());
                 getBoardView().getTilesetManager().reset();
                 break;
@@ -3252,7 +3260,7 @@ public class ClientGUI extends AbstractClientGUI
 
         if (curPanel instanceof MovementDisplay) {
             MovementDisplay md = (MovementDisplay) curPanel;
-            if (entity.getId() == md.currentEntity) {
+            if (entity.getId() == md.getCurrentEntity()) {
                 firingArcSpriteHandler.update(entity, getDisplayedWeapon().get(), md.getPlannedMovement());
                 return;
             }

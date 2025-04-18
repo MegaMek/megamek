@@ -68,7 +68,7 @@ import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.boardview.*;
-import megamek.client.ui.swing.boardview.overlay.ChatterBox2;
+import megamek.client.ui.swing.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.swing.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.swing.boardview.overlay.OffBoardTargetOverlay;
 import megamek.client.ui.swing.boardview.overlay.PlanetaryConditionsOverlay;
@@ -253,7 +253,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public MegaMekController controller;
     private ChatterBox cb;
-    public ChatterBox2 cb2;
+    public ChatterBoxOverlay cb2;
     private BoardView bv;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
@@ -559,7 +559,7 @@ public class ClientGUI extends AbstractClientGUI
             bv.addOverlay(new TurnDetailsOverlay(bv));
             bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
             bv.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), this, bv));
-            cb2 = new ChatterBox2(this, bv, controller);
+            cb2 = new ChatterBoxOverlay(this, bv, controller);
             bv.addOverlay(cb2);
             bv.getPanel().addKeyListener(cb2);
             bv.addOverlay(new UnitOverviewOverlay(this));

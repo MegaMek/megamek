@@ -50,7 +50,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.boardview.overlay.ChatterBox2;
+import megamek.client.ui.swing.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.EntityChoiceDialog;
 import megamek.client.ui.swing.GUIPreferences;
@@ -583,7 +583,7 @@ public final class BoardView extends AbstractBoardView
             // If the mouse is over an IDisplayable, have it react instead of the board. Currently only implemented
             // for the ChatterBox
             for (IDisplayable displayable : overlays) {
-                if (displayable instanceof ChatterBox2 chatterBox2) {
+                if (displayable instanceof ChatterBoxOverlay chatterBox2) {
                     double width = scrollPane.getViewport().getSize().getWidth();
                     double height = scrollPane.getViewport().getSize().getHeight();
                     Dimension drawDimension = new Dimension();
@@ -850,7 +850,7 @@ public final class BoardView extends AbstractBoardView
         if (!getChatterBoxActive()) {
             setChatterBoxActive(true);
             for (IDisplayable displayable : overlays) {
-                if (displayable instanceof ChatterBox2 chatterBox2) {
+                if (displayable instanceof ChatterBoxOverlay chatterBox2) {
                     chatterBox2.slideUp();
                     chatterBox2.setMessage("/");
                 }
@@ -863,7 +863,7 @@ public final class BoardView extends AbstractBoardView
         if (!getChatterBoxActive()) {
             setChatterBoxActive(true);
             for (IDisplayable displayable : overlays) {
-                if (displayable instanceof ChatterBox2 chatterBox2) {
+                if (displayable instanceof ChatterBoxOverlay chatterBox2) {
                     chatterBox2.slideUp();
                 }
             }

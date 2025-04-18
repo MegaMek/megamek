@@ -59,8 +59,8 @@ import megamek.logging.MMLogger;
  *
  * @author beerockxs2
  */
-public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChangeListener {
-    private final static MMLogger logger = MMLogger.create(ChatterBox2.class);
+public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreferenceChangeListener {
+    private final static MMLogger logger = MMLogger.create(ChatterBoxOverlay.class);
 
     private static final String FILENAME_BUTTON_UP = "upbutton.gif";
     private static final String FILENAME_BUTTON_DOWN = "downbutton.gif";
@@ -134,7 +134,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
 
     private FontMetrics fm;
 
-    public ChatterBox2(ClientGUI client, BoardView boardview, MegaMekController controller) {
+    public ChatterBoxOverlay(ClientGUI client, BoardView boardview, MegaMekController controller) {
         this.client = client.getClient();
         client.getClient().getGame().addGameListener(new GameListenerAdapter() {
             @Override

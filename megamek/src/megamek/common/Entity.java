@@ -15677,13 +15677,13 @@ public abstract class Entity extends TurnOrdered
             }
         }
         if (healCrew) {
+            Crew crew = this.getCrew();
+            crew.setDoomed(false);
+            crew.setEjected(false);
             for (int i = 0; i < this.getCrew().getSlotCount(); i++) {
-                Crew crew = this.getCrew();
                 crew.setHits(0, i);
                 crew.setDead(false, i);
                 crew.setCrewFatigue(0, i);
-                crew.setDoomed(false);
-                crew.setEjected(false);
             }
         }
     }

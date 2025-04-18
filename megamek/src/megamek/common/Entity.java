@@ -15,6 +15,10 @@
 package megamek.common;
 
 import java.awt.Image;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +29,7 @@ import java.util.stream.IntStream;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
+import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Base64Image;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
@@ -91,7 +96,7 @@ import megamek.utilities.xml.MMXMLUtility;
 @JsonDeserialize(using = EntityDeserializer.class)
 public abstract class Entity extends TurnOrdered
       implements Transporter, Targetable, RoundUpdated, PhaseUpdated, ITechnology, ForceAssignable, CombatRole,
-                 Deployable {
+                 Deployable, Cloneable {
 
     private static final MMLogger LOGGER = MMLogger.create(Entity.class);
 
@@ -15609,4 +15614,90 @@ public abstract class Entity extends TurnOrdered
     public void setJumpingWithMechanicalBoosters(boolean jumpingWithMechanicalBoosters) {
         isJumpingWithMechanicalBoosters = jumpingWithMechanicalBoosters;
     }
+
+    
+    /**
+     * Clone an entity. This method creates a deep copy of the entity, including all its properties and references.
+     * @return The copied entity
+     */
+    @Override
+    public Entity clone() {
+        try {
+            return clone(true, true);
+        } catch (Exception e) {
+            throw new AssertionError("Clone not supported", e);
+        }
+    }
+    
+    /**
+     * Clone an entity. This method creates a deep copy of the entity, including all its properties and references.
+     * @param keepDamage Whether to keep the damage data of the original entity
+     * @param keepCrew Whether to keep the crew data of the original entity
+     * @return The copied entity
+     */
+    public Entity clone(boolean keepDamage, boolean keepCrew) throws Exception {
+        Entity newEntity = null;
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+                // Serialize the entities
+                objectOutputStream.writeObject(this);
+                objectOutputStream.flush();
+                byte[] serializedData = byteArrayOutputStream.toByteArray();
+
+                // Deserialize to create new instances
+                try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(serializedData)) {
+                    try (ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
+                        newEntity = (Entity) objectInputStream.readObject();
+                    }
+                }
+            }
+        }
+        if (newEntity == null) {
+            return newEntity;
+        }
+        // we remove all damage and status from the new entity
+        if (!keepDamage) {
+            for (Mounted<?> mounted : newEntity.getEquipment()) {
+                if (mounted instanceof MiscMounted misc) {
+                    misc.setDamageTaken(0);
+                }
+                mounted.setHit(false);
+                mounted.setDestroyed(false);
+                mounted.setMissing(false);
+                mounted.setJammed(false);
+                mounted.setBreached(false);
+                mounted.setFired(false);
+                mounted.setDumping(false);
+            }
+            for (int loc = 0; loc < newEntity.locations(); loc++) {
+                for (int slot = 0; slot < newEntity.getNumberOfCriticals(loc); slot++) {
+                    CriticalSlot cs = newEntity.getCritical(loc, slot);
+                    if (cs != null) {
+                        cs.setDestroyed(false);
+                        cs.setMissing(false);
+                        cs.setBreached(false);
+                        cs.setHit(false);
+                    }
+                }
+                newEntity.setInternal(newEntity.getOInternal(loc), loc);
+                newEntity.setArmor(newEntity.getOArmor(loc), loc);
+                if (newEntity.hasRearArmor(loc)) {
+                    newEntity.setArmor(newEntity.getOArmor(loc, true), loc, true);
+                }
+            }
+            if (keepCrew) {
+                for (int i = 0; i < newEntity.getCrew().getSlotCount(); i++) {
+                    Crew crew = newEntity.getCrew();
+                    crew.setName(RandomNameGenerator.UNNAMED, i);
+                    crew.setHits(0, i);
+                    crew.setDead(false, i);
+                }
+            }
+        }
+        if (!keepCrew) {
+            newEntity.setCrew(new Crew(newEntity.defaultCrewType()));
+        }
+        return newEntity;
+    }
+
 }

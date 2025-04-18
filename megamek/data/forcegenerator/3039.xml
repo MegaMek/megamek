@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3039-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>5,5</pctOmni>
@@ -3302,6 +3299,10 @@
                 <roles>anti_aircraft,field_gun,fire_support,paratrooper</roles>
                 <availability>FWL:4-</availability>
             </model>
+            <model name='(Motorized AC20 3035+)'>
+                <roles>field_gun,paratrooper</roles>
+                <availability>FWL:1+</availability>
+            </model>
             <model name='(Motorized AC5 3035+)'>
                 <roles>anti_aircraft,field_gun,fire_support,paratrooper</roles>
                 <availability>FWL:6-</availability>
@@ -3597,7 +3598,7 @@
             </model>
         </chassis>
         <chassis name='Foot Platoon (FWLM)' unitType='Infantry'>
-            <availability>FWL!A:8!B:8!C:8!D:5!F:0,DA:0</availability>
+            <availability>FWL!A:8!B:8!C:8!D:5,DA:0</availability>
             <model name='(Flamer 3035+)'>
                 <roles>urban</roles>
                 <availability>FWL:3-</availability>
@@ -6635,6 +6636,10 @@
                 <availability>FWL:4</availability>
             </model>
             <model name='(Rifle 3035+)'>
+                <availability>FWL:7</availability>
+            </model>
+            <model name='Riot Police 3035+'>
+                <roles>civilian</roles>
                 <availability>FWL:7</availability>
             </model>
             <model name='(Sappers 2315+)'>

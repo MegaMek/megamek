@@ -30,8 +30,8 @@ import megamek.client.ui.swing.boardview.spriteHandler.SBFFormationSpriteHandler
 import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
 import megamek.client.ui.swing.phaseDisplay.SBFReportDisplay;
 import megamek.client.ui.swing.phaseDisplay.StatusBarPhaseDisplay;
-import megamek.client.ui.swing.sbf.SBFFiringDisplay;
-import megamek.client.ui.swing.sbf.SBFMovementDisplay;
+import megamek.client.ui.swing.phaseDisplay.SBFFiringDisplay;
+import megamek.client.ui.swing.phaseDisplay.SBFMovementDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.SBFReportPanel;
 import megamek.common.Coords;

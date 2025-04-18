@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.sbf;
+package megamek.client.ui.swing.phaseDisplay;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

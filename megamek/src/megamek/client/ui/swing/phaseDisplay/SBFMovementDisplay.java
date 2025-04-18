@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.sbf;
+package megamek.client.ui.swing.phaseDisplay;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -32,6 +32,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.SBFClientGUI;
+import megamek.client.ui.swing.sbf.SBFJumpChoiceDialog;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.common.BTObject;

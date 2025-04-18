@@ -38,7 +38,7 @@ public class SBFJumpChoiceDialog extends AbstractChoiceDialog<Integer> {
     private static final int BASE_PADDING = 10;
     private static final int BASE_JUMP_SIZE = 35;
 
-    protected SBFJumpChoiceDialog(JFrame parent, List<Integer> targets) {
+    public SBFJumpChoiceDialog(JFrame parent, List<Integer> targets) {
         super(parent, "SBFTargetDialog.title", titleMessage(), targets, false);
         setColumns(1);
         initialize();

@@ -56,4 +56,13 @@ public interface Deployable {
     default HexArea getFleeZone() {
         return HexArea.EMPTY_AREA;
     }
+
+    /**
+     * @return The board ID of the board this deployable is on.
+     */
+    default int getBoardId() {
+        // This defaults to 0 so that any code that doesn't  support multiple boards yet safely points to the first
+        // (and only) board; should eventually default to -1
+        return 0;
+    }
 }

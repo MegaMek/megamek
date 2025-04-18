@@ -1349,7 +1349,7 @@ public class Tank extends Entity {
         }
 
         // are we wheeled and in light snow?
-        Hex hex = game.getBoard().getHex(getPosition());
+        Hex hex = game.getHex(getPosition(), getBoardId());
         if ((null != hex) &&
                   (getMovementMode() == EntityMovementMode.WHEELED) &&
                   (hex.terrainLevel(Terrains.SNOW) == 1)) {

@@ -1431,13 +1431,13 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
         int vel = getCurrentVelocity();
         int velocityMod = vel - (2 * getWalkMP());
-        if (!getGame().getBoard().inSpace() && (velocityMod > 0)) {
+        if (!isSpaceborne() && (velocityMod > 0)) {
             prd.addModifier(velocityMod, "Velocity greater than 2x safe thrust");
         }
 
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // add in atmospheric effects later
-        boolean spaceOrVacuum = game.getBoard().inSpace() || conditions.getAtmosphere().isVacuum();
+        boolean spaceOrVacuum = isSpaceborne() || conditions.getAtmosphere().isVacuum();
         if (!spaceOrVacuum && isAirborne()) {
             prd.addModifier(+2, "Atmospheric operations");
 
@@ -1474,10 +1474,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         }
 
         // quirks?
-        if (hasQuirk(OptionsConstants.QUIRK_POS_ATMO_FLYER) && !game.getBoard().inSpace()) {
+        if (hasQuirk(OptionsConstants.QUIRK_POS_ATMO_FLYER) && !isSpaceborne()) {
             prd.addModifier(-1, "atmospheric flyer");
         }
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY) && !game.getBoard().inSpace()) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY) && !isSpaceborne()) {
             prd.addModifier(+1, "atmospheric flight instability");
         }
         if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {

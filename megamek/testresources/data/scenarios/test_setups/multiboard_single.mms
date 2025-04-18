@@ -45,7 +45,7 @@ factions:
 #    board: 1
 #    facing: 2
 
-  - fullname: Bulldog Medium Tank
+#  - fullname: Bulldog Medium Tank
 #    at: [ 13,10 ]
 #    board: 1
 #    facing: 2

@@ -6919,46 +6919,45 @@ public class Compute {
     }
 
     /**
-     * Builds a list of all adjacent units that can load the given Entity.
+     * Returns a list of all adjacent units that can load the given Entity.
      *
-     * @param en   The entity to load
-     * @param pos  The coordinates of the hex to load from
-     * @param elev The absolute elevation of the unit at the point of loading
-     *             (surface
-     *             of the hex + elevation over the surface)
-     * @param game The current {@link Game}
-     * @return All adjacent units that can mount the Entity
+     * @param entity  The entity to load
+     * @param pos     The coordinates of the hex to load from
+     * @param boardId The board Id of the hex to load from
+     * @param elev    The absolute elevation of the unit at the point of loading (surface of the hex + elevation over
+     *                the surface)
+     * @param game    The game
+     *
+     * @return All adjacent units that can transport the Entity
      */
-    public static List<Entity> getMountableUnits(Entity en, Coords pos, int elev, Game game) {
-        List<Entity> mountable = new ArrayList<>();
-        // Expanded to include trains
+    public static List<Entity> getMountableUnits(Entity entity, Coords pos, int boardId, int elev, Game game) {
+        if ((entity == null) || (pos == null) || (game == null) || !game.hasBoardLocation(pos, boardId)) {
+            logger.error("Invalid argument; cannot find mountable units");
+            return Collections.emptyList();
+        }
 
-        // the rules don't say that the unit must be facing loader
-        // so lets take the ring
+        List<Entity> mountable = new ArrayList<>();
+        // the rules don't say that the unit must be facing loader, so lets take the ring
         for (Coords c : pos.allAdjacent()) {
-            Hex hex = game.getBoard().getHex(c);
+            Hex hex = game.getBoard(boardId).getHex(c);
             if (null == hex) {
                 continue;
             }
-            for (Entity other : game.getEntitiesVector(c)) {
-                // Is the other unit friendly and not the current entity?
-                if ((en.getOwner().equals(other.getOwner()) || (en.getOwner()
-                        .getTeam() == other.getOwner().getTeam()))
-                        && !en.equals(other)
+            for (Entity other : game.getEntitiesVector(c, boardId)) {
+                if ((entity.getOwner().equals(other.getOwner())
+                           || (entity.getOwner().getTeam() == other.getOwner().getTeam()))
+                        && !entity.equals(other)
                         && ((other instanceof SmallCraft) || other.getTowing() != Entity.NONE
                                 || other.getTowedBy() != Entity.NONE)
-                        && other.canLoad(en)
+                        && other.canLoad(entity)
                         && !other.isAirborne()
-                        && (Math.abs((hex.getLevel() + other.getElevation())
-                                - elev) < 3)
+                        && (Math.abs((hex.getLevel() + other.getElevation()) - elev) < 3)
                         && !mountable.contains(other)) {
                     mountable.add(other);
                 }
             }
         }
-
         return mountable;
-
     }
 
     public static boolean allowAimedShotWith(WeaponMounted weapon, AimingMode aimingMode) {
@@ -7348,22 +7347,15 @@ public class Compute {
     }
 
     /**
-     * Should we treat this entity, in its current state, as if it is a spheroid
-     * unit
-     * flying in atmosphere?
+     * Should we treat this entity, in its current state, as if it is a spheroid unit flying in atmosphere?
      */
     public static boolean useSpheroidAtmosphere(Game game, Entity en) {
-        if (!en.isAero()) {
-            return false;
-        }
-        // are we in space?
-        if (game.getBoard().inSpace()) {
+        if (!(en instanceof IAero aero) || en.isSpaceborne()) {
             return false;
         }
         // aerodyne's will operate like spheroids in vacuum
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (!((IAero) en).isSpheroid()
-                && !conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
+        if (!aero.isSpheroid() && !conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             return false;
         }
         // are we in atmosphere?

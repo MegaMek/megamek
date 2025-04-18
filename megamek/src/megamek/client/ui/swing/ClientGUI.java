@@ -2818,7 +2818,8 @@ public class ClientGUI extends AbstractClientGUI
 
     @Override
     public boolean isChatBoxActive() {
-        return getBoardView().getChatterBoxActive();
+        Optional<IBoardView> ibv = getCurrentBoardView();
+        return ibv.isPresent() && ibv.get() instanceof BoardView bv && bv.getChatterBoxActive();
     }
 
     @Override

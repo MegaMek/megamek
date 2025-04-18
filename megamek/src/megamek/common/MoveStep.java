@@ -1441,12 +1441,12 @@ public class MoveStep implements Serializable {
             isEnd = true;
         }
 
-        // If this step didn't already know it's status as the ending position of a path, then there are more updates
-        // to do.
+        // If this step didn't already know its status as the ending position of a path, then there are more updates
+        // to do
         boolean moreUpdates = (isEndPos != isEnd);
 
         // If this step isn't the end step anymore, we might not be in danger after all
-        Hex pos = getGame().getBoard().getHex(position);
+        Hex pos = getGame().getBoard(targetBoardId).getHex(position);
         if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
             if (!isEnd &&
                       isJumping() &&

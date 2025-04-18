@@ -2321,9 +2321,9 @@ public abstract class Entity extends TurnOrdered
             case AERODYNE:
             case SPHEROID:
                 assumedAlt = assumedElevation;
-                if (game.getBoard().inAtmosphere()) {
+                if (game.getBoard(boardId).inAtmosphere()) {
                     minAlt = Math.max(0, hex.ceiling(true)) + 1;
-                } else if (game.getBoard().onGround() && isAirborne()) {
+                } else if (game.getBoard(boardId).onGround() && isAirborne()) {
                     minAlt = 1;
                 }
                 // if sensors are damaged then, one higher
@@ -5721,7 +5721,7 @@ public abstract class Entity extends TurnOrdered
                 }
 
                 // in space the range of all BAPs is given by the mode
-                if (game.getBoard().inSpace()) {
+                if (isSpaceborne()) {
                     return m.curMode().equals("Medium") ? 12 : 6;
                 }
 

@@ -428,11 +428,11 @@ public abstract class AbstractGame implements IGame {
      * @return True when it can indeed flee
      */
     public boolean canFleeFrom(Deployable unit, Coords coords) {
-        if ((unit == null) || (coords == null)) {
-            LOGGER.warn("Received null unit or coords!");
+        if ((unit == null) || (coords == null) || !hasBoard(unit.getBoardId())) {
+            LOGGER.error("Invalid arguments!");
             return false;
         } else {
-            return getFleeZone(unit).containsCoords(coords, getBoard());
+            return getFleeZone(unit).containsCoords(coords, getBoard(unit.getBoardId()));
         }
     }
 

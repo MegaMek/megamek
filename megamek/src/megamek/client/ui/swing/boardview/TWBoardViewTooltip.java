@@ -142,7 +142,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         // Show the player(s) that may deploy here
         // in the artillery autohit designation phase
         if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex != null)) {
-            result += HexTooltip.getArtilleryHit(game, coords);
+            result += HexTooltip.getArtilleryHit(game, coords, bv.boardId);
         }
 
         // check if it's on any flares

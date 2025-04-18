@@ -3031,7 +3031,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         final boolean canMount = isFinalPositionOnBoard() && !movingEntity.isAirborne()
                 && (mpUsed <= Math.ceil(movingEntity.getWalkMP() / 2.0))
-                && !Compute.getMountableUnits(movingEntity, pos,
+                && !Compute.getMountableUnits(movingEntity, pos, finalBoardId(),
               elev + game.getBoard(movingEntity).getHex(pos).getLevel(), game).isEmpty();
         setMountEnabled(canMount);
     }
@@ -3103,12 +3103,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             pos = cmd.getFinalCoords();
             elev = cmd.getFinalElevation();
         }
-        Hex hex = game.getBoard(ce).getHex(pos);
+        Hex hex = game.getBoard(finalBoardId()).getHex(pos);
         if (null != hex) {
             elev += hex.getLevel();
         }
 
-        List<Entity> mountableUnits = Compute.getMountableUnits(ce, pos, elev, game);
+        List<Entity> mountableUnits = Compute.getMountableUnits(ce, pos, finalBoardId(), elev, game);
 
         // Handle error condition.
         if (mountableUnits.isEmpty()) {

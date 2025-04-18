@@ -318,13 +318,13 @@ public final class HexTooltip {
         return sTerrain;
     }
 
-    public static String getArtilleryHit(Game game, Coords coords) {
+    public static String getArtilleryHit(Game game, Coords coords, int boardId) {
         String sAttilleryAutoHix = "";
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         boolean foundPlayer = false;
         for (Player player : game.getPlayersList()) {
             // loop through all players
-            if (game.getBoard().isLegalDeployment(coords, player)) {
+            if (game.getBoard(boardId).isLegalDeployment(coords, player)) {
                 if (!foundPlayer) {
                     foundPlayer = true;
                     sAttilleryAutoHix += Messages.getString("BoardView1.Tooltip.ArtyAutoHeader") + "<BR>";

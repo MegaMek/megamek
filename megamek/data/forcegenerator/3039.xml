@@ -6638,7 +6638,7 @@
             <model name='(Rifle 3035+)'>
                 <availability>FWL:7</availability>
             </model>
-            <model name='Riot Police 3035+'>
+            <model name='(Riot Police 3035+)'>
                 <roles>civilian</roles>
                 <availability>FWL:7</availability>
             </model>

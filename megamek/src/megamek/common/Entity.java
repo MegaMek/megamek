@@ -15623,81 +15623,69 @@ public abstract class Entity extends TurnOrdered
     @Override
     public Entity clone() {
         try {
-            return clone(true, true);
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+                try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+                    // Serialize the entities
+                    objectOutputStream.writeObject(this);
+                    objectOutputStream.flush();
+                    byte[] serializedData = byteArrayOutputStream.toByteArray();
+    
+                    // Deserialize to create new instances
+                    try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(serializedData)) {
+                        try (ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
+                            return (Entity) objectInputStream.readObject();
+                        }
+                    }
+                }
+            }
         } catch (Exception e) {
             throw new AssertionError("Clone not supported", e);
         }
     }
     
     /**
-     * Clone an entity. This method creates a deep copy of the entity, including all its properties and references.
-     * @param keepDamage Whether to keep the damage data of the original entity
-     * @param keepCrew Whether to keep the crew data of the original entity
-     * @return The copied entity
+     * Repairs an entity.
+     * @param healCrew Whether to heal the crew or not
      */
-    public Entity clone(boolean keepDamage, boolean keepCrew) throws Exception {
-        Entity newEntity = null;
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
-                // Serialize the entities
-                objectOutputStream.writeObject(this);
-                objectOutputStream.flush();
-                byte[] serializedData = byteArrayOutputStream.toByteArray();
-
-                // Deserialize to create new instances
-                try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(serializedData)) {
-                    try (ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
-                        newEntity = (Entity) objectInputStream.readObject();
-                    }
+    public void repair(boolean healCrew) {
+        for (Mounted<?> mounted : this.getEquipment()) {
+            if (mounted instanceof MiscMounted misc) {
+                misc.setDamageTaken(0);
+            }
+            mounted.setHit(false);
+            mounted.setDestroyed(false);
+            mounted.setMissing(false);
+            mounted.setJammed(false);
+            mounted.setBreached(false);
+            mounted.setFired(false);
+            mounted.setDumping(false);
+        }
+        for (int loc = 0; loc < this.locations(); loc++) {
+            for (int slot = 0; slot < this.getNumberOfCriticals(loc); slot++) {
+                CriticalSlot cs = this.getCritical(loc, slot);
+                if (cs != null) {
+                    cs.setDestroyed(false);
+                    cs.setMissing(false);
+                    cs.setBreached(false);
+                    cs.setHit(false);
                 }
             }
-        }
-        if (newEntity == null) {
-            return newEntity;
-        }
-        // we remove all damage and status from the new entity
-        if (!keepDamage) {
-            for (Mounted<?> mounted : newEntity.getEquipment()) {
-                if (mounted instanceof MiscMounted misc) {
-                    misc.setDamageTaken(0);
-                }
-                mounted.setHit(false);
-                mounted.setDestroyed(false);
-                mounted.setMissing(false);
-                mounted.setJammed(false);
-                mounted.setBreached(false);
-                mounted.setFired(false);
-                mounted.setDumping(false);
-            }
-            for (int loc = 0; loc < newEntity.locations(); loc++) {
-                for (int slot = 0; slot < newEntity.getNumberOfCriticals(loc); slot++) {
-                    CriticalSlot cs = newEntity.getCritical(loc, slot);
-                    if (cs != null) {
-                        cs.setDestroyed(false);
-                        cs.setMissing(false);
-                        cs.setBreached(false);
-                        cs.setHit(false);
-                    }
-                }
-                newEntity.setInternal(newEntity.getOInternal(loc), loc);
-                newEntity.setArmor(newEntity.getOArmor(loc), loc);
-                if (newEntity.hasRearArmor(loc)) {
-                    newEntity.setArmor(newEntity.getOArmor(loc, true), loc, true);
-                }
-            }
-            if (keepCrew) {
-                for (int i = 0; i < newEntity.getCrew().getSlotCount(); i++) {
-                    Crew crew = newEntity.getCrew();
-                    crew.setName(RandomNameGenerator.UNNAMED, i);
-                    crew.setHits(0, i);
-                    crew.setDead(false, i);
-                }
+            this.setInternal(this.getOInternal(loc), loc);
+            this.setArmor(this.getOArmor(loc), loc);
+            if (this.hasRearArmor(loc)) {
+                this.setArmor(this.getOArmor(loc, true), loc, true);
             }
         }
-        if (!keepCrew) {
-            newEntity.setCrew(new Crew(newEntity.defaultCrewType()));
+        if (healCrew) {
+            for (int i = 0; i < this.getCrew().getSlotCount(); i++) {
+                Crew crew = this.getCrew();
+                crew.setHits(0, i);
+                crew.setDead(false, i);
+                crew.setCrewFatigue(0, i);
+                crew.setDoomed(false);
+                crew.setEjected(false);
+            }
         }
-        return newEntity;
     }
 
 }

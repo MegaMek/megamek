@@ -1,15 +1,29 @@
 /*
- * MegaMek - Copyright (C) 2020 - The MegaMek Team
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.client.ui.swing.util;
 
@@ -19,6 +33,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
+import java.io.Serial;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +136,7 @@ public final class UIUtil {
 
     /**
      * Returns a span of the given CSS class with opening and closing tag and the content in between. The class should
-     * be defined in the header styles block, e.g. as
+     * be defined in the header styles block, e.g., as
      * <code>.myspan { ... }</code>,
      * then it can be given as "myspan" here.
      *
@@ -170,7 +185,7 @@ public final class UIUtil {
 
     /**
      * Returns a div of the given CSS class with opening and closing tag and the content in between. The class should be
-     * defined in the header styles block, e.g. as
+     * defined in the header styles block, e.g., as
      * <code>.mydiv { ... }</code>,
      * then it can be given as "mydiv" here.
      *
@@ -185,7 +200,7 @@ public final class UIUtil {
 
     /**
      * Returns a TD table cell of the given CSS class with opening and closing tag and the content in between. The class
-     * should be defined in the header styles block, e.g. as
+     * should be defined in the header styles block, e.g., as
      * <code>.mycell { ... }</code>, then it
      * can be given as "mycell" here.
      *
@@ -200,7 +215,7 @@ public final class UIUtil {
 
     /**
      * Returns a TD table cell of the given CSS class with opening and closing tag and the content in between (as text).
-     * The class should be defined in the header styles block, e.g. as
+     * The class should be defined in the header styles block, e.g., as
      * <code>.mycell { ... }</code>, then it
      * can be given as "mycell" here.
      *
@@ -214,17 +229,19 @@ public final class UIUtil {
     }
 
     /**
-     * Helper method to place Strings in lines according to length. The Strings in origList will be added to one line
-     * with separator sep between them as long as the total length does not exceed maxLength. If it exceeds maxLength, a
-     * new line is begun. All lines but the last will end with sep if sepAtEnd is true.
+     * Helper method to place Strings in lines according to length. The Strings in the origList will be added to one
+     * line with separator sep between them as long as the total length does not exceed maxLength. If it exceeds
+     * maxLength, a new line is begun. All lines but the last will end with sep if sepAtEnd is true.
      */
     public static ArrayList<String> arrangeInLines(List<String> origList, int maxLength, String sep, boolean sepAtEnd) {
 
         ArrayList<String> result = new ArrayList<>();
+
         if (origList == null || origList.isEmpty()) {
             return result;
         }
-        String currLine = "";
+
+        StringBuilder currLine = new StringBuilder();
         for (String curr : origList) {
             // Skip empty strings to avoid double separators
             if (curr.isEmpty()) {
@@ -233,20 +250,20 @@ public final class UIUtil {
 
             if (currLine.isEmpty()) {
                 // No entry in this line yet
-                currLine = curr;
+                currLine = new StringBuilder(curr);
             } else if (currLine.length() + curr.length() + sep.length() <= maxLength) {
                 // This line can hold another string
-                currLine += sep + curr;
+                currLine.append(sep).append(curr);
             } else {
                 // This line cannot hold another string
-                currLine += sepAtEnd ? sep : "";
-                result.add(currLine);
-                currLine = curr;
+                currLine.append(sepAtEnd ? sep : "");
+                result.add(currLine.toString());
+                currLine = new StringBuilder(curr);
             }
         }
         if (!currLine.isEmpty()) {
             // Add the last unfinished line
-            result.add(currLine);
+            result.add(currLine.toString());
         } else if (sepAtEnd) {
             // Remove the last unnecessary sep if there were no more Strings
             String lastLine = result.get(result.size() - 1);
@@ -350,7 +367,10 @@ public final class UIUtil {
     /**
      * Returns a light red color suitable as a text color. The supplied color depends on the UI look and feel and will
      * be lighter for a dark UI LAF than for a light UI LAF.
+     *
+     * @deprecated no indicated uses
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public static Color uiBlack() {
         return uiBgBrightness() > 130 ? LIGHTUI_BLACK : DARKUI_BLACK;
     }
@@ -374,7 +394,10 @@ public final class UIUtil {
     /**
      * Returns a color for the UI display of Partial Repairs. Different colors will be supplied for a dark and for a
      * light UI look-and-feel.
+     *
+     * @deprecated no indicated uses
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public static Color uiPartialRepairColor() {
         return uiLightRed();
     }
@@ -398,7 +421,10 @@ public final class UIUtil {
     /**
      * Returns a color for the UI display of C3 Info. Different colors will be supplied for a dark and for a light UI
      * look-and-feel.
+     *
+     * @deprecated no indicated uses
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public static Color uiTTWeaponColor() {
         return uiLightBlue();
     }
@@ -413,7 +439,7 @@ public final class UIUtil {
 
     /**
      * Returns the given values multiplied by the current GUI scaling as a Dimension. Use this to adapt things that the
-     * automatic scaling doesn't affect, e.g. images.
+     * automatic scaling doesn't affect, e.g., images.
      *
      * @param width  the width of the Dimension
      * @param height the height of the Dimension
@@ -424,7 +450,7 @@ public final class UIUtil {
 
     /**
      * Returns the given value multiplied by the current GUI scaling. Use this to adapt things that the automatic
-     * scaling doesn't affect, e.g. images. Note that the given int value is scaled as a float and then rounded.
+     * scaling doesn't affect, e.g., images. Note that the given int value is scaled as a float and then rounded.
      *
      * @param value The value to scale up or down according to the current GUI scale
      */
@@ -434,7 +460,7 @@ public final class UIUtil {
 
     /**
      * Returns the given value multiplied by the current GUI scaling. Use this to adapt things that the automatic
-     * scaling doesn't affect, e.g. images.
+     * scaling doesn't affect, e.g., images.
      *
      * @param value The value to scale up or down according to the current GUI scale
      */
@@ -535,7 +561,7 @@ public final class UIUtil {
     }
 
     /**
-     * @param multiResImageMap a collection of widths matched with corresponding image file path
+     * @param multiResImageMap a collection of widths matched with a corresponding image file path
      * @param parent           component
      *
      * @return a JLabel setup to the correct size to act as a splash screen
@@ -548,7 +574,7 @@ public final class UIUtil {
                                                                 .getDisplayMode());
         Image imgSplash = parent.getToolkit().getImage(multiResImageMap.floorEntry(scaledMonitorSize.width).getValue());
 
-        // wait for splash image to load completely
+        // wait for the splash image to load completely
         MediaTracker tracker = new MediaTracker(parent);
         tracker.addImage(imgSplash, 0);
         try {
@@ -565,17 +591,20 @@ public final class UIUtil {
      * @param parent        component
      *
      * @return a JLabel setup to the correct size to act as a splash screen
+     *
+     * @deprecated no indicated uses
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public static JLabel createSplashComponent(String imgSplashFile, Component parent) {
-        // Use the current monitor so we don't "overflow" computers whose primary
-        // displays aren't as large as their secondary displays.
+        // Use the current monitor so we don't "overflow" computers whose primary displays aren't as large as their
+        // secondary displays.
         Dimension scaledMonitorSize = getScaledScreenSize(parent.getGraphicsConfiguration()
                                                                 .getDevice()
                                                                 .getDisplayMode());
 
         Image imgSplash = parent.getToolkit().getImage(imgSplashFile);
 
-        // wait for splash image to load completely
+        // wait for the splash image to load completely
         MediaTracker tracker = new MediaTracker(parent);
         tracker.addImage(imgSplash, 0);
         try {
@@ -624,7 +653,6 @@ public final class UIUtil {
 
         Point pos = component.getLocationOnScreen();
         Dimension size = component.getSize();
-        Rectangle r = new Rectangle(scaledScreenSize);
 
         // center and size if out of bounds
         if ((pos.x < 0) ||
@@ -636,7 +664,7 @@ public final class UIUtil {
     }
 
     /**
-     * Activates anti-aliasing and other high-quality settings for the given Graphics.
+     * Activates antialiasing and other high-quality settings for the given Graphics.
      *
      * @param graph Graphics context to use hq rendering for
      */
@@ -666,6 +694,7 @@ public final class UIUtil {
 
     /** A specialized panel for the header of a section. */
     public static class Header extends JPanel {
+        @Serial
         private static final long serialVersionUID = -6235772150005269143L;
 
         public Header(String text) {
@@ -680,6 +709,7 @@ public final class UIUtil {
 
     /** A panel for the content of a subsection of the dialog. */
     public static class Content extends JPanel {
+        @Serial
         private static final long serialVersionUID = -6605053283642217306L;
 
         public Content(LayoutManager layout) {
@@ -694,8 +724,9 @@ public final class UIUtil {
         }
     }
 
-    /** A panel for a subsection of the dialog, e.g. Minefields. */
+    /** A panel for a subsection of the dialog, e.g., Minefields. */
     public static class OptionPanel extends FixedYPanel {
+        @Serial
         private static final long serialVersionUID = -7168700339882132428L;
 
         public OptionPanel(String header) {
@@ -708,6 +739,7 @@ public final class UIUtil {
 
     /** A JPanel that does not stretch vertically beyond its preferred height. */
     public static class FixedYPanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = -8805710112708937089L;
 
         public FixedYPanel(LayoutManager layout) {
@@ -726,6 +758,7 @@ public final class UIUtil {
 
     /** A JPanel that does not stretch horizontally beyond its preferred width. */
     public static class FixedXPanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = -4634244641653743910L;
 
         public FixedXPanel(LayoutManager layout) {
@@ -815,6 +848,10 @@ public final class UIUtil {
      */
     public static class TipCombo<E> extends MMComboBox<E> {
 
+        /**
+         * @deprecated no indicated uses
+         */
+        @Deprecated(since = "0.50.05", forRemoval = true)
         public TipCombo(String name) {
             super(name);
         }
@@ -854,6 +891,10 @@ public final class UIUtil {
      */
     public static class TipList<E> extends JList<E> {
 
+        /**
+         * @deprecated no indicated uses
+         */
+        @Deprecated(since = "0.50.05", forRemoval = true)
         public TipList() {
             super();
         }
@@ -979,6 +1020,10 @@ public final class UIUtil {
             super();
         }
 
+        /**
+         * @deprecated no indicated uses
+         */
+        @Deprecated(since = "0.50.05", forRemoval = true)
         public TipPanel(LayoutManager lm) {
             super(lm);
         }
@@ -1081,6 +1126,7 @@ public final class UIUtil {
      * this will be very obvious. The native FlowLayout should be kept for the buttons.
      */
     public static class WrappingButtonPanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = -6966176665047676553L;
 
         @Override
@@ -1129,8 +1175,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a Font object using the "Dialog" logic font. The font size 14. legacy from manual gui scaling. This
-     * method should eventually be removed
+     * Returns a Font object using the "Dialog" logic font. Font size 14. legacy from manual gui scaling. This method
+     * should eventually be removed
      *
      * @deprecated since 0.50.04 - {@link #getDefaultFont()}
      */
@@ -1140,7 +1186,7 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a Font object using the "Dialog" logic font. The font size 14.
+     * Returns a Font object using the "Dialog" logic font. Font size 14.
      */
     public static Font getDefaultFont() {
         return new Font(MMConstants.FONT_DIALOG, Font.PLAIN, FONT_SCALE1);
@@ -1191,14 +1237,14 @@ public final class UIUtil {
     }
 
     /**
-     * Returns an HTML FONT Color String, e.g. COLOR=#FFFFFF according to the given color.
+     * Returns an HTML FONT Color String, e.g., COLOR=#FFFFFF according to the given color.
      */
     public static String colorString(Color col) {
         return " COLOR=" + Integer.toHexString(col.getRGB() & 0xFFFFFF) + " ";
     }
 
     /**
-     * Returns Color Hex String, e.g. #FFFFFF according to the given color.
+     * Returns Color Hex String, e.g., #FFFFFF, according to the given color.
      */
     public static String toColorHexString(Color col) {
         return Integer.toHexString(col.getRGB() & 0xFFFFFF);
@@ -1222,8 +1268,8 @@ public final class UIUtil {
     }
 
     /**
-     * Only place this is used is in the Skin Builder. If the Skin Builder can be worked without this method, it can be
-     * removed.
+     * The only place this is used is in the Skin Builder. If the Skin Builder can be worked without this method, it can
+     * be removed.
      *
      * @return the 'virtual bounds' of the screen. That is, the union of the displayable space on all available screen
      *       devices.
@@ -1279,8 +1325,8 @@ public final class UIUtil {
     }
 
     /**
-     * Returns the HTML/CSS color string for the given color, e.g. #FF0000 for red. Includes the #. Does not include any
-     * alpha components.
+     * Returns the HTML/CSS color string for the given color, e.g., #FF0000 for red. Includes the #. Does not include
+     * any alpha components.
      *
      * @param color The color to convert
      *

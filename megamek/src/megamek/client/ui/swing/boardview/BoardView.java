@@ -1,21 +1,30 @@
 /*
  * Copyright (c) 2000-2008 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.client.ui.swing.boardview;
 
@@ -378,7 +387,7 @@ public final class BoardView extends AbstractBoardView
     /** The coords where the mouse was last. */
     Coords lastCoords;
 
-    private GUIPreferences GUIP = GUIPreferences.getInstance();
+    private final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private final TerrainShadowHelper shadowHelper = new TerrainShadowHelper(this);
 
@@ -4722,7 +4731,7 @@ public final class BoardView extends AbstractBoardView
             } else {
                 newECMHexes.put(coords, hexColorECM);
             }
-        } else if (hexColorECM == null && hexColorECCM != null) {
+        } else if (hexColorECM == null) {
             if (eccm.isECCM()) {
                 newECCMHexes.put(coords, hexColorECCM);
             } else {

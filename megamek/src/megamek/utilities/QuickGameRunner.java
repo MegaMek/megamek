@@ -1,19 +1,45 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 
 package megamek.utilities;
+
+import static megamek.MMConstants.LOCALHOST_IP;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputFilter;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import javax.swing.SwingUtilities;
 
 import io.sentry.Sentry;
 import megamek.MMConstants;
@@ -22,7 +48,11 @@ import megamek.client.Client;
 import megamek.client.CloseClientListener;
 import megamek.client.HeadlessClient;
 import megamek.client.bot.princess.Princess;
-import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.CommanderGUI;
+import megamek.client.ui.swing.IClientGUI;
+import megamek.client.ui.swing.IDisconnectSilently;
+import megamek.client.ui.swing.MegaMekGUI;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.Game;
 import megamek.common.MekSummaryCache;
@@ -36,19 +66,12 @@ import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
 
-import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputFilter;
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import static megamek.MMConstants.*;
-
 /**
- * QuickGameRunner This class is used to run a game without minimal preparation all it needs is a game file to load and it will populate the
- * bots in the game and run the game the predefined number of turns, or until the game ends or until it times out.
+ * QuickGameRunner
+ * <p>
+ * This class is used to run a game without minimal preparation. All it needs is a game file to load, and it will
+ * populate the bots in the game and run the game the predefined number of turns, or until the game ends or until it
+ * times out.
  */
 public class QuickGameRunner {
     private static final MMLogger logger = MMLogger.create(QuickGameRunner.class);
@@ -64,16 +87,15 @@ public class QuickGameRunner {
     private final GUIType guiType;
 
     public enum GUIType {
-        DEFAULT,
-        COMMANDER,
-        NONE,
+        DEFAULT, COMMANDER, NONE,
     }
 
     /**
-     * QuickGameRunner, initializes the game and runs it
+     * QuickGameRunner initializes the game and runs it
      *
      * @param gameFile       The game file to load
-     * @param GUIType        The GUI type to use, Default is ClientGUI, Commander is CommanderGUI, None does not load a GUI at all.
+     * @param GUIType        The GUI type to use, Default is ClientGUI, Commander is CommanderGUI; None does not load a
+     *                       GUI at all.
      * @param roundsLimit    The number of rounds to run the game
      * @param timeoutMinutes The maximum number of minutes to wait for the game to complete
      */
@@ -93,8 +115,12 @@ public class QuickGameRunner {
     private void initialize() throws Exception {
         TWGameManager gameManager = new TWGameManager();
         server = new Server(null,
-            random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
-            gameManager, false, "", null, true);
+              random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
+              gameManager,
+              false,
+              "",
+              null,
+              true);
 
         Thread.sleep(1000);
         PreferenceManager.getClientPreferences().setStampFilenames(true);
@@ -115,7 +141,7 @@ public class QuickGameRunner {
     }
 
     private CountDownLatch startGame(File saveFile, GameListenerAdapter gameListenerAdapter, int rounds)
-        throws IOException {
+          throws IOException {
         assert rounds > 0;
         switch (guiType) {
             case COMMANDER, NONE:
@@ -149,8 +175,8 @@ public class QuickGameRunner {
     }
 
     /**
-     * GameThread Based on the GameThread from MekHQ, this thread serves to separate the place where we setup some parts of the game from
-     * the place where we actually run the game.
+     * GameThread Based on the GameThread from MekHQ, this thread serves to separate the place where we set up some
+     * parts of the game from the place where we actually run the game.
      */
     private static class GameThread extends Thread implements CloseClientListener {
         private static final MMLogger logger = MMLogger.create(GameThread.class);
@@ -265,19 +291,23 @@ public class QuickGameRunner {
         }
 
         private void initializePlayers() {
-            var ghosts = server.getGame().getPlayersList().stream()
-                .filter(Player::isBot)
-                .sorted(Comparator.comparingInt(Player::getId)).toList();
+            var ghosts = server.getGame()
+                               .getPlayersList()
+                               .stream()
+                               .filter(Player::isBot)
+                               .sorted(Comparator.comparingInt(Player::getId))
+                               .toList();
 
             for (var ghost : ghosts) {
                 var behavior = ((Game) server.getGame()).getBotSettings().get(ghost.getName());
-                Princess botClient = Princess.createPrincess(ghost.getName(), server.getHost(), server.getPort(),
-                    behavior);
+                Princess botClient = Princess.createPrincess(ghost.getName(),
+                      server.getHost(),
+                      server.getPort(),
+                      behavior);
                 if (botClient.connect()) {
                     getLocalBots().put(botClient.getName(), botClient);
                     int retryCount = 0;
-                    while ((botClient.getLocalPlayer() == null)
-                        && (retryCount++ < 250)) {
+                    while ((botClient.getLocalPlayer() == null) && (retryCount++ < 250)) {
                         try {
                             Thread.sleep(50);
                         } catch (Exception ignored) {
@@ -360,12 +390,12 @@ public class QuickGameRunner {
     public static void main(String[] args) {
         if (args.length < 1) {
             System.out.println(
-                "Usage: QuickGameRunner <gameFile> [guiType] [rounds] [timeout]: GUITypes are 0=DEFAULT, 1=COMMANDER, 2=NONE");
+                  "Usage: QuickGameRunner <gameFile> [guiType] [rounds] [timeout]: GUITypes are 0=DEFAULT, 1=COMMANDER, 2=NONE");
             System.out.println(
-                " - The game to be loaded need to have all the players with units set as bots in the save file");
+                  " - The game to be loaded need to have all the players with units set as bots in the save file");
             System.out.println(" - rounds is a limit of rounds to run the game until it stops");
             System.out.println(
-                " - timeout is a number of minutes to wait the game completion, it will kill the game if it takes longer than this");
+                  " - timeout is a number of minutes to wait the game completion, it will kill the game if it takes longer than this");
             System.exit(1);
         }
 

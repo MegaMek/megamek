@@ -1,17 +1,30 @@
 /*
-* MegaMek -
-* Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ */
 package megamek.common.util;
 
 import java.util.HashMap;
@@ -23,7 +36,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
@@ -40,31 +52,19 @@ public class EmailService {
 
     private static class RoundReportMessage extends MimeMessage {
 
-        private RoundReportMessage(InternetAddress from,
-                Player to,
-                Game game,
-                Vector<Report> reports,
-                int sequenceNumber,
-                Session session) throws Exception {
+        private RoundReportMessage(InternetAddress from, Player to, Game game, Vector<Report> reports,
+              int sequenceNumber, Session session) throws Exception {
             super(session);
 
-            // Since MM mutates game state as it progresses, need to
-            // fully create the complete message here, so that by the
-            // time it is sent things like the current round number
-            // hasn't changed from underneath it
+            // Since MM mutates game state as it progresses, need to fully create the complete message here, so that
+            // by the time it is sent, things like the current round number haven't changed from underneath it
 
             setFrom(from);
-            setRecipient(
-                    RecipientType.TO,
-                    new InternetAddress(to.getEmail(), to.getName()));
+            setRecipient(RecipientType.TO, new InternetAddress(to.getEmail(), to.getName()));
 
-            setHeader(
-                    "Message-ID",
-                    newMessageId(from, to, game, sequenceNumber));
+            setHeader("Message-ID", newMessageId(from, to, game, sequenceNumber));
             if (sequenceNumber > 0) {
-                setHeader(
-                        "In-Reply-To",
-                        newMessageId(from, to, game, sequenceNumber - 1));
+                setHeader("In-Reply-To", newMessageId(from, to, game, sequenceNumber - 1));
             }
 
             Report subjectReport;
@@ -86,22 +86,18 @@ public class EmailService {
         }
 
         @Override
-        protected void updateMessageID() throws MessagingException {
+        protected void updateMessageID() {
             // no-op, we have already set it in the ctor
         }
 
-        private static String newMessageId(InternetAddress from,
-                Player to,
-                Game game,
-                int actualSequenceNumber) {
+        private static String newMessageId(InternetAddress from, Player to, Game game, int actualSequenceNumber) {
             final var address = from.getAddress();
-            return String.format(
-                    "<megamek.%s.%d.%d.%d@%s>",
-                    game.getUUIDString(),
-                    game.getRoundCount(),
-                    to.getId(),
-                    actualSequenceNumber,
-                    address.substring(address.indexOf("@") + 1));
+            return String.format("<megamek.%s.%d.%d.%d@%s>",
+                  game.getUUIDString(),
+                  game.getRoundCount(),
+                  to.getId(),
+                  actualSequenceNumber,
+                  address.substring(address.indexOf("@") + 1));
         }
 
     }
@@ -115,8 +111,7 @@ public class EmailService {
     private boolean running = true;
 
     public EmailService(Properties mailProperties) throws Exception {
-        this.from = InternetAddress.parse(
-                mailProperties.getProperty("megamek.smtp.from", ""))[0];
+        this.from = InternetAddress.parse(mailProperties.getProperty("megamek.smtp.from", ""))[0];
 
         Authenticator auth = null;
         var login = mailProperties.getProperty("megamek.smtp.login", "").trim();
@@ -139,8 +134,7 @@ public class EmailService {
     public Vector<Player> getEmailablePlayers(Game game) {
         Vector<Player> emailable = new Vector<>();
         for (var player : game.getPlayersList()) {
-            if (!StringUtility.isNullOrBlank(player.getEmail()) && !player.isBot()
-                    && !player.isObserver()) {
+            if (!StringUtility.isNullOrBlank(player.getEmail()) && !player.isBot() && !player.isObserver()) {
                 emailable.add(player);
             }
         }
@@ -156,8 +150,7 @@ public class EmailService {
             }
             messageSequences.put(player, nextSequence);
         }
-        return new RoundReportMessage(
-                from, player, game, reports, nextSequence, mailSession);
+        return new RoundReportMessage(from, player, game, reports, nextSequence, mailSession);
     }
 
     public void send(final Message message) {

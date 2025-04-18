@@ -1,22 +1,31 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.server;
 
@@ -141,7 +150,7 @@ public class Server implements Runnable {
                         packetQueue.wait();
                     }
                 } catch (InterruptedException ignored) {
-                    // If we are interrupted, just keep going, generally this happens after we are signalled to stop.
+                    // If we are interrupted, keep going; generally this happens after we are signaled to stop.
                 }
             }
         }
@@ -165,7 +174,7 @@ public class Server implements Runnable {
 
     private int connectionCounter;
 
-    // listens for and connects players
+    // listens to and connects players
     private Thread connector;
 
     private final PacketPump packetPump;
@@ -371,8 +380,8 @@ public class Server implements Runnable {
      * @param password                  the <code>String</code> that is set as a password
      * @param port                      the <code>int</code> value that specifies the port that is used
      * @param gameManager               the {@link IGameManager} instance for this server instance.
-     * @param registerWithServerBrowser a <code>boolean</code> indicating whether we should register with the master
-     *                                  server browser on <a href="https://api.megamek.org">...</a>
+     * @param registerWithServerBrowser a <code>boolean</code> indicating whether we should register with the primary
+     *                                  server browser on <a href="https://api.megamek.org">our API Site</a>
      * @param mailer                    an email service instance to use for sending round reports.
      * @param dedicated                 set to true if this server is started from a GUI-less context
      */
@@ -387,7 +396,7 @@ public class Server implements Runnable {
         // initialize server socket
         serverSocket = new ServerSocket(port);
 
-        messageOfTheDay = createMotd();
+        messageOfTheDay = createMOTD();
 
         // display server start text
         LOGGER.info("s: starting a new server...");
@@ -442,7 +451,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Sets the game for this server. Restores any transient fields, and sets all players as ghosts. This should only be
+     * Sets the game for this server. Restores any transient fields and sets all players as ghosts. This should only be
      * called during server initialization before any players have connected.
      */
     public void setGame(IGame g) {
@@ -460,7 +469,7 @@ public class Server implements Runnable {
     /**
      * Make a default message o' the day containing the version string, and if it was found, the build timestamp
      */
-    private String createMotd() {
+    private String createMOTD() {
         return "Welcome to MegaMek. Server is running version " + SuiteConstants.VERSION;
     }
 
@@ -569,7 +578,10 @@ public class Server implements Runnable {
 
     /**
      * Returns a free entity id. Perhaps this should be in Game instead.
+     *
+     * @deprecated no indicated uses
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public int getFreeEntityId() {
         return getGame().getNextEntityId();
     }
@@ -629,7 +641,7 @@ public class Server implements Runnable {
                     dupNum++;
                     newName = oldName.substring(0, oldName.lastIndexOf('.'));
                 } catch (Exception e) {
-                    // If this fails, we don't care much. Just assume it's the first time for this name.
+                    // If this fails, we don't care much. Assume it's the first time for this name.
                     dupNum = 2;
                 }
                 newName = newName.concat(".").concat(Integer.toString(dupNum));
@@ -669,7 +681,7 @@ public class Server implements Runnable {
         boolean returning = false;
         String message;
 
-        // this had better be from a pending connection
+        // this had better been from a pending connection
         if (conn == null) {
             LOGGER.warn("Got a client name from a non-pending connection");
             return;
@@ -740,7 +752,7 @@ public class Server implements Runnable {
         LOGGER.info(message);
 
         if (showIPAddressesInChat) {
-            // Send the port we're listening on. Only useful for the player on the server machine to check.
+            // Send the port we're listening to on. Only useful for the player on the server machine to check.
             sendServerChat(connId, message);
         }
 
@@ -943,11 +955,11 @@ public class Server implements Runnable {
     /**
      * When the load command is used, there is a list of already connected players which have assigned names and player
      * id numbers with the id numbers matching the connection numbers. When a new game is loaded, this mapping may need
-     * to be updated. This method takes a map of player names to their current ids, and uses the list of players to
+     * to be updated. This method takes a map of player names to their current ids and uses the list of players to
      * figure out what the current ids should change to.
      *
      * @param nameToIdMap This maps a player name to the current connection ID
-     * @param idToNameMap This maps a current conn ID to a player name, and is just the inverse mapping from
+     * @param idToNameMap This maps a current connection ID to a player name, and is just the inverse mapping from
      *                    nameToIdMap
      */
     public void remapConnIds(Map<String, Integer> nameToIdMap, Map<Integer, String> idToNameMap) {
@@ -962,7 +974,7 @@ public class Server implements Runnable {
             currentPlayerNames.add(p.getName());
         }
 
-        // Map the old connection ID to new value
+        // Map the old connection ID to a new value
         Map<Integer, Integer> connIdRemapping = new HashMap<>();
         for (Player p : getGame().getPlayersList()) {
             // Check to see if this player was already connected
@@ -1025,7 +1037,7 @@ public class Server implements Runnable {
             send(newId, new Packet(PacketCommand.LOCAL_PN, newId));
         }
 
-        // Ensure all clients are up-to-date on player info
+        // Ensure all clients are up to date on player info
         transmitAllPlayerUpdates();
     }
 
@@ -1134,7 +1146,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Player can request its own change of team
+     * Player can request its own change of a team
      *
      * @param teamId target team id
      * @param player player requesting the change
@@ -1147,7 +1159,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Player can request its own change of team
+     * Player can request its own change of a team
      *
      * @param teamID target team id
      * @param player player requesting the change

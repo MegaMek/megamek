@@ -1,5 +1,4 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
@@ -139,7 +138,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     /**
-     * Construct a MegaMek, and display the main menu in the specified frame.
+     * Construct a MegaMek and display the main menu in the specified frame.
      */
     private void createGUI(boolean show) {
         createController();
@@ -181,7 +180,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.setJMenuBar(menuBar);
         showMainMenu();
 
-        // set visible on middle of screen
+        // set visible in the middle of the screen
         frame.setLocationRelativeTo(null);
         // init the cache
         MekSummaryCache.getInstance();
@@ -286,8 +285,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         int height = metrics.getHeight();
         Dimension textDim = new Dimension(width + 50, height + 10);
 
-        // Strive for no more than ~90% of the screen and use golden ratio to make
-        // the button width "look" reasonable.
+        // Strive for no more than ~90% of the screen and use a golden ratio to make the button width "look" reasonable.
         int maximumWidth = (int) (0.9 * scaledMonitorSize.width) - splash.getPreferredSize().width;
 
         //no more than 50% of image width
@@ -560,7 +558,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
-        // free some memory that's only needed in lounge This normally happens in the deployment phase in Client, but
+        // free some memory only needed in lounge This normally happens in the deployment phase in Client, but
         // if we are loading a game, this phase may not be reached
         MekFileParser.dispose();
         // We must do this last, as the name and unit generators can create a new instance if they are running
@@ -588,7 +586,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         });
         int returnVal = fc.showOpenDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-            // I want a file, y'know!
+            // I want a file
             return;
         }
 
@@ -994,7 +992,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     /**
-     * Called when the quit buttons is pressed or the main menu is closed.
+     * Called when the quit buttons are pressed or the main menu is closed.
      */
     static void quit() {
         MegaMek.getMMPreferences().saveToFile(SuiteConstants.MM_PREFERENCES_FILE);
@@ -1012,7 +1010,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Hides this window for later. Listens to the frame until it closes, then calls unlaunch().
      */
     private void launch(JFrame launched) {
-        // listen to new frame
+        // listen to the new frame
         launched.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -1027,7 +1025,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Un-hides the main menu and tries to clean up the client or server.
      */
     void unlaunch() {
-        // clean up server, if we have one
+        // clean up a server if we have one
         if (server != null) {
             server.die();
             server = null;
@@ -1138,15 +1136,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             // Default to the HD splash screen.
             String splashFileName = splashScreens.get(3);
             if ((screenWidth > 1920) && (screenHeight > 1080)) {
-                // If both height and width is greater than 1080p use the UHD splash screen.
+                // If both height and width are greater than 1080p, use the UHD splash screen.
                 splashFileName = splashScreens.get(2);
             } else if ((screenWidth > 1280) && (screenHeight > 720)) {
-                // If both height and width is greater than 720p then use the FHD splash screen.
+                // If both height and width are greater than 720p, then use the FHD splash screen.
                 splashFileName = splashScreens.get(0);
             }
             return splashFileName;
         }
-        // List of splash screens is not complete so default to the first splash screen.
+        // The list of splash screens is not complete so default to the first splash screen.
         return splashScreens.get(0);
     }
 
@@ -1165,7 +1163,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         Image img = ImageUtil.loadImageFromFile(file.toString());
-        // wait for splash image to load completely
+        // wait for the splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);
         tracker.addImage(img, 0);
         try {
@@ -1205,7 +1203,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             } else {
                 BufferedImage img = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
                 images.add(img);
-                // wait for splash image to load completely
+                // wait for the splash image to load completely
                 MediaTracker tracker = new MediaTracker(frame);
                 tracker.addImage(img, 0);
                 try {

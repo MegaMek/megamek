@@ -1,20 +1,29 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This file is part of MegaMek.
+ * This file is part of MegaMek.
  *
- *  MekHQ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
- *  MekHQ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with MekHQ. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.test;
 
@@ -35,9 +44,7 @@ import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class ScenarioLoaderTest {
-    private List<String> errCache = new ArrayList<>();
-    private PrintStream cachedPs;
-    private PrintStream originalOut;
+    private final List<String> errCache = new ArrayList<>();
     private PrintStream originalErr;
 
     public static void main(String[] args) throws ScenarioLoaderException, IOException {
@@ -46,21 +53,21 @@ public class ScenarioLoaderTest {
         System.exit(0);
     }
 
-    public List<String> runTests() throws ScenarioLoaderException, IOException {
+    public void runTests() throws ScenarioLoaderException, IOException {
         List<String> errorAccumulator = new ArrayList<>();
         PrintStream nullPs = new PrintStream(new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b) {
                 // Output nothing
             }
         });
-        originalOut = System.out;
+        PrintStream originalOut = System.out;
         System.setOut(nullPs);
-        cachedPs = new PrintStream(new OutputStream() {
-            private StringBuilder line = new StringBuilder();
+        PrintStream cachedPs = new PrintStream(new OutputStream() {
+            private final StringBuilder line = new StringBuilder();
 
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b) {
                 if (b == '\n') {
                     String s = line.toString();
                     if (!s.startsWith("MMRandom: generating RNG")) {
@@ -79,7 +86,7 @@ public class ScenarioLoaderTest {
         MekSummaryCache msc = MekSummaryCache.getInstance();
         while (!msc.isInitialized()) {
             try {
-                Thread.sleep(1000);
+                wait(1000);
             } catch (InterruptedException ignored) {
 
             }
@@ -91,10 +98,10 @@ public class ScenarioLoaderTest {
         System.setErr(originalErr);
         cachedPs.close();
         nullPs.close();
-        return errorAccumulator;
     }
 
-    private void checkScenarioFile(File file, List<String> errorAccumulator) throws ScenarioLoaderException, IOException {
+    private void checkScenarioFile(File file, List<String> errorAccumulator)
+          throws ScenarioLoaderException, IOException {
         int port = 7770;
         if (null == file) {
             return;
@@ -102,16 +109,12 @@ public class ScenarioLoaderTest {
         if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) {
             ScenarioLoader loader = new ScenarioLoader(file);
             ScenarioV1 scenario = (ScenarioV1) loader.load();
-            try {
-                Game game = (Game) scenario.createGame();
-                TWGameManager gameManager = new TWGameManager();
-                Server server = new Server("test", port + 1, gameManager);
-                server.setGame(game);
-                scenario.applyDamage(gameManager);
-                server.die();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            Game game = (Game) scenario.createGame();
+            TWGameManager gameManager = new TWGameManager();
+            Server server = new Server("test", port + 1, gameManager);
+            server.setGame(game);
+            scenario.applyDamage(gameManager);
+            server.die();
 
             if (!errCache.isEmpty()) {
                 errorAccumulator.add("ERROR in " + file.getPath());

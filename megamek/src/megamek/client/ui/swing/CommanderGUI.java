@@ -1,19 +1,41 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 
 package megamek.client.ui.swing;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+import javax.swing.*;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -35,14 +57,6 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.logging.MMLogger;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-
 /**
  * @author Luana Coppio
  */
@@ -61,6 +75,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
     private JPanel centerPanel;
 
     private final TreeMap<Integer, String> splashImages = new TreeMap<>();
+
     {
         splashImages.put(0, Configuration.miscImagesDir() + "/acar_splash_hd.png");
     }
@@ -95,12 +110,12 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         while (alive) {
             currentNanos = System.nanoTime();
             elapsedNanos = currentNanos - previousNanos;
-            // keeps around 60fps, not that it is important now, but anyway
+            // keeps around 60 fps, not that it is important now but anyway
             tick(elapsedNanos / 1_000_000);
             previousNanos = currentNanos;
             awaitMillis = (targetFrameTimeNanos - elapsedNanos) / 1_000_000;
             try {
-                Thread.sleep(Math.max(1, awaitMillis));
+                wait(Math.max(1, awaitMillis));
             } catch (InterruptedException ignored) {
                 logger.error("Interrupted while waiting for next frame");
                 alive = false;
@@ -117,7 +132,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
     public void initialize() {
         JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // Center: Splash image with progress bar
+        // Center: Splash image with the progress bar
         centerPanel = new JPanel(new BorderLayout());
         JLabel splashImage = UIUtil.createSplashComponent(splashImages, getFrame());
         MiniReportDisplay miniReportDisplay = new MiniReportDisplay(this);
@@ -167,10 +182,10 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
                     die();
                 } else {
                     int closePrompt = JOptionPane.showConfirmDialog(null,
-                        "Would you like to exit the game?",
-                        Messages.getString("ClientGUI.gameSaveFirst"),
-                        JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
+                          "Would you like to exit the game?",
+                          Messages.getString("ClientGUI.gameSaveFirst"),
+                          JOptionPane.YES_NO_CANCEL_OPTION,
+                          JOptionPane.WARNING_MESSAGE);
                     if (closePrompt == JOptionPane.YES_OPTION) {
                         getClient().die();
                         die();
@@ -179,7 +194,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
             }
         });
 
-        // Update entity list on phase change
+        // Update an entity list on phase change
         client.getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
@@ -209,7 +224,10 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
                         progressBar.setString("Preparing...");
                     } else {
                         setupMinimap();
-                        progressBar.setString("Round #" + game.getCurrentRound() + ": " + e.getNewPhase().localizedName());
+                        progressBar.setString("Round #" +
+                                                    game.getCurrentRound() +
+                                                    ": " +
+                                                    e.getNewPhase().localizedName());
                     }
                 }
                 entityListEntries.removeAll();
@@ -217,7 +235,10 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
                 game.getInGameObjects().stream().filter(entity -> entity instanceof Entity).forEach(ent -> {
                     var entity = (Entity) ent;
                     var isCrippled = entity.isCrippled(true);
-                    var entityLabelText = entity.getId() + " - " + entity.getDisplayName() + (isCrippled ? " (Crippled)" : "");
+                    var entityLabelText = entity.getId() +
+                                                " - " +
+                                                entity.getDisplayName() +
+                                                (isCrippled ? " (Crippled)" : "");
                     JLabel entityLabel = new JLabel(entityLabelText);
                     entityLabel.setForeground(entity.getOwner().getColour().getColour());
                     entityListEntries.add(entityLabel);
@@ -281,13 +302,12 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
 
     public void enableReady() {
         if (buttonPanel != null) {
-            buttonPanel.setMiscButton(
-                Messages.getString("BotCommandPanel.Ready.title"),
-                Messages.getString("BotCommandPanel.Ready.tooltip"),
-                e -> {
-                    getLocalBots().values().forEach(bot -> bot.sendDone(true));
-                    client.sendDone(true);
-                });
+            buttonPanel.setMiscButton(Messages.getString("BotCommandPanel.Ready.title"),
+                  Messages.getString("BotCommandPanel.Ready.tooltip"),
+                  e -> {
+                      getLocalBots().values().forEach(bot -> bot.sendDone(true));
+                      client.sendDone(true);
+                  });
             setupMinimap();
         }
     }

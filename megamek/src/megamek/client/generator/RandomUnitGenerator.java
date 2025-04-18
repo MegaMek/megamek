@@ -1,23 +1,33 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
+
 package megamek.client.generator;
 
 import java.awt.event.ActionEvent;
@@ -52,13 +62,13 @@ import megamek.logging.MMLogger;
  * This class sets up a random unit generator that can then be used to read in user-created input files of random
  * assignment tables
  * <p>
- * Files must be located in the directory defined by {@link Configuration#armyTablesDir()}. All files should
+ * Files must be located in the directory defined by {@link Configuration#armyTablesDir()}. All files should be
  * comma-delimited text files.
  * </p>
  * <p>
  * The first line of the file should contain the title of the RAT The second line of the file should give the unit type
  * number corresponding to UnitType.java The remaining lines should be comma split. The first field should give the
- * frequency of that unit and the second line should give the name of that unit written as { Model } { Chassis }.
+ * frequency of that unit, and the second line should give the name of that unit written as { Model } { Chassis }.
  * Comment lines can also be added with "#".
  * </p>
  *
@@ -70,7 +80,7 @@ public class RandomUnitGenerator implements Serializable {
     @Serial
     private static final long serialVersionUID = 5765118329881301375L;
 
-    // The RATs are stored in a hashmap of string vectors. The keys are the RAT names and the vectors just contain
+    // The RATs are stored in a hashmap of string vectors. The keys are the RAT names, and the vectors just contain
     // the unit names listed a number of times equal to the frequency
     private final Map<String, RatEntry> rats = new HashMap<>();
     private static RandomUnitGenerator rug;
@@ -83,7 +93,7 @@ public class RandomUnitGenerator implements Serializable {
 
     /**
      * Plain old data class used to represent nodes in a Random Assignment Table tree. RATs are grouped into categories
-     * based on directory structure, and will be displayed hierarchically to the user.
+     * based on directory structure and will be displayed hierarchically to the user.
      */
     public static class RatTreeNode implements Comparable<RatTreeNode> {
         public RatTreeNode(String name) {
@@ -152,7 +162,7 @@ public class RandomUnitGenerator implements Serializable {
         long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
         while (!interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis()) {
             try {
-                Thread.sleep(50);
+                wait(50);
             } catch (InterruptedException ignored) {
                 // Ignore
             }
@@ -340,7 +350,7 @@ public class RandomUnitGenerator implements Serializable {
                         }
                     }
                 } catch (Exception ex) {
-                    LOGGER.error(ex, "Unable to load {}", ratFile.getName());
+                    LOGGER.error(ex, "(loadRatsFrom Directory) Unable to load {}", ratFile.getName());
                 }
             }
 
@@ -370,7 +380,7 @@ public class RandomUnitGenerator implements Serializable {
      *
      * @param numRolls - the number of units to roll from the RAT
      * @param ratName  - name of the RAT to roll on
-     * @param filter   - entries in the RAT must pass this condition to be included. If null, no filter is applied.
+     * @param filter   - Entries in the RAT must pass this condition to be included. If null, no filter is applied.
      *
      * @return - a list of units determined by the random rolls
      */
@@ -383,7 +393,7 @@ public class RandomUnitGenerator implements Serializable {
             // give the RATs a few seconds to load
             while (!initialized && (retryCount < 5)) {
                 try {
-                    Thread.sleep(1000);
+                    wait(1000);
                 } catch (Exception ignored) {
 
                 }

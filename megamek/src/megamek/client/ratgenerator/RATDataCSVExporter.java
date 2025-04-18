@@ -1,21 +1,31 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
+
 package megamek.client.ratgenerator;
 
 import java.io.BufferedWriter;
@@ -27,7 +37,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
@@ -36,8 +45,7 @@ import megamek.common.UnitType;
 import megamek.logging.MMLogger;
 
 /**
- * This class provides export for MM's RAT data to an excel-optimized CSV file
- * for exchanging data with the MUL team.
+ * This class provides export for MM's RAT data to an excel-optimized CSV file for exchanging data with the MUL team.
  */
 public class RATDataCSVExporter {
     private static final MMLogger logger = MMLogger.create(RATDataCSVExporter.class);
@@ -47,15 +55,17 @@ public class RATDataCSVExporter {
 
     /**
      * Exports all RAT data to a selectable file as an excel-optimized CSV.
+     *
+     * @deprecated Use {@link #exportToCSV(RATGenerator)} instead.
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public static void exportToCSV() {
         RATGenerator ratGenerator = initializeRatGenerator();
         exportToCSV(ratGenerator);
     }
 
     /**
-     * Exports all RAT data from the given RATGenerator to a selectable file as an
-     * excel-optimized CSV.
+     * Exports all RAT data from the given RATGenerator to a selectable file as an excel-optimized CSV.
      */
     public static void exportToCSV(RATGenerator ratGenerator) {
         File saveFile = getSaveTargetFile();
@@ -69,10 +79,22 @@ public class RATDataCSVExporter {
         }
 
         try (PrintWriter pw = new PrintWriter(saveFile); BufferedWriter bw = new BufferedWriter(pw)) {
-            String columnNames = "Chassis" + DELIMITER + "Model" + DELIMITER + "Model/Chassis Data" + DELIMITER
-                    + "MUL ID"
-                    + DELIMITER + "Unit Type" + DELIMITER + "Intro Date" + DELIMITER + "Faction ID" + DELIMITER +
-                    "Faction" + DELIMITER;
+            String columnNames = "Chassis" +
+                                       DELIMITER +
+                                       "Model" +
+                                       DELIMITER +
+                                       "Model/Chassis Data" +
+                                       DELIMITER +
+                                       "MUL ID" +
+                                       DELIMITER +
+                                       "Unit Type" +
+                                       DELIMITER +
+                                       "Intro Date" +
+                                       DELIMITER +
+                                       "Faction ID" +
+                                       DELIMITER +
+                                       "Faction" +
+                                       DELIMITER;
             columnNames += String.join(DELIMITER, eraYears) + "\n";
 
             bw.write(columnNames);
@@ -204,8 +226,5 @@ public class RATDataCSVExporter {
             }
         }
         return choice;
-    }
-
-    private RATDataCSVExporter() {
     }
 }

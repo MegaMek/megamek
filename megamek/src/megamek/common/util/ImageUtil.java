@@ -1,17 +1,30 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018 The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  */
 package megamek.common.util;
 
@@ -211,8 +224,11 @@ public final class ImageUtil {
     }
 
     /**
-     * Add a new image loader to the first position of the list, if it isn't there already
+     * Add a new image loader to the first position of the list if it isn't there already
+     *
+     * @deprecated no indicated uses
      */
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public static void addImageLoader(ImageLoader loader) {
         if (null != loader && !IMAGE_LOADERS.contains(loader)) {
             IMAGE_LOADERS.add(0, loader);
@@ -220,13 +236,13 @@ public final class ImageUtil {
     }
 
     /**
-     * Loads and returns the image of the given fileName. This method does not make sure the image is fully loaded, this
+     * Loads and returns the image of the given fileName. This method does not make sure the image is fully loaded; this
      * must be done by the caller when necessary (the simplest way is to create a new ImageIcon with the image). If the
      * image cannot be loaded for any reason, the method returns a placeholder image but not null.
      *
      * @param fileName The image filename
      *
-     * @return The image if possible, a placeholder image otherwise
+     * @return The image, if possible, a placeholder image otherwise
      */
     public static Image loadImageFromFile(String fileName) {
         if (null == fileName) {
@@ -243,13 +259,13 @@ public final class ImageUtil {
 
 
     /**
-     * Loads and returns the image of the given fileName. This method does not make sure the image is fully loaded, this
+     * Loads and returns the image of the given fileName. This method does not make sure the image is fully loaded; this
      * must be done by the caller when necessary (the simplest way is to create a new ImageIcon with the image). If the
      * image cannot be loaded for any reason, the method returns a placeholder image but not null.
      *
      * @param file The image as a MegaMekFile
      *
-     * @return The image if possible, a placeholder image otherwise
+     * @return The image, if possible, a placeholder image otherwise
      */
     public static Image loadImageFromFile(MegaMekFile file) {
         return loadImageFromFile(file.toString());
@@ -305,13 +321,13 @@ public final class ImageUtil {
     }
 
     /**
-     * ImageLoader that loads sub-regions from a larger atlas file. The filename is assumed to have the format
-     * {imageFile}(X,Y-Width,Height), where X,Y is the start of the image tile, and Width,Height are the size of the
+     * ImageLoader that loads subregions from a larger atlas file. The filename is assumed to have the format
+     * {imageFile}(X, Y-Width, Height), where X, Y is the start of the image tile, and Width, Height is the size of the
      * image tile.
      */
     public static class TileMapImageLoader implements ImageLoader {
         /**
-         * Given a String with the format "X,Y" split this into the X,Y components, and use those to create a Coords
+         * Given a String with the format "X, Y" split this into the X, Y components, and use those to create a Coords
          * object.
          *
          * @param coords String containing coordinates.
@@ -339,8 +355,8 @@ public final class ImageUtil {
         }
 
         /**
-         * Given a string with the format {imageFile}(X,Y-W,H), load the image file and then use X,Y and W,H to find a
-         * sub-image within the original image and return that sub-image.
+         * Given a string with the format {imageFile}(X, Y-W, H), load the image file and then use X, Y and W, H to find
+         * a sub-image within the original image and return that sub-image.
          */
         @Override
         public @Nullable Image loadImage(String fileName) {
@@ -398,10 +414,10 @@ public final class ImageUtil {
     }
 
     /**
-     * ImageLoader that loads sub-regions from a larger atlas file, but is given file names that are mapped into an
-     * atlas. When constructed, this class reads in a map that maps image files to an atlas image and offset location.
-     * When an image file is requested to be opened, it first looks to see if the map contains that file, and if it does
-     * return an image from the corresponding key which includes an atlas and offset.
+     * ImageLoader that loads subregions from a larger atlas file but is given file names that are mapped into an atlas.
+     * When constructed, this class reads in a map that maps image files to an atlas image and offset location. When an
+     * image file is requested to be opened, it first looks to see if the map contains that file, and if it does, return
+     * an image from the corresponding key which includes an atlas and offset.
      */
     public static class AtlasImageLoader extends TileMapImageLoader {
         ImageAtlasMap imgFileToAtlasMap;
@@ -472,7 +488,7 @@ public final class ImageUtil {
                 g2d.dispose();
                 return img;
             } else {
-                // Otherwise just return the image loaded from the atlas
+                // Otherwise return the image loaded from the atlas
                 return super.loadImage(imgFileToAtlasMap.get(p));
             }
         }
@@ -541,7 +557,7 @@ public final class ImageUtil {
     }
 
     /**
-     * takes an image and converts it to text in the Base64 encoding. When the given image is null, an empty String is
+     * Takes an image and converts it to text in the Base64 encoding. When the given image is null, an empty String is
      * returned.
      */
     public static String base64TextEncodeImage(@Nullable Image image) {
@@ -565,7 +581,7 @@ public final class ImageUtil {
     }
 
     /**
-     * creates a ? image, used when units are hidden in double-blind
+     * creates an ? image, used when units are hidden in double-blind
      */
     public static void createDoubleBlindHiddenImage(Map<Integer, String> imgCache) {
         BufferedImage image = new BufferedImage(56, 48, BufferedImage.TYPE_INT_ARGB);
@@ -585,7 +601,7 @@ public final class ImageUtil {
 
     /**
      * Returns a square normalized Kernel for a Gaussian Blur. The Kernel has width x width elements. Sigma gives its
-     * Gauss sharpness. A high sigma of e.g. 1000 returns a flat Kernel of equal elements (= 1 / width ^ 2); sigma
+     * Gauss sharpness. A high sigma of e.g., 1000 returns a flat Kernel of equal elements (= 1 / width ^ 2); sigma
      * should not be smaller than about 0.2 (will lead to an exception). Normal sigma values are in the area of 1 to 5.
      *
      * @param width The length and height of the Kernel

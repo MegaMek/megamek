@@ -682,9 +682,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     private static Version getVersion(Node n) {
         final NodeList nl = n.getChildNodes();
-        String release = null;
         String major = null;
         String minor = null;
+        String patch = null;
         String extra = null;
         for (int i = 0; i < nl.getLength(); i++) {
             final Node n2 = nl.item(i);
@@ -693,14 +693,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
 
             switch (n2.getNodeName()) {
-                case "release":
-                    release = n2.getTextContent();
-                    break;
                 case "major":
                     major = n2.getTextContent();
                     break;
                 case "minor":
                     minor = n2.getTextContent();
+                    break;
+                case "patch":
+                    patch = n2.getTextContent();
                     break;
                 case "snapshot":
                 case "extra":
@@ -711,7 +711,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
         }
 
-        return new Version(release, major, minor, extra);
+        return new Version(major, minor, patch, extra);
     }
 
     private void parsePlayerNames(final Node nodePlayers, final Vector<String> playerNames) {

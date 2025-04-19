@@ -45,6 +45,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6633: fixed the file entity conversion for ACAR by adding move by copy
 + Fix #6880: correct issue with show possible moves and show coords
 + PR #6891: Fix version comparisons now that isExtra is never null
++ PR #6898: Reset the dataset game action logger opt-out value so dedicated servers upgrading from 0.50.04 can log game actions with no-setup needed.
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width
@@ -175,6 +176,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6867: Excluded Infantry Attack From Edit Unit Damage Dialog
 + PR #6885: fix: wrong access for weapon arc
 + PR #6886: Change getWeaponArc signature and add JavaDocs 
++ Fix #6899: fix can not load save in same version 
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

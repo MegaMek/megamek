@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3058-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='ARDC'>
 			<pctOmni>0,0,2,5,10</pctOmni>
@@ -8594,7 +8591,7 @@
                 <availability>FWL:7</availability>
             </model>
             <model name='(Rifle AA 3056+)'>
-                <roles>anti_aircraft</roles>
+                <roles>anti_aircraft,urban</roles>
                 <availability>FWL:2+</availability>
             </model>
             <model name='(SRM 3035+)'>

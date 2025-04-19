@@ -8095,7 +8095,7 @@
                 <availability>FWL:7</availability>
             </model>
             <model name='(Rifle AA 3056+)'>
-                <roles>anti_aircraft</roles>
+                <roles>anti_aircraft,urban</roles>
                 <availability>FWL:2+</availability>
             </model>
             <model name='(SRM 3035+)'>

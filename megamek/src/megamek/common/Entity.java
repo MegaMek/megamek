@@ -13434,34 +13434,6 @@ public abstract class Entity extends TurnOrdered
         return null;
     }
 
-    /**
-     * @return non-supercharger MASC mounted on this entity, even if it is damaged or destroyed
-     */
-    public MiscMounted getOriginalMASC() {
-        for (MiscMounted m : getMisc()) {
-            MiscType miscType = m.getType();
-            if (miscType.hasFlag(MiscType.F_MASC) &&
-                      !miscType.hasSubType(MiscType.S_SUPERCHARGER) &&
-                      !miscType.hasSubType(MiscType.S_JETBOOSTER)) {
-                return m;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @return A Supercharger if there is one on this unit, even if it is damaged or destroyed
-     */
-    public MiscMounted getOriginalSuperCharger() {
-        for (MiscMounted m : getMisc()) {
-            MiscType miscType = m.getType();
-            if (miscType.hasFlag(MiscType.F_MASC) && miscType.hasSubType(MiscType.S_SUPERCHARGER)) {
-                return m;
-            }
-        }
-        return null;
-    }
-
     public abstract int getEngineHits();
 
     /**

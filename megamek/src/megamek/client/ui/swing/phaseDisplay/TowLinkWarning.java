@@ -17,7 +17,7 @@
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.phaseDisplay;
 
 import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
 import megamek.common.*;

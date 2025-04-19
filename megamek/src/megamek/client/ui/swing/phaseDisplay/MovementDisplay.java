@@ -25,7 +25,7 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.phaseDisplay.dialog.BombPayloadDialog;
 import megamek.client.ui.swing.ChoiceDialog;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.CollapseWarning;
+import megamek.client.ui.swing.boardview.CollapseWarning;
 import megamek.client.ui.swing.ConfirmDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.ManeuverChoiceDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.MineLayingDialog;

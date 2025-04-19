@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.boardview;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.phaseDisplay.DeploymentDisplay;
 import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
 import megamek.common.Board;

@@ -15,6 +15,10 @@ package megamek.client.ui.swing;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.IClientGUI;
+import megamek.client.ui.swing.IHasBoardView;
+import megamek.client.ui.swing.IHasUnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.enums.GamePhase;

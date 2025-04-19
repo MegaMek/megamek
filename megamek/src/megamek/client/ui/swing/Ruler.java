@@ -38,7 +38,6 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -46,8 +45,6 @@ import megamek.common.LosEffects;
 import megamek.common.Mek;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 import megamek.logging.MMLogger;
 
 /**

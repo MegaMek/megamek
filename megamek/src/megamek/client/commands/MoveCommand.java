@@ -20,7 +20,7 @@
 package megamek.client.commands;
 
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.MovementDisplay;
+import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;

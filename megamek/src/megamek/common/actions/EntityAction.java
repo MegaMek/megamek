@@ -23,7 +23,7 @@ import megamek.client.Client;
 import megamek.common.*;
 import megamek.client.ui.swing.AccessibilityWindow;
 import megamek.client.ui.swing.tooltip.EntityActionLog;
-import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
+import megamek.client.ui.swing.boardview.overlay.TurnDetailsOverlay;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.strategicBattleSystems.SBFFormation;
 

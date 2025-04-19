@@ -19,6 +19,7 @@
 
 package megamek.client.ui.swing;
 
+import megamek.client.ui.swing.phaseDisplay.TowLinkWarning;
 import megamek.common.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

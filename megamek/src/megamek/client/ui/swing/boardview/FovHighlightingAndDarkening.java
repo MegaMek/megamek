@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.sprite.StepSprite;
 import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.ComputeECM;

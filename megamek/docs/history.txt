@@ -52,6 +52,9 @@ MEGAMEK VERSION HISTORY:
 + PR #6902: Correct MRM-4 OS BV
 + PR #6892: Allow laser insulators to attach to chem lasers
 + PR #6890: corrected destroyed heatsinks count
++ PR #6893: Properly calculate armor crit slot count for superheavy meks
++ PR #6907: fix: removed code duplication
++ PR #6908: Homing Artillery should work direct fire when targeting a hex
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

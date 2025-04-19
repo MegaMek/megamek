@@ -120,19 +120,15 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
 
         // Position information
         if (movePath.getStartCoords() != null) {
-            map.put(Field.FROM_X, movePath.getStartCoords().getX())
-                  .put(Field.FROM_Y, movePath.getStartCoords().getY());
+            map.put(Field.FROM_X, movePath.getStartCoords().getX()).put(Field.FROM_Y, movePath.getStartCoords().getY());
         } else {
-            map.put(Field.FROM_X, -1)
-                  .put(Field.FROM_Y, -1);
+            map.put(Field.FROM_X, -1).put(Field.FROM_Y, -1);
         }
 
         if (movePath.getFinalCoords() != null) {
-            map.put(Field.TO_X, movePath.getFinalCoords().getX())
-                  .put(Field.TO_Y, movePath.getFinalCoords().getY());
+            map.put(Field.TO_X, movePath.getFinalCoords().getX()).put(Field.TO_Y, movePath.getFinalCoords().getY());
         } else {
-            map.put(Field.TO_X, -1)
-                  .put(Field.TO_Y, -1);
+            map.put(Field.TO_X, -1).put(Field.TO_Y, -1);
         }
 
         // Movement information
@@ -141,7 +137,8 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
               .put(Field.MP_USED, movePath.getMpUsed())
               .put(Field.MAX_MP, movePath.getMaxMP())
               .put(Field.MP_P, movePath.getMaxMP() > 0 ? (double) movePath.getMpUsed() / movePath.getMaxMP() : 0.0)
-              .put(Field.HEAT_P, entity.getHeatCapacity() > 0 ? entity.getHeat() / (double) entity.getHeatCapacity() : 0.0);
+              .put(Field.HEAT_P,
+                    entity.getHeatCapacity() > 0 ? entity.getHeat() / (double) entity.getHeatCapacity() : 0.0);
 
         // Status information
         map.put(Field.ARMOR_P, entity.getArmorRemainingPercent())
@@ -151,14 +148,14 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
               .put(Field.LEGAL, movePath.isMoveLegal());
 
         // Failure chance calculation
-        map.put(Field.CHANCE_OF_FAILURE, SharedUtility.getPSRList(movePath).stream()
-                                               .map(psr -> psr.getValue() / 36d)
-                                               .reduce(1.0, (a, b) -> a * b));
+        map.put(Field.CHANCE_OF_FAILURE,
+              SharedUtility.getPSRList(movePath)
+                    .stream()
+                    .map(psr -> psr.getValue() / 36d)
+                    .reduce(1.0, (a, b) -> a * b));
 
         // Movement steps
-        map.put(Field.STEPS, movePath.getStepVector().stream()
-                                   .map(MoveStep::getType)
-                                   .collect(Collectors.toList()));
+        map.put(Field.STEPS, movePath.getStepVector().stream().map(MoveStep::getType).collect(Collectors.toList()));
 
         // Entity capabilities
         map.put(Field.IS_BOT, entity.getOwner().isBot())
@@ -184,44 +181,10 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
               .put(Field.ARMOR_BACK_P, EntityFeatureUtils.getTargetBackHealthStats(entity));
 
         // Weapon information
-        List<Integer> weaponData = new ArrayList<>();
-        entity.getWeaponList().forEach(weapon -> {
-            serializeWeaponData(weapon, entity, weaponData);
-        });
+        List<Integer> weaponData = WeaponDataEncoder.getEncodedWeaponData(entity);
 
         map.put(Field.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE, weaponData);
 
         return map;
-    }
-
-    private static void serializeWeaponData(WeaponMounted weapon, Entity entity, List<Integer> weaponData) {
-        try {
-            int equipmentId = entity.getEquipmentNum(weapon);
-            var mounted = entity.getEquipment(equipmentId);
-            if (mounted == null) {
-                logger.warn("No such equipment {} [{}] for {}", weapon, equipmentId, entity);
-                return;
-            }
-
-            int arc = entity.getWeaponArc(equipmentId);
-            int shortRange = weapon.getType().getShortRange();
-            int mediumRange = weapon.getType().getMediumRange();
-            int longRange = weapon.getType().getLongRange();
-
-            int damage = Compute.computeTotalDamage(weapon);
-            weaponData.add(damage);
-            weaponData.add(arc);
-            weaponData.add(shortRange);
-            weaponData.add(mediumRange);
-            weaponData.add(longRange);
-        } catch (Exception e) {
-            logger.error(e, "Error while trying to serialize Weapon {} data for {}", weapon, entity);
-            // Error, log this instead
-            weaponData.add(-1);
-            weaponData.add(-1);
-            weaponData.add(-1);
-            weaponData.add(-1);
-            weaponData.add(-1);
-        }
     }
 }

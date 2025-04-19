@@ -164,45 +164,10 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.ARMOR_BACK_P, EntityFeatureUtils.getTargetBackHealthStats(entity));
 
         // Weapon information
-        List<Integer> weaponData = new ArrayList<>();
-        entity.getWeaponList().forEach(weapon -> {
-            serializeWeaponData(weapon, entity, weaponData);
-        });
+        List<Integer> weaponData = WeaponDataEncoder.getEncodedWeaponData(entity);
 
         map.put(Field.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE, weaponData);
 
         return map;
-    }
-
-
-    private static void serializeWeaponData(WeaponMounted weapon, Entity entity, List<Integer> weaponData) {
-        try {
-            int equipmentId = entity.getEquipmentNum(weapon);
-            var mounted = entity.getEquipment(equipmentId);
-            if (mounted == null) {
-                logger.warn("No such equipment {} [{}] for {}", weapon, equipmentId, entity);
-                return;
-            }
-
-            int arc = entity.getWeaponArc(equipmentId);
-            int shortRange = weapon.getType().getShortRange();
-            int mediumRange = weapon.getType().getMediumRange();
-            int longRange = weapon.getType().getLongRange();
-
-            int damage = Compute.computeTotalDamage(weapon);
-            weaponData.add(damage);
-            weaponData.add(arc);
-            weaponData.add(shortRange);
-            weaponData.add(mediumRange);
-            weaponData.add(longRange);
-        } catch (Exception e) {
-            logger.error(e, "Error while trying to serialize Weapon {} data for {}", weapon, entity);
-            // Error, log this instead
-            weaponData.add(-1);
-            weaponData.add(-1);
-            weaponData.add(-1);
-            weaponData.add(-1);
-            weaponData.add(-1);
-        }
     }
 }

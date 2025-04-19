@@ -1080,8 +1080,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // Grab a copy of the game.
         Game game = null;
 
-        if (unitDisplay.getClientGUI() != null) {
-            game = unitDisplay.getClientGUI().getClient().getGame();
+        if (unitDisplay.getClient() != null) {
+            game = unitDisplay.getClient().getGame();
         }
 
         // update pointer to weapons
@@ -1884,8 +1884,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wDamR.setText(damage.toString());
         } else if (wtype.hasFlag(WeaponType.F_ENERGY)
                 && mounted.hasModes()
-                && (unitDisplay.getClientGUI() != null)
-                && unitDisplay.getClientGUI().getClient().getGame().getOptions().booleanOption(
+                && (unitDisplay.getClient() != null)
+                && unitDisplay.getClient().getGame().getOptions().booleanOption(
                         OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
             if (mounted.hasChargedCapacitor() != 0) {
                 if (mounted.hasChargedCapacitor() == 1) {
@@ -2116,7 +2116,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         // send event to other parts of the UI which care
-        unitDisplay.getClientGUI().showSensorRanges(entity);
+        if (unitDisplay.getClientGUI() != null) {
+            unitDisplay.getClientGUI().showSensorRanges(entity);
+        }
         unitDisplay.processMekDisplayEvent(new MekDisplayEvent(this, entity, mounted));
         onResize();
         addListeners();

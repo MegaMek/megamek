@@ -50,14 +50,13 @@ class ForceDisplayMekCellFormatter {
      * Creates and returns the display content of the C3-MekTree cell for the given entity and
      * for the compact display mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
-    static String formatUnitCompact(Entity entity, ClientGUI clientGUI) {
-        Client client = clientGUI.getClient();
+    static String formatUnitCompact(Entity entity, Client client) {
         Game game = client.getGame();
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
         boolean showAsUnknown = owner.isEnemyOf(localPlayer)
-                && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, clientGUI.getClient().getGame(), entity);
+                && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, client.getGame(), entity);
 
         if (entity.isSensorReturn(localPlayer)) {
             String value = "<NOBR>&nbsp;&nbsp;";
@@ -299,12 +298,11 @@ class ForceDisplayMekCellFormatter {
      * Creates and returns the display content of the C3-MekTree cell for the given entity and
      * for the compact display mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
-    static String formatForceCompact(Force force, ClientGUI clientGUI) {
-        return formatForce(force, clientGUI);
+    static String formatForceCompact(Force force, Client client) {
+        return formatForce(force, client);
     }
 
-    private static String formatForce(Force force, ClientGUI clientGUI) {
-        Client client = clientGUI.getClient();
+    private static String formatForce(Force force, Client client) {
         Game game = client.getGame();
         Player localPlayer = client.getLocalPlayer();
         int ownerId = game.getForces().getOwnerId(force);

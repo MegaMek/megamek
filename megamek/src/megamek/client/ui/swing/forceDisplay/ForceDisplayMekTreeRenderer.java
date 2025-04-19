@@ -30,7 +30,10 @@ import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import megamek.MMConstants;
+import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.tileset.EntityImage;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
@@ -52,6 +55,7 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             "unknown_unit.gif").toString();
 
     private ClientGUI clientGUI;
+    private Client client;
     private boolean isSelected;
     private Color selectionColor = Color.BLUE;
     private Entity entity;
@@ -64,7 +68,7 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             boolean leaf, int row, boolean hasFocus) {
 
         isSelected = sel;
-        localPlayer = clientGUI.getClient().getLocalPlayer();
+        localPlayer = client.getLocalPlayer();
         selectionColor = UIManager.getColor("Tree.selectionBackground");
         setOpaque(true);
 
@@ -81,15 +85,23 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             entity = (Entity) value;
             this.row = row;
             Player owner = entity.getOwner();
-            setText(ForceDisplayMekCellFormatter.formatUnitCompact(entity, clientGUI));
+            setText(ForceDisplayMekCellFormatter.formatUnitCompact(entity, client));
             int size = UIUtil.scaleForGUI(20);
             boolean showAsUnknown = owner.isEnemyOf(localPlayer)
-                    && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, clientGUI.getClient().getGame(), entity);
+                    && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, client.getGame(), entity);
             if (showAsUnknown) {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {
+                Image image;
                 Camouflage camo = entity.getCamouflageOrElseOwners();
-                Image image = clientGUI.getBoardView().getTilesetManager().loadPreviewImage(entity, camo, false);
+                if (clientGUI != null) {
+                    image = clientGUI.getBoardView().getTilesetManager().loadPreviewImage(entity, camo, false);
+                } else {
+                    Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
+                    EntityImage entityImage = EntityImage.createIcon(base, camo, entity, false);
+                    entityImage.loadFacings();
+                    image = entityImage.getFacing(entity.getFacing());
+                }
                 setIconTextGap(UIUtil.scaleForGUI(10));
                 setIcon(image, size);
             }
@@ -98,7 +110,7 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             Font scaledFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
             setFont(scaledFont);
             Force force = (Force) value;
-            setText(ForceDisplayMekCellFormatter.formatForceCompact(force, clientGUI));
+            setText(ForceDisplayMekCellFormatter.formatForceCompact(force, client));
             setIcon(null);
         }
         return this;
@@ -125,8 +137,14 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
         }
     }
 
-    ForceDisplayMekTreeRenderer(ClientGUI clientGUI, JTree tree) {
-        this.clientGUI = clientGUI;
+    ForceDisplayMekTreeRenderer(Client client, JTree tree) {
+        this.clientGUI = null;
+        this.client = client;
         this.tree = tree;
+    }
+
+    ForceDisplayMekTreeRenderer(ClientGUI clientGUI, JTree tree) {
+        this(clientGUI.getClient(), tree);
+        this.clientGUI = clientGUI;
     }
 }

@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.forceDisplay;
 
+import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.lobby.sorters.MekTreeTopLevelSorter;
 import megamek.common.Entity;
@@ -31,13 +32,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ForceDisplayMekTreeModel extends DefaultTreeModel {
-    private ClientGUI clientGUI;
+    private Client client;
     /** A sorted list of all top-level objects: top-level forces and force-less entities. */
     private ArrayList<Object> allToplevel;
 
-    public ForceDisplayMekTreeModel(ClientGUI clientGUI) {
+    public ForceDisplayMekTreeModel(Client client) {
         super(new DefaultMutableTreeNode("Root"));
-        this.clientGUI = clientGUI;
+        this.client = client;
     }
     
     public void refreshData() {
@@ -62,10 +63,10 @@ public class ForceDisplayMekTreeModel extends DefaultTreeModel {
             return allToplevel.get(index);
 
         } else if (parent instanceof Force) {
-            Forces forces = clientGUI.getClient().getGame().getForces();
+            Forces forces = client.getGame().getForces();
             Force pnt = (Force) parent;
             if (index < pnt.entityCount()) {
-                return clientGUI.getClient().getGame().getEntity(pnt.getEntityId(index));
+                return client.getGame().getEntity(pnt.getEntityId(index));
             } else if (index < pnt.getChildCount()) {
                 return forces.getForce(pnt.getSubForceId(index - pnt.entityCount()));
             } 
@@ -95,18 +96,18 @@ public class ForceDisplayMekTreeModel extends DefaultTreeModel {
      * Removes those that aren't visible in real blind drop. 
      */
     private void createTopLevel() {
-        clientGUI.getClient().getGame().getForces().correct();
-        Forces forces = clientGUI.getClient().getGame().getForces();
+        client.getGame().getForces().correct();
+        Forces forces = client.getGame().getForces();
         ArrayList<Force> toplevel = new ArrayList<>(forces.getTopLevelForces());
         List<Entity> forceless = ForceAssignable.filterToEntityList(forces.forcelessEntities());
         allToplevel = new ArrayList<>(toplevel);
         allToplevel.addAll(forceless);
-        allToplevel.sort(new MekTreeTopLevelSorter(clientGUI.getClient()));
+        allToplevel.sort(new MekTreeTopLevelSorter(client));
     }
 
     @Override
     public boolean isLeaf(Object node) {
-        return node instanceof Entity; 
+        return node instanceof Entity;
     }
 
     @Override

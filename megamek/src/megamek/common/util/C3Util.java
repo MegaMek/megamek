@@ -19,12 +19,23 @@
 package megamek.common.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import megamek.common.Entity;
 import megamek.common.Game;
 
 public class C3Util {
+
+    public static class MissingC3MException extends Exception {
+    }
+    public static class MismatchingC3MException extends Exception {
+    }
+    public static class C3CapacityException extends Exception {
+    }
     /**
      * Adds C3 connections when new units are being added.
      * 
@@ -98,6 +109,136 @@ public class C3Util {
         }
 
         return affectedUnits;
+    }
+
+    /**
+     * Disconnects the passed entities from their C3 network, if any.
+     * Due to the way C3 networks are represented in Entity, units
+     * cannot disconnect from a C3 network with an id that is the
+     * entity's own id.
+     */
+    public static Set<Entity> disconnectFromNetwork(Game game, Collection<Entity> entities) {
+        final Set<Entity> updateCandidates = performDisconnect(game, entities);
+        return updateCandidates;
+    }
+
+    /**
+     * Performs a disconnect from C3 networks for the given entities without sending
+     * an update.
+     * Returns a set of all affected units.
+     */
+    private static HashSet<Entity> performDisconnect(Game game, Collection<Entity> entities) {
+        HashSet<Entity> updateCandidates = new HashSet<>();
+        for (Entity entity : entities) {
+            if (entity.hasNhC3()) {
+                entity.setC3NetIdSelf();
+                updateCandidates.add(entity);
+            } else if (entity.hasAnyC3System()) {
+                entity.setC3Master(null, true);
+                updateCandidates.add(entity);
+            }
+        }
+        // Also disconnect all units connected *to* that entity
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getC3Master() == null) {
+                continue;
+            }
+            if (entities.contains(entity.getC3Master())) {
+                entity.setC3Master(null, true);
+                updateCandidates.add(entity);
+            }
+        }
+        return updateCandidates;
+    }
+
+    /** Sets the entities' C3M to act as a Company Master. */
+    public static void setCompanyMaster(Collection<Entity> entities) throws MissingC3MException {
+        if (!entities.stream().allMatch(Entity::hasC3M)) {
+            throw new MissingC3MException();
+        }
+        entities.forEach(e -> e.setC3Master(e.getId(), true));
+    }
+
+    /** Sets the entities' C3M to act as a Lance Master (aka normal mode). */
+    public static void setLanceMaster(Collection<Entity> entities) throws MissingC3MException {
+        if (!entities.stream().allMatch(Entity::hasC3M)) {
+            throw new MissingC3MException();
+        }
+        entities.forEach(e -> e.setC3Master(-1, true));
+    }
+
+    /**
+     * Returns true if a and b share at least one non-hierarchic C3 system (C3i, Naval C3, Nova CEWS). Symmetrical (the
+     * order of a and b does not matter).
+     */
+    public static boolean sameNhC3System(Entity a, Entity b) {
+        return (a.hasC3i() && b.hasC3i()) || (a.hasNavalC3() && b.hasNavalC3()) || (a.hasNovaCEWS() && b.hasNovaCEWS());
+    }
+
+    /**
+     * Connects the passed entities to a nonhierarchic C3 (NC3, C3i or Nova CEWS)
+     * identified by masterID.
+     */
+    public static void joinNh(Game game, Collection<Entity> entities, int masterID, boolean disconnectFirst) throws MismatchingC3MException, C3CapacityException {
+        Entity master = game.getEntity(masterID);
+        if (!master.hasNhC3() || !entities.stream().allMatch(e -> sameNhC3System(master, e))) {
+            throw new MismatchingC3MException();
+        }
+        if (disconnectFirst) {
+            performDisconnect(game, entities);
+        }
+        int freeNodes = master.calculateFreeC3Nodes();
+        freeNodes += entities.contains(master) ? 1 : 0;
+        if (entities.size() > freeNodes) {
+            throw new C3CapacityException();
+        }
+        entities.forEach(e -> e.setC3NetId(master));
+    }
+
+    /**
+     * Connects the passed entities to a standard C3M
+     * identified by masterID.
+     */
+    public static Set<Entity> connect(Game game, Collection<Entity> entities, int masterID, boolean disconnectFirst) throws MismatchingC3MException, C3CapacityException {
+        Entity master = game.getEntity(masterID);
+        // To make it possible to mark a C3S/C3S/C3S/C3M lance and connect it:
+        entities.remove(master);
+        boolean connectMS = master.isC3IndependentMaster() && entities.stream().allMatch(Entity::hasC3S);
+        boolean connectMM = master.isC3CompanyCommander() && entities.stream().allMatch(Entity::hasC3M);
+        boolean connectSMM = master.hasC3MM() && entities.stream().allMatch(e -> e.hasC3S() || e.hasC3M());
+        if (!connectMM && !connectMS && !connectSMM) {
+            throw new MismatchingC3MException();
+        }
+        Set<Entity> updateCandidates = new HashSet<>(entities);
+        if (disconnectFirst) { // this is only true when a C3 lance is formed from SSSM
+            updateCandidates.addAll(performDisconnect(game, entities));
+            updateCandidates.addAll(performDisconnect(game, Arrays.asList(master)));
+        }
+        int newC3nodeCount = entities.stream().mapToInt(e -> game.getC3SubNetworkMembers(e).size()).sum();
+        int masC3nodeCount = game.getC3NetworkMembers(master).size();
+        if (newC3nodeCount + masC3nodeCount > Entity.MAX_C3_NODES || entities.size() > master.calculateFreeC3Nodes()) {
+            throw new C3CapacityException();
+        }
+        entities.forEach(e -> e.setC3Master(master, true));
+        return updateCandidates;
+    }
+
+    public static List<Entity> broadcastChanges(Game game, Entity entity) {
+        // When we customize a single entity's C3 network setting,
+        // **ALL** members of the network may get changed.
+        Entity c3master = entity.getC3Master();
+        List<Entity> c3members = new ArrayList<>();
+        for (Entity unit : game.getEntitiesVector()) {
+            if (entity.onSameC3NetworkAs(unit)) {
+                c3members.add(unit);
+            }
+        }
+        // Do we need to update the members of our C3 network?
+        if (((c3master != null) && !c3master.equals(entity.getC3Master()))
+                || ((c3master == null) && (entity.getC3Master() != null))) {
+            return c3members;
+        }
+        return List.of();
     }
 
     /**

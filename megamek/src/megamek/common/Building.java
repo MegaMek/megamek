@@ -591,28 +591,14 @@ public class Building implements Serializable {
     }
 
     /**
-     * Override <code>Object#equals(Object)</code>.
+     * Two Buildings are equal if and only if their IDs are equal.
      *
-     * @param obj
-     *            - the other <code>Object</code> to compare to this
-     *            <code>Building</code>.
-     * @return <code>true</code> if the other object is the same as this
-     *         <code>Building</code>. The value <code>false</code> will be
-     *         returned if the other object is <code>null</code>, is not a
-     *         <code>Building</code>, or if it is not the same as this
-     *         <code>Building</code>.
+     * @param other The other Object to compare
+     * @return True if this and the given other are considered equal
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof Building)) {
-            return false;
-        }
-        // True until we're talking about more than one Board per Game.
-        final Building other = (Building) obj;
-        return (id == other.id);
+    public boolean equals(Object other) {
+        return (this == other) || ((other instanceof Building otherBuilding) && (id == otherBuilding.id));
     }
 
     @Override
@@ -624,16 +610,12 @@ public class Building implements Serializable {
      * Returns a string representation of the given building class, e.g. "Hangar".
      */
     public static String className(int bldgClass) {
-        switch (bldgClass) {
-            case Building.HANGAR:
-                return "Hangar";
-            case Building.FORTRESS:
-                return "Fortress";
-            case Building.GUN_EMPLACEMENT:
-                return "Gun Emplacement";
-            default:
-                return "Building";
-        }
+        return switch (bldgClass) {
+            case Building.HANGAR -> "Hangar";
+            case Building.FORTRESS -> "Fortress";
+            case Building.GUN_EMPLACEMENT -> "Gun Emplacement";
+            default -> "Building";
+        };
     }
 
     @Override

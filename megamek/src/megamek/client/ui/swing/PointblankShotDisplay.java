@@ -777,19 +777,19 @@ public class PointblankShotDisplay extends FiringDisplay {
     }
 
     @Override
-    public void hexSelected(BoardViewEvent b) {
+    public void hexSelected(BoardViewEvent event) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
 
-        Coords evtCoords = b.getCoords();
+        Coords evtCoords = event.getCoords();
         if (clientgui.isProcessingPointblankShot() && (evtCoords != null)
                 && (ce() != null)) {
             if (!evtCoords.equals(ce().getPosition())) {
-                if (b.isShiftHeld()) {
+                if (event.isShiftHeld()) {
                     updateFlipArms(false);
-                    torsoTwist(b.getCoords());
+                    torsoTwist(event.getCoords());
                 }
             }
         }
@@ -911,13 +911,13 @@ public class PointblankShotDisplay extends FiringDisplay {
     }
 
     @Override
-    public void unitSelected(BoardViewEvent b) {
+    public void unitSelected(BoardViewEvent event) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
 
-        Entity entity = game.getEntity(b.getEntityId());
+        Entity entity = game.getEntity(event.getEntityId());
         if (entity == null) {
             return;
         } else if (clientgui.getPointblankEID() == entity.getId()) {

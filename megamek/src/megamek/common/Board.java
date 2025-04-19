@@ -1389,23 +1389,7 @@ public class Board implements Serializable {
      *         returned instead.
      */
     private Building getLocalBuilding(Building other) {
-        // Handle garbage input.
-        if (other == null) {
-            return null;
-        }
-
-        // ASSUMPTION: it is better to use the Hashtable than the Vector.
-        Building local = null;
-        Enumeration<Coords> coords = other.getCoords();
-        if (coords.hasMoreElements()) {
-            local = bldgByCoords.get(coords.nextElement());
-            if (!other.equals(local)) {
-                local = null;
-            }
-        }
-
-        // TODO: if local is still null, try the Vector.
-        return local;
+        return buildings.stream().filter(building -> building.equals(other)).findFirst().orElse(null);
     }
 
     /**
@@ -1504,42 +1488,6 @@ public class Board implements Serializable {
     }
 
     /**
-     * Update the construction factors on an array of buildings.
-     *
-     * @param bldgs the <code>Vector</code> of <code>Building</code> objects to be
-     *              updated.
-     */
-    public void updateBuildings(Vector<Building> bldgs) {
-
-        // Walk through the vector of buildings.
-        Enumeration<Building> loop = bldgs.elements();
-        while (loop.hasMoreElements()) {
-            final Building other = loop.nextElement();
-
-            // Find the local object for the given building.
-            Building bldg = getLocalBuilding(other);
-
-            // Handle garbage input.
-            if (bldg == null) {
-                logger.error("Could not find a match for " + other + " to update.");
-                continue;
-            }
-            Enumeration<Coords> coordsEnum = bldg.getCoords();
-            while (coordsEnum.hasMoreElements()) {
-                // Set the current and phase CFs of the building hexes.
-                final Coords coords = coordsEnum.nextElement();
-                bldg.setCurrentCF(other.getCurrentCF(coords), coords);
-                bldg.setPhaseCF(other.getPhaseCF(coords), coords);
-                bldg.setArmor(other.getArmor(coords), coords);
-                bldg.setBasement(coords,
-                        BasementType.getType(getHex(coords).terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
-                bldg.setBasementCollapsed(coords, other.getBasementCollapsed(coords));
-                bldg.setDemolitionCharges(other.getDemolitionCharges());
-            }
-        }
-    }
-
-    /**
      * Update a locally stored building with CF and other values from a building received from the server.
      *
      * @param receivedBuilding The Building received from the server
@@ -1551,10 +1499,7 @@ public class Board implements Serializable {
             logger.error("Could not find a match for " + receivedBuilding + " to update.");
             return;
         }
-        Enumeration<Coords> coordsEnum = localBuilding.getCoords();
-        while (coordsEnum.hasMoreElements()) {
-            // Set the current and phase CFs of the building hexes.
-            final Coords coords = coordsEnum.nextElement();
+        for (Coords coords : localBuilding.getCoordsList()) {
             localBuilding.setCurrentCF(receivedBuilding.getCurrentCF(coords), coords);
             localBuilding.setPhaseCF(receivedBuilding.getPhaseCF(coords), coords);
             localBuilding.setArmor(receivedBuilding.getArmor(coords), coords);

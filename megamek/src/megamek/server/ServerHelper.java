@@ -422,7 +422,7 @@ public class ServerHelper {
             heatArmor = ((Mek) entity).hasIntactHeatDissipatingArmor();
         }
 
-        if (game.getBoard().inSpace() || (tempDiff == 0) || laserHS) {
+        if (entity.isSpaceborne() || (tempDiff == 0) || laserHS) {
             return;
         } else {
             if (game.getPlanetaryConditions().getTemperature() > 50) {

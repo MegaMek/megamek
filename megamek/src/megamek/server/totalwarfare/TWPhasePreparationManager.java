@@ -172,7 +172,7 @@ public class TWPhasePreparationManager {
             case END:
                 gameManager.resetEntityPhase(phase);
                 gameManager.clearReports();
-                gameManager.resolveHeat();
+                gameManager.heatResolver.resolveHeat();
                 gameManager.resolveWeather();
                 gameManager.addReport(gameManager.resolveControlRolls());
                 gameManager.addReport(gameManager.checkForTraitors());

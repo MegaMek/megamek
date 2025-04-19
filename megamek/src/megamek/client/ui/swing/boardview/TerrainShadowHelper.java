@@ -46,6 +46,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.common.Board;
+import megamek.common.BoardType;
 import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.common.Terrains;
@@ -101,7 +102,7 @@ class TerrainShadowHelper {
         }
 
         Board board = boardView.getBoard();
-        if ((board == null) || board.inSpace()) {
+        if ((board == null) || board.inSpace() || (board.getBoardType() == BoardType.SKY)) {
             return null;
         }
 
@@ -367,7 +368,8 @@ class TerrainShadowHelper {
         }
 
         long tT5 = System.nanoTime() - stT;
-        LOGGER.info("Time to prepare the shadow map: {}ms", tT5 / 1e6);
+        int memory = shadowMap.getWidth() * shadowMap.getHeight() * 4 / 1_000_000;
+        LOGGER.info("Time to prepare the shadow map: {}ms; memory (roughly): {} MB", tT5 / 1e6, memory);
         return shadowMap;
     }
 

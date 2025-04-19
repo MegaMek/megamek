@@ -39,7 +39,9 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -3376,5 +3378,9 @@ public class ClientGUI extends AbstractClientGUI
     public BoardView getBoardView(BoardLocation boardLocation) {
         // TW games use only standard BoardViews
         return (BoardView) super.getBoardView(boardLocation);
+    }
+
+    void onAllBoardViews(Consumer<BoardView> consumer) {
+        boardViews().forEach(boardView -> consumer.accept((BoardView) boardView));
     }
 }

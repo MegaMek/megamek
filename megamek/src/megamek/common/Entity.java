@@ -5521,7 +5521,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasGhostTargets(boolean active) {
         // no Ghost Targets in space unless strat op option enabled
-        if (game.getBoard().inSpace()) {
+        if (isSpaceborne()) {
             return false;
         }
 
@@ -12371,7 +12371,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * is this entity a large craft? (dropship, jumpship, warship, or space station)
+     * is this entity a large craft? (dropship, jumpship, warship, or space station, see TW p.20)
      */
     public boolean isLargeCraft() {
         return (this instanceof Dropship) || (this instanceof Jumpship);

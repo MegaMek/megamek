@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3055-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>5,5</pctOmni>
@@ -4030,6 +4027,10 @@
                 <roles>mixed_artillery</roles>
                 <availability>FWL:7</availability>
             </model>
+            <model name='(Wheeled Arrow IV 3044+)'>
+                <roles>mixed_artillery</roles>
+                <availability>FWL:1+</availability>
+            </model>
             <model name='(Wheeled Sniper 3035+)'>
                 <roles>mixed_artillery,urban</roles>
                 <availability>FWL:7</availability>
@@ -6414,7 +6415,7 @@
             </model>
         </chassis>
         <chassis name='Jump Platoon (FWLM)' unitType='Infantry'>
-            <availability>FWL!A:5!B:4!C:3!D:1</availability>
+            <availability>FWL!A:6!B:5!C:3!D:1</availability>
             <model name='(Flamer 3035+)'>
                 <roles>urban</roles>
                 <availability>FWL:2-</availability>

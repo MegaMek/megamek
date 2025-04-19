@@ -3092,6 +3092,10 @@
                 <roles>mixed_artillery</roles>
                 <availability>FWL:7</availability>
             </model>
+            <model name='(Wheeled Arrow IV 3044+)'>
+                <roles>mixed_artillery</roles>
+                <availability>FWL:1+</availability>
+            </model>
             <model name='(Wheeled Sniper 3035+)'>
                 <roles>mixed_artillery,urban</roles>
                 <availability>FWL:7</availability>

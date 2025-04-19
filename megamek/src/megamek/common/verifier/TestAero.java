@@ -28,7 +28,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
@@ -721,6 +720,13 @@ public class TestAero extends TestEntity {
             buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
+
+        if (engine.getRating() < 10) {
+            buff.append("Engine rating of ").append(engine.getRating())
+                  .append(" is below the minimum rating of 10.").append("\n\n");
+            correct = false;
+        }
+
         if ((getCountHeatSinks() < engine.getWeightFreeEngineHeatSinks())
                 && !aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             buff.append("Heat Sinks:\n");

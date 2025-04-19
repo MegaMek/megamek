@@ -456,7 +456,11 @@ public class ArtilleryTargetingControl {
 
 
                     for (Targetable target : targetSet) {
-                        boolean targetingEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
+                        boolean attackOnAirborneEntity = (target.getTargetType() == Targetable.TYPE_ENTITY) &&
+                                                              (target instanceof Entity targetedEntity) &&
+                                                              ((targetedEntity.isAirborne()) ||
+                                                                     (targetedEntity.isAirborneVTOLorWIGE()) ||
+                                                                     (targetedEntity.isAirborneAeroOnGroundMap()));
                         double damageValue;
                         if (isZeroDamageMunition) {
                             // Skip zero-damage utility munitions for now.
@@ -473,7 +477,7 @@ public class ArtilleryTargetingControl {
                             }
                         } else {
                             // Flak Artillery need to be made during direct fire, not as Indirect
-                            if (targetingEntity) {
+                            if (attackOnAirborneEntity) {
                                 damageValue = damage;
                             } else {
                                 if (!isADA) {
@@ -503,8 +507,14 @@ public class ArtilleryTargetingControl {
                                 } else {
                                     wfi.getAmmo().setSwitchedReason(1503);
                                 }
-                                if (targetingEntity && (isADA || wfi.getAmmo().getType().getMunitionType().stream().anyMatch(aaMunitions::contains)
-                                              || wfi.getAmmo().getType().countsAsFlak())) {
+                                if (attackOnAirborneEntity &&
+                                          (isADA ||
+                                                 wfi.getAmmo()
+                                                       .getType()
+                                                       .getMunitionType()
+                                                       .stream()
+                                                       .anyMatch(aaMunitions::contains) ||
+                                                 wfi.getAmmo().getType().countsAsFlak())) {
                                     // Handle Flak attacks during Direct Fire
                                     topValuedFlakInfos.clear();
                                     maxDamage = damage;
@@ -515,7 +525,7 @@ public class ArtilleryTargetingControl {
                                     topValuedFireInfos.add(wfi);
                                 }
                             } else if ((damageValue == maxDamage) && (damageValue > 0)) {
-                                if (targetingEntity && (wfi.getAmmo().getType().getMunitionType()
+                                if (attackOnAirborneEntity && (wfi.getAmmo().getType().getMunitionType()
                                         .contains(Munitions.M_ADA) || wfi.getAmmo().getType().getMunitionType().stream().anyMatch(aaMunitions::contains)
                                           || wfi.getAmmo().getType().countsAsFlak())) {
                                     topValuedFlakInfos.add(wfi);

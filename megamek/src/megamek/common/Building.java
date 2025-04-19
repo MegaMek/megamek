@@ -241,30 +241,25 @@ public class Building implements Serializable {
     }
 
     /**
-     * Construct a building for the given coordinates from the board's
-     * information. If the building covers multiple hexes, every hex will be
-     * included in the building.
+     * Construct a building for the given coordinates from the board's information. If the building covers multiple
+     * hexes, every hex will be included in the building.
      *
-     * @param coords the <code>Coords</code> of a hex of the building. If the
-     *               building covers
-     *               multiple hexes, this constructor will include them all in this
-     *               building
-     *               automatically.
+     * @param coords the <code>Coords</code> of a hex of the building. If the building covers multiple hexes, this
+     *               constructor will include them all in this building automatically.
      * @param board  the game's <code>Board</code> object.
-     * @throws IllegalArgumentException will be thrown if the given coordinates do
-     *                                  not contain a
-     *                                  building, or if the building covers multiple
-     *                                  hexes with different CFs.
+     *
+     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a building, or if the
+     *                                  building covers multiple hexes with different CFs.
      */
     public Building(Coords coords, Board board, int structureType, BasementType basementType) {
 
-        // The ID of the building will be deterministic based on the
-        // position of its first hex. 9,999 hexes in the Y direction
-        // ought to be enough for anyone.
+        // The ID of the building will be deterministic based on the position of its first hex. 999 hexes in the Y
+        // direction ought to be enough for anyone. This has been changed to accomodate the board ID. Now only allows
+        // maximum board size of 1000x1000 which still seems enough. The ID cannot allow collisions (unlike the
+        // hashcode).
         //
-        // ASSUMPTION: this will be unique ID across ALL the building's
-        // hexes for ALL the clients of this board.
-        id = coords.getX() * 10000 + coords.getY();
+        // ASSUMPTION: this will be unique ID across ALL the building's hexes for ALL the clients of this board.
+        id = board.getBoardId() * 1_000_000 + coords.getX() * 1000 + coords.getY();
 
         // The building occupies the given coords, at least.
         coordinates.addElement(coords);

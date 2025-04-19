@@ -4274,23 +4274,19 @@ public class Compute {
     }
 
     /**
-     * Updates an entity's firingSolutions, removing any objects that no longer meet
-     * criteria for being
-     * tracked as targets. Also, if the detecting entity no longer meets criteria
-     * for having firing solutions,
-     * empty the list. We wouldn't want a dead ship to be providing NC3 data, now
-     * would we...
+     * Updates an entity's firingSolutions, removing any objects that no longer meet criteria for being tracked as
+     * targets. Also, if the detecting entity no longer meets criteria for having firing solutions, empty the list. We
+     * wouldn't want a dead ship to be providing NC3 data, now would we...
      */
     public static void updateFiringSolutions(Game game, Entity detector) {
         List<Integer> toRemove = new ArrayList<>();
-        // Flush the detecting unit's firing solutions if any of these conditions
-        // applies
+        // Flush the detecting unit's firing solutions if any of these conditions applies
         if (detector.isDestroyed()
                 || detector.isDoomed()
-                || detector.getTransportId() != Entity.NONE
+                || detector.isTransported()
                 || detector.isPartOfFighterSquadron()
                 || detector.isOffBoard()
-                || detector.getPosition() == null) {
+                || !game.hasBoardLocation(detector.getPosition(), detector.getBoardId())) {
             detector.clearFiringSolutions();
             return;
         }
@@ -4298,10 +4294,11 @@ public class Compute {
             Entity target = game.getEntity(id);
             // The target should be removed if it's off the board for any of these reasons
             if (target == null
-                    || target.getPosition() == null
+                      || !game.onTheSameBoard(detector, target)
+                    || !game.hasBoardLocation(target.getPosition(), target.getBoardId())
                     || target.isDestroyed()
                     || target.isDoomed()
-                    || target.getTransportId() != Entity.NONE
+                    || target.isTransported()
                     || target.isPartOfFighterSquadron()
                     || target.isOffBoard()) {
                 toRemove.add(id);
@@ -4332,17 +4329,14 @@ public class Compute {
     }
 
     /**
-     * Updates an entity's sensorContacts, removing any objects that no longer meet
-     * criteria for being
-     * tracked. Also, if the detecting entity no longer meets criteria for having
-     * sensor contacts,
-     * empty the list. We wouldn't want a dead ship to be providing sensor data, now
-     * would we...
+     * Updates an entity's sensorContacts, removing any objects that no longer meet criteria for being tracked. Also, if
+     * the detecting entity no longer meets criteria for having sensor contacts, empty the list. We wouldn't want a dead
+     * ship to be providing sensor data, now would we...
      */
     public static void updateSensorContacts(Game game, Entity detector) {
         List<Integer> toRemove = new ArrayList<>();
         // Flush the detecting unit's sensor contacts if any of these conditions applies
-        if (detector.getPosition() == null
+        if (!game.hasBoardLocation(detector.getPosition(), detector.getBoardId())
                 || detector.isDestroyed()
                 || detector.isDoomed()
                 || detector.getTransportId() != Entity.NONE
@@ -4355,7 +4349,8 @@ public class Compute {
             Entity target = game.getEntity(id);
             // The target should be removed if it's off the board for any of these reasons
             if (target == null
-                    || target.getPosition() == null
+                    || !game.hasBoardLocation(target.getPosition(), target.getBoardId())
+                      || !game.onTheSameBoard(detector, target)
                     || target.isDestroyed()
                     || target.isDoomed()
                     || target.getTransportId() != Entity.NONE
@@ -4364,8 +4359,7 @@ public class Compute {
                 toRemove.add(id);
                 continue;
             }
-            // And now calculate whether or not the target has moved out of range. Per SO
-            // p117-119,
+            // And now calculate whether or not the target has moved out of range. Per SO p117-119,
             // sensor contacts remain tracked on the plotting board until this occurs.
             Coords targetPos = target.getPosition();
             int distance = detector.getPosition().distance(targetPos);
@@ -4377,26 +4371,20 @@ public class Compute {
     }
 
     /**
-     * If the game is in space, "visual range" represents a firing solution as
-     * defined in SO starting on p117
-     * Also, in most cases each target must be detected with sensors before it can
-     * be seen, so we need to make
-     * sensor rolls for detection. This should only be used if Tacops sensor rules
-     * are in use.
-     * This requires line of sight effects to determine if there are
-     * certain intervening obstructions, like sensor shadows, asteroids and that
-     * sort of thing, that can reduce visual
-     * range. Since repeated LoSEffects computations can be expensive, it is
-     * possible to pass in the LosEffects, since they are commonly already
-     * computed when this method is called.
+     * If the game is in space, "visual range" represents a firing solution as defined in SO starting on p117 Also, in
+     * most cases each target must be detected with sensors before it can be seen, so we need to make sensor rolls for
+     * detection. This should only be used if Tacops sensor rules are in use. This requires line of sight effects to
+     * determine if there are certain intervening obstructions, like sensor shadows, asteroids and that sort of thing,
+     * that can reduce visual range. Since repeated LoSEffects computations can be expensive, it is possible to pass in
+     * the LosEffects, since they are commonly already computed when this method is called.
      *
      * @param game   The current {@link Game}
      * @param ae     the entity making a sensor scan
      * @param target the entity we're trying to spot
+     *
      * @return
      */
-    public static boolean calcFiringSolution(Game game, Entity ae,
-            Targetable target) {
+    public static boolean calcFiringSolution(Game game, Entity ae, Targetable target) {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
 

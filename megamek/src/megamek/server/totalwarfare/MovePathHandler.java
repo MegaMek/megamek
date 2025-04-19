@@ -217,7 +217,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     md.getFinalCoords(), md.getFinalFacing(), false);
             gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
             gameManager.checkLandingTerrainEffects(a, true, md.getFinalCoords(),
-                    md.getFinalCoords().translated(md.getFinalFacing(), a.getLandingLength()), md.getFinalFacing());
+                    md.getFinalCoords().translated(md.getFinalFacing(), a.getLandingLength()),
+                  md.getFinalBoardId(), md.getFinalFacing());
             a.land();
             entity.setPosition(md.getFinalCoords().translated(md.getFinalFacing(),
                     a.getLandingLength()));
@@ -236,7 +237,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 gameManager.applyDropShipLandingDamage(md.getFinalCoords(), (Dropship) a);
             }
             gameManager.checkLandingTerrainEffects(a, true, md.getFinalCoords(), md.getFinalCoords(),
-                    md.getFinalFacing());
+                    md.getFinalBoardId(), md.getFinalFacing());
             a.land();
             entity.setPosition(md.getFinalCoords());
             entity.setDone(true);

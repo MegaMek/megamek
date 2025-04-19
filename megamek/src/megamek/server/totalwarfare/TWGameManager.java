@@ -3534,16 +3534,17 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @
      */
-    void checkLandingTerrainEffects(IAero aero, boolean vertical, Coords touchdownPos, Coords finalPos, int facing) {
+    void checkLandingTerrainEffects(IAero aero, boolean vertical, Coords touchdownPos, Coords finalPos,
+          int boardId, int facing) {
         // Landing in a rough for rubble hex damages landing gear.
-        Hex hex = game.getBoard().getHex(finalPos);
+        Hex hex = game.getHex(finalPos, boardId);
         if (hex == null) {
             logger.debug("Attempted to check landing terrain effects for null hex " + finalPos.toFriendlyString());
             return;
         }
         Set<Coords> landingPositions = aero.getLandingCoords(vertical, touchdownPos, facing);
         if (landingPositions.stream()
-                  .map(c -> game.getBoard().getHex(c))
+                  .map(c -> game.getHex(c, boardId))
                   .filter(Objects::nonNull)
                   .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
             aero.setGearHit(true);
@@ -5284,7 +5285,7 @@ public class TWGameManager extends AbstractGameManager {
 
             // Check if still on board
             if (game.getBoard().contains(c) && game.getBoard().contains(finalPosition)) {
-                checkLandingTerrainEffects(aero, vertical, c, finalPosition, entity.getFacing());
+                checkLandingTerrainEffects(aero, vertical, c, finalPosition, entity.getBoardId(), entity.getFacing());
             } else {
                 // Somehow left the map while crashing!  This will count as destroyed.
                 r = new Report(9701);
@@ -10182,16 +10183,16 @@ public class TWGameManager extends AbstractGameManager {
      * Called at the end of movement. Determines if an entity has moved beyond sensor range
      */
     void updateSpacecraftDetection() {
-        // Don't bother if we're not in space or if the game option isn't on
-        if (!game.getBoard().inSpace() ||
-                  !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+        // Don't bother if the game option isn't on
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             return;
         }
-        // Run through our list of units and remove any entities from the plotting board
-        // that have moved out of range
+        // Run through our list of units and remove any entities from the plotting board that have moved out of range
         for (Entity detector : game.getEntitiesVector()) {
-            Compute.updateFiringSolutions(game, detector);
-            Compute.updateSensorContacts(game, detector);
+            if (detector.isSpaceborne()) {
+                Compute.updateFiringSolutions(game, detector);
+                Compute.updateSensorContacts(game, detector);
+            }
         }
     }
 
@@ -28234,9 +28235,11 @@ public class TWGameManager extends AbstractGameManager {
         // the Enumeration from megamek.common.Board#getBuildings.
         Map<Building, Vector<Coords>> collapse = new HashMap<>();
         Map<Building, Vector<Coords>> update = new HashMap<>();
-        Enumeration<Building> buildings = game.getBoard().getBuildings();
-        while (buildings.hasMoreElements()) {
-            Building bldg = buildings.nextElement();
+        List<Building> allBuildings = game.getBoards().values().stream()
+                    .map(Board::getBuildingsVector)
+                    .flatMap(List::stream)
+                    .toList();
+        for (Building bldg : allBuildings) {
             Vector<Coords> collapseCoords = new Vector<>();
             Vector<Coords> updateCoords = new Vector<>();
             Enumeration<Coords> buildingCoords = bldg.getCoords();

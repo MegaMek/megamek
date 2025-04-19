@@ -951,8 +951,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void updateMove(boolean redrawMovement) {
-        if (redrawMovement) {
-            ((BoardView) clientgui.getBoardView(ce())).drawMovementData(ce(), cmd);
+        Entity ce = ce();
+        if (redrawMovement && (ce != null)) {
+            clientgui.getBoardView(ce).drawMovementData(ce, cmd);
         }
 
         updateFleeButton();
@@ -1012,7 +1013,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         MovePath possible = cmd.clone();
         possible.clipToPossible();
-        if ((possible.length() == 0) || (ce() == null)) {
+        Entity ce = ce();
+        if ((possible.length() == 0) || (ce == null)) {
             updateDonePanelButtons(Messages.getString("MovementDisplay.Move"),
                     Messages.getString("MovementDisplay.Skip"), false, null);
         } else if (!possible.isMoveLegal()) {
@@ -1023,7 +1025,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank())
                     || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
             boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage() || cmd.hasActiveMASC()
-                    || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
+                    || (!(ce instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
             String moveMsg = Messages.getString("MovementDisplay.Move") + " (" + mp + "MP)" + (psrCheck ? "*" : "")
                     + (damageCheck ? "!" : "");
             updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, computeTurnDetails());

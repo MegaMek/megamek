@@ -3359,4 +3359,22 @@ public class ClientGUI extends AbstractClientGUI
             centerOnHex(targetable.getBoardLocation());
         }
     }
+
+    @Override
+    public BoardView getBoardView(int boardId) {
+        // TW games use only standard BoardViews
+        return (BoardView) super.getBoardView(boardId);
+    }
+
+    @Override
+    public BoardView getBoardView(Targetable entity) {
+        // TW games use only standard BoardViews
+        return (BoardView) super.getBoardView(entity);
+    }
+
+    @Override
+    public BoardView getBoardView(BoardLocation boardLocation) {
+        // TW games use only standard BoardViews
+        return (BoardView) super.getBoardView(boardLocation);
+    }
 }

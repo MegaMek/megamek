@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.sbf;
+package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import megamek.client.ui.swing.AbstractChoiceDialog;
 import megamek.client.ui.swing.ButtonEsc;

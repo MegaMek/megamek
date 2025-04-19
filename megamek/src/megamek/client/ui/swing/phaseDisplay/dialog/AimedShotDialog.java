@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -28,6 +28,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.IndexedRadioButton;

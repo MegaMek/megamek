@@ -26,7 +26,6 @@ import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.sprite.Sprite;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.common.Entity;
 

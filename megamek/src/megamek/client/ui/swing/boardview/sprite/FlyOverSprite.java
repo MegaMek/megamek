@@ -29,7 +29,6 @@ import java.awt.Stroke;
 import java.awt.image.ImageObserver;
 
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.sprite.Sprite;
 import megamek.common.Coords;
 import megamek.common.Entity;
 

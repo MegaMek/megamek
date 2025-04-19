@@ -27,7 +27,6 @@ import java.awt.image.ImageObserver;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.sprite.Sprite;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
 import megamek.common.Compute;

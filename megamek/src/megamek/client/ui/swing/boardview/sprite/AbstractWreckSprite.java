@@ -27,7 +27,6 @@ import java.text.MessageFormat;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.sprite.Sprite;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.*;

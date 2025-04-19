@@ -27,13 +27,12 @@ import javax.swing.event.ListSelectionListener;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.AimedShotHandler;
-import megamek.client.ui.swing.BombPayloadDialog;
+import megamek.client.ui.swing.phaseDisplay.dialog.BombPayloadDialog;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.TargetChoiceDialog;
-import megamek.client.ui.swing.TriggerAPPodDialog;
-import megamek.client.ui.swing.TriggerBPodDialog;
-import megamek.client.ui.swing.VibrabombSettingDialog;
+import megamek.client.ui.swing.phaseDisplay.dialog.TargetChoiceDialog;
+import megamek.client.ui.swing.phaseDisplay.dialog.TriggerAPPodDialog;
+import megamek.client.ui.swing.phaseDisplay.dialog.TriggerBPodDialog;
+import megamek.client.ui.swing.phaseDisplay.dialog.VibrabombSettingDialog;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegaMekButton;

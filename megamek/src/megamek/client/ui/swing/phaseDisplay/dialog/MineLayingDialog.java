@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -31,6 +31,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.MiscType;

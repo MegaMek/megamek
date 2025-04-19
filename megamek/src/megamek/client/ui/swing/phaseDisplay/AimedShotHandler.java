@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.phaseDisplay;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +24,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.phaseDisplay.FiringDisplay;
+import megamek.client.ui.swing.phaseDisplay.dialog.AimedShotDialog;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;

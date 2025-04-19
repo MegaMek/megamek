@@ -19,7 +19,6 @@
 package megamek.client.ui.swing.phaseDisplay;
 
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.phaseDisplay.ActionPhaseDisplay;
 import megamek.client.ui.swing.tooltip.EntityActionLog;
 import megamek.common.actions.*;
 

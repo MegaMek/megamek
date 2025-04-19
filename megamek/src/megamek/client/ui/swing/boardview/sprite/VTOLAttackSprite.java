@@ -30,7 +30,6 @@ import java.util.List;
 
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.HexDrawUtilities;
-import megamek.client.ui.swing.boardview.sprite.Sprite;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBomber;

@@ -25,7 +25,6 @@ import java.awt.image.ImageObserver;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.sprite.Sprite;
 import megamek.common.Entity;
 import megamek.common.util.ImageUtil;
 

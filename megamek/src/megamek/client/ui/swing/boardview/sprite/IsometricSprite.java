@@ -24,7 +24,6 @@ import java.awt.image.ImageObserver;
 import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.sprite.HexSprite;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.Coords;
 import megamek.common.Entity;

@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.sbf.SBFTargetingToHitDisplay;
 import megamek.client.ui.sbf.SBFUnitAttackSelector;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.InGameObject;

@@ -13,7 +13,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;

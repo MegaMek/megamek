@@ -51,8 +51,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.IClientGUI;
 import megamek.client.ui.swing.MegaMekGUI;
-import megamek.client.ui.swing.phaseDisplay.AbstractPhaseDisplay;
-import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
 import megamek.client.ui.swing.util.KeyBindReceiver;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.TurnTimer;

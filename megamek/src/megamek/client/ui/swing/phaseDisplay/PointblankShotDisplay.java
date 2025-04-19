@@ -31,7 +31,7 @@ import javax.swing.event.ListSelectionEvent;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.VibrabombSettingDialog;
+import megamek.client.ui.swing.phaseDisplay.dialog.VibrabombSettingDialog;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegaMekButton;

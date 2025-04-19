@@ -17,7 +17,7 @@ import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.TargetChoiceDialog;
+import megamek.client.ui.swing.phaseDisplay.dialog.TargetChoiceDialog;
 import megamek.client.ui.swing.phaseDisplay.TargetingPhaseDisplay;
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;

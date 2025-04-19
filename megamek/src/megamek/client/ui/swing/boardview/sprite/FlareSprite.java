@@ -22,7 +22,6 @@ import java.awt.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.sprite.Sprite;
 import megamek.common.Configuration;
 import megamek.common.Flare;
 import megamek.common.util.ImageUtil;

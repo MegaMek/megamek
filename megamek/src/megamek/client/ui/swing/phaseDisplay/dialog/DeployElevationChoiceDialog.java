@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.AbstractChoiceDialog;
+import megamek.client.ui.swing.ButtonEsc;
+import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.DeploymentElevationType;
 import megamek.common.ElevationOption;

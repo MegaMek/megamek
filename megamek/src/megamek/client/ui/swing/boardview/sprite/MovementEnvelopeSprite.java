@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.sprite.HexSprite;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 

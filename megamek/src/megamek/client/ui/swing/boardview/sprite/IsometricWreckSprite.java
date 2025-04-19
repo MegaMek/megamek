@@ -15,7 +15,6 @@ package megamek.client.ui.swing.boardview.sprite;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.sprite.AbstractWreckSprite;
 import megamek.common.Entity;
 
 import java.awt.*;

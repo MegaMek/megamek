@@ -21,7 +21,6 @@ import java.util.Map;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.phaseDisplay.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.common.enums.GamePhase;

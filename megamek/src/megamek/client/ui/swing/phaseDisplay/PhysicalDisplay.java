@@ -30,9 +30,9 @@ import javax.swing.JOptionPane;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.AimedShotDialog;
+import megamek.client.ui.swing.phaseDisplay.dialog.AimedShotDialog;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.TargetChoiceDialog;
+import megamek.client.ui.swing.phaseDisplay.dialog.TargetChoiceDialog;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.IndexedRadioButton;

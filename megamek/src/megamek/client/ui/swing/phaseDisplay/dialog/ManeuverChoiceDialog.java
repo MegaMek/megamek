@@ -13,7 +13,7 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -35,6 +35,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Game;
 import megamek.common.ManeuverType;
 import megamek.common.MovePath;

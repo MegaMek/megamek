@@ -14,7 +14,7 @@
 * details.
 */
 
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -39,6 +39,8 @@ import javax.swing.JTextArea;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -125,7 +127,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
      * @param attackType
      */
     public TriggerBPodDialog(ClientGUI clientgui, Entity entity, String attackType) {
-        super(clientgui.frame, Messages.getString("TriggerBPodDialog.title"), true);
+        super(clientgui.getFrame(), Messages.getString("TriggerBPodDialog.title"), true);
         entityId = entity.getId();
         this.clientgui = clientgui;
 
@@ -238,10 +240,10 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
             size = getSize();
         }
         setResizable(false);
-        setLocation(clientgui.frame.getLocation().x
-                + clientgui.frame.getSize().width / 2 - size.width / 2,
-                clientgui.frame.getLocation().y
-                        + clientgui.frame.getSize().height / 2 - size.height
+        setLocation(clientgui.getFrame().getLocation().x
+                + clientgui.getFrame().getSize().width / 2 - size.width / 2,
+                clientgui.getFrame().getLocation().y
+                        + clientgui.getFrame().getSize().height / 2 - size.height
                                 / 2);
     }
 

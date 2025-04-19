@@ -28,7 +28,6 @@ import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.sprite.FieldofFireSprite;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 

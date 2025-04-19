@@ -19,7 +19,6 @@
 package megamek.client.ui.swing.boardview.sprite;
 
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.common.Entity;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics;

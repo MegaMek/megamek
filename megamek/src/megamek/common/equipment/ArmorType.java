@@ -364,7 +364,7 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Ferro-Fibrous Armor");
         armor.addLookupName("IS Ferro Fibre");
         armor.cost = 20000.0;
-        armor.criticals = 14;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 2;
         armor.svslots = 2;
         armor.patchworkSlotsMekSV = 2;
@@ -391,7 +391,7 @@ public class ArmorType extends MiscType {
         armor.addLookupName("Clan Ferro-Fibrous Armor");
         armor.addLookupName("Clan Ferro Fibre");
         armor.cost = 20000.0;
-        armor.criticals = 7;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 1;
         armor.svslots = 1;
         armor.patchworkSlotsMekSV = 1;
@@ -419,7 +419,7 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Light Ferro-Fibrous Armor");
         armor.addLookupName("IS LightFerro");
         armor.cost = 15000.0;
-        armor.criticals = 7;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 1;
         armor.svslots = 1;
         armor.patchworkSlotsMekSV = 1;
@@ -445,7 +445,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Heavy Ferro-Fibrous");
         armor.addLookupName("IS Heavy Ferro-Fibrous Armor");
         armor.cost = 25000.0;
-        armor.criticals = 21;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 3;
         armor.svslots = 3;
         armor.patchworkSlotsMekSV = 3;
@@ -471,7 +471,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Ferro-Fibrous Prototype");
         armor.addLookupName("IS Ferro-Fibrous Armor Prototype");
         armor.cost = 60000.0;
-        armor.criticals = 16;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 3;
         armor.svslots = 3;
         armor.patchworkSlotsMekSV = 2;
@@ -736,7 +736,7 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Reactive Armor");
         armor.addLookupName("IS Reactive");
         armor.cost = 30000.0;
-        armor.criticals = 14;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 2;
         armor.svslots = 2;
         armor.fighterSlots = 3;
@@ -766,7 +766,7 @@ public class ArmorType extends MiscType {
         armor.addLookupName("Clan Reactive Armor");
         armor.addLookupName("Clan Reactive");
         armor.cost = 30000.0;
-        armor.criticals = 7;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 1;
         armor.svslots = 1;
         armor.fighterSlots = 1;
@@ -795,7 +795,7 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Reflective Armor");
         armor.addLookupName("IS Reflective");
         armor.cost = 30000.0;
-        armor.criticals = 10;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 1;
         armor.svslots = 1;
         armor.fighterSlots = 1;
@@ -824,7 +824,7 @@ public class ArmorType extends MiscType {
         armor.addLookupName("Clan Reflective Armor");
         armor.addLookupName("Clan Reflective");
         armor.cost = 30000.0;
-        armor.criticals = 5;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 1;
         armor.svslots = 1;
         armor.fighterSlots = 1;
@@ -935,7 +935,7 @@ public class ArmorType extends MiscType {
         armor.name = "Ferro-Lamellor";
         armor.setInternalName("Clan Ferro-Lamellor");
         armor.cost = 35000.0;
-        armor.criticals = 12;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 1;
         armor.svslots = 1;
         armor.fighterSlots = 2;
@@ -963,7 +963,7 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS Heat-Dissipating");
         armor.addLookupName("Clan Heat-Dissipating");
         armor.cost = 25000.0;
-        armor.criticals = 6;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.patchworkSlotsMekSV = 1;
         armor.flags = armor.flags.or(F_HEAT_DISSIPATING).or(F_MEK_EQUIPMENT);
         armor.rulesRefs = "87, IO";
@@ -989,7 +989,7 @@ public class ArmorType extends MiscType {
         armor.name = "Impact-Resistant";
         armor.setInternalName("IS Impact-Resistant");
         armor.cost = 20000.0;
-        armor.criticals = 10;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.patchworkSlotsMekSV = 2;
         armor.flags = armor.flags.or(F_IMPACT_RESISTANT).or(F_MEK_EQUIPMENT);
         armor.rulesRefs = "87, IO";
@@ -1013,7 +1013,7 @@ public class ArmorType extends MiscType {
         armor.name = "Anti-Penetrative Ablation";
         armor.setInternalName("IS Anti-Penetrative Ablation");
         armor.cost = 15000.0;
-        armor.criticals = 6;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 1;
         armor.svslots = 1;
         armor.patchworkSlotsMekSV = 1;
@@ -1041,7 +1041,7 @@ public class ArmorType extends MiscType {
         armor.name = "Ballistic-Reinforced";
         armor.setInternalName("IS Ballistic-Reinforced");
         armor.cost = 25000.0;
-        armor.criticals = 10;
+        armor.criticals = CRITICALS_VARIABLE;
         armor.tankslots = 1;
         armor.svslots = 1;
         armor.fighterSlots = 2;

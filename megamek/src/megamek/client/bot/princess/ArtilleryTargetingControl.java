@@ -335,6 +335,7 @@ public class ArtilleryTargetingControl {
             }
         }
 
+        // TODO: Counter-battery fire must target a hex (TO:AR p 154); needs better off-board unit deploy logic
         for (Entity enemy : game.getAllOffboardEnemyEntities(shooter.getOwner())) {
             if (enemy.isOffBoardObserved(shooter.getOwner().getTeam())) {
                 targetSet.add(enemy);
@@ -456,7 +457,8 @@ public class ArtilleryTargetingControl {
 
 
                     for (Targetable target : targetSet) {
-                        boolean attackOnAirborneEntity = (target.getTargetType() == Targetable.TYPE_ENTITY) &&
+                        boolean attackOnEntity = (target.getTargetType() == Targetable.TYPE_ENTITY);
+                        boolean attackOnAirborneEntity = attackOnEntity &&
                                                               (target instanceof Entity targetedEntity) &&
                                                               ((targetedEntity.isAirborne()) ||
                                                                      (targetedEntity.isAirborneVTOLorWIGE()) ||
@@ -477,8 +479,12 @@ public class ArtilleryTargetingControl {
                             }
                         } else {
                             // Flak Artillery need to be made during direct fire, not as Indirect
-                            if (attackOnAirborneEntity) {
-                                damageValue = damage;
+                            // Other indirect-fire entity-targeting attacks are likely Counter-Battery Fire
+                            // and should ignore surrounding targets when computing damage.
+                            if (attackOnAirborneEntity || attackOnEntity) {
+                                // Homing rounds can't hit flying Aerospace units because TAG can't hit them.
+                                boolean homing = ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_HOMING);
+                                damageValue = (target.isAirborne()) ? 0 : damage;
                             } else {
                                 if (!isADA) {
                                     damageValue = calculateDamageValue(damage, (HexTarget) target, shooter, game, owner);

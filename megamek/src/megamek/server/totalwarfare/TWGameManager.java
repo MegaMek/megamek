@@ -31680,9 +31680,11 @@ public class TWGameManager extends AbstractGameManager {
                 // Check: is entity excluded?
                 if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                     continue;
-                    // We now track the blast on a per-level basis
-                } else if ((entity.getElevation() + effectiveLevel > altitude) ||
-                                 (entity.getElevation() + entity.getHeight() + effectiveLevel < altitude)) {
+                // We now track the blast on a per-level basis for non-ASF Flak
+                } else if (!asfFlak && (
+                                 (entity.getElevation() + effectiveLevel > altitude) ||
+                                 (entity.getElevation() + entity.getHeight() + effectiveLevel < altitude)
+                )) {
                     String msg = "Missed due to elevation difference: " +
                                        "entity lvl/ht: " +
                                        hex.getLevel() +

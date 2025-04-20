@@ -485,16 +485,19 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
 
-            String artyMsg = "Artillery hit here on round " + game.getRoundCount()
-                    + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
-                    + " (this hex is now an auto-hit)";
-            game.getBoard().addSpecialHexDisplay(
-                    targetPos,
-                    new SpecialHexDisplay(Type.ARTILLERY_HIT,
-                            game.getRoundCount(), game.getPlayer(aaa
-                                    .getPlayerId()),
-                            artyMsg));
-
+            if (!isFlak) {
+                String artyMsg = "Artillery hit here on round " +
+                                       game.getRoundCount() +
+                                       ", fired by " +
+                                       game.getPlayer(aaa.getPlayerId()).getName() +
+                                       " (this hex is now an auto-hit)";
+                game.getBoard()
+                      .addSpecialHexDisplay(targetPos,
+                            new SpecialHexDisplay(Type.ARTILLERY_HIT,
+                                  game.getRoundCount(),
+                                  game.getPlayer(aaa.getPlayerId()),
+                                  artyMsg));
+            }
         } else {
             // direct fire artillery only scatters by one d6
             // we do this here to avoid duplicating handle()

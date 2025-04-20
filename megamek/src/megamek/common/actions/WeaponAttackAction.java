@@ -2323,12 +2323,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         return Messages.getString("WeaponAttackAction.TooLongForDirectArty");
                     }
                 }
-                if (isHoming) {
-                    if ((te == null) || (te.getTaggedBy() == UNASSIGNED)) {
-                        // Homing missiles must target a tagged entity
-                        return Messages.getString("WeaponAttackAction.MustTargetTagged");
-                    }
-                }
             }
 
             // Indirect artillery attacks

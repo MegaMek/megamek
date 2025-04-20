@@ -484,7 +484,7 @@ public class ArtilleryTargetingControl {
                             if (attackOnAirborneEntity || attackOnEntity) {
                                 // Homing rounds can't hit flying Aerospace units because TAG can't hit them.
                                 boolean homing = ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_HOMING);
-                                damageValue = (target.isAirborne()) ? 0 : damage;
+                                damageValue = (target.isAirborne() && homing) ? 0 : damage;
                             } else {
                                 if (!isADA) {
                                     damageValue = calculateDamageValue(damage, (HexTarget) target, shooter, game, owner);

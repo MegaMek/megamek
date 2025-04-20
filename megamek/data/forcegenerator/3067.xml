@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3067-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='ARDC'>
 			<pctOmni>0,0,4,10,20</pctOmni>
@@ -6670,7 +6667,7 @@
             </model>
         </chassis>
         <chassis name='Field Gun Platoon (FWLM)' unitType='Infantry'>
-            <availability>FWL!A:7!B:5!C:4!D:3,DTA!A:7!B:5!C:4!D:3</availability>
+            <availability>FWL!A:7!B:5!C:4!D:3!F:1,DTA!A:7!B:5!C:4!D:3!F:1</availability>
             <model name='(Motorized AC10 3035+)'>
                 <roles>field_gun,paratrooper</roles>
                 <availability>FWL!A:1!B:1!C:3!D:3!F:3,DTA!A:1!B:1!C:3!D:3!F:3</availability>
@@ -7201,7 +7198,7 @@
 				<availability>IS:8,FWL!D:6!F:7,DTA!D:6!F:7,CS:0,WOB:0,WOB.PM:7,Periphery:8,TC:7,CDP:7,HL:7,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>IS:5,FWL:0,CS:0,WOB:0,WOB.PM:3+,Periphery:5,TC:3+,CDP:3+,HL:5+,Periphery.Deep:5+</availability>
+				<availability>IS:5,FWL:0,DTA:0,CS:0,WOB:0,WOB.PM:3+,Periphery:5,TC:3+,CDP:3+,HL:5+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
         <chassis name='Foot demi-I (ComGuards)' unitType='Infantry'>
@@ -7273,58 +7270,58 @@
             </model>
         </chassis>
         <chassis name='Foot Platoon (FWLM)' unitType='Infantry'>
-            <availability>FWL!A:8!B:8!C:8!D:5!F:1</availability>
+            <availability>FWL!A:8!B:8!C:8!D:5!F:1,DTA!A:8!B:8!C:8!D:5!F:1</availability>
             <model name='(Flamer 3035+)'>
                 <roles>urban</roles>
-                <availability>FWL:3-</availability>
+                <availability>FWL:3-,DTA:3-</availability>
             </model>
             <model name='(Gauss 3060+)'>
-                <availability>FWL:1+</availability>
+                <availability>FWL:1+,DTA:1+</availability>
             </model>
             <model name='(Laser 3035+)'>
-                <availability>FWL:5+</availability>
+                <availability>FWL:5+,DTA:5+</availability>
             </model>
             <model name='(Laser Marine 2880+)'>
                 <roles>marine</roles>
-                <availability>FWL:1+</availability>
+                <availability>FWL:1+,DTA:1+</availability>
             </model>
             <model name='(Laser XCT 2880+)'>
                 <roles>xct</roles>
-                <availability>FWL:1+</availability>
+                <availability>FWL:1+,DTA:1+</availability>
             </model>
             <model name='(LRM 3035+)'>
                 <roles>fire_support</roles>
-                <availability>FWL:3+</availability>
+                <availability>FWL:3+,DTA:3+</availability>
             </model>
             <model name='(MG 3035+)'>
                 <roles>anti_infantry</roles>
-                <availability>FWL:4</availability>
+                <availability>FWL:4,DTA:4</availability>
             </model>
             <model name='(Rifle 3035+)'>
-                <availability>FWL:7</availability>
+                <availability>FWL:7,DTA:7</availability>
             </model>
             <model name='(Rifle AA 3056+)'>
                 <roles>anti_aircraft</roles>
-                <availability>FWL:1+</availability>
+                <availability>FWL:1+,DTA:1+</availability>
             </model>
             <model name='(Riot Police 3035+)'>
                 <roles>civilian</roles>
-                <availability>FWL:7</availability>
+                <availability>FWL:7,DTA:7</availability>
             </model>
             <model name='(Sappers 2315+)'>
                 <roles>engineer,minesweeper</roles>
-                <availability>FWL:3+</availability>
+                <availability>FWL:3+,DTA:3+</availability>
             </model>
             <model name='(Sniper Detachment 2505+)'>
                 <roles>specops</roles>
-                <availability>FWL:1+</availability>
+                <availability>FWL:1+,DTA:1+</availability>
             </model>
             <model name='(SpecOps Fireteam 3050+)'>
                 <roles>paratrooper,recon,specops</roles>
-                <availability>FWL:1+</availability>
+                <availability>FWL:1+,DTA:1+</availability>
             </model>
             <model name='(SRM 3035+)'>
-                <availability>FWL:4+</availability>
+                <availability>FWL:4+,DTA:4+</availability>
             </model>
         </chassis>
         <chassis name='Foot Platoon (Taurian 3047+)' unitType='Infantry'>
@@ -12731,7 +12728,7 @@
 			</model>
 			<model name='(Rifle)'>
                 <roles>urban</roles>
-				<availability>IS:8,FWL!F:3,DTA!F:3,CS:0,WOB:0,WOB.PM:6,Periphery:8,TC:4,CDP:4,HL:8,Periphery.Deep:6</availability>
+				<availability>IS:8,FWL!F:8,DTA!F:8,CS:0,WOB:0,WOB.PM:6,Periphery:8,TC:4,CDP:4,HL:8,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
                 <roles>urban</roles>
@@ -13261,7 +13258,7 @@
 			</model>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
-				<availability>IS:8,FWL:3-,DTA:0,CS:0,WOB:0,WOB.PM:4-,Periphery:8,TC:5-,CDP:5-,HL:8,Periphery.Deep:8</availability>
+				<availability>IS:8,FWL:3-,DTA:3-,CS:0,WOB:0,WOB.PM:4-,Periphery:8,TC:5-,CDP:5-,HL:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='(Flechette)'>
 				<availability>IS:5,FWL:2,DTA:2,CS:0,WOB:0,WOB.PM:2</availability>
@@ -13379,47 +13376,47 @@
             <availability>FWL!A:6!B:6!C:6!D:2!F:1,DTA!A:6!B:6!C:6!D:2!F:1</availability>
             <model name='(Combat Engineers 3035+)'>
                 <roles>engineer</roles>
-                <availability>FWL!A:2!B:1!C:1</availability>
+                <availability>FWL!A:2!B:1!C:1,DTA!A:2!B:1!C:1</availability>
             </model>
             <model name='(Flamer 3035+)'>
                 <roles>urban</roles>
-                <availability>FWL:3-</availability>
+                <availability>FWL:3-,DTA:3-</availability>
             </model>
             <model name='(Gauss 3060+)'>
-                <availability>FWL:2+</availability>
+                <availability>FWL:2+,DTA:2+</availability>
             </model>
             <model name='(Laser 3035+)'>
-                <availability>FWL:4+</availability>
+                <availability>FWL:4+,DTA:4+</availability>
             </model>
             <model name='(Laser XCT 2880+)'>
                 <roles>xct</roles>
-                <availability>FWL:1+</availability>
+                <availability>FWL:1+,DTA:1+</availability>
             </model>
             <model name='(LRM 3035+)'>
                 <roles>fire_support</roles>
-                <availability>FWL:3+</availability>
+                <availability>FWL:3+,DTA:3+</availability>
             </model>
             <model name='(MG 3035+)'>
                 <roles>anti_infantry</roles>
-                <availability>FWL:4</availability>
+                <availability>FWL:4,DTA:4</availability>
             </model>
             <model name='(Rifle 3035+)'>
-                <availability>FWL:7</availability>
+                <availability>FWL:7,DTA:7</availability>
             </model>
             <model name='(Rifle AA 3056+)'>
                 <roles>anti_aircraft</roles>
-                <availability>FWL:1+</availability>
+                <availability>FWL:1+,DTA:1+</availability>
             </model>
             <model name='(Riot Police 3035+)'>
                 <roles>civilian</roles>
-                <availability>FWL:7</availability>
+                <availability>FWL:7,DTA:7</availability>
             </model>
             <model name='(Sappers 2315+)'>
                 <roles>engineer,minesweeper</roles>
-                <availability>FWL:2+</availability>
+                <availability>FWL:2+,DTA:2+</availability>
             </model>
             <model name='(SRM 3035+)'>
-                <availability>FWL:4+</availability>
+                <availability>FWL:4+,DTA:4+</availability>
             </model>
         </chassis>
         <chassis name='Motorized Platoon (Taurian 3047+)' unitType='Infantry'>

@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3060-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='ARDC'>
 			<pctOmni>0,0,2,5,10</pctOmni>
@@ -5561,6 +5558,10 @@
             <model name='(Wheeled UAC2 3057+)'>
                 <roles>field_gun,fire_support,urban</roles>
                 <availability>FWL!A:1!B:1!C:1</availability>
+            </model>
+            <model name='(Wheeled UAC20 3060+)'>
+                <roles>field_gun,urban</roles>
+                <availability>FWL:1+</availability>
             </model>
             <model name='(Wheeled UAC5 3040+)'>
                 <roles>field_gun,fire_support,urban</roles>

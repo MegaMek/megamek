@@ -4281,16 +4281,18 @@ public abstract class Mek extends Entity {
 
     @Override
     public boolean isLocationDeadly(Coords c) {
-        Hex hex = game.getBoard().getHex(c);
+        //legacy
+        return isLocationDeadly(c, 0);
+    }
 
-        if (this.isIndustrial()
-                && !this.hasEnvironmentalSealing()
-                && (this.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                && hex.terrainLevel(Terrains.WATER) >= 2) {
-            return true;
-        }
-
-        return false;
+    @Override
+    public boolean isLocationDeadly(Coords c, int boardId) {
+        return isIndustrial()
+                     && hasEngine()
+                     && getEngine().isICE()
+                     && !hasEnvironmentalSealing()
+                     && game.hasBoardLocation(c, boardId)
+                     && game.getHex(c, boardId).terrainLevel(Terrains.WATER) >= 2;
     }
 
     /**

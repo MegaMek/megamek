@@ -394,7 +394,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         // shots that miss an entity can also potential cause explosions in a
         // heavy industrial hex
-        gameManager.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
+        gameManager.checkExplodeIndustrialZone(target.getPosition(), target.getBoardId(), vPhaseReport);
 
         // Report any AMS action.
         if (amsEngaged) {

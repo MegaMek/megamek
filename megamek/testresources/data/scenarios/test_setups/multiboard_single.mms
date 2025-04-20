@@ -6,11 +6,23 @@ map:
   - file: unofficial/Cakefish/General/50x50 Grass QRF Airbase.board
     name: Airport
     id: 5
+    postprocess:
+      # addterrain adds terrain in a given area
+      - type: addterrain
+      # required: the terrain type to change, as used in board files
+        terrain: fire
+      # required: the terrain level
+        level: 1
+      # required: an area to apply it to, see "areas" section
+        area:
+          list:
+          - [ 9, 9 ]
 
 options:
   on:
     - friendly_fire
     - aero_ground_move
+    - tacops_start_fire
   off:
     - check_victory
 
@@ -44,6 +56,8 @@ factions:
 #    at: [13,10]
 #    board: 1
 #    facing: 2
+  - fullname: Black Knight BL-12-KNT
+
 
 #  - fullname: Bulldog Medium Tank
 #    at: [ 13,10 ]
@@ -89,7 +103,7 @@ factions:
 #    facing: 3
 #    altitude: 5
 
-  - fullname: Cheetah IIC
+#  - fullname: Cheetah IIC
 #    at: [ 8, 2 ]
 #    board: 6
 #    facing: 3

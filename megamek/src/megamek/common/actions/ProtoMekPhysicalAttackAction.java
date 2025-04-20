@@ -109,8 +109,8 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
             }
         }
 
-        final Hex attHex = game.getBoard().getHex(ae.getPosition());
-        final Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getHexOf(ae);
+        Hex targHex = game.getHexOf(target);
         if ((attHex == null) || (targHex == null)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import megamek.common.Terrain;
 import megamek.common.Terrains;
 import megamek.common.board.postprocess.*;
+import megamek.common.hexarea.HexArea;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class BoardProcessorDeserializer {
     private static final String TYPE = "type";
     private static final String TYPE_TERRAIN_REMOVE = "removeterrain";
     private static final String TYPE_TERRAIN_CONVERT = "convertterrain";
+    private static final String TYPE_TERRAIN_ADD = "addterrain";
     private static final String TYPE_THEME = "settheme";
     private static final String TERRAIN = "terrain";
     private static final String NEW_TERRAIN = "newterrain";
@@ -49,6 +51,7 @@ public class BoardProcessorDeserializer {
         return switch (type) {
             case TYPE_TERRAIN_CONVERT -> parseConvertTerrain(node);
             case TYPE_TERRAIN_REMOVE -> parseRemoveTerrain(node);
+            case TYPE_TERRAIN_ADD -> parseAddTerrain(node);
             case TYPE_THEME -> parseChangeTheme(node);
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
@@ -85,6 +88,16 @@ public class BoardProcessorDeserializer {
             level = node.get(LEVEL).intValue();
         }
         return new TerrainRemoveBoardProcessor(terrainType, level);
+    }
+
+    private static BoardProcessor parseAddTerrain(JsonNode node) {
+        int terrainType = Terrains.getType(node.get(TERRAIN).asText());
+        if (terrainType == 0) {
+            throw new IllegalArgumentException("Invalid terrain type: " + node.get(TERRAIN).asText());
+        }
+        int level = node.get(LEVEL).intValue();
+        HexArea area = HexAreaDeserializer.parseShape(node.get("area"));
+        return new TerrainAddPostProcessor(terrainType, level, area);
     }
 
     private static BoardProcessor parseChangeTheme(JsonNode triggerNode) {

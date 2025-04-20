@@ -2561,7 +2561,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         .collect(Collectors.toList());
                 if (chaffDispensers.size() > 0) {
                     chaffDispensers.get(0).setFired(true);
-                    gameManager.createSmoke(curPos, SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
+                    gameManager.createSmoke(curPos, getGame().getBoard(step.getTargetBoardId()),
+                          SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
                     Hex hex = getGame().getBoard(curBoardId).getHex(curPos);
                     hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
                     gameManager.sendChangedHex(curPos);

@@ -25,7 +25,6 @@ import static megamek.common.options.OptionsConstants.INIT_INITIATIVE_STREAK_COM
 import static megamek.common.options.OptionsConstants.RPG_INDIVIDUAL_INITIATIVE;
 import static megamek.common.weapons.AreaEffectHelper.calculateDamageFallOff;
 
-import java.awt.Color;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -33,10 +32,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.AmmoType.Munitions;
@@ -15950,8 +15947,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r;
         for (Entity entity : game.inGameTWEntities()) {
             if ((null == entity.getPosition()) || entity.isOffBoard() || !entity.isSpaceborne()) {
-                // If it's not on the board - aboard something else, for
-                // example...
+                // If it's not on the board - aboard something else, for example...
                 continue;
             }
             if (entity.doomedInSpace()) {
@@ -15970,24 +15966,20 @@ public class TWGameManager extends AbstractGameManager {
      */
     void checkForSuffocation() {
         for (Entity entity : game.inGameTWEntities()) {
-            final Hex curHex = game.getBoard().getHex(entity.getPosition());
-            if ((null == entity.getPosition()) || entity.isOffBoard() || curHex == null) {
+            if (entity.isOffBoard() || !game.hasBoardLocationOf(entity)) {
                 continue;
             }
 
+            final Hex curHex = game.getHex(entity.getPosition(), entity.getBoardId());
             boolean depthOneProne = (curHex.terrainLevel(Terrains.WATER) == 1) && entity.isProne();
             boolean inWater = (curHex.terrainLevel(Terrains.WATER) > 1) || depthOneProne;
             boolean underWater = (entity.getElevation() < 0) && inWater;
-            boolean canNotBeathe = underWater ||
+            boolean cannotBreathe = underWater ||
                                          game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN);
-            if (canNotBeathe &&
+            if (cannotBreathe &&
                       (entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, Mek.LOC_HEAD) > 0)) {
-                Report r = new Report(6020);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                addReport(r);
+                addReport(new Report(6020).with(entity));
                 addReport(damageCrew(entity, 1));
-
             }
         }
     }
@@ -24893,13 +24885,18 @@ public class TWGameManager extends AbstractGameManager {
         return checkIgnition(c, roll, false, Entity.NONE, null);
     }
 
+    public void ignite(Coords c, int fireLevel, Vector<Report> vReport) {
+        //LEGACY use boardId version
+        ignite(c, 0, fireLevel, vReport);
+    }
+
     /**
      * add fire to a hex
      *
      * @param c         - the <code>Coords</code> of the hex to be set on fire
      * @param fireLevel - The level of fire, see Terrains
      */
-    public void ignite(Coords c, int fireLevel, Vector<Report> vReport) {
+    public void ignite(Coords c, int boardId, int fireLevel, Vector<Report> vReport) {
         // you can't start fires in some planetary conditions!
         if (null != game.getPlanetaryConditions().cannotStartFire()) {
             if (null != vReport) {
@@ -24922,7 +24919,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        Hex hex = game.getBoard().getHex(c);
+        Hex hex = game.getHex(c, boardId);
         if (null == hex) {
             return;
         }
@@ -24979,7 +24976,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @param coords The <code>Coords</code> x-coordinate of the hex
      */
-    public void addSmoke(ArrayList<Coords> coords, int windDir, boolean bInferno) {
+    public void addSmoke(List<Coords> coords, Board board, boolean bInferno) {
         // if a tornado, then no smoke!
         if (game.getPlanetaryConditions().getWind().isStrongerThan(Wind.STORM)) {
             return;
@@ -24987,14 +24984,12 @@ public class TWGameManager extends AbstractGameManager {
 
         int smokeLevel = 0;
         for (Coords smokeCoords : coords) {
-            Hex smokeHex = game.getBoard().getHex(smokeCoords);
-            Report r;
+            Hex smokeHex = board.getHex(smokeCoords);
             if (smokeHex == null) {
                 continue;
             }
-            // Have to check if it's inferno smoke or from a heavy/hardened
-            // building
-            // - heavy smoke from those
+            Report r;
+            // Have to check if it's inferno smoke or from a heavy/hardened building - heavy smoke from those
             if (bInferno ||
                       (BuildingType.MEDIUM.getTypeValue() < smokeHex.terrainLevel(Terrains.FUEL_TANK)) ||
                       (BuildingType.MEDIUM.getTypeValue() < smokeHex.terrainLevel(Terrains.BUILDING))) {
@@ -25029,7 +25024,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
-        createSmoke(coords, smokeLevel, 0);
+        createSmoke(coords, board, smokeLevel, 0);
     }
 
     /**
@@ -27026,12 +27021,17 @@ public class TWGameManager extends AbstractGameManager {
         return vDesc;
     }
 
+    public void checkExplodeIndustrialZone(Coords c, Vector<Report> vDesc) {
+        // LEGACY use boardId
+        checkExplodeIndustrialZone(c, 0, vDesc);
+    }
+
     /**
      * checks for unintended explosion of heavy industrial zone hex and applies damage to entities occupying the hex
      */
-    public void checkExplodeIndustrialZone(Coords c, Vector<Report> vDesc) {
+    public void checkExplodeIndustrialZone(Coords c, int boardId, Vector<Report> vDesc) {
         Report r;
-        Hex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard(boardId).getHex(c);
         if (null == hex) {
             return;
         }
@@ -27087,7 +27087,7 @@ public class TWGameManager extends AbstractGameManager {
             // apply damage here
             if (powerLine || minorExp || elecExp || majorExp) {
                 // cycle through the entities in the hex and apply damage
-                for (Entity en : game.getEntitiesVector(c)) {
+                for (Entity en : game.getEntitiesVector(c, boardId)) {
                     int damage = 3;
                     if (minorExp) {
                         damage = 5;
@@ -27121,7 +27121,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             Report.addNewline(vDesc);
             if (onFire && !hex.containsTerrain(Terrains.FIRE)) {
-                ignite(c, Terrains.FIRE_LVL_NORMAL, vDesc);
+                ignite(c, boardId, Terrains.FIRE_LVL_NORMAL, vDesc);
             }
         } else {
             // report no explosion
@@ -30557,15 +30557,18 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * create a <code>SmokeCloud</code> object and add it to the server list
+     * LEGACY - use real board id
      *
      * @param coords   the location to create the smoke
      * @param level    1=Light 2=Heavy Smoke 3:light LI smoke 4: Heavy LI smoke
      * @param duration How long the smoke will last.
      */
     public void createSmoke(Coords coords, int level, int duration) {
-        SmokeCloud cloud = new SmokeCloud(coords, level, duration, game.getRoundCount());
-        game.addSmokeCloud(cloud);
-        sendSmokeCloudAdded(cloud);
+        createSmoke(List.of(coords), game.getBoard(), level, duration);
+    }
+
+    public void createSmoke(Coords coords, Board board, int level, int duration) {
+        createSmoke(List.of(coords), board, level, duration);
     }
 
     /**
@@ -30575,8 +30578,8 @@ public class TWGameManager extends AbstractGameManager {
      * @param level    1=Light 2=Heavy Smoke 3:light LI smoke 4: Heavy LI smoke
      * @param duration duration How long the smoke will last.
      */
-    public void createSmoke(ArrayList<Coords> coords, int level, int duration) {
-        SmokeCloud cloud = new SmokeCloud(coords, level, duration, game.getRoundCount());
+    public void createSmoke(List<Coords> coords, Board board, int level, int duration) {
+        SmokeCloud cloud = new SmokeCloud(coords, board.getBoardId(), level, duration, game.getRoundCount());
         game.addSmokeCloud(cloud);
         sendSmokeCloudAdded(cloud);
     }

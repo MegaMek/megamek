@@ -30,8 +30,8 @@ import java.util.Set;
  * This class represents an area composed of hexes on a single board. The area can be a basic shape or be defined by
  * adding, subtracting or intersecting basic shapes. Areas can be used to define deployment zones in code using
  * {@link Board#addDeploymentZone(int, HexArea)}, to set a zone where units may flee the board from in
- * {@link Entity#setFleeZone(HexArea)} and in positional triggers for events ({@link UnitPositionTrigger}). HexAreas
- * can be present on some or all boards; on each board that it is present, it has the same shape.
+ * {@link Entity#setFleeZone(HexArea)} and in positional triggers for events ({@link UnitPositionTrigger}). HexAreas can
+ * be present on some or all boards; on each board that it is present, it has the same shape.
  * <P>Note:
  * <BR>- A HexArea can be empty if its shapes result in no valid hexes;
  * <BR>- A HexArea can be infinite; therefore, its hexes can only be retrieved by limiting the results to a Board;
@@ -39,12 +39,10 @@ import java.util.Set;
  * <BR>- A HexArea can appear empty when its shapes do not contain any hexes within the given board;
  * <BR>- A HexArea does not have to be contiguous;
  * <BR>- HexAreas are typically lightweight as they don't store their hexes (unless ListHexArea is misused to store
- * thousands of hexes),
- * only the rules to create the hexes;
+ * thousands of hexes), only the rules to create the hexes;
  * <P>HexArea is immutable.
  * <P>Note that the shape can have any complexity by being itself constructed from other shapes. For example, the
- * intersection of two
- * circles can be created by calling
+ * intersection of two circles can be created by calling
  * <pre>{@code
  * new HexAreaIntersection(
  *       new HexCircleShape(new Coords(20, 5), 14),
@@ -64,9 +62,11 @@ public interface HexArea extends Serializable {
 
     /**
      * Returns true if this shape contains the given coords. Returns false when the given coords is null. If this shape
-     * is absolute, i.e. does not depend on parameters outside itself, the board does not matter. Some shapes however
-     * may be relative to the board size, e.g. a shape that returns the borders of the board; or even board contents,
-     * such as terrain.
+     * is absolute, i.e. does not depend on parameters outside itself, the board does not matter. Note that this means
+     * that areas are *not* required to return true only for coords that are on the given board!
+     * <p>
+     * Some shapes however may be relative to the board size, e.g. a shape that returns the borders of the board; or
+     * even relate to board contents, such as terrain.
      *
      * @param coords The coords that are tested if they are part of this shape
      * @param board  The board to limit the area coords to
@@ -86,8 +86,8 @@ public interface HexArea extends Serializable {
 
 
     /**
-     * Returns true if this HexArea is present on the given board. By default, forwards to
-     * {@link #matchesBoardId(int)}. This method will usually not need to be overridden.
+     * Returns true if this HexArea is present on the given board. By default, forwards to {@link #matchesBoardId(int)}.
+     * This method will usually not need to be overridden.
      *
      * @return True if this area is present on the given board
      */

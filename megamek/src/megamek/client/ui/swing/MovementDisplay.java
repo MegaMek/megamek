@@ -2855,7 +2855,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (!movePath.contains(MoveStepType.BRACE) &&
-                movePath.isValidPositionForBrace(movePath.getFinalCoords(), movePath.getFinalFacing())) {
+                movePath.isValidPositionForBrace(movePath.getFinalCoords(), finalBoardId(),
+                      movePath.getFinalFacing())) {
             setBraceEnabled(true);
         } else {
             setBraceEnabled(false);

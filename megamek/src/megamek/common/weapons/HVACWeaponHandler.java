@@ -49,7 +49,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
             int rear = (ae.getFacing() + 3 + (weapon.isMekTurretMounted() ? weapon.getFacing() : 0)) % 6;
             Coords src = ae.getPosition();
             Coords rearCoords = src.translated(rear);
-            Board board = game.getBoard();
+            Board board = game.getBoard(ae);
             Hex currentHex = board.getHex(src);
 
             if (!board.contains(rearCoords)) {
@@ -64,7 +64,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
                 rearCoords = src;
             }
 
-            gameManager.createSmoke(rearCoords, SmokeCloud.SMOKE_HEAVY, 2);
+            gameManager.createSmoke(rearCoords, board, SmokeCloud.SMOKE_HEAVY, 2);
         }
         return super.handle(phase, vPhaseReport);
     }

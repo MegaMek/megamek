@@ -131,8 +131,8 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        Hex attHex = game.getBoard().getHex(ae.getPosition());
-        Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getHexOf(ae);
+        Hex targHex = game.getHexOf(target);
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetElevation = target.getElevation()
                 + targHex.getLevel();

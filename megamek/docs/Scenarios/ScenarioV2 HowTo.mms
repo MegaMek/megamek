@@ -152,6 +152,17 @@ map:
       newlevel: 2
       # obviously, at least one of newterrain and newlevel must be given
 
+    # addterrain adds terrain in a given area
+    - type: addterrain
+      # required: the terrain type to change, as used in board files
+      terrain: fire
+      # required: the terrain level
+      level: 1
+      # required: an area to apply it to, see "areas" section
+      area:
+        list:
+          - [ 10, 10 ]
+
 # Optional: game options
 # when not given, the options from the latest game are used
 options:

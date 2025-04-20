@@ -511,6 +511,18 @@ public interface IGame {
     }
 
     /**
+     * Returns true if the given targetable is not null and has a position that exists, i.e. its position and
+     * board ID are on an actual board. When this returns true, calling getHex for its location will return a
+     * non-null hex.
+     *
+     * @param targetable The targetable to check
+     * @return True when its location exists and is on a board
+     */
+    default boolean hasBoardLocationOf(@Nullable Targetable targetable) {
+        return targetable!=null && hasBoardLocation(targetable.getPosition(), targetable.getBoardId());
+    }
+
+    /**
      * Returns true if the given boardLocation really exists, i.e. is not null, its board ID is an actual board in
      * the game and its coords are contained in that board. This means that a hex can be found for this boardLocation.
      *
@@ -558,26 +570,51 @@ public interface IGame {
     }
 
     /**
-     * Returns the hex for the given location, i.e. the hex at the coords and on the board ID of the given
-     * location. Returns null when the board doesn't exist or when there is no hex at the given coords.
+     * Returns the hex for the given location, i.e. the hex at the coords and on the board ID of the given location.
+     * Returns null when the board doesn't exist or when there is no hex at the given coords. The various
+     * hasBoardLocation() methods can be used to make sure that a non-null hex can be found.
      *
      * @param boardLocation The location to query
+     *
      * @return The hex at the given location
+     *
+     * @see #hasBoardLocation(Coords, int)
+     * @see #hasBoardLocationOf(Targetable)
      */
     default @Nullable Hex getHex(BoardLocation boardLocation) {
         return hasBoardLocation(boardLocation) ? getBoard(boardLocation).getHex(boardLocation.coords()) : null;
     }
 
     /**
-     * Returns the hex for the given location, i.e. the hex at the coords and on the board of the given
-     * ID. Returns null when the board doesn't exist or when there is no hex at the given coords.
+     * Returns the hex for the given location, i.e. the hex at the coords and on the board of the given ID. Returns null
+     * when the board doesn't exist or when there is no hex at the given coords.
      *
-     * @param coords The coords
-     * @param boardId The board ID
+     * @param coords  The location's coords
+     * @param boardId The location's board ID
+     *
      * @return The hex at the given location
+     *
+     * @see #hasBoardLocation(Coords, int)
+     * @see #hasBoardLocationOf(Targetable)
      */
     default @Nullable Hex getHex(Coords coords, int boardId) {
         return hasBoardLocation(coords, boardId) ? getBoard(boardId).getHex(coords) : null;
+    }
+
+    /**
+     * Returns the hex that the given Targetable is at, i.e. the hex at the position and on the board ID of the given
+     * Targetable. Returns null when targetable is null, the board doesn't exist or when there is no hex at its
+     * position or the position is null.
+     *
+     * @param targetable The unit or object
+     *
+     * @return The hex at the position of the Targetable
+     *
+     * @see #hasBoardLocation(Coords, int)
+     * @see #hasBoardLocationOf(Targetable)
+     */
+    default @Nullable Hex getHexOf(Targetable targetable) {
+        return targetable == null ? null : getHex(targetable.getPosition(), targetable.getBoardId());
     }
 
     /**

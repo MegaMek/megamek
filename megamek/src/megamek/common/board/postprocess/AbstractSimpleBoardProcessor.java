@@ -26,7 +26,7 @@ import megamek.common.Hex;
  * from other hexes. An example is a processor that converts all woods hexes to heavy woods or
  * removes all water.
  */
-public abstract class AbstractSimpleBoardProcessor implements BoardProcessor {
+abstract class AbstractSimpleBoardProcessor implements BoardProcessor {
 
     @Override
     public final void processBoard(Board board) {

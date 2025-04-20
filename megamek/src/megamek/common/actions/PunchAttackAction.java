@@ -104,8 +104,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (physicalImpossible != null) {
             return physicalImpossible;
         }
-        Hex attHex = game.getBoard().getHex(ae.getPosition());
-        Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getHexOf(ae);
+        Hex targHex = game.getHexOf(target);
         int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         if (ae.isHullDown()) {
             attackerHeight--;
@@ -195,8 +195,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, impossible);
         }
 
-        Hex attHex = game.getBoard().getHex(ae.getPosition());
-        Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getHexOf(ae);
+        Hex targHex = game.getHexOf(target);
         final int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         final int targetElevation = target.getElevation()
                 + targHex.getLevel(); // The absolute level of the target's arms

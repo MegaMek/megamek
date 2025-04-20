@@ -3397,10 +3397,17 @@ public abstract class Entity extends TurnOrdered
                      (boardType.isSpace() && doomedInSpace());
     }
 
-    /**
-     * Returns true if the specified hex contains some sort of deadly terrain.
-     */
+     // legacy use board id version
     public boolean isLocationDeadly(Coords c) {
+        return isLocationDeadly(c, 0);
+    }
+
+
+    /**
+     * Returns true if the specified hex exists and has terrain that is deadly to this unit.
+     * Note: Currently this is only overridden for meks and is missing elevation information which makes it incomplete.
+     */
+    public boolean isLocationDeadly(Coords c, int boardId) {
         return false;
     }
 
@@ -9904,12 +9911,12 @@ public abstract class Entity extends TurnOrdered
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
-        if (getPosition() == null) {
+        if (!game.hasBoardLocationOf(this)) {
             return false; // not on board?
         }
 
         if ((this instanceof Infantry) && hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_DEMOLITION_CHARGE)) {
-            Hex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getHex(position, boardId);
 
             if (hex == null) {
                 return false;
@@ -9998,7 +10005,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         // If there are no valid Entity targets, check for add valid buildings.
-        Enumeration<Building> buildings = game.getBoard().getBuildings();
+        Enumeration<Building> buildings = game.getBoard(boardId).getBuildings();
         while (!canHit && buildings.hasMoreElements()) {
             final Building bldg = buildings.nextElement();
 
@@ -10013,7 +10020,7 @@ public abstract class Entity extends TurnOrdered
                 }
 
                 // Can the entity target *this* hex of the building?
-                final BuildingTarget target = new BuildingTarget(coords, game.getBoard(), false);
+                final BuildingTarget target = new BuildingTarget(coords, game.getBoard(boardId), false);
                 canHit |= Compute.canPhysicalTarget(game, getId(), target);
 
             } // Check the next hex of the building

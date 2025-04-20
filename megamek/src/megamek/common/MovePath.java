@@ -873,16 +873,17 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public boolean isValidPositionForBrace(MoveStep step) {
-        return isValidPositionForBrace(step.getPosition(), step.getFacing());
+        return isValidPositionForBrace(step.getPosition(), step.getTargetBoardId(), step.getFacing());
     }
 
     /**
      * Given a set of coordinates and a facing, is the entity taking this path in a valid position to execute a brace?
      */
-    public boolean isValidPositionForBrace(Coords coords, int facing) {
+    public boolean isValidPositionForBrace(Coords coords, int boardId, int facing) {
         // situation: can't brace off of jumps; can't brace if you're not a mek with
         // arms/protomek
-        if (isJumping() || contains(MoveStepType.GO_PRONE) || !getEntity().canBrace()) {
+        if (isJumping() || contains(MoveStepType.GO_PRONE) || !getEntity().canBrace()
+                  || !game.hasBoardLocation(coords, boardId)) {
             return false;
         }
 
@@ -891,16 +892,16 @@ public class MovePath implements Cloneable, Serializable {
         // a) level 1 level higher than your hex level
         // b) building/bridge ceiling 1 level higher than your hex level (?)
         if (getEntity() instanceof Mek) {
-            boolean onBoard = getGame().getBoard().contains(coords);
+            Board board = game.getBoard(boardId);
             Coords nextPosition = coords.translated(facing);
-            boolean nextHexOnBoard = getGame().getBoard().contains(nextPosition);
+            boolean nextHexOnBoard = board.contains(nextPosition);
 
-            if (!onBoard || !nextHexOnBoard) {
+            if (!nextHexOnBoard) {
                 return false;
             }
 
-            Hex nextHex = getGame().getBoard().getHex(nextPosition);
-            Hex currentHex = getGame().getBoard().getHex(coords);
+            Hex nextHex = board.getHex(nextPosition);
+            Hex currentHex = board.getHex(coords);
 
             int curHexLevel = currentHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV) ?
                                     currentHex.ceiling() :
@@ -909,7 +910,7 @@ public class MovePath implements Cloneable, Serializable {
                                      nextHex.ceiling() :
                                      nextHex.floor();
 
-            return onBoard && nextHexOnBoard && (nextHexLevel == curHexLevel + 1);
+            return nextHexLevel == curHexLevel + 1;
         }
 
         return true;

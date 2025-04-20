@@ -29,7 +29,7 @@ import megamek.server.ServerHelper;
 import java.awt.Color;
 import java.util.Vector;
 
-public class HeatResolver extends AbstractTWRuleHandler {
+class HeatResolver extends AbstractTWRuleHandler {
 
     private static final MMLogger LOGGER = MMLogger.create(HeatResolver.class);
 
@@ -147,13 +147,11 @@ public class HeatResolver extends AbstractTWRuleHandler {
 
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero && !(entity instanceof ConvFighter)) {
-                ServerHelper.resolveAeroHeat(getGame(),
-                      entity,
+                resolveAeroHeat(entity,
                       gameManager.getMainPhaseReport(),
                       rhsReports,
                       radicalHSBonus,
-                      hotDogMod,
-                      gameManager);
+                      hotDogMod);
                 continue;
             }
 
@@ -256,7 +254,7 @@ public class HeatResolver extends AbstractTWRuleHandler {
             // If a Mek is in extreme Temperatures, add or subtract one
             // heat per 10 degrees (or fraction of 10 degrees) above or
             // below 50 or -30 degrees Celsius
-            ServerHelper.adjustHeatExtremeTemp(getGame(), entity, gameManager.getMainPhaseReport());
+            adjustHeatExtremeTemp(entity, gameManager.getMainPhaseReport());
 
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.
@@ -867,4 +865,381 @@ public class HeatResolver extends AbstractTWRuleHandler {
             addReport(new Report(1205, Report.PUBLIC));
         }
     }
+
+    /**
+     * Worker function that handles heat as applied to aerospace fighter
+     */
+    void resolveAeroHeat(Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports,
+          int radicalHSBonus, int hotDogMod) {
+        Report r;
+
+        // If this aero is part of a squadron, we will deal with its
+        // heat with the fighter squadron
+        if (getGame().getEntity(entity.getTransportId()) instanceof FighterSquadron) {
+            return;
+        }
+
+        // should we even bother?
+        if (entity.isDestroyed() || entity.isDoomed()
+                  || entity.getCrew().isDoomed()
+                  || entity.getCrew().isDead()) {
+            return;
+        }
+
+        // engine hits add a lot of heat, provided the engine is on
+        entity.heatBuildup += entity.getEngineCritHeat();
+
+        // If an Aero had an active Stealth suite, add 10 heat.
+        if (entity.isStealthOn()) {
+            entity.heatBuildup += 10;
+            r = new Report(5015);
+            r.subject = entity.getId();
+            vPhaseReport.add(r);
+        }
+
+        // Add or subtract heat due to extreme temperatures TO:AR p60
+        adjustHeatExtremeTemp(entity, vPhaseReport);
+
+        // Combat computers help manage heat
+        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
+            int reduce = Math.min(entity.heatBuildup, 4);
+            r = new Report(5026);
+            r.subject = entity.getId();
+            r.add(reduce);
+            vPhaseReport.add(r);
+            entity.heatBuildup -= reduce;
+        }
+
+        // Add heat from external sources to the heat buildup
+        int max_ext_heat = getGame().getOptions().intOption(
+              OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT); // Check Game Options
+        if (max_ext_heat < 0) {
+            max_ext_heat = 15; // standard value specified in TW p.159
+        }
+        entity.heatBuildup += Math.min(max_ext_heat, entity.heatFromExternal);
+        entity.heatFromExternal = 0;
+        // remove heat we cooled down
+        entity.heatBuildup -= Math.min(9, entity.coolFromExternal);
+        entity.coolFromExternal = 0;
+
+        // add the heat we've built up so far.
+        entity.heat += entity.heatBuildup;
+
+        // how much heat can we sink?
+        int tosink = entity.getHeatCapacityWithWater() + radicalHSBonus;
+
+        // should we use a coolant pod?
+        int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
+        int possibleSinkage = ((Aero) entity).getHeatSinks();
+        for (Mounted<?> m : entity.getEquipment()) {
+            if (m.getType() instanceof AmmoType) {
+                AmmoType at = (AmmoType) m.getType();
+                if ((at.getAmmoType() == AmmoType.T_COOLANT_POD) && m.isAmmoUsable()) {
+                    EquipmentMode mode = m.curMode();
+                    if (mode.equals("dump")) {
+                        r = new Report(5260);
+                        r.subject = entity.getId();
+                        vPhaseReport.add(r);
+                        m.setShotsLeft(0);
+                        tosink += possibleSinkage;
+                        break;
+                    }
+                    if (mode.equals("safe") && ((entity.heat - tosink) > safeHeat)) {
+                        r = new Report(5265);
+                        r.subject = entity.getId();
+                        vPhaseReport.add(r);
+                        m.setShotsLeft(0);
+                        tosink += possibleSinkage;
+                        break;
+                    }
+                    if (mode.equals("efficient")
+                              && ((entity.heat - tosink) >= possibleSinkage)) {
+                        r = new Report(5270);
+                        r.subject = entity.getId();
+                        vPhaseReport.add(r);
+                        m.setShotsLeft(0);
+                        tosink += possibleSinkage;
+                        break;
+                    }
+                }
+            }
+        }
+
+        tosink = Math.min(tosink, entity.heat);
+        entity.heat -= tosink;
+        r = new Report(5035);
+        r.subject = entity.getId();
+        r.addDesc(entity);
+        r.add(entity.heatBuildup);
+        r.add(tosink);
+        r.add(entity.heat);
+        vPhaseReport.add(r);
+        entity.heatBuildup = 0;
+        vPhaseReport.addAll(rhsReports);
+
+        // add in the effects of heat
+
+        if ((entity instanceof Dropship) || (entity instanceof Jumpship)) {
+            // only check for a possible control roll
+            if (entity.heat > 0) {
+                int bonus = (int) Math.ceil(entity.heat / 100.0);
+                getGame().addControlRoll(new PilotingRollData(
+                      entity.getId(), bonus, "used too much heat"));
+                entity.heat = 0;
+            }
+            return;
+        }
+
+        // Capital fighters can overheat and require control rolls
+        if (entity.isCapitalFighter() && (entity.heat > 0)) {
+            int penalty = (int) Math.ceil(entity.heat / 15.0);
+            getGame().addControlRoll(new PilotingRollData(entity.getId(),
+                  penalty, "used too much heat"));
+        }
+
+        // Like other large craft, the rest of these rules don't apply
+        // to capital fighters
+        if (entity.isCapitalFighter()) {
+            return;
+        }
+
+        int autoShutDownHeat = 30;
+        boolean mtHeat = getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
+        if (mtHeat) {
+            autoShutDownHeat = 50;
+        }
+
+        // heat effects: start up
+        if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
+            // only start up if not shut down by taser or a TSEMP
+            if ((entity.getTaserShutdownRounds() == 0)
+                      && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+                if ((entity.heat < 14) && !entity.isManualShutdown()) {
+                    // automatically starts up again
+                    entity.setShutDown(false);
+                    r = new Report(5045);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    vPhaseReport.add(r);
+                } else if (!entity.isManualShutdown()) {
+                    // If the pilot is KO and we need to roll, auto-fail.
+                    if (!entity.getCrew().isActive()) {
+                        r = new Report(5049);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                    } else {
+                        // roll for startup
+                        int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
+                        if (mtHeat) {
+                            startup -= 5;
+                            switch (entity.getCrew().getPiloting()) {
+                                case 0:
+                                case 1:
+                                    startup -= 2;
+                                    break;
+                                case 2:
+                                case 3:
+                                    startup -= 1;
+                                    break;
+                                case 6:
+                                case 7:
+                                    startup += 1;
+                                    break;
+                            }
+                        }
+                        Roll diceRoll = entity.getCrew().rollPilotingSkill();
+                        r = new Report(5050);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.add(startup);
+                        r.add(diceRoll);
+
+                        if (diceRoll.getIntValue() >= startup) {
+                            // start 'er back up
+                            entity.setShutDown(false);
+                            r.choose(true);
+                        } else {
+                            r.choose(false);
+                        }
+                    }
+                    vPhaseReport.add(r);
+                }
+            } else {
+                // if we're shutdown by a BA taser, we might activate
+                // again
+                if (entity.isBATaserShutdown()) {
+                    int roll = Compute.d6(2);
+                    if (roll >= 8) {
+                        entity.setTaserShutdownRounds(0);
+                        if (!(entity.isManualShutdown())) {
+                            entity.setShutDown(false);
+                        }
+                        entity.setBATaserShutdown(false);
+                    }
+                }
+            }
+        }
+        // heat effects: shutdown!
+        else if ((entity.heat >= 14) && !entity.isShutDown()) {
+            if (entity.heat >= autoShutDownHeat) {
+                r = new Report(5055);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                vPhaseReport.add(r);
+                // okay, now mark shut down
+                entity.setShutDown(true);
+            } else {
+                // Again, pilot KO means shutdown is automatic.
+                if (!entity.getCrew().isActive()) {
+                    r = new Report(5056);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    vPhaseReport.add(r);
+                    entity.setShutDown(true);
+                } else {
+                    int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
+                    if (mtHeat) {
+                        shutdown -= 5;
+                        switch (entity.getCrew().getPiloting()) {
+                            case 0:
+                            case 1:
+                                shutdown -= 2;
+                                break;
+                            case 2:
+                            case 3:
+                                shutdown -= 1;
+                                break;
+                            case 6:
+                            case 7:
+                                shutdown += 1;
+                                break;
+                        }
+                    }
+                    Roll diceRoll = Compute.rollD6(2);
+                    r = new Report(5060);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(shutdown);
+                    r.add(diceRoll);
+
+                    if (diceRoll.getIntValue() >= shutdown) {
+                        // avoided
+                        r.choose(true);
+                        vPhaseReport.add(r);
+                    } else {
+                        // shutting down...
+                        r.choose(false);
+                        vPhaseReport.add(r);
+                        // okay, now mark shut down
+                        entity.setShutDown(true);
+                    }
+                }
+            }
+        }
+
+        gameManager.checkRandomAeroMovement(entity, hotDogMod);
+
+        // heat effects: ammo explosion!
+        if (entity.heat >= 19) {
+            int boom = (4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0))
+                             - hotDogMod;
+            if (mtHeat) {
+                boom += (entity.heat >= 35 ? 2 : 0)
+                              + (entity.heat >= 40 ? 2 : 0)
+                              + (entity.heat >= 45 ? 2 : 0);
+                // Last line is a crutch; 45 heat should be no roll
+                // but automatic explosion.
+            }
+            r = new Report(5065);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(boom);
+
+            Roll diceRoll = Compute.rollD6(2);
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() >= boom) {
+                // no ammo explosion
+                r.choose(true);
+                vPhaseReport.add(r);
+            } else {
+                // boom!
+                r.choose(false);
+                vPhaseReport.add(r);
+                vPhaseReport.addAll(gameManager.explodeAmmoFromHeat(entity));
+            }
+        }
+
+        // heat effects: pilot damage
+        if (entity.heat >= 21) {
+            int ouch = (6 + (entity.heat >= 27 ? 3 : 0)) - hotDogMod;
+            Roll diceRoll = Compute.rollD6(2);
+            r = new Report(5075);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(ouch);
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() >= ouch) {
+                // pilot is ok
+                r.choose(true);
+                vPhaseReport.add(r);
+            } else {
+                // pilot is hurting
+                r.choose(false);
+                vPhaseReport.add(r);
+                vPhaseReport.addAll(gameManager.damageCrew(entity, 1));
+            }
+        }
+
+        // The pilot may have just expired.
+        if ((entity.getCrew().isDead() || entity.getCrew().isDoomed())
+                  && !entity.getCrew().isEjected()) {
+            r = new Report(5080);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            vPhaseReport.add(r);
+            vPhaseReport.addAll(gameManager.destroyEntity(entity, "pilot death", true));
+        }
+    }
+
+    void adjustHeatExtremeTemp(Entity entity, Vector<Report> vPhaseReport) {
+        Report r;
+        int tempDiff = getGame().getPlanetaryConditions().getTemperatureDifference(50, -30);
+        boolean heatArmor = false;
+        boolean laserHS = false;
+
+        if (entity instanceof Mek) {
+            laserHS = ((Mek) entity).hasLaserHeatSinks();
+            heatArmor = ((Mek) entity).hasIntactHeatDissipatingArmor();
+        }
+
+        if (entity.isSpaceborne() || (tempDiff == 0) || laserHS) {
+            return;
+        } else {
+            if (getGame().getPlanetaryConditions().getTemperature() > 50) {
+                int heatToAdd = tempDiff;
+                if (heatArmor) {
+                    heatToAdd /= 2;
+                }
+                entity.heatFromExternal += heatToAdd;
+                r = new Report(5020);
+                r.subject = entity.getId();
+                r.add(heatToAdd);
+                vPhaseReport.add(r);
+                if (heatArmor) {
+                    r = new Report(5550);
+                    vPhaseReport.add(r);
+                }
+            } else {
+                entity.heatFromExternal -= tempDiff;
+                r = new Report(5025);
+                r.subject = entity.getId();
+                r.add(tempDiff);
+                vPhaseReport.add(r);
+            }
+        }
+    }
+
+
 }

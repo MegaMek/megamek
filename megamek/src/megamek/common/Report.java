@@ -328,6 +328,22 @@ public class Report implements ReportEntry {
     }
 
     /**
+     * Set the report's subject and add its description. This is equivalent to calling
+     * <pre>{@code
+     * report.subject(entity.getId());
+     * report.addDesc(entity);
+     * }</pre>
+     * Typically used in reports that start with {@literal "<data> (<data>) ..."}
+     *
+     * @return This Report to allow chaining
+     */
+    public Report with(Entity entity) {
+        subject(entity.getId());
+        addDesc(entity);
+        return this;
+    }
+
+    /**
      * Add the given int to the list of data that will be substituted for the
      * &lt;data&gt; tags in the report. The order in which items are added must
      * match the order of the tags in the report text.

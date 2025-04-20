@@ -522,7 +522,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         // shots that miss an entity can also potential cause explosions in a
         // heavy industrial hex
-        gameManager.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
+        gameManager.checkExplodeIndustrialZone(target.getPosition(), target.getBoardId(), vPhaseReport);
 
         // TW, pg. 171 - shots that miss a target in a building don't damage the
         // building, unless the attacker is adjacent

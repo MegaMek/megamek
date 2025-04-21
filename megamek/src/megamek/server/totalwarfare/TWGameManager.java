@@ -21,6 +21,7 @@ package megamek.server.totalwarfare;
 import static megamek.common.Game.TEAM_HAS_COMBAT_PARALYSIS;
 import static megamek.common.Game.TEAM_HAS_COMBAT_SENSE;
 import static megamek.common.Game.TEAM_HAS_NO_INITIATIVE_APTITUDE;
+import static megamek.common.IGame.LOGGER;
 import static megamek.common.options.OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION;
 import static megamek.common.options.OptionsConstants.RPG_INDIVIDUAL_INITIATIVE;
 import static megamek.common.weapons.AreaEffectHelper.calculateDamageFallOff;
@@ -117,7 +118,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Stores a set of <code>Coords</code> that have changed during this phase.
      */
-    private final Set<Coords> hexUpdateSet = new LinkedHashSet<>();
+    private final Set<BoardLocation> hexUpdateSet = new LinkedHashSet<>();
 
     private final List<DemolitionCharge> explodingCharges = new ArrayList<>();
 
@@ -24980,10 +24981,15 @@ public class TWGameManager extends AbstractGameManager {
      * Sends notification to clients that the specified hex has changed.
      */
     public void sendChangedHexes() {
-        send(createHexesChangePacket(hexUpdateSet,
-              hexUpdateSet.stream()
-                    .map(coord -> game.getBoard().getHex(coord))
-                    .collect(Collectors.toCollection(LinkedHashSet::new))));
+        Map<BoardLocation, Hex> changedHexes = new HashMap<>();
+        for (BoardLocation location : hexUpdateSet) {
+            if (game.hasBoardLocation(location)) {
+                changedHexes.put(location, game.getHex(location));
+            } else {
+                LOGGER.error("Tried to send terrain change for non-existent hex.");
+            }
+        }
+        send(new Packet(PacketCommand.CHANGE_HEXES, changedHexes));
     }
 
     /**
@@ -28998,7 +29004,7 @@ public class TWGameManager extends AbstractGameManager {
         return cargoDestroyed;
     }
 
-    public Set<Coords> getHexUpdateSet() {
+    public Set<BoardLocation> getHexUpdateSet() {
         return hexUpdateSet;
     }
 

@@ -21,7 +21,6 @@ import megamek.server.totalwarfare.TWGameManager;
 
 public class ScreenProcessor extends DynamicTerrainProcessor {
 
-    private Game game;
     Vector<Report> vPhaseReport;
 
     public ScreenProcessor(TWGameManager gameManager) {
@@ -30,40 +29,38 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
 
     @Override
     public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
-        game = gameManager.getGame();
         this.vPhaseReport = vPhaseReport;
         resolveScreen();
         this.vPhaseReport = null;
-        
+
     }
 
     /**
      * Check to see if screen clears
      */
     private void resolveScreen() {
-        Board board = game.getBoard();
-        int width = board.getWidth();
-        int height = board.getHeight();
+        for (Board board : gameManager.getGame().getBoards().values()) {
+            int width = board.getWidth();
+            int height = board.getHeight();
 
-        // Cycle through all hexes, checking for screens
-        for (int currentXCoord = 0; currentXCoord < width; currentXCoord++) {
-            for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
-                Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                Hex currentHex = board.getHex(currentXCoord, currentYCoord);
+            // Cycle through all hexes, checking for screens
+            for (int currentXCoord = 0; currentXCoord < width; currentXCoord++) {
+                for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
+                    Coords currentCoords = new Coords(currentXCoord, currentYCoord);
+                    Hex currentHex = board.getHex(currentXCoord, currentYCoord);
 
-                // check for existence of screen
-                if (currentHex.containsTerrain(Terrains.SCREEN)) {
-                    if (Compute.d6(2) > 6) {
-                        Report r = new Report(9075, Report.PUBLIC);
-                        r.add(currentCoords.getBoardNum());
-                        vPhaseReport.addElement(r);
-
-                        currentHex.removeTerrain(Terrains.SCREEN);
-                        gameManager.getHexUpdateSet().add(currentCoords);
+                    // check for existence of screen
+                    if (currentHex.containsTerrain(Terrains.SCREEN)) {
+                        if (Compute.d6(2) > 6) {
+                            Report r = new Report(9075, Report.PUBLIC);
+                            r.add(currentCoords.getBoardNum());
+                            vPhaseReport.addElement(r);
+                            currentHex.removeTerrain(Terrains.SCREEN);
+                            markHexUpdate(currentCoords, board.getBoardId());
+                        }
                     }
                 }
             }
-
         }
     }
 }

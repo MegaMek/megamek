@@ -21,7 +21,6 @@ import megamek.server.totalwarfare.TWGameManager;
 
 public class QuicksandProcessor extends DynamicTerrainProcessor {
 
-    private Game game;
     Vector<Report> vPhaseReport;
 
     public QuicksandProcessor(TWGameManager gameManager) {
@@ -30,43 +29,41 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
 
     @Override
     public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
-        game = gameManager.getGame();
         this.vPhaseReport = vPhaseReport;
         resolveQuicksand();
         this.vPhaseReport = null;
-
     }
 
     /**
      * Check or quicksand stuff
      */
     private void resolveQuicksand() {
-        Board board = game.getBoard();
-        int width = board.getWidth();
-        int height = board.getHeight();
+        for (Board board : gameManager.getGame().getBoards().values()) {
+            int width = board.getWidth();
+            int height = board.getHeight();
 
-        // Cycle through all hexes, checking for screens
-        for (int currentXCoord = 0; currentXCoord < width; currentXCoord++) {
-            for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
-                Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                Hex currentHex = board.getHex(currentXCoord, currentYCoord);
+            // Cycle through all hexes, checking for screens
+            for (int currentXCoord = 0; currentXCoord < width; currentXCoord++) {
+                for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
+                    Coords currentCoords = new Coords(currentXCoord, currentYCoord);
+                    Hex currentHex = board.getHex(currentXCoord, currentYCoord);
 
-                // Check for quicksand that has been around at least one turn (terrain level of 3),
-                // then for any new quicksand this turn (terrain level of 2)
-                if (currentHex.terrainLevel(Terrains.SWAMP) == 3) {
-                    // sink any units that occupy this hex
-                    for (Entity entity : game.getEntitiesVector(currentCoords)) {
-                        if (entity.isStuck()) {
-                            gameManager.doSinkEntity(entity);
+                    // Check for quicksand that has been around at least one turn (terrain level of 3),
+                    // then for any new quicksand this turn (terrain level of 2)
+                    if (currentHex.terrainLevel(Terrains.SWAMP) == 3) {
+                        // sink any units that occupy this hex
+                        for (Entity entity : gameManager.getGame().getEntitiesVector(currentCoords, board.getBoardId())) {
+                            if (entity.isStuck()) {
+                                gameManager.doSinkEntity(entity);
+                            }
                         }
+                    } else if (currentHex.terrainLevel(Terrains.SWAMP) == 2) {
+                        currentHex.removeTerrain(Terrains.SWAMP);
+                        currentHex.addTerrain(new Terrain(Terrains.SWAMP, 3));
+                        markHexUpdate(currentCoords, board.getBoardId());
                     }
-                } else if (currentHex.terrainLevel(Terrains.SWAMP) == 2) {
-                    currentHex.removeTerrain(Terrains.SWAMP);
-                    currentHex.addTerrain(new Terrain(Terrains.SWAMP, 3));
-                    gameManager.getHexUpdateSet().add(currentCoords);
                 }
             }
-
         }
     }
 }

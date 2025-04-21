@@ -51,14 +51,14 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
     public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         game = gameManager.getGame();
         this.vPhaseReport = vPhaseReport;
-        resolveWeather();
+        for (Board board : gameManager.getGame().getBoards().values()) {
+            resolveWeather(board);
+        }
         this.vPhaseReport = null;
-
     }
 
-    private void resolveWeather() {
+    private void resolveWeather(Board board) {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        Board board = game.getBoard();
         int width = board.getWidth();
         int height = board.getHeight();
         boolean lightSnow = false;
@@ -70,8 +70,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         }
 
         // first we need to increment the conditions
-        if (conditions.getWeather().isModerateSnowOrSnowFlurries()
-                && game.getBoard().onGround()) {
+        if (conditions.getWeather().isModerateSnowOrSnowFlurries() && board.onGround()) {
             modSnowTurn = modSnowTurn + 1;
             if (modSnowTurn == 9) {
                 lightSnow = true;
@@ -81,8 +80,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 ice = true;
             }
         }
-        if (conditions.getWeather().isHeavySnow()
-                && game.getBoard().onGround()) {
+        if (conditions.getWeather().isHeavySnow() && board.onGround()) {
             heavySnowTurn = heavySnowTurn + 1;
             if (heavySnowTurn == 4) {
                 lightSnow = true;
@@ -94,15 +92,13 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 ice = true;
             }
         }
-        if (conditions.getWeather().isSleet()
-                && game.getBoard().onGround()) {
+        if (conditions.getWeather().isSleet() && board.onGround()) {
             sleetTurn = sleetTurn + 1;
             if (sleetTurn == 14) {
                 ice = true;
             }
         }
-        if (conditions.getWeather().isIceStorm()
-                && game.getBoard().onGround()) {
+        if (conditions.getWeather().isIceStorm() && board.onGround()) {
             iceTurn = iceTurn + 1;
             if (iceTurn == 9) {
                 ice = true;
@@ -142,7 +138,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                         //inferno fires should become regular fires
                         currentHex.removeTerrain(Terrains.FIRE);
                         currentHex.addTerrain(new Terrain(Terrains.FIRE, 1));
-                        gameManager.getHexUpdateSet().add(currentCoords);
+                        markHexUpdate(currentCoords, board);
                     // Check Inferno Bombs
                     } else if (currentHex.terrainLevel(Terrains.FIRE)
                             == Terrains.FIRE_LVL_INFERNO_BOMB) {
@@ -150,6 +146,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                             gameManager.removeFire(currentCoords,
                                     "inferno bomb burning out");
                         }
+                        markHexUpdate(currentCoords, board);
                     }
                     // Inferno IV doesn't burn out, TO pg 356
                 }
@@ -157,7 +154,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 if (ice && !currentHex.containsTerrain(Terrains.ICE)
                         && currentHex.containsTerrain(Terrains.WATER)) {
                     currentHex.addTerrain(new Terrain(Terrains.ICE, 1));
-                    gameManager.getHexUpdateSet().add(currentCoords);
+                    markHexUpdate(currentCoords, board);
                 }
 
                 if (lightSnow
@@ -166,7 +163,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                                 && !currentHex.containsTerrain(Terrains.ICE))
                         && !currentHex.containsTerrain(Terrains.MAGMA)) {
                     currentHex.addTerrain(new Terrain(Terrains.SNOW, 1));
-                    gameManager.getHexUpdateSet().add(currentCoords);
+                    markHexUpdate(currentCoords, board);
                 }
 
                 if (deepSnow && !(currentHex.terrainLevel(Terrains.SNOW) > 1)
@@ -174,7 +171,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                                 && !currentHex.containsTerrain(Terrains.ICE))
                         && !currentHex.containsTerrain(Terrains.MAGMA)) {
                     currentHex.addTerrain(new Terrain(Terrains.SNOW, 2));
-                    gameManager.getHexUpdateSet().add(currentCoords);
+                    markHexUpdate(currentCoords, board);
                 }
 
                 // check for the melting of any snow or ice
@@ -182,9 +179,11 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                         && currentHex.containsTerrain(Terrains.FIRE)
                         && currentHex.getFireTurn() == 3) {
                     currentHex.removeTerrain(Terrains.SNOW);
+                    markHexUpdate(currentCoords, board);
                     if (!currentHex.containsTerrain(Terrains.MUD)
                             && !currentHex.containsTerrain(Terrains.WATER)) {
                         currentHex.addTerrain(new Terrain(Terrains.MUD, 1));
+                        markHexUpdate(currentCoords, board);
                     }
                 }
 
@@ -192,9 +191,11 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                         && currentHex.containsTerrain(Terrains.FIRE)
                         && currentHex.getFireTurn() == 1) {
                     currentHex.removeTerrain(Terrains.SNOW);
+                    markHexUpdate(currentCoords, board);
                     if (!currentHex.containsTerrain(Terrains.MUD)
                             && !currentHex.containsTerrain(Terrains.WATER)) {
                         currentHex.addTerrain(new Terrain(Terrains.MUD, 1));
+                        markHexUpdate(currentCoords, board);
                     }
                 }
 
@@ -202,9 +203,11 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                         && currentHex.containsTerrain(Terrains.FIRE)
                         && currentHex.getFireTurn() == 2) {
                     currentHex.removeTerrain(Terrains.ICE);
+                    markHexUpdate(currentCoords, board);
                     if (!currentHex.containsTerrain(Terrains.MUD)
                             && !currentHex.containsTerrain(Terrains.WATER)) {
                         currentHex.addTerrain(new Terrain(Terrains.MUD, 1));
+                        markHexUpdate(currentCoords, board);
                     }
                 }
 
@@ -212,19 +215,20 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                         && currentHex.containsTerrain(Terrains.FIRE)
                         && currentHex.getFireTurn() == 2) {
                     currentHex.removeTerrain(Terrains.BLACK_ICE);
+                    markHexUpdate(currentCoords, board);
                 }
 
                 // check for rapids/torrents created by wind
-                // FIXME: This doesn't seem to be doing anything
-                if (currentHex.containsTerrain(Terrains.WATER)
-                        && currentHex.depth(true) > 0) {
+                if (currentHex.terrainLevel(Terrains.WATER) > 0) {
                     if (conditions.getWind().isStrongerThan(Wind.STORM)) {
                         if (!(currentHex.terrainLevel(Terrains.RAPIDS) > 1)) {
                             currentHex.addTerrain(new Terrain(Terrains.RAPIDS, 2));
+                            markHexUpdate(currentCoords, board);
                         }
                     } else if (conditions.getWind().isStrongerThan(Wind.MOD_GALE)) {
                         if (!currentHex.containsTerrain(Terrains.RAPIDS)) {
                             currentHex.addTerrain(new Terrain(Terrains.RAPIDS, 1));
+                            markHexUpdate(currentCoords, board);
                         }
                     }
                 }

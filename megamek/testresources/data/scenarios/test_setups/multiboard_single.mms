@@ -26,6 +26,16 @@ options:
   off:
     - check_victory
 
+planetaryconditions:                        # default: standard conditions
+  wind:
+    strength: moderate gale                 # default: none; other values: light gale, moderate gale, strong gale
+    # storm, tornado, tornado f4
+    #minimum: light gale                    # default: none
+    #maximum: strong gale                   # default: tornado f4
+    direction: NW                           # default: random; other values: N, NE, SE, S, SW, NW
+    shifting: no                            # default: no
+
+
 factions:
 - name: P1
 #  deploy: W

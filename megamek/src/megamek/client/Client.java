@@ -919,9 +919,8 @@ public class Client extends AbstractClient {
                       (Hex) packet.getObject(2));
                 break;
             case CHANGE_HEXES:
-                List<Coords> coords = new ArrayList<>((Set<Coords>) packet.getObject(0));
-                List<Hex> hexes = new ArrayList<>((Set<Hex>) packet.getObject(1));
-                game.getBoard().setHexes(coords, hexes);
+                var changedHexes = (Map<BoardLocation, Hex>) packet.getObject(0);
+                game.getBoards().values().forEach(board -> board.setHexes(changedHexes));
                 break;
             case BLDG_UPDATE:
                 receiveBuildingUpdate(packet);

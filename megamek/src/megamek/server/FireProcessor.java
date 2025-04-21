@@ -180,7 +180,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
                     // increment the fire turn counter
                     currentHex.incrementFireTurn();
-                    gameManager.getHexUpdateSet().add(currentCoords);
+                    markHexUpdate(currentCoords, boardId);
                 }
             }
         }
@@ -295,7 +295,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
         // Process smoke drifting
         for (SmokeCloud cloud : preExistingSmokeClouds()) {
-            gameManager.getHexUpdateSet().addAll(cloud.getCoordsList());
+            markHexUpdate(cloud.getCoordsList(), boardId);
 
             final ArrayList<Coords> replacementHexes = new ArrayList<>();
             for (Coords currentCoords : cloud.getCoordsList()) {
@@ -350,11 +350,11 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     if (smokeHex.containsTerrain(Terrains.SMOKE)) {
                         if (smokeHex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LIGHT) {
                             smokeHex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
-                            gameManager.getHexUpdateSet().add(coords);
+                            markHexUpdate(coords, cloud.getBoardId());
                         }
                     } else {
                         smokeHex.addTerrain(new Terrain(Terrains.SMOKE, cloud.getSmokeLevel()));
-                        gameManager.getHexUpdateSet().add(coords);
+                        markHexUpdate(coords, cloud.getBoardId());
                     }
                 }
             }

@@ -187,9 +187,8 @@ public class Precognition implements Runnable {
                           (Hex) c.getObject(2));
                     break;
                 case CHANGE_HEXES:
-                    List<Coords> coords = new ArrayList<>((Set<Coords>) c.getObject(0));
-                    List<Hex> hexes = new ArrayList<>((Set<Hex>) c.getObject(1));
-                    getGame().getBoard().setHexes(coords, hexes);
+                    var changedHexes = (Map<BoardLocation, Hex>) c.getObject(0);
+                    game.getBoards().values().forEach(board -> board.setHexes(changedHexes));
                     break;
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(c);

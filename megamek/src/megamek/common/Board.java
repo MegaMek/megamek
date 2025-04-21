@@ -681,48 +681,27 @@ public class Board implements Serializable {
      * @param hex the hex to be set into position.
      */
     public void setHex(int x, int y, Hex hex) {
-        data[(y * width) + x] = hex;
-        initializeHex(x, y);
-        // If this hex has exitable terrain, we may need to update the exits in
-        // adjacent hexes
-        if (hex.hasExitableTerrain()) {
-            for (int dir = 0; dir < 6; dir++) {
-                if (hex.containsExit(dir)) {
-                    initializeInDir(x, y, dir);
-                }
-            }
-        }
+        Map<BoardLocation, Hex> changedHex = new HashMap<>();
+        changedHex.put(BoardLocation.of(new Coords(x, y), boardId), hex);
+        setHexes(changedHex);
     }
 
     /**
-     * Similar to the setHex function for a collection of coordinates and hexes.
-     * For each coord/hex pair in the supplied collections, this method determines
-     * if the Board
-     * contains the coords and if so updates the specified hex into that position
-     * and initializes it.
+     * Copies in the given hexes, overwriting any affected hexes that are on this board. For simplicity, this method
+     * ignores boardlocations that are not on this board, i.e., it can be called without first filtering the locations
+     * for board ID.
      *
-     * The method ensures that each hex that needs to be updated is only updated
-     * once.
-     *
-     * @param coords A list of coordinates to be updated
-     * @param hexes  The hex to be updated for each coordinate
+     * @param changedHexes A map of locations and hexes; the locations need not all (or any) match this board
      */
-    public void setHexes(List<Coords> coords, List<Hex> hexes) {
-        // Keeps track of hexes that will need to be reinitialized
-        LinkedHashSet<Coords> needsUpdate = new LinkedHashSet<>((int) (coords.size() * 1.25 + 0.5));
+    public void setHexes(Map<BoardLocation, Hex> changedHexes) {
+        Set<Coords> needsUpdate = new HashSet<>();
+        for (Map.Entry<BoardLocation, Hex> entry : changedHexes.entrySet()) {
+            if (boardId != entry.getKey().boardId()) {
+                continue;
+            }
 
-        // Sanity check
-        if (coords.size() != hexes.size()) {
-            throw new IllegalStateException("setHexes received two collections differeing size!");
-        }
-
-        // Update all input hexes, plus create a set of coords that need
-        // updating
-        Iterator<Coords> coordIter = coords.iterator();
-        Iterator<Hex> hexIter = hexes.iterator();
-        while (coordIter.hasNext() && hexIter.hasNext()) {
-            Coords currCoord = coordIter.next();
-            Hex currHex = hexIter.next();
+            Coords currCoord = entry.getKey().coords();
+            Hex currHex = entry.getValue();
             int x = currCoord.getX();
             int y = currCoord.getY();
 
@@ -742,13 +721,11 @@ public class Board implements Serializable {
                     }
                 }
             }
-
         }
 
         for (Coords coord : needsUpdate) {
             initializeHex(coord.getX(), coord.getY());
         }
-
     }
 
     /**

@@ -3575,8 +3575,19 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @return The building at the location, if any
      */
     public Optional<Building> getBuildingAt(@Nullable BoardLocation boardLocation) {
-        if (hasBoardLocation(boardLocation)) {
-            return Optional.ofNullable(getBoard(boardLocation.boardId()).getBuildingAt(boardLocation.coords()));
+        return getBuildingAt(boardLocation.coords(), boardLocation.boardId());
+    }
+
+    /**
+     * Returns the Building at the given location, if any. Shortcut to Board.getBuildingAt().
+     *
+     * @param boardId The board ID
+     * @param coords The position on the board
+     * @return The building at the location, if any
+     */
+    public Optional<Building> getBuildingAt(@Nullable Coords coords, int boardId) {
+        if (hasBoardLocation(coords, boardId)) {
+            return Optional.ofNullable(getBoard(boardId).getBuildingAt(coords));
         } else {
             return Optional.empty();
         }

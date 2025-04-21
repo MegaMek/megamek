@@ -6947,7 +6947,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(missiles * 4);
                     vPhaseReport.addElement(r);
                 }
-                vPhaseReport.addAll(tryClearHex(t.getPosition(), missiles * 4, attId));
+                vPhaseReport.addAll(tryClearHex(t.getPosition(), t.getBoardId(), missiles * 4, attId));
                 tryIgniteHex(t.getPosition(), attId, false, true, new TargetRoll(0, "inferno"), -1, vPhaseReport);
                 break;
             case Targetable.TYPE_BUILDING:
@@ -10985,8 +10985,13 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     public Vector<Report> tryClearHex(Coords c, int nDamage, int entityId) {
+        // LEGACY replace the board ID version
+        return tryClearHex(c, 0, nDamage, entityId);
+    }
+
+    public Vector<Report> tryClearHex(Coords c, int boardId, int nDamage, int entityId) {
         Vector<Report> vPhaseReport = new Vector<>();
-        Hex h = game.getBoard().getHex(c);
+        Hex h = game.getHex(c, boardId);
         if (h == null) {
             return vPhaseReport;
         }
@@ -11094,17 +11099,17 @@ public class TWGameManager extends AbstractGameManager {
                 vPhaseReport.add(r);
                 h.removeTerrain(Terrains.MAGMA);
                 h.addTerrain(new Terrain(Terrains.MAGMA, 2));
-                for (Entity en : game.getEntitiesVector(c)) {
+                for (Entity en : game.getEntitiesVector(c, boardId)) {
                     doMagmaDamage(en, false);
                 }
             } else {
                 magma.setTerrainFactor(tf);
             }
         }
-        sendChangedHex(c);
+        sendChangedHex(c, boardId);
 
         // any attempt to clear an heavy industrial hex may cause an explosion
-        checkExplodeIndustrialZone(c, vPhaseReport);
+        checkExplodeIndustrialZone(c, boardId, vPhaseReport);
 
         return vPhaseReport;
     }

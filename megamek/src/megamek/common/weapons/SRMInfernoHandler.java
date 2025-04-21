@@ -283,7 +283,7 @@ public class SRMInfernoHandler extends SRMHandler {
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(),
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), target.getBoardId(),
                 nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;

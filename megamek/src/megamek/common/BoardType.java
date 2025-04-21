@@ -119,4 +119,17 @@ public enum BoardType implements Serializable {
             case GROUND -> "Ground";
         };
     }
+
+    /**
+     * @return A value to use for ordering boards according to ground, atmospheric, space.
+     */
+    public int orderValue() {
+        return switch (this) {
+            case GROUND -> 0;
+            case SKY, SKY_WITH_TERRAIN -> 1;
+            case FAR_SPACE, NEAR_SPACE -> 2;
+            case RADAR -> 100;
+            case CAPITAL_RADAR -> 101;
+        };
+    }
 }

@@ -485,8 +485,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             bMekTankStealthActive = ae.isStealthActive();
         }
 
-        boolean isFlakAttack = !game.getBoard().inSpace() &&
-                                     (te != null) &&
+        boolean isFlakAttack = (te != null) &&
                                      Compute.isFlakAttack(ae, te) &&
                                      (wtype instanceof CLBALBX ||
                                             ((atype != null) &&
@@ -645,7 +644,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         int targEl;
 
         if (te == null) {
-            Hex hex = game.getBoard().getHex(target.getPosition());
+            Hex hex = game.getHexOf(target);
 
             targEl = hex == null ? 0 : -hex.depth();
         } else {
@@ -991,7 +990,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // situations,
         // this occurs regardless of other LOS consideration.
         if (WeaponAttackAction.targetInShortCoverBuilding(target)) {
-            Building currentBuilding = game.getBoard().getBuildingAt(target.getPosition());
+            Building currentBuilding = game.getBuildingAt(target.getPosition(), target.getBoardId()).get();
 
             LosEffects shortBuildingLos = new LosEffects();
             shortBuildingLos.setTargetCover(LosEffects.COVER_HORIZONTAL);
@@ -1131,7 +1130,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // brush off attached INarcs on oneself; use left arm as a placeholder here as no choice has been made
             return BrushOffAttackAction.toHit(game, attackerId, target, BrushOffAttackAction.LEFT);
         } else if (te == null) {
-            targEl = game.getBoard().getHex(target.getPosition()).floor();
+            targEl = game.getHexOf(target).floor();
         } else {
             targEl = te.relHeight();
         }
@@ -1576,7 +1575,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Infantry can't clear woods.
         if (isAttackerInfantry && (Targetable.TYPE_HEX_CLEAR == target.getTargetType())) {
-            Hex hexTarget = game.getBoard().getHex(target.getPosition());
+            Hex hexTarget = game.getHexOf(target);
             if ((hexTarget != null) && hexTarget.containsTerrain(Terrains.WOODS)) {
                 return Messages.getString("WeaponAttackAction.NoInfantryWoodsClearing");
             }
@@ -1977,7 +1976,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                    (ae.isAero() &&
                           ((IAero) ae).isSpheroid() &&
                           (ae.getAltitude() == 0) &&
-                          game.getBoard().onGround())) && (weapon != null)) {
+                          game.isOnGroundMap(ae))) && (weapon != null)) {
             int range = Compute.effectiveDistance(game, ae, target, false);
             // Only aft-mounted weapons can be fired at range 0 (targets directly
             // underneath)
@@ -2028,8 +2027,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 if (!ae.isAirborne() && !target.isAirborne()) {
                     boolean targetInAttackerHex = ae.getOccupiedCoords().contains(target.getPosition()) ||
                                                         ae.getPosition().equals(target.getPosition());
-                    boolean targetBelowAttacker = game.getBoard().getHex(ae.getPosition()).getLevel() >
-                                                        game.getBoard().getHex(target.getPosition()).getLevel() +
+                    boolean targetBelowAttacker = game.getHexOf(ae).getLevel() >
+                                                        game.getHexOf(target).getLevel() +
                                                               target.getElevation();
 
                     if (!targetInAttackerHex || !targetBelowAttacker) {
@@ -2107,8 +2106,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     }
                     // Otherwise, check for a dead-zone, TW pg 243
                     Coords prevCoords = ae.passedThroughPrevious(target.getPosition());
-                    Hex prevHex = game.getBoard().getHex(prevCoords);
-                    Hex currHex = game.getBoard().getHex(target.getPosition());
+                    Hex prevHex = game.getBoard(ae).getHex(prevCoords);
+                    Hex currHex = game.getHexOf(target);
                     int prevElev = prevHex.getLevel();
                     int currElev = currHex.getLevel();
                     if ((prevElev - currElev - target.relHeight()) > 2) {
@@ -2376,11 +2375,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             if (conditions.getWind().isTornadoF1ToF3() &&
                       wtype.hasFlag(WeaponType.F_MISSILE) &&
-                      !game.getBoard().inSpace()) {
+                      !ae.isSpaceborne()) {
                 return Messages.getString("WeaponAttackAction.NoMissileTornado");
             }
             boolean missleOrBallistic = wtype.hasFlag(WeaponType.F_MISSILE) || wtype.hasFlag(WeaponType.F_BALLISTIC);
-            if (conditions.getWind().isTornadoF4() && !game.getBoard().inSpace() && missleOrBallistic) {
+            if (conditions.getWind().isTornadoF4() && !ae.isSpaceborne() && missleOrBallistic) {
                 return Messages.getString("WeaponAttackAction.F4Tornado");
             }
 
@@ -2470,7 +2469,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Bombs and such
 
             // Anti ship missiles can't be launched from altitude 3 or lower
-            if (wtype.hasFlag(WeaponType.F_ANTI_SHIP) && !game.getBoard().inSpace() && (ae.getAltitude() < 4)) {
+            if (wtype.hasFlag(WeaponType.F_ANTI_SHIP) && !ae.isSpaceborne() && (ae.getAltitude() < 4)) {
                 return Messages.getString("WeaponAttackAction.TooLowForASM");
             }
 
@@ -2683,15 +2682,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // only woods and buildings can be set intentionally on fire
             if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE) &&
                       game.getOptions().booleanOption(OptionsConstants.ADVANCED_NO_IGNITE_CLEAR) &&
-                      !(game.getBoard().getHex(((HexTarget) target).getPosition()).containsTerrain(Terrains.WOODS) ||
-                              game.getBoard()
-                                    .getHex(((HexTarget) target).getPosition())
+                      !(game.getHexOf(target).containsTerrain(Terrains.WOODS) ||
+                              game.getHexOf(target)
                                     .containsTerrain(Terrains.JUNGLE) ||
-                              game.getBoard()
-                                    .getHex(((HexTarget) target).getPosition())
+                              game.getHexOf(target)
                                     .containsTerrain(Terrains.FUEL_TANK) ||
-                              game.getBoard()
-                                    .getHex(((HexTarget) target).getPosition())
+                              game.getHexOf(target)
                                     .containsTerrain(Terrains.BUILDING))) {
                 return Messages.getString("WeaponAttackAction.CantIntentionallyBurn");
             }
@@ -2744,7 +2740,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 if (!wtype.hasFlag(WeaponType.F_EXTINGUISHER) && !vf_cool) {
                     return Messages.getString("WeaponAttackAction.InvalidForFirefighting");
                 }
-                Hex hexTarget = game.getBoard().getHex(target.getPosition());
+                Hex hexTarget = game.getHexOf(target);
                 if ((hexTarget != null) && !hexTarget.containsTerrain(Terrains.FIRE)) {
                     return Messages.getString("WeaponAttackAction.TargetNotBurning");
                 }
@@ -3387,12 +3383,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // weather mods (not in space)
         int weatherMod = conditions.getWeatherHitPenalty(ae);
-        if ((weatherMod != 0) && !game.getBoard().inSpace()) {
+        if ((weatherMod != 0) && !ae.isSpaceborne()) {
             weatherToHitMods.addModifier(weatherMod, conditions.getWeather().toString());
         }
 
         // wind mods (not in space)
-        if (!game.getBoard().inSpace()) {
+        if (!ae.isSpaceborne()) {
             if (conditions.getWind().isModerateGale()) {
                 if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
                     weatherToHitMods.addModifier(1, conditions.getWind().toString());
@@ -3425,7 +3421,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // fog mods (not in space)
         if (wtype != null &&
                   wtype.hasFlag(WeaponType.F_ENERGY) &&
-                  !game.getBoard().inSpace() &&
+                  !ae.isSpaceborne() &&
                   conditions.getFog().isFogHeavy()) {
             weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.HeavyFog"));
         }
@@ -3433,7 +3429,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // blowing sand mods
         if (wtype != null &&
                   wtype.hasFlag(WeaponType.F_ENERGY) &&
-                  !game.getBoard().inSpace() &&
+                  !ae.isSpaceborne() &&
                   conditions.isBlowingSandActive()) {
             weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.BlowingSand"));
         }
@@ -3446,7 +3442,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // gravity mods (not in space)
-        if (!game.getBoard().inSpace()) {
+        if (!ae.isSpaceborne()) {
             int mod = (int) Math.floor(Math.abs((conditions.getGravity() - 1.0f) / 0.2f));
             if ((mod != 0) &&
                       wtype != null &&
@@ -3755,7 +3751,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Heat Seeking Missiles
         if (bHeatSeeking) {
-            Hex hexTarget = game.getBoard().getHex(target.getPosition());
+            Hex hexTarget = game.getHexOf(target);
             // -2 bonus if shooting at burning hexes or buildings
             if (te == null && hexTarget.containsTerrain(Terrains.FIRE)) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AmmoMod"));
@@ -4178,7 +4174,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // Space ECM
-            if (game.getBoard().inSpace() &&
+            if (ae.isSpaceborne() && game.onTheSameBoard(ae, target) &&
                       game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
                 if (!ae.isLargeCraft()) {
@@ -4252,7 +4248,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     // Additional Nap-of-Earth restrictions for strafing
                     if (ae.getAltitude() == 1) {
                         Coords prevCoords = ae.passedThroughPrevious(target.getPosition());
-                        Hex prevHex = game.getBoard().getHex(prevCoords);
+                        Hex prevHex = game.getBoard(ae).getHex(prevCoords);
                         toHit.append(Compute.getStrafingTerrainModifier(game, eistatus, prevHex));
                     }
                 } else {
@@ -4558,7 +4554,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // Target's hex
-        Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex targHex = game.getHexOf(target);
 
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
@@ -4799,12 +4795,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
             IAero a = (IAero) te;
 
             // is the target at zero velocity
-            if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !game.getBoard().inSpace())) {
+            if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !a.isSpaceborne())) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ImmobileAero"));
             }
 
             // get mods for direction of attack
-            if (!(a.isSpheroid() && !game.getBoard().inSpace())) {
+            if (!(a.isSpheroid() && !a.isSpaceborne())) {
                 int side = Compute.targetSideTable(ae.getPosition(), te);
 
                 // +1 if shooting at an aero approaching nose-on
@@ -4819,7 +4815,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // Target hidden in the sensor shadow of a larger spacecraft
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW) &&
-                      game.getBoard().inSpace()) {
+                      a.isSpaceborne()) {
                 for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
                     if (!en.isEnemyOf(te) &&
                               en.isLargeCraft() &&
@@ -4898,7 +4894,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // Target's hex
-        Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex targHex = game.getHexOf(target);
 
         boolean targetHexContainsWater = targHex != null && targHex.containsTerrain(Terrains.WATER);
         boolean targetHexContainsFortified = targHex != null && targHex.containsTerrain(Terrains.FORTIFIED);
@@ -5045,8 +5041,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
             boolean targetWoodsAffectModifier = (te != null) &&
                                                       !te.isOffBoard() &&
                                                       (te.getPosition() != null) &&
-                                                      (game.getBoard().getHex(te.getPosition()) != null) &&
-                                                      game.getBoard().getHex(te.getPosition()).hasVegetation() &&
+                                                      (game.getHexOf(te) != null) &&
+                                                      game.getHexOf(te).hasVegetation() &&
                                                       !game.getOptions()
                                                              .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER);
             if (los.canSee() && (targetWoodsAffectModifier || los.thruWoods())) {
@@ -5143,7 +5139,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         Entity targetEntity = (Entity) target;
 
-        Hex targetHex = targetEntity.getGame().getBoard().getHex(target.getPosition());
+        Hex targetHex = targetEntity.getGame().getHexOf(target);
         if (targetHex == null) {
             return false;
         }
@@ -5212,7 +5208,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
             }
             if ((target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH) &&
-                      game.getBoard().isInfernoBurning(target.getPosition())) {
+                      game.getBoard(target).isInfernoBurning(target.getPosition())) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
             }
             srt.setSpecialResolution(true);
@@ -5402,7 +5398,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
               underWater));
         toHit.setCover(LosEffects.COVER_NONE);
 
-        Hex targHex = game.getBoard().getHex(swarmSecondaryTarget.getPosition());
+        Hex targHex = game.getHexOf(swarmSecondaryTarget);
         int targEl = swarmSecondaryTarget.relHeight();
         int distance = Compute.effectiveDistance(game, ae, swarmSecondaryTarget);
 
@@ -5850,7 +5846,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                           .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
                           .equals(Crew.ENVSPC_FOG) &&
                           wtype.hasFlag(WeaponType.F_ENERGY) &&
-                          !game.getBoard().inSpace() &&
+                          !te.isSpaceborne() &&
                           conditions.getFog().isFogHeavy()) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.FogSpec"));
                 }
@@ -5940,29 +5936,29 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
         // Terrain Abilities - Offboard units don't have a hex, so if an offboard unit has one of these
         // it will cause a NPE. Let's check to make sure the target entity is on the board:
-        if (game.getBoard().contains(te.getPosition())) {
+        if (game.hasBoardLocationOf(te)) {
             // Urban Guerrilla - Target gets a +1 bonus in any sort of urban terrain
             if (te.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA) &&
-                      (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.PAVEMENT) ||
-                             game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD) ||
-                             game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE) ||
-                             game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING) ||
-                             game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
+                      (game.getHexOf(te).containsTerrain(Terrains.PAVEMENT) ||
+                             game.getHexOf(te).containsTerrain(Terrains.ROAD) ||
+                             game.getHexOf(te).containsTerrain(Terrains.RUBBLE) ||
+                             game.getHexOf(te).containsTerrain(Terrains.BUILDING) ||
+                             game.getHexOf(te).containsTerrain(Terrains.ROUGH))) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.UrbanGuerilla"));
             }
             // Forest Ranger - Target gets a +1 bonus in wooded terrain when moving at
             // walking speed or greater
             if (te.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER) &&
-                      (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS) ||
-                             game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE)) &&
+                      (game.getHexOf(te).containsTerrain(Terrains.WOODS) ||
+                             game.getHexOf(te).containsTerrain(Terrains.JUNGLE)) &&
                       te.moved == EntityMovementType.MOVE_WALK) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.ForestRanger"));
             }
             // Swamp Beast - Target gets a +1 bonus in mud/swamp terrain when
             // running/flanking
             if (te.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST) &&
-                      (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.MUD) ||
-                             game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.SWAMP)) &&
+                      (game.getHexOf(te).containsTerrain(Terrains.MUD) ||
+                             game.getHexOf(te).containsTerrain(Terrains.SWAMP)) &&
                       te.moved == EntityMovementType.MOVE_RUN) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SwampBeast"));
             }

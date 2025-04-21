@@ -1252,7 +1252,7 @@ public class Compute {
         }
 
         // is water involved?
-        Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex targHex = game.getHexOf(target);
         int targTop = target.relHeight();
         int targBottom = target.getElevation();
 
@@ -1342,7 +1342,7 @@ public class Compute {
 
         // if Aero then adjust to standard ranges
         if (ae.isAero() && (ae.isAirborne()
-                || (ae.usesWeaponBays() && game.getBoard().onGround()))) {
+                || (ae.usesWeaponBays() && game.isOnGroundMap(ae)))) {
             weaponRanges = wtype.getATRanges();
         }
         // And if you're using bearings-only capital missiles, update the extreme range
@@ -1398,8 +1398,7 @@ public class Compute {
         int maxRange = wtype.getMaxRange(weapon, ammo);
 
         // if aero and greater than max range then switch to range_out
-        if ((ae.isAirborne() || (ae.usesWeaponBays() && game.getBoard()
-                .onGround())) && (range > maxRange)) {
+        if ((ae.isAirborne() || (ae.usesWeaponBays() && game.isOnGroundMap(ae))) && (range > maxRange)) {
             range = RangeType.RANGE_OUT;
         }
 
@@ -2869,7 +2868,7 @@ public class Compute {
      */
     public static ToHitData getAttackerTerrainModifier(Game game, int entityId) {
         final Entity attacker = game.getEntity(entityId);
-        final Hex hex = game.getBoard().getHex(attacker.getPosition());
+        final Hex hex = game.getHexOf(attacker);
 
         ToHitData toHit = new ToHitData();
 
@@ -2913,14 +2912,14 @@ public class Compute {
         }
 
         Entity entityTarget = null;
-        Hex hex = game.getBoard().getHex(t.getPosition());
+        Hex hex = game.getHexOf(t);
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
             entityTarget = (Entity) t;
             if (hex == null) {
                 entityTarget.setPosition(game.getEntity(entityTarget.getId())
                         .getPosition());
-                hex = game.getBoard().getHex(
-                        game.getEntity(entityTarget.getId()).getPosition());
+                hex = game.getHexOf(
+                        game.getEntity(entityTarget.getId()));
             }
         }
 

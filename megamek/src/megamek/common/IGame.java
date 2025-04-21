@@ -744,6 +744,38 @@ public interface IGame {
         return getBoard(board.getEnclosingBoardId());
     }
 
+    /**
+     * Returns the common enclosing board of the two given units/targets. For two units on the same board, this board
+     * is returned. When one unit is on a higher board and the other on a connected lower board (ground is lower than
+     * atmospheric is lower than space), the higher of the two is returned. When two units are on ground boards with
+     * an atmospheric board connecting the two, the atmospheric board is returned. For a S2O or O2S attack situation,
+     * the space board is returned. If any of the two units is null, is not deployed or otherwise off board, not on
+     * connected boards, the return value is empty.
+     *
+     * @param object1 The first unit or object
+     * @param object2 The second unit or object
+     *
+     * @return The "lowest" common enclosing board, if any
+     */
+    default Optional<Board> commonEnclosingBoard(@Nullable Targetable object1, @Nullable Targetable object2) {
+        if ((object1 == null) || (object2 == null) || !hasBoardLocationOf(object1) || !hasBoardLocationOf(object2)) {
+            return Optional.empty();
+        } else {
+            List<Integer> hierarchy1 = getAllEnclosingBoards(object1.getBoardId());
+            hierarchy1.add(object1.getBoardId());
+            List<Integer> hierarchy2 = getAllEnclosingBoards(object2.getBoardId());
+            hierarchy2.add(object2.getBoardId());
+            // Keep only shared boards of the two hierarchies; the "lowest" of these is the correct one
+            hierarchy1.retainAll(hierarchy2);
+            if (hierarchy1.isEmpty()) {
+                return Optional.empty();
+            } else {
+                hierarchy1.sort(Comparator.comparingInt(id -> getBoard(id).getBoardType().orderValue()));
+                return Optional.of(getBoard(hierarchy1.get(0)));
+            }
+        }
+    }
+
     // endregion
 
     /**

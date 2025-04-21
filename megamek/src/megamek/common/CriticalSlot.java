@@ -135,7 +135,7 @@ public class CriticalSlot implements Serializable {
      * Has this slot been damaged?
      */
     public boolean isDamaged() {
-        return hit || destroyed;
+        return hit || destroyed || missing;
     }
 
     /**

@@ -24,18 +24,15 @@ import java.util.Comparator;
 
 /**
  * A comparator that compares the inputs based on natural sort order.
- *
- * Natural sort order is an easier to parse format that counts multi-digit numbers atomically (as a
- * single number)
- *
- * Windows File Explorer uses this format for files as it is more human-friendly, but
- * ASCII sort order is more common in computer programs because of the ease of programming in that
- * order.
- *
- * To showcase how this works, below is an example:
- * The list of Strings { "Atlas 0", "Atlas 15", "Atlas 2", "Atlas 1", "Atlas 5" }
- * would be sorted into { "Atlas 0", "Atlas 1", "Atlas 2", "Atlas 5", "Atlas 15" }
- * instead of ASCII's { "Atlas 0", "Atlas 1", "Atlas 15", "Atlas 2", "Atlas 5" }
+ * <p>
+ * Natural sort order is an easier to parse format that counts multi-digit numbers atomically (as a single number)
+ * <p>
+ * Windows File Explorer uses this format for files as it is more human-friendly, but ASCII sort order is more common in
+ * computer programs because of the ease of programming in that order.
+ * <p>
+ * To showcase how this works, below is an example: The list of Strings { "Atlas 0", "Atlas 15", "Atlas 2", "Atlas 1",
+ * "Atlas 5" } would be sorted into { "Atlas 0", "Atlas 1", "Atlas 2", "Atlas 5", "Atlas 15" } instead of ASCII's {
+ * "Atlas 0", "Atlas 1", "Atlas 15", "Atlas 2", "Atlas 5" }
  */
 public class NaturalOrderComparator implements Comparator<String>, Serializable {
     private static final long serialVersionUID = -5116813198443091269L;
@@ -61,10 +58,11 @@ public class NaturalOrderComparator implements Comparator<String>, Serializable 
                 // find the ends of the numbers
                 // ii: first digit
                 int da = 0, db = 0;
-                while ((ii + da) < a.length() && Character.isDigit(a.charAt(ii + da))) {
+                // comma-formatted numbers should also be recognized
+                while ((ii + da) < a.length() && (Character.isDigit(a.charAt(ii + da)) || a.charAt(ii + da) == ',')) {
                     da++;
                 }
-                while ((ii + db) < b.length() && Character.isDigit(b.charAt(ii + db))) {
+                while ((ii + db) < b.length() && (Character.isDigit(b.charAt(ii + db)) || b.charAt(ii + db) == ',')) {
                     db++;
                 }
 
@@ -77,13 +75,14 @@ public class NaturalOrderComparator implements Comparator<String>, Serializable 
 
                 // da == db: magnitudes are equal, we can compare
                 //           base-10 numbers left to right.
-                for ( ; da > 0; --da, ++ii) {
+                // If a number is ever badly formatted with the wrong number of digits before commas,
+                // behavior will be undefined. Maybe assemble a new string with no commas?
+                // Internationalization issues? See periods in place of commas?
+                for (; da > 0; --da, ++ii) {
                     ca = a.charAt(ii);
                     cb = b.charAt(ii);
                     if (ca != cb) {
-                        diff = Integer.compare(
-                                Character.getNumericValue(ca),
-                                Character.getNumericValue(cb));
+                        diff = Integer.compare(Character.getNumericValue(ca), Character.getNumericValue(cb));
                         if (diff != 0) {
                             return diff;
                         }

@@ -59,10 +59,17 @@ public class NaturalOrderComparator implements Comparator<String>, Serializable 
                 // ii: first digit
                 int da = 0, db = 0;
                 // comma-formatted numbers should also be recognized
-                while ((ii + da) < a.length() && (Character.isDigit(a.charAt(ii + da)) || a.charAt(ii + da) == ',')) {
+                // Also period-formatted for international people
+                while ((ii + da) < a.length() &&
+                             (Character.isDigit(a.charAt(ii + da)) ||
+                                    a.charAt(ii + da) == ',' ||
+                                    a.charAt(ii + da) == '.')) {
                     da++;
                 }
-                while ((ii + db) < b.length() && (Character.isDigit(b.charAt(ii + db)) || b.charAt(ii + db) == ',')) {
+                while ((ii + db) < b.length() &&
+                             (Character.isDigit(b.charAt(ii + db)) ||
+                                    b.charAt(ii + db) == ',' ||
+                                    b.charAt(ii + db) == '.')) {
                     db++;
                 }
 
@@ -75,9 +82,9 @@ public class NaturalOrderComparator implements Comparator<String>, Serializable 
 
                 // da == db: magnitudes are equal, we can compare
                 //           base-10 numbers left to right.
-                // If a number is ever badly formatted with the wrong number of digits before commas,
-                // behavior will be undefined. Maybe assemble a new string with no commas?
-                // Internationalization issues? See periods in place of commas?
+                // If a number is ever formatted with the wrong number of digits before commas,
+                // behavior will be undefined with -2? Maybe assemble a new string with no commas.
+                // Internationalization issues with fractional values? Do
                 for (; da > 0; --da, ++ii) {
                     ca = a.charAt(ii);
                     cb = b.charAt(ii);

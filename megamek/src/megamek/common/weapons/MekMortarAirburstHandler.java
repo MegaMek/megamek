@@ -39,7 +39,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
             return true;
         }
 
-        Coords targetPos = target.getPosition();
+        final Coords targetPos = target.getPosition();
 
         Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
@@ -127,7 +127,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         Vector<Report> newReports;
         int numRounds = wtype.getRackSize();
         // Damage building directly
-        Building bldg = game.getBoard().getBuildingAt(targetPos);
+        Building bldg = game.getBuildingAt(targetPos, target.getBoardId()).orElse(null);
         if (bldg != null) {
             newReports = gameManager.damageBuilding(bldg, numRounds, " receives ", targetPos);
             adjustReports(newReports);
@@ -135,7 +135,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         }
 
         // Damage Terrain if applicable
-        Hex h = game.getBoard().getHex(targetPos);
+        Hex h = game.getHexOf(target);
         newReports = new Vector<>();
         if ((h != null) && h.hasTerrainFactor()) {
             r = new Report(3384);
@@ -147,11 +147,11 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         }
 
         // Update hex and report any changes
-        newReports.addAll(gameManager.tryClearHex(targetPos, numRounds, subjectId));
+        newReports.addAll(gameManager.tryClearHex(targetPos, target.getBoardId(), numRounds, subjectId));
         adjustReports(newReports);
         vPhaseReport.addAll(newReports);
 
-        for (Entity target : game.getEntitiesVector(targetPos)) {
+        for (Entity target : game.getEntitiesVector(targetPos, target.getBoardId())) {
             // Ignore airborne units
             if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
                 continue;

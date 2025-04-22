@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3075-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='AB'>
 			<omniMargin>1</omniMargin>
@@ -6745,11 +6742,11 @@
             </model>
             <model name='(Tracked Sniper 3035+)'>
                 <roles>mixed_artillery</roles>
-                <availability>FWL:6,DTA:6</availability>
+                <availability>FWL:6,DTA:6,RCM:6</availability>
             </model>
             <model name='(Tracked Thumper 3035+)'>
                 <roles>mixed_artillery</roles>
-                <availability>FWL:7,DTA:7</availability>
+                <availability>FWL:7,DTA:7,RCM:7</availability>
             </model>
             <model name='(Wheeled Arrow IV 3044+)'>
                 <roles>mixed_artillery</roles>
@@ -6757,11 +6754,11 @@
             </model>
             <model name='(Wheeled Sniper 3035+)'>
                 <roles>mixed_artillery,urban</roles>
-                <availability>FWL:7,DTA:7</availability>
+                <availability>FWL:7,DTA:7,RCM:7</availability>
             </model>
             <model name='(Wheeled Thumper 3035+)'>
                 <roles>mixed_artillery,urban</roles>
-                <availability>FWL:8,DTA:8</availability>
+                <availability>FWL:8,DTA:8,RCM:8</availability>
             </model>
         </chassis>
         <chassis name='Field Gun Century (MHAF)' unitType='Infantry'>
@@ -7215,7 +7212,7 @@
             <availability>FWL!A:7!B:5!C:4!D:3!F:1,DTA!A:7!B:5!C:4!D:3!F:1,RCM!A:6!B:5!C:4!D:3!F:1</availability>
             <model name='(Motorized AC10 3035+)'>
                 <roles>field_gun,paratrooper</roles>
-                <availability>FWL!A:1!B:1!C:3!D:3!F:3,DTA!A:1!B:1!C:3!D:3!F:3,DTA!A:1!B:1!C:3!D:3!F:3</availability>
+                <availability>FWL!A:1!B:1!C:3!D:3!F:3,DTA!A:1!B:1!C:3!D:3!F:3,RCM!A:1!B:1!C:3!D:3!F:3</availability>
             </model>
             <model name='(Motorized AC2 3035+)'>
                 <roles>anti_aircraft,field_gun,fire_support,paratrooper</roles>

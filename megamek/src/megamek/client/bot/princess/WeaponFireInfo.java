@@ -630,8 +630,14 @@ public class WeaponFireInfo {
             String msg = realToHitData.getCumulativePlainDesc();
             ToHitData thd;
             if (game.getPhase() != GamePhase.FIRING) {
-                // Check if any spotters can help us out...
                 Entity te = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
+
+                // Can't hit flying Aerospace with Homing
+                if (te != null && te.isAirborne()) {
+                    return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Aerospace cannot be TAGged, auto-miss");
+                }
+
+                // Check if any spotters can help us out...
                 Entity spotter = Compute.findTAGSpotter(game, shooter, target, false);
                 if (spotter != null) {
                     // Chance of getting a TAG spot is, at base, the spotter's gunnery skill

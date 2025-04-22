@@ -55,6 +55,8 @@ MEGAMEK VERSION HISTORY:
 + PR #6893: Properly calculate armor crit slot count for superheavy meks
 + PR #6907: fix: removed code duplication
 + PR #6908: Homing Artillery should work direct fire when targeting a hex
++ PR #6909: Fix for ASF Flak shots missing due to erroneous elevation check (ASF Flak uses Altitude)
++ PR #6910: Fix Counter-Battery Fire Class Cast Exception
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

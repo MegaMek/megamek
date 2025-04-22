@@ -984,8 +984,8 @@ public class Tank extends Entity {
      * Returns the Compute.ARC that the weapon fires into.
      */
     @Override
-    public int getWeaponArc(int wn) {
-        final Mounted<?> mounted = getEquipment(wn);
+    public int getWeaponArc(int weaponNumber) {
+        final Mounted<?> mounted = getEquipment(weaponNumber);
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType) && mounted.getType().hasFlag(WeaponType.F_B_POD)) {

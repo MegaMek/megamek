@@ -60,7 +60,7 @@ public class LowestForceAsUnit extends BaseFormationConverter<Formation> {
                         logger.error("Entity " + entityCast + " does not belong to force " + force);
                         continue;
                     }
-                    var element = ASConverter.convertAndKeepRefs(entityCast);
+                    var element = ASConverter.convert(entityCast);
                     if (element != null) {
                         thisUnit.add(element);
                         counter.add(Role.getRole(entityCast.getRole()));

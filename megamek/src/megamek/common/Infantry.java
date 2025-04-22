@@ -779,8 +779,8 @@ public class Infantry extends Entity {
     }
 
     @Override
-    public int getWeaponArc(int wn) {
-        Mounted<?> weapon = getEquipment(wn);
+    public int getWeaponArc(int weaponNumber) {
+        Mounted<?> weapon = getEquipment(weaponNumber);
         // Infantry can fire all around themselves. But field guns are set up to a
         // vehicular turret facing
         if (isFieldWeapon(weapon)) {

@@ -272,7 +272,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
             return;
         }
 
-        if (!(hex.containsTerrain(Terrains.FIRE)) && gameManager.checkIgnition(coords, roll)) {
+        if (!(hex.containsTerrain(Terrains.FIRE)) && gameManager.checkIgnition(coords, board.getBoardId(), roll)) {
             vPhaseReport.addElement(Report.publicReport(5150).add(coords.getBoardNum()).add(origin.getBoardNum()));
         }
     }

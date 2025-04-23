@@ -6948,7 +6948,8 @@ public class TWGameManager extends AbstractGameManager {
                     vPhaseReport.addElement(r);
                 }
                 vPhaseReport.addAll(tryClearHex(t.getPosition(), t.getBoardId(), missiles * 4, attId));
-                tryIgniteHex(t.getPosition(), attId, false, true, new TargetRoll(0, "inferno"), -1, vPhaseReport);
+                tryIgniteHex(t.getPosition(), t.getBoardId(), attId, false, true, new TargetRoll(0, "inferno"), -1,
+                      vPhaseReport);
                 break;
             case Targetable.TYPE_BUILDING:
                 Vector<Report> vBuildingDamageReport = damageBuilding(game.getBoard().getBuildingAt(t.getPosition()),
@@ -10855,10 +10856,11 @@ public class TWGameManager extends AbstractGameManager {
      * @param accidentTarget - <code>int</code> the target number below which a roll has to be made in order to try
      *                       igniting a hex accidentally. -1 for intentional
      */
-    public boolean tryIgniteHex(Coords c, int entityId, boolean bHotGun, boolean bInferno, TargetRoll nTargetRoll,
+    public boolean tryIgniteHex(Coords c, int boardId, int entityId, boolean bHotGun, boolean bInferno,
+     TargetRoll nTargetRoll,
           boolean bReportAttempt, int accidentTarget, Vector<Report> vPhaseReport) {
 
-        Hex hex = game.getBoard().getHex(c);
+        Hex hex = game.getHex(c, boardId);
         Report r;
 
         // Ignore bad coordinates.
@@ -10907,7 +10909,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // building modifiers
-        Building bldg = game.getBoard().getBuildingAt(c);
+        Building bldg = game.getBuildingAt(c, boardId).orElse(null);
         if (null != bldg) {
             nTargetRoll.addModifier(bldg.getType().getTypeValue() - 3, "building");
         }
@@ -10963,7 +10965,7 @@ public class TWGameManager extends AbstractGameManager {
                 vPhaseReport.add(r);
             }
         } else {
-            return checkIgnition(c, nTargetRoll, bInferno, entityId, vPhaseReport);
+            return checkIgnition(c, boardId, nTargetRoll, bInferno, entityId, vPhaseReport);
         }
 
         return false;
@@ -10979,9 +10981,10 @@ public class TWGameManager extends AbstractGameManager {
      *                    or ammo is causing the roll, this should be <code>false</code>.
      * @param nTargetRoll - the <code>int</code> roll target for the attempt.
      */
-    public boolean tryIgniteHex(Coords c, int entityId, boolean bHotGun, boolean bInferno, TargetRoll nTargetRoll,
+    public boolean tryIgniteHex(Coords c, int boardId, int entityId, boolean bHotGun, boolean bInferno,
+TargetRoll nTargetRoll,
           int accidentTarget, Vector<Report> vPhaseReport) {
-        return tryIgniteHex(c, entityId, bHotGun, bInferno, nTargetRoll, false, accidentTarget, vPhaseReport);
+        return tryIgniteHex(c, boardId, entityId, bHotGun, bInferno, nTargetRoll, false, accidentTarget, vPhaseReport);
     }
 
     public Vector<Report> tryClearHex(Coords c, int nDamage, int entityId) {
@@ -20711,33 +20714,31 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Explode a VTOL
+     * Explodes a VTOL or WiGE unit.
      *
-     * @param en The <code>VTOL</code> to explode.
+     * @param entity The unit to explode.
      *
-     * @return a <code>Vector</code> of reports
+     * @return The new reports created by the events
      */
-    private Vector<Report> explodeVTOLorWiGE(Tank en) {
-        Vector<Report> vDesc = new Vector<>();
-        Report r;
+    private Vector<Report> explodeVTOLorWiGE(@Nullable Tank entity) {
+        Vector<Report> newReports = new Vector<>();
+        if (entity == null) {
+            LOGGER.error("Tried to explode null entity");
+            return newReports;
 
-        if (en.hasEngine() && en.getEngine().isFusion()) {
+        } else if (entity.hasEngine() && entity.getEngine().isFusion()) {
             // fusion engine, no effect
-            r = new Report(6300);
-            r.subject = en.getId();
-            vDesc.addElement(r);
-        } else {
-            Coords pos = en.getPosition();
-            Hex hex = game.getBoard().getHex(pos);
-            if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
-                ignite(pos, Terrains.FIRE_LVL_NORMAL, vDesc);
-            } else {
-                ignite(pos, Terrains.FIRE_LVL_INFERNO, vDesc);
-            }
-            vDesc.addAll(destroyEntity(en, "crashed and burned", false, false));
-        }
+            newReports.addElement(new Report(6300).subject(entity.getId()));
 
-        return vDesc;
+        } else {
+            if (game.hasBoardLocationOf(entity)) {
+                Hex hex = game.getHexOf(entity);
+                int fireTerrain = hex.hasVegetation() ? Terrains.FIRE_LVL_NORMAL : Terrains.FIRE_LVL_INFERNO;
+                ignite(entity.getPosition(), entity.getBoardId(), fireTerrain, newReports);
+            }
+            newReports.addAll(destroyEntity(entity, "crashed and burned", false, false));
+        }
+        return newReports;
     }
 
     /**
@@ -22989,14 +22990,14 @@ public class TWGameManager extends AbstractGameManager {
      * @param entityId - the entityId responsible for the ignite attempt. If the value is Entity.NONE, then the roll
      *                 attempt will not be included in the report.
      */
-    public boolean checkIgnition(Coords c, TargetRoll roll, boolean bInferno, int entityId,
+    public boolean checkIgnition(Coords c, int boardId, TargetRoll roll, boolean bInferno, int entityId,
           Vector<Report> vPhaseReport) {
 
         if (vPhaseReport == null) {
             return false;
         }
 
-        Hex hex = game.getBoard().getHex(c);
+        Hex hex = game.getHex(c, boardId);
 
         // The hex might be null due to spreadFire translation
         // goes outside of the board limit.
@@ -23027,7 +23028,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         if (diceRoll.getIntValue() >= roll.getValue()) {
-            ignite(c, Terrains.FIRE_LVL_NORMAL, vPhaseReport);
+            ignite(c, boardId, Terrains.FIRE_LVL_NORMAL, vPhaseReport);
             return true;
         }
 
@@ -23038,28 +23039,12 @@ public class TWGameManager extends AbstractGameManager {
      * Returns true if the hex is set on fire with the specified roll. Of course, also checks to see that fire is
      * possible in the specified hex. This version of the method will not report the attempt roll.
      *
-     * @param c        - the <code>Coords</code> to be lit.
-     * @param roll     - the <code>int</code> target number for the ignition roll
-     * @param bInferno - <code>true</code> if the fire can be lit in any terrain. If this value is <code>false</code>
-     *                 the hex will be lit only if it contains Woods, jungle or a Building.
-     *
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public boolean checkIgnition(Coords c, TargetRoll roll, boolean bInferno) {
-        return checkIgnition(c, roll, bInferno, Entity.NONE, null);
-    }
-
-    /**
-     * Returns true if the hex is set on fire with the specified roll. Of course, also checks to see that fire is
-     * possible in the specified hex. This version of the method will not report the attempt roll.
-     *
      * @param c    - the <code>Coords</code> to be lit.
      * @param roll - the <code>int</code> target number for the ignition roll
      */
-    public boolean checkIgnition(Coords c, TargetRoll roll) {
+    public boolean checkIgnition(Coords c, int boardId, TargetRoll roll) {
         // default signature, assuming only woods can burn
-        return checkIgnition(c, roll, false, Entity.NONE, null);
+        return checkIgnition(c, boardId, roll, false, Entity.NONE, null);
     }
 
     public void ignite(Coords c, int fireLevel, Vector<Report> vReport) {

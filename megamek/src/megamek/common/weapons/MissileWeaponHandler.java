@@ -388,7 +388,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 && !entityTarget.isAirborneVTOLorWIGE()
                 && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE
                         && (atype == null || atype.getFireTN() != TargetRoll.IMPOSSIBLE)))) {
-            gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
+            gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false, false,
                     getFireTNRoll(), 3, vPhaseReport);
         }
 

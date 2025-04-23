@@ -186,11 +186,19 @@ public class AreaEffectHelper {
                 attacker, null, attacker.getId(), vPhaseReport, gameManager);
     }
 
+    public static Vector<Integer> processFuelAirDamage(
+          Coords center, int height, AmmoType ammo, Entity attacker,
+          Vector<Report> vPhaseReport, TWGameManager gameManager
+    ) {
+        //LEGACY use boardId version
+        return processFuelAirDamage(center, 0, height, ammo, attacker, vPhaseReport, gameManager);
+    }
+
     /**
      * Helper function that processes damage for fuel-air explosives.
      */
     public static Vector<Integer> processFuelAirDamage(
-        Coords center, int height, AmmoType ammo, Entity attacker,
+        Coords center, int boardId, int height, AmmoType ammo, Entity attacker,
             Vector<Report> vPhaseReport, TWGameManager gameManager
     ) {
         Game game = attacker.getGame();
@@ -200,7 +208,7 @@ public class AreaEffectHelper {
 
         // sanity check: if this attack is happening in vacuum through very thin atmo,
         // add that to the phase report and terminate early
-        if (game.getBoard().inSpace()
+        if (game.getBoard(boardId).inSpace()
                 || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             Report r = new Report(9986);
             r.indent(1);
@@ -248,7 +256,8 @@ public class AreaEffectHelper {
                     gameManager);
 
                 TargetRoll fireRoll = new TargetRoll(7, "fuel-air ordnance");
-                gameManager.tryIgniteHex(bCoords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
+                gameManager.tryIgniteHex(bCoords, boardId, attacker.getId(), false, false, fireRoll, true, -1,
+                      vPhaseReport);
 
                 clearMineFields(bCoords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game,
                     gameManager);

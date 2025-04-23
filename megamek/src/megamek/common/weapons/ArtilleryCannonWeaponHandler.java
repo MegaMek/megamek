@@ -48,7 +48,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         }
 
         Coords targetPos = target.getPosition();
-        Hex targetHex = game.getBoard().getHex(targetPos);
+        Hex targetHex = game.getHexOf(target);
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         boolean isFlak = targetIsEntity && Compute.isFlakAttack(ae, (Entity) target);
         boolean asfFlak = isFlak && target.isAirborne();
@@ -122,9 +122,10 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
         } else {
-            if (!game.getBoard().inSpace()) {
+            Board board = game.getBoard(target);
+            if (!board.inSpace()) {
                 targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS()) + 1) / 2);
-                if (game.getBoard().contains(targetPos)) {
+                if (board.contains(targetPos)) {
                     // misses and scatters to another hex
                     if (!isFlak) {
                         r = new Report(3195);
@@ -202,7 +203,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                             targetPos, atype, targetPos, false, ae, null, getAttackerId(),
                             vPhaseReport, gameManager);
                 } else {
-                    AreaEffectHelper.processFuelAirDamage(targetPos, height,
+                    AreaEffectHelper.processFuelAirDamage(targetPos, target.getBoardId(), height,
                             ammoType, ae, vPhaseReport, gameManager);
                 }
 

@@ -277,7 +277,7 @@ public class SRMInfernoHandler extends SRMHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && gameManager.tryIgniteHex(target.getPosition(), subjectId, false,
+                && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false,
                         true,
                         getFireTNRoll(), 5,
                         vPhaseReport)) {

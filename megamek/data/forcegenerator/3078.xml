@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3078-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='AB'>
 			<omniMargin>2</omniMargin>
@@ -7074,7 +7071,7 @@
             </model>
             <model name='(Tracked Sniper Cannon 3079+)'>
                 <roles>field_gun,fire_support</roles>
-                <availability>FWL:6+,DA:2+,DGM:2+,DO:6+,DoO:2+,DTA:6+,MCM:6+,PG:1+,PR:6+,RCM:0,RFS:1+,SC:2+,TP:2+</availability>
+                <availability>FWL:6+,DA:2+,DGM:2+,DO:6+,DoO:2+,DTA:6+,MCM:6+,PG:6+,PR:6+,RCM:0,RFS:1+,SC:2+,TP:2+</availability>
             </model>
             <model name='(Tracked Thumper 3035+)'>
                 <roles>mixed_artillery</roles>
@@ -8086,7 +8083,7 @@
             </model>
         </chassis>
 		<chassis name='Foot Stealth Platoon' unitType='Infantry'>
-			<availability>MOC:1+,IS:2+,CS:1+,FWL:0,DA:0,DGM:0,DO:0,DoO:0,DTA:0,MCM:0,PG:0,PR:0,RCM:0,RFS:0,SC:0,TP:0,WOB:1+,WOB.SD:2+,WOB.PM:0,Periphery:1,MH:0</availability>
+			<availability>MOC:1+,IS:2+,FWL:0,DA:0,DGM:0,DO:0,DoO:0,DTA:0,MCM:0,PG:0,PR:0,RCM:0,RFS:0,SC:0,TP:0,WOB:1+,CS:1+,WOB.SD:2+,WOB.PM:0,Periphery:1,MH:0</availability>
 			<model name='(Rifle Paratrooper)'>
 				<roles>recon,specops,paratrooper</roles>
 				<availability>General:8</availability>
@@ -13908,7 +13905,7 @@
 			</model>
 			<model name='(SRM)'>
                 <roles>urban</roles>
-				<availability>IS:5,FWL!F:3,DA!F:3,DGM!F:3,DO!F:3,DoO!F:3,DTA!F:3,MCM:8,PG!F:3,PR!F:3,RCM!F:3,RFS!F:3,SC!F:3,TP!F:3,CS:0,WOB:2-,WOB.PM:4+,Periphery:5,TC:4+,CDP:4+,HL:4+,Periphery.Deep:4+</availability>
+				<availability>IS:5,FWL!F:3,DA!F:3,DGM!F:3,DO!F:3,DoO!F:3,DTA!F:3,MCM:3,PG!F:3,PR!F:3,RCM!F:3,RFS!F:3,SC!F:3,TP!F:3,CS:0,WOB:2-,WOB.PM:4+,Periphery:5,TC:4+,CDP:4+,HL:4+,Periphery.Deep:4+</availability>
 			</model>
 		</chassis>
         <chassis name='Mechanized Wheeled Level I (ComGuards)' unitType='Infantry'>
@@ -14521,7 +14518,7 @@
 				<availability>IS:3+,FWL:0,DA:0,DGM:0,DO:0,DoO:0,DTA:0,MCM:0,PG:0,PR:0,RCM:0,RFS:0,SC:0,TP:0,WOB:3,WOB.PM:2+</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>IS:6,CS:0,WOB:2-,WOB.PM:5+,Periphery:5,TC:4+,CDP:4+,HL:3,Periphery.Deep:5</availability>
+				<availability>IS:6,FWL:0,DA:0,DGM:0,DO:0,DoO:0,DTA:0,MCM:0,PG:0,PR:0,RCM:0,RFS:0,SC:0,TP:0,CS:0,WOB:2-,WOB.PM:5+,Periphery:5,TC:4+,CDP:4+,HL:3,Periphery.Deep:5</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>

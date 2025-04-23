@@ -10998,7 +10998,7 @@
             </model>
         </chassis>
 		<chassis name='Motorized Sub Platoon' unitType='Infantry'>
-			<availability>IS:1,FS:3,Periphery:1,MH:0</availability>
+			<availability>IS:1,FS:3,FWL:0,Periphery:1,MH:0</availability>
 			<model name='(Laser SCUBA)'>
 				<roles>specops</roles>
 				<availability>IS:9</availability>

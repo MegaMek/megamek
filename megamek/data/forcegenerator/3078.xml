@@ -7071,7 +7071,7 @@
             </model>
             <model name='(Tracked Sniper Cannon 3079+)'>
                 <roles>field_gun,fire_support</roles>
-                <availability>FWL:6+,DA:2+,DGM:2+,DO:6+,DoO:2+,DTA:6+,MCM:6+,PG:6+,PR:6+,RCM:0,RFS:1+,SC:2+,TP:2+</availability>
+                <availability>FWL:6+,DA:2+,DGM:2+,DO:6+,DoO:2+,DTA:6+,MCM:6+,PG:1+,PR:6+,RCM:0,RFS:1+,SC:2+,TP:2+</availability>
             </model>
             <model name='(Tracked Thumper 3035+)'>
                 <roles>mixed_artillery</roles>
@@ -7089,9 +7089,17 @@
                 <roles>mixed_artillery,urban</roles>
                 <availability>FWL:7,DA:7,DGM:7,DO:7,DoO:7,DTA:7,MCM:7,PG:7,PR:6,RCM:7,RFS:7,SC:7,TP:7</availability>
             </model>
+            <model name='(Wheeled Sniper Cannon 3079+)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>FWL:5+,DA:1+,DGM:1+,DO:5+,DoO:1+,DTA:5+,MCM:5+,PG:1+,PR:5+,RCM:0,RFS:0,SC:1+,TP:1+</availability>
+            </model>
             <model name='(Wheeled Thumper 3035+)'>
                 <roles>mixed_artillery,urban</roles>
                 <availability>FWL:8,DA:8,DGM:8,DO:8,DoO:8,DTA:8,MCM:8,PG:8,PR:7,RCM:8,RFS:8,SC:8,TP:8</availability>
+            </model>
+            <model name='(Wheeled Thumper Cannon 3079+)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>FWL:5+,DA:1+,DGM:1+,DO:5+,DoO:1+,DTA:5+,MCM:5+,PG:1+,PR:5+,RCM:0,RFS:0,SC:1+,TP:1+</availability>
             </model>
         </chassis>
         <chassis name='Field Gun Century (MHAF)' unitType='Infantry'>
@@ -13893,7 +13901,7 @@
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry,urban</roles>
-				<availability>IS:7,FWL!F:4,DA!F:4,DGM!F:4,DO!F:4,DoO!F:4,DTA!F:4,MCM:4,PG!F:4,PR!F:4,RCM!F:4,RFS!F:4,SC!F:4,TP!F:4,CS:2-,WOB:2-,WOB.PM:5,Periphery:7,TC:6,CDP:6,HL:7,Periphery.Deep:7</availability>
+				<availability>IS:7,FWL!F:4,DA!F:4,DGM!F:4,DO!F:4,DoO!F:4,DTA!F:4,MCM!F:4,PG!F:4,PR!F:4,RCM!F:4,RFS!F:4,SC!F:4,TP!F:4,CS:2-,WOB:2-,WOB.PM:5,Periphery:7,TC:6,CDP:6,HL:7,Periphery.Deep:7</availability>
 			</model>
 			<model name='(Rifle AA)'>
 				<roles>anti_aircraft,urban</roles>
@@ -13901,11 +13909,11 @@
 			</model>
 			<model name='(Rifle)'>
                 <roles>urban</roles>
-				<availability>IS:8,FWL!F:8,DA!F:8,DGM!F:8,DO!F:8,DoO!F:8,DTA!F:8,MCM:8,PG!F:8,PR!F:8,RCM!F:8,RFS!F:8,SC!F:8,TP!F:8,CS:3-,WOB:3-,WOB.PM:6,Periphery:8,TC:4,CDP:4,HL:8,Periphery.Deep:6</availability>
+				<availability>IS:8,FWL!F:8,DA!F:8,DGM!F:8,DO!F:8,DoO!F:8,DTA!F:8,MCM!F:8,PG!F:8,PR!F:8,RCM!F:8,RFS!F:8,SC!F:8,TP!F:8,CS:3-,WOB:3-,WOB.PM:6,Periphery:8,TC:4,CDP:4,HL:8,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
                 <roles>urban</roles>
-				<availability>IS:5,FWL!F:3,DA!F:3,DGM!F:3,DO!F:3,DoO!F:3,DTA!F:3,MCM:3,PG!F:3,PR!F:3,RCM!F:3,RFS!F:3,SC!F:3,TP!F:3,CS:0,WOB:2-,WOB.PM:4+,Periphery:5,TC:4+,CDP:4+,HL:4+,Periphery.Deep:4+</availability>
+				<availability>IS:5,FWL!F:3,DA!F:3,DGM!F:3,DO!F:3,DoO!F:3,DTA!F:3,MCM!F:3,PG!F:3,PR!F:3,RCM!F:3,RFS!F:3,SC!F:3,TP!F:3,CS:0,WOB:2-,WOB.PM:4+,Periphery:5,TC:4+,CDP:4+,HL:4+,Periphery.Deep:4+</availability>
 			</model>
 		</chassis>
         <chassis name='Mechanized Wheeled Level I (ComGuards)' unitType='Infantry'>
@@ -14686,7 +14694,7 @@
             </model>
         </chassis>
 		<chassis name='Motorized Sub Platoon' unitType='Infantry'>
-			<availability>IS:1,FS:3,Periphery:1,MH:0</availability>
+			<availability>IS:1,FS:3,FWL:0,DA:0,DGM:0,DO:0,DoO:0,DTA:0,MCM:0,PG:0,PR:0,RCM:0,RFS:0,SC:0,TP:0,Periphery:1,MH:0</availability>
 			<model name='(Laser SCUBA)'>
 				<roles>specops</roles>
 				<availability>IS:9</availability>

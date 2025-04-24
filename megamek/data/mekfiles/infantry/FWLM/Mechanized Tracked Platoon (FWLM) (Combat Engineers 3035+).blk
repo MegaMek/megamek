@@ -1,0 +1,76 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-14
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Mechanized Tracked Platoon (FWLM)
+</Name>
+
+<Model>
+(Combat Engineers 3035+)
+</Model>
+
+<year>
+3030
+</year>
+
+<originalBuildYear>
+3030
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Vibro-Shovel
+Vibro-Shovel
+Vibro-Shovel
+Vibro-Shovel
+Free Worlds League Infantry Kit (3035+)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+Using a combination of bridging equipment and light earthmoving vehicles these troops assist conventional forces in crossing minor obstacles and improving defensive fighting positions.
+</capabilities>
+
+<overview>
+Combat engineers are support troops used to improve the mobility and protection of combat forces.  They can also be found in non-combat situations such as natural disaster response, helping government assistance reach those in need and constructing temporary camps for evacuees.
+</overview>
+
+<notes>
+Intro date based on prototype release of FWL advanced infantry kit
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<Primary>
+Submachine Gun
+</Primary>
+
+<encumberingarmor>
+true
+</encumberingarmor>
+
+<specialization>
+33
+</specialization>
+

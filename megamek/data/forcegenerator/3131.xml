@@ -11832,13 +11832,13 @@
 				<availability>IS:4,FWL:0,DA:0,OP:0,DTA:0,MSC:0,RF:0</availability>
 			</model>
 			<model name='(LRM)'>
-				<availability>IS:5,FWL:2,DA:2,OP:0,DTA:2,MSC:2,RF:2,Periphery:4,TC:3,CDP:3,Periphery.Deep:3</availability>
+				<availability>IS:5,FWL:2,DA:2,OP:2,DTA:2,MSC:2,RF:2,Periphery:4,TC:3,CDP:3,Periphery.Deep:3</availability>
 			</model>
 			<model name='(Laser Heavy)'>
 				<availability>IS:4,FWL:0,DA:0,OP:0,DTA:0,MSC:0,RF:0,Periphery:3+</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>IS:6,FWL:8,DA:8,OP:0,DTA:8,MSC:8,RF:8,Periphery:5,TC:5+,CDP:5+,HL:3,Periphery.Deep:6+</availability>
+				<availability>IS:6,FWL:8,DA:8,OP:8,DTA:8,MSC:8,RF:8,Periphery:5,TC:5+,CDP:5+,HL:3,Periphery.Deep:6+</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
@@ -15310,6 +15310,10 @@
 			<model name='(Laser)'>
 				<availability>IS:6,FWL:0,DA:0,OP:0,DTA:0,MSC:0,RF:0,RCM:0,Periphery:5,TC:4+,CDP:4+,HL:3,Periphery.Deep:5</availability>
 			</model>
+            <model name='(Laser XCT)'>
+                <roles>xct</roles>
+                <availability>IS:2,FWL:0,DA:0,OP:0,DTA:0,MSC:0,RF:0,RCM:0</availability>
+            </model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
 				<availability>IS:6,FWL:4,DA:4,OP:4,DTA:4,MSC:4,RF:4,RCM:4,Periphery:7,TC:5,CDP:5,HL:7,Periphery.Deep:5</availability>
@@ -15334,14 +15338,14 @@
 				<availability>IS:8,FWL!D:5!F:7,DA!D:5!F:7,OP!D:5!F:7,DTA!D:5!F:7,MSC!D:5!F:7,RF!D:5!F:7,RCM!D:5!F:7,Periphery:8,TC:7,CDP:7,HL:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>IS:5,FWL:0,DA:0,OP:0,DTA:0,MSC:0,RCM:0,Periphery:5,TC:4+,CDP:4+,HL:5+,Periphery.Deep:5+</availability>
+				<availability>IS:5,FWL:0,DA:0,OP:0,DTA:0,MSC:0,RF:0,RCM:0,Periphery:5,TC:4+,CDP:4+,HL:5+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
         <chassis name='Motorized Platoon (FWLM)' unitType='Infantry'>
             <availability>FWL!A:6!B:6!C:6!D:2!F:1,DA!A:6!B:6!C:6!D:2!F:1,OP!A:6!B:6!C:6!D:2!F:1,DTA!A:6!B:6!C:6!D:2!F:1,MSC!A:6!B:6!C:6!D:2!F:1,RF!A:6!B:6!C:6!D:2!F:1,RCM!A:6!B:6!C:6!D:2!F:1</availability>
             <model name='(Combat Engineers 3035+)'>
                 <roles>engineer</roles>
-                <availability>FWL!A:2!B:1!C:1,DA:2+,OP!A:2!B:1!C:1,MSC!A:2!B:1!C:1,RF:2+,RCM:1+</availability>
+                <availability>FWL!A:2!B:1!C:1,DA:2+,OP!A:2!B:1!C:1,DTA!A:2!B:1!C:1,MSC!A:2!B:1!C:1,RF:2+,RCM:1+</availability>
             </model>
             <model name='(Flamer 3035+)'>
                 <roles>urban</roles>

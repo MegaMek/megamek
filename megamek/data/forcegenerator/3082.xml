@@ -10463,7 +10463,7 @@
             </model>
         </chassis>
         <chassis name='Jump Platoon (FWLM)' unitType='Infantry'>
-            <availability>FWL!A:6!B:5!C:3!D:1,DA!A:6!B:5!C:3!D:1,DGM!A:6!B:5!C:3!D:1,DO!A:6!B:5!C:3!D:1,DoO!A:6!B:5!C:3!D:1,DTA!A:6!B:5!C:3!D:1,MCM!A:6!B:5!C:3!D:1,MSC!A:6!B:5!C:3!D:1,PG!A:6!B:5!C:3!D:1,PR!A:6!B:5!C:3!D:1,RCM!A:6!B:5!C:3!D:1,RFS!A:6!B:5!C:3!D:1,SC!A:6!B:5!C:3!D:1,TP!A:6!B:5!C:3!D:1</availability>
+            <availability>FWL!A:6!B:5!C:3!D:1,DA!A:6!B:5!C:3!D:1,DGM!A:6!B:5!C:3!D:1,DO!A:6!B:5!C:3!D:1,DoO!A:6!B:5!C:3!D:1,DTA!A:6!B:5!C:3!D:1,MCM!A:6!B:5!C:3!D:1,MSC!A:6!B:5!C:3!D:1,PG!A:6!B:5!C:3!D:1,PR!A:6!B:5!C:3!D:1,RF!A:6!B:5!C:3!D:1,RCM!A:6!B:5!C:3!D:1,RFS!A:6!B:5!C:3!D:1,SC!A:6!B:5!C:3!D:1,TP!A:6!B:5!C:3!D:1</availability>
             <model name='(Flamer 3035+)'>
                 <roles>urban</roles>
                 <availability>FWL:2-,DA:2-,DGM:2-,DO:2-,DoO:2-,DTA:2-,MCM:2-,MSC:2-,PG:2-,PR:2-,RCM:2-,RFS:2-,SC:2-,TP:2-</availability>
@@ -12816,7 +12816,7 @@
             </model>
             <model name='(MG 3035+)'>
                 <roles>anti_infantry</roles>
-                <availability>FWL:4,DA:4,DGM:4,DO:4,DoO:4,DTA:4,MCM:4,MSC:4,PG:4,PG:4,RCM:4,RFS:4,SC:4,TP:4</availability>
+                <availability>FWL:4,DA:4,DGM:4,DO:4,DoO:4,DTA:4,MCM:4,MSC:4,PG:4,PR:4,RCM:4,RFS:4,SC:4,TP:4</availability>
             </model>
             <model name='(Rifle 3035+)'>
                 <availability>FWL:6,DA:6,DGM:6,DO:6,DoO:6,DTA:6,MCM:6,MSC:6,PG:6,PR:6,RCM:6,RFS:6,SC:6,TP:6</availability>

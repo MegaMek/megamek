@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3131-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='AA'>
 			<omniMargin>12</omniMargin>
@@ -8268,7 +8265,7 @@
 				<availability>General:6,FWL:0,DA:0,OP:0,DTA:0,MSC:0,RF:0,RCM:0</availability>
 			</model>
 			<model name='(Rifle Light)'>
-				<availability>IS:5,Periphery:7-,TC:7,CDP:7,HL:6,Periphery.Deep:7</availability>
+				<availability>IS:5,FWL!D:2!F:5,DA!D:2!F:5,OP!D:2!F:5,DTA!D:2!F:5,MSC!D:2!F:5,RF!D:2!F:5,RCM!D:2!F:5,Periphery:7-,TC:7,CDP:7,HL:6,Periphery.Deep:7</availability>
 			</model>
 			<model name='(Rifle Mountain)'>
 				<roles>mountaineer</roles>

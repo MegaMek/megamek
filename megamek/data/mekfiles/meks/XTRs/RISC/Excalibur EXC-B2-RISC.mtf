@@ -1,0 +1,158 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-10-27
+chassis:Excalibur
+model:EXC-B2-RISC
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3135
+source:XTRO:RISC
+rules level:4
+role:Sniper
+
+quirk:difficult_maintain
+quirk:prototype
+quirk:vestigial_hands_ra
+
+mass:70
+engine:350 XXL (Clan) Engine
+structure:IS Endo-Composite
+myomer:Super-Cooled
+cockpit:Standard Cockpit
+gyro:Compact Gyro
+
+heat sinks:14 IS Double
+walk mp:5
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:19
+RA armor:19
+LT armor:21
+RT armor:21
+CT armor:30
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:6
+RTR armor:6
+RTC armor:9
+
+Weapons:4
+Gauss Rifle, Right Arm
+LRM 20, Left Torso
+Medium Pulse Laser, Center Torso
+Laser AMS, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Mek Null Signature System
+ISSuperCooledMyomer
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+Mek Null Signature System
+ISSuperCooledMyomer
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+Mek Null Signature System
+ISSuperCooledMyomer
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Ammo LRM-20
+Clan Ammo LRM-20
+Clan Gauss Ammo
+Clan Gauss Ammo
+Mek Null Signature System
+ISSuperCooledMyomer
+ISCASEII
+IS Endo-Composite
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser
+CLLaserAntiMissileSystem
+Mek Null Signature System
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo-Composite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Mek Null Signature System
+ISSuperCooledMyomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Mek Null Signature System
+ISSuperCooledMyomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

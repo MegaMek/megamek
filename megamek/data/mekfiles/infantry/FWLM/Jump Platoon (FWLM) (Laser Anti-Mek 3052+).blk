@@ -1,0 +1,69 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-14
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Jump Platoon (FWLM)
+</Name>
+
+<Model>
+(Laser Anti-Mek 3052+)
+</Model>
+
+<year>
+3052
+</year>
+
+<originalBuildYear>
+3052
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<Troopers Equipment>
+AntiMekGear
+Sneak Suit (IR)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+One of the downsides of the additional protection provided by the new advanced infantry armor is the lowered efficiency in anti-Mek close assaults. Although the primary anti-Mek infantry role has been taken over by the newly developed battle armor units, some conventional infantry capability is retained. Now equipped with basic stealth gear (thanks to Word of Blake technical assistance) they can more easily close to point-blank range with a selected target.
+</capabilities>
+
+<overview>
+In response to the formation of the Federated Commonwealth the Free World League introduced it's own advanced infantry armor kit.  It is widely considered the most effective commonly available kit in the Inner Sphere and is in high demand among FWL forces.
+</overview>
+
+<notes>
+Intro date based on FWL production date for Starfire ER Laser Rifle. Basic sneak suit used due to encumbering nature of FWL advanced infantry armor kit.
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<Primary>
+Laser Rifle (ER [Sunbeam Starfire])
+</Primary>
+
+<sneakir>
+true
+</sneakir>
+

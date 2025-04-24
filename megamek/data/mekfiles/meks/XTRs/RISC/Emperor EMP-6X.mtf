@@ -1,0 +1,163 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-10-27
+chassis:Emperor
+model:EMP-6X
+mul id:964
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3136
+source:XTRO RISC
+rules level:4
+role:Juggernaut
+
+quirk:combat_computer
+quirk:command_mech
+quirk:non_standard
+weaponquirk:imp_cooling:LA:3:ISRISCHyperLaser
+weaponquirk:imp_cooling:RA:3:ISRISCHyperLaser
+
+mass:90
+engine:360 XL (Clan) Engine
+structure:IS Standard
+myomer:Super-Cooled
+cockpit:Standard Cockpit
+gyro:Compact Gyro
+heat sink kit:RISC Heat Sink Override Kit
+
+heat sinks:18 Clan Double
+walk mp:4
+jump mp:3
+
+armor:Standard(Inner Sphere)
+LA armor:30
+RA armor:30
+LT armor:30
+RT armor:30
+CT armor:48
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:8
+RTR armor:8
+RTC armor:10
+
+Weapons:5
+RISC Hyper Laser, Left Arm
+RISC Hyper Laser, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+Mek Void Signature System
+ISSuperCooledMyomer
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+Mek Void Signature System
+ISSuperCooledMyomer
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+ISMediumPulseLaser
+Mek Void Signature System
+ISSuperCooledMyomer
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+ISMediumPulseLaser
+Mek Void Signature System
+ISSuperCooledMyomer
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISRISCEmergencyCoolantSystem
+CLECMSuite
+Mek Void Signature System
+
+Head:
+Life Support
+Sensors
+Cockpit
+Medium Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Mek Void Signature System
+ISSuperCooledMyomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Mek Void Signature System
+ISSuperCooledMyomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

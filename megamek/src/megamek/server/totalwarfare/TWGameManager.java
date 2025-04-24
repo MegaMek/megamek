@@ -23109,7 +23109,7 @@ TargetRoll nTargetRoll,
             vReport.add(r);
         }
         hex.addTerrain(new Terrain(Terrains.FIRE, fireLevel));
-        sendChangedHex(c);
+        sendChangedHex(c, boardId);
     }
 
     /**
@@ -24950,21 +24950,18 @@ TargetRoll nTargetRoll,
 
     /**
      * Sends notification to clients that the specified hex has changed.
-     * LEGACY - use the boardId version instead
+     * LEGACY - replace with the boardId version
      */
     public void sendChangedHex(Coords coords) {
         sendChangedHex(coords, 0);
     }
 
     public void sendChangedHex(Coords coords, int boardId) {
-        send(createHexChangePacket(coords, boardId, game.getBoard(boardId).getHex(coords)));
-    }
-
-    /**
-     * Creates a packet containing a hex, and the coordinates it goes at.
-     */
-    private Packet createHexesChangePacket(Set<Coords> coords, Set<Hex> hex) {
-        return new Packet(PacketCommand.CHANGE_HEXES, coords, hex);
+        if (game.hasBoardLocation(coords, boardId)) {
+            send(createHexChangePacket(coords, boardId, game.getHex(coords, boardId)));
+        } else {
+            LOGGER.error("Trying to send a hex update for a non-existent hex!");
+        }
     }
 
     /**

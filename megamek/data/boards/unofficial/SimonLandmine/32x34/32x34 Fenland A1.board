@@ -1,4 +1,10 @@
 size 32 34
+tag "Foliage (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "Fields (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "planted_fields:5" "grass"
 hex 0201 0 "planted_fields:5" "grass"
 hex 0301 0 "planted_fields:5" "grass"

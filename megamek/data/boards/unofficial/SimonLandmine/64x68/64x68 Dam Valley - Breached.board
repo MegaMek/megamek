@@ -1,5 +1,15 @@
 size 64 68
 option exit_roads_to_pavement false
+tag "Rough (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "UnderWaterBridge (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "Woods (Auto)"
+tag "Hangar (Auto)"
+tag "HeavyBuilding (Auto)"
+tag "MediumUrban (Auto)"
 hex 0101 1 "woods:1:9;foliage_elev:2" "grass"
 hex 0201 0 "woods:1:9;foliage_elev:2" "grass"
 hex 0301 0 "" "grass"

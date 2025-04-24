@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3150-->
-<ratgen
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
     <factions>
         <faction key='AML'>
             <techMargin>16</techMargin>
@@ -7516,7 +7513,7 @@
             </model>
         </chassis>
         <chassis name='Field Artillery' unitType='Infantry'>
-            <availability>IS:3,FWL:0,DA:0,OP:0,DTA:0,MSC:0,RF:0,RCM:0,Periphery:3,MH:0</availability>
+            <availability>IS:3,FWL:0,DA:0,RF:0,Periphery:3,MH:0</availability>
             <model name='(Arrow IV)'>
                 <roles>missile_artillery</roles>
                 <availability>CC:5,MOC:3,RA.OA:2,PIR:2,IS:4</availability>

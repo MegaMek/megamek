@@ -1,170 +1,146 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
+<!DOCTYPE html>
+<HTML lang="en" dir="ltr">
 <HEAD>
     <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
     <TITLE>Princess Bot Documentation</TITLE>
-    <META NAME="GENERATOR" CONTENT="LibreOffice 3.5  (Linux)">
-    <META NAME="AUTHOR" CONTENT="Deric Page">
-    <META NAME="CREATED" CONTENT="0;0">
-    <META NAME="CHANGED" CONTENT="20140313;10374900">
-    <META NAME="CHANGEDBY" CONTENT="Deric Page">
-    <META NAME="CHANGEDBY" CONTENT="Deric Page">
-    <STYLE TYPE="text/css">
-        <!--
-            H2.cjk { font-family: "SimSun" }
-            H2.ctl { font-family: "Mangal" }
-        -->
-    </STYLE>
 </HEAD>
-<BODY LANG="en-US" DIR="LTR">
+<BODY>
 <H1><A NAME="mozTocId157777"></A>Princess Bot Documentation</H1>
+
 <UL>
-    <LI><P STYLE="margin-bottom: 0"><A NAME="mozToc"></A><!--mozToc h1 1 h2 2 h3 3 h4 4 h5 5 h6 6--><A
-            HREF="#mozTocId157777">Princess
-        Bot Documentation</A>
-    </P>
-    <LI><P STYLE="margin-bottom: 0"><A HREF="#mozTocId899214">Who is
-        Princess Bot?</A>
-    </P>
-    <LI><P STYLE="margin-bottom: 0"><A HREF="#mozTocId432957">Princess
-        Bot Configuration</A>
-    </P>
-    <LI><P STYLE="margin-bottom: 0"><A HREF="#mozTocId149056">Chat
-        Commands</A>
-    </P>
-    <LI><P STYLE="margin-bottom: 0"><A HREF="#mozTocId779311">Replacing
-        an Absent Player with the Princess Bot</A></P>
-    <LI><P><A HREF="#Princess-Compatible Optional Rules|outline">Princess-Compatible
-        Optional Rules</A>
-    </P>
+    <LI>
+        <A NAME="mozToc"></A>
+        <A HREF="#mozTocId157777">Princess Bot Documentation</A>
+    </LI>
+    <LI><A HREF="#mozTocId899214">Who is Princess Bot?</A></LI>
+    <LI><A HREF="#mozTocId432957">Princess Bot Configuration</A></LI>
+    <LI><A HREF="#mozTocId149056">Chat Commands</A></LI>
+    <LI><A HREF="#mozTocId779311">Replacing an Absent Player with the Princess Bot</A></LI>
+    <LI><A HREF="#Princess-Compatible Optional Rules|outline">Princess-Compatible Optional Rules</A></LI>
 </UL>
-<H2 CLASS="western"><A NAME="mozTocId899214"></A>Who is Princess Bot?</H2>
 
-<P>The TestBot was originally written several years ago as an example
-    of how to create an AI for MegaMek.&nbsp; As such, it's not
-    terribly sophisticated, but it can provide a decent fight when
-    commanding a handful of Introductory Tech units.&nbsp; It does
-    odd/silly things with some higher tech units.&nbsp; Also, when
-    commanding more than a half-dozen units, it slows down exponentially
-    when attempting to determine which unit to move next.&nbsp; You can
-    get more details about the TestBot in the ai-readme.txt
-    document located in the docs folder, then in the Bot Stuff folder.
-    <BR><BR>The Princess Bot was written many years after in an
-    attempt to create an AI that would process quicker even if it were
-    slightly dimmer. Princess offers a few advantages over TestBot.&nbsp;
-    First, Princess is still being maintained, though not by the original
-    author.&nbsp; Princess is actually faster at determining which unit
-    to move next, however, she is slower at moving fast units (VTOLs &amp;
-    Hovercraft especially).&nbsp; She is able to operate AeroSpace units
-    on the ground map, which TestBot cannot, but it takes a long time for
-    her to crunch the numbers and she still can't handle anything
-    on the space maps.&nbsp; Also, she's not very competent with
-    Infantry, which she seriously undervalues.&nbsp; One of the biggest
-    advantages of Princess, however, is that her behavior can be modified
-    in a number of ways, which you'll see throughout this
-    document.</P>
+<H2><A NAME="mozTocId899214"></A>Who is Princess Bot?</H2>
 
-<H2 CLASS="western"><A NAME="mozTocId432957"></A>Princess Bot
-    Configuration</H2>
+<P>
+    The TestBot was originally written several years ago as an example of how to create an AI for MegaMek. As such, it's
+    not terribly sophisticated, but it can provide a decent fight when commanding a handful of Introductory Tech units.
+    It does odd/silly things with some higher tech units. Also, when commanding more than a half-dozen units, it slows
+    down exponentially when attempting to determine which unit to move next. You can get more details about the TestBot
+    in the ai-readme.txt document located in the docs folder, then in the Bot Stuff folder.
+    <BR>
+    <BR>
+    The Princess Bot was written many years after in an attempt to create an AI that would process quicker even if it
+    were slightly dimmer. Princess offers a few advantages over TestBot. First, Princess is still being maintained,
+    though not by the original author. Princess is actually faster at determining which unit to move next, however, she
+    is slower at moving fast units (VTOLs &amp; Hovercraft especially). She is able to operate AeroSpace units on the
+    ground map, which TestBot cannot, but it takes a long time for her to crunch the numbers, and she still can't handle
+    anything on the space maps. Also, she's not very competent with Infantry, which she seriously undervalues. One of
+    the biggest advantages of Princess, however, is that her behavior can be modified in a number of ways, which you'll
+    see throughout this document.
+</P>
+
+<H2><A NAME="mozTocId432957"></A>Princess Bot Configuration</H2>
 <TABLE WIDTH=100% CELLPADDING=2 CELLSPACING=2>
     <TR VALIGN=TOP>
         <TD WIDTH=20% STYLE="border: none; padding: 0">
-            <P ALIGN=LEFT><IMG SRC="princessConfigDialog.jpg" NAME="graphics1" ALIGN=BOTTOM WIDTH=278 HEIGHT=694
-                               BORDER=0 alt="image of the princess dialog"></P>
+            <IMG SRC="princessConfigDialog.jpg" NAME="graphics1" WIDTH=312 HEIGHT=713 BORDER=0
+                 alt="image of the princess dialog">
         </TD>
         <TD STYLE="border: none; padding: 0">
-            <P>The Princess Bot has a number of settings to play
-                with.<BR><BR><B>Behavior</B> - There are 4 behaviors
-                pre-configured with Princess:</P>
-            <UL>
-                <LI><P STYLE="margin-bottom: 0"><I>DEFAULT</I> - Basic
-                    &quot;balanced&quot; settings.
-                </P>
-                <LI><P STYLE="margin-bottom: 0"><I>BERSERK</I> - Highly
-                    aggressive.&nbsp; Princess will ignore danger to herself and will
-                    not run away under any circumstances.
-                </P>
-                <LI><P STYLE="margin-bottom: 0"><I>COWARDLY</I> - Really
-                    doesn't want to get shot.
-                </P>
-                <LI><P><I>ESCAPE</I> - Not quite as fearful as <I>cowardly</I>
-                    but she will try to escape from her home board edge ASAP.
-                </P>
-            </UL>
-            <P>You can also enter a name to save your own configurations for later games or for use with the <A
-                    HREF="#mozTocId779311">replacePlayer</A> command.</P>
-
-            <P><A NAME="Verbosity"></A><B>Verbosity</B> - Used to set the
-                level of logging Princess will use.&nbsp; DEBUG mode is <I>very</I>
-                verbose.&nbsp; It is recommended you only use it when trying to
-                debug something specific.</P>
-
-            <P><B>Forced Withdrawal</B>&nbsp; - Used to make the Princess
-                follow the Forced Withdrawal rules outlined in Total Warfare.</P>
-
-            <P><B>Immediate Withdrawal</B> - Used to make Princess send her
-                units to her home edge from the start of the game, regardless of
-                damage level. This can be handy for <I>Chase</I> <SPAN STYLE="font-variant: normal"><SPAN
-                        STYLE="font-style: normal">and
-			</SPAN></SPAN><I>Breakthrough</I> <SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal">scenarios.</SPAN></SPAN>
+            <P>
+                The Princess Bot has a number of settings to play with.
+                <BR>
+                <BR>
+                <B>Behavior</B> - There are four behaviors pre-configured with Princess:
             </P>
-
-            <P><B>Auto Flee Board</B> - (Only available when <I>Immediate
-                Withdrawal</I> is in effect.) If this is checked, Princess will
-                issue the Flee command as soon as her units reach her home edge,
-                regardless of damage level.</P>
-
-            <P><B>Home Edge</B> - Defines which edge Princess will attempt to
-                flee across when Forced Withdrawal is in effect.</P>
-
-            <P><B>Aggression</B> - This determines how much Princess wants to
-                close with her enemies.&nbsp; Lower settings will cause her to try
-                to keep her distance more, while higher settings will have her get
-                right up in her enemies' faces.</P>
-
-            <P><B>Bravery</B> - This determines how much return fire Princess
-                is willing to risk in order to do damage to the enemy.</P>
-
-            <P><B>Herding</B> - The higher this value, the more Princess will
-                try to keep her units together.</P>
-
-            <P><B>Piloting Caution</B> - This determines how willing Princess
-                is to fail a piloting roll and fall on her face when attempting
-                various maneuvers.&nbsp; Higher settings means that Princess will
-                risk fewer piloting rolls.&nbsp; Note, this also affects how
-                willing she is to use MASC or try to move through or on buildings.</P>
-
-            <P><B>Self Preservation</B> - This determines how quickly Princess
-                will flee once Forced Withdrawal takes effect.&nbsp; At lower
-                levels, she will attempt more of a fighting withdrawal, while at
-                higher levels she should run straight for her home edge.</P>
-
-            <P><B>Strategic Targets</B> - This allows you to provide Princess
-                with a list of hex coordinates or unit ids to move to and attack.&nbsp;
-                If a building exists in a target hex, then she will attempt to
-                destroy that building. If a unit with the given id is on the
-                enemy team, she will give that target a higher priority.</P>
+            <UL>
+                <LI><I>DEFAULT</I> - Basic "balanced" settings.
+                <LI><I>BERSERK</I> - Highly aggressive. Princess will ignore danger to herself and will not run away
+                    under any circumstances.
+                <LI><I>COWARDLY</I> - Really doesn't want to get shot.
+                <LI><I>ESCAPE</I> - Not quite as fearful as <I>cowardly</I> but she will try to escape from her home
+                    board edge ASAP.
+            </UL>
+            <P>
+                You can also enter a name to save your own configurations for later games or for use with the <A
+                    HREF="#mozTocId779311">replacePlayer</A> command.
+            </P>
+            <P>
+                <A NAME="Verbosity"></A><B>Verbosity</B> - Used to set the level of logging Princess will use. DEBUG
+                mode is <I>very</I> verbose. It is recommended you only use it when trying to debug something specific.
+            </P>
+            <P>
+                <B>Forced Withdrawal</B>&nbsp; - Used to make the Princess follow the Forced Withdrawal rules outlined
+                in Total Warfare.
+            </P>
+            <P>
+                <B>Immediate Withdrawal</B> - Used to make Princess send her units to her home edge from the start of
+                the game, regardless of damage level. This can be handy for <I>Chase</I> and <I>Breakthrough</I>
+                scenarios.
+            </P>
+            <P>
+                <B>Auto Flee Board</B> - (Only available when <I>Immediate Withdrawal</I> is in effect.) If this is
+                checked, Princess will issue the Flee command as soon as her units reach her home edge, regardless of
+                damage level.
+            </P>
+            <P>
+                <B>Home Edge</B> - Defines which edge Princess will attempt to flee across when Forced Withdrawal is in
+                effect.
+            </P>
+            <P>
+                <B>Aggression</B> - This determines how much Princess wants to close with her enemies. Lower settings
+                will cause her to try to keep her distance more, while higher settings will have her get right up in her
+                enemies' faces.
+            </P>
+            <P>
+                <B>Bravery</B> - This determines how much return fire Princess is willing to risk to do damage to the
+                enemy.
+            </P>
+            <P>
+                <B>Herding</B> - The higher this value, the more Princess will try to keep her units together.
+            </P>
+            <P>
+                <B>Piloting Caution</B> - This determines how willing Princess is to fail a piloting roll and fall on
+                her face when attempting various maneuvers. Higher settings mean that Princess will risk fewer piloting
+                rolls. Note, this also affects how willing she is to use MASC or try to move through or on buildings.
+            </P>
+            <P>
+                <B>Self Preservation</B> - This determines how quickly Princess will flee once Forced Withdrawal takes
+                effect. At lower levels, she will attempt more of a fighting withdrawal, while at higher levels she
+                should run straight for her home edge.
+            </P>
+            <P>
+                <B>Strategic Targets</B> - This allows you to provide Princess with a list of hex coordinates or unit
+                ids to move to and attack. If a building exists in a target hex, then she will attempt to destroy that
+                building. If a unit with the given id is on the enemy team, she will give that target a higher priority.
+            </P>
         </TD>
     </TR>
 </TABLE>
-<H2 CLASS="western"><A NAME="mozTocId149056"></A><A NAME="Chat_Commands"></A>
-    Chat Commands</H2>
+<H2><A NAME="mozTocId149056"></A><A NAME="Chat_Commands"></A>Chat Commands</H2>
 
-<P>Chat commands can only be given to an allied Princess player (on
-    the same team).</P>
-
-<P><B>Flee</B><BR><I>princessName: flee : edge#</I><BR>Causes
-    princess-controlled units to start fleeing the board, regardless of
-    damage level or Forced Withdrawal setting. Edge # is a number from 0 to 4;
-	0 = north, 1 = south, 2 = west, 3 = east, 4 = nearest edge.</P>
-
-<P><B>Verbose</B><BR><I>princessName: verbose :
-    &lt;error/warning/info/debug&gt;</I><BR>Sets princess's verbosity
-    level.</P>
-
-<P><B>Behavior</B><BR><I>princessName: behavior :
-    behaviorName</I><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR>Change's
-princess's behavior to the named behavior (case-sensitive).</SPAN></SPAN></P>
+<P>
+    Chat commands can only be given to an allied Princess player (on the same team).
+</P>
+<P>
+    <B>Flee</B>
+    <BR>
+    <I>princessName: flee : edge#</I><BR>Causes princess-controlled units to start fleeing the board, regardless of
+    damage level or Forced Withdrawal setting. Edge # is a number from 0 to 4; 0 = north, 1 = south, 2 = west, 3 = east,
+    4 = nearest edge.
+</P>
+<P>
+    <B>Verbose</B>
+    <BR>
+    <I>princessName: verbose : &lt;error/warning/info/debug&gt;</I><BR>Sets princess's verbosity level.
+</P>
+<P>
+    <B>Behavior</B>
+    <BR>
+    <I>princessName: behavior : behaviorName</I>
+    <BR>
+    Change's princess's behavior to the named behavior (case-sensitive).
+</P>
 
 <P><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><B>Caution</B></SPAN></SPAN><SPAN
         STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR></SPAN></SPAN><I>princessName:
@@ -238,7 +214,7 @@ Targets list.</SPAN></SPAN></P>
 
 <P>The following are the optional rules that should be safe to use
     when playing against Princess. Anything not on this list will either
-    cause Princess to behave on nonsensical ways (always Sprinting or
+    cause Princess to behave in nonsensical ways (always Sprinting or
     Leaping) or can cause crashes/lockups (mek/vehicle lance movement).
     So, it is not recommended you use any rules not on this list when
     using Princess.</P>
@@ -284,7 +260,7 @@ Targets list.</SPAN></SPAN></P>
         However, don't expect her to do well with ammo created after the
         FedCom Civil War or units like LAMS or Superheavy Meks.</P>
     <LI><P STYLE="margin-bottom: 0">There is no support for using
-        Princess in space or high altitude battles. Ground battles only.</P>
+        Princess in space or high-altitude battles. Ground battles only.</P>
 </UL>
 <P STYLE="margin-bottom: 0"><BR>
 </P>
@@ -302,7 +278,7 @@ Targets list.</SPAN></SPAN></P>
     <LI><P STYLE="margin-bottom: 0">No igniting clear hexes</P>
     <LI><P STYLE="margin-bottom: 0">Extreme temperature survival</P>
     <LI><P STYLE="margin-bottom: 0">Armed MekWarriors</P>
-    <LI><P STYLE="margin-bottom: 0">Limited Mekwarrior Visibility</P>
+    <LI><P STYLE="margin-bottom: 0">Limited MekWarrior Visibility</P>
     <LI><P STYLE="margin-bottom: 0">Alternate &quot;Better&quot; MASC</P>
     <LI><P STYLE="margin-bottom: 0">Alternate &quot;Better&quot; MASC
         - Enhanced</P>
@@ -314,13 +290,13 @@ Targets list.</SPAN></SPAN></P>
 
 <P STYLE="margin-bottom: 0"><B>Advanced Combat</B></P>
 <UL>
-    <LI><P STYLE="margin-bottom: 0">Through-armor criticals will
+    <LI><P STYLE="margin-bottom: 0">Through-armor critical hits will
         'float'</P>
     <LI><P STYLE="margin-bottom: 0">TacOps Advanced Determining
         Critical Hits</P>
     <LI><P STYLE="margin-bottom: 0">TacOps engine explosions</P>
     <LI><P STYLE="margin-bottom: 0">TacOps Starting Fires (though
-        Pincess won't intentionally start a fire)</P>
+        Princess won't intentionally start a fire)</P>
     <LI><P STYLE="margin-bottom: 0">TacOps Extreme Range Rules</P>
     <LI><P STYLE="margin-bottom: 0">TacOps Dead Zone Rule</P>
     <LI><P STYLE="margin-bottom: 0">TacOps Diagramming Line of Sight
@@ -337,7 +313,7 @@ Targets list.</SPAN></SPAN></P>
     <LI><P STYLE="margin-bottom: 0">TacOps Vehicle Firing Arcs</P>
     <LI><P STYLE="margin-bottom: 0">TacOps Advanced 'Mek Hit
         Locations</P>
-    <LI><P STYLE="margin-bottom: 0">No through-armor criticals</P>
+    <LI><P STYLE="margin-bottom: 0">No through-armor critical hits</P>
     <LI><P STYLE="margin-bottom: 0">Increased AC Damage</P>
     <LI><P STYLE="margin-bottom: 0">Increased IS ER Large Laser Range</P>
 </UL>
@@ -380,9 +356,10 @@ Targets list.</SPAN></SPAN></P>
 <UL>
     <LI><P STYLE="margin-bottom: 0">Front load initiative</P>
     <LI><P STYLE="margin-bottom: 0">Initiative streak compensation</P>
-    <LI><P STYLE="...">Simultaneous Phases (any) - Technically they can be used but they cause massive CPU and Memory
+    <LI>Simultaneous Phases (any)—Technically they can be used, but they cause massive CPU and Memory
         consumption. So, don't use these unless you're running a high-end system. Also, Simultaneous Movement won't work
-        at all.</P></LI>
+        at all.
+    </LI>
 </UL>
 <P STYLE="margin-bottom: 0"><BR>
 </P>
@@ -397,7 +374,7 @@ Targets list.</SPAN></SPAN></P>
     <LI><P STYLE="margin-bottom: 0">Individual Initiative</P>
     <LI><P STYLE="margin-bottom: 0">Commander Initiative</P>
     <LI><P STYLE="margin-bottom: 0">Toughness Bonus</P>
-    <LI><P STYLE="margin-bottom: 0">Conditional Autoejection</P>
+    <LI><P STYLE="margin-bottom: 0">Conditional Auto ejection</P>
     <LI><P STYLE="margin-bottom: 0">Maximum Heat from External Heat
         Sources</P>
     <LI><P STYLE="margin-bottom: 0">CASE/CASEII reduces pilot damage

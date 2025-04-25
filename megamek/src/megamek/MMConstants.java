@@ -58,19 +58,18 @@ public final class MMConstants extends SuiteConstants {
     public static final String SURNAME_FILE = Paths.get("data/names/surnames.csv").toString();
     public static final String BOT_README_FILE_PATH = Paths.get("docs/Bot Stuff/Princess Notes.txt").toString();
     public static final String BOARD_README_FILE_PATH = Paths.get("docs/Archive Stuff/maps/Map Editor-readme.txt")
-        .toString();
-    public static final String MEGAMEK_README_FILE_PATH = Paths.get("docs/1-Readme/readme.txt").toString();
+                                                              .toString();
+    public static final String MEGAMEK_README_FILE_PATH = Paths.get("docs/README.md").toString();
     public static final String USER_DIR_README_FILE = Paths.get("docs/UserDirHelp.html").toString();
-    public static final String SERIALKILLER_CONFIG_FILE = Paths.get("mmconf/serialkiller.xml").toString();
     public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = Paths.get("userdata/data/names/factions/")
-        .toString();
+                                                                         .toString();
     public static final String USER_CALLSIGN_FILE_PATH = Paths.get("userdata/data/names/callsigns.csv").toString();
     public static final String USER_GIVEN_NAME_FEMALE_FILE = Paths.get("userdata/data/names/femaleGivenNames.csv")
-        .toString();
+                                                                   .toString();
     public static final String USER_HISTORICAL_ETHNICITY_FILE = Paths.get("userdata/data/names/historicalEthnicity.csv")
-        .toString();
+                                                                      .toString();
     public static final String USER_GIVEN_NAME_MALE_FILE = Paths.get("userdata/data/names/maleGivenNames.csv")
-        .toString();
+                                                                 .toString();
     public static final String USER_SURNAME_FILE = Paths.get("userdata/data/names/surnames.csv").toString();
     public static final String ERAS_FILE_PATH = Paths.get("data/universe/eras.xml").toString();
     public static final String USER_LOADOUTS_DIR = Paths.get("userdata/data/").toString();

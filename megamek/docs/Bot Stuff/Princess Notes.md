@@ -1,0 +1,200 @@
+# Who or What is Princess.
+
+Introducing Princess, the crown jewel of MegaMek's AI warriors, notorious for her rapid-fire decision-making and royal
+impatience. She's not your average bot; think of her as the offspring of 'Clever Girl' and 'Fire Girl'—brilliantly
+tactical in the heat of the moment yet as predictably unpredictable as fire itself. Named for her blazing
+speed, she rules the battlefield with the impetuousness of a true princess.
+
+Within the digital confines of MegaMek, Princess reigns supreme in her own chaotic domain, executing each turn with a
+precision that’s dazzlingly effective yet bewilderingly short-sighted. She's a master of the immediate, squeezing every
+ounce of potential from the present turn with a tactical acumen that leaves her human adversaries in awe. Yet don't ask
+her about the 'next move' in the grand scheme—our beloved Princess has a knack for living (and battling) "in the
+moment," often forgetting her grand strategy as soon as the next round begins.
+
+So here's the inside scoop, dear players: While Princess might outmaneuver you in the short run, her inability to think
+turn over turn is her Achilles' heel. But underestimate her at your own peril; her next move is as much a surprise to
+her as it is to you, making every game an adventurous foray into the unpredictable mind of MegaMek's most enigmatic AI.
+
+In a wink to you, the savvy gamer, remember this: Princess is more than code and strategy; she's a narrative woven into
+the very fabric of the MegaMek universe, challenging you to adapt, anticipate, and enjoy the tumultuous ride. Prepare to
+engage with an opponent who is part tactical genius, part whimsical sovereign, and entirely in a league of her own.
+
+MegaMek contains a single bot client, Princess. First, we'll go through the basic settings for princess and what they
+mean. Second, we'll go through the basic commands for Princess. Third, we'll discuss how to run separate instances of
+Princess to keep different types of units using different tactics. Finally, we'll go through the Optional Rules Princess
+can use.
+
+## Behavior Options
+
+Behavior—There are four behaviors pre-configured with Princess:
+
+1. DEFAULT: Basic "balanced" settings.
+2. BERSERK: Highly aggressive. Princess will ignore danger to herself and will not run away under any circumstances.
+3. COWARDLY: Really doesn't want to get shot.
+4. ESCAPE: Not quite as fearful as cowardly, but she will try to escape from her home board edge ASAP.
+
+You can also enter a name to save your own configurations for later games or for use with the replacePlayer command.
+
+### Verbosity
+
+Used to set the level of logging Princess will use. DEBUG mode is very verbose. It is recommended you only use it when
+trying to debug something specific.
+
+### Forced Withdrawal
+
+Used to make the Princess follow the Forced Withdrawal rules outlined in Total Warfare.
+
+### Immediate Withdrawal
+
+Used to make Princess send her units to her home edge from the start of the game, regardless of damage level. This can
+be handy for Chase and Breakthrough scenarios.
+
+#### Auto Flee Board
+
+(Only available when Immediate Withdrawal is in effect.) If this is checked, Princess will issue the flee command as
+soon as her units reach her home edge, regardless of damage level.
+
+### Home Edge
+
+Defines which edge Princess will attempt to flee across when Forced Withdrawal is in effect.
+
+## Behavior Settings
+
+### Bravery
+
+This determines how much return fire Princess is willing to risk to do damage to the enemy.
+
+### Self-Preservation
+
+This determines how quickly Princess will flee once Forced Withdrawal takes effect. At lower levels, she will attempt
+more of a fighting withdrawal, while at higher levels she should run straight for her home edge.
+
+### Aggression
+
+This determines how much Princess wants to close with her enemies. Lower settings will cause her to try to keep her
+distance more, while higher settings will have her get right up in her enemies' faces.
+
+### Herding
+
+The higher this value, the more Princess will try to keep her units together.
+
+### Piloting Caution
+
+This determines how willing Princess is to fail a piloting roll and fall on her face when attempting various maneuvers.
+Higher settings means that Princess will risk fewer piloting rolls. Note, this also affects how willing she is to use
+MASC or try to move through or on buildings.
+
+### Strategic Targets
+
+This allows you to provide Princess with a list of hex coordinates or unit ids to move to and attack. If a building
+exists in a target hex, then she will attempt to destroy that building. If a unit with the given id is on the enemy
+team, she will give that target a higher priority ignoring easier shots over the Strategic Target.
+
+The key to setting Princess up is using the above settings together and realizing that she tends to chose the best
+overall tactic with her limits. Without tweaking settings, this almost invariably means Princess charging in. Setting
+Bravery and Aggression to lower levels will have Princess keep at longer ranges. The real key to having Princess use
+units to their fullest is to break them down into roles, tweaking the settings for each. Princess doesn't use units
+together operating each individually, but with the same overall tactics. This means she'll often focus fire on one of
+your units, even to extreme levels. This also means that one instance of Princess will have a Longbow follow a bunch of
+brawlers into short range.
+
+## Chat Commands
+
+Chat commands can only be given to an allied Princess player (on the same team). If you are playing solo and will want
+to change settings on the fly you can open a separate instance of MM and join the game (making sure to set the team to
+the bot's side). With this you can issue Behavior changing commands to the bot.
+
+### Flee
+
+princessName: flee : 0-4 [0=north, 1=south, 2=west, 3=east, 4=nearest edge]
+Causes princess-controlled units to start fleeing the board, regardless of damage level or Forced Withdrawal setting, in
+the specified direction.
+
+### Verbose
+
+princessName: verbose : <error/warning/info/debug>
+Sets princess's verbosity level.
+
+### Behavior
+
+princessName: behavior : behaviorName
+Change's princess's behavior to the named behavior.
+
+### Caution
+
+princessName: caution : <+/->
+Modifies princess's Piloting Caution setting. Each '+' increases it by 1 and each '-' decreases it by one.
+
+### Avoid
+
+princessName: avoid : <+/->
+Modifies princess's Self Preservation setting. Each '+' increases it by 1 and each '-' decreases it by one.
+
+### Aggression
+
+princessName: aggression : <+/->
+Modifies princess's Aggression setting. Each '+' increases it by 1 and each '-' decreases it by one.
+
+### Herding
+
+princessName: herd : <+/->
+Modifies princess's Herding setting. Each '+' increases it by 1 and each '-' decreases it by one.
+
+### Bravery
+
+princessName: brave : <+/->
+Modifies princess's Bravery setting. Each '+' increases it by 1 and each '-' decreases it by one.
+
+### Target
+
+princessName: target : hexNumber
+Adds the specified hex to princess's list of Strategic Targets.
+
+### Prioritize
+
+princessName: prioritize : unitId
+Adds the specified unit to princess's Priority Targets list.
+
+### Show Behavior
+
+princessName: showBehavior
+Princess will state the name of her current behavior.
+
+### List Commands
+
+princessName: listCommands
+Displays a list of available chat commands for Princess.
+
+## Replacing an Absent Player with the Princess Bot
+
+If a player has become disconnected (the word "(ghost)" appears next to their name, you can replace that player with a
+bot. There are two methods for replacing a player. The first is the Edit Bots command under the File menu. This will
+bring up a version of the Bot Config Dialog along with a list of players that can be replaced. The second option is to
+use the /replacePlayer command in the chat window:
+
+    /replacePlayer -b:Princess <-c:ConfigName> <-v:VerbosityLevel> <-p:>PlayerName
+
+Princess will replace the named player.
+
+- <-b> Specifies the use of Princess. If left out, TestBot will be used instead.
+- <-c> Specifies a saved configuration to be used by Princess. If left out DEFAULT will be used.
+- <-v> Specifies the verbosity level used to log Princess (DEBUG/INFO/WARNING/ERROR). If left out, ERROR will be used.
+- <-p> Specifies the player to be replaced. The "-p:" is only required with the "-c:" or "-v:" parameters are also used.
+
+## Running Separate Instances of MegaMek
+
+Once you have your basic game set up, start a second game (called an instance to reduce confusion) of MegaMek. 'Connect
+as a Computer Player', then set up the Behaviors as you want. If the units the bot is supposed to use are already in the
+first instance, you can go back to that and click on each mek (or shift-click for multiple ones) and change teams as you
+wish.
+
+**Note 1**: You don't have to operate in this fashion, you can have one game run all the bot clients you wish. The only
+time you HAVE to run a separate instance is when you will want to change Behaviors for the bot client(s). I prefer to
+use this fashion for larger or longer games as it allows you to have separate logs and save games. I believe it does
+speed up Princess' decision making to have separate instances open.
+
+**Note 2**: The more bots you have running and the more units each one controls, the more memory MM will use. Running
+separate instances will compound this memory issue. This doesn't really seem to be a problem with modern machines.
+Note3: Multiple Princess bots within one instance of MM can be on the same C3 or C3i network.
+
+My suggestion is to run a bot for each role or sub-group you want to stay together and/or work under the same rules.

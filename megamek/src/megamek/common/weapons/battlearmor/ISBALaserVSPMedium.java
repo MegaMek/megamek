@@ -37,11 +37,11 @@ public class ISBALaserVSPMedium extends VariableSpeedPulseLaserWeapon {
         shortRange = 2;
         mediumRange = 5;
         longRange = 9;
-        extremeRange = 10;
+        extremeRange = 13;
         waterShortRange = 1;
         waterMediumRange = 3;
         waterLongRange = 6;
-        waterExtremeRange = 6;
+        waterExtremeRange = 9;
         damageShort = 9;
         damageMedium = 7;
         damageLong = 5;

@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
+ *
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
@@ -27,86 +28,146 @@
  */
 package megamek.ai.dataset;
 
-import megamek.common.*;
-import megamek.common.enums.GamePhase;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import megamek.ai.utility.EntityFeatureUtils;
+import megamek.common.Compute;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.IAero;
+import megamek.common.UnitRole;
+import megamek.common.equipment.WeaponMounted;
+import megamek.logging.MMLogger;
 
 /**
- * Represents the state of a unit.
- * @param id unit id
- * @param teamId team id
- * @param round round number
- * @param playerId player id
- * @param chassis chassis
- * @param model model
- * @param type type is actually the simple name of the class of the entity
- * @param role UnitRole
- * @param x x coordinate
- * @param y y coordinate
- * @param facing facing direction
- * @param mp movement points
- * @param heat heat points
- * @param prone prone
- * @param airborne airborne
- * @param offBoard off board
- * @param crippled crippled
- * @param destroyed destroyed
- * @param armorP armor percent
- * @param internalP internal percent
- * @param done done
- * @param maxRange max weapon range
- * @param totalDamage total damage it can cause
- * @param entity entity
+ * Flexible container for unit state data using a map-based approach with enum keys.
  * @author Luana Coppio
  */
-public record UnitState(int id, GamePhase phase, int teamId, int round, int playerId, String chassis, String model, String type,
-      UnitRole role, int x, int y, int facing, double mp, double heat, boolean prone, boolean airborne,
-      boolean offBoard, boolean crippled, boolean destroyed, double armorP,
-      double internalP, boolean done, int maxRange, int totalDamage, int armor, int internal, int bv,
-      Entity entity) {
+public class UnitState extends EntityDataMap<UnitState.Field> {
+    private static final MMLogger logger = MMLogger.create(UnitState.class);
 
     /**
-     * Creates a UnitState from an {@code entity}.
-     * @param entity The entity to which the state belongs
-     * @param game The game reference
-     * @return The UnitState
+     * Enum defining all available unit state fields.
      */
-    public static UnitState fromEntity(Entity entity, Game game) {
-        return new UnitState(
-              entity.getId(),
-              game.getPhase(),
-              entity.getOwner().getTeam(),
-              game.getCurrentRound(),
-              entity.getOwner().getId(),
-              entity.getChassis(),
-              entity.getModel(),
-              entity.getClass().getSimpleName(),
-              entity.getRole(),
-              entity.getPosition() == null ? -1 : entity.getPosition().getX(),
-              entity.getPosition() == null ? -1 : entity.getPosition().getY(),
-              entity.getFacing(),
-              entity.getMpUsedLastRound(),
-              entity.getHeat(),
-              entity.isProne(),
-              entity.isAirborne(),
-              entity.isOffBoard(),
-              entity.isCrippled(),
-              entity.isDestroyed(),
-              entity.getArmorRemainingPercent(),
-              entity.getInternalRemainingPercent(),
-              entity.isDone(),
-              entity.getMaxWeaponRange(),
-              Compute.computeTotalDamage(entity.getWeaponList()),
-              entity.getTotalArmor(),
-              entity instanceof IAero aero ? aero.getSI() : entity.getTotalInternal(),
-              entity.getInitialBV(),
-              entity);
+    public enum Field {
+        ID,
+        PHASE,
+        TEAM_ID,
+        ROUND,
+        PLAYER_ID,
+        CHASSIS,
+        MODEL,
+        TYPE,
+        ROLE,
+        X,
+        Y,
+        FACING,
+        MP,
+        HEAT,
+        PRONE,
+        AIRBORNE,
+        OFF_BOARD,
+        CRIPPLED,
+        DESTROYED,
+        ARMOR_P,
+        INTERNAL_P,
+        DONE,
+        MAX_RANGE,
+        TOTAL_DAMAGE,
+        ARMOR,
+        INTERNAL,
+        BV,
+        IS_BOT,
+        HAS_ECM,
+        ARMOR_FRONT_P,
+        ARMOR_LEFT_P,
+        ARMOR_RIGHT_P,
+        ARMOR_BACK_P,
+        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE;
     }
 
     /**
-     * Returns the position of the unit.
-     * @return The position
+     * Creates an empty UnitStateMap.
      */
-    public Coords position() {
-        return new Coords(x, y);
+    public UnitState() {
+        super(Field.class);
+    }
+
+    /**
+     * Creates a UnitStateMap from an Entity.
+     * @param entity The entity to extract state from
+     * @param game The game reference
+     * @return A populated UnitStateMap
+     */
+    public static UnitState fromEntity(Entity entity, Game game) {
+        UnitState map = new UnitState();
+
+        // Basic entity information
+        map.put(Field.ID, entity.getId())
+              .put(Field.PHASE, game.getPhase())
+              .put(Field.TEAM_ID, entity.getOwner().getTeam())
+              .put(Field.ROUND, game.getCurrentRound())
+              .put(Field.PLAYER_ID, entity.getOwner().getId())
+              .put(Field.CHASSIS, entity.getChassis())
+              .put(Field.MODEL, entity.getModel())
+              .put(Field.TYPE, entity.getClass().getSimpleName())
+              .put(Field.ROLE, firstNonNull(entity.getRole(), UnitRole.NONE));
+
+        // Position and movement
+        if (entity.getPosition() != null) {
+            map.put(Field.X, entity.getPosition().getX())
+                  .put(Field.Y, entity.getPosition().getY());
+        } else {
+            map.put(Field.X, -1)
+                  .put(Field.Y, -1);
+        }
+
+        map.put(Field.FACING, entity.getFacing())
+              .put(Field.MP, entity.getMpUsedLastRound())
+              .put(Field.HEAT, entity.getHeat());
+
+        // Status flags
+        map.put(Field.PRONE, entity.isProne())
+              .put(Field.AIRBORNE, entity.isAirborne())
+              .put(Field.OFF_BOARD, entity.isOffBoard())
+              .put(Field.CRIPPLED, entity.isCrippled())
+              .put(Field.DESTROYED, entity.isDestroyed())
+              .put(Field.DONE, entity.isDone());
+
+        // Health and armor
+        map.put(Field.ARMOR_P, entity.getArmorRemainingPercent())
+              .put(Field.INTERNAL_P, entity.getInternalRemainingPercent())
+              .put(Field.ARMOR, entity.getTotalArmor());
+
+        if (entity instanceof IAero aero) {
+            map.put(Field.INTERNAL, aero.getSI());
+        } else {
+            map.put(Field.INTERNAL, entity.getTotalInternal());
+        }
+
+        // Combat stats
+        map.put(Field.MAX_RANGE, entity.getMaxWeaponRange())
+              .put(Field.TOTAL_DAMAGE, Compute.computeTotalDamage(entity.getWeaponList()))
+              .put(Field.BV, entity.getInitialBV());
+
+        // Equipment and capabilities
+        map.put(Field.IS_BOT, entity.getOwner().isBot())
+              .put(Field.HAS_ECM, entity.hasActiveECM());
+
+        // Directional armor
+        map.put(Field.ARMOR_FRONT_P, EntityFeatureUtils.getTargetFrontHealthStats(entity))
+              .put(Field.ARMOR_LEFT_P, EntityFeatureUtils.getTargetLeftSideHealthStats(entity))
+              .put(Field.ARMOR_RIGHT_P, EntityFeatureUtils.getTargetRightSideHealthStats(entity))
+              .put(Field.ARMOR_BACK_P, EntityFeatureUtils.getTargetBackHealthStats(entity));
+
+        // Weapon information
+        List<Integer> weaponData = WeaponDataEncoder.getEncodedWeaponData(entity);
+
+        map.put(Field.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE, weaponData);
+
+        return map;
     }
 }

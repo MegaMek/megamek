@@ -45,21 +45,16 @@ import java.util.zip.GZIPInputStream;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.MMConstants;
-import megamek.MegaMek;
 import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Roll;
 import megamek.common.annotations.Nullable;
 import megamek.common.commandline.AbstractCommandLineParser.ParseException;
-import megamek.common.enums.GamePhase;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
@@ -366,7 +361,7 @@ public class Server implements Runnable {
     }
 
     public Server(@Nullable String password, int port, IGameManager gameManager, boolean registerWithServerBrowser,
-                  @Nullable String metaServerUrl) throws IOException {
+          @Nullable String metaServerUrl) throws IOException {
         this(password, port, gameManager, registerWithServerBrowser, metaServerUrl, null, false);
     }
 
@@ -382,7 +377,7 @@ public class Server implements Runnable {
      * @param dedicated                 set to true if this server is started from a GUI-less context
      */
     public Server(@Nullable String password, int port, IGameManager gameManager, boolean registerWithServerBrowser,
-                  @Nullable String metaServerUrl, @Nullable EmailService mailer, boolean dedicated) throws IOException {
+          @Nullable String metaServerUrl, @Nullable EmailService mailer, boolean dedicated) throws IOException {
         this.metaServerUrl = StringUtility.isNullOrBlank(metaServerUrl) ? null : metaServerUrl;
         this.password = StringUtility.isNullOrBlank(password) ? null : password;
         this.gameManager = gameManager;
@@ -659,40 +654,6 @@ public class Server implements Runnable {
                   System.lineSeparator(),
                   message));
             return false;
-        }
-
-        final String clientChecksum = (String) packet.getObject(1);
-        final String serverChecksum = MegaMek.getMegaMekSHA256();
-        String message = "";
-
-        // print a message indicating client doesn't have jar file
-        if (clientChecksum == null) {
-            message = "Client Checksum is null. Client may not have a jar file";
-            LOGGER.info(message);
-            // print message indicating server doesn't have jar file
-        } else if (serverChecksum == null) {
-            message = "Server Checksum is null. Server may not have a jar file";
-            LOGGER.info(message);
-            // print message indicating a client/server checksum mismatch
-        } else if (!clientChecksum.equals(serverChecksum)) {
-            message = String.format("Client/Server checksum mismatch. Server reports: %s, Client reports %s",
-                  serverChecksum,
-                  clientChecksum);
-            LOGGER.warn(message);
-        }
-
-        // Now, if we need to, send message!
-        if (message.isEmpty()) {
-            message = String.format("SUCCESS: Client/Server Version (%s) and Checksum (%s) matched",
-                  version,
-                  clientChecksum);
-            LOGGER.info(message);
-        } else {
-            Player player = getPlayer(connId);
-            sendServerChat(String.format("For %s, Server reports:%s%s",
-                  ((player == null) ? "unknown player" : player.getName()),
-                  System.lineSeparator(),
-                  message));
         }
 
         return true;
@@ -1369,80 +1330,6 @@ public class Server implements Runnable {
 
     private void wargamesResponse() {
         sendServerChat(WARGAMES_RESPONSE);
-        wargamesAttack(3, new Random().nextInt(5, 13));
-    }
-
-    private void wargamesAttack(int rounds, int numberOfStrikes) {
-        if (rounds <= 0) {
-            return;
-        }
-
-        if (this.getGame() != null && this.getGame().getBoard() != null) {
-            int height = this.getGame().getBoard().getHeight();
-            int width = this.getGame().getBoard().getWidth(); // Fixed width retrieval
-
-            Random random = new Random();
-            List<Coords> selectedCoords = new ArrayList<>();
-
-            int maxAttempts = 100;
-            int maxStrikes = rounds == 1 ? numberOfStrikes : new Random().nextInt(1, numberOfStrikes + 1);
-            for (int i = 0; i < maxStrikes; i++) {
-                Coords newCoord = null;
-
-                for (int attempt = 0; attempt < maxAttempts; attempt++) {
-                    int x = random.nextInt(width);
-                    int y = random.nextInt(height);
-                    Coords candidate = new Coords(x, y);
-
-                    boolean isValid = true;
-                    for (Coords coords : selectedCoords) {
-                        int dx = Math.abs(coords.getX() - x);
-                        int dy = Math.abs(coords.getY() - y);
-                        if (Math.max(dx, dy) <= 9) {
-                            isValid = false;
-                            break;
-                        }
-                    }
-
-                    if (isValid) {
-                        newCoord = candidate;
-                        break;
-                    }
-                }
-
-                if (newCoord != null) {
-                    selectedCoords.add(newCoord);
-                } else {
-                    break; // Stop if we can't find a valid coordinate
-                }
-            }
-
-            if (!selectedCoords.isEmpty()) {
-                sendServerChat("!!!WARNING!!! LAUNCH OF STRATEGIC WEAPONS DETECTED");
-                sendServerChat("!!!WARNING!!! LAUNCH OF STRATEGIC WEAPONS DETECTED");
-                sendServerChat("!!!WARNING!!! LAUNCH OF STRATEGIC WEAPONS DETECTED");
-            }
-
-            for (Coords coords : selectedCoords) {
-                numberOfStrikes--;
-                processCommand(SERVER_CONN, "/ob " + coords.getX() + 1 + " " + coords.getY() + 1);
-                sendServerChat("DANGER ZONE: Incoming strategic strike at " +
-                                     (coords.getX() + 1) +
-                                     ", " +
-                                     (coords.getY() + 1));
-            }
-        }
-
-        final int strikesRemaining = numberOfStrikes;
-        this.getGame().addGameListener(new GameListenerAdapter() {
-            @Override
-            public void gamePhaseChange(GamePhaseChangeEvent e) {
-                if (e.getNewPhase() == GamePhase.PREMOVEMENT) {
-                    wargamesAttack(rounds - 1, strikesRemaining);
-                    getGame().removeGameListener(this);
-                }
-            }
-        });
     }
 
     /**

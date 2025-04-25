@@ -4182,8 +4182,10 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns the Rules.ARC that the weapon, specified by number, fires into.
+     * @param weaponNumber integer equipment number, index from equipment list
+     * @return arc the specified weapon is in
      */
-    public abstract int getWeaponArc(int wn);
+    public abstract int getWeaponArc(int weaponNumber);
 
     /**
      * Returns true if this weapon fires into the secondary facing arc. If false, assume it fires into the primary.
@@ -5942,7 +5944,7 @@ public abstract class Entity extends TurnOrdered
         return hasC3() || hasNhC3();
     }
 
-    public String getC3NetId() {
+    public @Nullable String getC3NetId() {
         if (c3NetIdString == null) {
             if (hasC3()) {
                 c3NetIdString = "C3." + getId();
@@ -6010,6 +6012,16 @@ public abstract class Entity extends TurnOrdered
         } else {
             c3NetIdString = "C3i." + getId();
         }
+    }
+
+    /**
+     * Explicitly set the C3 Net ID using a string.
+     * @see megamek.common.util.C3Util
+     * @see #setC3NetId(Entity)
+     * @param c3NetId string value the id should be set to
+     */
+    public void setC3NetId(@Nullable String c3NetId) {
+        c3NetIdString = c3NetId;
     }
 
     /**
@@ -10990,7 +11002,7 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
-    public Engine getEngine() {
+    public @Nullable Engine getEngine() {
         return engine;
     }
 

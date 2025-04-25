@@ -36,10 +36,10 @@ public abstract class ExtendedLRMWeapon extends LRMWeapon {
         shortRange = 12;
         mediumRange = 22;
         longRange = 38;
-        extremeRange = 44;
+        extremeRange = 57;
         maxRange = RANGE_EXT;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;

@@ -34,9 +34,8 @@ import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.ModelRecord;
+import megamek.client.ratgenerator.Parameters;
 import megamek.client.ratgenerator.RATGenerator;
-import megamek.client.ratgenerator.UnitTable;
-import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.EntityMovementMode;
@@ -1224,9 +1223,9 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
 
         private void showAnalysis() {
-            List<UnitTable.Parameters> params = new ArrayList<>();
+            List<Parameters> params = new ArrayList<>();
             FormationType ft = FormationType.getFormationType(getFormation());
-            Parameters p = new UnitTable.Parameters(getFaction(),
+            Parameters p = new Parameters(getFaction(),
                   getUnitType(),
                   ratGenYear,
                   (String) cbRating.getSelectedItem(),

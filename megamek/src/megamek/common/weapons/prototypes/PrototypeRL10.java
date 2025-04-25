@@ -32,7 +32,7 @@ public class PrototypeRL10 extends PrototypeRLWeapon {
         shortRange = 5;
         mediumRange = 11;
         longRange = 18;
-        extremeRange = 22;
+        extremeRange = 27;
         tonnage = .5;
         criticals = 1;
         bv = 15;

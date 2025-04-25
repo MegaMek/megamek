@@ -17,20 +17,18 @@ import java.awt.image.AreaAveragingScaleFilter;
 import java.awt.image.ColorModel;
 
 /**
- * Extension of java.awt.image.AreaAveragingScaleFilter. Uses the same algorithm
- * but makes sure all images are scaled using area averaging. Ensures there is
- * no fallback to ReplicateScaleFilter.
- * 
+ * Extension of java.awt.image.AreaAveragingScaleFilter. Uses the same algorithm but makes sure all images are scaled
+ * using area averaging. Ensures there is no fallback to ReplicateScaleFilter.
+ *
  * @author Ben Smith
  */
 public class ImprovedAveragingScaleFilter extends AreaAveragingScaleFilter {
     private int savedWidth;
     private int savedHeight;
     private int[] savedPixels;
-    private static ColorModel defaultCM = ColorModel.getRGBdefault();
+    private static final ColorModel defaultCM = ColorModel.getRGBdefault();
 
-    public ImprovedAveragingScaleFilter(int savedWidth, int savedHeight,
-            int destWidth, int destHeight) {
+    public ImprovedAveragingScaleFilter(int savedWidth, int savedHeight, int destWidth, int destHeight) {
         super(destWidth, destHeight);
         this.savedWidth = savedWidth;
         this.savedHeight = savedHeight;
@@ -40,31 +38,37 @@ public class ImprovedAveragingScaleFilter extends AreaAveragingScaleFilter {
     }
 
     @Override
+    public ImprovedAveragingScaleFilter clone() {
+        ImprovedAveragingScaleFilter improvedAveragingScaleFilter = (ImprovedAveragingScaleFilter) super.clone();
+        improvedAveragingScaleFilter.savedWidth = savedWidth;
+        improvedAveragingScaleFilter.savedHeight = savedHeight;
+        improvedAveragingScaleFilter.savedPixels = savedPixels.clone();
+        return improvedAveragingScaleFilter;
+    }
+
+    @Override
     public void setColorModel(ColorModel model) {
         // Change color model to model you are generating
         consumer.setColorModel(defaultCM);
     }
 
     @Override
-    public void setHints(int hintflags) {
-        consumer.setHints(TOPDOWNLEFTRIGHT | COMPLETESCANLINES | SINGLEPASS
-                | (hintflags & SINGLEFRAME));
+    public void setHints(int hintFlags) {
+        consumer.setHints(TOPDOWNLEFTRIGHT | COMPLETESCANLINES | SINGLEPASS | (hintFlags & SINGLEFRAME));
     }
 
     @Override
-    public void setPixels(int x, int y, int width, int height, ColorModel cm,
-                          byte[] pixels, int offset, int scansize) {
-        setThePixels(x, y, width, height, cm, pixels, offset, scansize);
+    public void setPixels(int x, int y, int width, int height, ColorModel cm, byte[] pixels, int offset, int scanSize) {
+        setThePixels(x, y, width, height, cm, pixels, offset, scanSize);
     }
 
     @Override
-    public void setPixels(int x, int y, int width, int height, ColorModel cm,
-                          int[] pixels, int offset, int scansize) {
-        setThePixels(x, y, width, height, cm, pixels, offset, scansize);
+    public void setPixels(int x, int y, int width, int height, ColorModel cm, int[] pixels, int offset, int scanSize) {
+        setThePixels(x, y, width, height, cm, pixels, offset, scanSize);
     }
 
-    private void setThePixels(int x, int y, int width, int height,
-            ColorModel cm, Object pixels, int offset, int scansize) {
+    private void setThePixels(int x, int y, int width, int height, ColorModel cm, Object pixels, int offset,
+          int scanSize) {
 
         int sourceOffset = offset;
         int destinationOffset = y * savedWidth + x;
@@ -77,7 +81,7 @@ public class ImprovedAveragingScaleFilter extends AreaAveragingScaleFilter {
                     savedPixels[destinationOffset++] = cm.getRGB(((int[]) pixels)[sourceOffset++]);
                 }
             }
-            sourceOffset += (scansize - width);
+            sourceOffset += (scanSize - width);
             destinationOffset += (savedWidth - width);
         }
     }
@@ -97,8 +101,7 @@ public class ImprovedAveragingScaleFilter extends AreaAveragingScaleFilter {
             for (int xx = 0; xx < savedWidth; xx++) {
                 pixels[position++] = savedPixels[start + xx];
             }
-            super.setPixels(0, yy, savedWidth, 1, defaultCM, pixels, 0,
-                    savedWidth);
+            super.setPixels(0, yy, savedWidth, 1, defaultCM, pixels, 0, savedWidth);
         }
         consumer.imageComplete(status);
     }

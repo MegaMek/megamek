@@ -1513,8 +1513,8 @@ public abstract class Mek extends Entity {
                             .hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes))) {
                 sinks += 2;
             } else if (etype.hasFlag(MiscType.F_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || (etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes)) {
+            || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+            || (etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes)) {
                 sinks++;
             }
         }
@@ -1527,13 +1527,17 @@ public abstract class Mek extends Entity {
     public int damagedHeatSinks() {
         int sinks = 0;
         for (Mounted<?> mounted : getMisc()) {
-            EquipmentType etype = mounted.getType();
             if (!mounted.isDestroyed()) {
                 continue;
             }
-            if (etype.hasFlag(MiscType.F_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            EquipmentType etype = mounted.getType();
+            if (etype.hasFlag(MiscType.F_COMPACT_HEAT_SINK)
+                    && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) || etype
+                            .hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE))) {
+                sinks += 2;
+            } else if (etype.hasFlag(MiscType.F_HEAT_SINK)
+            || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+            || etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 sinks++;
             }
         }
@@ -1898,8 +1902,8 @@ public abstract class Mek extends Entity {
      * Returns the Compute.ARC that the weapon fires into.
      */
     @Override
-    public int getWeaponArc(int wn) {
-        final Mounted<?> mounted = getEquipment(wn);
+    public int getWeaponArc(int weaponNumber) {
+        final Mounted<?> mounted = getEquipment(weaponNumber);
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType)

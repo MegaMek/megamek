@@ -40,7 +40,7 @@ public class ISBALaserPulseSmall extends PulseLaserWeapon {
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 2;
-        waterExtremeRange = 4;
+        waterExtremeRange = 2;
         tonnage = 0.4;
         criticals = 1;
         bv = 12;

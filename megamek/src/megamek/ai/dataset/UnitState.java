@@ -39,12 +39,15 @@ import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.IAero;
 import megamek.common.UnitRole;
+import megamek.common.equipment.WeaponMounted;
+import megamek.logging.MMLogger;
 
 /**
  * Flexible container for unit state data using a map-based approach with enum keys.
  * @author Luana Coppio
  */
 public class UnitState extends EntityDataMap<UnitState.Field> {
+    private static final MMLogger logger = MMLogger.create(UnitState.class);
 
     /**
      * Enum defining all available unit state fields.
@@ -161,22 +164,8 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.ARMOR_BACK_P, EntityFeatureUtils.getTargetBackHealthStats(entity));
 
         // Weapon information
-        List<Integer> weaponData = new ArrayList<>();
-        entity.getWeaponList().forEach(weapon -> {
-            int damage = Compute.computeTotalDamage(weapon);
-            int equipmentId = entity.getEquipmentNum(weapon);
-            int facing = weapon.isRearMounted() ? -entity.getWeaponArc(equipmentId) :
-                               entity.getWeaponArc(equipmentId);
-            int shortRange = weapon.getType().getShortRange();
-            int mediumRange = weapon.getType().getMediumRange();
-            int longRange = weapon.getType().getLongRange();
+        List<Integer> weaponData = WeaponDataEncoder.getEncodedWeaponData(entity);
 
-            weaponData.add(damage);
-            weaponData.add(facing);
-            weaponData.add(shortRange);
-            weaponData.add(mediumRange);
-            weaponData.add(longRange);
-        });
         map.put(Field.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE, weaponData);
 
         return map;

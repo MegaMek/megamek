@@ -1,0 +1,169 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-10-27
+chassis:Templar
+model:TLR1-ORISC
+
+Config:Biped OmniMek
+techbase:Inner Sphere
+era:3139
+source:XTRO:RISC
+rules level:4
+role:Brawler
+
+quirk:easy_maintain
+quirk:non_standard
+
+mass:85
+engine:340 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:13 IS Double
+base chassis heat sinks:13
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:28
+RA armor:28
+LT armor:26
+RT armor:26
+CT armor:44
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:10
+RTR armor:10
+RTC armor:10
+
+Weapons:7
+ER Large Laser, Left Arm
+Large Laser, Left Arm
+TSEMP Repeating Cannon, Right Arm
+TAG, Left Torso
+Streak SRM 4, Right Torso
+Heavy Machine Gun, Center Torso
+Heavy Machine Gun, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERLargeLaser (OMNIPOD)
+ISERLargeLaser (OMNIPOD)
+ISRISCLaserPulseModule (OMNIPOD)
+Large Laser (OMNIPOD)
+Large Laser (OMNIPOD)
+ISRISCLaserPulseModule (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+TSEMP Repeating Cannon (OMNIPOD)
+TSEMP Repeating Cannon (OMNIPOD)
+TSEMP Repeating Cannon (OMNIPOD)
+TSEMP Repeating Cannon (OMNIPOD)
+TSEMP Repeating Cannon (OMNIPOD)
+TSEMP Repeating Cannon (OMNIPOD)
+TSEMP Repeating Cannon (OMNIPOD)
+ISAngelECMSuite (OMNIPOD)
+ISAngelECMSuite (OMNIPOD)
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISTargeting Computer (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
+ISTAG (OMNIPOD)
+ISCASEII (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISStreakSRM4 (OMNIPOD)
+IS Streak SRM 4 Ammo (OMNIPOD)
+IS Heavy Machine Gun Ammo - Full (OMNIPOD)
+Supercharger (OMNIPOD) (ARMORED)
+Coolant Pod (OMNIPOD)
+ISCASE (OMNIPOD)
+ISCASEII (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heavy Machine Gun (OMNIPOD)
+Heavy Machine Gun (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+capabilities:The primary configuration of the Templar is intended to be able to engage an enemy effectively at any range. For effective long range hitting power, the Templar carries a powerful Gauss Rifle. If the Templar does close with an enemy, it can bring its highly accurate Large Pulse Laser, Medium Pulse Laser, and two ER Medium Lasers to bear on a target. For increased accuracy, the Gauss Rifle and all the lasers are linked to an advanced Targeting Computer. The Templar Prime has a Streak SRM-4 launcher for seeking weak points in an enemy's armor.
+deployment: The Templar is built on a lightweight Kallon Type XIX Endo Steel chassis and is powered by a KalTek 340 XL engine that gives the 'Mech a top speed of 64.8 km/h while sacrificing durability. The Templar has thirteen fixed double heat sinks and is armored with sixteen and a half tons of Starshield A armor with CASE fixed in the right torso. Overall, this allows the Templar to have forty tons of free pod space for weapons and equipment which the 'Mech uses effectively in its various configurations.
+history:With a noticeable lack of OmniMechs designed in the Federated Suns, Field Marshal Duke George Hasek went over the heads of the Department of the Quartermaster and commissioned Kallon Industries to design an assault OmniMech and backed the project with his own considerable financial resources. The resulting 'Mech is a force to be reckoned with on the modern battlefield.
+manufacturer:Kallon Industries
+primaryfactory:Talon
+systemmanufacturer:CHASSIS:Kallon Type XIX Endo Steel
+systemmanufacturer:ENGINE:KalTek 340 Extralight
+systemmanufacturer:ARMOR:Starshield A with CASE
+systemmanufacturer:COMMUNICATIONS:Newberg Telescan 17
+systemmanufacturer:TARGETING:Spar 3C MegaTrak
+

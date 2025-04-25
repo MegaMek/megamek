@@ -19,6 +19,12 @@
 
 package megamek.client.bot.princess;
 
+import static megamek.common.AmmoType.FLARE_MUNITIONS;
+import static megamek.common.AmmoType.MINE_MUNITIONS;
+import static megamek.common.AmmoType.Munitions;
+import static megamek.common.AmmoType.SMOKE_MUNITIONS;
+import static megamek.common.AmmoType.isAmmoValid;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Enumeration;
@@ -35,8 +41,6 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-
-import static megamek.common.AmmoType.*;
 
 /**
  * This class handles the creation of firing plans for indirect-fire artillery
@@ -331,6 +335,7 @@ public class ArtilleryTargetingControl {
             }
         }
 
+        // TODO: Counter-battery fire must target a hex (TO:AR p 154); needs better off-board unit deploy logic
         for (Entity enemy : game.getAllOffboardEnemyEntities(shooter.getOwner())) {
             if (enemy.isOffBoardObserved(shooter.getOwner().getTeam())) {
                 targetSet.add(enemy);
@@ -452,6 +457,12 @@ public class ArtilleryTargetingControl {
 
 
                     for (Targetable target : targetSet) {
+                        boolean attackOnEntity = (target.getTargetType() == Targetable.TYPE_ENTITY);
+                        boolean attackOnAirborneEntity = attackOnEntity &&
+                                                              (target instanceof Entity targetedEntity) &&
+                                                              ((targetedEntity.isAirborne()) ||
+                                                                     (targetedEntity.isAirborneVTOLorWIGE()) ||
+                                                                     (targetedEntity.isAirborneAeroOnGroundMap()));
                         double damageValue;
                         if (isZeroDamageMunition) {
                             // Skip zero-damage utility munitions for now.
@@ -468,8 +479,12 @@ public class ArtilleryTargetingControl {
                             }
                         } else {
                             // Flak Artillery need to be made during direct fire, not as Indirect
-                            if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-                                damageValue = damage;
+                            // Other indirect-fire entity-targeting attacks are likely Counter-Battery Fire
+                            // and should ignore surrounding targets when computing damage.
+                            if (attackOnAirborneEntity || attackOnEntity) {
+                                // Homing rounds can't hit flying Aerospace units because TAG can't hit them.
+                                boolean homing = ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_HOMING);
+                                damageValue = (target.isAirborne() && homing) ? 0 : damage;
                             } else {
                                 if (!isADA) {
                                     damageValue = calculateDamageValue(damage, (HexTarget) target, shooter, game, owner);
@@ -498,8 +513,14 @@ public class ArtilleryTargetingControl {
                                 } else {
                                     wfi.getAmmo().setSwitchedReason(1503);
                                 }
-                                if (isADA || wfi.getAmmo().getType().getMunitionType().stream().anyMatch(aaMunitions::contains)
-                                              || wfi.getAmmo().getType().countsAsFlak()) {
+                                if (attackOnAirborneEntity &&
+                                          (isADA ||
+                                                 wfi.getAmmo()
+                                                       .getType()
+                                                       .getMunitionType()
+                                                       .stream()
+                                                       .anyMatch(aaMunitions::contains) ||
+                                                 wfi.getAmmo().getType().countsAsFlak())) {
                                     // Handle Flak attacks during Direct Fire
                                     topValuedFlakInfos.clear();
                                     maxDamage = damage;
@@ -510,9 +531,9 @@ public class ArtilleryTargetingControl {
                                     topValuedFireInfos.add(wfi);
                                 }
                             } else if ((damageValue == maxDamage) && (damageValue > 0)) {
-                                if (wfi.getAmmo().getType().getMunitionType()
+                                if (attackOnAirborneEntity && (wfi.getAmmo().getType().getMunitionType()
                                         .contains(Munitions.M_ADA) || wfi.getAmmo().getType().getMunitionType().stream().anyMatch(aaMunitions::contains)
-                                          || wfi.getAmmo().getType().countsAsFlak()) {
+                                          || wfi.getAmmo().getType().countsAsFlak())) {
                                     topValuedFlakInfos.add(wfi);
                                 } else {
                                     topValuedFireInfos.add(wfi);

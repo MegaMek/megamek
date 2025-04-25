@@ -28,6 +28,7 @@ import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestInfantry;
+import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.CLEnhancedPPC;
 import megamek.common.weapons.ppc.CLImprovedPPC;
@@ -288,7 +289,10 @@ public class MekFileParser {
                 Predicate<Mounted<?>> linkable = mount -> (mount.getLinkedBy() == null) &&
                                                                 (mount.getLocation() == m.getLocation()) &&
                                                                 (mount.getType() instanceof WeaponType) &&
-                                                                mount.getType().hasFlag(WeaponType.F_LASER);
+                                                                (
+                                                                      mount.getType().hasFlag(WeaponType.F_LASER) ||
+                                                                      mount.getType() instanceof CLChemicalLaserWeapon
+                                                                );
                 // The laser pulse module is also restricted to non-pulse lasers, IS only
                 if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                     linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponType.F_PULSE) &&

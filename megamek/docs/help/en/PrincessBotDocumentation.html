@@ -125,14 +125,18 @@
 <P>
     <B>Flee</B>
     <BR>
-    <I>princessName: flee : edge#</I><BR>Causes princess-controlled units to start fleeing the board, regardless of
+    <I>princessName: flee : edge#</I>
+    <BR>
+    Causes princess-controlled units to start fleeing the board, regardless of
     damage level or Forced Withdrawal setting. Edge # is a number from 0 to 4; 0 = north, 1 = south, 2 = west, 3 = east,
     4 = nearest edge.
 </P>
 <P>
     <B>Verbose</B>
     <BR>
-    <I>princessName: verbose : &lt;error/warning/info/debug&gt;</I><BR>Sets princess's verbosity level.
+    <I>princessName: verbose : &lt;error/warning/info/debug&gt;</I>
+    <BR>
+    Sets princess's verbosity level.
 </P>
 <P>
     <B>Behavior</B>
@@ -141,244 +145,263 @@
     <BR>
     Change's princess's behavior to the named behavior (case-sensitive).
 </P>
+<P><B>Caution</B>
+    <BR>
+    <I>princessName: caution : &lt;+/-&gt;</I>
+    <BR>
+    Modifies princess's Piloting Caution setting. Each '+' increases it by 1 and each '-' decreases it by one.
+</P>
+<P>
+    <B>Avoid</B>
+    <BR>
+    <I>princessName: avoid : &lt;+/-&gt;</I>
+    <BR>
+    Modifies princess's Self Preservation setting. Each '+' increases it by 1 and each '-' decreases it by one.
+</P>
+<P>
+    <B>Aggression</B>
+    <BR>
+    <I>princessName: aggression : &lt;+/-&gt;</I>
+    <BR>
+    Modifies princess's Aggression setting. Each '+' increases it by 1 and each '-' decreases it by one.
+</P>
+<P>
 
-<P><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><B>Caution</B></SPAN></SPAN><SPAN
-        STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR></SPAN></SPAN><I>princessName:
-    caution : &lt;+/-&gt;</I><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR>Modifies
-princess's Piloting Caution setting. Each '+' increases it by 1 and
-each '-' decreases it by one.</SPAN></SPAN></P>
-
-<P><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><B>Avoid</B></SPAN></SPAN><SPAN
-        STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR></SPAN></SPAN><I>princessName:
-    avoid : &lt;+/-&gt;</I><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR>Modifies
-princess's Self Preservation setting. Each '+' increases it by 1 and
-each '-' decreases it by one.</SPAN></SPAN></P>
-
-<P><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><B>Aggression</B></SPAN></SPAN><SPAN
-        STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR></SPAN></SPAN><I>princessName:
-    aggression : &lt;+/-&gt;</I><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR>Modifies
-princess's Aggression setting. Each '+' increases it by 1 and each
-'-' decreases it by one.</SPAN></SPAN></P>
-
-<P><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><B>Herding</B></SPAN></SPAN><SPAN
-        STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR></SPAN></SPAN><I>princessName:
-    herd : &lt;+/-&gt;</I><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR>Modifies
-princess's Herding setting. Each '+' increases it by 1 and each '-'
-decreases it by one.</SPAN></SPAN></P>
-
-<P><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><B>Bravery</B></SPAN></SPAN><SPAN
-        STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR></SPAN></SPAN><I>princessName:
-    brave : &lt;+/-&gt;</I><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR>Modifies
-princess's Bravery setting. Each '+' increases it by 1 and each '-'
-decreases it by one.</SPAN></SPAN></P>
-
-<P><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><B>Target</B></SPAN></SPAN><SPAN
-        STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR></SPAN></SPAN><I>princessName:
-    target : hexNumber</I><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR>Adds
-the specified hex to princess's list of Strategic Targets.</SPAN></SPAN></P>
-
-<P><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><B>Prioritize</B></SPAN></SPAN><SPAN
-        STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR>princessName:
-prioritize : unitId<BR>Adds the specified unit to princess's Priority
-Targets list.</SPAN></SPAN></P>
-
-<P><B>Show Behavior</B><BR><I>princessName: showBehavior</I><BR>Princess will state the name of her current
-    behavior.</P>
-
-<P><B>List Commands</B><BR><I>princessName: listCommands</I><BR>Displays a list of available chat commands for
-    Princess.</P>
-
-<H2 CLASS="western"><A NAME="mozTocId779311"></A>Replacing an Absent
-    Player with the Princess Bot</H2>
-
-<P>If a player has become disconnected (the word &quot;<I>(ghost)</I>&quot;
-    appears next to their name, you can replace that player with a bot.&nbsp;
-    There are two methods for replacing a player. The first is the <i>Edit Bots</i> command under the <u>File</u>
-    menu. This will bring up a version of the Bot Config Dialog along with a list of players that can be replaced. The
-    second option is to use the <i>/replacePlayer</i> command in the chat window:</P>
-
-<P>&nbsp;&nbsp;&nbsp; <I>/replacePlayer -b:Princess &lt;-c:ConfigName&gt;
-    &lt;-v:VerbosityLevel&gt; &lt;-p:&gt;PlayerName</I></P>
-
-<P>Princess will replace the named player.<BR>&lt;-b&gt; Specifies
-    the use of Princess. If left out, TestBot will be used instead.<BR>&lt;-c&gt;
-    Specifies a saved configuration to be used by Princess (case-sensitive). If left out
-    DEFAULT will be used.<BR>&lt;-v&gt; Specifies the verbosity level
-    used to log Princess (DEBUG/INFO/WARNING/ERROR). If left out, ERROR
-    will be used.<BR>&lt;-p&gt; Specifies the player to be replaced. The
-    "-p:" is only required with the "-c:" or
-    "-v:" parameters are also used.</P>
-
-<H2 CLASS="western" STYLE="page-break-after: avoid"><A NAME="Princess-Compatible Optional Rules|outline"></A>
-    Princess-Compatible Optional Rules</H2>
-
-<P>The following are the optional rules that should be safe to use
-    when playing against Princess. Anything not on this list will either
-    cause Princess to behave in nonsensical ways (always Sprinting or
-    Leaping) or can cause crashes/lockups (mek/vehicle lance movement).
-    So, it is not recommended you use any rules not on this list when
-    using Princess.</P>
-
-<P>If there is an optional rule you would like Princess to support,
-    file a Feature
-    Request:<BR><A HREF="https://sourceforge.net/p/megamek/feature-requests/?source=navbar">https://sourceforge.net/p/megamek/feature-requests/?source=navbar</A>
+    <B>Herding</B>
+    <BR>
+    <I>princessName: herd : &lt;+/-&gt;</I>
+    <BR>
+    Modifies princess's Herding setting. Each '+' increases it by 1 and each '-' decreases it by one.
+</P>
+<P>
+    <B>Bravery</B>
+    <BR>
+    <I>princessName: brave : &lt;+/-&gt;</I>
+    <BR>
+    Modifies princess's Bravery setting. Each '+' increases it by 1 and each '-' decreases it by one.
+</P>
+<P>
+    <B>Target</B>
+    <BR>
+    <I>princessName: target : hexNumber</I>
+    <BR>
+    Adds the specified hex to princess's list of Strategic Targets.
+</P>
+<P>
+    <B>Prioritize</B>
+    <BR>
+    princessName: prioritize : unitId
+    <BR>
+    Adds the specified unit to princess's Priority Targets list.
+</P>
+<P>
+    <B>Show Behavior</B>
+    <BR>
+    <I>princessName: showBehavior</I>
+    <BR>
+    Princess will state the name of her current behavior.
+</P>
+<P>
+    <B>List Commands</B>
+    <BR>
+    <I>princessName: listCommands</I>
+    <BR>
+    Displays a list of available chat commands for Princess.
 </P>
 
-<P STYLE="margin-bottom: 0"><B>Basic</B></P>
+<H2 CLASS="western"><A NAME="mozTocId779311"></A>Replacing an Absent Player with the Princess Bot</H2>
+
+<P>
+    If a player has become disconnected (the word "<I>(ghost)</I>" appears next to their name, you can replace that
+    player with a bot. There are two methods for replacing a player. The first is the <i>Edit Bots</i> command under the
+    <u>File</u> menu. This will bring up a version of the Bot Config Dialog along with a list of players that can be
+    replaced. The second option is to use the <i>/replacePlayer</i> command in the chat window:
+</P>
+<P>
+    <I>/replacePlayer -b:Princess &lt;-c:ConfigName&gt; &lt;-v:VerbosityLevel&gt; &lt;-p:&gt;PlayerName</I>
+</P>
+<P>
+    Princess will replace the named player.
+    <BR>
+    &lt;-b&gt; Specifies the use of Princess. If left out, TestBot will be used instead.
+    <BR>
+    &lt;-c&gt; Specifies a saved configuration to be used by Princess (case-sensitive). If left out DEFAULT will be
+    used.
+    <BR>
+    &lt;-v&gt; Specifies the verbosity level used to log Princess (DEBUG/INFO/WARNING/ERROR). If left out, ERROR will be
+    used.
+    <BR>
+    &lt;-p&gt; Specifies the player to be replaced. The "-p:" is only required with the "-c:" or "-v:" parameters are
+    also used.
+</P>
+
+<H2 CLASS="western" STYLE="page-break-after: avoid"><A NAME="Princess-Compatible Optional Rules|outline"></A>Princess-Compatible
+    Optional Rules</H2>
+
+<P>
+    The following are the optional rules that should be safe to use when playing against Princess. Anything not on this
+    list will either cause Princess to behave in nonsensical ways (always Sprinting or Leaping) or can cause
+    crashes/lockups (mek/vehicle lance movement). So, it is not recommended you use any rules not on this list when
+    using Princess.
+</P>
+<P>
+    If there is an optional rule you would like Princess to support, file a <A
+        HREF="https://github.com/MegaMek/megamek/issues">Feature Request</A>.
+</P>
+<P>
+    <B>Basic</B>
+</P>
 <UL>
-    <LI><P STYLE="margin-bottom: 0">Skip ineligible during firing</P>
-    <LI><P STYLE="margin-bottom: 0">Skip ineligible during physical</P>
-    <LI><P STYLE="margin-bottom: 0">Teams roll initiative</P>
-    <LI><P STYLE="margin-bottom: 0">The various Autosave options</P>
-    <LI><P STYLE="margin-bottom: 0">Exclusive Double-Blind Deployment
-        Zones</P>
-    <LI><P STYLE="margin-bottom: 0">Deep Deployment Zones</P>
-    <LI><P STYLE="margin-bottom: 0">Restrict Sensitive Commands to
-        Non-Observers</P>
-    <LI><P STYLE="margin-bottom: 0">CF for Bridges</P>
-    <LI><P STYLE="margin-bottom: 0">all RNG Types</P>
-    <LI><P STYLE="margin-bottom: 0">RNG Log</P>
-    <LI><P STYLE="margin-bottom: 0">Smoke Drift</P>
-    <LI><P STYLE="margin-bottom: 0">Year The Game Takes Place In</P>
-    <LI><P STYLE="margin-bottom: 0">Use Random Basements</P>
+    <LI>Skip ineligible during firing</LI>
+    <LI>Skip ineligible during physical</LI>
+    <LI>Teams roll initiative</LI>
+    <LI>The various Autosave options</LI>
+    <LI>Exclusive Double-Blind Deployment Zones</LI>
+    <LI>Deep Deployment Zones</LI>
+    <LI>Restrict Sensitive Commands to Non-Observers</LI>
+    <LI>CF for Bridges</LI>
+    <LI>all RNG Types</LI>
+    <LI>RNG Log</LI>
+    <LI>Smoke Drift</LI>
+    <LI>Year The Game Takes Place In</LI>
+    <LI>Use Random Basements</LI>
 </UL>
-<P STYLE="margin-bottom: 0"><BR>
+<P>
+    <BR>
 </P>
-
-<P STYLE="margin-bottom: 0"><B>Victory Conditions</B></P>
-
-<P STYLE="margin-bottom: 0">Any will work, but Princess isn't
-    really aware of them. This means that she'll use the same strategy no
-    matter the VC.</P>
-
-<P STYLE="margin-bottom: 0"><BR>
+<P>
+    <B>Victory Conditions</B>
 </P>
-
-<P STYLE="margin-bottom: 0"><B>Allowed Units and Equipment</B></P>
+<P>
+    Any will work, but Princess isn't really aware of them. This means that she'll use the same strategy no matter the
+    VC.
+</P>
+<P>
+    <BR>
+</P>
+<P>
+    <B>Allowed Units and Equipment</B>
+</P>
 <UL>
-    <LI><P STYLE="margin-bottom: 0">She'll try to use most anything.
-        However, don't expect her to do well with ammo created after the
-        FedCom Civil War or units like LAMS or Superheavy Meks.</P>
-    <LI><P STYLE="margin-bottom: 0">There is no support for using
-        Princess in space or high-altitude battles. Ground battles only.</P>
+    <LI>She'll try to use most anything. However, don't expect her to do well with ammo created after the FedCom Civil
+        War or units like LAMS or Superheavy Meks.
+    </LI>
+    <LI>There is no support for using Princess in space or high-altitude battles. Ground battles only.</LI>
 </UL>
-<P STYLE="margin-bottom: 0"><BR>
+<P>
+    <BR>
 </P>
-
-<P STYLE="margin-bottom: 0"><B>Advanced Rules</B></P>
+<P>
+    <B>Advanced Rules</B>
+</P>
 <UL>
-    <LI><P STYLE="margin-bottom: 0">TacOps Battlefield Wreckage</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Skin of Teeth Ejection</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Fatigue</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps PSR Fumbles</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Vehicle Crews</P>
-    <LI><P STYLE="margin-bottom: 0">StratOps Quirks</P>
-    <LI><P STYLE="margin-bottom: 0">StratOps Partial Repairs</P>
-    <LI><P STYLE="margin-bottom: 0">Woods have a chance to burn down</P>
-    <LI><P STYLE="margin-bottom: 0">No igniting clear hexes</P>
-    <LI><P STYLE="margin-bottom: 0">Extreme temperature survival</P>
-    <LI><P STYLE="margin-bottom: 0">Armed MekWarriors</P>
-    <LI><P STYLE="margin-bottom: 0">Limited MekWarrior Visibility</P>
-    <LI><P STYLE="margin-bottom: 0">Alternate &quot;Better&quot; MASC</P>
-    <LI><P STYLE="margin-bottom: 0">Alternate &quot;Better&quot; MASC
-        - Enhanced</P>
-    <LI><P STYLE="margin-bottom: 0">Compute BV by Geometric Mean</P>
-    <LI><P STYLE="margin-bottom: 0">Alternate Pilot Skill BV Mod</P>
+    <LI>TacOps Battlefield Wreckage</LI>
+    <LI>TacOps Skin of Teeth Ejection</LI>
+    <LI>TacOps Fatigue</LI>
+    <LI>TacOps PSR Fumbles</LI>
+    <LI>TacOps Vehicle Crews</LI>
+    <LI>StratOps Quirks</LI>
+    <LI>StratOps Partial Repairs</LI>
+    <LI>Woods have a chance to burn down</LI>
+    <LI>No igniting clear hexes</LI>
+    <LI>Extreme temperature survival</LI>
+    <LI>Armed MekWarriors</LI>
+    <LI>Limited MekWarrior Visibility</LI>
+    <LI>Alternate &quot;Better&quot; MASC</LI>
+    <LI>Alternate &quot;Better&quot; MASC - Enhanced</LI>
+    <LI>Compute BV by Geometric Mean</LI>
+    <LI>Alternate Pilot Skill BV Mod</LI>
 </UL>
-<P STYLE="margin-bottom: 0"><BR>
+<P>
+    <BR>
 </P>
-
-<P STYLE="margin-bottom: 0"><B>Advanced Combat</B></P>
+<P>
+    <B>Advanced Combat</B>
+</P>
 <UL>
-    <LI><P STYLE="margin-bottom: 0">Through-armor critical hits will
-        'float'</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Advanced Determining
-        Critical Hits</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps engine explosions</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Starting Fires (though
-        Princess won't intentionally start a fire)</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Extreme Range Rules</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Dead Zone Rule</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Diagramming Line of Sight
-        Rules</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Altered Energy Weapons
-        Damage</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Cluster Hit Penalties</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Glancing Blows</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Direct Blow</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Partial Cover</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps BA Critical hits</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Ammunition</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Vehicle Effectiveness</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Vehicle Firing Arcs</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Advanced 'Mek Hit
-        Locations</P>
-    <LI><P STYLE="margin-bottom: 0">No through-armor critical hits</P>
-    <LI><P STYLE="margin-bottom: 0">Increased AC Damage</P>
-    <LI><P STYLE="margin-bottom: 0">Increased IS ER Large Laser Range</P>
+    <LI>Through-armor critical hits will 'float'</LI>
+    <LI>TacOps Advanced Determining Critical Hits</LI>
+    <LI>TacOps engine explosions</LI>
+    <LI>TacOps Starting Fires (though Princess won't intentionally start a fire)</LI>
+    <LI>TacOps Extreme Range Rules</LI>
+    <LI>TacOps Dead Zone Rule</LI>
+    <LI>TacOps Diagramming Line of Sight Rules</LI>
+    <LI>TacOps Altered Energy Weapons Damage</LI>
+    <LI>TacOps Cluster Hit Penalties</LI>
+    <LI>TacOps Glancing Blows</LI>
+    <LI>TacOps Direct Blow</li>
+    <LI>TacOps Partial Cover</LI>
+    <LI>TacOps BA Critical hits</LI>
+    <LI>TacOps Ammunition</LI>
+    <LI>TacOps Vehicle Effectiveness</LI>
+    <LI>TacOps Vehicle Firing Arcs</LI>
+    <LI>TacOps Advanced 'Mek Hit Locations</LI>
+    <LI>No through-armor critical hits</LI>
+    <LI>Increased AC Damage</LI>
+    <LI>Increased IS ER Large Laser Range</LI>
 </UL>
-<P STYLE="margin-bottom: 0"><BR>
+<P>
+    <BR>
 </P>
-
-<P STYLE="margin-bottom: 0"><B>Advanced Ground Movement</B></P>
+<P>
+    <B>Advanced Ground Movement</B>
+</P>
 <UL>
-    <LI><P STYLE="margin-bottom: 0">TacOps Standing Still</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps defensive physical PSR
-        weight modifier</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps attack physical PSR weight
-        modifier</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps taking damage</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Leg Damage Rule</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Attempting to Stand</P>
-    <LI><P STYLE="margin-bottom: 0">TacOps Careful Stand</P>
-    <LI><P STYLE="margin-bottom: 0">Vehicles not immobilized by crits</P>
-    <LI><P STYLE="margin-bottom: 0">Vehicles can be abandoned</P>
-    <LI><P STYLE="margin-bottom: 0">Ejected Pilots Flee</P>
-    <LI><P STYLE="margin-bottom: 0">Auto Abandon Unit</P>
-    <LI><P STYLE="margin-bottom: 0">Falling ends movement</P>
-    <LI><P STYLE="margin-bottom: 0">Jumping into heavy woods PSR</P>
-    <LI><P STYLE="margin-bottom: 0">No Movement penalty for night/fog</P>
+    <LI>TacOps Standing Still</LI>
+    <LI>TacOps defensive physical PSR weight modifier</LI>
+    <LI>TacOps attack physical PSR weight modifier</LI>
+    <LI>TacOps taking damage</LI>
+    <LI>TacOps Leg Damage Rule</LI>
+    <LI>TacOps Attempting to Stand</LI>
+    <LI>TacOps Careful Stand</LI>
+    <LI>Vehicles not immobilized by crits</LI>
+    <LI>Vehicles can be abandoned</LI>
+    <LI>Ejected Pilots Flee</LI>
+    <LI>Auto Abandon Unit</LI>
+    <LI>Falling ends movement</LI>
+    <LI>Jumping into heavy woods PSR</LI>
+    <LI>No Movement penalty for night/fog</LI>
 </UL>
-<P STYLE="margin-bottom: 0"><BR>
+<P>
+    <BR>
 </P>
-
-<P STYLE="margin-bottom: 0"><B>Advanced Aerospace Rules</B>
-    (Princess only works on ground maps)</P>
+<P>
+    <B>Advanced Aerospace Rules</B>(Princess only works on ground maps)
+</P>
 <UL>
-    <LI><P STYLE="margin-bottom: 0">Allow aerospace units on ground
-        maps</P>
-    <LI><P STYLE="margin-bottom: 0">Allow return flyovers</P>
+    <LI>Allow aerospace units on ground maps</LI>
+    <LI>Allow return flyovers</LI>
 </UL>
-<P STYLE="margin-bottom: 0"><BR>
+<P>
+    <BR>
 </P>
 
-<P STYLE="margin-bottom: 0"><B>Initiative Rules</B></P>
+<P>
+    <B>Initiative Rules</B>
+</P>
 <UL>
-    <LI><P STYLE="margin-bottom: 0">Front load initiative</P>
-    <LI><P STYLE="margin-bottom: 0">Initiative streak compensation</P>
-    <LI>Simultaneous Phases (any)—Technically they can be used, but they cause massive CPU and Memory
-        consumption. So, don't use these unless you're running a high-end system. Also, Simultaneous Movement won't work
-        at all.
+    <LI>Front load initiative</LI>
+    <LI>Initiative streak compensation</LI>
+    <LI>Simultaneous Phases (any)—Technically they can be used, but they cause massive CPU and Memory consumption. So,
+        don't use these unless you're running a high-end system. Also, Simultaneous Movement won't work at all.
     </LI>
 </UL>
-<P STYLE="margin-bottom: 0"><BR>
+<P>
+    <BR>
 </P>
-
-<P STYLE="margin-bottom: 0"><B>RPG Related</B></P>
+<P>
+    <B>RPG Related</B>
+</P>
 <UL>
-    <LI><P STYLE="margin-bottom: 0">Pilot Special Abilities (passive
-        abilities are the only thing Princess will 'use')</P>
-    <LI><P STYLE="margin-bottom: 0">Edge</P>
-    <LI><P STYLE="margin-bottom: 0">Domini Options (passive abilities
-        are the only thing Princess will 'use')</P>
-    <LI><P STYLE="margin-bottom: 0">Individual Initiative</P>
-    <LI><P STYLE="margin-bottom: 0">Commander Initiative</P>
-    <LI><P STYLE="margin-bottom: 0">Toughness Bonus</P>
-    <LI><P STYLE="margin-bottom: 0">Conditional Auto ejection</P>
-    <LI><P STYLE="margin-bottom: 0">Maximum Heat from External Heat
-        Sources</P>
-    <LI><P STYLE="margin-bottom: 0">CASE/CASEII reduces pilot damage
-        on ammo explosion</P>
+    <LI>Pilot Special Abilities (passive abilities are the only thing Princess will 'use')</LI>
+    <LI>Edge</LI>
+    <LI>Domini Options (passive abilities are the only thing Princess will 'use')</LI>
+    <LI>Individual Initiative</LI>
+    <LI>Commander Initiative</LI>
+    <LI>Toughness Bonus</LI>
+    <LI>Conditional Auto ejection</LI>
+    <LI>Maximum Heat from External Heat Sources</LI>
+    <LI>CASE/CASEII reduces pilot damage on ammo explosion</LI>
 </UL>
 </BODY>
 </HTML>

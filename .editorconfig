@@ -435,7 +435,7 @@ ij_properties_keep_blank_lines = false
 ij_properties_key_value_delimiter = equals
 ij_properties_spaces_around_key_value_delimiter = false
 
-[{*.yaml,*.yml}]
+[{*.yaml,*.yml,*.mmu,*.mms}]
 indent_size = 2
 ij_yaml_align_values_properties = do_not_align
 ij_yaml_autoinsert_sequence_marker = true

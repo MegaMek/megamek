@@ -1,6 +1,6 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.05
+0.50.05 (2025-04-25 1800 UTC)
 + Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1
 + PR #6752: Mek jump boosters and jump jets
 + PR #6758: Removed Deprecated methods from MMLogger and updated impacted calls

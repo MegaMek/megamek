@@ -4119,7 +4119,8 @@ public class TWGameManager extends AbstractGameManager {
           EntityMovementType moveType, boolean flip) {
         Coords nextPos = start;
         Coords curPos = nextPos;
-        Hex curHex = game.getBoard().getHex(start);
+        Board board = game.getBoard(entity);
+        Hex curHex = board.getHex(start);
         Report r;
         int skidDistance = 0; // actual distance moved
         // Flipping vehicles take tonnage/10 points of damage for every hex they enter.
@@ -4127,7 +4128,7 @@ public class TWGameManager extends AbstractGameManager {
         while (!entity.isDoomed() && (distance > 0)) {
             nextPos = curPos.translated(direction);
             // Is the next hex off the board?
-            if (!game.getBoard().contains(nextPos)) {
+            if (!board.contains(nextPos)) {
 
                 // Can the entity skid off the map?
                 if (game.getOptions().booleanOption(OptionsConstants.BASE_PUSH_OFF_BOARD)) {
@@ -4165,7 +4166,7 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             }
 
-            Hex nextHex = game.getBoard().getHex(nextPos);
+            Hex nextHex = board.getHex(nextPos);
             distance -= nextHex.movementCost(entity) + 1;
             // By default, the unit is going to fall to the floor of the next
             // hex
@@ -4239,7 +4240,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
-                Building bldg = game.getBoard().getBuildingAt(nextPos);
+                Building bldg = board.getBuildingAt(nextPos);
 
                 if (bldg.getType() == BuildingType.WALL) {
                     crashedIntoTerrain = true;
@@ -4278,7 +4279,7 @@ public class TWGameManager extends AbstractGameManager {
 
             if (crashedIntoTerrain) {
                 if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
-                    Building bldg = game.getBoard().getBuildingAt(nextPos);
+                    Building bldg = board.getBuildingAt(nextPos);
 
                     // If you crash into a wall you want to stop in the hex
                     // before the wall not in the wall
@@ -4322,7 +4323,7 @@ public class TWGameManager extends AbstractGameManager {
                               nextHex.containsTerrain(Terrains.JUNGLE)) {
                         addReport(destroyEntity(entity, "could not land in crash site"));
                     } else if (elevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)) {
-                        Building bldg = game.getBoard().getBuildingAt(nextPos);
+                        Building bldg = board.getBuildingAt(nextPos);
 
                         // If you crash into a wall you want to stop in the hex
                         // before the wall not in the wall
@@ -4422,7 +4423,7 @@ public class TWGameManager extends AbstractGameManager {
             if (nextElevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)) {
                 // We will only run into the building if its at a higher level,
                 // otherwise we skid over the roof
-                bldg = game.getBoard().getBuildingAt(nextPos);
+                bldg = board.getBuildingAt(nextPos);
             }
             boolean bldgSuffered = false;
             boolean stopTheSkid = false;
@@ -4684,7 +4685,7 @@ public class TWGameManager extends AbstractGameManager {
                     // at the same level.
                     addReport(processSkidDisplacement(entity, entity.getPosition(), direction));
 
-                    if (bldg.rollBasement(nextPos, game.getBoard(), mainPhaseReport)) {
+                    if (bldg.rollBasement(nextPos, board, mainPhaseReport)) {
                         sendChangedHex(nextPos);
                         Vector<Building> buildings = new Vector<>();
                         buildings.add(bldg);
@@ -4709,7 +4710,7 @@ public class TWGameManager extends AbstractGameManager {
             skidDistance++;
 
             // Check for collapse of any building the entity might be on
-            Building roof = game.getBoard().getBuildingAt(nextPos);
+            Building roof = board.getBuildingAt(nextPos);
             if (roof != null) {
                 if (checkForCollapse(roof, nextPos, true, mainPhaseReport)) {
                     break; // stop skidding if the building collapsed
@@ -4907,7 +4908,8 @@ public class TWGameManager extends AbstractGameManager {
      */
     boolean processFailedVehicleManeuver(Entity entity, Coords curPos, int turnDirection, MoveStep prevStep,
           boolean isBackwards, EntityMovementType lastStepMoveType, int distance, int modifier, int marginOfFailure) {
-        Hex curHex = game.getBoard().getHex(curPos);
+        Board board = game.getBoard(entity);
+        Hex curHex = board.getHex(curPos);
         if (entity.getMovementMode() == EntityMovementMode.WHEELED && !curHex.containsTerrain(Terrains.PAVEMENT)) {
             modifier += 2;
         }
@@ -25774,7 +25776,7 @@ TargetRoll nTargetRoll,
                 } else if ((curCF < startingCF) && (damage > damageThresh)) {
                     // need to check for crits
                     // don't bother unless we have some gun emplacements
-                    Vector<GunEmplacement> guns = game.getGunEmplacements(coords);
+                    Collection<GunEmplacement> guns = game.getGunEmplacements(coords, bldg.getBoardId());
                     if (!guns.isEmpty()) {
                         vPhaseReport.addAll(criticalGunEmplacement(guns, bldg, coords));
                     }
@@ -25785,7 +25787,7 @@ TargetRoll nTargetRoll,
         return vPhaseReport;
     }
 
-    private Vector<Report> criticalGunEmplacement(Vector<GunEmplacement> guns, Building bldg, Coords coords) {
+    private Vector<Report> criticalGunEmplacement(Collection<GunEmplacement> guns, Building bldg, Coords coords) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
         r = new Report(3800);

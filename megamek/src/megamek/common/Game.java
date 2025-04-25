@@ -1566,6 +1566,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return Collections.unmodifiableList(vector);
     }
 
+    public List<GunEmplacement> getGunEmplacements(Coords c) {
+        // LEGACY use board version
+        return getGunEmplacements(c, 0);
+    }
+
     /**
      * Return a Vector of gun emplacements at Coords <code>c</code>
      *
@@ -1573,19 +1578,19 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return the {@link GunEmplacement} <code>Vector</code>
      */
-    public Vector<GunEmplacement> getGunEmplacements(Coords c) {
-        Vector<GunEmplacement> vector = new Vector<>();
+    public List<GunEmplacement> getGunEmplacements(Coords c, int boardId) {
+        List<GunEmplacement> result = new ArrayList<>();
 
         // Only build the list if the coords are on the board.
-        if (getBoard().contains(c)) {
-            for (Entity entity : getEntitiesVector(c, true)) {
-                if (entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)) {
-                    vector.addElement((GunEmplacement) entity);
+        if (hasBoardLocation(c, boardId)) {
+            for (Entity entity : getEntitiesVector(c, boardId, true)) {
+                if (entity instanceof GunEmplacement gunEmplacement) {
+                    result.add(gunEmplacement);
                 }
             }
         }
 
-        return vector;
+        return result;
     }
 
     /**

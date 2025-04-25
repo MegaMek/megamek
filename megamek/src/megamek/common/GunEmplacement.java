@@ -19,19 +19,18 @@ import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.logging.MMLogger;
 
+import java.io.Serial;
+import java.util.Optional;
+
 /**
- * A building with weapons fitted and, optionally, a turret.
- * Taharqa: I am completely re-writing this entity to bring it up to code with
- * TacOps rules
- * GunEmplacements will not simply be the weapon loadouts that can be attached
- * to buildings.
- * They will not be targetable in game, but will be destroyed if their building
- * hex is reduced.
+ * A building with weapons fitted and, optionally, a turret. Taharqa: I am completely re-writing this entity to bring it
+ * up to code with TacOps rules GunEmplacements will not simply be the weapon loadouts that can be attached to
+ * buildings. They will not be targetable in game, but will be destroyed if their building hex is reduced.
  */
 public class GunEmplacement extends Tank {
-    private static final MMLogger logger = MMLogger.create(GunEmplacement.class);
-
+    @Serial
     private static final long serialVersionUID = 8561738092216598248L;
+    private static final MMLogger logger = MMLogger.create(GunEmplacement.class);
 
     // locations
     public static final int LOC_GUNS = 0;
@@ -160,10 +159,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public int getWeaponArc(int weaponId) {
-        if (isTurret()) {
-            return Compute.ARC_TURRET;
-        }
-        return Compute.ARC_FORWARD;
+        return isTurret() ? Compute.ARC_TURRET : Compute.ARC_FORWARD;
     }
 
     @Override
@@ -286,40 +282,24 @@ public class GunEmplacement extends Tank {
 
     @Override
     public boolean isDmgHeavy() {
-        int totalWeapons = getTotalWeaponList().size();
-        int totalInoperable = 0;
-        for (Mounted<?> weap : getTotalWeaponList()) {
-            if (weap.isCrippled()) {
-                totalInoperable++;
-            }
-        }
-        return ((double) totalInoperable / totalWeapons) >= 0.75;
+        long inoperableWeapons = inoperableWeaponCount();
+        return inoperableWeapons != 0 && ((double) inoperableWeapons / getTotalWeaponList().size()) >= 0.75;
     }
 
     @Override
     public boolean isDmgLight() {
-        int totalWeapons = getTotalWeaponList().size();
-        int totalInoperable = 0;
-        for (Mounted<?> weap : getTotalWeaponList()) {
-            if (weap.isCrippled()) {
-                totalInoperable++;
-            }
-        }
-
-        return ((double) totalInoperable / totalWeapons) >= 0.25;
+        long inoperableWeapons = inoperableWeaponCount();
+        return inoperableWeapons != 0 && ((double) inoperableWeapons / getTotalWeaponList().size()) >= 0.25;
     }
 
     @Override
     public boolean isDmgModerate() {
-        int totalWeapons = getTotalWeaponList().size();
-        int totalInoperable = 0;
-        for (Mounted<?> weap : getTotalWeaponList()) {
-            if (weap.isCrippled()) {
-                totalInoperable++;
-            }
-        }
+        long inoperableWeapons = inoperableWeaponCount();
+        return inoperableWeapons != 0 && ((double) inoperableWeapons / getTotalWeaponList().size()) >= 0.5;
+    }
 
-        return ((double) totalInoperable / totalWeapons) >= 0.5;
+    private long inoperableWeaponCount() {
+        return getTotalWeaponList().stream().filter(Mounted::isCrippled).count();
     }
 
     @Override
@@ -335,8 +315,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public int getArmorType(int loc) {
-        // this is a hack to get around the fact that gun emplacements don't even have
-        // armor
+        // this is a hack to get around the fact that gun emplacements don't even have armor
         return 0;
     }
 
@@ -357,37 +336,36 @@ public class GunEmplacement extends Tank {
     @Override
     public void setDeployed(boolean deployed) {
         super.setDeployed(deployed);
+        Optional<Building> occupiedBuilding = occupiedBuilding();
+        initialBuildingCF = occupiedBuilding.map(bldg -> bldg.getCurrentCF(getPosition())).orElse(0);
+        initialBuildingArmor = occupiedBuilding.map(bldg -> bldg.getArmor(getPosition())).orElse(0);
+    }
 
-        // very aggressive null defense
-        if (deployed && (getGame() != null) && (getGame().getBoard() != null) &&
-                (getPosition() != null)) {
-            Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
-
-            if (occupiedStructure != null) {
-                initialBuildingCF = occupiedStructure.getCurrentCF(getPosition());
-                initialBuildingArmor = occupiedStructure.getArmor(getPosition());
-                return;
-            }
+    /**
+     * @return The Building this Gun Emplacement is deployed onto, if any. Safe to call under any circumstances (game
+     * may be null, may be undeployed etc).
+     */
+    private Optional<Building> occupiedBuilding() {
+        if (game != null) {
+            return game.getBuildingAt(getPosition(), getBoardId());
+        } else {
+            return Optional.empty();
         }
-
-        initialBuildingCF = initialBuildingArmor = 0;
     }
 
     @Override
     public double getArmorRemainingPercent() {
-        if (getPosition() == null) {
-            return 1.0;
+        return occupiedBuilding().map(this::armorPercentage).orElse(1d);
+    }
+
+    private double armorPercentage(Building building) {
+        if (initialBuildingCF + initialBuildingArmor == 0) {
+            // probably undeployed; avoid division by zero
+            return 1;
+        } else {
+            return (building.getCurrentCF(getPosition()) + building.getArmor(getPosition()))
+                         / ((double) (initialBuildingCF + initialBuildingArmor));
         }
-
-        Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
-
-        // we'll consider undeployed emplacements to be fully intact
-        if ((occupiedStructure == null) || (initialBuildingCF + initialBuildingArmor == 0)) {
-            return 1.0;
-        }
-
-        return (occupiedStructure.getCurrentCF(getPosition()) + occupiedStructure.getArmor(getPosition()))
-                / ((double) (initialBuildingCF + initialBuildingArmor));
     }
 
     /**

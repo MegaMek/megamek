@@ -6,17 +6,17 @@ map:
   - file: unofficial/Cakefish/General/50x50 Grass QRF Airbase.board
     name: Airport
     id: 5
-    postprocess:
-      # addterrain adds terrain in a given area
-      - type: addterrain
-      # required: the terrain type to change, as used in board files
-        terrain: fire
-      # required: the terrain level
-        level: 1
-      # required: an area to apply it to, see "areas" section
-        area:
-          list:
-          - [ 9, 9 ]
+#    postprocess:
+#      # addterrain adds terrain in a given area
+#      - type: addterrain
+#      # required: the terrain type to change, as used in board files
+#        terrain: fire
+#      # required: the terrain level
+#        level: 1
+#      # required: an area to apply it to, see "areas" section
+#        area:
+#          list:
+#          - [ 9, 9 ]
 
 options:
   on:
@@ -66,13 +66,19 @@ factions:
 #    at: [13,10]
 #    board: 1
 #    facing: 2
-  - fullname: Black Knight BL-12-KNT
+
+#  - fullname: Black Knight BL-12-KNT
+#    board: 5
+#    at: [ 35, 29 ]
 
 
-#  - fullname: Bulldog Medium Tank
-#    at: [ 13,10 ]
-#    board: 1
-#    facing: 2
+  - fullname: Bulldog Medium Tank
+    at: [ 6,12 ]
+    board: 5
+    facing: 2
+    crew:
+      name: Eddie the Eagle
+      piloting: 8
 
 #  - fullname: Locust LCT-1V
 #    board: 0
@@ -118,7 +124,10 @@ factions:
 #    board: 6
 #    facing: 3
 
-#  - fullname: AC/10 Turret (Dual)
+#  - fullname: FWL Advanced Laser Turret (3075)
+#    at: [37,26]
+#    elevation: 1
+#    board: 5
 
 #  - fullname: Mobile Long Tom Artillery LT-MOB-25
 #    at: [ 30, 24 ]

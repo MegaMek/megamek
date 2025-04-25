@@ -411,7 +411,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             }
 
             clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
-            if (!ce().isOffBoard()) {
+            if (clientgui.getBoardView(ce()) != null) {
                 clientgui.getBoardView(ce()).highlight(ce().getPosition());
             }
 

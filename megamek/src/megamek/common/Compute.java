@@ -410,13 +410,13 @@ public class Compute {
     public static Entity stackingViolation(Game game, Entity entering,
             int elevation, Coords dest, Entity transport, boolean climbMode) {
         return stackingViolation(game, entering, entering.getPosition(),
-                elevation, dest, 0, transport, climbMode);
+                elevation, dest, entering.getBoardId(), transport, climbMode);
     }
 
     public static Entity stackingViolation(Game game, Entity entering,
                Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode) {
         return stackingViolation(game, entering, origPosition,
-              elevation, dest, 0, transport, climbMode);
+              elevation, dest, entering.getBoardId(), transport, climbMode);
     }
 
     public static Entity stackingViolation(Game game, Entity entering,

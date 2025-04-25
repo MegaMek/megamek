@@ -130,7 +130,7 @@ public final class CollapseWarning {
      * Returns true if the selected entity should have CF warnings calculated when
      * selected.
      */
-    static boolean entityTypeIsInWhiteList(Entity entity) {
+    public static boolean entityTypeIsInWhiteList(Entity entity) {
         // Include entities that are ground units and onboard only. Flying units need not apply.
         return (entity.isGround() && !entity.isOffBoard());
     }
@@ -186,7 +186,7 @@ public final class CollapseWarning {
      * This includes the entity current weight summed with any unit weights
      * at the hex location that could cause a building to collapse.
      */
-    protected static double calculateTotalTonnage(Game g, Entity selected, Coords c) {
+    public static double calculateTotalTonnage(Game g, Entity selected, Coords c) {
         // Calculate total weight of entity and all entities at the location.
         double totalWeight = selected.getWeight();
         List<Entity> units = g.getEntitiesVector(c, true);

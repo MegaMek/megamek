@@ -56,7 +56,7 @@ public final class MMConstants extends SuiteConstants {
     public static final String HISTORICAL_ETHNICITY_FILE = Paths.get("data/names/historicalEthnicity.csv").toString();
     public static final String GIVEN_NAME_MALE_FILE = Paths.get("data/names/maleGivenNames.csv").toString();
     public static final String SURNAME_FILE = Paths.get("data/names/surnames.csv").toString();
-    public static final String BOT_README_FILE_PATH = Paths.get("docs/Bot Stuff/Princess Notes.txt").toString();
+    public static final String BOT_README_FILE_PATH = Paths.get("docs/Bot Stuff/Princess Notes.md").toString();
     public static final String BOARD_README_FILE_PATH = Paths.get("docs/Archive Stuff/maps/Map Editor-readme.txt")
                                                               .toString();
     public static final String MEGAMEK_README_FILE_PATH = Paths.get("docs/README.md").toString();
@@ -77,9 +77,12 @@ public final class MMConstants extends SuiteConstants {
 
     // region ClientServer
     public static final int DEFAULT_PORT = 2346;
-    public static final int MIN_PORT = 1; // Minimum port number for a player game.
-    public static final int MIN_PORT_FOR_QUICK_GAME = 1024; // Minimum port for quick games for testing or AI usage to
-    // prevent possible issues with needing root access to run.
+
+    // Minimum port number for a player game.
+    public static final int MIN_PORT = 1;
+
+    // Minimum port for quick games for testing or AI usage to prevent possible issues with needing root access to run.
+    public static final int MIN_PORT_FOR_QUICK_GAME = 1024;
     public static final int MAX_PORT = 65535;
     public static final String DEFAULT_PLAYERNAME = "Player";
     public static final String LOCALHOST = "localhost";

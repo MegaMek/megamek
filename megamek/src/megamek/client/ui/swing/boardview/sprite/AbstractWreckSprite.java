@@ -51,7 +51,7 @@ public abstract class AbstractWreckSprite extends Sprite {
     @Override
     public Rectangle getBounds() {
         // Start with the hex and add the label
-        bounds = new Rectangle(0, 0, bv.getHex_size().width, bv.getHex_size().height);
+        bounds = new Rectangle(0, 0, bv.getHexSize().width, bv.getHexSize().height);
 
         // Move to board position, save this origin for correct drawing
         Point hexOrigin = bounds.getLocation();

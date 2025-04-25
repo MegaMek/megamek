@@ -64,7 +64,7 @@ public class MovingEntitySprite extends Sprite {
             altAdjust = (int) (elevation * BoardView.HEX_ELEV * bv.getScale());
         }
 
-        Dimension dim = new Dimension(bv.getHex_size().width, bv.getHex_size().height + altAdjust);
+        Dimension dim = new Dimension(bv.getHexSize().width, bv.getHexSize().height + altAdjust);
         Rectangle tempBounds = new Rectangle(dim).union(modelRect);
 
         tempBounds.setLocation(bv.getHexLocation(position));

@@ -34,7 +34,7 @@ public class WreckSprite extends AbstractWreckSprite {
         Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
         modelRect = new Rectangle(47, 55, bv.getPanel().getFontMetrics(font).stringWidth(shortName) + 1,
                 bv.getPanel().getFontMetrics(font).getAscent());
-        Rectangle tempBounds = new Rectangle(bv.getHex_size()).union(modelRect);
+        Rectangle tempBounds = new Rectangle(bv.getHexSize()).union(modelRect);
         if (secondaryPos == -1) {
             tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
         } else {

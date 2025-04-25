@@ -51,7 +51,7 @@ public class FlareSprite extends Sprite {
 
     @Override
     public Rectangle getBounds() {
-        Dimension dim = new Dimension(bv.getHex_size().width, bv.getHex_size().height);
+        Dimension dim = new Dimension(bv.getHexSize().width, bv.getHexSize().height);
         bounds = new Rectangle(dim);
         bounds.setLocation(bv.getHexLocation(flare.position));
         return bounds;

@@ -62,7 +62,7 @@ public class SBFStepSprite extends Sprite {
         isIllegal = step.isIllegal() || movePath.isIllegal();
 
         // step is the size of the hex that this step is in
-        bounds = new Rectangle(this.bv.getHexLocation(step.getDestination().coords()), this.bv.getHex_size());
+        bounds = new Rectangle(this.bv.getHexLocation(step.getDestination().coords()), this.bv.getHexSize());
         image = null;
         baseScaleImage = null;
     }
@@ -130,7 +130,7 @@ public class SBFStepSprite extends Sprite {
 
     @Override
     public Rectangle getBounds() {
-        bounds = new Rectangle(0, 0, bv.getHex_size().width, bv.getHex_size().height);
+        bounds = new Rectangle(0, 0, bv.getHexSize().width, bv.getHexSize().height);
         Point ePos = bv.getHexLocation(step.getDestination().coords());
         bounds.setLocation(ePos.x, ePos.y);
         return bounds;

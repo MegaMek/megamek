@@ -63,7 +63,7 @@ public class IsometricSprite extends HexSprite {
             altAdjust = (int) (entity.getElevation() * BoardView.HEX_ELEV * bv.getScale());
         }
 
-        Dimension dim = new Dimension(bv.getHex_size().width, bv.getHex_size().height + altAdjust);
+        Dimension dim = new Dimension(bv.getHexSize().width, bv.getHexSize().height + altAdjust);
         Rectangle tempBounds = new Rectangle(dim).union(modelRect);
 
         if (secondaryPos == -1) {

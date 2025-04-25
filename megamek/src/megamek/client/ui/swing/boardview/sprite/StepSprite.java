@@ -55,7 +55,7 @@ public class StepSprite extends Sprite {
         this.isLastStep = isLastStep;
 
         // step is the size of the hex that this step is in
-        bounds = new Rectangle(bv.getHexLocation(step.getPosition()), bv.getHex_size());
+        bounds = new Rectangle(bv.getHexLocation(step.getPosition()), bv.getHexSize());
         image = null;
         baseScaleImage = null;
     }
@@ -376,7 +376,7 @@ public class StepSprite extends Sprite {
 
     @Override
     public Rectangle getBounds() {
-        bounds = new Rectangle(bv.getHexLocation(step.getPosition()), bv.getHex_size());
+        bounds = new Rectangle(bv.getHexLocation(step.getPosition()), bv.getHexSize());
         return bounds;
     }
 

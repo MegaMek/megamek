@@ -239,7 +239,7 @@ public class EntitySprite extends Sprite {
     @Override
     public Rectangle getBounds() {
         // Start with the hex and add the label
-        bounds = new Rectangle(0, 0, bv.getHex_size().width, bv.getHex_size().height);
+        bounds = new Rectangle(0, 0, bv.getHexSize().width, bv.getHexSize().height);
         updateLabel();
         bounds.add(labelRect);
         // Add space for 4 little status boxes
@@ -289,22 +289,22 @@ public class EntitySprite extends Sprite {
 
         if (position != null) {
             if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
-                labelRect.setLocation((int) (bv.getHex_size().width * 0.55), (int) (0.75 * bv.getHex_size() .height));
+                labelRect.setLocation((int) (bv.getHexSize().width * 0.55), (int) (0.75 * bv.getHexSize() .height));
                 labelPos = Positioning.RIGHT;
             } else if (bv.game.getEntitiesVector(position.translated("NW"), true).isEmpty()) {
-                labelRect.setLocation((int) (bv.getHex_size() .width * 0.45) - labelRect.width,
-                      (int) (0.25 * bv.getHex_size() .height) - labelRect.height);
+                labelRect.setLocation((int) (bv.getHexSize() .width * 0.45) - labelRect.width,
+                      (int) (0.25 * bv.getHexSize() .height) - labelRect.height);
                 labelPos = Positioning.LEFT;
             } else if (bv.game.getEntitiesVector(position.translated("NE"), true).isEmpty()) {
-                labelRect.setLocation((int) (bv.getHex_size() .width * 0.55),
-                      (int) (0.25 * bv.getHex_size() .height) - labelRect.height);
+                labelRect.setLocation((int) (bv.getHexSize() .width * 0.55),
+                      (int) (0.25 * bv.getHexSize() .height) - labelRect.height);
                 labelPos = Positioning.RIGHT;
             } else if (bv.game.getEntitiesVector(position.translated("SW"), true).isEmpty()) {
-                labelRect.setLocation((int) (bv.getHex_size() .width * 0.45) - labelRect.width,
-                      (int) (0.75 * bv.getHex_size() .height));
+                labelRect.setLocation((int) (bv.getHexSize() .width * 0.45) - labelRect.width,
+                      (int) (0.75 * bv.getHexSize() .height));
                 labelPos = Positioning.LEFT;
             } else {
-                labelRect.setLocation(bv.getHex_size() .width / 2 - labelRect.width / 2, (int) (0.75 * bv.getHex_size() .height));
+                labelRect.setLocation(bv.getHexSize() .width / 2 - labelRect.width / 2, (int) (0.75 * bv.getHexSize() .height));
                 labelPos = Positioning.RIGHT;
             }
         }
@@ -416,7 +416,7 @@ public class EntitySprite extends Sprite {
         if ((bv.getScale() < 0.55) && criticalStatus) {
             // When zoomed far out, status wouldn't be readable, therefore draw a big "!" (and the label is red)
             Font bigFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (42 * bv.getScale() ));
-            new StringDrawer("!").at(bv.getHex_size() .width / 2, bv.getHex_size() .height / 2)
+            new StringDrawer("!").at(bv.getHexSize() .width / 2, bv.getHexSize() .height / 2)
                   .color(GUIP.getWarningColor())
                   .outline(Color.WHITE, 1)
                   .center()
@@ -425,10 +425,10 @@ public class EntitySprite extends Sprite {
         } else {
             // Critical status texts
             Font boldFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (12 * bv.getScale() ));
-            int y = (int) ((float) bv.getHex_size() .height / 2 + bv.getScale() * (statusStrings.size() - 1) * 7);
+            int y = (int) ((float) bv.getHexSize() .height / 2 + bv.getScale() * (statusStrings.size() - 1) * 7);
             for (Status curStatus : statusStrings) {
                 if (!curStatus.small) { // Critical status
-                    new StringDrawer(curStatus.status).at(bv.getHex_size() .width / 2, y)
+                    new StringDrawer(curStatus.status).at(bv.getHexSize() .width / 2, y)
                           .color(curStatus.color)
                           .outline(Color.BLACK, 1)
                           .center()
@@ -773,7 +773,7 @@ public class EntitySprite extends Sprite {
                     var tr = graph.getTransform();
                     // rotate the arrow slightly
                     graph.scale(1 / bv.getScale() , 1 / bv.getScale() );
-                    graph.rotate(Math.PI / 24, bv.getHex_size() .width / 2.0, bv.getHex_size() .height / 2.0);
+                    graph.rotate(Math.PI / 24, bv.getHexSize() .width / 2.0, bv.getHexSize() .height / 2.0);
                     graph.scale(bv.getScale() , bv.getScale() );
                     graph.setColor(GUIP.getWarningColor());
                     graph.fill(bv.getFacingPolys()[entity.getFacing()]);

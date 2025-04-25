@@ -63,7 +63,7 @@ public class SBFFormationSprite extends Sprite {
 
     @Override
     public Rectangle getBounds() {
-        bounds = new Rectangle(0, 0, bv.getHex_size().width, bv.getHex_size().height);
+        bounds = new Rectangle(0, 0, bv.getHexSize().width, bv.getHexSize().height);
         Point ePos = bv.getHexLocation(formation.getPosition().coords());
         bounds.setLocation(ePos.x, ePos.y);
 

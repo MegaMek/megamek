@@ -3647,7 +3647,7 @@ public final class BoardView extends AbstractBoardView
         return scale;
     }
 
-    public Dimension getHex_size() {
+    public Dimension getHexSize() {
         return hex_size;
     }
 

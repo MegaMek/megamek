@@ -1192,14 +1192,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 addStepToMovePath(MoveStepType.CONVERT_MODE);
             }
         } else {
-            // clear board cursors
-            clientgui.getBoardView().select(cmd.getFinalCoords());
-            clientgui.getBoardView().cursor(cmd.getFinalCoords());
-            clientgui.getBoardView().drawMovementData(currentlySelectedEntity, cmd);
-            clientgui.updateFiringArc(currentlySelectedEntity);
-            clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
-
             if (cmd != null) {
+                // clear board cursors
+                clientgui.getBoardView().select(cmd.getFinalCoords());
+                clientgui.getBoardView().cursor(cmd.getFinalCoords());
+                clientgui.getBoardView().drawMovementData(currentlySelectedEntity, cmd);
+                clientgui.updateFiringArc(currentlySelectedEntity);
+                clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
+
                 // FIXME what is this
                 // Set the button's label to "Done" if the entire move is impossible.
                 MovePath possible = cmd.clone();
@@ -1848,20 +1848,22 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
 
                 // check if it's a valid charge
-                ToHitData toHit;
-                if (currentlySelectedEntity != null && currentlySelectedEntity.isAirborneVTOLorWIGE()) {
-                    toHit = new AirMekRamAttackAction(currentEntity,
-                          target.getTargetType(),
-                          target.getId(),
-                          target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
-                } else {
-                    toHit = new ChargeAttackAction(currentEntity,
-                          target.getTargetType(),
-                          target.getId(),
-                          target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
+                ToHitData toHit = null;
+                if (target != null) {
+                    if (currentlySelectedEntity != null && currentlySelectedEntity.isAirborneVTOLorWIGE()) {
+                        toHit = new AirMekRamAttackAction(currentEntity,
+                              target.getTargetType(),
+                              target.getId(),
+                              target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
+                    } else {
+                        toHit = new ChargeAttackAction(currentEntity,
+                              target.getTargetType(),
+                              target.getId(),
+                              target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
+                    }
                 }
 
-                if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
+                if (toHit != null && toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // Determine how much damage the charger will take.
                     int toDefender;
                     int toAttacker = 0;
@@ -1918,7 +1920,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     return;
                 }
                 // if not valid, tell why
-                clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantCharge"), toHit.getDesc());
+                if (toHit != null) {
+                    clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantCharge"), toHit.getDesc());
+                } else {
+                    clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantCharge"), "toHit Value Is Null");
+                }
+                
                 clear();
                 computeMovementEnvelope(currentlySelectedEntity);
                 return;
@@ -2195,7 +2202,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (ce.isAero()) {
+        if (ce.isAero() && cmd != null) {
             if (ce.isAirborne() && (cmd.getFinalAltitude() == 1)) {
                 setLandEnabled(((IAero) ce).canLandHorizontally());
                 setVLandEnabled(((IAero) ce).canLandVertically());

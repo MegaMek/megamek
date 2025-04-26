@@ -3,6 +3,7 @@ MEGAMEK VERSION HISTORY:
 0.50.06
 + PR #6933: 0.50.06 Deprecation Removal and Clean up. 
 + PR #6901: move sprite, spriteHandler, overlay, toolTip, phaseDisplay and phaseDiplay.dialogs classes into packages
++ PR #6864: Added Heroic and Legendary Skill Levels
 
 
 0.50.05 (2025-04-25 1800 UTC)

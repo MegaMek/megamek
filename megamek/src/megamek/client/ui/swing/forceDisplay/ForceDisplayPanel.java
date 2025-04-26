@@ -240,7 +240,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
                         if (windowAncestor instanceof JFrame) {
                             frame = (JFrame) windowAncestor;
                         }
-                        UnitDisplayDialog.showEntity(frame, client, entity, e.isShiftDown());
+                        UnitDisplayDialog.showEntity(frame, entity, e.isShiftDown());
                     }
                     GUIP.setUnitDisplayEnabled(true);
 

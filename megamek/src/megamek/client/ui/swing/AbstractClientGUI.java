@@ -24,6 +24,7 @@ import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.MMNarrativeStoryDialog;
 import megamek.client.ui.swing.boardview.*;
+import megamek.client.ui.swing.boardview.spriteHandler.BoardViewSpriteHandler;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.event.GameScriptedMessageEvent;

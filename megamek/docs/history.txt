@@ -1,6 +1,14 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.05
+0.50.06
++ PR #6933: 0.50.06 Deprecation Removal and Clean up. 
++ PR #6901: move sprite, spriteHandler, overlay, toolTip, phaseDisplay and phaseDiplay.dialogs classes into packages
++ PR #6864: Added Heroic and Legendary Skill Levels
++ Fix #6915: Fixed Status of Uncrewed Vehicles
++ Fix: #6931: Fixes duplicated score key for score logging on basic path ranker
+
+
+0.50.05 (2025-04-25 1800 UTC)
 + Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1
 + PR #6752: Mek jump boosters and jump jets
 + PR #6758: Removed Deprecated methods from MMLogger and updated impacted calls
@@ -57,6 +65,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6908: Homing Artillery should work direct fire when targeting a hex
 + PR #6909: Fix for ASF Flak shots missing due to erroneous elevation check (ASF Flak uses Altitude)
 + PR #6910: Fix Counter-Battery Fire Class Cast Exception
++ Fix #6918: Fix Splash damage hitting other offboard units
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width

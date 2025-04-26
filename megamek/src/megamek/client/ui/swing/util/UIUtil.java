@@ -1,15 +1,34 @@
 /*
- * MegaMek - Copyright (C) 2020 - The MegaMek Team
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.swing.util;
 
@@ -20,6 +39,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ImageObserver;
+import java.io.Serial;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -227,7 +247,7 @@ public final class UIUtil {
         if (origList == null || origList.isEmpty()) {
             return result;
         }
-        String currLine = "";
+        StringBuilder currLine = new StringBuilder();
         for (String curr : origList) {
             // Skip empty strings to avoid double separators
             if (curr.isEmpty()) {
@@ -236,20 +256,20 @@ public final class UIUtil {
 
             if (currLine.isEmpty()) {
                 // No entry in this line yet
-                currLine = curr;
+                currLine = new StringBuilder(curr);
             } else if (currLine.length() + curr.length() + sep.length() <= maxLength) {
                 // This line can hold another string
-                currLine += sep + curr;
+                currLine.append(sep).append(curr);
             } else {
                 // This line cannot hold another string
-                currLine += sepAtEnd ? sep : "";
-                result.add(currLine);
-                currLine = curr;
+                currLine.append(sepAtEnd ? sep : "");
+                result.add(currLine.toString());
+                currLine = new StringBuilder(curr);
             }
         }
         if (!currLine.isEmpty()) {
             // Add the last unfinished line
-            result.add(currLine);
+            result.add(currLine.toString());
         } else if (sepAtEnd) {
             // Remove the last unnecessary sep if there were no more Strings
             String lastLine = result.get(result.size() - 1);
@@ -353,7 +373,10 @@ public final class UIUtil {
     /**
      * Returns a light red color suitable as a text color. The supplied color depends on the UI look and feel and will
      * be lighter for a dark UI LAF than for a light UI LAF.
+     *
+     * @deprecated no indicated uses.
      */
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public static Color uiBlack() {
         return uiBgBrightness() > 130 ? LIGHTUI_BLACK : DARKUI_BLACK;
     }
@@ -377,7 +400,10 @@ public final class UIUtil {
     /**
      * Returns a color for the UI display of Partial Repairs. Different colors will be supplied for a dark and for a
      * light UI look-and-feel.
+     *
+     * @deprecated no indicated uses.
      */
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public static Color uiPartialRepairColor() {
         return uiLightRed();
     }
@@ -401,7 +427,10 @@ public final class UIUtil {
     /**
      * Returns a color for the UI display of C3 Info. Different colors will be supplied for a dark and for a light UI
      * look-and-feel.
+     *
+     * @deprecated no indicated uses.
      */
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public static Color uiTTWeaponColor() {
         return uiLightBlue();
     }
@@ -643,7 +672,10 @@ public final class UIUtil {
      * @param parent        component
      *
      * @return a JLabel setup to the correct size to act as a splash screen
+     *
+     * @deprecated no indicated uses
      */
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public static JLabel createSplashComponent(String imgSplashFile, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
@@ -742,6 +774,7 @@ public final class UIUtil {
 
     /** A specialized panel for the header of a section. */
     public static class Header extends JPanel {
+        @Serial
         private static final long serialVersionUID = -6235772150005269143L;
 
         public Header(String text) {
@@ -756,6 +789,7 @@ public final class UIUtil {
 
     /** A panel for the content of a subsection of the dialog. */
     public static class Content extends JPanel {
+        @Serial
         private static final long serialVersionUID = -6605053283642217306L;
 
         public Content(LayoutManager layout) {
@@ -772,6 +806,7 @@ public final class UIUtil {
 
     /** A panel for a subsection of the dialog, e.g. Minefields. */
     public static class OptionPanel extends FixedYPanel {
+        @Serial
         private static final long serialVersionUID = -7168700339882132428L;
 
         public OptionPanel(String header) {
@@ -784,6 +819,7 @@ public final class UIUtil {
 
     /** A JPanel that does not stretch vertically beyond its preferred height. */
     public static class FixedYPanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = -8805710112708937089L;
 
         public FixedYPanel(LayoutManager layout) {
@@ -802,6 +838,7 @@ public final class UIUtil {
 
     /** A JPanel that does not stretch horizontally beyond its preferred width. */
     public static class FixedXPanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = -4634244641653743910L;
 
         public FixedXPanel(LayoutManager layout) {
@@ -891,6 +928,10 @@ public final class UIUtil {
      */
     public static class TipCombo<E> extends MMComboBox<E> {
 
+        /**
+         * @deprecated no indicated uses.
+         */
+        @Deprecated(since = "0.50.06", forRemoval = true)
         public TipCombo(String name) {
             super(name);
         }
@@ -930,6 +971,10 @@ public final class UIUtil {
      */
     public static class TipList<E> extends JList<E> {
 
+        /**
+         * @deprecated no indicated uses.
+         */
+        @Deprecated(since = "0.50.06", forRemoval = true)
         public TipList() {
             super();
         }
@@ -1055,6 +1100,10 @@ public final class UIUtil {
             super();
         }
 
+        /**
+         * @deprecated no indicated uses.
+         */
+        @Deprecated(since = "0.50.06", forRemoval = true)
         public TipPanel(LayoutManager lm) {
             super(lm);
         }
@@ -1157,6 +1206,7 @@ public final class UIUtil {
      * this will be very obvious. The native FlowLayout should be kept for the buttons.
      */
     public static class WrappingButtonPanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = -6966176665047676553L;
 
         @Override
@@ -1208,9 +1258,9 @@ public final class UIUtil {
      * Returns a Font object using the "Dialog" logic font. The font size 14. legacy from manual gui scaling. This
      * method should eventually be removed
      *
-     * @deprecated since 0.50.04 - {@link #getDefaultFont()}
+     * @deprecated {@link #getDefaultFont()} Remediated in 0.50.06, remove in 0.50.07
      */
-    @Deprecated(since = "0.50.04")
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public static Font getScaledFont() {
         return getDefaultFont();
     }
@@ -1298,8 +1348,8 @@ public final class UIUtil {
     }
 
     /**
-     * Only place this is used is in the Skin Builder. If the Skin Builder can be worked without this method, it can be
-     * removed.
+     * The only place this is used is in the Skin Builder. If the Skin Builder can be worked without this method, it can
+     * be removed.
      *
      * @return the 'virtual bounds' of the screen. That is, the union of the displayable space on all available screen
      *       devices.

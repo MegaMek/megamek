@@ -54,6 +54,7 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.ConfirmDialog;
 import megamek.client.ui.swing.boardview.CollapseWarning;
 import megamek.client.ui.swing.boardview.overlay.AbstractBoardViewOverlay;
+import megamek.client.ui.swing.phaseDisplay.commands.MoveCommand;
 import megamek.client.ui.swing.phaseDisplay.dialog.BombPayloadDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.ManeuverChoiceDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.MineLayingDialog;
@@ -64,6 +65,7 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.MekPanelTabStrip;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AirMekRamAttackAction;
@@ -121,232 +123,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private boolean isUnJammingRAC;
     private boolean isUsingChaff;
-
-    /**
-     * This enumeration lists all the possible ActionCommands that can be carried out during the movement phase. Each
-     * command has a string for the command plus a flag that determines what unit type it is appropriate for.
-     *
-     * @author arlith
-     */
-    public enum MoveCommand implements PhaseCommand {
-        MOVE_NEXT("moveNext", CMD_NONE),
-        MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO),
-        MOVE_WALK("moveWalk", CMD_GROUND),
-        MOVE_JUMP("moveJump", CMD_MEK | CMD_TANK | CMD_INF | CMD_PROTOMEK),
-        MOVE_BACK_UP("moveBackUp", CMD_MEK | CMD_TANK | CMD_VTOL),
-        MOVE_GET_UP("moveGetUp", CMD_MEK),
-        MOVE_FORWARD_INI("moveForwardIni", CMD_ALL),
-        MOVE_CHARGE("moveCharge", CMD_MEK | CMD_TANK),
-        MOVE_DFA("moveDFA", CMD_MEK),
-        MOVE_GO_PRONE("moveGoProne", CMD_MEK),
-        MOVE_FLEE("moveFlee", CMD_ALL),
-        MOVE_EJECT("moveEject", CMD_ALL),
-        MOVE_LOAD("moveLoad", CMD_MEK | CMD_TANK | CMD_VTOL),
-        MOVE_UNLOAD("moveUnload", CMD_MEK | CMD_TANK | CMD_VTOL),
-        MOVE_MOUNT("moveMount", CMD_GROUND),
-        MOVE_TOW("moveTow", CMD_TANK),
-        MOVE_DISCONNECT("moveDisconnect", CMD_TANK),
-        MOVE_UNJAM("moveUnjam", CMD_NON_INF),
-        MOVE_CLEAR("moveClear", CMD_INF),
-        MOVE_CANCEL("moveCancel", CMD_NONE),
-        MOVE_RAISE_ELEVATION("moveRaiseElevation", CMD_NON_VECTORED),
-        MOVE_LOWER_ELEVATION("moveLowerElevation", CMD_NON_VECTORED),
-        MOVE_SEARCHLIGHT("moveSearchlight", CMD_GROUND),
-        MOVE_LAY_MINE("moveLayMine", CMD_TANK | CMD_INF),
-        MOVE_HULL_DOWN("moveHullDown", CMD_MEK | CMD_TANK),
-        MOVE_CLIMB_MODE("moveClimbMode", CMD_MEK | CMD_TANK | CMD_INF | CMD_PROTOMEK),
-        MOVE_SWIM("moveSwim", CMD_MEK),
-        MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL),
-        MOVE_BRACE("moveBrace", CMD_MEK),
-        MOVE_CHAFF("moveChaff", CMD_NON_INF),
-
-        // Convert command to a single button, which can cycle through modes because MovePath state is available
-        MOVE_MODE_CONVERT("moveModeConvert", CMD_CONVERTER),
-
-        // Convert commands used for menus, where the MovePath state is unknown.
-        MOVE_MODE_LEG("moveModeLeg", CMD_NO_BUTTON),
-        MOVE_MODE_VEE("moveModeVee", CMD_NO_BUTTON),
-        MOVE_MODE_AIR("moveModeAir", CMD_NO_BUTTON),
-        MOVE_RECKLESS("moveReckless", CMD_MEK | CMD_TANK | CMD_VTOL),
-        MOVE_CAREFUL_STAND("moveCarefulStand", CMD_NONE),
-        MOVE_EVADE("MoveEvade", CMD_MEK | CMD_TANK | CMD_VTOL),
-        MOVE_BOOTLEGGER("moveBootlegger", CMD_TANK | CMD_VTOL),
-        MOVE_SHUTDOWN("moveShutDown", CMD_NON_INF),
-        MOVE_STARTUP("moveStartup", CMD_NON_INF),
-        MOVE_SELF_DESTRUCT("moveSelfDestruct", CMD_NON_INF),
-
-        // Infantry only
-        MOVE_DIG_IN("moveDigIn", CMD_INF),
-        MOVE_FORTIFY("moveFortify", CMD_INF | CMD_TANK),
-        MOVE_TAKE_COVER("moveTakeCover", CMD_INF),
-        MOVE_CALL_SUPPORT("moveCallSupport", CMD_INF),
-
-        // VTOL attacks, declared in the movement phase
-        MOVE_STRAFE("moveStrafe", CMD_VTOL),
-        MOVE_BOMB("moveBomb", CMD_VTOL | CMD_AIRMEK),
-
-        // Aero Movement
-        MOVE_ACC("MoveAccelerate", CMD_AERO),
-        MOVE_DEC("MoveDecelerate", CMD_AERO),
-        MOVE_EVADE_AERO("MoveEvadeAero", CMD_AERO_BOTH),
-        MOVE_ACCN("MoveAccNext", CMD_AERO),
-        MOVE_DECN("MoveDecNext", CMD_AERO),
-        MOVE_ROLL("MoveRoll", CMD_AERO_BOTH),
-        MOVE_LAUNCH("MoveLaunch", CMD_AERO_BOTH),
-        MOVE_DOCK("MoveDock", CMD_AERO_BOTH),
-        MOVE_RECOVER("MoveRecover", CMD_AERO_BOTH),
-        MOVE_DROP("MoveDrop", CMD_AERO_BOTH),
-        MOVE_DUMP("MoveDump", CMD_AERO_BOTH),
-        MOVE_RAM("MoveRam", CMD_AERO_BOTH | CMD_AIRMEK),
-        MOVE_HOVER("MoveHover", CMD_AERO | CMD_AIRMEK),
-        MOVE_MANEUVER("MoveManeuver", CMD_AERO_BOTH),
-        MOVE_JOIN("MoveJoin", CMD_AERO_BOTH),
-        MOVE_FLY_OFF("MoveOff", CMD_AERO_BOTH),
-        MOVE_TAKE_OFF("MoveTakeOff", CMD_TANK),
-        MOVE_VERT_TAKE_OFF("MoveVertTakeOff", CMD_TANK),
-        MOVE_LAND("MoveLand", CMD_AERO_BOTH),
-        MOVE_VERT_LAND("MoveVLand", CMD_AERO_BOTH),
-        // Aero Vector Movement
-        MOVE_TURN_LEFT("MoveTurnLeft", CMD_AERO_VECTORED),
-        MOVE_TURN_RIGHT("MoveTurnRight", CMD_AERO_VECTORED),
-        MOVE_THRUST("MoveThrust", CMD_AERO_VECTORED),
-        MOVE_YAW("MoveYaw", CMD_AERO_VECTORED),
-        MOVE_END_OVER("MoveEndOver", CMD_AERO_VECTORED),
-        // Move envelope
-        MOVE_ENVELOPE("MoveEnvelope", CMD_NONE),
-        MOVE_LONGEST_RUN("MoveLongestRun", CMD_NONE),
-        MOVE_LONGEST_WALK("MoveLongestWalk", CMD_NONE),
-        // Traitor
-        MOVE_TRAITOR("Traitor", CMD_NONE),
-        MOVE_PICKUP_CARGO("movePickupCargo", CMD_MEK | CMD_PROTOMEK),
-        MOVE_DROP_CARGO("moveDropCargo", CMD_MEK | CMD_PROTOMEK),
-        MOVE_MORE("MoveMore", CMD_NONE);
-
-        /**
-         * The command text.
-         */
-        public final String cmd;
-
-        /**
-         * Flag that determines what unit types can use a command.
-         */
-        public final int flag;
-
-        /**
-         * Priority that determines this button order
-         */
-        public int priority;
-
-        MoveCommand(String commandString, int commandFlag) {
-            cmd = commandString;
-            flag = commandFlag;
-            priority = ordinal();
-        }
-
-        @Override
-        public String getCmd() {
-            return cmd;
-        }
-
-        @Override
-        public int getPriority() {
-            return priority;
-        }
-
-        @Override
-        public void setPriority(int newPriority) {
-            priority = newPriority;
-        }
-
-        @Override
-        public String toString() {
-            return Messages.getString("MovementDisplay." + getCmd());
-        }
-
-        public String getHotKeyDesc() {
-            String result;
-
-            String msgNext = Messages.getString("Next");
-            String msgPrevious = Messages.getString("Previous");
-            String msgLeft = Messages.getString("Left");
-            String msgRight = Messages.getString("Right");
-            String msgToggleMoveJump = Messages.getString("MovementDisplay.tooltip.ToggleMoveJump");
-            String msgToggleMode = Messages.getString("MovementDisplay.tooltip.ToggleMode");
-
-            result = "<BR>";
-
-            switch (this) {
-                case MOVE_NEXT:
-                    result += "&nbsp;&nbsp;" + msgNext + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
-                    result += "&nbsp;&nbsp;" + msgPrevious + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
-                    break;
-                case MOVE_WALK, MOVE_JUMP:
-                    result += "&nbsp;&nbsp;" +
-                                    msgToggleMoveJump +
-                                    ": " +
-                                    KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
-                    break;
-                case MOVE_TURN:
-                    result += "&nbsp;&nbsp;" + msgLeft + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_LEFT);
-                    result += "&nbsp;&nbsp;" + msgRight + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_RIGHT);
-                    break;
-                case MOVE_MODE_AIR:
-                case MOVE_MODE_CONVERT:
-                case MOVE_MODE_LEG:
-                case MOVE_MODE_VEE:
-                    result += "&nbsp;&nbsp;" +
-                                    msgToggleMode +
-                                    ": " +
-                                    KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_CONVERSIONMODE);
-                    break;
-                default:
-                    break;
-            }
-
-            return result;
-        }
-
-        /**
-         * Return a list of valid commands for the given parameters.
-         *
-         * @param unitFlag   The unit flag to specify what unit type the commands are for.
-         * @param opts       A {@link GameOptions} reference for checking game options
-         * @param forwardIni A flag to see if we can pass the turn to a teammate
-         *
-         * @return An array of valid commands for the given parameters
-         */
-        public static MoveCommand[] values(int unitFlag, GameOptions opts, boolean forwardIni) {
-            boolean selfDestruct = false;
-            boolean advVehicle = false;
-            boolean vtolStrafe = false;
-
-            if (opts != null) {
-                selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT);
-                advVehicle = opts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
-                vtolStrafe = opts.booleanOption(OptionsConstants.ADVCOMBAT_VTOL_STRAFING);
-            }
-
-            ArrayList<MoveCommand> flaggedCommands = new ArrayList<>();
-            for (MoveCommand command : MoveCommand.values()) {
-                // Check for movements that with disabled game options
-                if ((command == MOVE_SELF_DESTRUCT) && !selfDestruct) {
-                    continue;
-                } else if ((command == MOVE_FORWARD_INI) && !forwardIni) {
-                    continue;
-                } else if ((command == MOVE_BOOTLEGGER) && !advVehicle) {
-                    continue;
-                } else if ((command == MOVE_STRAFE) && !vtolStrafe) {
-                    continue;
-                }
-
-                // Check a unit type flag
-                if ((command.flag & unitFlag) != 0) {
-                    flaggedCommands.add(command);
-                }
-            }
-            return flaggedCommands.toArray(new MoveCommand[0]);
-        }
-    }
 
     // buttons
     private Map<MoveCommand, MegaMekButton> buttons;
@@ -565,6 +341,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     protected ArrayList<MegaMekButton> getButtonList() {
         final Entity currentlySelectedEntity = ce();
         int flag = CMD_MEK;
+        // Chain of Instance Of Tests that should be refactored using either polymorphism or something else.
         if (currentlySelectedEntity != null) {
             if (currentlySelectedEntity instanceof Infantry) {
                 flag = CMD_INF;
@@ -603,6 +380,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 flag = CMD_PROTOMEK;
             }
         }
+
         return getButtonList(flag);
     }
 
@@ -1421,12 +1199,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.updateFiringArc(currentlySelectedEntity);
             clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
 
-            // FIXME what is this
-            // Set the button's label to "Done" if the entire move is impossible.
-            MovePath possible = cmd.clone();
-            possible.clipToPossible();
-            if (possible.length() == 0) {
-                updateDonePanel();
+            if (cmd != null) {
+                // FIXME what is this
+                // Set the button's label to "Done" if the entire move is impossible.
+                MovePath possible = cmd.clone();
+                possible.clipToPossible();
+                if (possible.length() == 0) {
+                    updateDonePanel();
+                }
             }
         }
         updateButtons();
@@ -1977,12 +1757,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (shiftHeld || (gear == MovementDisplay.GEAR_TURN)) {
                 updateDonePanel();
 
-                // FIXME what is this
-                // Set the button's label to "Done" if the entire move is impossible.
-                MovePath possible = cmd.clone();
-                possible.clipToPossible();
-                if (possible.length() == 0) {
-                    updateDonePanel();
+                if (cmd != null) {
+                    // FIXME what is this
+                    // Set the button's label to "Done" if the entire move is impossible.
+                    MovePath possible = cmd.clone();
+                    possible.clipToPossible();
+                    if (possible.length() == 0) {
+                        updateDonePanel();
+                    }
                 }
             } else {
                 clientgui.getBoardView().select(boardViewEvent.getCoords());
@@ -2012,20 +1794,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       target.getTargetType(),
                       target.getId(),
                       target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
-                if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
+                if (toHit.getValue() != TargetRoll.IMPOSSIBLE &&
+                          target instanceof IAero targetAero &&
+                          currentlySelectedEntity instanceof IAero attackingEntity) {
                     // Determine how much damage the charger will take.
-                    IAero ta = (IAero) target;
-                    IAero ae = (IAero) currentlySelectedEntity;
-                    int toAttacker = RamAttackAction.getDamageTakenBy(ae,
-                          (Entity) ta,
+                    int toAttacker = RamAttackAction.getDamageTakenBy(attackingEntity,
+                          (Entity) targetAero,
                           cmd.getSecondFinalPosition(currentlySelectedEntity.getPosition()),
                           cmd.getHexesMoved(),
-                          ta.getCurrentVelocity());
-                    int toDefender = RamAttackAction.getDamageFor(ae,
-                          (Entity) ta,
+                          targetAero.getCurrentVelocity());
+                    int toDefender = RamAttackAction.getDamageFor(attackingEntity,
+                          (Entity) targetAero,
                           cmd.getSecondFinalPosition(currentlySelectedEntity.getPosition()),
                           cmd.getHexesMoved(),
-                          ta.getCurrentVelocity());
+                          targetAero.getCurrentVelocity());
 
                     // Ask the player if they want to charge.
                     if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.RamDialog.title",
@@ -2055,7 +1837,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else if (gear == MovementDisplay.GEAR_CHARGE) {
                 // check if the target is valid
                 final Targetable target = chooseTarget(boardViewEvent.getCoords());
-                if (currentlySelectedEntity != null && (target == null) || target.equals(currentlySelectedEntity)) {
+                if (currentlySelectedEntity != null && ((target == null) || target.equals(currentlySelectedEntity))) {
                     clientgui.doAlertDialog(Messages.getString(currentlySelectedEntity.isAirborneVTOLorWIGE() ?
                                                                      "MovementDisplay.CantRam" :
                                                                      "MovementDisplay.CantCharge"),
@@ -3207,7 +2989,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       null,
                       retVal,
                       null);
-                ce.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+                ce.setTargetBay(MathUtility.parseInt(bayString.substring(0, bayString.indexOf(" "))));
                 // We need to update the entity here so that the server knows
                 // about our target bay
                 clientgui.getClient().sendUpdateEntity(ce);
@@ -3276,7 +3058,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       null,
                       retVal,
                       null);
-                choice.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+                choice.setTargetBay(MathUtility.parseInt(bayString.substring(0, bayString.indexOf(" "))));
                 // We need to update the entity here so that the server knows
                 // about our target bay
                 clientgui.getClient().sendUpdateEntity(choice);

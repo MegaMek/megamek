@@ -14,6 +14,11 @@
 
 package megamek.client.ui.swing;
 
+import megamek.client.ui.swing.phaseDisplay.DeploymentDisplay;
+import megamek.client.ui.swing.phaseDisplay.FiringDisplay;
+import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
+import megamek.client.ui.swing.phaseDisplay.PhysicalDisplay;
+import megamek.client.ui.swing.phaseDisplay.TargetingPhaseDisplay;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 

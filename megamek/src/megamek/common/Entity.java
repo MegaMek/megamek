@@ -1913,7 +1913,7 @@ public abstract class Entity extends TurnOrdered
                          (mek.getOriginalMechanicalJumpBoosterMP() > 0) &&
                          (getMechanicalJumpBoosterMP(MPCalculationSetting.PERM_IMMOBILIZED) > 0)) {
             return false;
-        } else {
+        } else if (!(this instanceof Tank)) { // this is already handled in the tank specific override
             return ((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
                          // Need to make sure here that we're ignoring heat because that's not actually "permanent":
                          &&
@@ -1921,6 +1921,8 @@ public abstract class Entity extends TurnOrdered
                                 (getRunMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0) &&
                                 (getJumpMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0));
         }
+
+        return false;
     }
 
     public boolean isCharging() {

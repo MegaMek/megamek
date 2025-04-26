@@ -474,8 +474,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JSlider traceOverlayTransparencySlider;
     private JLabel traceOverlayScaleLabel;
     private JSlider traceOverlayScaleSlider;
-    private JSpinner traceOverlayOriginXSpinrer;
-    private JSpinner traceOverlayOriginYSpinrer;
+    private JSlider traceOverlayOriginXSlider;
+    private JSlider traceOverlayOriginYSlider;
     private JTextField traceOverlayImageFile;
 
     /**
@@ -1691,19 +1691,39 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         JLabel traceOverlayOriginLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayOrigin"));
 
-        SpinnerNumberModel mtraceOverlayOriginX = new SpinnerNumberModel(GUIP.getTraceOverlayOriginX(), -1000, 5000, 1);
-        traceOverlayOriginXSpinrer = new JSpinner(mtraceOverlayOriginX);
-        traceOverlayOriginXSpinrer.setMaximumSize(new Dimension(150, 40));
-        traceOverlayOriginXSpinrer.setValue(GUIP.getTraceOverlayOriginX());
-        SpinnerNumberModel mtraceOverlayOriginY = new SpinnerNumberModel(GUIP.getTraceOverlayOriginY(), -1000, 5000, 1);
-        traceOverlayOriginYSpinrer = new JSpinner(mtraceOverlayOriginY);
-        traceOverlayOriginYSpinrer.setMaximumSize(new Dimension(150, 40));
-        traceOverlayOriginYSpinrer.setValue(GUIP.getTraceOverlayOriginY());
+        traceOverlayOriginXSlider = new JSlider(-4000, 10000);
+        traceOverlayOriginXSlider.setMajorTickSpacing(1000);
+        traceOverlayOriginXSlider.setMinorTickSpacing(100);
+        traceOverlayOriginXSlider.setPaintTicks(true);
+        traceOverlayOriginXSlider.setPaintLabels(true);
+        traceOverlayOriginXSlider.setMaximumSize(new Dimension(1000, 100));
+        traceOverlayOriginXSlider.addChangeListener(this);
+        traceOverlayOriginXSlider.setToolTipText(Messages.getString("CommonSettingsDialog.TraceOverlayTransparency.tooltip"));
+        traceOverlayOriginXSlider.setValue(GUIP.getTraceOverlayOriginX());
+
+        traceOverlayOriginYSlider = new JSlider(-4000, 10000);
+        traceOverlayOriginYSlider.setMajorTickSpacing(1000);
+        traceOverlayOriginYSlider.setMinorTickSpacing(100);
+        traceOverlayOriginYSlider.setPaintTicks(true);
+        traceOverlayOriginYSlider.setPaintLabels(true);
+        traceOverlayOriginYSlider.setMaximumSize(new Dimension(1000, 100));
+        traceOverlayOriginYSlider.addChangeListener(this);
+        traceOverlayOriginYSlider.setToolTipText(Messages.getString("CommonSettingsDialog.TraceOverlayTransparency.tooltip"));
+        traceOverlayOriginYSlider.setValue(GUIP.getTraceOverlayOriginY());
+
 
         row = new ArrayList<>();
         row.add(traceOverlayOriginLabel);
-        row.add(traceOverlayOriginXSpinrer);
-        row.add(traceOverlayOriginYSpinrer);
+        comps.add(row);
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(traceOverlayOriginXSlider);
+        comps.add(row);
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(traceOverlayOriginYSlider);
         comps.add(row);
 
         JLabel traceOverlayImageFileLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayImageFile"));
@@ -2495,8 +2515,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         traceOverlayTransparencySlider.setValue(GUIP.getTraceOverlayTransparency());
         traceOverlayScaleSlider.setValue((int) GUIP.getTraceOverlayScale()*10);
-        traceOverlayOriginXSpinrer.setValue(GUIP.getTraceOverlayOriginX());
-        traceOverlayOriginYSpinrer.setValue(GUIP.getTraceOverlayOriginY());
+        traceOverlayOriginXSlider.setValue(GUIP.getTraceOverlayOriginX());
+        traceOverlayOriginYSlider.setValue(GUIP.getTraceOverlayOriginY());
         traceOverlayImageFile.setText(GUIP.getTraceOverlayImageFile());
 
         setVisible(false);
@@ -3008,8 +3028,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         GUIP.setTraceOverlayTransparency(traceOverlayTransparencySlider.getValue());
         GUIP.setTraceOverlayScale(traceOverlayScaleSlider.getValue()/10f);
-        GUIP.setTraceOverlayOriginX((Integer) traceOverlayOriginXSpinrer.getValue());
-        GUIP.setTraceOverlayOriginY((Integer) traceOverlayOriginYSpinrer.getValue());
+        GUIP.setTraceOverlayOriginX(traceOverlayOriginXSlider.getValue());
+        GUIP.setTraceOverlayOriginY(traceOverlayOriginYSlider.getValue());
         GUIP.setTraceOverlayImageFile(traceOverlayImageFile.getText());
 
         setVisible(false);
@@ -3677,6 +3697,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             GUIP.setFovDarkenAlpha(Math.max(0, Math.min(255, fovDarkenAlpha.getValue())));
         } else if (evt.getSource().equals(numStripesSlider)) {
             GUIP.setFovStripes(numStripesSlider.getValue());
+        } else if (evt.getSource().equals(traceOverlayTransparencySlider)) {
+            GUIP.setTraceOverlayTransparency(traceOverlayTransparencySlider.getValue());
+        } else if (evt.getSource().equals(traceOverlayScaleSlider)) {
+            GUIP.setTraceOverlayScale(traceOverlayScaleSlider.getValue()/10f);
+        } else if (evt.getSource().equals(traceOverlayOriginXSlider)) {
+            GUIP.setTraceOverlayOriginX(traceOverlayOriginXSlider.getValue());
+        } else if (evt.getSource().equals(traceOverlayOriginYSlider)) {
+            GUIP.setTraceOverlayOriginY(traceOverlayOriginYSlider.getValue());
         }
     }
 

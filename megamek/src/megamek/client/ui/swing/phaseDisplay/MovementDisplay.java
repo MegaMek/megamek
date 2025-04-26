@@ -1179,7 +1179,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void removeLastStep() {
+        if (cmd == null) {
+            LOGGER.warn("Cannot process removeLastStep() request, cmd is null!");
+            return;
+        }
+
         cmd.removeLastStep();
+
         final Entity currentlySelectedEntity = ce();
         if (currentlySelectedEntity == null) {
             LOGGER.warn("Cannot process removeLastStep for a null currentlySelectedEntity.");
@@ -1192,21 +1198,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 addStepToMovePath(MoveStepType.CONVERT_MODE);
             }
         } else {
-            if (cmd != null) {
-                // clear board cursors
-                clientgui.getBoardView().select(cmd.getFinalCoords());
-                clientgui.getBoardView().cursor(cmd.getFinalCoords());
-                clientgui.getBoardView().drawMovementData(currentlySelectedEntity, cmd);
-                clientgui.updateFiringArc(currentlySelectedEntity);
-                clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
+            // clear board cursors
+            clientgui.getBoardView().select(cmd.getFinalCoords());
+            clientgui.getBoardView().cursor(cmd.getFinalCoords());
+            clientgui.getBoardView().drawMovementData(currentlySelectedEntity, cmd);
+            clientgui.updateFiringArc(currentlySelectedEntity);
+            clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
 
-                // FIXME what is this
-                // Set the button's label to "Done" if the entire move is impossible.
-                MovePath possible = cmd.clone();
-                possible.clipToPossible();
-                if (possible.length() == 0) {
-                    updateDonePanel();
-                }
+            // FIXME what is this
+            // Set the button's label to "Done" if the entire move is impossible.
+            MovePath possible = cmd.clone();
+            possible.clipToPossible();
+            if (possible.length() == 0) {
+                updateDonePanel();
             }
         }
         updateButtons();
@@ -1925,7 +1929,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 } else {
                     clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantCharge"), "toHit Value Is Null");
                 }
-                
+
                 clear();
                 computeMovementEnvelope(currentlySelectedEntity);
                 return;

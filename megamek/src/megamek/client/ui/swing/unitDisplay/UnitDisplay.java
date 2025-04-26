@@ -31,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
-import megamek.client.Client;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
@@ -83,12 +82,10 @@ public class UnitDisplay extends JPanel {
     public WeaponPanel wPan;
     private SystemPanel sPan;
     private ExtraPanel ePan;
-    private ClientGUI clientgui = null;
-    private Client client = null;
+    private ClientGUI clientgui;
     private Entity currentlyDisplaying;
     private JLabel labTitle;
     private ArrayList<MekDisplayListener> eventListeners = new ArrayList<>();
-
 
     public static final String NON_TABBED_GENERAL = "General";
     public static final String NON_TABBED_PILOT = "Pilot";
@@ -122,19 +119,14 @@ public class UnitDisplay extends JPanel {
      *                  This could be null, if there is no ClientGUI, such as with
      *                  MekWars.
      */
-    public UnitDisplay(ClientGUI clientgui) {
+    public UnitDisplay(@Nullable ClientGUI clientgui) {
         this(clientgui, null);
     }
 
-    public UnitDisplay(ClientGUI clientgui, @Nullable MegaMekController controller) {
-        this(clientgui.getClient(), controller);
-        this.clientgui = clientgui;
-    }
-
-    public UnitDisplay(Client client,
+    public UnitDisplay(@Nullable ClientGUI clientgui,
             @Nullable MegaMekController controller) {
         super(new GridBagLayout());
-        this.client = client;
+        this.clientgui = clientgui;
 
         labTitle = new JLabel("Title");
 
@@ -150,8 +142,8 @@ public class UnitDisplay extends JPanel {
         displayP = new JPanel(new CardLayout());
         mPan = new SummaryPanel(this);
         pPan = new PilotPanel(this);
-        aPan = new ArmorPanel(client.getGame(), this);
-        wPan = new WeaponPanel(this, client);
+        aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null, this);
+        wPan = new WeaponPanel(this, clientgui != null ? clientgui.getClient() : null);
         sPan = new SystemPanel(this);
         ePan = new ExtraPanel(this);
 
@@ -232,11 +224,9 @@ public class UnitDisplay extends JPanel {
         c.weighty = 0.0;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
-        
-        if (getClientGUI() != null) {
-            ((GridBagLayout) getLayout()).setConstraints(butSwitchView, c);
-            add(butSwitchView);
-        }
+
+        ((GridBagLayout) getLayout()).setConstraints(butSwitchView, c);
+        add(butSwitchView);
 
         c.weightx = 1.0;
         c.anchor = GridBagConstraints.EAST;
@@ -247,8 +237,8 @@ public class UnitDisplay extends JPanel {
         butSwitchView.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (getClientGUI() != null) {
-                    UnitDisplayDialog unitDisplayDialog = getClientGUI().getUnitDisplayDialog();
+                if (clientgui != null) {
+                    UnitDisplayDialog unitDisplayDialog = clientgui.getUnitDisplayDialog();
                     if (!(GUIP.getUnitDisplayStartTabbed())) {
                         saveSplitterLoc();
                         GUIP.setUnitDisplayNontabbedPosX(unitDisplayDialog.getLocation().x);
@@ -466,19 +456,20 @@ public class UnitDisplay extends JPanel {
         }
         currentlyDisplaying = en;
         updateDisplay();
-        if (getClientGUI() != null) {
-            getClientGUI().clearFieldOfFire();
-            getClientGUI().hideFleeZone();
+        if (clientgui != null) {
+            clientgui.clearFieldOfFire();
+            clientgui.hideFleeZone();
         }
     }
 
     protected void updateDisplay() {
-        String enName = currentlyDisplaying.getShortName();
-        enName += " [" + UnitToolTip.getDamageLevelDesc(currentlyDisplaying, false) + "]";
-        labTitle.setText(enName);
-        if (getClientGUI() != null) {
-            getClientGUI().getUnitDisplayDialog().setTitle(enName);
+        if (clientgui != null) {
+            String enName = currentlyDisplaying.getShortName();
+            enName += " [" + UnitToolTip.getDamageLevelDesc(currentlyDisplaying, false) + "]";
+            clientgui.getUnitDisplayDialog().setTitle(enName);
+            labTitle.setText(enName);
         }
+
         mPan.displayMek(currentlyDisplaying);
         pPan.displayMek(currentlyDisplaying);
         aPan.displayMek(currentlyDisplaying);
@@ -569,18 +560,5 @@ public class UnitDisplay extends JPanel {
     @Nullable
     public ClientGUI getClientGUI() {
         return clientgui;
-    }
-
-    /**
-     * Returns the UnitDisplay's Client reference, which can be null.
-     *
-     * @return
-     */
-    @Nullable
-    public Client getClient() {
-        if (getClientGUI() != null) {
-            return getClientGUI().getClient();
-        }
-        return client;
     }
 }

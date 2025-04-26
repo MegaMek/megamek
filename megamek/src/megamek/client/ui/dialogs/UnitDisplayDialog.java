@@ -52,7 +52,7 @@ public class UnitDisplayDialog extends JDialog {
         }
         if (localDialogInstance == null || unitDisplay == null) {
             localDialogInstance = new UnitDisplayDialog(frame, null);
-            localUnitDisplay = new UnitDisplay(client, null);
+            localUnitDisplay = new UnitDisplay(null, null);
             localDialogInstance.add(localUnitDisplay, BorderLayout.CENTER);
             localDialogInstance.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
             if (!newInstance) {

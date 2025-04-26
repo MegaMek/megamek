@@ -137,7 +137,7 @@ public class SummaryPanel extends PicMap {
      * @param entity The Entity to display info for
      */
     public void displayMek(Entity entity) {
-        Player localPlayer = unitDisplay.getClient().getLocalPlayer();
+        Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
         String txt = "";
 
         if (entity == null) {
@@ -169,7 +169,7 @@ public class SummaryPanel extends PicMap {
                 row = UIUtil.tag("TR", "", col);
                 rows += row;
 
-                String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClient(), GUIP);
+                String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), GUIP);
                 if (!hexTip.isEmpty()) {
                     attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
                     col = UIUtil.tag("TD", attr, hexTip);

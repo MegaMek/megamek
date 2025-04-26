@@ -69,7 +69,7 @@ class PilotPanel extends PicMap {
         btnSwapRoles.addActionListener(e -> {
             if (null != entity) {
                 entity.getCrew().setSwapConsoleRoles(btnSwapRoles.isSelected());
-                unitDisplay.getClient().sendUpdateEntity(entity);
+                unitDisplay.getClientGUI().getClient().sendUpdateEntity(entity);
                 updateSwapButtonText();
             }
         });

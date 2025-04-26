@@ -418,7 +418,7 @@ public class EquipChoicePanel extends JPanel {
             gameYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
             legalLevel = SimpleTechLevel.getGameTechLevel(client.getGame());
         } else {
-            clientgui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+            gameYear = clientgui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
             legalLevel = SimpleTechLevel.getGameTechLevel(clientgui.getClient().getGame());
         }
         while (allTypes.hasMoreElements()) {

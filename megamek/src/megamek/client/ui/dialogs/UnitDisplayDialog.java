@@ -43,7 +43,7 @@ public class UnitDisplayDialog extends JDialog {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
-    public static void showEntity(final JFrame frame, final Client client, Entity entity, final boolean newInstance) {
+    public static void showEntity(final JFrame frame, Entity entity, final boolean newInstance) {
         UnitDisplayDialog localDialogInstance = null;
         UnitDisplay localUnitDisplay = null;
         if (!newInstance) {

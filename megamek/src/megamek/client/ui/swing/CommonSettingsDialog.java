@@ -1731,7 +1731,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         traceOverlayImageFile.setMaximumSize(new Dimension(250, 40));
         traceOverlayImageFile.setText(GUIP.getTraceOverlayImageFile());
         JButton traceOverlayImageFileChooser = new JButton("...");
-        traceOverlayImageFileChooser.addActionListener(e -> fileChoose(traceOverlayImageFile, getFrame(), Messages.getString("CommonSettingsDialog.TraceOverlayImageFile"), false));
+        traceOverlayImageFileChooser.addActionListener(e -> selectTraceOverlayImageFile(traceOverlayImageFile, getFrame()));
 
         row = new ArrayList<>();
         row.add(traceOverlayImageFileLabel);
@@ -1742,6 +1742,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(row);
 
         return createSettingsPanel(comps);
+    }
+
+    private static void selectTraceOverlayImageFile(JTextField textField, JFrame frame) {
+        fileChoose(textField, frame, Messages.getString("CommonSettingsDialog.TraceOverlayImageFile"), false);
+        GUIP.setTraceOverlayImageFile(textField.getText());
     }
 
     private BufferedImage boardImage;

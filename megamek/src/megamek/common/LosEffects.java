@@ -517,7 +517,7 @@ public class LosEffects {
             ai.targetIsMek = false;
         }
 
-        // Adjust units' altitudes for low-altitude map LOS caclulations
+        // Adjust units' altitudes for low-altitude map LOS calculations
         // Revisit once we have ground units on low-alt and dual-map functional
         final boolean lowAlt = game.getBoard().inAtmosphere() && !game.getBoard().onGround();
         if (attacker.isAirborne() && lowAlt) {
@@ -594,7 +594,7 @@ public class LosEffects {
             ai.minimumWaterDepth = 0;
         } else if (ai.attInWater || ai.targetInWater) {
             ai.minimumWaterDepth = 1;
-        } else if (ai.attUnderWater || ai.targetUnderWater) {
+        } else {
             ai.minimumWaterDepth = Math.min(attackerHex.terrainLevel(Terrains.WATER),
                   targetHex.terrainLevel(Terrains.WATER));
         }
@@ -643,7 +643,7 @@ public class LosEffects {
         }
 
         // Should not need to check unit types; only Aeros or acting Aeros can be up
-        // here currently.
+        // here current.
         final AttackInfo ai = new AttackInfo();
         ai.attackerIsMek = false;
         ai.targetIsMek = false;
@@ -657,7 +657,7 @@ public class LosEffects {
             ai.targetId = ((Entity) target).getId();
         }
 
-        // Adjust units' altitudes for low-altitude map LOS caclulations
+        // Adjust units' altitudes for low-altitude map LOS calculations
         // Revisit once we have ground units on low-alt and dual-map functional
         final boolean lowAlt = game.getBoard().inAtmosphere() && !game.getBoard().onGround();
         if (attacker.isAirborne() && lowAlt) {

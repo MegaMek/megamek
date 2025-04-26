@@ -1,6 +1,8 @@
 MEGAMEK VERSION HISTORY:
 ----------------
 0.50.06
++ PR #6933: 0.50.06 Deprecation Removal and Clean up. 
+
 
 0.50.05 (2025-04-25 1800 UTC)
 + Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1

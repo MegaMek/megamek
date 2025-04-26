@@ -16,6 +16,8 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.commands.ClientCommand;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.overlay.ChatterBoxOverlay;
+import megamek.client.ui.swing.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.event.*;
 import megamek.common.preference.PreferenceManager;
@@ -48,7 +50,7 @@ public class ChatterBox implements KeyListener {
     public LinkedList<String> history;
     public int historyBookmark = -1;
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private ChatterBox2 cb2;
+    private ChatterBoxOverlay cb2;
 
     private static final String CB_KEY_ADVANCED_CHATBOXSIZE = "AdvancedChatboxSize";
 
@@ -281,7 +283,7 @@ public class ChatterBox implements KeyListener {
         inputField.setText(message);
     }
 
-    public void setChatterBox2(ChatterBox2 cb2) {
+    public void setChatterBox2(ChatterBoxOverlay cb2) {
         this.cb2 = cb2;
     }
 }

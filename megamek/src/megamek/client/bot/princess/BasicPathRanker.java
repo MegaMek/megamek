@@ -55,7 +55,7 @@ public class BasicPathRanker extends PathRanker {
     // what it's doing
     private final int UNIT_DESTRUCTION_FACTOR = 1000;
 
-    protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
+    protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     protected final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
 
@@ -628,8 +628,8 @@ public class BasicPathRanker extends PathRanker {
         // Movement is good, it gives defense and extends a player power in the game.
         double movementMod = calculateMovementMod(pathCopy, game, enemies, movementModFormula);
         scores.put("enemyHotSpotCount", (double) getOwner().getEnemyHotSpots().size());
-        scores.put("herdingValue", getOwner().getBehaviorSettings().getSelfPreservationValue());
-        scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
+        scores.put("selfPreservationValue", getOwner().getBehaviorSettings().getSelfPreservationValue());
+        scores.put("selfPreservationIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
         scores.put("movementMod", movementMod);
         // Try to face the enemy.
         Coords medianEnemyPosition = getEnemiesMedianCoordinate(enemies, movingUnit);

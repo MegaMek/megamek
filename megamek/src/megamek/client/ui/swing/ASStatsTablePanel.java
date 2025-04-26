@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2022, 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.swing;
 
@@ -30,7 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -64,13 +77,14 @@ public class ASStatsTablePanel implements ActionListener {
     private final JFrame frame;
     private final Map<JButton, AlphaStrikeElementComparator> buttonMap = new HashMap<>();
     private final ASETableComparator aseTableComparator = new ASETableComparator();
+
     /**
-     * Constructs a panel with a table of AlphaStrike stats for any units that are added to it.
-     * To add units to it, call {@link #add(Collection)} or {@link #add(Collection, String)}. These
-     * calls can be stringed. The panel can be obtained with {@link #getPanel()}.
-     *
-     * The table will show buttons for calling up conversion reports. The given frame is needed as a
-     * parent to the conversion report windows. Pilot skills will be included when converting TW units.
+     * Constructs a panel with a table of AlphaStrike stats for any units that are added to it. To add units to it, call
+     * {@link #add(Collection)} or {@link #add(Collection, String)}. These calls can be stringed. The panel can be
+     * obtained with {@link #getPanel()}.
+     * <p>
+     * The table will show buttons for calling up conversion reports. The given frame is needed as a parent to the
+     * conversion report windows. Pilot skills will be included when converting TW units.
      *
      * @param frame The parent frame (important for giving a parent to conversion report dialogs)
      */
@@ -170,12 +184,12 @@ public class ASStatsTablePanel implements ActionListener {
     }
 
     /**
-     * Adds a block of units to the panel. AlphaStrikeElements are shown as they are, Entities are
-     * converted first. All other types of unit are ignored. This block of units is shown with the
-     * given name.
+     * Adds a block of units to the panel. AlphaStrikeElements are shown as they are, Entities are converted first. All
+     * other types of unit are ignored. This block of units is shown with the given name.
      *
-     * @param name The name of this block of units
+     * @param name  The name of this block of units
      * @param units a collection of units to (convert and) show
+     *
      * @return This panel to allow stringing.
      */
     public ASStatsTablePanel add(Collection<? extends ForceAssignable> units, @Nullable String name) {
@@ -185,10 +199,11 @@ public class ASStatsTablePanel implements ActionListener {
     }
 
     /**
-     * Adds a block of units to the panel. AlphaStrikeElements are shown as they are, Entities are
-     * converted first. All other types of unit are ignored. This block of units is shown without a name.
+     * Adds a block of units to the panel. AlphaStrikeElements are shown as they are, Entities are converted first. All
+     * other types of unit are ignored. This block of units is shown without a name.
      *
      * @param units a collection of units to (convert and) show
+     *
      * @return This panel to allow stringing.
      */
     public ASStatsTablePanel add(Collection<? extends ForceAssignable> units) {
@@ -198,8 +213,8 @@ public class ASStatsTablePanel implements ActionListener {
     }
 
     /**
-     * Returns the fully constructed JPanel with all units added through the add() methods to add to
-     * any other Container.
+     * Returns the fully constructed JPanel with all units added through the add() methods to add to any other
+     * Container.
      *
      * @return The swing JPanel
      */
@@ -211,8 +226,8 @@ public class ASStatsTablePanel implements ActionListener {
     /** returns the list of elements in the panel, sorted in the same way they are displayed */
     public List<AlphaStrikeElement> getSortedElements() {
         return groups.stream()
-                .flatMap(group -> group.elements.stream()
-                .sorted(aseTableComparator)).collect(Collectors.toList());
+                     .flatMap(group -> group.elements.stream().sorted(aseTableComparator))
+                     .collect(Collectors.toList());
     }
 
     /** remove and rebuild the table grid */
@@ -232,7 +247,9 @@ public class ASStatsTablePanel implements ActionListener {
     private void addGroupToPanel(EntityGroup group) {
         addGroupHeaders(group);
 
-        for (AlphaStrikeElement element : group.elements.stream().sorted(aseTableComparator).collect(Collectors.toList())) {
+        for (AlphaStrikeElement element : group.elements.stream()
+                                                .sorted(aseTableComparator)
+                                                .collect(Collectors.toList())) {
             boolean oddRow = (rows++ % 2) == 1;
             addGridElementLeftAlign(element.getName(), oddRow);
             addGridElement(element.getASUnitType() + "", oddRow);
@@ -265,15 +282,18 @@ public class ASStatsTablePanel implements ActionListener {
     }
 
     private void addConversionInfo(boolean coloredBG, FlexibleCalculationReport conversionReport,
-                                   AlphaStrikeElement element, JFrame frame) {
+          AlphaStrikeElement element, JFrame frame) {
         var conversionPanel = new UIUtil.FixedYPanel();
         if (coloredBG) {
             conversionPanel.setBackground(UIUtil.alternateTableBGColor());
         }
         JButton button = new JButton("?");
         button.setEnabled(conversionReport != null);
-        button.setFont(UIUtil.getScaledFont());
-        button.addActionListener(e -> new ASConversionInfoDialog(frame, conversionReport, element, true).setVisible(true));
+        button.setFont(UIUtil.getDefaultFont());
+        button.addActionListener(e -> new ASConversionInfoDialog(frame,
+              conversionReport,
+              element,
+              true).setVisible(true));
         conversionPanel.add(button);
         panel.add(conversionPanel);
     }
@@ -293,7 +313,7 @@ public class ASStatsTablePanel implements ActionListener {
         }
         var textLabel = new JLabel(text);
         textLabel.setForeground(color);
-        textLabel.setFont(UIUtil.getScaledFont());
+        textLabel.setFont(UIUtil.getDefaultFont());
         elementPanel.add(textLabel);
         panel.add(elementPanel);
     }
@@ -305,28 +325,37 @@ public class ASStatsTablePanel implements ActionListener {
     private void addHeader(String text) {
         var textLabel = new JLabel(text, SwingConstants.CENTER);
         textLabel.setForeground(HEADER_COLOR);
-        textLabel.setFont(UIUtil.getScaledFont());
+        textLabel.setFont(UIUtil.getDefaultFont());
         panel.add(textLabel);
     }
 
     /** add a header button that connects to the <code>sort</code> of an AlphaStrikeElementComparator */
-    private JButton addSortableHeader( AlphaStrikeElementComparator comparator ) {
+    private JButton addSortableHeader(AlphaStrikeElementComparator comparator) {
         var button = new JButton(comparator.getLabel());
         button.addActionListener(this);
-        button.setForeground( comparator.sort == 0 ? HEADER_COLOR : SORTED_HEADER_COLOR);
-        button.setFont(UIUtil.getScaledFont());
-        button.setToolTipText("Click to sort by "+comparator.name);
+        button.setForeground(comparator.sort == 0 ? HEADER_COLOR : SORTED_HEADER_COLOR);
+        button.setFont(UIUtil.getDefaultFont());
+        button.setToolTipText("Click to sort by " + comparator.name);
         panel.add(button);
         buttonMap.put(button, comparator);
         return button;
     }
 
     private String getArcedSpecials(AlphaStrikeElement element) {
-        return "<HTML>" + element.getSpecialsDisplayString(element) +
-                "<BR>FRONT(" + element.getFrontArc().getSpecialsExportString(", ", element) + ")" +
-                "<BR>LEFT(" + element.getLeftArc().getSpecialsExportString(", ", element) + ")" +
-                "<BR>RIGHT(" + element.getRightArc().getSpecialsExportString(", ", element) + ")" +
-                "<BR>REAR(" + element.getRearArc().getSpecialsExportString(", ", element) + ")";
+        return "<HTML>" +
+                     element.getSpecialsDisplayString(element) +
+                     "<BR>FRONT(" +
+                     element.getFrontArc().getSpecialsExportString(", ", element) +
+                     ")" +
+                     "<BR>LEFT(" +
+                     element.getLeftArc().getSpecialsExportString(", ", element) +
+                     ")" +
+                     "<BR>RIGHT(" +
+                     element.getRightArc().getSpecialsExportString(", ", element) +
+                     ")" +
+                     "<BR>REAR(" +
+                     element.getRearArc().getSpecialsExportString(", ", element) +
+                     ")";
     }
 
     private void addVerticalSpace() {
@@ -406,7 +435,7 @@ public class ASStatsTablePanel implements ActionListener {
         }
     }
 
-    /** Extend this class to create a comparator triggered by a button*/
+    /** Extend this class to create a comparator triggered by a button */
     private abstract class AlphaStrikeElementComparator implements Comparator<AlphaStrikeElement> {
         // 0 is do not sort, 1 is sort, -q is reverse sort
         private int sort = 0;
@@ -419,19 +448,22 @@ public class ASStatsTablePanel implements ActionListener {
         private String getLabel() {
             return name + (sort < 0 ? '-' : sort > 0 ? '+' : "");
         }
+
         private void toggleSort() {
             sort = sort < 0 ? 0 : sort > 0 ? -1 : 1;
         }
     }
 
-    /** Orderable, optional sorting criteria for AlphaStrikeElements. Execute sorts in order of
-     * <code>comparatorList</code>*/
+    /**
+     * Orderable, optional sorting criteria for AlphaStrikeElements. Execute sorts in order of
+     * <code>comparatorList</code>
+     */
     private class ASETableComparator implements Comparator<AlphaStrikeElement> {
         //sort criteria: 1 is sort, 0 is do not sort, -1 is reverse sort
         private final List<AlphaStrikeElementComparator> comparatorList = new ArrayList<>();
 
         @Override
-        public int compare(AlphaStrikeElement o1,AlphaStrikeElement o2) {
+        public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
             for (var comparator : comparatorList) {
                 if (comparator.sort != 0) {
                     int result = comparator.compare(o1, o2);

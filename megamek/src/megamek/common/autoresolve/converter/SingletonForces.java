@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * BalancedConsolidateForces is a helper class that redistribute entities and forces
- * in a way to consolidate then into valid forces to build Formations out of them.
+ * Each unit is a formation
  * @author Luana Coppio
  */
 public class SingletonForces extends ForceConsolidation {

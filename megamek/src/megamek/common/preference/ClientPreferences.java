@@ -49,7 +49,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String GAMELOG_FILENAME = "GameLogFilename";
     public static final String AUTO_RESOLVE_GAMELOG_FILENAME = "AutoResolveGameLogFilename";
     public static final String STAMP_FILENAMES = "StampFilenames";
-    public static final String DATA_LOGGING = "DataLogging";
+    public static final String DATA_LOGGING = "GameDatasetLogging";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
     public static final String UNIT_START_CHAR = "UnitStartChar";
@@ -120,7 +120,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(USER_DIR, "");
         store.setDefault(MML_PATH, "");
         store.setDefault(NAG_ASK_FOR_VICTORY_LIST, true);
-        store.setDefault(DATA_LOGGING, false);
+        store.setDefault(DATA_LOGGING, true);
         store.setDefault(SHOW_AUTO_RESOLVE_PANEL, true);
         store.setDefault(STAMP_FILENAMES, false);
 

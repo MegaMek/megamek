@@ -584,8 +584,8 @@ public class SmallCraft extends Aero {
 
     // weapon arcs
     @Override
-    public int getWeaponArc(int wn) {
-        final Mounted<?> mounted = getEquipment(wn);
+    public int getWeaponArc(int weaponNumber) {
+        final Mounted<?> mounted = getEquipment(weaponNumber);
 
         int arc = Compute.ARC_NOSE;
         if (!isSpheroid()) {

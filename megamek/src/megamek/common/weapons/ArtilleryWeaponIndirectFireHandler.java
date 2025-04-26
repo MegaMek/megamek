@@ -103,9 +103,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return true;
         }
 
+        boolean targetIsEntity = target != null && target.getTargetType() == Targetable.TYPE_ENTITY;
+
         // Offboard shots are targeted at an entity rather than a hex. If null, the
-        // target has disengaged.
-        if (target == null) {
+        // target has disengaged. Same if the target is no longer in game. Dead?
+        if ((target == null || (targetIsEntity && aaa.getTarget(game) == null))) {
             Report r = new Report(3158);
             r.indent();
             r.subject = subjectId;
@@ -126,7 +128,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
 
         final int playerId = aaa.getPlayerId();
-        boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         boolean isFlak = targetIsEntity && Compute.isFlakAttack(ae, (Entity) target);
         boolean asfFlak = isFlak && target.isAirborne();
         Entity bestSpotter = null;
@@ -485,16 +486,19 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
 
-            String artyMsg = "Artillery hit here on round " + game.getRoundCount()
-                    + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
-                    + " (this hex is now an auto-hit)";
-            game.getBoard().addSpecialHexDisplay(
-                    targetPos,
-                    new SpecialHexDisplay(Type.ARTILLERY_HIT,
-                            game.getRoundCount(), game.getPlayer(aaa
-                                    .getPlayerId()),
-                            artyMsg));
-
+            if (!isFlak) {
+                String artyMsg = "Artillery hit here on round " +
+                                       game.getRoundCount() +
+                                       ", fired by " +
+                                       game.getPlayer(aaa.getPlayerId()).getName() +
+                                       " (this hex is now an auto-hit)";
+                game.getBoard()
+                      .addSpecialHexDisplay(targetPos,
+                            new SpecialHexDisplay(Type.ARTILLERY_HIT,
+                                  game.getRoundCount(),
+                                  game.getPlayer(aaa.getPlayerId()),
+                                  artyMsg));
+            }
         } else {
             // direct fire artillery only scatters by one d6
             // we do this here to avoid duplicating handle()

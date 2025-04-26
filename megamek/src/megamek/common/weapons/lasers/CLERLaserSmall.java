@@ -35,7 +35,7 @@ public class CLERLaserSmall extends LaserWeapon {
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 4;
-        waterExtremeRange = 4;
+        waterExtremeRange = 6;
         tonnage = 0.5;
         criticals = 1;
         flags = flags.or(F_NO_FIRES);
@@ -54,7 +54,7 @@ public class CLERLaserSmall extends LaserWeapon {
                 .setPrototypeFactions(F_CJF)
                 .setProductionFactions(F_CJF);
     }
-    
+
     @Override
     public boolean isAlphaStrikePointDefense() {
         return true;

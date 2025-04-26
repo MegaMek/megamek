@@ -1,0 +1,78 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-14
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Artillery Platoon (FWLM)
+</Name>
+
+<Model>
+(Motorized Arrow IV 3044+)
+</Model>
+
+<year>
+3044
+</year>
+
+<originalBuildYear>
+3044
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Troopers Equipment>
+Free Worlds League Infantry Kit (3035+)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISArrowIV
+ISArrowIVAmmo
+</Field Guns Equipment>
+
+<capabilities>
+The low ammunition capacity of the towed Arrow IV launcher makes it rare outside of providing fire support to elite assault formations via precision TAG-guided missiles. The motorized version is built light enough to be moved by common VTOLs enabling them to keep pace with air mobile forces.
+</capabilities>
+
+<overview>
+In response to the formation of the Federated Commonwealth the Free World League introduced it's own advanced infantry armor kit.  It is widely considered the most effective commonly available kit in the Inner Sphere and is in high demand among FWL forces.
+</overview>
+
+<notes>
+Intro date based on re-introduction date of Arrow IV
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+1
+</secondn>
+
+<Primary>
+Submachine Gun
+</Primary>
+
+<Secondary>
+InfantryAssaultRifle
+</Secondary>
+
+<encumberingarmor>
+true
+</encumberingarmor>
+

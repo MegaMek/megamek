@@ -12,13 +12,13 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.cost.WarShipCostCalculator;
-import megamek.common.options.OptionsConstants;
+import static megamek.common.Compute.*;
 
 import java.io.Serial;
 
-import static megamek.common.Compute.*;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.cost.WarShipCostCalculator;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author Jay Lawson
@@ -101,8 +101,8 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public int getWeaponArc(int wn) {
-        final Mounted<?> mounted = getEquipment(wn);
+    public int getWeaponArc(int weaponNumber) {
+        final Mounted<?> mounted = getEquipment(weaponNumber);
         int arc = switch (mounted.getLocation()) {
             case LOC_NOSE -> mounted.isInWaypointLaunchMode() ? ARC_NOSE_WPL : ARC_NOSE;
             case LOC_FRS -> mounted.isInWaypointLaunchMode() ? ARC_RIGHTSIDE_SPHERE_WPL : ARC_RIGHTSIDE_SPHERE;

@@ -1,6 +1,8 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.05-SNAPSHOT
+0.50.06
+
+0.50.05 (2025-04-25 1800 UTC)
 + Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1
 + PR #6752: Mek jump boosters and jump jets
 + PR #6758: Removed Deprecated methods from MMLogger and updated impacted calls
@@ -34,6 +36,30 @@ MEGAMEK VERSION HISTORY:
 + PR #6856: Updated Logging, Clone Handling, and Added toString Methods
 + PR #6840: fix: changed Internationalization to i18n
 + Fix #6860: Fixed Princess Not Acting During Their Rounds
++ Fix #6845: moved the acar hide to a better spot
++ PR #6865: data logging turned on by default
++ PR #6859: Fix MML #1818: Correct "armor_tech" to "armor_tech_level" when applicable
++ PR #6869: Added @Nullable to getEngine
++ PR #6877: Added Missing Camo for MekHQ New Player Quickstart
++ PR #6834: Slightly better serializer for unit actions and state, added attack action too
++ PR #6873: Data updates - IS faction Medium Mek review 2900-3049
++ Fix #6547: Fixed Extended Range Distances
++ Fix #6633: fixed the file entity conversion for ACAR by adding move by copy
++ Fix #6880: correct issue with show possible moves and show coords
++ PR #6891: Fix version comparisons now that isExtra is never null
++ PR #6898: Reset the dataset game action logger opt-out value so dedicated servers upgrading from 0.50.04 can log game actions with no-setup needed.
++ Fix #6904: Flak attacks must target entities
++ PR #6906: fix: properly handles exception for weapon data serialization
++ PR #6903: Require engine rating of at least 10
++ PR #6902: Correct MRM-4 OS BV
++ PR #6892: Allow laser insulators to attach to chem lasers
++ PR #6890: corrected destroyed heatsinks count
++ PR #6893: Properly calculate armor crit slot count for superheavy meks
++ PR #6907: fix: removed code duplication
++ PR #6908: Homing Artillery should work direct fire when targeting a hex
++ PR #6909: Fix for ASF Flak shots missing due to erroneous elevation check (ASF Flak uses Altitude)
++ PR #6910: Fix Counter-Battery Fire Class Cast Exception
++ Fix #6918: Fix Splash damage hitting other offboard units
 
 0.50.04 (2025-03-22 1600 UTC)
 + PR #6494: Cap splashscreen button width
@@ -159,6 +185,12 @@ MEGAMEK VERSION HISTORY:
 + PR #6729: Removed deprecated logger method.
 + PR #6745: Remove reference to frame, which was extraneous, but keep pack(), which cleans up dialog display
 + PR #6744: Cache results from text normalization
++ Fix #6857: Fixed Port Validation (Sentry)
++ Fix MekHQ#6619: Move RestoreUnitAction::copyC3Networks from MekHQ to MegaMek's C3Utils
++ Fix #6867: Excluded Infantry Attack From Edit Unit Damage Dialog
++ PR #6885: fix: wrong access for weapon arc
++ PR #6886: Change getWeaponArc signature and add JavaDocs 
++ Fix #6899: fix can not load save in same version 
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 
@@ -515,6 +547,7 @@ MEGAMEK VERSION HISTORY:
 + FIX #5930: Fix selected unit label and fov lagging behind
 + PR #5939: Edited Display Name for Transported Personnel Edge Use Option
 + PR #5959: MM side of fix for MHQ 4755: NPE when opfor has no faction code
++ PR #6913: Fix C-Bill Sorting
 
 0.49.20 (2024-06-28 2100 UTC) (THIS IS THE LAST VERSION TO SUPPORT JAVA 11)
 + PR #5281, #5327, #5308, #5336, #5318, #5383, #5369, #5384, #5455, #5505, #5541: Code internals: preparatory work for supporting game types such as SBF, code cleanup for string drawing, superclass change for BoardView,

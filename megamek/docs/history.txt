@@ -4,6 +4,8 @@ MEGAMEK VERSION HISTORY:
 + PR #6933: 0.50.06 Deprecation Removal and Clean up. 
 + PR #6901: move sprite, spriteHandler, overlay, toolTip, phaseDisplay and phaseDiplay.dialogs classes into packages
 + PR #6864: Added Heroic and Legendary Skill Levels
++ Fix #6915: Fixed Status of Uncrewed Vehicles
++ Fix: #6931: Fixes duplicated score key for score logging on basic path ranker
 
 
 0.50.05 (2025-04-25 1800 UTC)

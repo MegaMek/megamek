@@ -1,0 +1,84 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-14
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Foot Platoon (FWLM)
+</Name>
+
+<Model>
+(Laser XCT 2880+)
+</Model>
+
+<year>
+2880
+</year>
+
+<originalBuildYear>
+2880
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Troopers Equipment>
+Environment Suit, Hostile
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+Platoons specifically trained to operate in hostile environments are rare and typically operate as pure light infantry with no dedicated heavy support or weapons platoons. To compensate for this they are more heavily armed than standard infantry platoons.  The primary weapon of FWL XCT commands is the Intek laser rifle, commonly found throughout FWL space.
+</capabilities>
+
+<overview>
+XCT infantry platoons are trained and equipped to face combat in any environmental comdition - hot, cold, toxic atmosphere, no atmosphere, it doesn't matter. The additional costs as well as the preference for settling more habitable areas makes them a rare sight outside of places of significant strategic importance.
+</overview>
+
+<notes>
+The Intek Laser Rifle is the standard laser long arm of the FWLM. Intro date based on production date of Intek Laser Rifle.
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+1
+</secondn>
+
+<Primary>
+Laser Rifle (Intek)
+</Primary>
+
+<Secondary>
+Support Laser (Semi-Portable)
+</Secondary>
+
+<encumberingarmor>
+true
+</encumberingarmor>
+
+<spacesuit>
+true
+</spacesuit>
+
+<specialization>
+2048
+</specialization>
+

@@ -1,0 +1,68 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-14
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Gun Platoon (FWLM)
+</Name>
+
+<Model>
+(Tracked Light Gauss 3056+)
+</Model>
+
+<year>
+3056
+</year>
+
+<originalBuildYear>
+3056
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Free Worlds League Infantry Kit (3035+)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISLightGaussRifle
+IS Light Gauss Ammo
+ISLightGaussRifle
+IS Light Gauss Ammo
+</Field Guns Equipment>
+
+<capabilities>
+Light Gauss Rifles provide exceptional ranged firepower for infantry formations. More substantial ammunition capacity and lower weight compared to regular Gauss models makes them more popular, especially in the Free Worlds League where the weapon originated.
+</capabilities>
+
+<overview>
+In response to the formation of the Federated Commonwealth the Free World League introduced it's own advanced infantry armor kit.  It is widely considered the most effective commonly available kit in the Inner Sphere and is in high demand among FWL forces.
+</overview>
+
+<notes>
+Intro date based FWL production date of Light Gauss Rifle
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+

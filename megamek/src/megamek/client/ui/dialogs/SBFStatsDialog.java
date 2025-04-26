@@ -1,22 +1,54 @@
 /*
- * Copyright (c) 2021-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs;
+
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Vector;
+import java.util.stream.Collectors;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
@@ -34,24 +66,9 @@ import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.strategicBattleSystems.SBFRecordSheetBook;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Vector;
-import java.util.stream.Collectors;
-
 /**
- * This non-modal dialog shows stats of one or more SBF Formations in the form of a table.
- * It also allows export of the table data (optimized for import into Excel).
+ * This non-modal dialog shows stats of one or more SBF Formations in the form of a table. It also allows export of the
+ * table data (optimized for import into Excel).
  */
 public class SBFStatsDialog extends AbstractDialog {
 
@@ -73,15 +90,14 @@ public class SBFStatsDialog extends AbstractDialog {
     private SBFStatsTablePanel statsPanel;
 
     /**
-     * Creates a non-modal dialog that shows SBF Formation stats for the given forces. In
-     * the collection of Forces, each entry should be an company-sized force to convert to
-     * Strategic Battle Force. In other words, for a single formation, the force Collection
-     * should only contain a single force. That force might, for example, have three sub-forces
-     * with 4 units each.
+     * Creates a non-modal dialog that shows SBF Formation stats for the given forces. In the collection of Forces, each
+     * entry should be an company-sized force to convert to Strategic Battle Force. In other words, for a single
+     * formation, the force Collection should only contain a single force. That force might, for example, have three
+     * sub-forces with 4 units each.
      *
-     * @param frame The parent frame for this dialog (required as parent to conversion dialogs)
+     * @param frame     The parent frame for this dialog (required as parent to conversion dialogs)
      * @param forceList The force or forces to be converted
-     * @param gm The game object (necessary to retrieve the entities from the forces)
+     * @param gm        The game object (necessary to retrieve the entities from the forces)
      */
     public SBFStatsDialog(JFrame frame, Collection<Force> forceList, Game gm) {
         super(frame, false, "SBFStatsDialog", "SBFStatsDialog.title");
@@ -106,8 +122,8 @@ public class SBFStatsDialog extends AbstractDialog {
         valueFontChooser.addItem("");
         headerFontChooser.setSelectedItem(GUIPreferences.getInstance().getSbfSheetHeaderFont());
         valueFontChooser.setSelectedItem(GUIPreferences.getInstance().getSbfSheetValueFont());
-        headerFontChooser.setFont(UIUtil.getScaledFont());
-        valueFontChooser.setFont(UIUtil.getScaledFont());
+        headerFontChooser.setFont(UIUtil.getDefaultFont());
+        valueFontChooser.setFont(UIUtil.getDefaultFont());
 
         var printPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         printPanel.add(Box.createHorizontalStrut(25));
@@ -120,15 +136,15 @@ public class SBFStatsDialog extends AbstractDialog {
         printPanel.add(valueFontChooser);
 
         elementsToggle.addActionListener(e -> setupTable());
-        elementsToggle.setFont(UIUtil.getScaledFont());
+        elementsToggle.setFont(UIUtil.getDefaultFont());
         clipBoardButton.addActionListener(e -> copyToClipboard());
-        clipBoardButton.setFont(UIUtil.getScaledFont());
+        clipBoardButton.setFont(UIUtil.getDefaultFont());
         saveButton.addActionListener(e -> save());
-        saveButton.setFont(UIUtil.getScaledFont());
+        saveButton.setFont(UIUtil.getDefaultFont());
         printButton.addActionListener(e -> printRecordSheets());
-        printButton.setFont(UIUtil.getScaledFont());
-        headerFontLabel.setFont(UIUtil.getScaledFont());
-        valueFontLabel.setFont(UIUtil.getScaledFont());
+        printButton.setFont(UIUtil.getDefaultFont());
+        headerFontLabel.setFont(UIUtil.getDefaultFont());
+        valueFontLabel.setFont(UIUtil.getDefaultFont());
 
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         centerPanel.add(Box.createVerticalStrut(15));
@@ -143,9 +159,9 @@ public class SBFStatsDialog extends AbstractDialog {
 
     private void setupTable() {
         formations = forceList.stream()
-                .map(f -> new SBFFormationConverter(f, game).convert())
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                           .map(f -> new SBFFormationConverter(f, game).convert())
+                           .filter(Objects::nonNull)
+                           .collect(Collectors.toList());
         statsPanel = new SBFStatsTablePanel(getFrame(), formations, elementsToggle.isSelected());
         scrollPane.setViewportView(statsPanel.getPanel());
     }
@@ -204,8 +220,7 @@ public class SBFStatsDialog extends AbstractDialog {
         try {
             new MMUWriter().writeMMUFile(unitFile, formations);
         } catch (IOException | IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(getParent(), "The MMU file could not be written. "
-                    + e.getMessage());
+            JOptionPane.showMessageDialog(getParent(), "The MMU file could not be written. " + e.getMessage());
         }
     }
 

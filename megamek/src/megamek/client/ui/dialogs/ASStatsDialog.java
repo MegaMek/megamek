@@ -1,22 +1,57 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs;
+
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
@@ -31,21 +66,9 @@ import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.jacksonadapters.MMUWriter;
 
-import java.util.List;
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.stream.Collectors;
-
 /**
- * This non-modal dialog shows stats of one or more AlphaStrike elements in the form of a table.
- * It also allows export of the table data (optimized for import into Excel).
+ * This non-modal dialog shows stats of one or more AlphaStrike elements in the form of a table. It also allows export
+ * of the table data (optimized for import into Excel).
  */
 public class ASStatsDialog extends AbstractDialog {
 
@@ -61,11 +84,10 @@ public class ASStatsDialog extends AbstractDialog {
     private static final String INTERNAL_DELIMITER = ",";
 
     /**
-     * Creates a non-modal dialog that shows AlphaStrike stats for the given entities. The
-     * collection may include entities that cannot be converted to AlphaStrike; those will
-     * be filtered out.
+     * Creates a non-modal dialog that shows AlphaStrike stats for the given entities. The collection may include
+     * entities that cannot be converted to AlphaStrike; those will be filtered out.
      *
-     * @param frame The parent frame for this dialog
+     * @param frame    The parent frame for this dialog
      * @param entities The entities to convert and show.
      */
     public ASStatsDialog(JFrame frame, Collection<Entity> entities) {
@@ -85,7 +107,7 @@ public class ASStatsDialog extends AbstractDialog {
         optionsPanel.add(printButton);
         optionsPanel.add(saveButton);
         saveButton.addActionListener(e -> save());
-        saveButton.setFont(UIUtil.getScaledFont());
+        saveButton.setFont(UIUtil.getDefaultFont());
         clipBoardButton.addActionListener(e -> copyToClipboard());
         copyStatsButton.addActionListener(e -> copyStats());
         printButton.addActionListener(ev -> printCards());
@@ -141,9 +163,10 @@ public class ASStatsDialog extends AbstractDialog {
         result.append("PV").append(COLUMN_SEPARATOR);
         result.append("Specials").append(COLUMN_SEPARATOR);
         result.append("\n");
-        entities.stream().filter(ASConverter::canConvert)
-                .map(e -> ASConverter.convert(e, true))
-                .forEach(e -> result.append(dataLine(e)));
+        entities.stream()
+              .filter(ASConverter::canConvert)
+              .map(e -> ASConverter.convert(e, true))
+              .forEach(e -> result.append(dataLine(e)));
         return result.toString();
     }
 
@@ -157,7 +180,10 @@ public class ASStatsDialog extends AbstractDialog {
         dataLine.append(element.isAerospace() ? "" : element.getTMM()).append(COLUMN_SEPARATOR);
         dataLine.append(element.getMovementAsString()).append(COLUMN_SEPARATOR);
         dataLine.append(element.getRole()).append(COLUMN_SEPARATOR);
-        dataLine.append("=\"").append(element.usesArcs() ? "" : " " + element.getStandardDamage()).append("\"").append(COLUMN_SEPARATOR);
+        dataLine.append("=\"")
+              .append(element.usesArcs() ? "" : " " + element.getStandardDamage())
+              .append("\"")
+              .append(COLUMN_SEPARATOR);
         dataLine.append(element.usesOV() ? element.getOV() : "").append(COLUMN_SEPARATOR);
         dataLine.append(element.getFullArmor()).append(COLUMN_SEPARATOR);
         dataLine.append(element.getFullStructure()).append(COLUMN_SEPARATOR);
@@ -170,9 +196,10 @@ public class ASStatsDialog extends AbstractDialog {
     }
 
     private void save() {
-        List<AlphaStrikeElement> elements = entities.stream().filter(ASConverter::canConvert)
-                .map(e -> ASConverter.convert(e, true))
-                .collect(Collectors.toList());
+        List<AlphaStrikeElement> elements = entities.stream()
+                                                  .filter(ASConverter::canConvert)
+                                                  .map(e -> ASConverter.convert(e, true))
+                                                  .collect(Collectors.toList());
         if (elements.isEmpty()) {
             return;
         }
@@ -190,8 +217,7 @@ public class ASStatsDialog extends AbstractDialog {
         try {
             new MMUWriter().writeMMUFileFullStats(unitFile, elements);
         } catch (IOException | IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(getParent(), "The MMU file could not be written. "
-                    + e.getMessage());
+            JOptionPane.showMessageDialog(getParent(), "The MMU file could not be written. " + e.getMessage());
         }
     }
 

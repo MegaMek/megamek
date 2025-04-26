@@ -1,22 +1,50 @@
 /*
- * Copyright (c) 2021-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.swing;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.util.Collection;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SpringLayout;
 
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
@@ -26,29 +54,25 @@ import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Collection;
-
 /**
- * A panel with a table of Strategic Battle Force stats for any SBF Formations that are added to it.
- * The table will show buttons for calling up conversion reports.
+ * A panel with a table of Strategic Battle Force stats for any SBF Formations that are added to it. The table will show
+ * buttons for calling up conversion reports.
  */
 public class SBFStatsTablePanel {
 
     public static final int COLUMNS = 13;
-    
+
     private final JFrame parent;
     private final boolean showElements;
     private final Collection<SBFFormation> formations;
     private final Box contentPane = Box.createVerticalBox();
 
     /**
-     * Constructs the panel for the given formations. The given frame is needed as a parent to the conversion
-     * report windows.
+     * Constructs the panel for the given formations. The given frame is needed as a parent to the conversion report
+     * windows.
      *
-     * @param formations The SBF formations to show
-     * @param parent The parent frame (important for giving a parent to conversion report dialogs)
+     * @param formations   The SBF formations to show
+     * @param parent       The parent frame (important for giving a parent to conversion report dialogs)
      * @param showElements When true, the elements in the formations are also listed
      */
     public SBFStatsTablePanel(JFrame parent, Collection<SBFFormation> formations, boolean showElements) {
@@ -58,15 +82,16 @@ public class SBFStatsTablePanel {
         updatePanel();
     }
 
-    /** @return The contructed stats table panel. */
+    /** @return The contracted stats table panel. */
     public JComponent getPanel() {
         return contentPane;
     }
 
     private void addBetaInfo() {
-        var betaLabel = new JLabel(UIUtil.WARNING_SIGN + " Please note: SBF conversion is currently in development " +
-                "and results may change in future releases.");
-        betaLabel.setFont(UIUtil.getScaledFont());
+        var betaLabel = new JLabel(UIUtil.WARNING_SIGN +
+                                         " Please note: SBF conversion is currently in development " +
+                                         "and results may change in future releases.");
+        betaLabel.setFont(UIUtil.getDefaultFont());
         betaLabel.setForeground(UIUtil.uiYellow());
         betaLabel.setAlignmentX(0.5f);
         contentPane.add(Box.createVerticalStrut(30));
@@ -94,13 +119,18 @@ public class SBFStatsTablePanel {
         addGridElement(summaryPanel, formation.getSize() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getMovement() + formation.getMovementCode() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getJumpMove() + "", UIUtil.uiDarkBlue());
-        addGridElement(summaryPanel, formation.getTrspMovement() + formation.getTrspMovementCode() + "", UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel,
+              formation.getTrspMovement() + formation.getTrspMovementCode() + "",
+              UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getTmm() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getTactics() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getMorale() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getSkill() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getPointValue() + "", UIUtil.uiDarkBlue());
-        addGridElement(summaryPanel, formation.getSpecialsDisplayString(", ", formation) + "", UIUtil.uiDarkBlue(), FlowLayout.LEFT);
+        addGridElement(summaryPanel,
+              formation.getSpecialsDisplayString(", ", formation) + "",
+              UIUtil.uiDarkBlue(),
+              FlowLayout.LEFT);
         addConversionInfo(summaryPanel, (FlexibleCalculationReport) formation.getConversionReport(), parent);
 
         addUnitHeaders(summaryPanel);
@@ -135,11 +165,10 @@ public class SBFStatsTablePanel {
     }
 
 
-    private void addConversionInfo(JComponent targetPanel, FlexibleCalculationReport conversionReport,
-                                   JFrame frame) {
+    private void addConversionInfo(JComponent targetPanel, FlexibleCalculationReport conversionReport, JFrame frame) {
         var panel = new UIUtil.FixedYPanel();
         JButton button = new JButton("?");
-        button.setFont(UIUtil.getScaledFont());
+        button.setFont(UIUtil.getDefaultFont());
         button.setEnabled(conversionReport != null);
         button.addActionListener(e -> new ASConversionInfoDialog(frame, conversionReport).setVisible(true));
         panel.add(button);
@@ -154,14 +183,14 @@ public class SBFStatsTablePanel {
         writeGridElement(targetPanel, text, bgColor, alignment, null);
     }
 
-    private void writeGridElement(JComponent targetPanel, String text, Color bgColor,
-                                  int alignment, @Nullable Color textColor) {
+    private void writeGridElement(JComponent targetPanel, String text, Color bgColor, int alignment,
+          @Nullable Color textColor) {
         var panel = new UIUtil.FixedYPanel(new FlowLayout(alignment));
         panel.setBackground(bgColor);
         panel.setForeground(textColor);
         var textLabel = new JLabel(text);
         textLabel.setForeground(textColor);
-        textLabel.setFont(UIUtil.getScaledFont());
+        textLabel.setFont(UIUtil.getDefaultFont());
         panel.add(textLabel);
         targetPanel.add(panel);
     }
@@ -184,7 +213,7 @@ public class SBFStatsTablePanel {
         var textLabel = new JLabel(text);
         textLabel.setAlignmentX(alignment);
         textLabel.setForeground(color);
-        textLabel.setFont(UIUtil.getScaledFont());
+        textLabel.setFont(UIUtil.getDefaultFont());
         namePanel.add(textLabel);
         namePanel.add(Box.createVerticalStrut(5));
         namePanel.add(new JSeparator());

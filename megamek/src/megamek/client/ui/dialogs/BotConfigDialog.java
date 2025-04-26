@@ -1,21 +1,35 @@
 /*
  * Copyright (c) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs;
 
@@ -45,7 +59,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -86,8 +99,8 @@ import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
 
 /** A dialog box to configure (Princess) bot properties. */
-public class BotConfigDialog extends AbstractButtonDialog implements ActionListener,
-        ListSelectionListener, ChangeListener {
+public class BotConfigDialog extends AbstractButtonDialog
+      implements ActionListener, ListSelectionListener, ChangeListener {
     private final static MMLogger logger = MMLogger.create(BotConfigDialog.class);
 
     private static final String OK_ACTION = "Ok_Action";
@@ -104,14 +117,13 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     private DefaultListModel<Object> targetsListModel = new DefaultListModel<>();
     private TipList<Object> targetsList = new TipList<>(targetsListModel);
 
-    private MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(
-            Messages.getString("BotConfigDialog.forcedWithdrawalCheck"));
+    private MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString(
+          "BotConfigDialog.forcedWithdrawalCheck"));
 
-    private MMToggleButton iAmAPirateCheck = new TipMMToggleButton(
-        Messages.getString("BotConfigDialog.iAmAPirateCheck"));
+    private MMToggleButton iAmAPirateCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.iAmAPirateCheck"));
 
-    private MMToggleButton experimentalCheck = new TipMMToggleButton(
-        Messages.getString("BotConfigDialog.experimentalCheck"));
+    private MMToggleButton experimentalCheck = new TipMMToggleButton(Messages.getString(
+          "BotConfigDialog.experimentalCheck"));
 
 
     private JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
@@ -136,8 +148,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     private JPanel presetsPanel;
     private JLabel chooseLabel = new JLabel(Messages.getString("BotConfigDialog.behaviorNameLabel"));
     /**
-     * A copy of the current presets. Modifications will only be saved when
-     * accepted.
+     * A copy of the current presets. Modifications will only be saved when accepted.
      */
     private List<String> presets;
     private PresetsModel presetsModel = new PresetsModel();
@@ -147,21 +158,18 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     private final JButton butCancel = new JButton(Messages.getString("Cancel"));
 
     /**
-     * The pre-existing bot player name that is affected by the dialog, if there is
-     * one. Null otherwise.
+     * The pre-existing bot player name that is affected by the dialog, if there is one. Null otherwise.
      */
     private final String fixedBotPlayerName;
     private final boolean isNewBot;
 
     /**
-     * Stores the currently chosen preset. Used to detect if the player has changed
-     * the sliders.
+     * Stores the currently chosen preset. Used to detect if the player has changed the sliders.
      */
     private BehaviorSettings chosenPreset;
 
     /**
-     * Stores the original Behavior if one was given in the constructor (= a save
-     * game Behavior).
+     * Stores the original Behavior if one was given in the constructor (= a save game Behavior).
      */
     private final BehaviorSettings saveGameBehavior;
 
@@ -175,8 +183,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         this(parent, botName, null, null);
     }
 
-    public BotConfigDialog(JFrame parent, @Nullable String botName,
-            @Nullable BehaviorSettings behavior, @Nullable ClientGUI cg) {
+    public BotConfigDialog(JFrame parent, @Nullable String botName, @Nullable BehaviorSettings behavior,
+          @Nullable ClientGUI cg) {
         super(parent, "BotConfigDialog", "BotConfigDialog.title");
         setAlwaysOnTop(true);
         fixedBotPlayerName = botName;
@@ -215,8 +223,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     }
 
     /**
-     * The setting section contains the presets list on the left side and the
-     * princess settings on the right.
+     * The setting section contains the presets list on the left side and the princess settings on the right.
      */
     private JPanel settingSection() {
         var princessScroll = new JScrollPane(princessPanel());
@@ -264,21 +271,23 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     }
 
     /**
-     * Returns a name that is not used by another player. Starts with "Princess"
-     * and subsequently adds numbers (Princess1 etc.) until a free one is found.
+     * Returns a name that is not used by another player. Starts with "Princess" and subsequently adds numbers
+     * (Princess1 etc.) until a free one is found.
      */
     private String getFreePrincessName() {
         String name = "Princess";
         if (client != null) {
             int counter = 0;
-            Set<String> playerNames = client.getGame().getPlayersList().stream().map(Player::getName)
-                    .collect(Collectors.toSet());
+            Set<String> playerNames = client.getGame()
+                                            .getPlayersList()
+                                            .stream()
+                                            .map(Player::getName)
+                                            .collect(Collectors.toSet());
             while (playerNames.contains(name) && counter < 1000) {
                 counter++;
-                name = "Princess-" + I18n.normalizeTextToASCII(
-                      RandomCallsignGenerator.getInstance().generate(),
-                      true
-                ).replace(" ", "-");
+                name = "Princess-" +
+                             I18n.normalizeTextToASCII(RandomCallsignGenerator.getInstance().generate(), true)
+                                   .replace(" ", "-");
 
             }
         }
@@ -315,47 +324,53 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
         result.add(panContent);
 
-        panContent.add(buildSlider(braverySlidebar, Messages.getString("BotConfigDialog.braverySliderMin"),
-                Messages.getString("BotConfigDialog.braverySliderMax"),
-                Messages.getString("BotConfigDialog.braveryTooltip"),
-                Messages.getString("BotConfigDialog.braverySliderTitle")));
+        panContent.add(buildSlider(braverySlidebar,
+              Messages.getString("BotConfigDialog.braverySliderMin"),
+              Messages.getString("BotConfigDialog.braverySliderMax"),
+              Messages.getString("BotConfigDialog.braveryTooltip"),
+              Messages.getString("BotConfigDialog.braverySliderTitle")));
         panContent.add(Box.createVerticalStrut(7));
 
-        panContent.add(
-                buildSlider(selfPreservationSlidebar, Messages.getString("BotConfigDialog.selfPreservationSliderMin"),
-                        Messages.getString("BotConfigDialog.selfPreservationSliderMax"),
-                        Messages.getString("BotConfigDialog.selfPreservationTooltip"),
-                        Messages.getString("BotConfigDialog.selfPreservationSliderTitle")));
+        panContent.add(buildSlider(selfPreservationSlidebar,
+              Messages.getString("BotConfigDialog.selfPreservationSliderMin"),
+              Messages.getString("BotConfigDialog.selfPreservationSliderMax"),
+              Messages.getString("BotConfigDialog.selfPreservationTooltip"),
+              Messages.getString("BotConfigDialog.selfPreservationSliderTitle")));
         panContent.add(Box.createVerticalStrut(7));
 
-        panContent.add(buildSlider(aggressionSlidebar, Messages.getString("BotConfigDialog.aggressionSliderMin"),
-                Messages.getString("BotConfigDialog.aggressionSliderMax"),
-                Messages.getString("BotConfigDialog.aggressionTooltip"),
-                Messages.getString("BotConfigDialog.aggressionSliderTitle")));
+        panContent.add(buildSlider(aggressionSlidebar,
+              Messages.getString("BotConfigDialog.aggressionSliderMin"),
+              Messages.getString("BotConfigDialog.aggressionSliderMax"),
+              Messages.getString("BotConfigDialog.aggressionTooltip"),
+              Messages.getString("BotConfigDialog.aggressionSliderTitle")));
         panContent.add(Box.createVerticalStrut(7));
 
-        panContent.add(buildSlider(herdingSlidebar, Messages.getString("BotConfigDialog.herdingSliderMin"),
-                Messages.getString("BotConfigDialog.herdingSliderMax"),
-                Messages.getString("BotConfigDialog.herdingToolTip"),
-                Messages.getString("BotConfigDialog.herdingSliderTitle")));
+        panContent.add(buildSlider(herdingSlidebar,
+              Messages.getString("BotConfigDialog.herdingSliderMin"),
+              Messages.getString("BotConfigDialog.herdingSliderMax"),
+              Messages.getString("BotConfigDialog.herdingToolTip"),
+              Messages.getString("BotConfigDialog.herdingSliderTitle")));
         panContent.add(Box.createVerticalStrut(7));
 
-        panContent.add(buildSlider(fallShameSlidebar, Messages.getString("BotConfigDialog.fallShameSliderMin"),
-                Messages.getString("BotConfigDialog.fallShameSliderMax"),
-                Messages.getString("BotConfigDialog.fallShameToolTip"),
-                Messages.getString("BotConfigDialog.fallShameSliderTitle")));
+        panContent.add(buildSlider(fallShameSlidebar,
+              Messages.getString("BotConfigDialog.fallShameSliderMin"),
+              Messages.getString("BotConfigDialog.fallShameSliderMax"),
+              Messages.getString("BotConfigDialog.fallShameToolTip"),
+              Messages.getString("BotConfigDialog.fallShameSliderTitle")));
 
         if (CLIENT_PREFERENCES.getEnableExperimentalBotFeatures()) {
-            panContent.add(buildSlider(antiCrowdingSlidebar, Messages.getString("BotConfigDialog.antiCrowdingSliderMin"),
-                Messages.getString("BotConfigDialog.antiCrowdingSliderMax"),
-                Messages.getString("BotConfigDialog.antiCrowdingToolTip"),
-                Messages.getString("BotConfigDialog.antiCrowdingTitle")));
+            panContent.add(buildSlider(antiCrowdingSlidebar,
+                  Messages.getString("BotConfigDialog.antiCrowdingSliderMin"),
+                  Messages.getString("BotConfigDialog.antiCrowdingSliderMax"),
+                  Messages.getString("BotConfigDialog.antiCrowdingToolTip"),
+                  Messages.getString("BotConfigDialog.antiCrowdingTitle")));
             panContent.add(Box.createVerticalStrut(7));
 
-            panContent.add(buildSlider(favorHigherTMMSlidebar, Messages.getString("BotConfigDialog.favorHigherTMMSliderMin"),
-                Messages.getString("BotConfigDialog.favorHigherTMMSliderMax"),
-                Messages.getString("BotConfigDialog.favorHigherTMMToolTip"),
-                Messages.getString("BotConfigDialog.favorHigherTMMTitle")));
+            panContent.add(buildSlider(favorHigherTMMSlidebar,
+                  Messages.getString("BotConfigDialog.favorHigherTMMSliderMin"),
+                  Messages.getString("BotConfigDialog.favorHigherTMMSliderMax"),
+                  Messages.getString("BotConfigDialog.favorHigherTMMToolTip"),
+                  Messages.getString("BotConfigDialog.favorHigherTMMTitle")));
             panContent.add(Box.createVerticalStrut(7));
         }
 
@@ -399,7 +414,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         addUnitButton.addActionListener(this);
 
         removeTargetButton.setMnemonic(KeyEvent.VK_R);
-        removeTargetButton.setFont(UIUtil.getScaledFont());
+        removeTargetButton.setFont(UIUtil.getDefaultFont());
         removeTargetButton.setForeground(GUIPreferences.getInstance().getWarningColor());
         removeTargetButton.addActionListener(this);
 
@@ -421,7 +436,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         targetsList.getSelectionModel().addListSelectionListener(this);
         targetsList.setLayoutOrientation(JList.VERTICAL);
         targetsList.setCellRenderer(new TargetsRenderer());
-        targetsList.setFont(UIUtil.getScaledFont());
+        targetsList.setFont(UIUtil.getDefaultFont());
         targetsList.setVisibleRowCount(6);
         targetsList.setPrototypeCellValue(new Coords(21, 22));
         JScrollPane targetsListScroller = new JScrollPane(targetsList);
@@ -525,25 +540,23 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     }
 
     /**
-     * Returns true if a preset is selected and is different from the current slider
-     * settings.
+     * Returns true if a preset is selected and is different from the current slider settings.
      */
     private boolean isChangedPreset() {
-        return (chosenPreset != null)
-                && (chosenPreset.getSelfPreservationIndex() != selfPreservationSlidebar.getValue()
-                        || chosenPreset.getHyperAggressionIndex() != aggressionSlidebar.getValue()
-                        || chosenPreset.getFallShameIndex() != fallShameSlidebar.getValue()
-                        || chosenPreset.getHerdMentalityIndex() != herdingSlidebar.getValue()
-                        || chosenPreset.getBraveryIndex() != braverySlidebar.getValue()
-                        || chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue()
-                        || chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue()
-                        || chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected()
-                        || chosenPreset.isExperimental() != experimentalCheck.isSelected()
-        );
+        return (chosenPreset != null) &&
+                     (chosenPreset.getSelfPreservationIndex() != selfPreservationSlidebar.getValue() ||
+                            chosenPreset.getHyperAggressionIndex() != aggressionSlidebar.getValue() ||
+                            chosenPreset.getFallShameIndex() != fallShameSlidebar.getValue() ||
+                            chosenPreset.getHerdMentalityIndex() != herdingSlidebar.getValue() ||
+                            chosenPreset.getBraveryIndex() != braverySlidebar.getValue() ||
+                            chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue() ||
+                            chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
+                            chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
+                            chosenPreset.isExperimental() != experimentalCheck.isSelected());
     }
 
-    private JPanel buildSlider(JSlider thisSlider, String minMsgProperty,
-            String maxMsgProperty, String toolTip, String title) {
+    private JPanel buildSlider(JSlider thisSlider, String minMsgProperty, String maxMsgProperty, String toolTip,
+          String title) {
         TitledBorder border = BorderFactory.createTitledBorder(title);
         border.setTitlePosition(TitledBorder.TOP);
         border.setTitleJustification(TitledBorder.CENTER);
@@ -599,8 +612,11 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         // otherwise
         // the connection between the client.bots stored name and the server-given name
         // gets lost. It doesn't hurt to check against all players though.
-        boolean playerNameTaken = (client != null) && client.getGame().getPlayersList().stream()
-                .anyMatch(p -> p.getName().equals(nameField.getText()));
+        boolean playerNameTaken = (client != null) &&
+                                        client.getGame()
+                                              .getPlayersList()
+                                              .stream()
+                                              .anyMatch(p -> p.getName().equals(nameField.getText()));
         if (isNewBot && playerNameTaken) {
             JOptionPane.showMessageDialog(getFrame(), Messages.getString("ChatLounge.AlertExistsBot.message"));
         } else {
@@ -625,8 +641,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             dlg.setAlwaysOnTop(true);
             dlg.setVisible(true);
             if (dlg.getResult() == DialogResult.CONFIRMED) {
-                dlg.getSelectedCoords().stream().filter(c -> !targetsListModel.contains(c))
-                        .forEach(targetsListModel::addElement);
+                dlg.getSelectedCoords()
+                      .stream()
+                      .filter(c -> !targetsListModel.contains(c))
+                      .forEach(targetsListModel::addElement);
             }
 
         } else if (e.getSource() == addUnitButton) {
@@ -634,8 +652,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             dlg.setAlwaysOnTop(true);
             dlg.setVisible(true);
             if (dlg.getResult() == DialogResult.CONFIRMED) {
-                dlg.getSelectedIDs().stream().filter(c -> !targetsListModel.contains(c))
-                        .forEach(targetsListModel::addElement);
+                dlg.getSelectedIDs()
+                      .stream()
+                      .filter(c -> !targetsListModel.contains(c))
+                      .forEach(targetsListModel::addElement);
             }
 
         } else if (e.getSource() == removeTargetButton) {
@@ -692,9 +712,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     }
 
     /**
-     * Writes the current Behavior under the given name to the stored Behavior
-     * Presets.
-     * Will overwrite a Behavior Preset if there is one with the same name.
+     * Writes the current Behavior under the given name to the stored Behavior Presets. Will overwrite a Behavior Preset
+     * if there is one with the same name.
      */
     private void writePreset(String name) {
         BehaviorSettings newBehavior = new BehaviorSettings();
@@ -809,13 +828,9 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     };
 
     /**
-     * Called when a Preset is selected. This will often be called twice when
-     * clicking
-     * with the mouse (by the listselectionlistener and the mouselistener). In this
-     * way
-     * the list will react when copying a Preset from another bot and then clicking
-     * the
-     * already selected Preset again. And it will also react to keyboard navigation.
+     * Called when a Preset is selected. This will often be called twice when clicking with the mouse (by the
+     * listselectionlistener and the mouselistener). In this way the list will react when copying a Preset from another
+     * bot and then clicking the already selected Preset again. And it will also react to keyboard navigation.
      */
     private void presetSelected() {
         if (presetsList.isSelectionEmpty()) {
@@ -844,8 +859,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     }
 
     /**
-     * Sets up/Updates the displayed preset list (e.g. after adding or deleting a
-     * preset)
+     * Sets up/Updates the displayed preset list (e.g. after adding or deleting a preset)
      */
     private void updatePresets() {
         presets = new ArrayList<>(Arrays.asList(behaviorSettingsFactory.getBehaviorNames()));
@@ -889,18 +903,16 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     }
 
     /**
-     * A renderer for the Behavior Presets list. Adapts the font size to the gui
-     * scaling and
-     * colors the special list elements (other bot Configurations and original
-     * Config).
+     * A renderer for the Behavior Presets list. Adapts the font size to the gui scaling and colors the special list
+     * elements (other bot Configurations and original Config).
      */
     private class PresetsRenderer extends DefaultListCellRenderer {
 
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
+              boolean cellHasFocus) {
             Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            comp.setFont(UIUtil.getScaledFont());
+            comp.setFont(UIUtil.getDefaultFont());
             String preset = (String) value;
             if (preset.startsWith(UIUtil.BOT_MARKER)) {
                 comp.setForeground(UIUtil.uiLightBlue());
@@ -918,7 +930,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
+              boolean cellHasFocus) {
 
             String content;
             boolean invalid = true;
@@ -941,16 +953,19 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                         final Building bldg = board.getBuildingAt(coords);
                         if (hex.containsTerrain(BUILDING)) {
                             content += Messages.getString("BotConfigDialog.hexListBldg",
-                                    bldg.getType().toString(),
-                                    Building.className(bldg.getBldgClass()), hex.terrainLevel(BLDG_ELEV),
-                                    hex.terrainLevel(BLDG_CF));
+                                  bldg.getType().toString(),
+                                  Building.className(bldg.getBldgClass()),
+                                  hex.terrainLevel(BLDG_ELEV),
+                                  hex.terrainLevel(BLDG_CF));
                         } else if (hex.containsTerrain(FUEL_TANK)) {
                             content += Messages.getString("BotConfigDialog.hexListFuel",
-                                    hex.terrainLevel(FUEL_TANK_CF), hex.terrainLevel(FUEL_TANK_MAGN));
+                                  hex.terrainLevel(FUEL_TANK_CF),
+                                  hex.terrainLevel(FUEL_TANK_MAGN));
                         } else {
                             content += Messages.getString("BotConfigDialog.hexListBrdg",
-                                    bldg.getType().toString(),
-                                    hex.terrainLevel(BRIDGE_ELEV), hex.terrainLevel(BRIDGE_CF));
+                                  bldg.getType().toString(),
+                                  hex.terrainLevel(BRIDGE_ELEV),
+                                  hex.terrainLevel(BRIDGE_CF));
                         }
                         invalid = false;
                     }

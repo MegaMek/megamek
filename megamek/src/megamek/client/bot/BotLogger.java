@@ -33,6 +33,7 @@ import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The GameDatasetLogger class is used to log game data to a file in the log directory
@@ -43,7 +44,7 @@ import java.util.List;
 public class BotLogger {
     private static final MMLogger logger = MMLogger.create(BotLogger.class);
     public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
-    protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
+    protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
 
     private File logfile;
 

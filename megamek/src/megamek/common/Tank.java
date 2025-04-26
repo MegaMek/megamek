@@ -556,13 +556,34 @@ public class Tank extends Entity {
     }
 
     /**
-     * @return true if <code>m_bImmobile</code> is true and the original walk MP for the unit is greater than 0.
+     * Determines whether the unit is considered to have suffered a movement hit.
      *
+     * <p>A unit is considered to have a movement hit if:</p>
+     * <ul>
+     *   <li>It is not a trailer (its original walking movement points is greater than 0), and</li>
+     *   <li>It is flagged as immobile, or</li>
+     *   <li>It is a VTOL unit and its rotor is destroyed, or</li>
+     *   <li>Its motive damage is greater than or equal to its original walking movement points.</li>
+     * </ul>
+     *
+     * @return {@code true} if the unit qualifies as having a movement hit according to these criteria; {@code false} otherwise.
      * @see #applyMovementDamage
      */
     public boolean isMovementHit() {
+        int originalWalkMP = getOriginalWalkMP();
+
         // We don't want to return true for trailers,
-        return (m_bImmobile) && (getOriginalWalkMP() > 0);
+        if (originalWalkMP <= 0) {
+            return false;
+        }
+
+        if (getUnitType() == UnitType.VTOL) {
+            if (getInternal(VTOL.LOC_ROTOR) == IArmorState.ARMOR_DESTROYED) {
+                return true;
+            }
+        }
+
+        return (m_bImmobile || (motiveDamage >= originalWalkMP));
     }
 
     public boolean isMovementHitPending() {

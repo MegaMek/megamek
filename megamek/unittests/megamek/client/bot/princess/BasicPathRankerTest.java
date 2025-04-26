@@ -35,6 +35,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -61,7 +62,7 @@ import megamek.utils.MockGenerators;
  * @since 12/5/13 10:19 AM
  */
 class BasicPathRankerTest {
-    private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00");
+    private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     private final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
 

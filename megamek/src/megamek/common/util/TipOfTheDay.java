@@ -187,17 +187,19 @@ public class TipOfTheDay {
             List<TextLayout> tipLayouts = new ArrayList<>();
             float totalTipHeight = 0;
             measurer.setPosition(0);
+            int previousPosition = -1; 
             while (measurer.getPosition() < tipAS.getIterator().getEndIndex()) {
+                // Check if the position hasn't advanced, indicating a potential infinite loop
+                if (measurer.getPosition() == previousPosition) {
+                    break;
+                }
+                previousPosition = measurer.getPosition();
                 TextLayout layout = measurer.nextLayout(availableWidth);
                 if (layout != null) {
                     tipLayouts.add(layout);
                     totalTipHeight += layout.getAscent() + layout.getDescent() + layout.getLeading();
                 } else {
                     break; // Should not happen with LineBreakMeasurer unless width is tiny
-                }
-                if (measurer.getPosition() == layout.getCharacterCount() + measurer.getPosition()
-                        && measurer.getPosition() < tipAS.getIterator().getEndIndex()) {
-                    break;
                 }
             }
 

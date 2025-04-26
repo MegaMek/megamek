@@ -203,7 +203,7 @@ public class TipOfTheDay {
                 }
             }
 
-            // Positioning// Positioning
+            // Positioning
             float totalBlockHeight = labelHeight + totalTipHeight;
             float startY;
             if (position == Position.BOTTOM_BORDER) {

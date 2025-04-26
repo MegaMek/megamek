@@ -1581,8 +1581,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             int direction = src.direction(dest);
             int facing = ce().getFacing();
             // Adjust direction based upon facing
-            // Java does mod different from how we want...
-            direction = (((direction - facing) % 6) + 6) % 6;
+            // Java does Remainder, not Modulo, so need the Absolute value as it can go negative.
+            direction = Math.abs((direction - facing) % 6);
             switch (direction) {
                 case 0:
                     cmd.findSimplePathTo(dest, MoveStepType.FORWARDS, src.direction(dest), ce().getFacing());
@@ -2186,18 +2186,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private synchronized void updateLandButtons() {
 
+        // Per TW Page 87, 10th Edition, Do not allow landing in an occupied space.
         if ((null != cmd) && (cmd.length() > 0)) {
-            // According to the link below, you can move in the air and the land. However, I have a personal message to
-            // Welshman right now asking that this be changed because it creates all kinds of rules problems, the
-            // number one being the ability to use spheroid dropships to perform insta-Death From Above attacks
-            // that cannot be defended against So we are going to disallow it
-            // http://www.classicbattletech.com/forums/index.php?topic=54112.0
             setLandEnabled(false);
             return;
         }
 
-        final Entity ce = ce();
-        if (ce == null) {
+        final Entity selectedEntity = ce();
+        if (selectedEntity == null) {
             return;
         }
 
@@ -2206,10 +2202,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (ce.isAero() && cmd != null) {
-            if (ce.isAirborne() && (cmd.getFinalAltitude() == 1)) {
-                setLandEnabled(((IAero) ce).canLandHorizontally());
-                setVLandEnabled(((IAero) ce).canLandVertically());
+        if (selectedEntity.isAero() && cmd != null) {
+            if (selectedEntity.isAirborne() && (cmd.getFinalAltitude() == 1)) {
+                setLandEnabled(((IAero) selectedEntity).canLandHorizontally());
+                setVLandEnabled(((IAero) selectedEntity).canLandVertically());
             }
         }
 
@@ -5294,7 +5290,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
 
             Player currentOwner = e.getOwner();
-            // Loop through the players vector and fill in the arrays
+            // Loop through the `players` vector and fill in the arrays
             int idx = 0;
             for (var player : players) {
                 if (player.getName().equals(currentOwner.getName()) || (player.getTeam() == Player.TEAM_UNASSIGNED)) {

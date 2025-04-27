@@ -14,24 +14,30 @@
 package megamek.client.ui.swing.forceDisplay;
 
 import java.awt.BorderLayout;
+import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.lobby.LobbyUtility;
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -52,15 +58,24 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
     JTree forceTree;
     private ForceTreeMouseAdapter mekForceTreeMouseListener = new ForceTreeMouseAdapter();
     private ClientGUI clientgui;
+    private Client client;
     private Game game;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public ForceDisplayPanel(ClientGUI clientgui) {
-        if (clientgui == null) {
+        this(clientgui == null ? null : clientgui.getClient());
+        if (client == null) {
             return;
         }
         this.clientgui = clientgui;
-        this.game = clientgui.getClient().getGame();
+    }
+
+    public ForceDisplayPanel(Client client) {
+        if (client == null) {
+            return;
+        }
+        this.client = client;
+        this.game = client.getGame();
 
         setupForce();
         refreshTree();
@@ -70,16 +85,20 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         add(sp, BorderLayout.CENTER);
 
         forceTree.addMouseListener(mekForceTreeMouseListener);
-        clientgui.getClient().getGame().addGameListener(this);
+        client.getGame().addGameListener(this);
         GUIP.addPreferenceChangeListener(this);
     }
 
     private void setupForce() {
-        forceTreeModel = new ForceDisplayMekTreeModel(clientgui);
+        forceTreeModel = new ForceDisplayMekTreeModel(client);
         forceTree = new JTree(forceTreeModel);
         forceTree.setRootVisible(false);
         forceTree.setDragEnabled(false);
-        forceTree.setCellRenderer(new ForceDisplayMekTreeRenderer(clientgui, forceTree));
+        if (clientgui != null) {
+            forceTree.setCellRenderer(new ForceDisplayMekTreeRenderer(clientgui, forceTree));
+        } else {
+            forceTree.setCellRenderer(new ForceDisplayMekTreeRenderer(client, forceTree));
+        }
         forceTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         forceTree.setExpandsSelectedPaths(true);
         ToolTipManager.sharedInstance().registerComponent(forceTree);
@@ -186,7 +205,16 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         item.addActionListener(evt -> {
             try {
                 Entity entity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
-                LobbyUtility.mekReadout(entity, 0, false, clientgui.getFrame());
+                JFrame frame = null;
+                if (clientgui != null) {
+                    frame = clientgui.getFrame();
+                } else {
+                    Window windowAncestor = SwingUtilities.getWindowAncestor(this);
+                    if (windowAncestor instanceof JFrame) {
+                        frame = (JFrame) windowAncestor;
+                    }
+                }
+                LobbyUtility.mekReadout(entity, 0, false, frame);
             } catch (Exception ex) {
                 logger.error(ex, "");
             }
@@ -204,10 +232,19 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
                 TreePath path = forceTree.getPathForRow(row);
                 if (path != null && path.getLastPathComponent() instanceof Entity) {
                     Entity entity = (Entity) path.getLastPathComponent();
-                    clientgui.getUnitDisplay().displayEntity(entity);
+                    if (clientgui != null) { 
+                        clientgui.getUnitDisplay().displayEntity(entity);
+                    } else {
+                        JFrame frame = null;
+                        Window windowAncestor = SwingUtilities.getWindowAncestor(ForceDisplayPanel.this);
+                        if (windowAncestor instanceof JFrame) {
+                            frame = (JFrame) windowAncestor;
+                        }
+                        UnitDisplayDialog.showEntity(frame, entity, e.isShiftDown());
+                    }
                     GUIP.setUnitDisplayEnabled(true);
 
-                    if (entity.isDeployed() && !entity.isOffBoard() && entity.getPosition() != null) {
+                    if (clientgui != null && entity.isDeployed() && !entity.isOffBoard() && entity.getPosition() != null) {
                         clientgui.getBoardView().centerOnHex(entity.getPosition());
                     }
                 }

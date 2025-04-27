@@ -62,7 +62,7 @@ public class TraceOverlay implements IDisplayable, IPreferenceChangeListener {
             return;
         }
 
-        double scale = GUIP.getTraceOverlayScale();
+        double scale = GUIP.getTraceOverlayScale() / 100f;
         int x = GUIP.getTraceOverlayOriginX();
         int y = GUIP.getTraceOverlayOriginY();
         float alpha = GUIP.getTraceOverlayTransparency() / 255f;

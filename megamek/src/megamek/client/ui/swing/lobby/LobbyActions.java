@@ -25,7 +25,6 @@ import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_PRONE;
 import static megamek.client.ui.swing.lobby.LobbyUtility.haveSingleOwner;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isBlindDrop;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isRealBlindDrop;
-import static megamek.client.ui.swing.lobby.LobbyUtility.sameNhC3System;
 
 import java.awt.Dimension;
 import java.util.*;
@@ -56,6 +55,10 @@ import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
+import megamek.common.util.C3Util;
+import megamek.common.util.C3Util.C3CapacityException;
+import megamek.common.util.C3Util.MismatchingC3MException;
+import megamek.common.util.C3Util.MissingC3MException;
 import megamek.common.util.CollectionUtil;
 import megamek.logging.MMLogger;
 
@@ -418,20 +421,7 @@ public class LobbyActions {
                 updateCandidates.addAll(entity.getSubEntities());
             }
 
-            // When we customize a single entity's C3 network setting,
-            // **ALL** members of the network may get changed.
-            Entity c3master = entity.getC3Master();
-            List<Entity> c3members = new ArrayList<>();
-            for (Entity unit : game().getEntitiesVector()) {
-                if (entity.onSameC3NetworkAs(unit)) {
-                    c3members.add(unit);
-                }
-            }
-            // Do we need to update the members of our C3 network?
-            if (((c3master != null) && !c3master.equals(entity.getC3Master()))
-                    || ((c3master == null) && (entity.getC3Master() != null))) {
-                updateCandidates.addAll(c3members);
-            }
+            updateCandidates.addAll(C3Util.broadcastChanges(game(), entity));
         }
         sendUpdates(updateCandidates);
     }
@@ -825,34 +815,7 @@ public class LobbyActions {
         if (!validateUpdate(entities)) {
             return;
         }
-        Set<Entity> updateCandidates = performDisconnect(entities);
-        sendUpdates(updateCandidates);
-    }
-
-    /**
-     * Performs a disconnect from C3 networks for the given entities without sending
-     * an update.
-     * Returns a set of all affected units.
-     */
-    private HashSet<Entity> performDisconnect(Collection<Entity> entities) {
-        HashSet<Entity> updateCandidates = new HashSet<>();
-        for (Entity entity : entities) {
-            if (entity.hasNhC3()) {
-                entity.setC3NetIdSelf();
-                updateCandidates.add(entity);
-            } else if (entity.hasAnyC3System()) {
-                entity.setC3Master(null, true);
-                updateCandidates.add(entity);
-            }
-        }
-        // Also disconnect all units connected *to* that entity
-        for (Entity entity : game().getEntitiesVector()) {
-            if (entities.contains(entity.getC3Master())) {
-                entity.setC3Master(null, true);
-                updateCandidates.add(entity);
-            }
-        }
-        return updateCandidates;
+        sendUpdates(C3Util.disconnectFromNetwork(game(), entities));
     }
 
     /** Sets the entities' C3M to act as a Company Master. */
@@ -860,11 +823,12 @@ public class LobbyActions {
         if (!validateUpdate(entities)) {
             return;
         }
-        if (!entities.stream().allMatch(Entity::hasC3M)) {
+        try {
+            C3Util.setCompanyMaster(entities);
+        } catch (MissingC3MException e) {
             LobbyErrors.showOnlyC3M(frame());
             return;
         }
-        entities.forEach(e -> e.setC3Master(e.getId(), true));
         sendUpdates(entities);
     }
 
@@ -873,11 +837,12 @@ public class LobbyActions {
         if (!validateUpdate(entities)) {
             return;
         }
-        if (!entities.stream().allMatch(Entity::hasC3M)) {
+        try {
+            C3Util.setLanceMaster(entities);
+        } catch (MissingC3MException e) {
             LobbyErrors.showOnlyC3M(frame());
             return;
         }
-        entities.forEach(e -> e.setC3Master(-1, true));
         sendUpdates(entities);
     }
 
@@ -893,21 +858,15 @@ public class LobbyActions {
             LobbyErrors.showOnlyTeam(frame());
             return;
         }
-        Entity master = game().getEntity(masterID);
-        if (!master.hasNhC3() || !entities.stream().allMatch(e -> sameNhC3System(master, e))) {
+        try {
+            C3Util.joinNh(game(), entities, masterID, disconnectFirst);
+        } catch (MismatchingC3MException e) {
             LobbyErrors.showSameC3(frame());
             return;
-        }
-        if (disconnectFirst) {
-            performDisconnect(entities);
-        }
-        int freeNodes = master.calculateFreeC3Nodes();
-        freeNodes += entities.contains(master) ? 1 : 0;
-        if (entities.size() > freeNodes) {
+        } catch (C3CapacityException e) {
             LobbyErrors.showExceedC3Capacity(frame());
             return;
         }
-        entities.forEach(e -> e.setC3NetId(master));
         sendUpdates(entities);
     }
 
@@ -916,9 +875,6 @@ public class LobbyActions {
      * identified by masterID.
      */
     void c3Connect(Collection<Entity> entities, int masterID, boolean disconnectFirst) {
-        Entity master = game().getEntity(masterID);
-        // To make it possible to mark a C3S/C3S/C3S/C3M lance and connect it:
-        entities.remove(master);
         if (!validateUpdate(entities)) {
             return;
         }
@@ -926,25 +882,16 @@ public class LobbyActions {
             LobbyErrors.showOnlyTeam(frame());
             return;
         }
-        boolean connectMS = master.isC3IndependentMaster() && entities.stream().allMatch(Entity::hasC3S);
-        boolean connectMM = master.isC3CompanyCommander() && entities.stream().allMatch(Entity::hasC3M);
-        boolean connectSMM = master.hasC3MM() && entities.stream().allMatch(e -> e.hasC3S() || e.hasC3M());
-        if (!connectMM && !connectMS && !connectSMM) {
+        Set<Entity> updateCandidates;
+        try {
+            updateCandidates = C3Util.connect(game(), entities, masterID, disconnectFirst);
+        } catch (MismatchingC3MException e) {
             LobbyErrors.showSameC3(frame());
             return;
-        }
-        Set<Entity> updateCandidates = new HashSet<>(entities);
-        if (disconnectFirst) { // this is only true when a C3 lance is formed from SSSM
-            updateCandidates.addAll(performDisconnect(entities));
-            updateCandidates.addAll(performDisconnect(Arrays.asList(master)));
-        }
-        int newC3nodeCount = entities.stream().mapToInt(e -> game().getC3SubNetworkMembers(e).size()).sum();
-        int masC3nodeCount = game().getC3NetworkMembers(master).size();
-        if (newC3nodeCount + masC3nodeCount > Entity.MAX_C3_NODES || entities.size() > master.calculateFreeC3Nodes()) {
+        } catch (C3CapacityException e) {
             LobbyErrors.showExceedC3Capacity(frame());
             return;
         }
-        entities.forEach(e -> e.setC3Master(master, true));
         sendUpdates(updateCandidates);
     }
 

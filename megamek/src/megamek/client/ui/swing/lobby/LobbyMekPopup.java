@@ -53,9 +53,9 @@ import megamek.common.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
-import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
 
 /**
@@ -629,7 +629,7 @@ class LobbyMekPopup {
             // Special treatment if a group of NhC3 is selected
             if (entities.size() > 1 && entities.size() <= 6) {
                 Entity master = anyOneElement(entities);
-                if (entities.stream().allMatch(e -> LobbyUtility.sameNhC3System(master, e))) {
+                if (entities.stream().allMatch(e -> C3Util.sameNhC3System(master, e))) {
                     menu.add(menuItem("Form C3 Lance", LMP_C3FORMNHC3 + "|" + master.getId() + enToken(entities), true,
                             listener));
                 }

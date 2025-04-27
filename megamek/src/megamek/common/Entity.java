@@ -14063,7 +14063,7 @@ public abstract class Entity extends TurnOrdered
             return "Small Craft";
         } else if ((typeId & ETYPE_TELEMISSILE) == ETYPE_TELEMISSILE) {
             return "Telemissile";
-        } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
+        } else if ((typeId & ETYPE_AEROSPACEFIGHTER) == ETYPE_AEROSPACEFIGHTER) {
             return "Aerospace fighter";
         } else if ((typeId & ETYPE_BATTLEARMOR) == ETYPE_BATTLEARMOR) {
             return "Battlearmor";
@@ -14083,6 +14083,8 @@ public abstract class Entity extends TurnOrdered
             return "Support Tank";
         } else if ((typeId & ETYPE_SUPPORT_VTOL) == ETYPE_SUPPORT_VTOL) {
             return "Support VTOL";
+        } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
+            return "Aerospace Craft";
         } else if ((typeId & ETYPE_VTOL) == ETYPE_VTOL) {
             return "VTOL";
         } else if ((typeId & ETYPE_TANK) == ETYPE_TANK) {

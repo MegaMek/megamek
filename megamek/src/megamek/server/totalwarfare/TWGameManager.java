@@ -126,6 +126,7 @@ public class TWGameManager extends AbstractGameManager {
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
     private Game game = new Game();
+    private TWDamageManager damager;
 
     private final Vector<Report> mainPhaseReport = new Vector<>();
 
@@ -211,6 +212,7 @@ public class TWGameManager extends AbstractGameManager {
         terrainProcessors.add(new ScreenProcessor(this));
         terrainProcessors.add(new WeatherProcessor(this));
         terrainProcessors.add(new QuicksandProcessor(this));
+        damager = new TWDamageManager(this, game);
     }
 
     @Override
@@ -21075,7 +21077,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return The amount of damage remaining
      */
-    private int damageExternalPassenger(Entity te, HitData hit, int damage, Vector<Report> vDesc, Entity passenger) {
+    public int damageExternalPassenger(Entity te, HitData hit, int damage, Vector<Report> vDesc, Entity passenger) {
         Report r;
         int passengerDamage = damage;
         int avoidRoll = Compute.d6();
@@ -21202,7 +21204,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return <code>true</code> if the unit's engine exploded,
      *       <code>false</code> if not.
      */
-    private boolean checkEngineExplosion(Entity en, Vector<Report> vDesc, int hits) {
+    public boolean checkEngineExplosion(Entity en, Vector<Report> vDesc, int hits) {
         if (!(en instanceof Mek) && !(en instanceof Aero) && !(en instanceof Tank)) {
             return false;
         }
@@ -24597,7 +24599,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param ammoExplosion - was the damage from an ammo explosion
      * @param nukeS2S       - was this a ship 2 ship nuke attack
      */
-    private void checkAeroCrits(Vector<Report> vDesc, Aero a, HitData hit, int damage_orig, boolean critThresh,
+    public void checkAeroCrits(Vector<Report> vDesc, Aero a, HitData hit, int damage_orig, boolean critThresh,
           boolean critSI, boolean ammoExplosion, boolean nukeS2S) {
 
         Report r;
@@ -25132,7 +25134,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param hex    the <code>Hex</code> the entity occupies when checking. This value will be <code>null</code> if the
      *               check is the result of an attack, and non-null if it occurs during movement.
      */
-    private Vector<Report> breachCheck(Entity entity, int loc, Hex hex) {
+    public Vector<Report> breachCheck(Entity entity, int loc, Hex hex) {
         return breachCheck(entity, loc, hex, false);
     }
 
@@ -25145,7 +25147,7 @@ public class TWGameManager extends AbstractGameManager {
      *                   the check is the result of an attack, and non-null if it occurs during movement.
      * @param underWater Is the breach check a result of an underwater attack?
      */
-    private Vector<Report> breachCheck(Entity entity, int loc, Hex hex, boolean underWater) {
+    public Vector<Report> breachCheck(Entity entity, int loc, Hex hex, boolean underWater) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
@@ -32849,7 +32851,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return A report showing the results of the roll
      */
-    private Report checkBreakSpikes(Entity e, int loc) {
+    public Report checkBreakSpikes(Entity e, int loc) {
         Roll diceRoll = Compute.rollD6(2);
         Report r;
 

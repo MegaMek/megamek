@@ -485,7 +485,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY, 200);
 
         setDefault(TRACE_OVERLAY_TRANSPARENCY, 64);
-        setDefault(TRACE_OVERLAY_SCALE, 1f);
+        setDefault(TRACE_OVERLAY_SCALE, 100);
         setDefault(TRACE_OVERLAY_ORIGIN_X, 0);
         setDefault(TRACE_OVERLAY_ORIGIN_Y, 0);
         setDefault(TRACE_OVERLAY_IMAGE_FILE, "");
@@ -3206,12 +3206,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(TRACE_OVERLAY_TRANSPARENCY, i);
     }
 
-    public float getTraceOverlayScale() {
-        return getFloat(TRACE_OVERLAY_SCALE);
+    public int getTraceOverlayScale() {
+        return getInt(TRACE_OVERLAY_SCALE);
     }
 
-    public void setTraceOverlayScale(float f) {
-        store.setValue(TRACE_OVERLAY_SCALE, f);
+    public void setTraceOverlayScale(int i) {
+        store.setValue(TRACE_OVERLAY_SCALE, i);
     }
 
     public int getTraceOverlayOriginX() {

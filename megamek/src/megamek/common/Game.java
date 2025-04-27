@@ -1,17 +1,35 @@
 /*
- * MegaMek -
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
 
@@ -827,9 +845,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * @return an enumeration of all the entities in the game.
      *
-     * @deprecated Use {@link #inGameTWEntities()} instead.
+     * @deprecated Use {@link #inGameTWEntities()}.iterator() instead. usage remediated in 0.50.06. Remove in 0.50.07
      */
-    @Deprecated(since = "0.50.4")
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public Iterator<Entity> getEntities() {
         return inGameTWEntities().iterator();
     }
@@ -1217,9 +1235,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @param id     Value that is ignored: the id is pulled from the passed Entity
      * @param entity The Entity to add to the game.
      *
-     * @deprecated since 0.50.4 - Use {@link #addEntity(Entity)} instead.
+     * @deprecated Use {@link #addEntity(Entity)} instead. Remediated in 0.50.06, remove in 0.50.07
      */
-    @Deprecated(since = "0.50.4", forRemoval = true)
+    @Deprecated(since = "0.50.05", forRemoval = true)
     public void addEntity(int id, Entity entity) {
         // Disregard the passed id, addEntity(Entity) pulls the id from the Entity instance.
         addEntity(entity);
@@ -2801,7 +2819,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         // If no selector was supplied, return all entities.
         if (null == selector) {
-            retVal = this.getEntities();
+            retVal = this.inGameTWEntities().iterator();
         }
 
         // Otherwise, return an anonymous Enumeration that selects entities in this game.
@@ -2810,7 +2828,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             retVal = new Iterator<>() {
                 private final EntitySelector entitySelector = entry;
                 private Entity current = null;
-                private final Iterator<Entity> iter = getEntities();
+                private final Iterator<Entity> iter = inGameTWEntities().iterator();
 
                 // Do any more entities meet the selection criteria?
                 @Override
@@ -2877,9 +2895,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
         // Otherwise, count the entities that meet the selection criteria.
         else {
-            Iterator<Entity> iter = this.getEntities();
-            while (iter.hasNext()) {
-                if (selector.accept(iter.next())) {
+            for (Entity entity : this.inGameTWEntities()) {
+                if (selector.accept(entity)) {
                     retVal++;
                 }
             }
@@ -3191,11 +3208,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public void createVictoryConditions() {
         victoryHelper = new VictoryHelper(this);
-    }
-
-    @Deprecated(since = "0.50.04", forRemoval = true)
-    public VictoryHelper getVictory() {
-        return victoryHelper;
     }
 
     public VictoryResult getVictoryResult() {

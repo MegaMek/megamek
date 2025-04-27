@@ -1915,7 +1915,7 @@ public abstract class Entity extends TurnOrdered
                          (mek.getOriginalMechanicalJumpBoosterMP() > 0) &&
                          (getMechanicalJumpBoosterMP(MPCalculationSetting.PERM_IMMOBILIZED) > 0)) {
             return false;
-        } else {
+        } else if (!(this instanceof Tank)) { // this is already handled in the tank specific override
             return ((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
                          // Need to make sure here that we're ignoring heat because that's not actually "permanent":
                          &&
@@ -1923,6 +1923,8 @@ public abstract class Entity extends TurnOrdered
                                 (getRunMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0) &&
                                 (getJumpMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0));
         }
+
+        return false;
     }
 
     public boolean isCharging() {
@@ -14018,7 +14020,7 @@ public abstract class Entity extends TurnOrdered
             return "Small Craft";
         } else if ((typeId & ETYPE_TELEMISSILE) == ETYPE_TELEMISSILE) {
             return "Telemissile";
-        } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
+        } else if ((typeId & ETYPE_AEROSPACEFIGHTER) == ETYPE_AEROSPACEFIGHTER) {
             return "Aerospace fighter";
         } else if ((typeId & ETYPE_BATTLEARMOR) == ETYPE_BATTLEARMOR) {
             return "Battlearmor";
@@ -14038,6 +14040,8 @@ public abstract class Entity extends TurnOrdered
             return "Support Tank";
         } else if ((typeId & ETYPE_SUPPORT_VTOL) == ETYPE_SUPPORT_VTOL) {
             return "Support VTOL";
+        } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
+            return "Aerospace Craft";
         } else if ((typeId & ETYPE_VTOL) == ETYPE_VTOL) {
             return "VTOL";
         } else if ((typeId & ETYPE_TANK) == ETYPE_TANK) {

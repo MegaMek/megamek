@@ -20,6 +20,8 @@ package megamek.client.ui.swing.boardview;
 
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
+import megamek.client.ui.swing.boardview.sprite.Sprite;
+import megamek.client.ui.swing.boardview.toolTip.BoardViewTooltipProvider;
 import megamek.common.Coords;
 import megamek.common.Player;
 

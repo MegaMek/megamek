@@ -35,7 +35,7 @@ import megamek.client.bot.princess.FiringPlanCalculationParameters.Builder;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
-import megamek.client.ui.swing.TowLinkWarning;
+import megamek.client.ui.swing.phaseDisplay.TowLinkWarning;
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;

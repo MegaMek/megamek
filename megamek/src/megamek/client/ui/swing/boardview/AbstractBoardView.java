@@ -22,6 +22,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.common.Player;
+import megamek.client.ui.swing.boardview.sprite.Sprite;
 
 import java.util.*;
 

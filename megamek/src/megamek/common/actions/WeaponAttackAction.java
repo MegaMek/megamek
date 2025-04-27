@@ -13,6 +13,7 @@
  */
 package megamek.common.actions;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -57,6 +58,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     private static final MMLogger logger = MMLogger.create(WeaponAttackAction.class);
 
     public static int DEFAULT_VELOCITY = 50;
+    @Serial
     private static final long serialVersionUID = -9096603813317359351L;
     public static int UNASSIGNED = -1;
 
@@ -94,7 +96,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     private int swarmMissiles = 0;
 
     // bomb stuff
-    private HashMap<String, int[]> bombPayloads = new HashMap<String, int[]>();
+    private HashMap<String, int[]> bombPayloads = new HashMap<>();
 
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
@@ -254,16 +256,20 @@ public class WeaponAttackAction extends AbstractAttackAction {
         return Compute.isGroundToAir(getEntity(game), getTarget(game));
     }
 
+    /**
+     * @deprecated no indicated uses.
+     */
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public boolean isDiveBomb(Game game) {
-        return ((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_DIVE_BOMB);
+        return getEntity(game).getEquipment(getWeaponId()).getType().hasFlag(WeaponType.F_DIVE_BOMB);
     }
 
     public int getAltitudeLoss(Game game) {
         if (isAirToGround(game)) {
-            if (((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_DIVE_BOMB)) {
+            if (getEntity(game).getEquipment(getWeaponId()).getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
                 return 2;
             }
-            if (((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_ALT_BOMB)) {
+            if (getEntity(game).getEquipment(getWeaponId()).getType().hasFlag(WeaponType.F_ALT_BOMB)) {
                 return 0;
             }
             if (isStrafing) {
@@ -354,7 +360,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt,
-                                  AimingMode aimingMode, boolean isStrafing) {
+          AimingMode aimingMode, boolean isStrafing) {
         // Use -1 as ammoId because this method should always use the currently linked
         // ammo for display calcs
         return toHit(game,
@@ -374,9 +380,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt,
-                                  AimingMode aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget,
-                                  Targetable oldTarget, Targetable originalTarget, boolean isStrafing,
-                                  boolean isPointblankShot, int ammoId, int ammoCarrier) {
+          AimingMode aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget, Targetable oldTarget,
+          Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, int ammoId, int ammoCarrier) {
         return toHitCalc(game,
               attackerId,
               target,
@@ -396,9 +401,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt,
-                                  AimingMode aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget,
-                                  Targetable oldTarget, Targetable originalTarget, boolean isStrafing,
-                                  boolean isPointblankShot, boolean evenIfAlreadyFired, int ammoId, int ammoCarrier) {
+          AimingMode aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget, Targetable oldTarget,
+          Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, boolean evenIfAlreadyFired,
+          int ammoId, int ammoCarrier) {
         return toHitCalc(game,
               attackerId,
               target,
@@ -421,10 +426,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * To-hit number for attacker firing a weapon at the target.
      */
     private static ToHitData toHitCalc(Game game, int attackerId, Targetable target, int weaponId, int aimingAt,
-                                       AimingMode aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget,
-                                       Targetable oldTarget, Targetable originalTarget, boolean isStrafing,
-                                       boolean isPointblankShot, List<ECMInfo> allECMInfo, boolean evenIfAlreadyFired,
-                                       int ammoId, int ammoCarrier) {
+          AimingMode aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget, Targetable oldTarget,
+          Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, List<ECMInfo> allECMInfo,
+          boolean evenIfAlreadyFired, int ammoId, int ammoCarrier) {
         final Entity ae = game.getEntity(attackerId);
         final WeaponMounted weapon = (WeaponMounted) ae.getEquipment(weaponId);
         final AmmoMounted linkedAmmo;
@@ -443,16 +447,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         Targetable swarmSecondaryTarget = target;
-        Targetable swarmPrimaryTarget = oldTarget;
         if (exchangeSwarmTarget) {
             // this is a swarm attack against a new target
             // first, exchange original and new targets to get all mods
             // as if firing against original target.
             // at the end of this function, we remove target terrain
             // and movement mods, and add those for the new target
-            Targetable tempTarget = target;
             target = originalTarget;
-            originalTarget = tempTarget;
         }
 
         Entity te = null;
@@ -471,7 +472,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         final AmmoMounted ammo = usesAmmo ? linkedAmmo : null;
 
-        final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
+        final AmmoType atype = ammo == null ? null : ammo.getType();
 
         EnumSet<AmmoType.Munitions> munition = EnumSet.of(AmmoType.Munitions.M_STANDARD);
         if (atype != null) {
@@ -740,14 +741,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
             } else {
                 // Swarm should draw LoS between targets, not attacker, since
                 // we don't want LoS to be blocked
-                if (swarmPrimaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-                    los = LosEffects.calculateLOS(game,
-                          game.getEntity(swarmPrimaryTarget.getId()),
-                          swarmSecondaryTarget);
+                if (oldTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+                    los = LosEffects.calculateLOS(game, game.getEntity(oldTarget.getId()), swarmSecondaryTarget);
                 } else {
-                    los = LosEffects.calculateLOS(game,
-                          game.getEntity(swarmSecondaryTarget.getId()),
-                          swarmPrimaryTarget);
+                    los = LosEffects.calculateLOS(game, game.getEntity(swarmSecondaryTarget.getId()), oldTarget);
                 }
             }
 
@@ -766,12 +763,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             losMods = los.losModifiers(game, eistatus, underWater);
         } else {
             if (exchangeSwarmTarget) {
-                // Swarm should draw LoS between targets, not attacker, since
-                // we don't want LoS to be blocked
-                if (swarmPrimaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-                    los = LosEffects.calculateLos(game, swarmPrimaryTarget.getId(), swarmSecondaryTarget);
+                // Swarm should draw LoS between targets, not attacker, since we don't want LoS to be blocked
+                if (oldTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+                    los = LosEffects.calculateLOS(game, (Entity) oldTarget, swarmSecondaryTarget);
                 } else {
-                    los = LosEffects.calculateLos(game, swarmSecondaryTarget.getId(), swarmPrimaryTarget);
+                    los = LosEffects.calculateLOS(game, (Entity) swarmSecondaryTarget, oldTarget);
                 }
             } else {
                 // For everything else, set up a plain old LOS
@@ -1057,7 +1053,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit = handleSwarmSecondaryAttacks(game,
                   ae,
                   target,
-                  swarmPrimaryTarget,
+                  oldTarget,
                   swarmSecondaryTarget,
                   toHit,
                   eistatus,
@@ -1172,46 +1168,44 @@ public class WeaponAttackAction extends AbstractAttackAction {
         toHit = compileCrewToHitMods(game, ae, te, toHit, null);
 
         // Collect the modifiers for the attacker's condition/actions
-        if (ae != null) {
-            // Conventional fighter, Aerospace and fighter LAM attackers
-            if (ae.isAero()) {
-                toHit = compileAeroAttackerToHitMods(game,
-                      ae,
-                      target,
-                      ttype,
-                      toHit,
-                      Entity.LOC_NONE,
-                      AimingMode.NONE,
-                      eistatus,
-                      null,
-                      null,
-                      null,
-                      EnumSet.of(AmmoType.Munitions.M_STANDARD),
-                      false,
-                      false,
-                      false,
-                      false,
-                      false);
-                // Everyone else
-            } else {
-                toHit = compileAttackerToHitMods(game,
-                      ae,
-                      target,
-                      los,
-                      toHit,
-                      Entity.LOC_NONE,
-                      AimingMode.NONE,
-                      null,
-                      null,
-                      weaponId,
-                      null,
-                      EnumSet.of(AmmoType.Munitions.M_STANDARD),
-                      false,
-                      false,
-                      false,
-                      false,
-                      false);
-            }
+        // Conventional fighter, Aerospace and fighter LAM attackers
+        if (ae.isAero()) {
+            toHit = compileAeroAttackerToHitMods(game,
+                  ae,
+                  target,
+                  ttype,
+                  toHit,
+                  Entity.LOC_NONE,
+                  AimingMode.NONE,
+                  eistatus,
+                  null,
+                  null,
+                  null,
+                  EnumSet.of(AmmoType.Munitions.M_STANDARD),
+                  false,
+                  false,
+                  false,
+                  false,
+                  false);
+            // Everyone else
+        } else {
+            toHit = compileAttackerToHitMods(game,
+                  ae,
+                  target,
+                  los,
+                  toHit,
+                  Entity.LOC_NONE,
+                  AimingMode.NONE,
+                  null,
+                  null,
+                  weaponId,
+                  null,
+                  EnumSet.of(AmmoType.Munitions.M_STANDARD),
+                  false,
+                  false,
+                  false,
+                  false,
+                  false);
         }
 
         // Collect the modifiers for the target's condition/actions
@@ -1303,16 +1297,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param underWater            flag that indicates whether or not the weapon being used is underwater
      */
     private static String toHitIsImpossible(Game game, Entity ae, int attackerId, Targetable target, int ttype,
-                                            LosEffects los, ToHitData losMods, ToHitData toHit, int distance,
-                                            Entity spotter, WeaponType wtype, WeaponMounted weapon, int weaponId,
-                                            AmmoType atype, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition,
-                                            boolean isArtilleryDirect, boolean isArtilleryFLAK,
-                                            boolean isArtilleryIndirect, boolean isAttackerInfantry,
-                                            boolean isBearingsOnlyMissile, boolean isCruiseMissile,
-                                            boolean exchangeSwarmTarget, boolean isHoming, boolean isInferno,
-                                            boolean isIndirect, boolean isStrafing, boolean isTAG,
-                                            boolean targetInBuilding, boolean usesAmmo, boolean underWater,
-                                            boolean evenIfAlreadyFired) {
+          LosEffects los, ToHitData losMods, ToHitData toHit, int distance, Entity spotter, WeaponType wtype,
+          WeaponMounted weapon, int weaponId, AmmoType atype, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition,
+          boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isAttackerInfantry,
+          boolean isBearingsOnlyMissile, boolean isCruiseMissile, boolean exchangeSwarmTarget, boolean isHoming,
+          boolean isInferno, boolean isIndirect, boolean isStrafing, boolean isTAG, boolean targetInBuilding,
+          boolean usesAmmo, boolean underWater, boolean evenIfAlreadyFired) {
 
         // Block the shot if the attacker is null
         if (ae == null) {
@@ -1472,7 +1462,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if ((weapon != null)) {
             int loc = weapon.getLocation();
 
-            if ((ae instanceof Mek) && !weapon.isRearMounted() && !((Mek) ae).canFireWeapon(loc)) {
+            if ((ae instanceof Mek) && !weapon.isRearMounted() && !ae.canFireWeapon(loc)) {
                 return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
             }
         }
@@ -2318,7 +2308,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         return Messages.getString("WeaponAttackAction.TooLongForDirectArty");
                     }
                     // Artillery Flak targeting Aerospace ignores altitude when computing range
-                    if (target.isAirborne() && ae.getPosition().distance(target.getPosition()) > Board.DEFAULT_BOARD_HEIGHT) {
+                    if (target.isAirborne() &&
+                              ae.getPosition().distance(target.getPosition()) > Board.DEFAULT_BOARD_HEIGHT) {
                         return Messages.getString("WeaponAttackAction.TooLongForDirectArty");
                     }
                 }
@@ -2351,8 +2342,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 }
 
                 // Apply gravity mod here, per TO: AR pg 155
-                maxRange =
-                      (int) (Math.floor((double) (maxRange * Board.DEFAULT_BOARD_HEIGHT) / game.getPlanetaryConditions().getGravity()) / 17f);
+                maxRange = (int) (Math.floor((double) (maxRange * Board.DEFAULT_BOARD_HEIGHT) /
+                                                   game.getPlanetaryConditions().getGravity()) / 17f);
 
                 // Maximum range is measured in mapsheets
                 if (boardRange > maxRange) {
@@ -3124,8 +3115,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param isBearingsOnlyMissile flag that indicates whether this is a bearings-only capital missile attack
      */
     private static String toHitIsAutomatic(Game game, Entity ae, Targetable target, int ttype, LosEffects los,
-                                           int distance, WeaponType wtype, Mounted<?> weapon,
-                                           boolean isBearingsOnlyMissile) {
+          int distance, WeaponType wtype, Mounted<?> weapon, boolean isBearingsOnlyMissile) {
 
         // Buildings
 
@@ -3365,8 +3355,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param isArtilleryIndirect flag that indicates whether this is an indirect-fire artillery attack
      */
     private static ToHitData compileEnvironmentalToHitMods(Game game, Entity ae, Targetable target, WeaponType wtype,
-                                                           AmmoType atype, ToHitData toHit,
-                                                           boolean isArtilleryIndirect) {
+          AmmoType atype, ToHitData toHit, boolean isArtilleryIndirect) {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         if (toHit == null) {
@@ -3479,10 +3468,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param narcSpotter  flag that indicates whether this spotting entity is using NARC equipment
      */
     private static ToHitData compileWeaponToHitMods(Game game, Entity ae, Entity spotter, Targetable target, int ttype,
-                                                    ToHitData toHit, WeaponType wtype, Mounted<?> weapon,
-                                                    AmmoType atype, Mounted<?> ammo,
-                                                    EnumSet<AmmoType.Munitions> munition, boolean isFlakAttack,
-                                                    boolean isIndirect, boolean narcSpotter) {
+          ToHitData toHit, WeaponType wtype, Mounted<?> weapon, AmmoType atype, Mounted<?> ammo,
+          EnumSet<AmmoType.Munitions> munition, boolean isFlakAttack, boolean isIndirect, boolean narcSpotter) {
         if (ae == null || wtype == null || weapon == null) {
             // Can't calculate weapon mods without a valid weapon and an attacker to fire it
             return toHit;
@@ -3678,10 +3665,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param isINarcGuided flag that indicates whether the target is broadcasting an iNarc beacon
      */
     private static ToHitData compileAmmoToHitMods(Game game, Entity ae, Targetable target, int ttype, ToHitData toHit,
-                                                  WeaponType wtype, Mounted<?> weapon, AmmoType atype,
-                                                  EnumSet<AmmoType.Munitions> munition, boolean bApollo,
-                                                  boolean bArtemisV, boolean bFTL, boolean bHeatSeeking,
-                                                  boolean isECMAffected, boolean isINarcGuided) {
+          WeaponType wtype, Mounted<?> weapon, AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean bApollo,
+          boolean bArtemisV, boolean bFTL, boolean bHeatSeeking, boolean isECMAffected, boolean isINarcGuided) {
         if (ae == null || atype == null) {
             // Can't calculate ammo mods without valid ammo and an attacker to fire it
             return toHit;
@@ -3827,11 +3812,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param usesAmmo          flag that indicates if the WeaponType being used is ammo-fed
      */
     private static ToHitData compileAttackerToHitMods(Game game, Entity ae, Targetable target, LosEffects los,
-                                                      ToHitData toHit, int aimingAt, AimingMode aimingMode,
-                                                      WeaponType wtype, Mounted<?> weapon, int weaponId, AmmoType atype,
-                                                      EnumSet<AmmoType.Munitions> munition, boolean isFlakAttack,
-                                                      boolean isHaywireINarced, boolean isNemesisConfused,
-                                                      boolean isWeaponFieldGuns, boolean usesAmmo) {
+          ToHitData toHit, int aimingAt, AimingMode aimingMode, WeaponType wtype, Mounted<?> weapon, int weaponId,
+          AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean isFlakAttack, boolean isHaywireINarced,
+          boolean isNemesisConfused, boolean isWeaponFieldGuns, boolean usesAmmo) {
         if (toHit == null) {
             // Without valid toHit data, the rest of this will fail
             toHit = new ToHitData();
@@ -4092,12 +4075,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param usesAmmo            flag that indicates if the WeaponType being used is ammo-fed
      */
     private static ToHitData compileAeroAttackerToHitMods(Game game, Entity ae, Targetable target, int ttype,
-                                                          ToHitData toHit, int aimingAt, AimingMode aimingMode,
-                                                          int eistatus, WeaponType wtype, WeaponMounted weapon,
-                                                          AmmoType atype, EnumSet<AmmoType.Munitions> munition,
-                                                          boolean isArtilleryIndirect, boolean isFlakAttack,
-                                                          boolean isNemesisConfused, boolean isStrafing,
-                                                          boolean usesAmmo) {
+          ToHitData toHit, int aimingAt, AimingMode aimingMode, int eistatus, WeaponType wtype, WeaponMounted weapon,
+          AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean isArtilleryIndirect, boolean isFlakAttack,
+          boolean isNemesisConfused, boolean isStrafing, boolean usesAmmo) {
         if (toHit == null) {
             // Without valid toHit data, the rest of this will fail
             toHit = new ToHitData();
@@ -4537,12 +4517,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param usesAmmo            flag that indicates whether or not the WeaponType being used is ammo-fed
      */
     private static ToHitData compileTargetToHitMods(Game game, Entity ae, Targetable target, int ttype, LosEffects los,
-                                                    ToHitData toHit, int aimingAt, AimingMode aimingMode, int distance,
-                                                    WeaponType wtype, WeaponMounted weapon, AmmoType atype,
-                                                    EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect,
-                                                    boolean isArtilleryIndirect, boolean isAttackerInfantry,
-                                                    boolean exchangeSwarmTarget, boolean isIndirect,
-                                                    boolean isPointBlankShot, boolean usesAmmo) {
+          ToHitData toHit, int aimingAt, AimingMode aimingMode, int distance, WeaponType wtype, WeaponMounted weapon,
+          AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect, boolean isArtilleryIndirect,
+          boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect, boolean isPointBlankShot,
+          boolean usesAmmo) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
@@ -4875,14 +4853,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param underWater       flag that indicates whether the weapon being used is underwater
      */
     private static ToHitData compileTerrainAndLosToHitMods(Game game, Entity ae, Targetable target, int ttype,
-                                                           int aElev, int tElev, int targEl, int distance,
-                                                           LosEffects los, ToHitData toHit, ToHitData losMods,
-                                                           int eistatus, WeaponType wtype, WeaponMounted weapon,
-                                                           int weaponId, AmmoType atype, AmmoMounted ammo,
-                                                           EnumSet<AmmoType.Munitions> munition,
-                                                           boolean isAttackerInfantry, boolean inSameBuilding,
-                                                           boolean isIndirect, boolean isPointBlankShot,
-                                                           boolean underWater) {
+          int aElev, int tElev, int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods,
+          int eistatus, WeaponType wtype, WeaponMounted weapon, int weaponId, AmmoType atype, AmmoMounted ammo,
+          EnumSet<AmmoType.Munitions> munition, boolean isAttackerInfantry, boolean inSameBuilding, boolean isIndirect,
+          boolean isPointBlankShot, boolean underWater) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
@@ -5169,8 +5143,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param srt    Class that stores whether or not this WAA should return a special resolution
      */
     private static ToHitData handleSpecialWeaponAttacks(Game game, Entity ae, Targetable target, int ttype,
-                                                        LosEffects los, ToHitData toHit, WeaponType wtype,
-                                                        AmmoType atype, SpecialResolutionTracker srt) {
+          LosEffects los, ToHitData toHit, WeaponType wtype, AmmoType atype, SpecialResolutionTracker srt) {
         if (ae == null) {
             // *Should* be impossible at this point in the process
             return toHit;
@@ -5241,8 +5214,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param srt    Class that stores whether or not this WAA should return a special resolution
      */
     private static ToHitData handleInfantrySwarmAttacks(Game game, Entity ae, Targetable target, int ttype,
-                                                        ToHitData toHit, WeaponType wtype,
-                                                        SpecialResolutionTracker srt) {
+          ToHitData toHit, WeaponType wtype, SpecialResolutionTracker srt) {
         if (ae == null) {
             // *Should* be impossible at this point in the process
             return toHit;
@@ -5372,11 +5344,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param underWater           flag that indicates whether the weapon being used is underwater
      */
     private static ToHitData handleSwarmSecondaryAttacks(Game game, Entity ae, Targetable target,
-                                                         Targetable swarmPrimaryTarget, Targetable swarmSecondaryTarget,
-                                                         ToHitData toHit, int eistatus, int aimingAt,
-                                                         AimingMode aimingMode, Mounted<?> weapon, AmmoType atype,
-                                                         EnumSet<AmmoType.Munitions> munition, boolean isECMAffected,
-                                                         boolean inSameBuilding, boolean underWater) {
+          Targetable swarmPrimaryTarget, Targetable swarmSecondaryTarget, ToHitData toHit, int eistatus, int aimingAt,
+          AimingMode aimingMode, Mounted<?> weapon, AmmoType atype, EnumSet<AmmoType.Munitions> munition,
+          boolean isECMAffected, boolean inSameBuilding, boolean underWater) {
         if (ae == null || swarmPrimaryTarget == null || swarmSecondaryTarget == null) {
             // This method won't work without these 3 things
             return toHit;
@@ -5415,13 +5385,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         LosEffects swarmlos;
-        // TO makes it seem like the terrain modifiers should be between the
+        // TO make it seem like the terrain modifiers should be between the
         // attacker and the secondary target, but we have received rules
         // clarifications on the old forums indicating that this is correct
         if (swarmPrimaryTarget.getTargetType() != Targetable.TYPE_ENTITY) {
-            swarmlos = LosEffects.calculateLos(game, swarmSecondaryTarget.getId(), target);
+            swarmlos = LosEffects.calculateLOS(game, (Entity) swarmSecondaryTarget, target);
         } else {
-            swarmlos = LosEffects.calculateLos(game, swarmPrimaryTarget.getId(), swarmSecondaryTarget);
+            swarmlos = LosEffects.calculateLOS(game, (Entity) swarmPrimaryTarget, swarmSecondaryTarget);
         }
 
         // reset cover
@@ -5441,7 +5411,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // target in partial water - depth 1 for most units
             int partialWaterLevel = 1;
             // Depth 2 for superheavy meks
-            if (target != null && (target instanceof Mek) && ((Mek) target).isSuperHeavy()) {
+            if ((target instanceof Mek) && ((Mek) target).isSuperHeavy()) {
                 partialWaterLevel = 2;
             }
             if (targHex.containsTerrain(Terrains.WATER) &&
@@ -5490,9 +5460,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param srt             Class that stores whether or not this WAA should return a special resolution
      */
     private static ToHitData artilleryDirectToHit(Game game, Entity ae, Targetable target, int ttype, ToHitData losMods,
-                                                  ToHitData toHit, WeaponType wtype, WeaponMounted weapon,
-                                                  AmmoType atype, boolean isArtilleryFLAK, boolean usesAmmo,
-                                                  SpecialResolutionTracker srt) {
+          ToHitData toHit, WeaponType wtype, WeaponMounted weapon, AmmoType atype, boolean isArtilleryFLAK,
+          boolean usesAmmo, SpecialResolutionTracker srt) {
 
         if (null == atype) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "No ammo type!");
@@ -5595,7 +5564,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param srt    Class that stores whether or not this WAA should return a special resolution
      */
     private static ToHitData artilleryIndirectToHit(Entity ae, Targetable target, ToHitData toHit, WeaponType wtype,
-                                                    Mounted<?> weapon, SpecialResolutionTracker srt) {
+          Mounted<?> weapon, SpecialResolutionTracker srt) {
 
         // See MegaMek/megamek#5168
         int mod = (ae.getPosition().distance(target.getPosition()) <= 17) ? 4 : 7;
@@ -5662,14 +5631,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param srt                 Class that stores whether or not this WAA should return a special resolution
      */
     private static ToHitData handleArtilleryAttacks(Game game, Entity ae, Targetable target, int ttype,
-                                                    ToHitData losMods, ToHitData toHit, WeaponType wtype,
-                                                    WeaponMounted weapon, AmmoType atype, boolean isArtilleryDirect,
-                                                    boolean isArtilleryFLAK, boolean isArtilleryIndirect,
-                                                    boolean isHoming, boolean usesAmmo, SpecialResolutionTracker srt) {
+          ToHitData losMods, ToHitData toHit, WeaponType wtype, WeaponMounted weapon, AmmoType atype,
+          boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isHoming,
+          boolean usesAmmo, SpecialResolutionTracker srt) {
         if ((target instanceof HexTarget hexTarget) && !game.isOnGroundMap(hexTarget)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.ArtyCanOnlyHitGroundHexes"));
         }
-
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
@@ -5769,7 +5736,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     public static ToHitData processAttackerSPAs(ToHitData toHit, Entity ae, Targetable target, WeaponMounted weapon,
-                                                Game game) {
+          Game game) {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         // blood stalker SPA

@@ -1159,7 +1159,7 @@ public class TWDamageManager implements IDamageManager {
                     int opRoll = Compute.d6(1);
                     if (((te instanceof Jumpship) && !(te instanceof Warship) && (opRoll > 3))
                               || ((te instanceof Dropship) && (opRoll > 4))
-                              || ((te instanceof Warship) && (a.get0SI() <= 30) && (opRoll > 5))) {
+                              || ((te instanceof Warship) && (a.getOSI() <= 30) && (opRoll > 5))) {
                         // over-penetration happened
                         r = new Report(9090);
                         r.subject = te_n;
@@ -2465,10 +2465,10 @@ public class TWDamageManager implements IDamageManager {
             // if there's a mast mount in the rotor, it and all other
             // equipment
             // on it get destroyed
-            if ((te instanceof VTOL)
-                      && (hit.getLocation() == VTOL.LOC_ROTOR)
-                      && te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1,
-                  VTOL.LOC_ROTOR)) {
+            if ((te instanceof VTOL) &&
+                      (hit.getLocation() == VTOL.LOC_ROTOR) &&
+                      te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) &&
+                      (damage > 0)) {
                 r = new Report(6081);
                 r.subject = te_n;
                 r.indent(2);

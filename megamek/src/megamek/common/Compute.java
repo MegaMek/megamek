@@ -6883,21 +6883,14 @@ public class Compute {
         return false;
     }
 
-    public static ArrayList<Coords> getAcceptableUnloadPositions(
-            List<Coords> ring, Entity unit, Game game, int elev) {
-
-        ArrayList<Coords> acceptable = new ArrayList<>();
-
-        for (Coords pos : ring) {
-            Hex hex = game.getBoard().getHex(pos);
-            if (null == hex) {
-                continue;
-            }
-            // no stacking violations, no prohibited terrain, and within 2
-            // elevations
-
-            if (!unit.isLocationProhibited(pos)
-                    && (null == stackingViolation(game, unit.getId(), pos, unit.climbMode()))
+    public static List<Coords> getAcceptableUnloadPositions(List<Coords> candidates, int boardId, Entity unitToUnload,
+          Game game, int elev) {
+        List<Coords> acceptable = new ArrayList<>();
+        for (Coords pos : candidates) {
+            Hex hex = game.getHex(pos, boardId);
+            // no stacking violations, no prohibited terrain, and within 2 elevations
+            if ((hex != null) && !unitToUnload.isLocationProhibited(pos)
+                    && (null == stackingViolation(game, unitToUnload.getId(), pos, unitToUnload.climbMode()))
                     && (Math.abs(hex.getLevel() - elev) < 3)) {
                 acceptable.add(pos);
             }

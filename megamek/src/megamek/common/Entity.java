@@ -7247,7 +7247,7 @@ public abstract class Entity extends TurnOrdered
             roll.addModifier(taserInterference, "taser interference");
         }
 
-        if (getGame().getPhase().isMovement() && isPowerReverse()) {
+        if (game.getPhase().isMovement() && isPowerReverse()) {
             roll.addModifier(1, "power reverse");
         }
 
@@ -7271,13 +7271,13 @@ public abstract class Entity extends TurnOrdered
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
         boolean hasAllWeather = (null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER);
-        if ((weatherMod != 0) && !game.getBoard().inSpace() && hasAllWeather) {
+        if ((weatherMod != 0) && !isSpaceborne() && hasAllWeather) {
             roll.addModifier(weatherMod, conditions.getWeather().toString());
         }
 
         // check wind conditions for all entities
         int windMod = conditions.getWindPilotPenalty(this);
-        if ((windMod != 0) && !game.getBoard().inSpace() && hasAllWeather) {
+        if ((windMod != 0) && !isSpaceborne() && hasAllWeather) {
             roll.addModifier(windMod, conditions.getWind().toString());
         }
 

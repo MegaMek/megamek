@@ -2988,7 +2988,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        final boolean canLoad = game().getEntitiesVector(finalPosition()).stream()
+        final boolean canLoad = game().getEntitiesVector(finalPosition(), finalBoardId()).stream()
                 .filter(other -> !ce.canTow(other.getId()))
                 .filter(Entity::isLoadableThisTurn)
                 .anyMatch(ce::canLoad);
@@ -3525,7 +3525,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             ring = pos.allAtDistance(2);
         }
         // ok now we need to go through the ring and identify available Positions
-        ring = Compute.getAcceptableUnloadPositions(ring, unloaded, game, elev);
+        ring = Compute.getAcceptableUnloadPositions(ring, finalBoardId(), unloaded, game, elev);
         // If we're a train, eliminate positions held by any unit in the train.
         // You get stacking violation weirdness if this isn't done.
         Set<Coords> toRemove = new HashSet<>();
@@ -3602,7 +3602,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             ring = pos.allAtDistance(2);
         }
         // ok now we need to go through the ring and identify available Positions
-        ring = Compute.getAcceptableUnloadPositions(ring, crew, game, elev);
+        ring = Compute.getAcceptableUnloadPositions(ring, finalBoardId(), crew, game, elev);
         if (ring.size() < 1) {
             String title = Messages.getString("MovementDisplay.NoPlaceToEject.title");
             String body = Messages.getString("MovementDisplay.NoPlaceToEject.message");

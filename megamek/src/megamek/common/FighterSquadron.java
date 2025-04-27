@@ -212,13 +212,13 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
         int vel = getCurrentVelocity();
         int vmod = vel - (2 * getWalkMP());
-        if (!getGame().getBoard().inSpace() && (vmod > 0)) {
+        if (!isSpaceborne() && (vmod > 0)) {
             prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
         }
 
         // add in atmospheric effects later
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (!(game.getBoard().inSpace()
+        if (!(isSpaceborne()
                 || conditions.getAtmosphere().isVacuum())) {
             prd.addModifier(+2, "Atmospheric operations");
             prd.addModifier(-1, "fighter/ small craft");

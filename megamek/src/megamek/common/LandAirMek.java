@@ -734,21 +734,21 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
             int vel = getCurrentVelocity();
             int vmod = vel - (2 * getWalkMP());
-            if (!getGame().getBoard().inSpace() && (vmod > 0)) {
+            if (!isSpaceborne() && (vmod > 0)) {
                 roll.addModifier(vmod, "Velocity greater than 2x safe thrust");
             }
 
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             // add in atmospheric effects later
-            boolean spaceOrVacuum = game.getBoard().inSpace() || conditions.getAtmosphere().isVacuum();
+            boolean spaceOrVacuum = isSpaceborne() || conditions.getAtmosphere().isVacuum();
             if (!spaceOrVacuum && isAirborne()) {
                 roll.addModifier(+1, "Atmospheric operations");
             }
 
-            if (hasQuirk(OptionsConstants.QUIRK_POS_ATMO_FLYER) && !game.getBoard().inSpace()) {
+            if (hasQuirk(OptionsConstants.QUIRK_POS_ATMO_FLYER) && !isSpaceborne()) {
                 roll.addModifier(-1, "atmospheric flyer");
             }
-            if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY) && !game.getBoard().inSpace()) {
+            if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY) && !isSpaceborne()) {
                 roll.addModifier(+1, "atmospheric flight instability");
             }
         }

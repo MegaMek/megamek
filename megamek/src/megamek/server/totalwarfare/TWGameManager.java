@@ -3325,6 +3325,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Place the unloaded unit onto the screen.
         unit.setPosition(pos);
+        unit.setBoardId(unloader.getBoardId());
 
         // Units unloaded onto the screen are deployed.
         if (pos != null) {
@@ -3335,7 +3336,7 @@ public class TWGameManager extends AbstractGameManager {
         unit.setFacing(facing);
         unit.setSecondaryFacing(facing);
 
-        Hex hex = game.getBoard().getHex(pos);
+        Hex hex = game.getHex(pos, unit.getBoardId());
         boolean isBridge = (hex != null) && hex.containsTerrain(Terrains.PAVEMENT);
 
         if (hex == null) {
@@ -3345,7 +3346,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Flying units unload to the same elevation as the flying
                 // transport
                 unit.setElevation(elevation);
-            } else if (game.getBoard().getBuildingAt(pos) != null) {
+            } else if (game.getBuildingAt(pos, unit.getBoardId()).isPresent()) {
                 // non-flying unit unloaded from a flying onto a building
                 // -> sit on the roof
                 unit.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
@@ -3369,7 +3370,7 @@ public class TWGameManager extends AbstractGameManager {
                     return false;
                 }
             }
-        } else if (game.getBoard().getBuildingAt(pos) != null) {
+        } else if (game.getBuildingAt(pos, unit.getBoardId()).isPresent()) {
             // non flying unit unloading units into a building
             // -> sit in the building at the same elevation
             unit.setElevation(elevation);
@@ -15719,7 +15720,7 @@ TargetRoll nTargetRoll,
                     }
                 }
             }
-            if (entity.isAero() && entity.isAirborne() && !game.getBoard().inSpace()) {
+            if (entity.isAero() && entity.isAirborne() && !entity.isSpaceborne()) {
                 // check if aero unit meets conditions for control rolls and add to the list
                 if (entity.damageThisPhase > 0) {
                     if (!getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL) &&

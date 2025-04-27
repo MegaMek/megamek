@@ -132,7 +132,7 @@ public class SharedUtility {
         checkNag(rollTarget, nagReport, psrList);
 
         // Atmospheric checks
-        if (!game.getBoard().inSpace() && !md.contains(MoveStepType.LAND)
+        if (!game.getBoard(md.getFinalBoardId()).inSpace() && !md.contains(MoveStepType.LAND)
                 && !md.contains(MoveStepType.VLAND)) {
             // check to see if velocity is 2x thrust
             rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),

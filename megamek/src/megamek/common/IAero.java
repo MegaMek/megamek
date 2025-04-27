@@ -661,26 +661,31 @@ public interface IAero {
 
     default String hasRoomForHorizontalTakeOff() {
         // walk along the hexes in the facing of the unit
-        Hex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
+        Entity thisAero = ((Entity) this);
+        if (!thisAero.game.hasBoardLocationOf(thisAero)) {
+            return "Unit is not on a board";
+        }
+        Board board = thisAero.game.getBoard(thisAero);
+        Hex hex = board.getHex(thisAero.getPosition());
         int elev = hex.getLevel();
-        int facing = ((Entity) this).getFacing();
+        int facing = thisAero.getFacing();
         String lenString = " (" + getTakeOffLength() + " hexes required)";
         // dropships need a strip three hexes wide
         Vector<Coords> startingPos = new Vector<>();
-        startingPos.add(((Entity) this).getPosition());
+        startingPos.add(thisAero.getPosition());
         if (this instanceof Dropship) {
-            startingPos.add(((Entity) this).getPosition().translated((facing + 4) % 6));
-            startingPos.add(((Entity) this).getPosition().translated((facing + 2) % 6));
+            startingPos.add(thisAero.getPosition().translated((facing + 4) % 6));
+            startingPos.add(thisAero.getPosition().translated((facing + 2) % 6));
         }
         for (Coords pos : startingPos) {
             for (int i = 0; i < getTakeOffLength(); i++) {
                 pos = pos.translated(facing);
                 // check for buildings
-                if (((Entity) this).getGame().getBoard().getBuildingAt(pos) != null) {
+                if (board.getBuildingAt(pos) != null) {
                     return "Buildings in the way" + lenString;
                 }
                 // no units in the way
-                for (Entity en : ((Entity) this).getGame().getEntitiesVector(pos)) {
+                for (Entity en : thisAero.game.getEntitiesVector(pos, board.getBoardId())) {
                     if (en.equals(this)) {
                         continue;
                     }
@@ -689,7 +694,7 @@ public interface IAero {
                         return "Ground units in the way" + lenString;
                     }
                 }
-                hex = ((Entity) this).getGame().getBoard().getHex(pos);
+                hex = board.getHex(pos);
                 // if the hex is null, then we are offboard. Don't let units
                 // take off offboard.
                 if (null == hex) {

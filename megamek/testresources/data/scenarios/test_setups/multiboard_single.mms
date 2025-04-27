@@ -72,13 +72,18 @@ factions:
 #    at: [ 35, 29 ]
 
 
-  - fullname: Bulldog Medium Tank
+  - fullname: Scorpion Light Tank (Armor)
     at: [ 6,12 ]
     board: 5
     facing: 2
     crew:
       name: Eddie the Eagle
       piloting: 8
+
+  - fullname: Zugvogel Omni Support Aircraft B
+    at: [ 4,12 ]
+    board: 5
+    altitude: 0
 
 #  - fullname: Locust LCT-1V
 #    board: 0

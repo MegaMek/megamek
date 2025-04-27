@@ -6035,7 +6035,7 @@
             </model>
 			<model name='RFL-3N'>
 				<roles>fire_support,anti_aircraft</roles>
-				<availability>IS:8,CLAN:2-,HL:8,Periphery.Deep:8,BAN:3</availability>
+				<availability>IS:8,CLAN:2-,Periphery:8,HL:8,Periphery.Deep:8,BAN:3</availability>
 			</model>
 		</chassis>
 		<chassis name='Ripper Infantry Transport' unitType='VTOL'>

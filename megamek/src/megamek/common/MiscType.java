@@ -1513,6 +1513,14 @@ public class MiscType extends EquipmentType {
                          hasFlag(F_NOVA) ||
                          (hasFlag(F_CLUB) && hasSubType(S_SPOT_WELDER))) {
             return 2;
+        } else if (hasFlag(F_CLUB)) {
+            if (hasSubType(S_VIBRO_SMALL)) {
+                return 3;
+            } else if (hasSubType(S_VIBRO_MEDIUM)) {
+                return 5;
+            } else if (hasSubType(S_VIBRO_LARGE)) {
+                return 7;
+            }
         }
         return 0;
     }

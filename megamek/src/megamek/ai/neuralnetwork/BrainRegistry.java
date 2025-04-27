@@ -5,7 +5,7 @@
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
- * version 2 or (at your option) any later version,
+ * version 3 or (at your option) any later version,
  * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.neuralnetwork;
 

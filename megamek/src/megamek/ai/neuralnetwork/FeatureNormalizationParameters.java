@@ -5,7 +5,7 @@
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
- * version 2 or (at your option) any later version,
+ * version 3 or (at your option) any later version,
  * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.neuralnetwork;
 
@@ -34,6 +39,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.internationalization.I18n;
+
 /**
  * FeatureNormalizationParameters is a record that holds the minimum and maximum values for input normalization for
  * the Neural Network model being run.
@@ -42,48 +49,70 @@ import java.util.List;
  * @author Luana Coppio
  */
 public record FeatureNormalizationParameters(float[] minValues, float[] maxValues) {
+
+    public static final String FAILED_TO_PARSE_FEATURE_NORMALIZATION_LINE_NUMBER_OF_COMMA_SEPARATED_VALUES =
+          "FailedToParseFeatureNormalizationLine.numberOfCommaSeparatedValues";
+    public static final String FAILED_TO_PARSE_FEATURE_NORMALIZATION_VALUE =
+          "FailedToParseFeatureNormalizationLine.failedToParseFeatureNormalizationValue";
+    public static final String HEADER = "feature,";
+    public static final String SEPARATOR = ",";
+    public static final int EXPECTED_NUMBER_OF_VALUES = 3;
+    public static final int FEATURE_MIN_VALUE_POSITION = 1;
+    public static final int FEATURE_MAX_VALUE_POSITION = 2;
+
     /**
      * Creates a new FeatureNormalizationParameters object from the given file with the min and max values.
      * @param featureNormalizationCsvFile the csv file containing the min and max values for feature normalization
      * @return a new FeatureNormalizationParameters object
      */
     public static FeatureNormalizationParameters loadFile(File featureNormalizationCsvFile) {
-        List<Float> minValuesList = new ArrayList<>();
-        List<Float> maxValuesList = new ArrayList<>();
-        float[] minValuesTemp;
-        float[] maxValuesTemp;
+        List<String> lines = getFeaturesLines(featureNormalizationCsvFile);
+        return parseFeatureMinMaxValues(lines);
+    }
 
-        int inputSize = 0;
+    private static FeatureNormalizationParameters parseFeatureMinMaxValues(List<String> lines) {
+        int size = lines.size();
+        float[] minValuesTemp = new float[size];
+        float[] maxValuesTemp = new float[size];
+
+        // Process collected lines
+        for (int i = 0; i < size; i++) {
+            String[] values = getFeaturesMinMaxValues(lines.get(i));
+            try {
+                minValuesTemp[i] = Float.parseFloat(values[FEATURE_MIN_VALUE_POSITION]);
+                maxValuesTemp[i] = Float.parseFloat(values[FEATURE_MAX_VALUE_POSITION]);
+            } catch (NumberFormatException e) {
+                throw new FailedToParseFeatureNormalizationLine(I18n.getFormattedTextAt(FailedToParseFeatureNormalizationLine.BUNDLE_NAME,
+                      FAILED_TO_PARSE_FEATURE_NORMALIZATION_VALUE, i, lines.get(i)), e);
+            }
+        }
+        return new FeatureNormalizationParameters(minValuesTemp, maxValuesTemp);
+    }
+
+    private static List<String> getFeaturesLines(File featureNormalizationCsvFile) {
+        List<String> lines = new ArrayList<>();
         // Initialize normalization values
         // the normalization values are on a file named min_max_feature_normalization.csv inside the model folder
+
         try (var reader = new BufferedReader(new FileReader(featureNormalizationCsvFile))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith("feature,")) {
-                    continue;
+                if (!line.startsWith(HEADER)) {
+                    lines.add(line);
                 }
-                String[] values = line.split(",");
-                if (values.length != 3) {
-                    // This probably means that it reached the end of the file, but we need to throw an exception here
-                    // to avoid using invalid values because otherwise it is impossible to run.
-                    throw new IllegalArgumentException("Invalid line in normalization file: " + line);
-                }
-                minValuesList.add(Float.parseFloat(values[1]));
-                maxValuesList.add(Float.parseFloat(values[2]));
-                inputSize++;
             }
-
-            minValuesTemp = new float[minValuesList.size()];
-            maxValuesTemp = new float[maxValuesList.size()];
-
-            for (int i = 0; i < inputSize; i++) {
-                minValuesTemp[i] = minValuesList.get(i);
-                maxValuesTemp[i] = maxValuesList.get(i);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load TensorFlow model: " + e.getMessage(), e);
+        } catch (IOException ioException) {
+            throw new FailedToLoadFeatureNormalizationFile(featureNormalizationCsvFile, ioException);
         }
+        return lines;
+    }
 
-        return new FeatureNormalizationParameters(minValuesTemp, maxValuesTemp);
+    private static String[] getFeaturesMinMaxValues(String line) {
+        String[] values = line.split(SEPARATOR);
+        if (values.length != EXPECTED_NUMBER_OF_VALUES) {
+            throw new FailedToParseFeatureNormalizationLine(I18n.getFormattedTextAt(FailedToParseFeatureNormalizationLine.BUNDLE_NAME,
+                  FAILED_TO_PARSE_FEATURE_NORMALIZATION_LINE_NUMBER_OF_COMMA_SEPARATED_VALUES, line));
+        }
+        return values;
     }
 }

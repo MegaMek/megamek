@@ -5,7 +5,7 @@
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
- * version 2 or (at your option) any later version,
+ * version 3 or (at your option) any later version,
  * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.neuralnetwork;
 
@@ -32,12 +37,14 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 import java.util.Map;
 
 import megamek.common.Configuration;
+import megamek.common.internationalization.I18n;
 import megamek.logging.MMLogger;
 import org.tensorflow.Result;
 import org.tensorflow.SavedModelBundle;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
 import org.tensorflow.TensorFlow;
+import org.tensorflow.exceptions.TensorFlowException;
 import org.tensorflow.ndarray.FloatNdArray;
 import org.tensorflow.ndarray.NdArrays;
 import org.tensorflow.ndarray.Shape;
@@ -91,11 +98,19 @@ public class Brain {
      * @throws RuntimeException If the model cannot be loaded
      */
     public static Brain loadBrain(BrainRegistry brainRegistry) {
-        SavedModelBundle model =
-              SavedModelBundle.load(Configuration.aiBrainFolderPath(brainRegistry.name()).toString());
+        SavedModelBundle model = getSavedModelBundle(brainRegistry);
         FeatureNormalizationParameters featureNormalizationParameters =
               FeatureNormalizationParameters.loadFile(Configuration.aiBrainNormalizationFile(brainRegistry.name()));
         return new Brain(brainRegistry.outputAxisLength(), model, featureNormalizationParameters);
+    }
+
+    private static SavedModelBundle getSavedModelBundle(BrainRegistry brainRegistry) {
+        try {
+            return SavedModelBundle.load(Configuration.aiBrainFolderPath(brainRegistry.name()).toString());
+        } catch (TensorFlowException e) {
+            logger.error(e, "Failed to load TensorFlow model: {}", e.getMessage());
+            throw new FailedToLoadBrain(brainRegistry, e);
+        }
     }
 
     /**

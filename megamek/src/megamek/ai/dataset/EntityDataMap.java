@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
@@ -94,6 +98,33 @@ public abstract class EntityDataMap<F extends Enum<F>> {
         if (type.isInstance(value)) {
             return (T) value;
         }
+        return null;
+    }
+
+    /**
+     * Gets a list field value with proper generic typing.
+     * @param <T> The element type of the list
+     * @param field The field enum
+     * @param elementType The class of the list elements
+     * @return The field value as a properly typed list, or null if not present
+     */
+    @SuppressWarnings("unchecked")
+    protected <T> List<T> getList(F field, Class<T> elementType) {
+        Object value = data.get(field);
+        if (!(value instanceof List<?> list)) {
+            return null;
+        }
+
+        if (list.isEmpty()) {
+            return (List<T>) list;
+        }
+
+        // Check first element's type as a representative
+        Object firstElement = list.get(0);
+        if (elementType.isInstance(firstElement)) {
+            return (List<T>) list;
+        }
+
         return null;
     }
 

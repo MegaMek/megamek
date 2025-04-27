@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
@@ -50,46 +54,56 @@ import megamek.common.enums.GamePhase;
  * @author Luana Coppio
  */
 public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDataMap<F>> {
-
+    protected static final String SPACE_DELIMITER = " ";
+    protected static final String TAB_DELIMITER = "\t";
     protected static final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
 
-        // Shared format handlers for special types that need custom serialization
-        protected static final Map<Class<?>, Function<Object, String>> FORMAT_HANDLERS = new HashMap<>();
+    // Shared format handlers for special types that need custom serialization
+    protected static final Map<Class<?>, Function<Object, String>> FORMAT_HANDLERS = new HashMap<>();
+    protected static final Function<Object, String> BOOLEAN_OBJECT_TO_STRING_FUNCTION = value -> (Boolean) value ? "1" : "0";
+    protected static final Function<Object, String> ENUM_OBJECT_TO_STRING_FUNCTION = value -> ((Enum<?>) value).name();
 
-        // Initialize default formatters for common types
-        static {
-            // Boolean values
-            FORMAT_HANDLERS.put(Boolean.class, value -> (Boolean) value ? "1" : "0");
-            FORMAT_HANDLERS.put(boolean.class, value -> (Boolean) value ? "1" : "0");
+    // Initialize default formatters for common types
+    static {
+        // Boolean values
+        FORMAT_HANDLERS.put(Boolean.class, BOOLEAN_OBJECT_TO_STRING_FUNCTION);
+        FORMAT_HANDLERS.put(boolean.class, BOOLEAN_OBJECT_TO_STRING_FUNCTION);
 
-            // Numeric values with decimal formatting
-            FORMAT_HANDLERS.put(Double.class, LOG_DECIMAL::format);
-            FORMAT_HANDLERS.put(double.class, LOG_DECIMAL::format);
-            FORMAT_HANDLERS.put(Float.class, LOG_DECIMAL::format);
-            FORMAT_HANDLERS.put(float.class, LOG_DECIMAL::format);
+        // Numeric values with decimal formatting
+        FORMAT_HANDLERS.put(Double.class, LOG_DECIMAL::format);
+        FORMAT_HANDLERS.put(double.class, LOG_DECIMAL::format);
+        FORMAT_HANDLERS.put(Float.class, LOG_DECIMAL::format);
+        FORMAT_HANDLERS.put(float.class, LOG_DECIMAL::format);
 
-            // Common enum types
-            FORMAT_HANDLERS.put(UnitRole.class, value -> ((UnitRole) value).name());
-            FORMAT_HANDLERS.put(GamePhase.class, value -> ((GamePhase) value).name());
-            FORMAT_HANDLERS.put(AimingMode.class, value -> ((AimingMode) value).name());
+        // Common enum types
+        FORMAT_HANDLERS.put(UnitRole.class, ENUM_OBJECT_TO_STRING_FUNCTION);
+        FORMAT_HANDLERS.put(GamePhase.class, ENUM_OBJECT_TO_STRING_FUNCTION);
+        FORMAT_HANDLERS.put(AimingMode.class, ENUM_OBJECT_TO_STRING_FUNCTION);
 
         // Lists with space-separated values
         FORMAT_HANDLERS.put(List.class, value -> {
             // Special handling for lists of enums
             if (!((List<?>) value).isEmpty() && ((List<?>) value).get(0) instanceof Enum) {
                 return ((List<?>) value).stream()
-                             .map(step -> ((Enum<?>) step).name())
-                             .collect(Collectors.joining(" "));
+                             .map(ENUM_OBJECT_TO_STRING_FUNCTION)
+                             .collect(Collectors.joining(SPACE_DELIMITER));
             }
             // Default handling for other lists
             return ((List<?>) value).stream()
                          .map(String::valueOf)
-                         .collect(Collectors.joining(" "));
+                         .collect(Collectors.joining(SPACE_DELIMITER));
         });
     }
 
     // Define the field order for serialization
     private final List<F> fieldOrder;
+
+    /**
+     * Gets the line type marker for the serialized data, making it easier to identify the type of data and the version
+     * of the serializer used when reading the file.
+     * @return The line type marker as a string
+     */
+    protected abstract String getLineTypeMarker();
 
     /**
      * Creates a serializer with all fields of the enum in their natural order.
@@ -108,11 +122,13 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
     }
 
     public String serialize(T entityData) {
-        List<String> values = new ArrayList<>(fieldOrder.size());
+        // +1 is needed for the "line type marker" at the beginning of the line
+        List<String> values = new ArrayList<>(fieldOrder.size() + 1);
+        // Adds the marker for the line type first
+        values.add(getLineTypeMarker());
 
         // Get all fields from the map
         Map<F, Object> allFields = entityData.getAllFields();
-
         // Process each field in the defined order
         for (F field : fieldOrder) {
             Object value = allFields.get(field);
@@ -139,13 +155,17 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
             }
         }
 
-        return String.join("\t", values);
+        return String.join(TAB_DELIMITER, values);
     }
 
+    /**
+     * Gets the header line for the serialized data.
+     * @return The header line as a string with field names separated by tabs
+     */
     public String getHeaderLine() {
-        return fieldOrder.stream()
+        return getLineTypeMarker() + TAB_DELIMITER + fieldOrder.stream()
                      .map(Enum::name)
-                     .collect(Collectors.joining("\t"));
+                     .collect(Collectors.joining(TAB_DELIMITER));
     }
 
     /**

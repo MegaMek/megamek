@@ -30,21 +30,16 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.ai.dataset;
+package megamek.ai.neuralnetwork;
 
-import megamek.ai.dataset.UnitAttack.Field;
+import megamek.common.internationalization.I18n;
 
-/**
- * <p>Serializer for UnitAttack to TSV format.</p>
- * <p>Uses a flexible map-based approach with enum fields.</p>
- * @author Luana Coppio
- */
-public class UnitAttackSerializer extends EntityDataSerializer<UnitAttack.Field, UnitAttack> {
+import java.io.File;
 
-    /**
-     * Creates a serializer with default field order.
-     */
-    public UnitAttackSerializer() {
-        super(Field.class);
+public class FailedToLoadFeatureNormalizationFile extends RuntimeException {
+    private static final String MESSAGE_KEY = "FailedToLoadFeatureNormalizationFile.message";
+    private static final String BUNDLE_NAME = "megamek.ai.neuralnetwork.error"; // megamek.client.messages
+    public FailedToLoadFeatureNormalizationFile(File featureNormalizationFile, Throwable throwable) {
+        super(I18n.getFormattedTextAt(BUNDLE_NAME, MESSAGE_KEY, featureNormalizationFile), throwable);
     }
 }

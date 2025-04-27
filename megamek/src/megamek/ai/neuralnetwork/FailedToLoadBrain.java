@@ -30,21 +30,25 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.ai.dataset;
+package megamek.ai.neuralnetwork;
 
-import megamek.ai.dataset.UnitAttack.Field;
+import megamek.common.internationalization.I18n;
 
 /**
- * <p>Serializer for UnitAttack to TSV format.</p>
- * <p>Uses a flexible map-based approach with enum fields.</p>
+ * FailedToParseFeatureNormalizationLine is a custom exception that is thrown when there is an error parsing a line
+ * from the feature normalization CSV file.
  * @author Luana Coppio
  */
-public class UnitAttackSerializer extends EntityDataSerializer<UnitAttack.Field, UnitAttack> {
-
+public class FailedToLoadBrain extends RuntimeException {
+    // This makes it easily accessible the error message for the I18n class
+    public static final String BUNDLE_NAME = "megamek.ai.neuralnetwork.error";
+    private static final String MESSAGE_KEY = "FailedToLoadBrain.message";
     /**
-     * Creates a serializer with default field order.
+     * Creates a new FailedToParseFeatureNormalizationLine exception with the given message and throwable.
+     * @param brainRegistry the brainRegistry
+     * @param throwable the cause of the error
      */
-    public UnitAttackSerializer() {
-        super(Field.class);
+    public FailedToLoadBrain(BrainRegistry brainRegistry, Throwable throwable) {
+        super(I18n.getFormattedTextAt(BUNDLE_NAME, MESSAGE_KEY, brainRegistry), throwable);
     }
 }

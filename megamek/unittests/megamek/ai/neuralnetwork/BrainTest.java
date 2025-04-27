@@ -5,7 +5,7 @@
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
- * version 2 or (at your option) any later version,
+ * version 3 or (at your option) any later version,
  * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.neuralnetwork;
 
@@ -53,7 +58,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 public class BrainTest {
 
-    private static Brain BRAIN;
+    private static Brain brain;
     private static final Map<MovementClassification, Integer> ERROR_COUNTS =
           new EnumMap<>(MovementClassification.class);
     private static int TOTAL_TESTS = 0;
@@ -63,22 +68,22 @@ public class BrainTest {
     @BeforeAll
     public static void setUp() {
         resetTrackers();
-        BRAIN = Brain.loadBrain(DEFAULT_BRAIN);
+        brain = Brain.loadBrain(DEFAULT_BRAIN);
 
     }
 
     @Test
     void testLoadBrain() {
-        assertNotNull(BRAIN, "Brain should not be null");
+        assertNotNull(brain, "Brain should not be null");
         assertTrue(Brain.testTensorFlow());
-        assertTrue(BRAIN.getInputSize() > 0, "Brain input size should be greater than 0");
-        assertTrue(BRAIN.getOutputSize() > 0, "Brain output size should be greater than 0");
+        assertTrue(brain.getInputSize() > 0, "Brain input size should be greater than 0");
+        assertTrue(brain.getOutputSize() > 0, "Brain output size should be greater than 0");
     }
 
     @ParameterizedTest
     @MethodSource(value = "testValidationInputs")
     void testCalculatingMoves(TestValue testValue) {
-        var prediction = BRAIN.predict(testValue.input());
+        var prediction = brain.predict(testValue.input());
         MovementClassification predictedClassification = ClassificationScore.fromPrediction(prediction).getClassification();
         if (!predictedClassification.equals(testValue.classification())) {
             ERROR_COUNTS.merge(testValue.classification(), 1, Integer::sum);
@@ -91,7 +96,7 @@ public class BrainTest {
         if (TOTAL_TESTS > 0) {
             assertClassifications();
         }
-        BRAIN = null;
+        brain = null;
         resetTrackers();
     }
 

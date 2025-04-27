@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
@@ -42,6 +46,10 @@ import megamek.logging.MMLogger;
  */
 public class WeaponDataEncoder {
     private static final MMLogger logger = MMLogger.create(WeaponDataEncoder.class);
+    private static final int WEAPON_DATA_SIZE = 5;
+    // Whenever there is an error in the weapon data, we add this sequence of -1s to the list
+    // to indicate that the data is invalid and must be ignored.
+    private static final int[] DEFAULT_INVALID_ENTRIES = { -1, -1, -1, -1, -1};
 
     /**
      * Encodes the weapons of an entity into a List of Integers, each weapon is encoded as a sequence of 5 integers
@@ -50,41 +58,40 @@ public class WeaponDataEncoder {
      * @return the encoded list
      */
     public static List<Integer> getEncodedWeaponData(Entity entity) {
-        List<Integer> weaponData = new ArrayList<>();
-        entity.getWeaponList().forEach(weapon -> {
-            serializeWeaponData(weapon, entity, weaponData);
-        });
-        return weaponData;
+        int weaponCount = entity.getWeaponList().size();
+        List<Integer> result = new ArrayList<>(weaponCount * WEAPON_DATA_SIZE);
+        entity.getWeaponList().forEach(weapon -> serializeWeaponData(weapon, entity, result));
+        return result;
     }
 
-    private static void serializeWeaponData(WeaponMounted weapon, Entity entity, List<Integer> weaponData) {
+    private static void serializeWeaponData(WeaponMounted weapon, Entity entity, List<Integer> collector) {
         try {
             int equipmentId = entity.getEquipmentNum(weapon);
             var mounted = entity.getEquipment(equipmentId);
+
+            // Use default values if mounted is null
             if (mounted == null) {
                 logger.warn("No such equipment {} [{}] for {}", weapon, equipmentId, entity);
+                addInvalidEntries(collector);
                 return;
             }
 
-            int arc = entity.getWeaponArc(equipmentId);
-            int shortRange = weapon.getType().getShortRange();
-            int mediumRange = weapon.getType().getMediumRange();
-            int longRange = weapon.getType().getLongRange();
+            // Add all values in sequence without creating intermediate collections
+            collector.add(Compute.computeTotalDamage(weapon));
+            collector.add(entity.getWeaponArc(equipmentId));
+            collector.add(weapon.getType().getShortRange());
+            collector.add(weapon.getType().getMediumRange());
+            collector.add(weapon.getType().getLongRange());
 
-            int damage = Compute.computeTotalDamage(weapon);
-            weaponData.add(damage);
-            weaponData.add(arc);
-            weaponData.add(shortRange);
-            weaponData.add(mediumRange);
-            weaponData.add(longRange);
         } catch (Exception e) {
             logger.error(e, "Error while trying to serialize Weapon {} data for {}", weapon, entity);
-            // Error, log this instead
-            weaponData.add(-1);
-            weaponData.add(-1);
-            weaponData.add(-1);
-            weaponData.add(-1);
-            weaponData.add(-1);
+            addInvalidEntries(collector);
+        }
+    }
+
+    private static void addInvalidEntries(List<Integer> collector) {
+        for (int value : DEFAULT_INVALID_ENTRIES) {
+            collector.add(value);
         }
     }
 }

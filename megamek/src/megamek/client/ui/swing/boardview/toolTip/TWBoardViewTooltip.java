@@ -77,7 +77,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 Board embeddedBoard = game.getBoard(bv.getBoard().getEmbeddedBoardAt(coords));
                 sbTerrain.append("Embedded Map: ").append(embeddedBoard.getBoardName()).append("<BR>");
             }
-            appendTerrainTooltip(sbTerrain, mhex, bv.boardId);
+            appendTerrainTooltip(sbTerrain, mhex, bv.getBoardId());
             String sTerrain = sbTerrain.toString();
 
             // Distance from the selected unit and a planned movement end point
@@ -122,7 +122,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             result += table;
 
             StringBuffer sbBuildings = new StringBuffer();
-            appendBuildingsTooltip(sbBuildings, mhex, bv.boardId);
+            appendBuildingsTooltip(sbBuildings, mhex, bv.getBoardId());
             result += sbBuildings.toString();
 
             if (bv.displayInvalidFields()) {
@@ -145,7 +145,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         // Show the player(s) that may deploy here
         // in the artillery autohit designation phase
         if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex != null)) {
-            result += HexTooltip.getArtilleryHit(game, coords, bv.boardId);
+            result += HexTooltip.getArtilleryHit(game, coords, bv.getBoardId());
         }
 
         // check if it's on any flares

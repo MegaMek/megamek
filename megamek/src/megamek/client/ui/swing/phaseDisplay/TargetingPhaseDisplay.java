@@ -25,7 +25,6 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.FiringDisplay.FiringCommand;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.ClientGUI;
@@ -621,7 +620,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                     target.getId(), weaponNum, game);
             // Get the launch velocity for bearings-only telemissiles
             if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {
-                TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.frame,
+                TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.getFrame(),
                         game);
                 tsd.setVisible(true);
                 waa.setLaunchVelocity(tsd.getSetting());

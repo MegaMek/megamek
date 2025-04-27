@@ -1139,7 +1139,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     /**
      * Adds a weapon attack with the currently selected weapon to the attack queue.
      */
-    void fire() {
+    public void fire() {
         // get the selected weaponnum
         final int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         WeaponMounted mounted = (WeaponMounted) ce().getEquipment(weaponNum);

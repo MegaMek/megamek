@@ -668,7 +668,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     /**
      * Push that target!
      */
-    void push() {
+    public void push() {
         ToHitData toHit = PushAttackAction.toHit(game, currentEntity, target);
         String title = Messages.getString("PhysicalDisplay.PushDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.PushDialog.message",
@@ -692,7 +692,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     /**
      * Trip that target!
      */
-    void trip() {
+    public void trip() {
         ToHitData toHit = TripAttackAction.toHit(game, currentEntity, target);
         String title = Messages.getString("PhysicalDisplay.TripDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.TripDialog.message",

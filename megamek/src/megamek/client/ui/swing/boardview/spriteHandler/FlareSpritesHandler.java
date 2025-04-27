@@ -20,6 +20,7 @@ package megamek.client.ui.swing.boardview.spriteHandler;
 
 import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.boardview.sprite.FlareSprite;
 import megamek.common.Flare;
 import megamek.common.Game;

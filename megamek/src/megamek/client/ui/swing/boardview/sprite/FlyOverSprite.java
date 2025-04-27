@@ -66,7 +66,7 @@ public class FlyOverSprite extends Sprite {
         double prevAngle = prev.radian(curr);
 
         Point currPoint = bv.getCentreHexLocation(curr, true);
-        final double lw = bv.scale * BoardView.FLY_OVER_LINE_WIDTH;
+        final double lw = bv.getScale() * BoardView.FLY_OVER_LINE_WIDTH;
 
         // This is a bend
         double diff;

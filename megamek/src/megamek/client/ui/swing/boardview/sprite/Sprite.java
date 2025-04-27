@@ -36,7 +36,7 @@ import java.awt.image.ImageObserver;
  */
 abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
 
-    protected final BoardView bv;
+    public final BoardView bv;
     protected Rectangle bounds;
     protected Image image;
     // Set this to true if you don't want the sprite to be drawn.

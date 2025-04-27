@@ -260,7 +260,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public MegaMekController controller;
     private ChatterBox cb;
-    public ChatterBox2 cb2;
+    public ChatterBoxOverlay cb2;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
     private FleeZoneSpriteHandler fleeZoneSpriteHandler;
@@ -1142,7 +1142,7 @@ public class ClientGUI extends AbstractClientGUI
         return mekSelectorDialog;
     }
 
-    void switchPanel(GamePhase phase) {
+    public void switchPanel(GamePhase phase) {
         // Clear the old panel's listeners.
         if (curPanel instanceof BoardViewListener) {
             boardViews().forEach(b -> b.removeBoardViewListener((BoardViewListener) curPanel));
@@ -2341,13 +2341,13 @@ public class ClientGUI extends AbstractClientGUI
                     boardViews.put(boardId, boardView);
                     boardView.getPanel().setPreferredSize(clientGuiPanel.getSize());
                     boardView.addBoardViewListener(ClientGUI.this);
-                    cb2 = new ChatterBox2(ClientGUI.this, boardView, controller);
+                    cb2 = new ChatterBoxOverlay(ClientGUI.this, boardView, controller);
                     cb.setChatterBox2(cb2);
                     cb2.setChatterBox(cb);
                     offBoardOverlay = new OffBoardTargetOverlay(ClientGUI.this);
                     boardView.getPanel().addKeyListener(cb2);
                     boardView.addOverlay(cb2);
-                    boardView.addOverlay(new UnitOverview(ClientGUI.this));
+                    boardView.addOverlay(new UnitOverviewOverlay(ClientGUI.this));
                     boardView.addOverlay(offBoardOverlay);
                     boardView.addOverlay(new KeyBindingsOverlay(boardView));
                     boardView.addOverlay(new PlanetaryConditionsOverlay(boardView));
@@ -3390,7 +3390,7 @@ public class ClientGUI extends AbstractClientGUI
         return (BoardView) super.getBoardView(boardLocation);
     }
 
-    void onAllBoardViews(Consumer<BoardView> consumer) {
+    public void onAllBoardViews(Consumer<BoardView> consumer) {
         boardViews().forEach(boardView -> consumer.accept((BoardView) boardView));
     }
 }

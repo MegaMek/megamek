@@ -67,7 +67,7 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
     /**
      * The boardviews of the game with the board ID as the map key
      */
-    protected final Map<Integer, IBoardView> boardViews = new HashMap<>();
+    public final Map<Integer, IBoardView> boardViews = new HashMap<>();
 
     /**
      * The minimaps of the game with the board ID as the map key

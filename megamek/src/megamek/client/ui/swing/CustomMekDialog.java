@@ -190,7 +190,7 @@ public class CustomMekDialog extends AbstractButtonDialog
           boolean editableDeployment) {
         this(clientgui.getFrame(), client, entities, editable, editableDeployment);
         this.clientGUI = clientgui;
-        this.space = clientgui.getClient().getMapSettings().getMedium() == Board.T_SPACE;
+        this.space = clientgui.getClient().getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE;
     }
 
     public CustomMekDialog(JFrame frame, Client client, List<Entity> entities, boolean editable,

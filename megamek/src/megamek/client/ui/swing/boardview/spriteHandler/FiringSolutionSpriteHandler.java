@@ -22,6 +22,7 @@ import megamek.client.Client;
 import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.boardview.sprite.FiringSolutionSprite;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;

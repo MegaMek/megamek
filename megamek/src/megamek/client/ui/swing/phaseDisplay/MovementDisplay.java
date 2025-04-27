@@ -22,7 +22,6 @@ package megamek.client.ui.swing.phaseDisplay;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.client.ui.swing.boardview.AbstractBoardViewOverlay;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.phaseDisplay.dialog.BombPayloadDialog;

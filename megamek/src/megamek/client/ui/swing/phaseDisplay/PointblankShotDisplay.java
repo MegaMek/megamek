@@ -537,7 +537,7 @@ public class PointblankShotDisplay extends FiringDisplay {
      * queue.
      */
     @Override
-    void fire() {
+    public void fire() {
         // get the selected weaponnum
         final int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         WeaponMounted mounted = (WeaponMounted) ce().getEquipment(weaponNum);

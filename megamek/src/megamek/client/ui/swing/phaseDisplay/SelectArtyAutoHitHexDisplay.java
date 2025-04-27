@@ -231,14 +231,14 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     private void showTooManyTargetsMessage() {
-        JOptionPane.showMessageDialog(clientgui.frame,
+        JOptionPane.showMessageDialog(clientgui.getFrame(),
               Messages.getString("SelectArtyAutoHitHexDisplay.TooManyTargets.message"),
               Messages.getString("SelectArtyAutoHitHexDisplay.TooManyTargets.title"),
               JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void showInvalidLocationMessage() {
-        JOptionPane.showMessageDialog(clientgui.frame,
+        JOptionPane.showMessageDialog(clientgui.getFrame(),
               Messages.getString("SelectArtyAutoHitHexDisplay.NotAllowed.message"),
               Messages.getString("SelectArtyAutoHitHexDisplay.NotAllowed.title"),
               JOptionPane.INFORMATION_MESSAGE);

@@ -105,8 +105,6 @@ import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
 
-import static megamek.common.weapons.AreaEffectHelper.calculateDamageFallOff;
-
 class UnknownEntityTypeException extends Exception
 {
     public UnknownEntityTypeException() {}

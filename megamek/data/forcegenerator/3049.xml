@@ -8815,7 +8815,7 @@
 			</model>
 			<model name='RFL-3N'>
 				<roles>fire_support,anti_aircraft</roles>
-				<availability>IS:8,DC:6,FC:6,CLAN.IS:1-,CIR:8,HL:8,Periphery.Deep:8,BAN:1</availability>
+				<availability>IS:8,DC:6,FC:6,CLAN.IS:1-,Periphery:8,CIR:8,HL:8,Periphery.Deep:8,BAN:1</availability>
 			</model>
 			<model name='RFL-4D'>
 				<roles>fire_support,anti_aircraft</roles>

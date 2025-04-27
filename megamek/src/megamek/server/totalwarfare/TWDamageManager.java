@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Vector;
 
 public class TWDamageManager implements IDamageManager {
-    private static final MMLogger logger = MMLogger.create(TWDamageManager.class);
     protected final TWGameManager owner;
     protected Game game;
 

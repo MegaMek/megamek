@@ -38,6 +38,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -45,6 +46,7 @@ import megamek.codeUtilities.MathUtility;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ProtoMek;
 import megamek.common.equipment.AmmoMounted;
@@ -75,9 +77,14 @@ public class MunitionChoicePanel extends JPanel {
 
     public MunitionChoicePanel(AmmoMounted ammoMounted, ArrayList<AmmoType> vTypes,
           List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels, Entity entity, ClientGUI clientGUI) {
+        this(ammoMounted, vTypes, weaponAmmoChoicePanels, entity, clientGUI.getClient().getGame());
+    }
+
+    public MunitionChoicePanel(AmmoMounted ammoMounted, ArrayList<AmmoType> vTypes,
+            List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels, Entity entity, Game game) {
         ammoTypes = vTypes;
         this.ammoMounted = ammoMounted;
-        gameOptions = clientGUI.getClient().getGame().getOptions();
+        gameOptions = game.getOptions();
 
         AmmoType ammoType = ammoMounted.getType();
         comboAmmoTypes = new JComboBox<>();

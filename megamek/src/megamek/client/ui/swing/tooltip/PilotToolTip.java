@@ -208,12 +208,15 @@ public final class PilotToolTip {
             if ((!showDefaultPortrait) && crew.getPortrait(i).isDefault()) {
                 continue;
             }
-
+            Image baseImage = crew.getPortrait(i).getBaseImage();
+            if (baseImage == null) {
+                continue;
+            }
             try {
                 // Adjust the portrait size to the GUI scale and number of pilots
                 float imgSize = UIUtil.scaleForGUI(PORTRAIT_BASESIZE);
                 imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
-                Image portrait = crew.getPortrait(i).getBaseImage().getScaledInstance(-1, (int) imgSize,
+                Image portrait = baseImage.getScaledInstance(-1, (int) imgSize,
                         Image.SCALE_SMOOTH);
                 String img = "";
 

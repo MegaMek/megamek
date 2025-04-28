@@ -186,28 +186,29 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
 
     public String getHotKeyDesc() {
         String result;
-
-        String msgNext = Messages.getString("Next");
-        String msgPrevious = Messages.getString("Previous");
-        String msgLeft = Messages.getString("Left");
-        String msgRight = Messages.getString("Right");
-        String msgToggleMoveJump = Messages.getString("MovementDisplay.tooltip.ToggleMoveJump");
-        String msgToggleMode = Messages.getString("MovementDisplay.tooltip.ToggleMode");
-
+        
         result = "<BR>";
 
         switch (this) {
             case MOVE_NEXT:
+                String msgNext = Messages.getString("Next");
+                String msgPrevious = Messages.getString("Previous");
+
                 result += "&nbsp;&nbsp;" + msgNext + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
                 result += "&nbsp;&nbsp;" + msgPrevious + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
                 break;
             case MOVE_WALK, MOVE_JUMP:
+                String msgToggleMoveJump = Messages.getString("MovementDisplay.tooltip.ToggleMoveJump");
+
                 result += "&nbsp;&nbsp;" +
                                 msgToggleMoveJump +
                                 ": " +
                                 KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
                 break;
             case MOVE_TURN:
+                String msgLeft = Messages.getString("Left");
+                String msgRight = Messages.getString("Right");
+
                 result += "&nbsp;&nbsp;" + msgLeft + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_LEFT);
                 result += "&nbsp;&nbsp;" + msgRight + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_RIGHT);
                 break;
@@ -215,6 +216,8 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
             case MOVE_MODE_CONVERT:
             case MOVE_MODE_LEG:
             case MOVE_MODE_VEE:
+                String msgToggleMode = Messages.getString("MovementDisplay.tooltip.ToggleMode");
+
                 result += "&nbsp;&nbsp;" +
                                 msgToggleMode +
                                 ": " +

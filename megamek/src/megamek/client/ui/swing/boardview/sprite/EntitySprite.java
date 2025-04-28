@@ -538,7 +538,7 @@ public class EntitySprite extends Sprite {
             boolean turretLocked = false;
             int crewStunned = 0;
             if (entity instanceof Tank tankEntity) {
-                turretLocked = !tankEntity.hasNoTurret() && !entity.canChangeSecondaryFacing();
+                turretLocked = !tankEntity.hasNoTurret() && !tankEntity.canChangeSecondaryFacing();
                 crewStunned = tankEntity.getStunnedTurns();
             }
 

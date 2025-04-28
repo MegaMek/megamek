@@ -3519,19 +3519,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     void executeCrashLanding(Entity entity, int mof, Vector<Report> vReport) {
-        int damage = 10 * (mof);
-        // Report damage taken
-        Report r = new Report(9609);
-        r.indent();
-        r.addDesc(entity);
-        r.add(damage);
-        r.add(mof);
-        vReport.add(r);
-
-        int side = ToHitData.SIDE_FRONT;
-        if ((entity instanceof Aero) && entity.isSpheroid()) {
-            side = ToHitData.SIDE_REAR;
-        }
+        int damage = 10 * mof;
+        vReport.add(new Report(9609).indent().addDesc(entity).add(damage).add(mof));
+        int side = entity.isSpheroid() ? ToHitData.SIDE_REAR : ToHitData.SIDE_FRONT;
         while (damage > 0) {
             HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
             vReport.addAll(damageEntity(entity, hit, 10));

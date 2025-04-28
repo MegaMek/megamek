@@ -45,6 +45,7 @@ map:
 options:
   on:
     - friendly_fire
+    - aero_ground_move
   off:
     - check_victory
 #    - aero_ground_move

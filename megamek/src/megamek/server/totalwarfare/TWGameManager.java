@@ -210,7 +210,9 @@ public class TWGameManager extends AbstractGameManager {
         terrainProcessors.add(new ScreenProcessor(this));
         terrainProcessors.add(new WeatherProcessor(this));
         terrainProcessors.add(new QuicksandProcessor(this));
-        damager = new TWDamageManager(this, game);
+
+        // add damage manager
+        damager = new TWDamageManagerNew(this, game);
     }
 
     @Override

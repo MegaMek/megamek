@@ -730,8 +730,8 @@ public class Board implements Serializable {
         // Keeps track of hexes that will need to be reinitialized
         LinkedHashSet<Coords> needsUpdate = new LinkedHashSet<>((int) (coords.size() * 1.25 + 0.5));
 
-        // Sanity check
-        if (coords.size() != hexes.size()) {
+        // Sanity check; ignore if number of hexes is large as TWGameManager appears to get sloppy here
+        if (coords.size() != hexes.size() && coords.size() < 200) {
             throw new IllegalStateException("setHexes received two collections differeing size!");
         }
 

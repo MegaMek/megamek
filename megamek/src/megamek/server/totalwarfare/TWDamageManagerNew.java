@@ -23,9 +23,9 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
 
     @Override
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType damageType,
-          boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S) {
+          boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S,
+        Vector<Report> vDesc) {
 
-        Vector<Report> vDesc = new Vector<>();
         Report r;
         int te_n = te.getId();
 
@@ -1545,7 +1545,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         new_hit.setSingleAV(hit.getSingleAV());
         new_hit.setAttackerId(hit.getAttackerId());
         vDesc.addAll(damageEntity(fighter, new_hit, damage, ammoExplosion, damageType,
-              damageIS, areaSatArty, throughFront, underWater, nukeS2S));
+              damageIS, areaSatArty, throughFront, underWater, nukeS2S, vDesc));
     }
 
     public void damageMultipleBAs(Vector<Report> vDesc, Entity te, HitData hit, int damage,
@@ -1561,7 +1561,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             hit.setLocation(BattleArmor.LOC_TROOPER_1 + i);
             if (te.getInternal(hit) > 0) {
                 vDesc.addAll(damageEntity(te, hit, damage, ammoExplosion, damageType,
-                      damageIS, false, throughFront, underWater, nukeS2S));
+                      damageIS, false, throughFront, underWater, nukeS2S, vDesc));
             }
         }
     }
@@ -1574,6 +1574,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         final boolean vacuum = game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN);
         int te_n = te.getId();
         boolean damageIS = (boolean) modsMap.get("damageIS");
+        HitData nextHit = null;
         Report r;
 
         // check for critical hit/miss vs. a BA
@@ -1617,19 +1618,201 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
 
         // Allocate the damage
         while (damage > 0) {
-            // Report this either way
-            r = new Report(6065);
-            r.subject = te_n;
-            r.indent(2);
-            r.addDesc(te);
-            r.add(damage);
-            if (damageIS) {
-                r.messageId = 6070;
-            }
-            r.add(te.getLocationAbbr(hit));
-            vDesc.addElement(r);
 
-            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+            // was the section destroyed earlier this phase?
+            if (te.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
+                // cannot transfer a through armor crit if so
+                modsMap.put("crits", 0);
+            }
+            if (!ammoExplosion && (te.getArmor(hit) > 0) && !damageIS) {
+                int origDamage = damage;
+
+                damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+            }
+
+            if (damage > 0) {
+
+                // Report this either way
+                r = new Report(6065);
+                r.subject = te_n;
+                r.indent(2);
+                r.addDesc(te);
+                r.add(damage);
+                if (damageIS) {
+                    r.messageId = 6070;
+                }
+                r.add(te.getLocationAbbr(hit));
+                vDesc.addElement(r);
+
+                // is there internal structure in the location hit?
+                if (te.getInternal(hit) > 0) {
+                    // Now we need to consider alternate structure types!
+                    int tmpDamageHold = -1;
+                    if ((te.getInternal(hit) > damage) && (damage > 0)) {
+                        // internal structure absorbs all damage
+                        te.setInternal(te.getInternal(hit) - damage, hit);
+                        modsMap.put("tookInternalDamage", true);
+                        // Alternate structures don't affect our damage total
+                        // for later PSR purposes, so use the previously stored
+                        // value here as necessary.
+                        te.damageThisPhase += (tmpDamageHold > -1) ? tmpDamageHold : damage;
+                        damage = 0;
+                        r = new Report(6100);
+                        r.subject = te_n;
+                        r.indent(3);
+                        r.add(te.getInternal(hit));
+                        vDesc.addElement(r);
+                    } else if (damage > 0) {
+                        // damage transfers, maybe
+                        int absorbed = Math.max(te.getInternal(hit), 0);
+
+                        // Platoon, Trooper, or Section destroyed message
+                        r = new Report(1210);
+                        r.subject = te_n;
+                        r.messageId = 6110;
+                        r.indent(3);
+                        vDesc.addElement(r);
+
+                        // BA inferno explosions
+                        int infernos = 0;
+                        for (Mounted<?> m : te.getEquipment()) {
+                            if (m.getType() instanceof AmmoType at) {
+                                if (((at.getAmmoType() == AmmoType.T_SRM) ||
+                                           (at.getAmmoType() == AmmoType.T_MML)) &&
+                                          (at.getMunitionType().contains(AmmoType.Munitions.M_INFERNO))) {
+                                    infernos += at.getRackSize() * m.getHittableShotsLeft();
+                                }
+                            } else if (m.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
+                                // immune to inferno explosion
+                                infernos = 0;
+                                break;
+                            }
+                        }
+                        if (infernos > 0) {
+                            Roll diceRoll = Compute.rollD6(2);
+                            r = new Report(6680);
+                            r.add(diceRoll);
+                            vDesc.add(r);
+
+                            if (diceRoll.getIntValue() >= 8) {
+                                Coords c = te.getPosition();
+                                if (c == null) {
+                                    Entity transport = game.getEntity(te.getTransportId());
+                                    if (transport != null) {
+                                        c = transport.getPosition();
+                                    }
+                                    owner.getMainPhaseReport().addAll(owner.deliverInfernoMissiles(te, te,
+                                          infernos));
+                                }
+                                if (c != null) {
+                                    owner.getMainPhaseReport().addAll(owner.deliverInfernoMissiles(te,
+                                          new HexTarget(c, Targetable.TYPE_HEX_ARTILLERY),
+                                          infernos));
+                                }
+                            }
+                        }
+
+                        // Mark off the internal structure here, but *don't*
+                        // destroy the location just yet -- there are checks
+                        // still to run!
+                        te.setInternal(0, hit);
+                        te.damageThisPhase += absorbed;
+                        damage -= absorbed;
+                    }
+                }
+                if (te.getInternal(hit) <= 0) {
+                    // internal structure is gone, what are the transfer
+                    // potentials?
+                    nextHit = te.getTransferLocation(hit);
+                    if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
+                        // nowhere for further damage to go
+                        damage = 0;
+                    } else if (nextHit.getLocation() == Entity.LOC_NONE) {
+                        // Rest of the damage is wasted.
+                        damage = 0;
+                    } else if (ammoExplosion && te.locationHasCase(hit.getLocation())) {
+                        // Remaining damage prevented by CASE
+                        r = new Report(6125);
+                        r.subject = te_n;
+                        r.add(damage);
+                        r.indent(3);
+                        vDesc.addElement(r);
+
+                        // The target takes no more damage from the explosion.
+                        damage = 0;
+                    } else if (damage > 0) {
+                        // remaining damage transfers
+                        r = new Report(6130);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add(damage);
+                        r.add(te.getLocationAbbr(nextHit));
+                        vDesc.addElement(r);
+
+                        // If there are split weapons in this location, mark it
+                        // as hit, even if it took no criticals.
+                        for (WeaponMounted m : te.getWeaponList()) {
+                            if (m.isSplit()) {
+                                if ((m.getLocation() == hit.getLocation()) ||
+                                          (m.getLocation() == nextHit.getLocation())) {
+                                    te.setWeaponHit(m);
+                                }
+                            }
+                        }
+                        // if this is damage from a nail/rivet gun, and we
+                        // transfer
+                        // to a location that has armor, and BAR >=5, no damage
+                        if ((damageType == DamageType.NAIL_RIVET) &&
+                                  (te.getArmor(nextHit.getLocation()) > 0) &&
+                                  (te.getBARRating(nextHit.getLocation()) >= 5)) {
+                            damage = 0;
+                            r = new Report(6065);
+                            r.subject = te_n;
+                            r.indent(2);
+                            vDesc.add(r);
+                        }
+                    }
+                }
+            } else if (hit.getSpecCrit()) {
+                // ok, we dealt damage but didn't go on to internal
+                // we get a chance of a crit, using Armor Piercing.
+                // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
+                if (!((boolean) modsMap.get("hardenedArmor")
+                            || (boolean) modsMap.get("ferroLamellorArmor")
+                            || (boolean) modsMap.get("reactiveArmor"))
+                ) {
+                    modsMap.put("specCrits", (int) modsMap.get("specCrits") + 1);
+                }
+            }
+            // check for breaching
+            vDesc.addAll(owner.breachCheck(te, hit.getLocation(), null, underWater));
+
+            // Special crits
+            dealSpecialCritEffects(te, vDesc, hit, modsMap, underWater, damageType);
+
+            // If the location has run out of internal structure, finally
+            // actually
+            // destroy it here. *EXCEPTION:* Aero units have 0 internal
+            // structure
+            // in every location by default and are handled elsewhere, so they
+            // get a bye.
+            if ((te.getInternal(hit) <= 0)) {
+                te.destroyLocation(hit.getLocation());
+            }
+
+            // If damage remains, loop to next location; if not, be sure to stop
+            // here because we may need to refer back to the last *damaged*
+            // location again later. (This is safe because at damage <= 0 the
+            // loop terminates anyway.)
+            if (damage > 0) {
+                hit = nextHit;
+                // Need to update armor status for the new location
+                updateArmorTypeMap(modsMap, te, hit);
+            }
+            if (damageIS) {
+                modsMap.put("wasDamageIS", true);
+                damageIS = false;
+            }
         }
     }
 
@@ -2076,7 +2259,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                     critMod += hit.glancingMod();
                 }
                 vDesc.addAll(owner.criticalEntity(te, hit.getLocation(), hit.isRear(),
-                      critMod + (int) modsMap.get("critBonus"), (int) modsMap.get("damage_orig")));
+                      critMod + (int) modsMap.get("critBonus"), (int) modsMap.get("damageOriginal")));
             }
             modsMap.put("specCrits", 0);
         }
@@ -2590,5 +2773,4 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         }
         return damage;
     }
-
 }

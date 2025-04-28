@@ -26,6 +26,7 @@ public class TWDamageManager implements IDamageManager {
     }
 
     public Vector<Report> damageEntity(DamageInfo damageInfo){
+        Vector<Report> vDesc = new Vector<>();
         return damageEntity(
               damageInfo.te(),
               damageInfo.hit(),
@@ -36,14 +37,15 @@ public class TWDamageManager implements IDamageManager {
               damageInfo.areaSatArty(),
               damageInfo.throughFront(),
               damageInfo.underWater(),
-              damageInfo.nukeS2S()
+              damageInfo.nukeS2S(),
+              vDesc
         );
     }
 
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType damageType,
-          boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S) {
+          boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S,
+          Vector<Report> vDesc) {
 
-        Vector<Report> vDesc = new Vector<>();
         Report r;
         int te_n = te.getId();
 
@@ -72,7 +74,9 @@ public class TWDamageManager implements IDamageManager {
                   areaSatArty,
                   throughFront,
                   underWater,
-                  nukeS2S);
+                  nukeS2S,
+                  vDesc
+            );
         }
 
         // Battle Armor takes full damage to each trooper from area-effect.
@@ -84,16 +88,21 @@ public class TWDamageManager implements IDamageManager {
             for (int i = 0; i < ((BattleArmor) te).getTroopers(); i++) {
                 hit.setLocation(BattleArmor.LOC_TROOPER_1 + i);
                 if (te.getInternal(hit) > 0) {
-                    vDesc.addAll(damageEntity(te,
-                          hit,
-                          damage,
-                          ammoExplosion,
-                          damageType,
-                          damageIS,
-                          false,
-                          throughFront,
-                          underWater,
-                          nukeS2S));
+                    vDesc.addAll(
+                        damageEntity(
+                            te,
+                            hit,
+                            damage,
+                            ammoExplosion,
+                            damageType,
+                            damageIS,
+                            false,
+                            throughFront,
+                            underWater,
+                            nukeS2S,
+                            vDesc
+                        )
+                    );
                 }
             }
             return vDesc;
@@ -258,6 +267,7 @@ public class TWDamageManager implements IDamageManager {
         }
 
         // check for critical hit/miss vs. a BA
+        // TODO: match 1579
         if ((crits > 0) && (te instanceof BattleArmor)) {
             // possible critical miss if the rerolled location isn't alive
             if ((hit.getLocation() >= te.locations()) || (te.getInternal(hit.getLocation()) <= 0)) {

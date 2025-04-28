@@ -169,7 +169,10 @@ public class MathUtility {
     }
 
     /**
-     * @param value the long value to clamp
+     * Clamps a double value between the limits of Math.ulp(1.0) and 1.0.
+     * Math.ulp is the smallest positive double value that is greater than 0.0.
+     *
+     * @param value the double value to clamp between Math.ulp(1.0) and 1.0
      *
      * @return The value if it is inside the range given by the limits (inclusive); the min value if value is below that
      *       range and the max value if value is above that range.

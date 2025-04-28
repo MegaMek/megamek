@@ -1607,11 +1607,12 @@ public class LosEffects {
      *
      * @return an attackInfo object that describes the applicable modifiers.
      */
-    public static LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1, int h2, int h1Floor,
+    public static LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int boardId, int h1, int h2, int h1Floor,
           int h2Floor) {
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         ai.attackPos = c1;
         ai.targetPos = c2;
+        ai.boardId = boardId;
         ai.attackHeight = h1;
         ai.targetHeight = h2;
         ai.attackAbsHeight = h1Floor + h1;

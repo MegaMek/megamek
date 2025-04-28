@@ -81,9 +81,9 @@ factions:
       piloting: 8
 
   - fullname: Zugvogel Omni Support Aircraft B
-    at: [ 4,12 ]
+#    at: [ 4,12 ]
     board: 5
-    altitude: 0
+#    altitude: 0
 
 #  - fullname: Locust LCT-1V
 #    board: 0

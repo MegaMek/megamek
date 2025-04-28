@@ -10890,6 +10890,7 @@ public abstract class Entity extends TurnOrdered
             if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
                       getPosition(),
+                      boardId,
                       1,
                       getElevation(),
                       srcHex.floor(),

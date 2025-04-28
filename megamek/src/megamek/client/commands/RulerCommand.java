@@ -82,7 +82,7 @@ public class RulerCommand extends ClientCommand {
             }
 
             thd = LosEffects.calculateLos(getClient().getGame(),
-                    LosEffects.buildAttackInfo(start, end, elev1, elev2,
+                    LosEffects.buildAttackInfo(start, end, 0, elev1, elev2,
                             getClient().getBoard().getHex(start).floor(),
                             getClient().getBoard().getHex(end).floor())
             ).losModifiers(getClient().getGame());
@@ -93,7 +93,7 @@ public class RulerCommand extends ClientCommand {
             toHit1 += thd.getDesc();
 
             thd = LosEffects.calculateLos(getClient().getGame(),
-                    LosEffects.buildAttackInfo(end, start, elev2, elev1,
+                    LosEffects.buildAttackInfo(end, start, 0, elev2, elev1,
                             getClient().getBoard().getHex(end).floor(),
                             getClient().getBoard().getHex(start).floor())
             ).losModifiers(getClient().getGame());

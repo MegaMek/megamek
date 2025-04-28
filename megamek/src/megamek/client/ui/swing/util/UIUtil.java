@@ -601,6 +601,7 @@ public final class UIUtil {
                     .getDefaultScreenDevice()
                     .getDefaultConfiguration();
             } catch (HeadlessException e) {
+                logger.warn("No GraphicsConfiguration found, using default size");
                 return new Dimension(800, 600); 
             }
         }

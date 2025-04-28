@@ -428,7 +428,7 @@ public class EntitySprite extends Sprite {
             int y = (int) ((float) bv.getHexSize() .height / 2 + bv.getScale() * (statusStrings.size() - 1) * 7);
             for (Status curStatus : statusStrings) {
                 if (!curStatus.small) { // Critical status
-                    new StringDrawer(curStatus.status).at(bv.getHexSize() .width / 2, y)
+                    new StringDrawer(curStatus.status).at(bv.getHexSize().width / 2, y)
                           .color(curStatus.color)
                           .outline(Color.BLACK, 1)
                           .center()

@@ -117,13 +117,15 @@ public class BotConfigDialog extends AbstractButtonDialog
     private DefaultListModel<Object> targetsListModel = new DefaultListModel<>();
     private TipList<Object> targetsList = new TipList<>(targetsListModel);
 
-    private MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString(
+    private final MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString(
           "BotConfigDialog.forcedWithdrawalCheck"));
 
-    private MMToggleButton iAmAPirateCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.iAmAPirateCheck"));
-
-    private MMToggleButton experimentalCheck = new TipMMToggleButton(Messages.getString(
-          "BotConfigDialog.experimentalCheck"));
+    private final MMToggleButton iAmAPirateCheck =
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.iAmAPirateCheck"));
+    private final MMToggleButton ignoreDamageOutputCheck =
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.ignoreDamageOutput"));
+    private final MMToggleButton experimentalCheck =
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.experimentalCheck"));
 
 
     private JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
@@ -378,10 +380,14 @@ public class BotConfigDialog extends AbstractButtonDialog
         iAmAPirateCheck.addActionListener(this);
         panContent.add(iAmAPirateCheck);
 
+        ignoreDamageOutputCheck.setToolTipText(Messages.getString("BotConfigDialog.ignoreDamageOutputToolTip"));
+        ignoreDamageOutputCheck.addActionListener(this);
+
         experimentalCheck.setToolTipText(Messages.getString("BotConfigDialog.experimentalCheckToolTip"));
         experimentalCheck.addActionListener(this);
 
         if (CLIENT_PREFERENCES.getEnableExperimentalBotFeatures()) {
+            panContent.add(ignoreDamageOutputCheck);
             panContent.add(experimentalCheck);
         }
 
@@ -393,6 +399,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         savePreset.setMnemonic(KeyEvent.VK_S);
         savePreset.setToolTipText(Messages.getString("BotConfigDialog.saveTip"));
         buttonPanel.add(savePreset);
+
         saveNewPreset.addActionListener(this);
         saveNewPreset.setMnemonic(KeyEvent.VK_A);
         saveNewPreset.setToolTipText(Messages.getString("BotConfigDialog.saveNewTip"));
@@ -503,6 +510,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
         iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
         experimentalCheck.setSelected(princessBehavior.isExperimental());
+        ignoreDamageOutputCheck.setSelected(princessBehavior.isIgnoreDamageOutput());
     }
 
     private void updateDialogFields() {
@@ -552,6 +560,7 @@ public class BotConfigDialog extends AbstractButtonDialog
                             chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue() ||
                             chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
                             chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
+                            chosenPreset.isIgnoreDamageOutput() != ignoreDamageOutputCheck.isSelected() ||
                             chosenPreset.isExperimental() != experimentalCheck.isSelected());
     }
 
@@ -722,6 +731,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         } catch (PrincessException e1) {
             return;
         }
+
         newBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         newBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         newBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
@@ -731,6 +741,8 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         newBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
         newBehavior.setExperimental(experimentalCheck.isSelected());
+        newBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
+
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
     }
@@ -770,6 +782,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
         tempBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
         tempBehavior.setExperimental(experimentalCheck.isSelected());
+        tempBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
 
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {

@@ -152,6 +152,36 @@ public class MathUtility {
     public static long clamp(final long value, final long min, final long max) {
         return Math.min(Math.max(value, min), max);
     }
+
+    /**
+     * @param value the long value to clamp
+     *
+     * @return The value if it is inside the range given by the limits (inclusive); the min value if value is below that
+     *       range and the max value if value is above that range.
+     *       <ul>
+     *         <li>clamp01(1.3) returns 1.0</li>
+     *         <li>clamp01(0.3) returns 0.3</li>
+     *         <li>clamp01(-5) returns 0</li>
+     *       </ul>
+     */
+    public static double clamp01(double value) {
+        return Math.min(1.0, Math.max(0.0, value));
+    }
+
+    /**
+     * @param value the long value to clamp
+     *
+     * @return The value if it is inside the range given by the limits (inclusive); the min value if value is below that
+     *       range and the max value if value is above that range.
+     *       <ul>
+     *         <li>clamp(0.3) returns 0.3</li>
+     *         <li>clamp(7) returns 1</li>
+     *         <li>clamp(-4) returns 2.220446049250313E-16</li>
+     *       </ul>
+     */
+    public static double clampUlp1(double value) {
+        return Math.min(1.0, Math.max(Math.ulp(1.0), value));
+    }
     // endregion Clamp
 
     /**

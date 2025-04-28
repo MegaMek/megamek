@@ -1513,6 +1513,14 @@ public class MiscType extends EquipmentType {
                          hasFlag(F_NOVA) ||
                          (hasFlag(F_CLUB) && hasSubType(S_SPOT_WELDER))) {
             return 2;
+        } else if (hasFlag(F_CLUB)) {
+            if (hasSubType(S_VIBRO_SMALL)) {
+                return 3;
+            } else if (hasSubType(S_VIBRO_MEDIUM)) {
+                return 5;
+            } else if (hasSubType(S_VIBRO_LARGE)) {
+                return 7;
+            }
         }
         return 0;
     }
@@ -4709,9 +4717,9 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Direct Neural Interface Cockpit Modification";
         misc.setInternalName("BABattleMechNIU");
-        misc.tonnage = 0.100;
-        misc.criticals = 2;
-        misc.cost = 500000;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 250000;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT).or(F_BATTLEMEK_NIU).or(F_BA_EQUIPMENT);
 

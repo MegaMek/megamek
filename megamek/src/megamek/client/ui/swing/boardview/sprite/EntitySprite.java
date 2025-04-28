@@ -400,7 +400,7 @@ public class EntitySprite extends Sprite {
                 } else {
                     rectangle.translate(labelRect.height + 2, 0);
                 }
-                g.setColor(labelBack);
+                graphics2D.setColor(labelBack);
                 graphics2D.fillRoundRect(rectangle.x, rectangle.y, squareEdge, squareEdge, 5, 5);
                 if (curStatus.status == null) {
                     Color damageColor = getDamageColor();

@@ -3506,7 +3506,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         if (storedData == null) {
             return Optional.empty();
         }
-        String[] windowCoords = getString(name + "_window").split(";");
+        String[] windowCoords = storedData.split(";");
         if (windowCoords.length < 4) {
             return Optional.empty();
         }

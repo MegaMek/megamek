@@ -1117,53 +1117,6 @@ public class ClientGUI extends AbstractClientGUI
 
     }
 
-    private void cleanupDialogs() {
-        if (unitDisplayDialog != null) {
-            unitDisplayDialog.dispose();
-            unitDisplayDialog = null;
-        }
-        if (forceDisplayDialog != null) {
-            forceDisplayDialog.dispose();
-            forceDisplayDialog = null;
-        }
-        if (minimapW != null) {
-            minimapW.dispose();
-            minimapW = null;
-        }
-        if (miniReportDisplayDialog != null) {
-            miniReportDisplayDialog.dispose();
-            miniReportDisplayDialog = null;
-        }
-        if (gameOptionsDialog != null) {
-            gameOptionsDialog.dispose();
-            gameOptionsDialog = null;
-        }
-        if (mekSelectorDialog != null) {
-            mekSelectorDialog.dispose();
-            mekSelectorDialog = null;
-        }
-        if (playerListDialog != null) {
-            playerListDialog.dispose();
-            playerListDialog = null;
-        }
-        if (randomArmyDialog != null) {
-            randomArmyDialog.dispose();
-            randomArmyDialog = null;
-        }
-        if (conditionsDialog != null) {
-            conditionsDialog.dispose();
-            conditionsDialog = null;
-        }
-        if (setdlg != null) {
-            setdlg.dispose();
-            setdlg = null;
-        }
-        if (help != null) {
-            help.dispose();
-            help = null;
-        }
-    }
-
     @Override
     public void die() {
         // Tell all the displays to remove themselves as listeners.
@@ -1190,8 +1143,6 @@ public class ClientGUI extends AbstractClientGUI
         client.die();
 
         TimerSingleton.getInstance().killTimer();
-
-        cleanupDialogs();
 
         if (controller != null) {
             controller.removeAllActions();

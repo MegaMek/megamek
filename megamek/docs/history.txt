@@ -10,6 +10,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6946: Fixes the Damage Status box on Label no appearing correctly. #6810
 + Fix #6945: uses bot skill generator when creating armies issue #6927
 + PR #6934: Dereference NPE Removals in MovementDisplay, moved MoveCommand to own class, added tests.
++ Fix #6954: Fixes NPE and missing portrait/deployment in Mek Customization dialog
 
 0.50.05 (2025-04-25 1800 UTC)
 + Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1

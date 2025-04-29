@@ -30,9 +30,20 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.common.Compute.d6;
+import static megamek.common.Compute.*;
 
-import java.awt.*;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.KeyboardFocusManager;
+import java.awt.MediaTracker;
+import java.awt.SystemColor;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -51,6 +62,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
+
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -60,6 +72,11 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
@@ -89,7 +106,17 @@ import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.client.ui.swing.widget.SkinnedJPanel;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.Configuration;
+import megamek.common.Game;
+import megamek.common.GameType;
+import megamek.common.IGame;
+import megamek.common.KeyBindParser;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummaryCache;
+import megamek.common.PlanetaryConditionsUsing;
+import megamek.common.Player;
+import megamek.common.WeaponOrderHandler;
 import megamek.common.annotations.Nullable;
 import megamek.common.jacksonadapters.BotParser;
 import megamek.common.options.IBasicOption;
@@ -101,6 +128,7 @@ import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
+import megamek.common.util.TipOfTheDay;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
@@ -108,10 +136,6 @@ import megamek.server.Server;
 import megamek.server.sbf.SBFGameManager;
 import megamek.server.totalwarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final MMLogger LOGGER = MMLogger.create(MegaMekGUI.class);
@@ -131,6 +155,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private Server server;
     private IGameManager gameManager;
     private CommonSettingsDialog settingsDialog;
+    JLabel splash;
+    private TipOfTheDay tipOfTheDay;
 
     private static MegaMekController controller;
 
@@ -163,7 +189,17 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
         });
 
-        frame.setContentPane(new SkinnedJPanel(UIComponents.MainMenuBorder, 1));
+        tipOfTheDay = new TipOfTheDay(Messages.getString("TipOfTheDay.title.text"), "megamek.client.TipOfTheDay", frame);
+        frame.setContentPane(new SkinnedJPanel(UIComponents.MainMenuBorder, 1) {
+            @Override
+            public void paint(Graphics g) {
+                super.paint(g); // Draw background, border, and children first
+                // Now draw the tip on top is the splash is visible
+                if (splash != null && splash.isShowing() && splash.getWidth() > 0 && splash.getHeight() > 0 && tipOfTheDay != null) {
+                    tipOfTheDay.drawTipOfTheDay((Graphics2D) g, splash.getBounds(), TipOfTheDay.Position.TOP_BORDER);
+                }
+            }
+        });
 
         List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit()
@@ -279,7 +315,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
         Image imgSplash = getSplashScreen(FILENAME_MEGAMEK_SPLASHES, scaledMonitorSize.width, scaledMonitorSize.height);
-        JLabel splash = UIUtil.createSplashComponent(imgSplash, frame, scaledMonitorSize);
+        splash = UIUtil.createSplashComponent(imgSplash, frame, scaledMonitorSize);
 
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());

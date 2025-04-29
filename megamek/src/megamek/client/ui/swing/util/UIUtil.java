@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.ImageObserver;
 import java.io.Serial;
 import java.net.URL;
@@ -61,6 +62,8 @@ public final class UIUtil {
 
     // The standard pixels-per-inch to compare against for display scaling
     private static final int DEFAULT_DISPLAY_PPI = 96;
+    private static final Dimension REFERENCE_RESOLUTION = new Dimension(1920, 1080);
+    private static final double MINIMUM_RESOLUTION_SCALE_FACTOR = 0.5f;
 
     /**
      * The width for a tooltip displayed to the side of a dialog using one of TipXX classes.
@@ -522,10 +525,88 @@ public final class UIUtil {
     }
 
     /**
+     * Gets the DPI scale factor for the monitor containing the specified component
+     * 
+     * @param component The component to check
+     * @return The DPI scale factor for the containing monitor
+     */
+    public static double getMonitorScaleFactor(Component component) {
+        // Get the GraphicsConfiguration for the monitor containing this component
+        GraphicsConfiguration gc = (component != null) ? component.getGraphicsConfiguration() : null;
+        if (gc == null) {
+            return getDpiScaleFactor(component); //fallback
+        }
+        // Calculate the DPI scale for this specific monitor
+        AffineTransform transform = gc.getDefaultTransform();
+        return transform.getScaleX();
+    }
+
+    /**
+     * Gets the resolution scale factor for the monitor containing the specified component. 
+     * Baseline is 1080p (1920x1080).
+     * 
+     * @param component The component to check
+     * @return The resolution scale factor for the containing monitor
+     */
+    public static double getResolutionScaleFactor(Component component) {
+        return getResolutionScaleFactor(component, REFERENCE_RESOLUTION);
+    }
+    
+    /**
+     * Gets the resolution scale factor for the monitor containing the specified component.
+     * 
+     * @param component The component to check
+     * @param referenceResolution The reference resolution width/height to use for scaling
+     * @return The resolution scale factor for the containing monitor
+     */
+    public static double getResolutionScaleFactor(Component component, Dimension referenceResolution) {
+        final Dimension logicalScreenSize = UIUtil.getScaledScreenSize(component);
+        final double scaleFactorX = logicalScreenSize.width / referenceResolution.getWidth();
+        final double scaleFactorY = logicalScreenSize.height / referenceResolution.getHeight();
+        return Math.max(MINIMUM_RESOLUTION_SCALE_FACTOR, Math.min(scaleFactorX, scaleFactorY));
+    }
+    
+    /**
+     * Calculate the DPI scale factor for a component
+     * 
+     * @param component The component to get scaling information from
+     * @return The scaling factor based on DPI
+     */
+    public static float getDpiScaleFactor(Component component) {
+        GraphicsConfiguration gc = null;
+        if (component != null) {
+            gc = component.getGraphicsConfiguration();
+        }
+        if (gc == null) {
+            // Fallback to default GraphicsEnvironment if component doesn't have a GraphicsConfiguration
+            gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        }
+        // Get screen resolution
+        int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+        // Calculate scale factor (compared to reference 96 DPI)
+        return (float) dpi / DEFAULT_DISPLAY_PPI;
+    }
+
+    /**
      * @return The height of the screen taking into account display scaling
      */
     public static Dimension getScaledScreenSize(Component component) {
-        return getScaledScreenSize(component.getGraphicsConfiguration().getDevice().getDisplayMode());
+        GraphicsConfiguration gc = null;
+        if (component != null) {
+            gc = component.getGraphicsConfiguration();
+        }
+        if (gc == null) {
+            try {
+                gc = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                    .getDefaultScreenDevice()
+                    .getDefaultConfiguration();
+            } catch (HeadlessException e) {
+                logger.warn("No GraphicsConfiguration found, using default size");
+                return new Dimension(800, 600); 
+            }
+        }
+        Rectangle bounds = gc.getBounds();
+        return new Dimension(bounds.width, bounds.height);
     }
 
     /**
@@ -572,9 +653,7 @@ public final class UIUtil {
     public static JLabel createSplashComponent(TreeMap<Integer, String> multiResImageMap, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
-        Dimension scaledMonitorSize = getScaledScreenSize(parent.getGraphicsConfiguration()
-                                                                .getDevice()
-                                                                .getDisplayMode());
+        Dimension scaledMonitorSize = getScaledScreenSize(parent);
         Image imgSplash = parent.getToolkit().getImage(multiResImageMap.floorEntry(scaledMonitorSize.width).getValue());
 
         // wait for splash image to load completely
@@ -601,9 +680,7 @@ public final class UIUtil {
     public static JLabel createSplashComponent(String imgSplashFile, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
-        Dimension scaledMonitorSize = getScaledScreenSize(parent.getGraphicsConfiguration()
-                                                                .getDevice()
-                                                                .getDisplayMode());
+        Dimension scaledMonitorSize = getScaledScreenSize(parent);
 
         Image imgSplash = parent.getToolkit().getImage(imgSplashFile);
 

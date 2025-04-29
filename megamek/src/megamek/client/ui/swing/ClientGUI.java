@@ -1148,6 +1148,7 @@ public class ClientGUI extends AbstractClientGUI
             controller.removeAllActions();
             controller.clientgui = null;
         }
+
         if (menuBar != null) {
             menuBar.die();
             menuBar = null;

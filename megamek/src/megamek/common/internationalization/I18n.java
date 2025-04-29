@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import megamek.MegaMek;
 
@@ -33,7 +34,7 @@ public class I18n {
 
     private final String defaultBundle;
     private final ConcurrentHashMap<String, ResourceBundle> resourceBundles = new ConcurrentHashMap<>();
-    protected static I18n instance;
+    protected static volatile I18n instance;
 
     static {
         instance = new I18n("megamek.common.messages");
@@ -76,6 +77,15 @@ public class I18n {
             return I18n.getInstance().getResourceBundle(bundleName).getString(key);
         }
         return "!" + key + "!";
+    }
+
+    /**
+     * Get the keys of all localized strings in a specific bundle
+     * @param bundleName the name of the bundle
+     * @return the list of keys with localization
+     */
+    public static Set<String> getKeys(String bundleName) {
+        return I18n.getInstance().getResourceBundle(bundleName).keySet();
     }
 
     /**

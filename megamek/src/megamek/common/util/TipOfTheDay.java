@@ -63,8 +63,6 @@ public class TipOfTheDay {
         BOTTOM_BORDER
     }
 
-    private static final String TIP_BUNDLE_KEY = "TipOfTheDay.tip.";
-    private static final String TIP_BUNDLE_TITLE_KEY = "TipOfTheDay.title.text";
     private static final int TIP_BORDER_MARGIN = 40;
     private static final int TIP_SIDE_PADDING = 20;
     private static final float TIP_TITLE_FONT_SIZE = 14f;
@@ -74,7 +72,6 @@ public class TipOfTheDay {
     private static final Color TIP_TITLE_FONT_COLOR = Color.WHITE;
     private static final Color TIP_FONT_COLOR = Color.WHITE;
     private final String bundleName;
-    private final int countTips;
     private final String tipOfTheDay;
     private final String tipLabel;
     private Font tipFont;
@@ -87,10 +84,9 @@ public class TipOfTheDay {
      * @param bundleName The name of the resource bundle containing the tips
      * @param referenceComponent A component to determine scaling
      */
-    public TipOfTheDay(String bundleName, Component referenceComponent) {
+    public TipOfTheDay(String title, String bundleName, Component referenceComponent) {
         this.bundleName = bundleName;
-        countTips = countTips();
-        tipLabel = I18n.getTextAt(bundleName, TIP_BUNDLE_TITLE_KEY);
+        tipLabel = title;
         tipOfTheDay = getRandomTip();
         updateScaleFactor(referenceComponent);
     }
@@ -109,25 +105,6 @@ public class TipOfTheDay {
     }
 
     /**
-     * Count the number of tips in the resource bundle
-     */
-    private int countTips() {
-        int count = 0;
-        try {
-            while (true) {
-                count++;
-                String tip = I18n.getTextAt(bundleName, TIP_BUNDLE_KEY + count);
-                if (tip.startsWith("!") && tip.endsWith("!")) {
-                    return count - 1;
-                }
-            }
-        } catch (Exception e) {
-            // When we get an exception, we've found all tips
-            return count - 1;
-        }
-    }
-
-    /**
      * Gets the tip for today based on the current date
      * 
      * @return A tip string for today
@@ -135,8 +112,9 @@ public class TipOfTheDay {
     public String getTodaysTip() {
         LocalDate today = LocalDate.now();
         int dayOfYear = today.getDayOfYear();
-        int tipIndex = (dayOfYear % countTips) + 1;
-        return I18n.getTextAt(bundleName, TIP_BUNDLE_KEY + tipIndex);
+        List<String> keyList = new ArrayList<>(I18n.getKeys(bundleName));
+        int tipIndex = (int) (dayOfYear % keyList.size());
+        return I18n.getTextAt(bundleName, keyList.get(tipIndex));
     }
 
     /**
@@ -145,8 +123,9 @@ public class TipOfTheDay {
      * @return A random tip string
      */
     public String getRandomTip() {
-        int randomIndex = (int) (Math.random() * countTips) + 1;
-        return I18n.getTextAt(bundleName, TIP_BUNDLE_KEY + randomIndex);
+        List<String> keyList = new ArrayList<>(I18n.getKeys(bundleName));
+        int randomIndex = (int) (Math.random() * keyList.size());
+        return I18n.getTextAt(bundleName, keyList.get(randomIndex));
     }
 
     /**

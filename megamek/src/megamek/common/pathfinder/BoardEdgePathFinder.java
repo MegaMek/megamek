@@ -33,7 +33,7 @@ import megamek.common.moves.MoveStep;
  * given a movement type from a particular hex to the specified board edge
  *
  * Note: This class is largely obsolete now, only used for its static methods
- * 
+ *
  * @author NickAragua
  */
 public class BoardEdgePathFinder {
@@ -68,7 +68,7 @@ public class BoardEdgePathFinder {
 
     /**
      * Figures out the "opposite" edge for the given entity.
-     * 
+     *
      * @param entity Entity to evaluate
      * @return the Board.START_ constant representing the "opposite" edge
      */
@@ -126,7 +126,7 @@ public class BoardEdgePathFinder {
      * Helper function to set the entity to an appropriate facing given the
      * destination region
      * Changes the actual entity's facing.
-     * 
+     *
      * @param entity            The entity
      * @param destinationRegion The region
      */
@@ -157,7 +157,7 @@ public class BoardEdgePathFinder {
      * Helper function to directly the entity to an appropriate facing given the
      * destination region
      * Changes the actual entity's facing.
-     * 
+     *
      * @param entity            The entity
      * @param destinationRegion The region
      */
@@ -172,7 +172,7 @@ public class BoardEdgePathFinder {
      * technically lead to an edge,
      * but we cut the path generation short when it reaches another path that
      * already goes to that edge.
-     * 
+     *
      * @param entity
      * @return
      */
@@ -212,7 +212,7 @@ public class BoardEdgePathFinder {
      * The resulting path has all the steps of the starting path, a turn to get the
      * unit to face in the direction of the second path,
      * and the rest of the second path starting from the intersection.
-     * 
+     *
      * @param startingPath The beginning path
      * @param endingPath   The end path
      * @return Combined path
@@ -261,7 +261,7 @@ public class BoardEdgePathFinder {
      * Helper function that, given a unit facing and a move step, adds turns to the
      * given path until the facing of the path matches
      * the facing of the step.
-     * 
+     *
      * @param initialPath
      * @param intersectionStep
      */
@@ -307,7 +307,7 @@ public class BoardEdgePathFinder {
      * building or bridge collapse), or some other terrain change
      * either directly or by connecting to a path that goes through this set of
      * coordinates.
-     * 
+     *
      * @param coords
      */
     public void invalidatePaths(Coords coords) {
@@ -340,7 +340,7 @@ public class BoardEdgePathFinder {
      * Mostly ignores movement cost
      * "opposite" is defined as the cardinal edge furthest from the entity's current
      * location
-     * 
+     *
      * @param entity The entity for which to calculate the path
      * @return A legal move path from the entity's current location to the
      *         "opposite" edge (over several turns)
@@ -363,7 +363,7 @@ public class BoardEdgePathFinder {
      * in a cardinal edge)
      * Completely ignores movement risk
      * Mostly ignores movement cost
-     * 
+     *
      * @param entity            The entity for which to calculate the path
      * @param destinationRegion The destination edge
      * @return A legal move path from the entity's current location to the edge
@@ -420,7 +420,7 @@ public class BoardEdgePathFinder {
     /**
      * Gets the currently stored longest non-edge path from the given entity's
      * current position
-     * 
+     *
      * @param coords The coordinates to check
      * @return A move path or null if these coordinates haven't been evaluated.
      */
@@ -431,7 +431,7 @@ public class BoardEdgePathFinder {
     /**
      * Helper function that gets us a cached path for the given set of coordinates
      * if they have a path cached
-     * 
+     *
      * @param coords            Coordinates to check
      * @param destinationRegion Where we're going
      * @return True or false
@@ -443,7 +443,7 @@ public class BoardEdgePathFinder {
     /**
      * Helper function that tells us if the given set of coordinates have a path
      * cached already
-     * 
+     *
      * @param coords            Coordinates to check
      * @param destinationRegion Where we're going
      * @return True or false
@@ -455,7 +455,7 @@ public class BoardEdgePathFinder {
 
     /**
      * Worker function that caches a path that gets to the destination region
-     * 
+     *
      * @param path              The path to cache
      * @param destinationRegion The region of the board to which the path moves
      */
@@ -502,7 +502,7 @@ public class BoardEdgePathFinder {
      * Function that generates all possible "legal" moves resulting from the given
      * path
      * and updates the set of visited coordinates so we don't visit them again.
-     * 
+     *
      * @param parentPath    The path for which to generate child nodes
      * @param visitedCoords Set of visited coordinates so we don't loop around
      * @return List of valid children. Between 0 and 3 inclusive.
@@ -626,15 +626,23 @@ public class BoardEdgePathFinder {
         boolean destinationHasBuilding = destHex.containsTerrain(Terrains.BLDG_CF)
                 || destHex.containsTerrain(Terrains.FUEL_TANK_CF);
 
-        // if we're going to step onto a bridge that will collapse, let's not consider
-        // going there
-        mli.destinationHasWeakBridge = destinationIsBridge
-                && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
+        if (destinationHasBuilding && destinationBuilding != null) {
+            // if we're going to step onto a bridge that will collapse, let's not consider
+            // going there
+            mli.destinationHasWeakBridge = destinationIsBridge &&
+                                                 destinationBuilding.getCurrentCF(dest) < entity.getWeight();
 
-        // if we're going to step onto a building that will collapse, let's not consider
-        // going there
-        mli.destinationHasWeakBuilding = destinationHasBuilding
-                && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
+            // if we're going to step onto a building that will collapse, let's not consider
+            // going there
+            mli.destinationHasWeakBuilding = destinationBuilding.getCurrentCF(dest) < entity.getWeight();
+
+            // for future expansion of this functionality, we may consider the possibility
+            // that a building or bridge
+            // will be destroyed intentionally by the bot to make way for a unit to cross
+            // for now, vehicles simply will not consider going through buildings as an
+            // option
+            mli.tankGoingThroughBuilding = (isWheeled || isTracked || isHovercraft);
+        }
 
         // this condition indicates that we are unable to go to the destination because
         // it's too high compared to the source
@@ -646,40 +654,39 @@ public class BoardEdgePathFinder {
 
         // tanks cannot go into jungles or heavy woods unless there is a road
         mli.tankIntoHeavyWoods = isTracked &&
-                (destHex.terrainLevel(Terrains.JUNGLE) > 0 || destHex.terrainLevel(Terrains.WOODS) > 1)
-                && !destHexHasRoad;
+                                       (destHex.terrainLevel(Terrains.JUNGLE) > 0 ||
+                                              destHex.terrainLevel(Terrains.WOODS) > 1) &&
+                                       !destHexHasRoad;
 
         // hovercraft and wheeled units cannot go into jungles or woods unless there is
         // a road
         mli.weakTankIntoWoods = (isHovercraft || isWheeled) &&
-                (destHex.terrainLevel(Terrains.JUNGLE) > 0 || destHex.terrainLevel(Terrains.WOODS) > 0)
-                && !destHexHasRoad;
+                                      (destHex.terrainLevel(Terrains.JUNGLE) > 0 ||
+                                             destHex.terrainLevel(Terrains.WOODS) > 0) &&
+                                      !destHexHasRoad;
 
         // wheeled tanks cannot go into rough terrain or rubble of any kind, or
         // buildings for that matter
         // even if you level them they still turn to rubble. Additionally, they cannot
         // go into deep snow.
-        mli.wheeledTankRestriction = isWheeled && !destHexHasRoad &&
-                (destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE)
-                        || destinationHasBuilding
-                        || (destHex.containsTerrain(Terrains.SNOW) && (destHex.terrainLevel(Terrains.SNOW) > 1)));
+        mli.wheeledTankRestriction = isWheeled &&
+                                           !destHexHasRoad &&
+                                           (destHex.containsTerrain(Terrains.ROUGH) ||
+                                                  destHex.containsTerrain(Terrains.RUBBLE) ||
+                                                  destinationHasBuilding ||
+                                                  (destHex.containsTerrain(Terrains.SNOW) &&
+                                                         (destHex.terrainLevel(Terrains.SNOW) > 1)));
 
         // tracked and wheeled tanks cannot go into water without a bridge, unless
         // amphibious
         mli.groundTankIntoWater = (isTracked || isWheeled) &&
-                destHex.containsTerrain(Terrains.WATER) && (destHex.depth() > 0) &&
-                !isAmphibious && !destHex.containsTerrain(Terrains.BRIDGE);
+                                        destHex.containsTerrain(Terrains.WATER) &&
+                                        (destHex.depth() > 0) &&
+                                        !isAmphibious &&
+                                        !destHex.containsTerrain(Terrains.BRIDGE);
 
         // naval units cannot go out of water
-        mli.shipOutofWater = entity.isNaval() &&
-                (!destHex.containsTerrain(Terrains.WATER) || destHex.depth() < 1);
-
-        // for future expansion of this functionality, we may consider the possibility
-        // that a building or bridge
-        // will be destroyed intentionally by the bot to make way for a unit to cross
-        // for now, vehicles simply will not consider going through buildings as an
-        // option
-        mli.tankGoingThroughBuilding = (isWheeled || isTracked || isHovercraft) && destinationHasBuilding;
+        mli.shipOutofWater = entity.isNaval() && (!destHex.containsTerrain(Terrains.WATER) || destHex.depth() < 1);
 
         return mli;
     }
@@ -687,7 +694,7 @@ public class BoardEdgePathFinder {
     /**
      * Helper function that calculates the effective elevation for a unit standing
      * there.
-     * 
+     *
      * @param hex    The hex to check
      * @param entity The entity to check
      * @return The effective elevation
@@ -699,7 +706,7 @@ public class BoardEdgePathFinder {
     /**
      * Helper function that calculates the effective elevation for a unit standing
      * there.
-     * 
+     *
      * @param hex          The hex to check
      * @param entity       The entity to check
      * @param useBridgeTop Whether we're going on top of a bridge or under it
@@ -737,7 +744,7 @@ public class BoardEdgePathFinder {
 
     /**
      * Determines if the given move path ends on the given board edge
-     * 
+     *
      * @param movePath          The move path to check.
      * @param destinationRegion The edge to check for.
      * @return True or false.
@@ -763,7 +770,7 @@ public class BoardEdgePathFinder {
      * Comparator implementation useful in comparing how much closer a given path is
      * to the internal
      * "destination edge" than the other.
-     * 
+     *
      * @author NickAragua
      *
      */
@@ -772,7 +779,7 @@ public class BoardEdgePathFinder {
 
         /**
          * Constructor - initializes the destination edge.
-         * 
+         *
          * @param targetRegion Destination edge
          */
         public SortByDistanceToEdge(int targetRegion) {

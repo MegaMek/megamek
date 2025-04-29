@@ -335,9 +335,11 @@ public class BoardClusterTracker {
                 }
 
                 int myElevation = 0;
+                Building building = board.getBuildingAt(c);
 
                 if (useBridgeTop && board.getHex(c).containsTerrain(Terrains.BRIDGE) &&
-                        canUseBridge && (entity.getWeight() <= board.getBuildingAt(c).getCurrentCF(c))) {
+                          building != null &&
+                        canUseBridge && (entity.getWeight() <= building.getCurrentCF(c))) {
                     myElevation = board.getHex(c).ceiling();
                 } else {
                     myElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(c), entity, isHovercraft,
@@ -348,15 +350,18 @@ public class BoardClusterTracker {
                 BoardCluster biggestNeighbor = null;
 
                 // hex is accessible one way or another
+                Building neighborBuilding;
                 for (int direction = 0; direction < 6; direction++) {
                     Coords neighbor = c.translated(direction);
+                    neighborBuilding = board.getBuildingAt(neighbor);
 
                     if (clusters.containsKey(neighbor)) {
                         int neighborElevation = 0;
 
                         if (useBridgeTop && board.getHex(neighbor).containsTerrain(Terrains.BRIDGE) &&
                                 canUseBridge
-                                && (entity.getWeight() <= board.getBuildingAt(neighbor).getCurrentCF(neighbor))) {
+                                  && neighborBuilding != null
+                                && (entity.getWeight() <= neighborBuilding.getCurrentCF(neighbor))) {
                             neighborElevation = board.getHex(neighbor).ceiling();
                         } else {
                             neighborElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(neighbor),

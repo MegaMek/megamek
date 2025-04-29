@@ -62,6 +62,7 @@ public class UnitDisplayDialog extends JDialog {
         }
         localUnitDisplay.displayEntity(entity);
         localDialogInstance.setVisible(true);
+        localDialogInstance.dispose();
     }
 
     //region Constructors

@@ -1,26 +1,39 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.swing.unitDisplay;
 
 import java.awt.Dimension;
 import java.awt.Image;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -66,6 +79,8 @@ public class SummaryPanel extends PicMap {
         JComponent panel = this;
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS ));
         panel.add(Box.createRigidArea(new Dimension(0,10)));
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         unitInfo = new JLabel("<HTML>UnitInfo</HTML>", SwingConstants.LEFT );
         panel.add(unitInfo);
@@ -185,7 +200,6 @@ public class SummaryPanel extends PicMap {
 
             String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0 width=100%", rows);
             txt = padLeft(table);
-            //txt = table;
         }
 
         unitInfo.setText(UnitToolTip.wrapWithHTML(txt));
@@ -197,8 +211,7 @@ public class SummaryPanel extends PicMap {
         String col = UIUtil.tag("TD", "", html);
         String row = UIUtil.tag("TR", "", col);
         String attr = String.format("CELLSPACING=0 CELLPADDING=%s width=100%%", dist);
-        String table = UIUtil.tag("TABLE", attr, row);
-        return table;
+        return UIUtil.tag("TABLE", attr, row);
     }
 
     @Override

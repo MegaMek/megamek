@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.Serial;
 import java.util.Enumeration;
 
 import javax.swing.JComboBox;
@@ -40,12 +41,13 @@ import megamek.common.Entity;
  * unit.
  */
 class PilotPanel extends PicMap {
+    @Serial
     private static final long serialVersionUID = 8284603003897415518L;
 
-    private PilotMapSet pi;
+    private final PilotMapSet pilotMapSet;
 
-    private int minTopMargin = 8;
-    private int minLeftMargin = 8;
+    private final int minTopMargin = 8;
+    private final int minLeftMargin = 8;
     private final JComboBox<String> cbCrewSlot = new JComboBox<>();
     private final JToggleButton btnSwapRoles = new JToggleButton();
 
@@ -81,9 +83,9 @@ class PilotPanel extends PicMap {
         gbc.weighty = 1.0;
         add(new JLabel(), gbc);
 
-        pi = new PilotMapSet(this);
-        addElement(pi.getContentGroup());
-        Enumeration<BackGroundDrawer> iter = pi.getBackgroundDrawers().elements();
+        pilotMapSet = new PilotMapSet(this);
+        addElement(pilotMapSet.getContentGroup());
+        Enumeration<BackGroundDrawer> iter = pilotMapSet.getBackgroundDrawers().elements();
         while (iter.hasMoreElements()) {
             addBgDrawer(iter.nextElement());
         }
@@ -118,7 +120,7 @@ class PilotPanel extends PicMap {
      */
     public void displayMek(Entity en) {
         entity = en;
-        pi.setEntity(en);
+        pilotMapSet.setEntity(en);
         if (en.getCrew().getSlotCount() > 1) {
             cbCrewSlot.removeAllItems();
             for (int i = 0; i < en.getCrew().getSlotCount(); i++) {
@@ -143,7 +145,7 @@ class PilotPanel extends PicMap {
 
     private void selectCrewSlot() {
         if (null != entity && cbCrewSlot.getSelectedIndex() >= 0) {
-            pi.setEntity(entity, cbCrewSlot.getSelectedIndex());
+            pilotMapSet.setEntity(entity, cbCrewSlot.getSelectedIndex());
             onResize();
             update();
         }

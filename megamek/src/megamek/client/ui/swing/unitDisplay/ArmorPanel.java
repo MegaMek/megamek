@@ -20,6 +20,7 @@ package megamek.client.ui.swing.unitDisplay;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.io.Serial;
 import java.util.Enumeration;
 
 import megamek.client.ui.swing.widget.*;
@@ -32,6 +33,7 @@ import megamek.logging.MMLogger;
 class ArmorPanel extends PicMap {
     private static final MMLogger logger = MMLogger.create(ArmorPanel.class);
 
+    @Serial
     private static final long serialVersionUID = -3612396252172441104L;
     private TankMapSet tank;
     private MekMapSet mek;
@@ -71,7 +73,7 @@ class ArmorPanel extends PicMap {
     private static final int minAeroTopMargin = 8;
     private static final int minAeroLeftMargin = 8;
 
-    private Game game;
+    private final Game game;
 
     ArmorPanel(Game g, UnitDisplay unitDisplay) {
         game = g;
@@ -220,8 +222,7 @@ class ArmorPanel extends PicMap {
             minRightMargin = minAeroLeftMargin;
         } else if (en instanceof Aero) {
             ams = aero;
-            if (en instanceof SmallCraft) {
-                SmallCraft sc = (SmallCraft) en;
+            if (en instanceof SmallCraft sc) {
                 if (sc.isSpheroid()) {
                     ams = sphere;
                 }

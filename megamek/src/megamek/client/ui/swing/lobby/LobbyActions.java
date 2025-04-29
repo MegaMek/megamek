@@ -222,6 +222,7 @@ public class LobbyActions {
         Entity entity = CollectionUtil.anyOneElement(entities);
         UnitEditorDialog med = new UnitEditorDialog(frame(), entity);
         med.setVisible(true);
+        med.dispose();
         sendUpdates(entities);
     }
 

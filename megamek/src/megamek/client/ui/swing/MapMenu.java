@@ -762,6 +762,7 @@ public class MapMenu extends JPopupMenu {
             UnitEditorDialog med = new UnitEditorDialog(gui.getFrame(), entity);
             gui.getBoardView().setShouldIgnoreKeys(true);
             med.setVisible(true);
+            med.dispose();
             client.sendUpdateEntity(entity);
             gui.getBoardView().setShouldIgnoreKeys(false);
         });

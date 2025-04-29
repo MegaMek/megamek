@@ -160,9 +160,9 @@ public class CustomMekDialog extends AbstractButtonDialog
     private boolean okay;
     private int status = CustomMekDialog.DONE;
 
-    private ClientGUI clientGUI;
+    private final ClientGUI clientGUI;
     private final Client client;
-    private boolean space;
+    private final boolean space;
 
     private PilotOptions options;
     private PartialRepairs partReps;
@@ -188,15 +188,26 @@ public class CustomMekDialog extends AbstractButtonDialog
      */
     public CustomMekDialog(ClientGUI clientgui, Client client, List<Entity> entities, boolean editable,
           boolean editableDeployment) {
-        this(clientgui.getFrame(), client, entities, editable, editableDeployment);
+
+        super(clientgui.getFrame(), "CustomizeMekDialog", "CustomMekDialog.title");
+        this.entities = entities;
         this.clientGUI = clientgui;
+        this.client = client;
         this.space = clientgui.getClient().getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE;
+        this.editable = editable;
+        this.editableDeployment = editableDeployment;
+
+        // Ensure we have at least one passed entity, anything less makes no sense
+        if (entities.isEmpty()) {
+            throw new IllegalStateException("Must pass at least one Entity!");
+        }
+
+        initialize();
     }
 
     public CustomMekDialog(JFrame frame, Client client, List<Entity> entities, boolean editable,
           boolean editableDeployment) {
         super(frame, "CustomizeMekDialog", "CustomMekDialog.title");
-
         this.entities = entities;
         this.clientGUI = null;
         this.client = client;

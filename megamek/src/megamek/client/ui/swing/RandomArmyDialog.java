@@ -699,7 +699,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     try {
                         Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
 
-                        autoSetSkillsAndName(entity);
+                        autoSetSkillsAndName(entity, client);
                         entity.setOwner(client.getLocalPlayer());
                         if (!client.getGame().getPhase().isLounge()) {
                             entity.setDeployRound(client.getGame().getRoundCount() + 1);
@@ -1160,12 +1160,12 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         super.setVisible(show);
     }
 
-    private void autoSetSkillsAndName(Entity e) {
+    private void autoSetSkillsAndName(Entity e, Client client) {
         ClientPreferences cs = PreferenceManager.getClientPreferences();
 
         Arrays.fill(e.getCrew().getClanPilots(), e.isClan());
         if (cs.useAverageSkills()) {
-            m_client.getSkillGenerator().setRandomSkills(e);
+            client.getSkillGenerator().setRandomSkills(e);
         }
 
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {

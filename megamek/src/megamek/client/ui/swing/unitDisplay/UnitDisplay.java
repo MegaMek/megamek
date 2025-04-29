@@ -47,6 +47,7 @@ import megamek.client.ui.swing.widget.PMUtil;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.Configuration;
+import megamek.common.EnhancedTabbedPane;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -74,8 +75,8 @@ public class UnitDisplay extends JPanel {
     private JSplitPane splitA1;
     private JSplitPane splitB1;
     private JSplitPane splitC1;
-    private MekPanelTabStrip tabStrip;
-    private JPanel displayP;
+    private EnhancedTabbedPane tabbedPane;
+    private JPanel contentPanel;
     private SummaryPanel mPan;
     private PilotPanel pPan;
     private ArmorPanel aPan;
@@ -100,6 +101,9 @@ public class UnitDisplay extends JPanel {
     public static final String NON_TABBED_B2 = "NonTabbedB2";
     public static final String NON_TABBED_C1 = "NonTabbedC1";
     public static final String NON_TABBED_C2 = "NonTabbedC2";
+
+    private static final String TABBED_VIEW = "TabbedView"; // ADD identifier for CardLayout
+    private static final String NON_TABBED_VIEW = "NonTabbedView"; // ADD identifier for CardLayout
 
     public static final int NON_TABBED_ZERO_INDEX = 0;
     public static final int NON_TABBED_ONE_INDEX = 1;
@@ -130,46 +134,18 @@ public class UnitDisplay extends JPanel {
 
         labTitle = new JLabel("Title");
 
-        tabStrip = new MekPanelTabStrip(this);
+        tabbedPane = new EnhancedTabbedPane(true, true);
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
         Image tile = getToolkit()
                 .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
-        int b = BackGroundDrawer.TILING_BOTH;
-        BackGroundDrawer bgd = new BackGroundDrawer(tile, b);
-        tabStrip.addBgDrawer(bgd);
 
-        displayP = new JPanel(new CardLayout());
         mPan = new SummaryPanel(this);
         pPan = new PilotPanel(this);
         aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null, this);
         wPan = new WeaponPanel(this, clientgui != null ? clientgui.getClient() : null);
         sPan = new SystemPanel(this);
         ePan = new ExtraPanel(this);
-
-        // layout main panel
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(4, 1, 0, 1);
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-
-        ((GridBagLayout) getLayout()).setConstraints(labTitle, c);
-        add(labTitle);
-
-        ((GridBagLayout) getLayout()).setConstraints(tabStrip, c);
-        add(tabStrip);
-
-        c.insets = new Insets(0, 1, 1, 1);
-        c.weighty = 1.0;
-
-        ((GridBagLayout) getLayout()).setConstraints(displayP, c);
-        add(displayP);
-
-        if (controller != null) {
-            registerKeyboardCommands(this, controller);
-        }
 
         panA1 = new JPanel(new BorderLayout());
         panA2 = new JPanel(new BorderLayout());
@@ -217,22 +193,51 @@ public class UnitDisplay extends JPanel {
         splitA1.setDividerLocation(GUIP.getUnitDisplaySplitA1Loc());
         splitB1.setDividerLocation(GUIP.getUnitDisplaySplitB1Loc());
         splitC1.setDividerLocation(GUIP.getUnitDisplaySplitC1Loc());
+        contentPanel = new JPanel(new CardLayout());
+        contentPanel.add(tabbedPane, TABBED_VIEW); // Add tabbedPane to the card layout
+        contentPanel.add(splitABC, NON_TABBED_VIEW); // Add non-tabbed split pane view
 
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(0, 1, 1, 1);
+        // --- Layout main panel (UnitDisplay using GridBagLayout) ---
+        GridBagConstraints c = new GridBagConstraints();
+
+        // Title Label (Top)
+        c.fill = GridBagConstraints.HORIZONTAL; // Title only needs horizontal fill
+        c.insets = new Insets(4, 1, 0, 1);
         c.weightx = 1.0;
-        c.weighty = 0.0;
+        c.weighty = 0.0; // No vertical expansion
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridx = 0;
+        c.gridy = 0;
+        add(labTitle, c);
+
+        // Content Panel (Middle - takes up vertical space)
+        c.fill = GridBagConstraints.BOTH; // Fill both horizontally and vertically
+        c.insets = new Insets(0, 1, 1, 1);
+        c.weighty = 1.0; // Allow vertical expansion
+        c.gridy = 1;
+        add(contentPanel, c); // Add the contentPanel here
+
+        // Buttons (Bottom)
+        butSwitchView = new JButton(Messages.getString("UnitDisplay.SwitchView"));
+        butSwitchLocation = new JButton(Messages.getString("UnitDisplay.SwitchLocation"));
+
+        c.fill = GridBagConstraints.NONE; // Buttons don't need to fill
+        c.weighty = 0.0; // No vertical expansion
+        c.gridy = 2;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0; // Reset weightx
+        add(butSwitchView, c);
 
-        ((GridBagLayout) getLayout()).setConstraints(butSwitchView, c);
-        add(butSwitchView);
-
-        c.weightx = 1.0;
         c.anchor = GridBagConstraints.EAST;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        ((GridBagLayout) getLayout()).setConstraints(butSwitchLocation, c);
-        add(butSwitchLocation);
+        c.weightx = 1.0; // Allow location button to push view button left
+        add(butSwitchLocation, c);
+        // --- End Layout ---
+
+        if (controller != null) {
+            registerKeyboardCommands(this, controller);
+        }
 
         butSwitchView.addActionListener(new ActionListener() {
             @Override
@@ -282,9 +287,7 @@ public class UnitDisplay extends JPanel {
      *
      */
     private void setDisplayTabbed() {
-        tabStrip.setVisible(true);
-
-        displayP.removeAll();
+        // 1. Remove components from non-tabbed view containers
         panA1.removeAll();
         panA2.removeAll();
         panB1.removeAll();
@@ -292,19 +295,25 @@ public class UnitDisplay extends JPanel {
         panC1.removeAll();
         panC2.removeAll();
 
-        displayP.add(MekPanelTabStrip.SUMMARY, mPan);
-        displayP.add(MekPanelTabStrip.PILOT, pPan);
-        displayP.add(MekPanelTabStrip.ARMOR, aPan);
-        displayP.add(MekPanelTabStrip.WEAPONS, wPan);
-        displayP.add(MekPanelTabStrip.SYSTEMS, sPan);
-        displayP.add(MekPanelTabStrip.EXTRAS, ePan);
+        // 2. Ensure tabbedPane is clear before adding
+        tabbedPane.removeAll(); // Assuming EnhancedTabbedPane has removeAll or similar
 
-        tabStrip.setTab(MekPanelTabStrip.SUMMARY_INDEX);
+        // 3. Add tabs to tabbedPane
+        tabbedPane.addTab(MekPanelTabStrip.SUMMARY, mPan);
+        tabbedPane.addTab(MekPanelTabStrip.PILOT, pPan);
+        tabbedPane.addTab(MekPanelTabStrip.ARMOR, aPan);
+        tabbedPane.addTab(MekPanelTabStrip.WEAPONS, wPan);
+        tabbedPane.addTab(MekPanelTabStrip.SYSTEMS, sPan);
+        tabbedPane.addTab(MekPanelTabStrip.EXTRAS, ePan);
+        tabbedPane.setSelectedIndex(MekPanelTabStrip.SUMMARY_INDEX); // Or restore last index
 
-        displayP.revalidate();
-        displayP.repaint();
+        // 4. Show the tabbed view card
+        CardLayout cl = (CardLayout) (contentPanel.getLayout());
+        cl.show(contentPanel, TABBED_VIEW);
 
         GUIP.setUnitDisplayStartTabbed(true);
+        revalidate(); // Revalidate the UnitDisplay panel
+        repaint();
     }
 
     /**
@@ -312,9 +321,10 @@ public class UnitDisplay extends JPanel {
      *
      */
     public void setDisplayNonTabbed() {
-        tabStrip.setVisible(false);
+        // 1. Remove tabs from tabbedPane
+        tabbedPane.removeAll(); // Assuming EnhancedTabbedPane has removeAll or similar
 
-        displayP.removeAll();
+        // 2. Ensure non-tabbed view containers are clear
         panA1.removeAll();
         panA2.removeAll();
         panB1.removeAll();
@@ -322,13 +332,14 @@ public class UnitDisplay extends JPanel {
         panC1.removeAll();
         panC2.removeAll();
 
+        // 3. Add components to the non-tabbed view containers
+        // Make sure the panels (mPan, pPan etc.) are visible if needed
         mPan.setVisible(true);
         pPan.setVisible(true);
         aPan.setVisible(true);
         wPan.setVisible(true);
         sPan.setVisible(true);
         ePan.setVisible(true);
-
         linkParentChild(UnitDisplay.NON_TABBED_A1, UDOP.getString(UnitDisplay.NON_TABBED_A1));
         linkParentChild(UnitDisplay.NON_TABBED_B1, UDOP.getString(UnitDisplay.NON_TABBED_B1));
         linkParentChild(UnitDisplay.NON_TABBED_C1, UDOP.getString(UnitDisplay.NON_TABBED_C1));
@@ -336,12 +347,13 @@ public class UnitDisplay extends JPanel {
         linkParentChild(UnitDisplay.NON_TABBED_B2, UDOP.getString(UnitDisplay.NON_TABBED_B2));
         linkParentChild(UnitDisplay.NON_TABBED_C2, UDOP.getString(UnitDisplay.NON_TABBED_C2));
 
-        displayP.add(splitABC);
-
-        displayP.revalidate();
-        displayP.repaint();
+        // 4. Show the non-tabbed view card
+        CardLayout cl = (CardLayout) (contentPanel.getLayout());
+        cl.show(contentPanel, NON_TABBED_VIEW);
 
         GUIP.setUnitDisplayStartTabbed(false);
+        revalidate(); // Revalidate the UnitDisplay panel
+        repaint();
     }
 
     /**
@@ -490,21 +502,21 @@ public class UnitDisplay extends JPanel {
      */
     public void showPanel(String s) {
         if (GUIP.getUnitDisplayStartTabbed()) {
-            ((CardLayout) displayP.getLayout()).show(displayP, s);
+            return;
         }
 
         if (MekPanelTabStrip.SUMMARY.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.SUMMARY_INDEX);
+            tabbedPane.setSelectedIndex(MekPanelTabStrip.SUMMARY_INDEX);
         } else if (MekPanelTabStrip.PILOT.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.PILOT_INDEX);
+            tabbedPane.setSelectedIndex(MekPanelTabStrip.PILOT_INDEX);
         } else if (MekPanelTabStrip.ARMOR.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.ARMOR_INDEX);
+            tabbedPane.setSelectedIndex(MekPanelTabStrip.ARMOR_INDEX);
         } else if (MekPanelTabStrip.WEAPONS.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.WEAPONS_INDEX);
+            tabbedPane.setSelectedIndex(MekPanelTabStrip.WEAPONS_INDEX);
         } else if (MekPanelTabStrip.SYSTEMS.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.SYSTEMS_INDEX);
+            tabbedPane.setSelectedIndex(MekPanelTabStrip.SYSTEMS_INDEX);
         } else if (MekPanelTabStrip.EXTRAS.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.EXTRAS_INDEX);
+            tabbedPane.setSelectedIndex(MekPanelTabStrip.EXTRAS_INDEX);
         }
     }
 
@@ -515,10 +527,9 @@ public class UnitDisplay extends JPanel {
      */
     public void showSpecificSystem(int loc) {
         if (GUIP.getUnitDisplayStartTabbed()) {
-            ((CardLayout) displayP.getLayout()).show(displayP, MekPanelTabStrip.SYSTEMS);
+            setDisplayTabbed();
         }
-
-        tabStrip.setTab(MekPanelTabStrip.SYSTEMS_INDEX);
+        tabbedPane.setSelectedIndex(MekPanelTabStrip.SYSTEMS_INDEX);
         sPan.selectLocation(loc);
     }
 

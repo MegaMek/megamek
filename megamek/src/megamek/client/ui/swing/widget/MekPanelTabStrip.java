@@ -23,12 +23,12 @@ public class MekPanelTabStrip extends PicMap {
 
     private static final long serialVersionUID = -1282343469769007184L;
     protected static final int NUM_TABS = 6;
-    public static final String SUMMARY = "summary";
-    public static final String PILOT = "pilot";
-    public static final String ARMOR = "armor";
-    public static final String WEAPONS = "weapons";
-    public static final String SYSTEMS = "systems";
-    public static final String EXTRAS = "extras";
+    public static final String SUMMARY = "Summary";
+    public static final String PILOT = "Pilot";
+    public static final String ARMOR = "Armor";
+    public static final String WEAPONS = "Weapons";
+    public static final String SYSTEMS = "Systems";
+    public static final String EXTRAS = "Extras";
 
     public static final int SUMMARY_INDEX = 0;
     public static final int PILOT_INDEX = 1;

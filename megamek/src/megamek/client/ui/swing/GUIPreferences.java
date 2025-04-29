@@ -25,6 +25,7 @@ import megamek.common.preference.PreferenceStoreProxy;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.Optional;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -3499,4 +3500,27 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setMovePathPersistenceOnMiniMap(int rounds) {
         store.setValue(MINI_MAP_MOVE_PATH_PERSISTENCE, rounds);
     }
+    
+    public Optional<Rectangle> getNamedWindowSizeAndPosition(String name) {
+        final String storedData = getString(name + "_window");
+        if (storedData == null) {
+            return Optional.empty();
+        }
+        String[] windowCoords = getString(name + "_window").split(";");
+        if (windowCoords.length < 4) {
+            return Optional.empty();
+        }
+        int x = Integer.parseInt(windowCoords[0]);
+        int y = Integer.parseInt(windowCoords[1]);
+        int width = Integer.parseInt(windowCoords[2]);
+        int height = Integer.parseInt(windowCoords[3]);
+        return Optional.of(new Rectangle(x,y,width,height));
+    }
+
+    public void setNamedWindowSizeAndPosition(String name, Window component) {
+        Dimension size = component.getSize();
+        Point pos = component.getLocation();
+        store.setValue(name + "_window", pos.x + ";" + pos.y + ";" + size.width + ";" + size.height);
+    }
+
 }

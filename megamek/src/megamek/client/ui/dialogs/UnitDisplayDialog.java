@@ -26,7 +26,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
@@ -67,6 +66,7 @@ public class UnitDisplayDialog extends JDialog {
     //region Constructors
     public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
         super(frame, "", false);
+        this.clientGUI = clientGUI;
         this.setTitle(Messages.getString("ClientGUI.MekDisplay"));
 
         if (GUIP.getUnitDisplayStartTabbed()) {
@@ -88,7 +88,6 @@ public class UnitDisplayDialog extends JDialog {
             }
         });
 
-        this.clientGUI = clientGUI;
     }
     //endregion Constructors
 

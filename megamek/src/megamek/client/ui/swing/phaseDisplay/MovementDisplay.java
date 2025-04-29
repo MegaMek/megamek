@@ -24,6 +24,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.IBoardView;
+import megamek.client.ui.swing.boardview.sprite.FlyOverSprite;
 import megamek.client.ui.swing.phaseDisplay.dialog.BombPayloadDialog;
 import megamek.client.ui.swing.ChoiceDialog;
 import megamek.client.ui.swing.ClientGUI;
@@ -335,6 +336,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private int gear;
     private int jumpSubGear;
 
+    /**
+     * Used to position a ground map flight path of an aero on an atmospheric map
+     */
+    private Coords flightPathPosition;
+
+    /**
+     * The ground map flight path of an aero on an atmospheric map
+     */
+    private FlyOverSprite flightPath;
+
     // is the shift key held?
     private boolean shiftheld;
 
@@ -358,6 +369,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public static final int GEAR_LONGEST_RUN = 10;
     public static final int GEAR_LONGEST_WALK = 11;
     public static final int GEAR_STRAFE = 12;
+    /** Used to set a ground map flight path for an aero on an atmospheric map. */
+    public static final int GEAR_FLIGHTPATH = 13;
     public static final String turnDetailsFormat = "%s%-3s %-14s %1s %2dMP%s";
     public static final int GEAR_SUB_STANDARD = 0;
     public static final int GEAR_SUB_MEKBOOSTERS = 2;
@@ -1105,7 +1118,26 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 accumLegal ? validTextColor : invalidTextColor,
                 accumTypeCount == 1 ? "" : "x" + accumTypeCount,
                 accumType, unicodeIcon, accumMP, "*".repeat(accumDanger)));
+        if (accumLegal && shouldDesignateFlightPath(ce())) {
+            turnDetails.add(">> Designate flight path!");
+        }
         return turnDetails;
+    }
+
+    private boolean shouldDesignateFlightPath(Entity entity) {
+        return (entity != null)
+                     && game.hasBoardLocation(finalPosition(), finalBoardId())
+                     && entity.isAirborne()
+                     && game.getBoard(entity).isLowAtmosphereMap()
+                     && game.getBoard(entity).getEmbeddedBoardHexes().contains(finalPosition());
+    }
+
+    private int flightPathTarget(Entity entity) {
+        if (shouldDesignateFlightPath(entity)) {
+            return game.getBoard(entity).getEmbeddedBoardAt(finalPosition());
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -1151,6 +1183,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.maybeShowUnitDisplay();
         }
         currentEntity = Entity.NONE;
+        clearFlightPath();
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         // Return the highlight sprite back to its original color
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).setHighlightColor(Color.WHITE));
@@ -1159,6 +1192,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
         cmd = null;
+    }
+
+    private void clearFlightPath() {
+        if (flightPath != null) {
+            clientgui.onAllBoardViews(bv -> bv.removeSprite(flightPath));
+        }
+        flightPathPosition = null;
+        flightPath = null;
     }
 
     /**
@@ -1275,6 +1316,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // set to "walk," or the equivalent
         gear = MovementDisplay.GEAR_LAND;
         jumpSubGear = GEAR_SUB_STANDARD;
+        clearFlightPath();
         Color walkColor = GUIP.getMoveDefaultColor();
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).setHighlightColor(walkColor));
 
@@ -1805,6 +1847,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
             gear = GEAR_LAND;
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
             extendPathTo(dest, boardId, MoveStepType.FORWARDS);
+            if (shouldDesignateFlightPath(ce())) {
+                gear = GEAR_FLIGHTPATH;
+                Board flightPathBoard = game.getBoard(flightPathTarget(ce()));
+                clientgui.showBoardView(flightPathTarget(ce()));
+                JOptionPane.showMessageDialog(clientgui.getFrame(), """
+                      Designate a flight path on the board "%s" by clicking on any of
+                      its hexes. Hexes can be clicked multiple times to move
+                      the planned flight path. Pressing ESC will clear the
+                      planned movement as normal.""".formatted(flightPathBoard.getBoardName()));
+            }
         } else if (gear == GEAR_BACKUP) {
             extendPathTo(dest, boardId, MoveStepType.BACKWARDS);
         } else if (gear == GEAR_CHARGE) {
@@ -1890,6 +1942,34 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
+    /**
+     * Returns the hexes of a flight path that has the given direction (facing) on the given Board and crosses the
+     * stored flightPathPosition.
+     *
+     * @param board The Board on which the flight path is located
+     * @param facing The direction of the flight path
+     * @return A Coords list, ordered from first to last hex entered
+     */
+    private List<Coords> flightPathPositions(Board board, int facing) {
+        List<Coords> positions = new ArrayList<>();
+        if (board == null || !board.contains(flightPathPosition)) {
+            return positions;
+        }
+        // traverse hexes in reverse direction from the chosen position to find the first hex off the board
+        int reverseFacing = (facing + 3) % 6;
+        Coords current = flightPathPosition;
+        while (board.contains(current)) {
+            current = current.translated(reverseFacing);
+        }
+        // now traverse hexes in the right direction to the board edge; these form the flight path
+        current = current.translated(facing);
+        while (board.contains(current)) {
+            positions.add(current);
+            current = current.translated(facing);
+        }
+        return positions;
+    }
+
     //
     // BoardListener
     //
@@ -1920,6 +2000,22 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
+
+        if ((ce != null) && (gear == GEAR_FLIGHTPATH) && (b.getBoardId() == flightPathTarget(ce))
+              && (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED)) {
+            if (flightPath != null) {
+                b.getBoardView().removeSprite(flightPath);
+            }
+            clearFlightPath();
+            flightPathPosition = b.getCoords();
+            ce.setPassedThrough(new Vector<>(flightPathPositions(game.getBoard(b.getBoardId()), finalFacing())));
+            flightPath = new FlyOverSprite(b.getBoardView(), ce);
+//            ce.setPassedThrough(new Vector<>());
+            b.getBoardView().addSprite(flightPath);
+            updateDonePanel();
+            return;
+        }
+
         // check for shifty goodness
         if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0)) {
             shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
@@ -3089,6 +3185,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return cmd == null ? ce().getBoardId() : cmd.getFinalBoardId();
     }
 
+    private int finalFacing() {
+        return cmd == null ? ce().getFacing() : cmd.getFinalFacing();
+    }
+
     private void updateLayMineButton() {
         final Entity ce = ce();
         if (null == ce) {
@@ -3603,7 +3703,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         // ok now we need to go through the ring and identify available Positions
         ring = Compute.getAcceptableUnloadPositions(ring, finalBoardId(), crew, game, elev);
-        if (ring.size() < 1) {
+        if (ring.isEmpty()) {
             String title = Messages.getString("MovementDisplay.NoPlaceToEject.title");
             String body = Messages.getString("MovementDisplay.NoPlaceToEject.message");
             clientgui.doAlertDialog(title, body);
@@ -3615,17 +3715,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             choices[i++] = c.toString();
         }
         String selected = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                Messages.getString(
-                        "MovementDisplay.ChooseEjectHex.message", new Object[] {
-                                abandoned.getShortName(), abandoned.getUnusedString() }),
-                Messages
-                        .getString("MovementDisplay.ChooseHex.title"),
-
+                Messages.getString("MovementDisplay.ChooseEjectHex.message",
+                      abandoned.getShortName(), abandoned.getUnusedString()),
+                Messages.getString("MovementDisplay.ChooseHex.title"),
                 JOptionPane.QUESTION_MESSAGE, null, choices, null);
-        Coords choice = null;
         if (selected == null) {
-            return choice;
+            return null;
         }
+        Coords choice = null;
         for (Coords c : ring) {
             if (selected.equals(c.toString())) {
                 choice = c;
@@ -4859,7 +4956,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (gear != MovementDisplay.GEAR_SWIM) {
                 clear();
             }
-            // daddStepToMovePath(MoveStepType.SWIM);
             gear = MovementDisplay.GEAR_SWIM;
             ce.setMovementMode((ce instanceof BipedMek) ? EntityMovementMode.BIPED_SWIM
                     : EntityMovementMode.QUAD_SWIM);

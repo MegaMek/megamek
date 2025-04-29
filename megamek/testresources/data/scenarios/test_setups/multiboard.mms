@@ -81,10 +81,10 @@ factions:
 #    board: 1
 #    facing: 2
 
-  - fullname: Bulldog Medium Tank
-    at: [ 13,10 ]
-    board: 1
-    facing: 2
+#  - fullname: Bulldog Medium Tank
+#    at: [ 13,10 ]
+#    board: 1
+#    facing: 2
 
 #  - fullname: Locust LCT-1V
 #    board: 0
@@ -127,7 +127,7 @@ factions:
 
   - fullname: Cheetah IIC
     at: [ 8, 2 ]
-    board: 6
+    board: 2
     facing: 3
 
 #  - fullname: AC/10 Turret (Dual)

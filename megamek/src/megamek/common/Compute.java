@@ -6814,17 +6814,11 @@ public class Compute {
     }
 
     public static boolean isGroundToAir(Entity attacker, Targetable target) {
-        if ((attacker == null) || (target == null)) {
-            return false;
-        }
-        return !attacker.isAirborne() && target.isAirborne();
+        return (attacker != null) && (target != null) && !attacker.isAirborne() && target.isAirborne();
     }
 
     public static boolean isGroundToGround(Entity attacker, Targetable target) {
-        if ((attacker == null) || (target == null)) {
-            return false;
-        }
-        return !attacker.isAirborne() && !target.isAirborne();
+        return (attacker != null) && (target != null) && !attacker.isAirborne() && !target.isAirborne();
     }
 
     /**
@@ -6882,17 +6876,17 @@ public class Compute {
 
     public static List<Coords> getAcceptableUnloadPositions(List<Coords> candidates, int boardId, Entity unitToUnload,
           Game game, int elev) {
-        List<Coords> acceptable = new ArrayList<>();
-        for (Coords pos : candidates) {
-            Hex hex = game.getHex(pos, boardId);
-            // no stacking violations, no prohibited terrain, and within 2 elevations
-            if ((hex != null) && !unitToUnload.isLocationProhibited(pos)
-                    && (null == stackingViolation(game, unitToUnload.getId(), pos, unitToUnload.climbMode()))
-                    && (Math.abs(hex.getLevel() - elev) < 3)) {
-                acceptable.add(pos);
-            }
-        }
+        List<Coords> acceptable = new ArrayList<>(candidates);
+        acceptable.removeIf(c -> !isAcceptableUnloadPosition(c, boardId, unitToUnload, game, elev));
         return acceptable;
+    }
+
+    public static boolean isAcceptableUnloadPosition(Coords position, int boardId, Entity unitToUnload,
+          Game game, int elev) {
+        Hex hex = game.getHex(position, boardId);
+        return (hex != null) && !unitToUnload.isLocationProhibited(position, boardId, unitToUnload.getElevation())
+              && (null == stackingViolation(game, unitToUnload.getId(), position, unitToUnload.climbMode()))
+              && (Math.abs(hex.getLevel() - elev) < 3);
     }
 
     /**

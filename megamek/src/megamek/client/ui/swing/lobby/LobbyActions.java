@@ -326,7 +326,10 @@ public class LobbyActions {
 
         if (cmd.isOkay() && (cmd.getStatus() != CustomMekDialog.DONE)) {
             Entity nextEnt = cmd.getNextEntity(cmd.getStatus() == CustomMekDialog.NEXT);
+            cmd.dispose();
             customizeMek(nextEnt);
+        } else {
+            cmd.dispose();
         }
     }
 
@@ -372,6 +375,7 @@ public class LobbyActions {
             } else {
                 doneCustomizing = true;
             }
+            cmd.dispose();
         }
     }
 

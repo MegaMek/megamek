@@ -749,6 +749,7 @@ public class MapMenu extends JPopupMenu {
             med.refreshOptions();
             gui.getBoardView().setShouldIgnoreKeys(true);
             med.setVisible(true);
+            med.dispose();
             client.sendUpdateEntity(entity);
             gui.getBoardView().setShouldIgnoreKeys(false);
         });

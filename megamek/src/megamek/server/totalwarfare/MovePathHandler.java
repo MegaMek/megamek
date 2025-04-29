@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AirMekRamAttackAction;
@@ -274,6 +275,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // cache this here, otherwise changing MP in the turn causes
         // erroneous gravity PSRs
 
+        // Replace ordinary passed through for these? Must also store the board id
+        if (md.getFlightPathHex() != null && !md.getFlightPathHex().isNoLocation()) {
+            BoardLocation location = md.getFlightPathHex();
+            entity.setPassedThrough(new Vector<>(MovementDisplay.flightPathPositions(getGame().getBoard(location),
+                  location.coords(),
+                  md.getFinalFacing())));
+        }
+
         // get a list of coordinates that the unit passed through this turn
         // so that I can later recover potential bombing targets
         // it may already have some values
@@ -399,6 +408,22 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // add a list of places passed through
         entity.setPassedThrough(passedThrough);
         entity.setPassedThroughFacing(passedThroughFacing);
+        entity.setPassedThroughBoardId(entity.getBoardId());
+
+        // Replace ordinary passed through for aeros on atmospheric board that designate a flight path on a ground
+        // board
+        if (md.getFlightPathHex() != null && !md.getFlightPathHex().isNoLocation()) {
+            BoardLocation location = md.getFlightPathHex();
+            entity.setPassedThrough(new Vector<>(MovementDisplay.flightPathPositions(getGame().getBoard(location),
+                  location.coords(),
+                  md.getFinalFacing())));
+            List<Integer> facings = new ArrayList<>();
+            for (int i = 0; i < entity.getPassedThrough().size(); i++) {
+                facings.add(md.getFinalFacing());
+            }
+            entity.setPassedThroughFacing(facings);
+            entity.setPassedThroughBoardId(location.boardId());
+        }
 
         // if we ran with destroyed hip or gyro, we need a psr
         rollTarget = entity.checkRunningWithDamage(overallMoveType);

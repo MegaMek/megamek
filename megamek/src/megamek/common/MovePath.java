@@ -225,6 +225,11 @@ public class MovePath implements Cloneable, Serializable {
     private final float gravity;
 
     /**
+     * Denotes a hex that a ground board flight path of an aero on an atmospheric board crosses
+     */
+    private BoardLocation flightPathHex = BoardLocation.NO_LOCATION;
+
+    /**
      * Generates a new, empty, movement path object.
      */
     public MovePath(final Game game, final Entity entity) {
@@ -2191,5 +2196,13 @@ public class MovePath implements Cloneable, Serializable {
                      .append(gravityConcern)
                      .append(gravity)
                      .toHashCode();
+    }
+
+    public void setFlightPathHex(BoardLocation flightPathHex) {
+        this.flightPathHex = flightPathHex;
+    }
+
+    public BoardLocation getFlightPathHex() {
+        return flightPathHex;
     }
 }

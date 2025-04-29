@@ -3196,8 +3196,9 @@ public final class BoardView extends AbstractBoardView
         flyOverSprites.removeIf(flyOverSprite -> flyOverSprite.getEntityId() == entity.getId());
 
         // Add Flyover path, if necessary
-        if (isOnThisBord(entity) && (entity.isAirborne() || entity.isMakingVTOLGroundAttack())
-                  && (entity.getPassedThrough().size() > 1)) {
+        if ((boardId == entity.getPassedThroughBoardId())
+              && (entity.isAirborne() || entity.isMakingVTOLGroundAttack())
+              && (entity.getPassedThrough().size() > 1)) {
             addFlyOverPath(entity);
         }
 
@@ -3248,6 +3249,10 @@ public final class BoardView extends AbstractBoardView
         clearC3Networks();
         clearFlyOverPaths();
         for (Entity entity : game.getEntitiesVector()) {
+            if ((boardId == entity.getPassedThroughBoardId()) && (entity.isAirborne()
+                  || entity.isMakingVTOLGroundAttack()) && (entity.getPassedThrough().size() > 1)) {
+                addFlyOverPath(entity);
+            }
             if (entity.getPosition() == null || !isOnThisBord(entity)) {
                 continue;
             }
@@ -3285,10 +3290,6 @@ public final class BoardView extends AbstractBoardView
 
             if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
                 addC3Link(entity);
-            }
-
-            if ((entity.isAirborne() || entity.isMakingVTOLGroundAttack()) && (entity.getPassedThrough().size() > 1)) {
-                addFlyOverPath(entity);
             }
         }
 

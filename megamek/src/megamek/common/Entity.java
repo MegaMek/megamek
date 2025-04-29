@@ -403,8 +403,9 @@ public abstract class Entity extends TurnOrdered
     // need to keep a list of areas that this entity has passed through on the
     // current turn
     private Vector<Coords> passedThrough = new Vector<>();
-
     private List<Integer> passedThroughFacing = new ArrayList<>();
+    // The passed through hexes can be on another board (ground board flight path of an atmospheric aero)
+    private int passedThroughBoardId = 0;
 
     private List<InvalidSourceBuildReason> invalidSourceBuildReasons = new ArrayList<>();
     /**
@@ -11642,6 +11643,14 @@ public abstract class Entity extends TurnOrdered
 
     public List<Integer> getPassedThroughFacing() {
         return passedThroughFacing;
+    }
+
+    public int getPassedThroughBoardId() {
+        return passedThroughBoardId;
+    }
+
+    public void setPassedThroughBoardId(int passedThroughBoardId) {
+        this.passedThroughBoardId = passedThroughBoardId;
     }
 
     public void addPassedThrough(Coords c) {

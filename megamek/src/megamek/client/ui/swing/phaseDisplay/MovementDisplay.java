@@ -1736,7 +1736,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     @Override
     public synchronized void ready() {
-        if (ce() == null) {
+        Entity ce = ce();
+        if (ce == null) {
             return;
         }
 
@@ -1748,13 +1749,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         disableButtons();
 
-        if (ce().isAirborne()
-                || ce().isSpaceborne()) {
+        if (ce.isAirborne() || ce.isSpaceborne()) {
             // depending on the rules and location (i.e. space v. atmosphere),
             // Aeros might need to have additional move steps tacked on
             // This must be done after all prompts, otherwise a user who cancels
             // will still have steps added to the movepath.
             cmd = SharedUtility.moveAero(cmd, clientgui.getClient());
+        }
+
+        if (flightPathPosition != null) {
+            cmd.setFlightPathHex(BoardLocation.of(flightPathPosition, flightPathTarget(ce)));
         }
 
         if (isUsingChaff) {
@@ -1764,12 +1768,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         clientgui.clearTemporarySprites();
         clearMovementSprites();
-        if (ce().hasUMU()) {
-            clientgui.getClient().sendUpdateEntity(ce());
+        if (ce.hasUMU()) {
+            clientgui.getClient().sendUpdateEntity(ce);
         }
         clientgui.getClient().moveEntity(currentEntity, cmd);
-        if (ce().isWeapOrderChanged()) {
-            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        if (ce.isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(ce);
         }
         endMyTurn();
     }
@@ -1942,14 +1946,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
-     * Returns the hexes of a flight path that has the given direction (facing) on the given Board and crosses the
-     * stored flightPathPosition.
+     * Returns the hexes of a straight flight path that has the given direction (facing) on the given Board and crosses
+     * the hex at the given flightPathPosition. If the board is null or does not contain the flightPathPosition, an
+     * empty list is returned.
      *
-     * @param board The Board on which the flight path is located
-     * @param facing The direction of the flight path
+     * @param board              The Board on which the flight path is located
+     * @param flightPathPosition Coords that the flight path crosses
+     * @param facing             The direction of the flight path
+     *
      * @return A Coords list, ordered from first to last hex entered
      */
-    private List<Coords> flightPathPositions(Board board, int facing) {
+    public static List<Coords> flightPathPositions(Board board, Coords flightPathPosition, int facing) {
         List<Coords> positions = new ArrayList<>();
         if (board == null || !board.contains(flightPathPosition)) {
             return positions;
@@ -2007,9 +2014,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             clearFlightPath();
             flightPathPosition = b.getCoords();
-            ce.setPassedThrough(new Vector<>(flightPathPositions(game.getBoard(b.getBoardId()), finalFacing())));
+            ce.setPassedThrough(new Vector<>(flightPathPositions(game.getBoard(b.getBoardId()), flightPathPosition,
+                  finalFacing())));
             flightPath = new FlyOverSprite(b.getBoardView(), ce);
-//            ce.setPassedThrough(new Vector<>());
             b.getBoardView().addSprite(flightPath);
             updateDonePanel();
             return;

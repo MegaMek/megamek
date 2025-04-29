@@ -81,10 +81,10 @@ factions:
 #    board: 1
 #    facing: 2
 
-#  - fullname: Bulldog Medium Tank
-#    at: [ 13,10 ]
-#    board: 1
-#    facing: 2
+  - fullname: Bulldog Medium Tank
+    at: [ 13,10 ]
+    board: 0
+    facing: 2
 
 #  - fullname: Locust LCT-1V
 #    board: 0

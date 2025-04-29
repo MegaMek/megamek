@@ -58,6 +58,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
 import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.swing.boardview.overlay.TraceOverlay;
 import megamek.client.ui.swing.boardview.toolTip.BoardEditorTooltip;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.overlay.KeyBindingsOverlay;
@@ -359,6 +360,7 @@ public class BoardEditor extends JPanel
         try {
             bv = new BoardView(game, controller, null);
             bv.addOverlay(new KeyBindingsOverlay(bv));
+            bv.addOverlay(new TraceOverlay(bv));
             bv.setUseLosTool(false);
             bv.setDisplayInvalidFields(true);
             bv.setTooltipProvider(new BoardEditorTooltip(game, bv));

@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import megamek.MegaMek;
-import megamek.codeUtilities.MathUtility;
 import megamek.logging.MMLogger;
 
 public enum SkillLevel {
@@ -48,7 +46,7 @@ public enum SkillLevel {
     // region Constructors
     SkillLevel(final String name, final String toolTipText, final int experienceLevel) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-              MegaMek.getMMOptions().getLocale());
+                MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
         this.toolTipText = resources.getString(toolTipText);
         this.experienceLevel = experienceLevel;
@@ -61,8 +59,8 @@ public enum SkillLevel {
     }
 
     /**
-     * Retrieves the current experience level of this entity. Where None is {@code 0}, Ultra-Green is {@code 1}, Green
-     * is {@code 2} and so forth.
+     * Retrieves the current experience level of this entity. Where None is {@code 0}, Ultra-Green
+     * is {@code 1}, Green is {@code 2} and so forth.
      *
      * @return the experience level as an integer.
      */
@@ -137,26 +135,34 @@ public enum SkillLevel {
     }
 
     /**
-     * This returns the default skill values by level. This should never return the value for NONE, as NONE means one
-     * does not have the skill.
+     * This returns the default skill values by level. This should never return the
+     * value for NONE,
+     * as NONE means one does not have the skill.
      *
      * @return the default skill array pairing
      */
     public int[] getDefaultSkillValues() {
-        return switch (this) {
-            case NONE -> {
-                MMLogger.create(SkillLevel.class)
-                      .error("Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
-                yield new int[] { 8, 8 };
-            }
-            case ULTRA_GREEN -> new int[] { 6, 7 };
-            case GREEN -> new int[] { 5, 6 };
-            case VETERAN -> new int[] { 3, 4 };
-            case ELITE -> new int[] { 2, 3 };
-            case HEROIC -> new int[] { 1, 2 };
-            case LEGENDARY -> new int[] { 0, 1 };
-            default -> new int[] { 4, 5 };
-        };
+        switch (this) {
+            case NONE:
+                MMLogger.create(SkillLevel.class).error(
+                        "Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
+                return new int[] { 8, 8 };
+            case ULTRA_GREEN:
+                return new int[] { 6, 7 };
+            case GREEN:
+                return new int[] { 5, 6 };
+            case VETERAN:
+                return new int[] { 3, 4 };
+            case ELITE:
+                return new int[] { 2, 3 };
+            case HEROIC:
+                return new int[] { 1, 2 };
+            case LEGENDARY:
+                return new int[] { 0, 1 };
+            case REGULAR:
+            default:
+                return new int[] { 4, 5 };
+        }
     }
 
     /**
@@ -168,34 +174,41 @@ public enum SkillLevel {
 
     // region File I/O
     public static SkillLevel parseFromString(final String text) {
-        // From String
         try {
-            return valueOf(text.toUpperCase());
+            return valueOf(text);
         } catch (Exception ignored) {
+
         }
 
-        // From Name
         try {
-            for (SkillLevel skillLevel : values()) {
-                if (skillLevel.name().equalsIgnoreCase(text)) {
-                    return skillLevel;
-                }
+            switch (Integer.parseInt(text)) {
+                case 0:
+                    return GREEN;
+                case 1:
+                    return REGULAR;
+                case 2:
+                    return VETERAN;
+                case 3:
+                    return ELITE;
+                default:
+                    break;
             }
         } catch (Exception ignored) {
+
         }
 
-        // From ordinal
-        return SkillLevel.values()[MathUtility.parseInt(text, REGULAR.ordinal())];
+        MMLogger.create(SkillLevel.class).error("Unable to parse " + text + " into a SkillLevel. Returning REGULAR.");
+
+        return REGULAR;
     }
 
     /**
      * Parses an integer value to a {@link SkillLevel} enumeration.
      *
      * @param value the integer value to parse
-     *
      * @return the {@link SkillLevel} enum corresponding to the given integer value
-     *
-     * @throws IllegalStateException if the integer value does not match any {@link SkillLevel} enum value
+     * @throws IllegalStateException if the integer value does not match any {@link SkillLevel} enum
+     * value
      */
     public static SkillLevel parseFromInteger(final int value) {
         return switch (value) {
@@ -207,8 +220,8 @@ public enum SkillLevel {
             case 5 -> ELITE;
             case 6 -> HEROIC;
             case 7 -> LEGENDARY;
-            default ->
-                  throw new IllegalStateException("Unexpected value in megamek/common/enums/SkillLevel.java: " + value);
+            default -> throw new IllegalStateException(
+                "Unexpected value in megamek/common/enums/SkillLevel.java: " + value);
         };
     }
     // endregion File I/O

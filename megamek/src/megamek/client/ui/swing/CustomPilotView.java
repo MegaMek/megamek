@@ -21,7 +21,6 @@ import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -99,48 +98,46 @@ public class CustomPilotView extends JPanel {
             add(chkMissing, GBC.eop());
         }
 
-        if (parent.getClientGUI() != null) {
-            JButton portraitButton = new JButton();
-            portraitButton.setPreferredSize(new Dimension(72, 72));
-            portraitButton.setName("portrait");
-            portraitButton.addActionListener(e -> {
-                final PortraitChooserDialog portraitDialog = new PortraitChooserDialog(
-                        parent.getFrame(), entity.getCrew().getPortrait(slot));
-                if (portraitDialog.showDialog().isConfirmed()) {
-                    portrait = portraitDialog.getSelectedItem();
-                    portraitButton.setIcon(portraitDialog.getSelectedItem().getImageIcon());
-                }
-            });
+        JButton portraitButton = new JButton();
+        portraitButton.setPreferredSize(new Dimension(72, 72));
+        portraitButton.setName("portrait");
+        portraitButton.addActionListener(e -> {
+            final PortraitChooserDialog portraitDialog = new PortraitChooserDialog(parent.getFrame(),
+                  entity.getCrew().getPortrait(slot));
+            if (portraitDialog.showDialog().isConfirmed()) {
+                portrait = portraitDialog.getSelectedItem();
+                portraitButton.setIcon(portraitDialog.getSelectedItem().getImageIcon());
+            }
+        });
 
-            portrait = entity.getCrew().getPortrait(slot);
-            portraitButton.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
-            add(portraitButton, GBC.std().gridheight(4));
+        portrait = entity.getCrew().getPortrait(slot);
+        portraitButton.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
+        add(portraitButton, GBC.std().gridheight(4));
 
-            JButton button = new JButton(Messages.getString("CustomMekDialog.RandomName"));
-            button.addActionListener(e -> {
-                gender = RandomGenderGenerator.generate();
-                fldName.setText(RandomNameGenerator.getInstance().generate(gender, isClanPilot(), entity.getOwner().getName()));
-            });
-            add(button, GBC.eop());
+        JButton button = new JButton(Messages.getString("CustomMekDialog.RandomName"));
+        button.addActionListener(e -> {
+            gender = RandomGenderGenerator.generate();
+            fldName.setText(RandomNameGenerator.getInstance()
+                                  .generate(gender, isClanPilot(), entity.getOwner().getName()));
+        });
+        add(button, GBC.eop());
 
-            button = new JButton(Messages.getString("CustomMekDialog.RandomCallsign"));
-            button.addActionListener(e -> fldNick.setText(RandomCallsignGenerator.getInstance().generate()));
-            add(button, GBC.eop());
+        button = new JButton(Messages.getString("CustomMekDialog.RandomCallsign"));
+        button.addActionListener(e -> fldNick.setText(RandomCallsignGenerator.getInstance().generate()));
+        add(button, GBC.eop());
 
-            button = new JButton(Messages.getString("CustomMekDialog.RandomSkill"));
-            button.addActionListener(e -> {
-                int[] skills = parent.getClient().getSkillGenerator().generateRandomSkills(entity);
-                fldGunnery.setText(Integer.toString(skills[0]));
-                fldPiloting.setText(Integer.toString(skills[1]));
-                if (entity.getCrew() instanceof LAMPilot) {
-                    skills = parent.getClient().getSkillGenerator().generateRandomSkills(entity);
-                    fldGunneryAero.setText(Integer.toString(skills[0]));
-                    fldPilotingAero.setText(Integer.toString(skills[1]));
-                }
-            });
-            add(button, GBC.eop());
-
-        }
+        button = new JButton(Messages.getString("CustomMekDialog.RandomSkill"));
+        button.addActionListener(e -> {
+            int[] skills = parent.getClient().getSkillGenerator().generateRandomSkills(entity);
+            fldGunnery.setText(Integer.toString(skills[0]));
+            fldPiloting.setText(Integer.toString(skills[1]));
+            if (entity.getCrew() instanceof LAMPilot) {
+                skills = parent.getClient().getSkillGenerator().generateRandomSkills(entity);
+                fldGunneryAero.setText(Integer.toString(skills[0]));
+                fldPilotingAero.setText(Integer.toString(skills[1]));
+            }
+        });
+        add(button, GBC.eop());
         add(chkClanPilot, GBC.eop());
         chkClanPilot.setSelected(entity.getCrew().isClanPilot(slot));
 

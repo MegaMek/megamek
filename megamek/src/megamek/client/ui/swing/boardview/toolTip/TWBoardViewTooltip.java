@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -40,6 +41,8 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+
+import javax.swing.JDialog;
 
 public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 

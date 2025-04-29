@@ -389,6 +389,7 @@ public final class BoardView extends AbstractBoardView
             .color(GUIP.getWarningColor()).font(FontHandler.notoFont().deriveFont(Font.BOLD)).center();
 
     BoardViewTooltipProvider boardViewToolTip = (point, movementTarget) -> null;
+    private boolean tooltipSuspended = false;
 
     // Part of the sprites need specialized treatment; as there can be many sprites, filtering them on the spot is a
     // noticeable performance hit (in iso mode), therefore the sprites are copied to specialized lists when created
@@ -668,8 +669,12 @@ public final class BoardView extends AbstractBoardView
 
                 final Coords mcoords = getCoordsAt(point);
                 if (!mcoords.equals(lastCoords) && game.getBoard(boardId).contains(mcoords)) {
-                    lastCoords = mcoords;
-                    boardPanel.setToolTipText(boardViewToolTip.getTooltip(mouseEvent, movementTarget));
+                    if (tooltipSuspended) {
+                        boardPanel.setToolTipText(null);
+                    } else {
+                        lastCoords = mcoords;
+                        boardPanel.setToolTipText(boardViewToolTip.getTooltip(mouseEvent, movementTarget));
+                    }
                 } else if (!game.getBoard(boardId).contains(mcoords)) {
                     boardPanel.setToolTipText(null);
                 } else {
@@ -5382,5 +5387,14 @@ public final class BoardView extends AbstractBoardView
     @Override
     public boolean isShowingAnimation() {
         return isMovingUnits();
+    }
+
+    public void suspendTooltip() {
+        tooltipSuspended = true;
+        boardPanel.setToolTipText(null);
+    }
+
+    public void activateTooltip() {
+        tooltipSuspended = false;
     }
 }

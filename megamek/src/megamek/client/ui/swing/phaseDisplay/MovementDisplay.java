@@ -30,6 +30,7 @@ import megamek.client.ui.swing.ChoiceDialog;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.boardview.CollapseWarning;
 import megamek.client.ui.swing.ConfirmDialog;
+import megamek.client.ui.swing.phaseDisplay.dialog.FlightPathNotice;
 import megamek.client.ui.swing.phaseDisplay.dialog.ManeuverChoiceDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.MineLayingDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.TargetChoiceDialog;
@@ -1129,7 +1130,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                      && game.hasBoardLocation(finalPosition(), finalBoardId())
                      && entity.isAirborne()
                      && game.getBoard(entity).isLowAtmosphereMap()
-                     && game.getBoard(entity).getEmbeddedBoardHexes().contains(finalPosition());
+                     && game.getBoard(entity).getEmbeddedBoardHexes().contains(finalPosition())
+              && cmd.isMoveLegal();
     }
 
     private int flightPathTarget(Entity entity) {
@@ -1375,6 +1377,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             updateLoadButtons();
             butDone.setEnabled(true);
         }
+
+        clientgui.showBoardView(ce.getBoardId());
     }
 
     private void removeLastStep() {
@@ -1850,12 +1854,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (shouldDesignateFlightPath(ce())) {
                 gear = GEAR_FLIGHTPATH;
                 Board flightPathBoard = game.getBoard(flightPathTarget(ce()));
-                clientgui.showBoardView(flightPathTarget(ce()));
-                JOptionPane.showMessageDialog(clientgui.getFrame(), """
-                      Designate a flight path on the board "%s" by clicking on any of
-                      its hexes. Hexes can be clicked multiple times to move
-                      the planned flight path. Pressing ESC will clear the
-                      planned movement as normal.""".formatted(flightPathBoard.getBoardName()));
+                new FlightPathNotice(clientgui, flightPathBoard).show();
             }
         } else if (gear == GEAR_BACKUP) {
             extendPathTo(dest, boardId, MoveStepType.BACKWARDS);

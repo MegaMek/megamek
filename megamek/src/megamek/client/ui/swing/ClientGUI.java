@@ -3393,4 +3393,15 @@ public class ClientGUI extends AbstractClientGUI
     public void onAllBoardViews(Consumer<BoardView> consumer) {
         boardViews().forEach(boardView -> consumer.accept((BoardView) boardView));
     }
+
+    public void suspendBoardTooltips() {
+        onAllBoardViews(BoardView::suspendTooltip);
+        // hide any currently shown tooltip, but don't disable tooltips entirely:
+        ToolTipManager.sharedInstance().setEnabled(false);
+        ToolTipManager.sharedInstance().setEnabled(true);
+    }
+
+    public void activateBoardTooltips() {
+        onAllBoardViews(BoardView::activateTooltip);
+    }
 }

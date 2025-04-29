@@ -1148,15 +1148,11 @@ public class ClientGUI extends AbstractClientGUI
             controller.removeAllActions();
             controller.clientgui = null;
         }
-        if (aw != null) {
-            aw.dispose();
-            aw = null;
-        }
-
         if (menuBar != null) {
             menuBar.die();
             menuBar = null;
         }
+
         if (curPanel instanceof StatusBarPhaseDisplay) {
             ((StatusBarPhaseDisplay) curPanel).stopTimer();
         }

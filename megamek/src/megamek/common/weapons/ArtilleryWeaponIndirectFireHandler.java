@@ -431,13 +431,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
 
         Targetable updatedTarget = aaa.getTarget(game);
+        // Calculate blast damage and falloff
+        DamageFalloff df = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
 
         // the attack's target may have been destroyed or fled since the attack was generated
         // so we need to carry out offboard/null checks against the "current" version of the target.
         // Note: currently this only damages the target and does not deal blast damage to "nearby" off-board units.
-        DamageFalloff df = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
         if ((updatedTarget != null) && updatedTarget.isOffBoard()) {
-            // Calculate blast damage falloff and shape
+            // Calculate blast damage shape
             HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
                 atype, finalPos, df, 0, true, false, false, game, false
             );

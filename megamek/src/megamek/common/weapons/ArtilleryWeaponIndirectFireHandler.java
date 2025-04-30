@@ -438,6 +438,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // the attack's target may have been destroyed or fled since the attack was generated
         // so we need to carry out offboard/null checks against the "current" version of the target.
         // Note: currently this only damages the target and does not deal blast damage to "nearby" off-board units.
+        // TODO: Sleet01: rename atype, ae, etc. to comport with current coding standards
         if ((updatedTarget != null) && updatedTarget.isOffBoard()) {
             // Calculate blast damage shape
             HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(

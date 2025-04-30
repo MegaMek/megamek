@@ -41,7 +41,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * @deprecated Don't use anything, this class is deprecated and will be removed in the future. There is no
  * substitute display class for the ArmlessMekMapSet as this type of mek is no longer supported.
  */
-@Deprecated(since="0.50.05", forRemoval = true)
+@Deprecated(since="0.50.06", forRemoval = true)
 public class ArmlessMekMapSet implements DisplayMapSet {
 
         // Because of keeping all areas of single type in one array

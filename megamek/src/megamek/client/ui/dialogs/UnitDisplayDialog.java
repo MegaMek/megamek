@@ -47,15 +47,17 @@ import megamek.common.Entity;
 /**
  * A dialog for displaying detailed unit information in MegaMek.
  * <p>
- * This dialog serves as a container for the UnitDisplay component, which provides
- * detailed information about game entities (meks, vehicles, infantry, etc.).
- * The dialog can operate in two modes:
+ *  This dialog serves as a container for the UnitDisplay component, which provides detailed information about game
+ *  entities (meks, vehicles, infantry, etc.).
+ *  The dialog can operate in two modes:
+ * </p>
  * <ul>
  *   <li>As a persistent, reusable dialog that is hidden when closed</li>
  *   <li>As a disposable dialog that is destroyed when closed</li>
  * </ul>
- * The dialog manages its position and size through GUIPreferences, storing separate
- * settings for tabbed and non-tabbed display modes.
+ * <p>
+ *  The dialog manages its position and size through GUIPreferences, storing separate settings for tabbed and
+ *  non-tabbed display modes.
  * </p>
  */
 public class UnitDisplayDialog extends JDialog {

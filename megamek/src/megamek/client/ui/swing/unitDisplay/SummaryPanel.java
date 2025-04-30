@@ -32,13 +32,16 @@
  */
 package megamek.client.ui.swing.unitDisplay;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -66,8 +69,9 @@ public class SummaryPanel extends PicMap {
 
     private final UnitDisplay unitDisplay;
     private final JLabel unitInfo;
+    private final JPanel contentPanel;
 
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final GUIPreferences GUI_PREFERENCES = GUIPreferences.getInstance();
 
     /**
      * @param unitDisplay the UnitDisplay UI to attach to
@@ -76,14 +80,24 @@ public class SummaryPanel extends PicMap {
         this.unitDisplay = unitDisplay;
         setBackGround();
 
-        JComponent panel = this;
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS ));
-        panel.add(Box.createRigidArea(new Dimension(0,10)));
+        contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setOpaque(false);
 
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        // Add spacing at top
+        contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        unitInfo = new JLabel("<HTML>UnitInfo</HTML>", SwingConstants.LEFT );
-        panel.add(unitInfo);
+        // Create the unit info label
+        unitInfo = new JLabel("<HTML>UnitInfo</HTML>", SwingConstants.LEFT);
+        unitInfo.setOpaque(false);
+        contentPanel.add(unitInfo);
+
+        // Use BorderLayout to ensure the content panel is properly sized
+        setLayout(new BorderLayout());
+        add(contentPanel, BorderLayout.NORTH);
+
+        // Add a "push" component to allow proper scrolling
+        add(Box.createVerticalGlue(), BorderLayout.CENTER);
     }
 
     private void setBackGround() {
@@ -178,15 +192,15 @@ public class SummaryPanel extends PicMap {
             Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
 
             if (mhex != null) {
-                String terrainTip = HexTooltip.getTerrainTip(mhex, GUIP, entity.getGame());
-                String attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
+                String terrainTip = HexTooltip.getTerrainTip(mhex, GUI_PREFERENCES, entity.getGame());
+                String attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUI_PREFERENCES.getUnitToolTipTerrainBGColor()));
                 col = UIUtil.tag("TD", attr, terrainTip);
                 row = UIUtil.tag("TR", "", col);
                 rows += row;
 
-                String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), GUIP);
+                String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), GUI_PREFERENCES);
                 if (!hexTip.isEmpty()) {
-                    attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
+                    attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUI_PREFERENCES.getUnitToolTipTerrainBGColor()));
                     col = UIUtil.tag("TD", attr, hexTip);
                     row = UIUtil.tag("TR", "", col);
                     rows += row;
@@ -203,7 +217,19 @@ public class SummaryPanel extends PicMap {
         }
 
         unitInfo.setText(UnitToolTip.wrapWithHTML(txt));
-        unitInfo.setOpaque(false);
+
+        // Force a revalidation to ensure proper sizing
+        contentPanel.revalidate();
+        contentPanel.setSize(contentPanel.getPreferredSize());
+        // Request focus to ensure scrollbars update
+        SwingUtilities.invokeLater(() -> {
+            revalidate();
+            getParent().revalidate();
+            if (getParent().getParent() instanceof JScrollPane) {
+                getParent().getParent().revalidate();
+            }
+        });
+
     }
 
     private String padLeft(String html) {
@@ -216,6 +242,17 @@ public class SummaryPanel extends PicMap {
 
     @Override
     public void onResize() {
+        revalidate();
+    }
 
+    @Override
+    public Dimension getPreferredSize() {
+        // Make sure the preferred size is at least as tall as the content
+        Dimension dimension = super.getPreferredSize();
+        if (contentPanel != null) {
+            Dimension contentSize = contentPanel.getPreferredSize();
+            dimension.height = Math.max(dimension.height, contentSize.height + 20); // Add padding
+        }
+        return dimension;
     }
 }

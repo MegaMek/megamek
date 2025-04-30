@@ -28,9 +28,8 @@ public final class CrossBoardAttackHelper {
      *
      * <P>Note: This method is strict in that when it returns false, no attack is possible. It
      * may however return true when an attack is possible in principle but may still be hindered by some circumstance.
-     * In other words, this method should check for general features such as unit types and a connection between the
-     * boards of attacker and target but it should not check ammo availability, disallowed multiple targets, firing arcs
-     * etc.</P>
+     * In other words, this method checks for general features such as unit types and a connection between the boards of
+     * attacker and target but it does not check ammo availability, disallowed multiple targets, firing arcs etc.</P>
      *
      * @param attacker The attacking unit
      * @param target   The target unit or object
@@ -45,9 +44,13 @@ public final class CrossBoardAttackHelper {
         }
 
         if (attacker.isInfantry() || attacker.isProtoMek()) {
-            // @@MultiBoardTODO: When NOT using aero on ground maps, a fighter on the atmo map is targteable
-            // by ground units if it makes a flyover
+            // some infantry can make G2A attacks, see WeaponAttackAction l.2779
             return false;
+        }
+
+        // An aero on an atmospheric board in a ground board hex is targetable by ground units along its flight path
+        if (Compute.isGroundToAir(attacker, target) && game.onDirectlyConnectedBoards(attacker, target)) {
+            return true;
         }
 
         // A2A attacks are possible between ground map and atmospheric map

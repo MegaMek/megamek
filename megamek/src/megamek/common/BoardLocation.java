@@ -45,7 +45,7 @@ public class BoardLocation implements Serializable {
      * .MIN_VALUE and the board ID is Board.BOARD_NONE.
      */
     public static final BoardLocation NO_LOCATION =
-          new BoardLocation(new Coords(Integer.MIN_VALUE, Integer.MIN_VALUE), Board.BOARD_NONE);
+          new BoardLocation(new Coords(Integer.MIN_VALUE, Integer.MIN_VALUE), Board.BOARD_NONE, true);
 
     private final Coords coords;
     private final int boardId;

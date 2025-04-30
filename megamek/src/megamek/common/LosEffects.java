@@ -472,6 +472,9 @@ public class LosEffects {
                 targetPositions.add(BoardHelper.positionOnEnclosingBoard(game, target.getBoardId()));
                 boardId = game.getEnclosingBoard(boardId).map(Board::getBoardId).orElse(boardId);
             }
+        } else if (Compute.isGroundToAir(attacker, target)) {
+            // G2A attacks are against the flight path on the attacker's board
+            boardId = attacker.getBoardId();
         }
 
         LosEffects bestLOS = null;

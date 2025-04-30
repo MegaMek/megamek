@@ -412,7 +412,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         // Replace ordinary passed through for aeros on atmospheric board that designate a flight path on a ground
         // board
-        if (md.getFlightPathHex() != null && !md.getFlightPathHex().isNoLocation()) {
+        if ((md.getFlightPathHex() != null) && !md.getFlightPathHex().isNoLocation()) {
             BoardLocation location = md.getFlightPathHex();
             entity.setPassedThrough(new Vector<>(MovementDisplay.flightPathPositions(getGame().getBoard(location),
                   location.coords(),

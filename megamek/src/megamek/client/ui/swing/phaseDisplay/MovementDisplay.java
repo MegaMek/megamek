@@ -59,7 +59,6 @@ import megamek.client.ui.swing.ConfirmDialog;
 import megamek.client.ui.swing.boardview.CollapseWarning;
 import megamek.client.ui.swing.boardview.overlay.AbstractBoardViewOverlay;
 import megamek.client.ui.swing.phaseDisplay.commands.MoveCommand;
-import megamek.client.ui.swing.phaseDisplay.dialog.BombPayloadDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.FlightPathNotice;
 import megamek.client.ui.swing.phaseDisplay.dialog.ManeuverChoiceDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.MineLayingDialog;
@@ -175,7 +174,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public static final int GEAR_STRAFE = 12;
     /** Used to set a ground map flight path for an aero on an atmospheric map. */
     public static final int GEAR_FLIGHTPATH = 13;
-    public static final String turnDetailsFormat = "%s%-3s %-14s %1s %2dMP%s";
     public static final int GEAR_SUB_STANDARD = 0;
     public static final int GEAR_SUB_MEKBOOSTERS = 2;
 
@@ -197,7 +195,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setButtonsTooltips();
         setupButtonPanel();
         gear = MovementDisplay.GEAR_LAND;
-        shiftheld = false;
         registerKeyCommands();
     }
 
@@ -227,11 +224,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             int finalFacing = cmd.getFinalFacing();
             finalFacing = (finalFacing + 5) % 6;
             Coords curPos = cmd.getFinalCoords();
-            Coords target = curPos.translated(dir);
+            Coords target = curPos.translated(finalFacing);
             // We need to set this to get the rotate behavior
-            shiftheld = true;
             currentMove(target, cmd.getFinalBoardId());
-            shiftheld = false;
             updateMove();
         }
     }
@@ -307,9 +302,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         EntityMovementMode nextMode = currentlySelectedEntity.nextConversionMode(cmd.getFinalConversionMode());
 
         // LAMs may have to skip the next mode due to damage
-        if (ce instanceof LandAirMek landAirMek) {
+        if (currentlySelectedEntity instanceof LandAirMek landAirMek) {
             if (!landAirMek.canConvertTo(nextMode)) {
-                nextMode = ce.nextConversionMode(nextMode);
+                nextMode = currentlySelectedEntity.nextConversionMode(nextMode);
             }
 
             if (!landAirMek.canConvertTo(nextMode)) {
@@ -450,9 +445,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * Selects an entity, by number, for movement.
      */
     public void selectEntity(int entityID) {
-        final Entity selectedEntity = game.getEntity(en);
+        final Entity selectedEntity = game.getEntity(entityID);
         if (selectedEntity == null) {
-            LOGGER.error("Tried to select non-existant entity with id " + en);
+            LOGGER.error("Tried to select non-existant entity with id " + entityID);
             return;
         }
 
@@ -471,9 +466,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateButtonsLater();
 
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
-        clientgui.getBoardView(ce).highlight(ce.getPosition());
+        clientgui.getBoardView(selectedEntity).highlight(selectedEntity.getPosition());
         if (!clientgui.isCurrentBoardViewShowingAnimation()) {
-            clientgui.centerOnUnit(ce);
+            clientgui.centerOnUnit(selectedEntity);
         }
 
         String remainingPlayerWithTurns = getRemainingPlayerWithTurns();
@@ -541,10 +536,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * Sets the buttons to their proper states
      */
     private void updateButtons() {
-        final GameOptions gOpts = game.getOptions();
-        final Entity ce = ce();
-        if (ce == null) {
-            logger.error("Cannot update buttons based on a null entity");
+        final GameOptions gameOptions = game.getOptions();
+        final Entity currentlySelectedEntity = ce();
+        if (currentlySelectedEntity == null) {
+            LOGGER.error("Cannot update buttons based on a null entity");
             return;
         }
         boolean isMEK = (currentlySelectedEntity instanceof Mek);
@@ -1004,8 +999,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 .getNextEntity(game.getTurnIndex());
         if (game.getPhase().isMovement()
                 && (null != next)
-                && (null != ce)
-                && (next.getOwnerId() != ce.getOwnerId())) {
+                && (null != currentlySelectedEntity)
+                && (next.getOwnerId() != currentlySelectedEntity.getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
         currentEntity = Entity.NONE;
@@ -1134,10 +1129,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // create new current and considered paths
-        cmd = new MovePath(game, ce);
-        clientgui.updateFiringArc(ce);
-        clientgui.showSensorRanges(ce, cmd.getFinalCoords());
-        computeCFWarningHexes(ce);
+        cmd = new MovePath(game, currentlySelectedEntity);
+        clientgui.updateFiringArc(currentlySelectedEntity);
+        clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
+        computeCFWarningHexes(currentlySelectedEntity);
 
         // set to "walk," or the equivalent
         gear = MovementDisplay.GEAR_LAND;
@@ -1202,7 +1197,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             butDone.setEnabled(true);
         }
 
-        clientgui.showBoardView(ce.getBoardId());
+        clientgui.showBoardView(currentlySelectedEntity.getBoardId());
     }
 
     private void removeLastStep() {
@@ -1228,9 +1223,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // clear board cursors
             clientgui.getBoardView(ce()).select(cmd.getFinalCoords());
             clientgui.getBoardView(ce()).cursor(cmd.getFinalCoords());
-            ((BoardView) clientgui.getBoardView(ce())).drawMovementData(entity, cmd);
-            clientgui.updateFiringArc(entity);
-            clientgui.showSensorRanges(entity, cmd.getFinalCoords());
+            ((BoardView) clientgui.getBoardView(ce())).drawMovementData(currentlySelectedEntity, cmd);
+            clientgui.updateFiringArc(currentlySelectedEntity);
+            clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
 
             // FIXME what is this
             // Set the button's label to "Done" if the entire move is impossible.
@@ -1807,7 +1802,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // don't make a movement path for aeros if advanced movement is on
-        boolean nopath = (ce != null && ce.isAero())
+        boolean noPath = (currentlySelectedEntity != null && currentlySelectedEntity.isAero())
                 && game.useVectorMove();
 
         // ignore buttons other than 1
@@ -1821,17 +1816,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if ((ce != null) && (gear == GEAR_FLIGHTPATH) && (b.getBoardId() == flightPathTarget(ce))
-              && (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED)) {
+        if ((currentlySelectedEntity != null) && (gear == GEAR_FLIGHTPATH) && (boardViewEvent.getBoardId() == flightPathTarget(currentlySelectedEntity))
+              && (boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_CLICKED)) {
             if (flightPath != null) {
-                b.getBoardView().removeSprite(flightPath);
+                boardViewEvent.getBoardView().removeSprite(flightPath);
             }
             clearFlightPath();
-            flightPathPosition = b.getCoords();
-            ce.setPassedThrough(new Vector<>(flightPathPositions(game.getBoard(b.getBoardId()), flightPathPosition,
+            flightPathPosition = boardViewEvent.getCoords();
+            currentlySelectedEntity.setPassedThrough(new Vector<>(flightPathPositions(game.getBoard(boardViewEvent.getBoardId()), flightPathPosition,
                   finalFacing())));
-            flightPath = new FlyOverSprite(b.getBoardView(), ce);
-            b.getBoardView().addSprite(flightPath);
+            flightPath = new FlyOverSprite(boardViewEvent.getBoardView(), currentlySelectedEntity);
+            boardViewEvent.getBoardView().addSprite(flightPath);
             updateDonePanel();
             return;
         }
@@ -1847,10 +1842,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if ((boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) && !noPath) {
             if (!boardViewEvent.getCoords().equals(currPosition) || shiftHeld || (gear == MovementDisplay.GEAR_TURN)) {
-                b.getBoardView().cursor(boardViewEvent.getCoords());
+                boardViewEvent.getBoardView().cursor(boardViewEvent.getCoords());
                 // either turn or move
                 if (currentlySelectedEntity != null) {
-                    currentMove(boardViewEvent.getCoords(), b.getBoardId());
+                    currentMove(boardViewEvent.getCoords(), boardViewEvent.getBoardId());
                     updateMove();
                 }
             }
@@ -1870,7 +1865,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                 }
             } else {
-                b.getBoardView().select(boardViewEvent.getCoords());
+                boardViewEvent.getBoardView().select(boardViewEvent.getCoords());
             }
 
             if (gear == MovementDisplay.GEAR_RAM) {
@@ -1977,7 +1972,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         toDefender = AirMekRamAttackAction.getDamageFor(currentlySelectedEntity, cmd.getHexesMoved());
                     } else {
                         toDefender = ChargeAttackAction.getDamageFor(
-                                ce, game.getOptions()
+                              currentlySelectedEntity, game.getOptions()
                                         .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
                                 cmd.getHexesMoved());
                         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -1990,7 +1985,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                   cmd.getHexesMoved());
                         } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK) ||
                                          (target.getTargetType() == Targetable.TYPE_BUILDING)) {
-                            Building bldg = game.getBoard(ce).getBuildingAt(moveto);
+                            Building bldg = game.getBoard(currentlySelectedEntity).getBuildingAt(moveto);
                             toAttacker = ChargeAttackAction.getDamageTakenBy(currentlySelectedEntity, bldg, moveto);
                         }
                     }
@@ -2289,7 +2284,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // only allow landing on the ground map, not atmosphere or space map
-        if (!game.getBoard(ce).onGround()) {
+        if (!game.getBoard(selectedEntity).onGround()) {
             return;
         }
 
@@ -4559,9 +4554,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         int maxMP = maxMP(en, mvMode);
 
         // Create a path finder to find possible moves; if aerodyne, use a custom Aero path finder.
-        ShortestPathFinder pf;
+        ShortestPathFinder shortestPathFinder;
         if (en.isAerodyne()) {
-            pf = ShortestPathFinder.newInstanceOfOneToAllAero(maxMP, stepType, game);
+            shortestPathFinder = ShortestPathFinder.newInstanceOfOneToAllAero(maxMP, stepType, game);
         } else {
             shortestPathFinder = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, game);
         }
@@ -5658,14 +5653,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()) {
-            if (game.getTurn().isValidEntity(e, game)) {
-                selectEntity(e.getId());
+            if (game.getTurn().isValidEntity(entity, game)) {
+                selectEntity(entity.getId());
             }
         } else {
             clientgui.maybeShowUnitDisplay();
-            clientgui.getUnitDisplay().displayEntity(e);
-            if (e.isDeployed()) {
-                clientgui.centerOnUnit(e);
+            clientgui.getUnitDisplay().displayEntity(entity);
+            if (entity.isDeployed()) {
+                clientgui.centerOnUnit(entity);
             }
         }
     }

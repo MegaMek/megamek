@@ -31615,8 +31615,9 @@ public class TWGameManager extends AbstractGameManager {
 
             // Buildings do _not_ shield housed units from artillery damage!
             if ((bldg != null) &&
-                      ((altitude < hex.terrainLevel(Terrains.BLDG_ELEV)) ||
-                             (altitude < hex.terrainLevel(Terrains.BRIDGE_ELEV))) &&
+                      ((altitude < effectiveLevel + hex.terrainLevel(Terrains.BLDG_ELEV)) ||
+                             (altitude < effectiveLevel + hex.terrainLevel(Terrains.BRIDGE_ELEV)) ||
+                             (altitude < effectiveLevel + hex.terrainLevel(Terrains.FUEL_TANK_ELEV))) &&
                       !(asfFlak)) {
                 if (!((ammo != null) && (ammo.getMunitionType().contains(Munitions.M_FLECHETTE)))) {
                     int buildingDamage;

@@ -9,6 +9,11 @@ MEGAMEK VERSION HISTORY:
 + PR #6937: Calculate heat for vibroblades
 + Fix #6946: Fixes the Damage Status box on Label no appearing correctly. #6810
 + Fix #6945: uses bot skill generator when creating armies issue #6927
++ PR #6934: Dereference NPE Removals in MovementDisplay, moved MoveCommand to own class, added tests.
++ Fix #6954: Fixes NPE and missing portrait/deployment in Mek Customization dialog
++ Fix #6955: fuel tanks take zero damage from AE
++ Fix #6956: Correct fluff art for HHWs
++ Fix #6957: BA Artillery doing no damage
 
 0.50.05 (2025-04-25 1800 UTC)
 + Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1

@@ -222,6 +222,7 @@ public class LobbyActions {
         Entity entity = CollectionUtil.anyOneElement(entities);
         UnitEditorDialog med = new UnitEditorDialog(frame(), entity);
         med.setVisible(true);
+        med.dispose();
         sendUpdates(entities);
     }
 
@@ -278,21 +279,24 @@ public class LobbyActions {
         Entity entity = CollectionUtil.anyOneElement(entities);
         boolean hasIndividualCamo = entities.stream().anyMatch(e -> !e.getCamouflage().hasDefaultCategory());
         CamoChooserDialog ccd = new CamoChooserDialog(frame(), entity.getCamouflageOrElseOwners(), hasIndividualCamo);
-        ccd.setDisplayedEntity(entity);
-        if (ccd.showDialog().isCancelled()) {
-            return;
+        try {
+            ccd.setDisplayedEntity(entity);
+            if (ccd.showDialog().isCancelled()) {
+                return;
+            }
+            // Choosing the player camo resets the units to have no individual camo.
+            Camouflage selectedItem = ccd.getSelectedItem();
+            Camouflage ownerCamo = entity.getOwner().getCamouflage();
+            boolean noIndividualCamo = selectedItem.equals(ownerCamo);
+    
+            // Update all allowed entities with the camo
+            for (final Entity ent : entities) {
+                ent.setCamouflage(noIndividualCamo ? ownerCamo : selectedItem);
+            }
+            sendUpdates(entities);
+        } finally {
+            ccd.dispose();
         }
-
-        // Choosing the player camo resets the units to have no individual camo.
-        Camouflage selectedItem = ccd.getSelectedItem();
-        Camouflage ownerCamo = entity.getOwner().getCamouflage();
-        boolean noIndividualCamo = selectedItem.equals(ownerCamo);
-
-        // Update all allowed entities with the camo
-        for (final Entity ent : entities) {
-            ent.setCamouflage(noIndividualCamo ? ownerCamo : selectedItem);
-        }
-        sendUpdates(entities);
     }
 
     /**
@@ -326,7 +330,10 @@ public class LobbyActions {
 
         if (cmd.isOkay() && (cmd.getStatus() != CustomMekDialog.DONE)) {
             Entity nextEnt = cmd.getNextEntity(cmd.getStatus() == CustomMekDialog.NEXT);
+            cmd.dispose();
             customizeMek(nextEnt);
+        } else {
+            cmd.dispose();
         }
     }
 
@@ -372,6 +379,7 @@ public class LobbyActions {
             } else {
                 doneCustomizing = true;
             }
+            cmd.dispose();
         }
     }
 

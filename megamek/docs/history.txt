@@ -15,6 +15,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6955: fuel tanks take zero damage from AE
 + Fix #6956: Correct fluff art for HHWs
 + Fix #6957: BA Artillery doing no damage
++ PR #6965: Disambiguate BA vs Mek weapons with the same name
 
 0.50.05 (2025-04-25 1800 UTC)
 + Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1

@@ -27,6 +27,7 @@ public class ISBALaserVSPSmall extends VariableSpeedPulseLaserWeapon {
     public ISBALaserVSPSmall() {
         super();
         name = "Small VSP Laser";
+        uniqueName = name + " [BA]";
         setInternalName("ISBASmallVSPLaser");
         addLookupName("ISBASVSPL");
         addLookupName("ISBASmallVariableSpeedLaser");

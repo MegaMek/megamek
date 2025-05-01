@@ -25,6 +25,7 @@ public class ISBALaserMedium extends LaserWeapon {
     public ISBALaserMedium() {
         super();
         name = "Medium Laser";
+        uniqueName = name + " [BA]";
         setInternalName("ISBAMediumLaser");
         addLookupName("IS BA Medium Laser");
         sortingName = "Laser C";

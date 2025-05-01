@@ -30,6 +30,7 @@ public class CLBALRM5 extends LRMWeapon {
     public CLBALRM5() {
         super();
         name = "LRM 5";
+        uniqueName = name + " [BA]";
         setInternalName("CLBALRM5");
         addLookupName("Clan BA LRM-5");
         addLookupName("Clan BA LRM 5");

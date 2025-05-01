@@ -25,6 +25,7 @@ public class CLBAMGLight extends BAMGWeapon {
     public CLBAMGLight() {
         super();
         name = "Machine Gun (Light)";
+        uniqueName = name + " [BA]";
         setInternalName("CLBALightMG");
         addLookupName("Clan BA Light Machine Gun");
         addLookupName("ISBALightMachineGun");

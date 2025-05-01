@@ -26,6 +26,7 @@ public class ISBALaserVSPMedium extends VariableSpeedPulseLaserWeapon {
     public ISBALaserVSPMedium() {
         super();
         name = "Medium VSP Laser";
+        uniqueName = name + " [BA]";
         setInternalName("ISBAMediumVSPLaser");
         addLookupName("ISBAMVSPL");
         addLookupName("ISBAMediumVariableSpeedLaser");

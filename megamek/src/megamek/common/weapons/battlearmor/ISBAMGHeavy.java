@@ -28,6 +28,7 @@ public class ISBAMGHeavy extends BAMGWeapon {
     public ISBAMGHeavy() {
         super();
         name = "Machine Gun (Heavy)";
+        uniqueName = name + " [BA]";
         setInternalName("ISBAHeavyMachineGun");
         addLookupName("IS BA Heavy Machine Gun");
         addLookupName("ISBAHeavyMG");

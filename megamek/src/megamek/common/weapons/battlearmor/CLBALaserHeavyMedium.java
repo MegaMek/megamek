@@ -25,6 +25,7 @@ public class CLBALaserHeavyMedium extends LaserWeapon {
     public CLBALaserHeavyMedium() {
         super();
         name = "Heavy Medium Laser";
+        uniqueName = name + " [BA]";
         setInternalName("CLBAHeavyMediumLaser");
         addLookupName("Clan BA Medium Heavy Laser");
         sortingName = "Laser Heavy C";

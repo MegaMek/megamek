@@ -38,6 +38,7 @@ public class ISBALRM1 extends LRMWeapon {
     public ISBALRM1() {
         super();
         name = "LRM 1";
+        uniqueName = name + " [BA]";
         setInternalName("ISBALRM1");
         addLookupName("IS BA LRM-1");
         addLookupName("IS BA LRM 1");

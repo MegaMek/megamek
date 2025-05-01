@@ -38,6 +38,7 @@ public class ISBAMRM4OS extends MRMWeapon {
     public ISBAMRM4OS() {
         super();
         name = "MRM 4 (OS)";
+        uniqueName = name + " [BA]";
         setInternalName("ISBAMRM4OS");
         addLookupName("IS BA MRM4 OS");
         rackSize = 4;

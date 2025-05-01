@@ -25,6 +25,7 @@ public class ISBALaserPulseMedium extends PulseLaserWeapon {
     public ISBALaserPulseMedium() {
         super();
         name = "Medium Pulse Laser";
+        uniqueName = name + " [BA]";
         setInternalName("ISBAMediumPulseLaser");
         addLookupName("IS BA Pulse Med Laser");
         addLookupName("IS BA Medium Pulse Laser");

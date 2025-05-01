@@ -24,6 +24,7 @@ public class ISBASRM4 extends SRMWeapon {
     public ISBASRM4() {
         super();
         this.name = "SRM 4";
+        uniqueName = name + " [BA]";
         this.setInternalName("ISBASRM4");
         this.addLookupName("IS BA SRM-4");
         this.addLookupName("IS BA SRM 4");

@@ -18,12 +18,12 @@
  */
 package megamek.client.ui.advancedsearch;
 
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
-
-import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.table.AbstractTableModel;
+
+import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * A table model for displaying weapons
@@ -107,7 +107,7 @@ class WeaponsTableModel extends AbstractTableModel {
         }
         WeaponType wp = weapons.get(row);
         return switch (col) {
-            case COL_NAME -> wp.getName();
+            case COL_NAME -> wp.getUniqueName();
             case COL_IS_CLAN -> TechConstants.getTechName(wp.getTechLevel(twAdvancedSearchPanel.gameYear));
             case COL_DMG -> wp.getDamage();
             case COL_HEAT -> wp.getHeat();

@@ -38,6 +38,7 @@ public class ISBALRM4OS extends LRMWeapon {
     public ISBALRM4OS() {
         super();
         name = "LRM 4 (OS)";
+        uniqueName = name + " [BA]";
         setInternalName("ISBALRM4OS");
         addLookupName("IS BA LRM4 OS");
         rackSize = 4;

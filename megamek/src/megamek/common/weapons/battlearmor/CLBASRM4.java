@@ -39,6 +39,7 @@ public class CLBASRM4 extends SRMWeapon {
     public CLBASRM4() {
         super();
         name = "SRM 4";
+        uniqueName = name + " [BA]";
         setInternalName("CLBASRM4");
         addLookupName("Clan BA SRM-4");
         addLookupName("Clan BA SRM 4");

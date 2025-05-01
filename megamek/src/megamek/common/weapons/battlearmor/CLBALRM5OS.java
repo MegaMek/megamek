@@ -30,6 +30,7 @@ public class CLBALRM5OS extends LRMWeapon {
     public CLBALRM5OS() {
         super();
         name = "LRM 5 (OS)";
+        uniqueName = name + " [BA]";
         setInternalName("CLBALRM5 (OS)");
         addLookupName("CLBALRM5OS");
         heat = 2;

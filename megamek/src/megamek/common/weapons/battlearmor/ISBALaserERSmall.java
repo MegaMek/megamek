@@ -25,6 +25,7 @@ public class ISBALaserERSmall extends LaserWeapon {
     public ISBALaserERSmall() {
         super();
          name = "ER Small Laser";
+        uniqueName = name + " [BA]";
         setInternalName("ISBAERSmallLaser");
         addLookupName("IS BA ER Small Laser");
         sortingName = "Laser ER B";

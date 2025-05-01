@@ -25,6 +25,7 @@ public class CLBALaserSmall extends LaserWeapon {
     public CLBALaserSmall() {
         super();
         name = "Small Laser";
+        uniqueName = name + " [BA]";
         setInternalName("CLBASmall Laser");
         addLookupName("CL BA Small Laser");
         addLookupName("CLBASmallLaser");

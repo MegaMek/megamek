@@ -38,6 +38,7 @@ public class CLBASRM5OS extends SRMWeapon {
     public CLBASRM5OS() {
         super();
         name = "SRM 5 (OS)";
+        uniqueName = name + " [BA]";
         setInternalName("CLBASRM5OS");
         rackSize = 5;
         shortRange = 3;

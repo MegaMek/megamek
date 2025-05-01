@@ -30,6 +30,7 @@ public class ISBASRM1OS extends SRMWeapon {
     public ISBASRM1OS() {
         super();
         name = "SRM 1 (OS)";
+        uniqueName = name + " [BA]";
         setInternalName("ISBASRM1OS");
         addLookupName("IS BA SRM1 OS");
         rackSize = 1;

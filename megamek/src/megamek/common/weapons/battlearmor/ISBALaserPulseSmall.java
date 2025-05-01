@@ -26,6 +26,7 @@ public class ISBALaserPulseSmall extends PulseLaserWeapon {
     public ISBALaserPulseSmall() {
         super();
         name = "Small Pulse Laser";
+        uniqueName = name + " [BA]";
         setInternalName("ISBASmallPulseLaser");
         addLookupName("IS BA Small Pulse Laser");
         addLookupName("ISBASmall Pulse Laser");

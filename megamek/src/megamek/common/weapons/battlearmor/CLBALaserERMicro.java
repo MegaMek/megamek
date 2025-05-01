@@ -27,6 +27,7 @@ public class CLBALaserERMicro extends LaserWeapon {
     public CLBALaserERMicro() {
         super();
         name = "ER Micro Laser";
+        uniqueName = name + " [BA]";
         setInternalName("CLBAERMicroLaser");
         addLookupName("Clan BA ER Micro Laser");
         sortingName = "Laser ER A";

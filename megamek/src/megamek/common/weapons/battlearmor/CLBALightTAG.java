@@ -25,6 +25,7 @@ public class CLBALightTAG extends TAGWeapon {
     public CLBALightTAG() {
         super();
         name = "TAG (Light)";
+        uniqueName = name + " [BA]";
         setInternalName("CLBALightTAG");
         addLookupName("Clan BA Light TAG");
         addLookupName("ISBALightTAG");

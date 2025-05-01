@@ -136,6 +136,8 @@ public class EquipmentType implements ITechnology {
 
     protected String name = null;
 
+    protected String uniqueName = null;
+
     // Short name for RS Printing
     protected String shortName = "";
 
@@ -231,6 +233,22 @@ public class EquipmentType implements ITechnology {
 
     public String getName(double size) {
         return getName();
+    }
+
+    /**
+     * A user-friendly name, similar to {@link #getName()}, but is less likely to share a name with other equipment.
+     * For example, <i>Medium Laser [BA]</i> instead of <i>Medium Laser</i>.
+     * <p>
+     * The returned name is not guaranteed to actually be unique. In particular, equipment with an IS and Clan
+     * counterpart will still show the same name.
+     * <p>
+     * When this function was created, it was to be used in a list of equipment that separately displayed the tech base.
+     * If you need a truly unique identifier, use {@link #getInternalName()} instead, if you also need it to be
+     * user-friendly, update this method.
+     * @return A user-friendly name.
+     */
+    public String getUniqueName() {
+        return Objects.requireNonNullElse(uniqueName, getName());
     }
 
     public String getDesc() {

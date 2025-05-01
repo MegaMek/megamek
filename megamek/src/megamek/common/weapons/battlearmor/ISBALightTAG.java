@@ -30,6 +30,7 @@ public class ISBALightTAG extends TAGWeapon {
     public ISBALightTAG() {
         super();
         this.name = "TAG (Light)";
+        uniqueName = name + " [BA]";
         setInternalName("ISBALightTAG");
         this.addLookupName("IS BA Light TAG");
         this.tonnage = 0.035;

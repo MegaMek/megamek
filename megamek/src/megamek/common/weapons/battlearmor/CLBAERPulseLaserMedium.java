@@ -26,6 +26,7 @@ public class CLBAERPulseLaserMedium extends PulseLaserWeapon {
     public CLBAERPulseLaserMedium() {
         super();
         name = "ER Medium Pulse Laser";
+        uniqueName = name + " [BA]";
         setInternalName("BACLERMediumPulseLaser");
         addLookupName("CLBAERMediumPulseLaser");
         addLookupName("BA Clan ER Pulse Med Laser");

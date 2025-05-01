@@ -26,6 +26,7 @@ public class CLBAPulseLaserMicro extends PulseLaserWeapon {
     public CLBAPulseLaserMicro() {
         super();
         name = "Micro Pulse Laser";
+        uniqueName = name + " [BA]";
         setInternalName("CLBAMicroPulseLaser");
         addLookupName("Clan BA Micro Pulse Laser");
         sortingName = "Laser Pulse A";

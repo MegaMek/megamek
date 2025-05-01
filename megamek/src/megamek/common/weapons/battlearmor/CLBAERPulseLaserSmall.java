@@ -27,6 +27,7 @@ public class CLBAERPulseLaserSmall extends PulseLaserWeapon {
     public CLBAERPulseLaserSmall() {
         super();
         name = "ER Small Pulse Laser";
+        uniqueName = name + " [BA]";
         setInternalName("CLBAERSmallPulseLaser");
         addLookupName("Clan BA ER Pulse Small Laser");
         addLookupName("Clan BA ER Small Pulse Laser");

@@ -30,6 +30,7 @@ public class CLBALRM3OS extends LRMWeapon {
     public CLBALRM3OS() {
         super();
         name = "LRM 3 (OS)";
+        uniqueName = name + " [BA]";
         setInternalName("CLBALRM3OS");
         heat = 0;
         rackSize = 3;

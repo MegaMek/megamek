@@ -32,6 +32,7 @@ public class ISBARL5 extends RLWeapon {
     public ISBARL5() {
         super();
         name = "Rocket Launcher 5";
+        uniqueName = name + " [BA]";
         setInternalName("ISBARL5");
         addLookupName("BARL5");
         addLookupName("ISBARocketLauncher5");

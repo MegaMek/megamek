@@ -30,6 +30,7 @@ public class ISBASRM6OS extends SRMWeapon {
     public ISBASRM6OS() {
         super();
         name = "SRM 6 (OS)";
+        uniqueName = name + " [BA]";
         setInternalName("ISBASRM6OS");
         addLookupName("ISBASRM6 (OS)"); // mtf
         addLookupName("IS BA SRM 6 (OS)"); // tdb

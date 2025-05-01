@@ -30,6 +30,7 @@ public class ISBASRM5 extends SRMWeapon {
     public ISBASRM5() {
         super();
         name = "SRM 5";
+        uniqueName = name + " [BA]";
         setInternalName("ISBASRM5");
         addLookupName("IS BA SRM-5");
         addLookupName("IS BA SRM 5");

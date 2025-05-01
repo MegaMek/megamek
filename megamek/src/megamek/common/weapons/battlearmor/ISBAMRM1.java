@@ -32,6 +32,7 @@ public class ISBAMRM1 extends MRMWeapon {
     public ISBAMRM1() {
         super();
         this.name = "MRM 1";
+        uniqueName = name + " [BA]";
         this.setInternalName("ISBAMRM1");
         this.addLookupName("BA MRM-1");
         this.addLookupName("IS BA MRM 1");

@@ -26,6 +26,7 @@ public class CLBAAPGaussRifle extends Weapon {
     public CLBAAPGaussRifle() {
         super();
         name = "Gauss Rifle [Anti-personnel Gauss Rifle]";
+        uniqueName = name + " [BA]";
         shortName = "AP Gauss";
         setInternalName("CLBAAPGaussRifle");
         heat = 1;

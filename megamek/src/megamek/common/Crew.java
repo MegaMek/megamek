@@ -44,6 +44,7 @@ import java.util.Vector;
 
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.codeUtilities.MathUtility;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;
@@ -1403,7 +1404,7 @@ public class Crew implements Serializable {
         }
     }
 
-    public String getExtraDataValue(int crewIndex, String key) {
+    public @Nullable String getExtraDataValue(int crewIndex, String key) {
         if (this.extraData == null) {
             return null;
         } else if (this.extraData.get(crewIndex) == null) {

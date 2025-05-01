@@ -1007,7 +1007,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
         // and add it into the game, temporarily
         game.addAction(saa);
-        ((BoardView) clientgui.getBoardView(target)).addAttack(saa);
+        clientgui.getBoardView(target).addAttack(saa);
 
         // refresh weapon panel, as bth will have changed
         updateTarget();
@@ -1022,56 +1022,49 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     private void updateStrafingTargets() {
+        Entity strafingUnit = ce();
+        if (strafingUnit == null) {
+            return;
+        }
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        final Mounted<?> m = ce().getEquipment(weaponId);
-        ToHitData toHit;
-        StringBuffer toHitBuff = new StringBuffer();
+        final Mounted<?> m = strafingUnit.getEquipment(weaponId);
+        StringBuilder toHitSummary = new StringBuilder();
         setFireEnabled(true);
+        int strafedBoardId = strafingUnit.getPassedThroughBoardId();
+        Board strafedBoard = game.getBoard(strafedBoardId);
         for (Coords c : strafingCoords) {
-            for (Entity t : game.getEntitiesVector(c)) {
-                // Airborne units cannot be strafed
-                if (t.isAirborne()) {
+            for (Entity t : game.getEntitiesVector(c, strafedBoardId)) {
+                if (t.isAirborne() || ((t instanceof Infantry) && t.isInBuilding())) {
+                    // Airborne units cannot be strafed, neither infantry in a building
                     continue;
                 }
-                // Can't shoot at infantry in the building
-                // Instead, strafe will hit the building, which could damage Inf
-                if ((t instanceof Infantry) && t.isInBuilding()) {
-                    continue;
-                }
-
-                toHit = WeaponAttackAction.toHit(game, currentEntity, t, weaponId,
+                ToHitData toHit = WeaponAttackAction.toHit(game, currentEntity, t, weaponId,
                         Entity.LOC_NONE, AimingMode.NONE, true);
-                toHitBuff.append(t.getShortName() + ": ");
-                toHitBuff.append(toHit.getDesc());
-                toHitBuff.append("\n");
-                if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
-                        || (toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
+                toHitSummary.append("%s: %s<BR>".formatted(t.getShortName(), toHit.getDesc()));
+                if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET) || (toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
                     setFireEnabled(false);
                 }
             }
-            Building bldg = game.getBoard(ce()).getBuildingAt(c);
+
+            Building bldg = strafedBoard.getBuildingAt(c);
             if (bldg != null) {
-                Targetable t = new BuildingTarget(c, game.getBoard(ce()), false);
-                toHit = WeaponAttackAction.toHit(game, currentEntity, t, weaponId,
+                Targetable t = new BuildingTarget(c, strafedBoard, false);
+                ToHitData toHit = WeaponAttackAction.toHit(game, currentEntity, t, weaponId,
                         Entity.LOC_NONE, AimingMode.NONE, true);
-                toHitBuff.append(t.getDisplayName() + ": ");
-                toHitBuff.append(toHit.getDesc());
-                toHitBuff.append("\n");
+                toHitSummary.append("%s: %s<BR>".formatted(t.getDisplayName(), toHit.getDesc()));
             }
-            Targetable hexTarget = new HexTarget(c, HexTarget.TYPE_HEX_CLEAR);
-            toHit = WeaponAttackAction.toHit(game, currentEntity, hexTarget, weaponId,
+
+            Targetable hexTarget = new HexTarget(c, strafedBoardId, HexTarget.TYPE_HEX_CLEAR);
+            ToHitData toHit = WeaponAttackAction.toHit(game, currentEntity, hexTarget, weaponId,
                     Entity.LOC_NONE, AimingMode.NONE, true);
-            if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
-                    || (toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
+            if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET) || (toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
                 setFireEnabled(false);
-                if (toHitBuff.isEmpty()) {
-                    toHitBuff.append(toHit.getDesc());
+                if (toHitSummary.isEmpty()) {
+                    toHitSummary.append(toHit.getDesc());
                 }
             }
-            // Could check legality on buildings, but I don't believe there are
-            // any weapons that are still legal that aren't legal on buildings
         }
-        clientgui.getUnitDisplay().wPan.setToHit(toHitBuff.toString());
+        clientgui.getUnitDisplay().wPan.setToHit(toHitSummary.toString());
     }
 
     private HashMap<String, int[]> getBombPayloads(boolean isSpace, int limit) {
@@ -1739,9 +1732,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         Coords coords = event.getCoords();
         if (isMyTurn() && (coords != null) && (ce() != null)) {
             if (isStrafing) {
-                if (validStrafingCoord(coords)) {
-                    strafingCoords.add(coords);
-                    event.getBoardView().addStrafingCoords(coords);
+                if (ce().getPassedThroughBoardId() == event.getBoardId()) {
+                    strafingCoords.clear();
+                    strafingCoords.addAll(getStrafingCoords(coords));
+                    event.getBoardView().clearStrafingCoords();
+                    if (!strafingCoords.isEmpty()) {
+                        strafingCoords.forEach(c -> event.getBoardView().addStrafingCoords(c));
+                    }
                     updateStrafingTargets();
                 }
             } else if (!coords.equals(ce().getPosition())) {
@@ -2263,6 +2260,61 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             }
         }
         return isConsecutive && isInaLine;
+    }
+
+    private List<Coords> getStrafingCoords(Coords center) {
+        Entity strafingAero = ce();
+
+        if (!(strafingAero instanceof Aero)) {
+            return Collections.emptyList();
+        }
+
+        // Can't update strafe hexes after weapons are fired, otherwise we'd
+        // have to have a way to update the attacks vector
+        if (!attacks.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Can only strafe hexes that were flown over
+        if (!strafingAero.passedThrough(center)) {
+            return Collections.emptyList();
+        }
+
+        // Path could hit the same hex multiple times with aero on ground maps, find all such hexes
+        List<Integer> centerCandidates = new ArrayList<>();
+        List<Coords> flightPath = strafingAero.getPassedThrough();
+        for (int index = 0; index < flightPath.size(); index++) {
+            if (center.equals(flightPath.get(index))) {
+                centerCandidates.add(index);
+            }
+        }
+
+        int centerIndex;
+        if (centerCandidates.isEmpty()) {
+            // shouldn't happen here, but be safe
+            return Collections.emptyList();
+
+        } else if (centerCandidates.size() == 1) {
+            centerIndex = centerCandidates.get(0);
+
+        } else {
+            // incomplete: choose one of the candidates
+            centerIndex = centerCandidates.get(0);
+        }
+
+        // When the flight path is shorter than 5 hexes, only that many can be strafed (may happen for aeros that are
+        // not on the ground board)
+        int maxStrafingHexes = Math.min(flightPath.size(), 5);
+        int startIndex = Math.max(centerIndex - 2, 0);
+        startIndex = Math.min(flightPath.size() - 5, startIndex);
+        startIndex = Math.max(startIndex, 0);
+        List<Coords> strafingPath = new ArrayList<>();
+        for (int index = startIndex; index < startIndex + maxStrafingHexes; index++) {
+            if (flightPath.size() > index) {
+                strafingPath.add(flightPath.get(index));
+            }
+        }
+        return strafingPath;
     }
 
     private void incrementInternalBombs(WeaponAttackAction waa) {

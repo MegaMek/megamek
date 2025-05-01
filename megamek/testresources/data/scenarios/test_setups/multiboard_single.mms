@@ -80,10 +80,10 @@ factions:
       name: Eddie the Eagle
       piloting: 8
 
-  - fullname: Zugvogel Omni Support Aircraft B
-    at: [ 8,20 ]
-    board: 5
-    altitude: 2
+#  - fullname: Zugvogel Omni Support Aircraft B
+#    at: [ 8,20 ]
+#    board: 5
+#    altitude: 2
 
 #  - fullname: Locust LCT-1V
 #    board: 0
@@ -124,10 +124,11 @@ factions:
 #    facing: 3
 #    altitude: 5
 
-#  - fullname: Cheetah IIC
-#    at: [ 8, 2 ]
-#    board: 6
-#    facing: 3
+  - fullname: Cheetah IIC
+    at: [ 8, 20 ]
+    board: 5
+    facing: 3
+    altitude: 2
 
 #  - fullname: FWL Advanced Laser Turret (3075)
 #    at: [37,26]

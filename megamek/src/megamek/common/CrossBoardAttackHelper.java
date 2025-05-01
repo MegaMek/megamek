@@ -57,6 +57,13 @@ public final class CrossBoardAttackHelper {
             return true;
         }
 
+        // An aero on an atmospheric board in a ground board hex is targetable by ground units along its flight path
+        if (Compute.isAirToGround(attacker, target)
+              && game.onDirectlyConnectedBoards(attacker, target)
+              && inCorrespondingHexes(game, attacker, target)) {
+            return true;
+        }
+
         // A2A attacks are possible between ground map and atmospheric map
         if (Compute.isAirToAir(game, attacker, target) &&
                   (game.onDirectlyConnectedBoards(attacker, target) ||

@@ -87,9 +87,15 @@ factions:
     facing: 2
 
   - fullname: Bulldog Medium Tank
-    at: [ 15,12 ]
+    at: [ 11,11 ]
     board: 0
     facing: 0
+
+  - fullname: Sprint Scout Helicopter (C3i)
+    at: [ 12,10 ]
+    board: 0
+    facing: 0
+    elevation: 3
 
 #  - fullname: Locust LCT-1V
 #    board: 0

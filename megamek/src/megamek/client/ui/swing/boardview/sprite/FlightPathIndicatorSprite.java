@@ -263,7 +263,7 @@ public class FlightPathIndicatorSprite extends HexSprite {
      */
     private void drawRemainingDistance(Graphics2D graph, MoveStep moveStep) {
         int velocity = moveStep.getVelocity();
-        if (bv.game.getBoard().onGround()) {
+        if (bv.getBoard().onGround()) {
             velocity *= 16;
         }
 

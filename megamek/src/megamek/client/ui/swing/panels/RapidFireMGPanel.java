@@ -50,7 +50,7 @@ public class RapidFireMGPanel extends JPanel {
     public RapidFireMGPanel(Mounted<?> mounted, Entity entity) {
         this.mounted = mounted;
         int mountedLocation = mounted.getLocation();
-        String stringDescription = Messages.getString("CustomMekDialog.gridBagLayout",
+        String stringDescription = Messages.getString("CustomMekDialog.burstFireMachineGun",
               entity.getLocationAbbr(mountedLocation));
         JLabel labelLocation = new JLabel(stringDescription);
         GridBagLayout gridBagLayout = new GridBagLayout();

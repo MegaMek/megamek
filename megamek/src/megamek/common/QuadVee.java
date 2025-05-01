@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022-2025 - The MegaMek Team. All Rights Reserved.
  *
- * This file is part of <Package Name>.
+ * This file is part of MegaMek.
  *
  * <Package Name> is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),

@@ -1735,10 +1735,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 if (ce().getPassedThroughBoardId() == event.getBoardId()) {
                     strafingCoords.clear();
                     strafingCoords.addAll(getStrafingCoords(coords));
-                    event.getBoardView().clearStrafingCoords();
-                    if (!strafingCoords.isEmpty()) {
-                        strafingCoords.forEach(c -> event.getBoardView().addStrafingCoords(c));
-                    }
+                    event.getBoardView().setStrafingCoords(strafingCoords);
                     updateStrafingTargets();
                 }
             } else if (!coords.equals(ce().getPosition())) {
@@ -2211,57 +2208,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         return target;
     }
 
-    private boolean validStrafingCoord(Coords newCoord) {
-        // Only Aeros can strafe...
-        if (ce() == null || !ce().isAero()) {
-            return false;
-        }
-
-        // Can't update strafe hexes after weapons are fired, otherwise we'd
-        // have to have a way to update the attacks vector
-        if (!attacks.isEmpty()) {
-            return false;
-        }
-
-        // Can only strafe hexes that were flown over
-        if (!ce().passedThrough(newCoord)) {
-            return false;
-        }
-
-        // No more limitations if it's the first hex
-        if (strafingCoords.isEmpty()) {
-            return true;
-        }
-
-        // We can only select at most 5 hexes
-        if (strafingCoords.size() >= 5) {
-            return false;
-        }
-
-        // Can't strafe the same hex twice
-        if (strafingCoords.contains(newCoord)) {
-            return false;
-        }
-
-        boolean isConsecutive = false;
-        for (Coords c : strafingCoords) {
-            isConsecutive |= (c.distance(newCoord) == 1);
-        }
-
-        boolean isInaLine = true;
-        // If there is only one other coord, then they're linear
-        if (strafingCoords.size() > 1) {
-            IdealHex newHex = new IdealHex(newCoord);
-            IdealHex start = new IdealHex(strafingCoords.get(0));
-            // Define the vector formed by the new coords and the first coords
-            for (int i = 1; i < strafingCoords.size(); i++) {
-                IdealHex iHex = new IdealHex(strafingCoords.get(i));
-                isInaLine &= iHex.isIntersectedBy(start.cx, start.cy, newHex.cx, newHex.cy);
-            }
-        }
-        return isConsecutive && isInaLine;
-    }
-
+    /**
+     * Determines the five (or fewer in case the flight path is shorter than 5 hexes) hexes on the flight path of the
+     * current entity centered around the given coord, if possible. In case of a flight path that crosses itself, the
+     * player may select which of the hexes to use.
+     *
+     * @param center The middle hex of the strafing path
+     * @return The up to five coords that make up a strafing path
+     */
     private List<Coords> getStrafingCoords(Coords center) {
         Entity strafingAero = ce();
 
@@ -2299,7 +2253,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
         } else {
             // incomplete: choose one of the candidates
-            centerIndex = centerCandidates.get(0);
+            centerIndex = (int) JOptionPane.showInputDialog(clientgui.getFrame(),
+                  "Choose the hex to center the strafing path on",
+                  "Strafing - Choose Hex", JOptionPane.QUESTION_MESSAGE, null,
+                  centerCandidates.toArray(), centerCandidates.get(0));
         }
 
         // When the flight path is shorter than 5 hexes, only that many can be strafed (may happen for aeros that are
@@ -2335,6 +2292,5 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 }
             }
         }
-
     }
 }

@@ -5240,7 +5240,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean crashLanded = false;
         boolean destroyDropShip = false; // save for later
         List<Entity> passengers = entity.getLoadedUnits();
-        if (c == null) {
+        if (c == null || (game.getBoard(entity) == null)) {
             r = new Report(9701);
             r.subject = entity.getId();
 
@@ -5249,8 +5249,9 @@ public class TWGameManager extends AbstractGameManager {
             return vReport;
         }
 
+        Board board = game.getBoard(entity);
         // Low-altitude map: just crash and destroy the unit
-        if (game.getBoard().inAtmosphere()) {
+        if (board.inAtmosphere()) {
             r = new Report(9393, Report.PUBLIC);
             r.indent();
             r.addDesc(entity);
@@ -5292,8 +5293,8 @@ public class TWGameManager extends AbstractGameManager {
             ((IAero) entity).land();
 
             // Check if still on board
-            if (game.getBoard().contains(c) && game.getBoard().contains(finalPosition)) {
-                checkLandingTerrainEffects(aero, vertical, c, finalPosition, entity.getBoardId(), entity.getFacing());
+            if (board.contains(c) && board.contains(finalPosition)) {
+                checkLandingTerrainEffects(aero, vertical, c, finalPosition, board.getBoardId(), entity.getFacing());
             } else {
                 // Somehow left the map while crashing!  This will count as destroyed.
                 r = new Report(9701);
@@ -5607,12 +5608,12 @@ public class TWGameManager extends AbstractGameManager {
         return vReport;
     }
 
-    private OffBoardDirection calculateEdge(Coords coords) {
+    private OffBoardDirection calculateEdge(Coords coords, int boardId) {
         OffBoardDirection fleeDirection;
 
         if (coords.getY() <= 0) {
             fleeDirection = OffBoardDirection.NORTH;
-        } else if (coords.getY() >= (getGame().getBoard().getHeight() - 1)) {
+        } else if (coords.getY() >= (getGame().getBoard(boardId).getHeight() - 1)) {
             fleeDirection = OffBoardDirection.SOUTH;
         } else if (coords.getX() <= 0) {
             fleeDirection = OffBoardDirection.WEST;
@@ -5668,7 +5669,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         r.addDesc(entity);
 
-        OffBoardDirection fleeDirection = calculateEdge(movePath.getFinalCoords());
+        OffBoardDirection fleeDirection = calculateEdge(movePath.getFinalCoords(), movePath.getFinalBoardId());
         String retreatEdge = setRetreatEdge(entity, fleeDirection);
         r.add(retreatEdge);
         addReport(r);
@@ -8952,7 +8953,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> displacementReport = new Vector<>();
         Report r;
 
-        if (!game.getBoard().contains(dest)) {
+        if (!game.getBoard(entity).contains(dest)) {
             // set position anyway, for pushes moving through, stuff like that
             entity.setPosition(dest);
             if (!entity.isDoomed()) {
@@ -8966,7 +8967,7 @@ public class TWGameManager extends AbstractGameManager {
                     send(packetHelper.createTurnListPacket());
                 }
 
-                OffBoardDirection fleeDirection = calculateEdge(src);
+                OffBoardDirection fleeDirection = calculateEdge(src, entity.getBoardId());
                 String retreatEdge = setRetreatEdge(entity, fleeDirection);
 
                 game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED);

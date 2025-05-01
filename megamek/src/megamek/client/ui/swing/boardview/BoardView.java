@@ -3630,16 +3630,14 @@ public final class BoardView extends AbstractBoardView
         strafingCoords.add(coords);
     }
 
+    public void setStrafingCoords(Collection<Coords> coords) {
+        strafingCoords.clear();
+        strafingCoords.addAll(coords);
+        repaint();
+    }
+
     public void clearStrafingCoords() {
         strafingCoords.clear();
-    }
-
-    public void setLocalPlayer(Player player) {
-        localPlayer = player;
-    }
-
-    public Player getLocalPlayer() {
-        return localPlayer;
     }
 
     public ClientGUI getClientgui() {

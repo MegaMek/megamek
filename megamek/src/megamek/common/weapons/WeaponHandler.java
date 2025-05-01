@@ -1459,7 +1459,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             bSalvo = true;
             // Create new toHitData
             toHit = new ToHitData(0, "", ToHitData.HIT_NORMAL,
-                    Compute.targetSideTable(ae, coverDropShip));
+                    ComputeSideTable.sideTable(ae, coverDropShip));
             // Report cover was damaged
             int sizeBefore = vPhaseReport.size();
             r = new Report(3465);
@@ -1532,7 +1532,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((!isIndirect || partialCoverForIndirectFire)
                 && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                         .getCover(),
-                        Compute.targetSideTable(ae, entityTarget,
+                        ComputeSideTable.sideTable(ae, entityTarget,
                                 weapon.getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,

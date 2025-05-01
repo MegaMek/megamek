@@ -125,7 +125,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             hits = calcHits(vPhaseReport);
             // Create new toHitData
             toHit = new ToHitData(0, "", ToHitData.HIT_NORMAL,
-                    Compute.targetSideTable(ae, coverDropShip));
+                    ComputeSideTable.sideTable(ae, coverDropShip));
             // Report cover was damaged
             int sizeBefore = vPhaseReport.size();
             r = new Report(3465);
@@ -188,7 +188,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             hit.setGeneralDamageType(generalDamageType);
             hit.setAttackerId(getAttackerId());
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                    Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+                    ComputeSideTable.sideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
                 return;

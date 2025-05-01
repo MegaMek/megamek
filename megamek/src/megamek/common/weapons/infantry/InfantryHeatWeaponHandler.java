@@ -67,7 +67,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
 
             if ((!indirect || partialCoverForIndirectFire)
                     && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {           
+                    .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.            
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                         nCluster, bldgAbsorbs);

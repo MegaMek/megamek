@@ -181,7 +181,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         // factor in target side
-        toHit.setSideTable(Compute.targetSideTable(ae, te));
+        toHit.setSideTable(ComputeSideTable.sideTable(ae, te));
 
         // done!
         return toHit;

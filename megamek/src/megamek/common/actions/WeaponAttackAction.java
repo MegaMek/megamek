@@ -4779,7 +4779,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // get mods for direction of attack
             if (!(a.isSpheroid() && !a.isSpaceborne())) {
-                int side = Compute.targetSideTable(ae.getPosition(), te);
+                int side = ComputeSideTable.sideTable(ae, te);
 
                 // +1 if shooting at an aero approaching nose-on
                 if (side == ToHitData.SIDE_FRONT) {
@@ -5091,7 +5091,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit.setSideTable(ToHitData.SIDE_FRONT);
         } else {
             if (weapon != null) {
-                toHit.setSideTable(Compute.targetSideTable(ae, target, weapon.getCalledShot().getCall()));
+                toHit.setSideTable(ComputeSideTable.sideTable(ae, target, weapon.getCalledShot().getCall()));
             }
         }
 
@@ -5375,7 +5375,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // We might not attack the new target from the same side as the
         // old, so recalculate; the attack *direction* is still traced from
         // the original source.
-        toHit.setSideTable(Compute.targetSideTable(ae, swarmSecondaryTarget));
+        toHit.setSideTable(ComputeSideTable.sideTable(ae, swarmSecondaryTarget));
 
         // Secondary swarm LRM attacks are never called shots even if the
         // initial one was.

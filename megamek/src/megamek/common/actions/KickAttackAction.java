@@ -301,7 +301,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // factor in target side
-        toHit.setSideTable(Compute.targetSideTable(ae, target));
+        toHit.setSideTable(ComputeSideTable.sideTable(ae, target));
 
         // BMRr pg. 42, "The side on which a vehicle takes damage is determined
         // randomly if the BattleMek is attacking from the same hex."

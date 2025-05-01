@@ -74,7 +74,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
                     aimingAt = Mek.LOC_CT;
                 }
             } else if (this.firingDisplay.getTarget() instanceof Tank) {
-                int side = Compute.targetSideTable(this.firingDisplay.ce(), this.firingDisplay.getTarget());
+                int side = ComputeSideTable.sideTable(this.firingDisplay.ce(), this.firingDisplay.getTarget());
                 if (this.firingDisplay.getTarget() instanceof LargeSupportTank) {
                     if (side == ToHitData.SIDE_FRONTLEFT) {
                         aimingAt = LargeSupportTank.LOC_FRONTLEFT;
@@ -129,7 +129,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
             mask[i] = true;
         }
 
-        int side = Compute.targetSideTable(this.firingDisplay.ce(), this.firingDisplay.getTarget());
+        int side = ComputeSideTable.sideTable(this.firingDisplay.ce(), this.firingDisplay.getTarget());
 
         // on a tank, remove turret if its missing
         // also, remove body

@@ -147,6 +147,11 @@ class PreferenceStore implements IPreferenceStore {
     }
 
     @Override
+    public boolean hasProperty(String name) {
+        return properties.containsKey(name);
+    }
+
+    @Override
     public String getString(String name) {
         return getString(properties, name);
     }

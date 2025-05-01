@@ -99,14 +99,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 artyMsg = "Artillery fire Incoming, landing on round "
                         + (game.getRoundCount() + artilleryAttackAction.getTurnsTilHit())
                         + ", fired by "
-                        + game.getPlayer(aaa.getPlayerId()).getName();
-                if (aaa.getTarget(game) != null) {
-                    game.getBoard(aaa.getTarget(game).getBoardId()).addSpecialHexDisplay(
-                            aaa.getTarget(game).getPosition(),
+                        + game.getPlayer(artilleryAttackAction.getPlayerId()).getName();
+                if (artilleryAttackAction.getTarget(game) != null) {
+                    game.getBoard(artilleryAttackAction.getTarget(game).getBoardId()).addSpecialHexDisplay(
+                            artilleryAttackAction.getTarget(game).getPosition(),
                             new SpecialHexDisplay(
                                     Type.ARTILLERY_INCOMING, game
-                                            .getRoundCount() + aaa.getTurnsTilHit(),
-                                    game.getPlayer(aaa.getPlayerId()), artyMsg,
+                                            .getRoundCount() + artilleryAttackAction.getTurnsTilHit(),
+                                    game.getPlayer(artilleryAttackAction.getPlayerId()), artyMsg,
                                     SpecialHexDisplay.SHD_VISIBLETO_TEAM));
                 }
             }

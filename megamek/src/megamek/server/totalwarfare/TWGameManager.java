@@ -4593,7 +4593,7 @@ public class TWGameManager extends AbstractGameManager {
                         // Infantry don't have different
                         // tables for punches and kicks
                         HitData hit = target.rollHitLocation(ToHitData.HIT_NORMAL,
-                              Compute.targetSideTable(entity, target));
+                              ComputeSideTable.sideTable(entity, target));
                         hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                         // Damage equals tonnage, divided by 5.
                         // ASSUMPTION: damage is applied in one hit.
@@ -7008,7 +7008,7 @@ public class TWGameManager extends AbstractGameManager {
                         if (ae == null) {
                             continue;
                         }
-                        int side = Compute.targetSideTable(ae, t, called);
+                        int side = ComputeSideTable.sideTable(ae, t, called);
                         HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, side);
                         if (te.removePartialCoverHits(hit.getLocation(), cover, side)) {
                             missiles--;
@@ -7123,13 +7123,13 @@ public class TWGameManager extends AbstractGameManager {
                     te.heatFromExternal += 2 * missiles;
                     Report.addNewline(vPhaseReport);
                 } else if (te instanceof GunEmplacement && ae != null) {
-                    int direction = Compute.targetSideTable(ae, te, called);
+                    int direction = ComputeSideTable.sideTable(ae, te, called);
                     while (missiles-- > 0) {
                         HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
                         vPhaseReport.addAll(damageEntity(te, hit, 2));
                     }
                 } else if (ae != null && ((te instanceof Tank) || te.isSupportVehicle())) {
-                    int direction = Compute.targetSideTable(ae, te, called);
+                    int direction = ComputeSideTable.sideTable(ae, te, called);
                     while (missiles-- > 0) {
                         HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
                         int critRollMod = 0;
@@ -13345,7 +13345,7 @@ TargetRoll nTargetRoll,
         }
 
         checkForSpikes(te,
-              ae.rollHitLocation(ToHitData.HIT_PUNCH, Compute.targetSideTable(ae, te)).getLocation(),
+              ae.rollHitLocation(ToHitData.HIT_PUNCH, ComputeSideTable.sideTable(ae, te)).getLocation(),
               0,
               ae,
               Mek.LOC_LARM,
@@ -14515,7 +14515,7 @@ TargetRoll nTargetRoll,
             r = new Report(4241);
             r.indent();
             addReport(r);
-            int side = Compute.targetSideTable(te, ae);
+            int side = ComputeSideTable.sideTable(te, ae);
             int mod = ae.getMotiveSideMod(side);
             addReport(vehicleMotiveDamage((Tank) ae, mod));
         }
@@ -14572,7 +14572,7 @@ TargetRoll nTargetRoll,
             r.indent();
             addReport(r);
 
-            int side = Compute.targetSideTable(ae, te);
+            int side = ComputeSideTable.sideTable(ae, te);
             int mod = te.getMotiveSideMod(side);
             addReport(vehicleMotiveDamage((Tank) te, mod));
         }

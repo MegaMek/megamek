@@ -20,12 +20,17 @@ package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.boardview.BoardView;
 import megamek.common.Board;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
 
+import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
+import java.awt.BorderLayout;
 import java.util.Objects;
 
 /**
@@ -34,9 +39,13 @@ import java.util.Objects;
 public class FlightPathNotice {
 
     private static final int WIDTH = 500;
+    private static final String SHOW_FLIGHT_PATH_NOTICE = "ShowFlightPathNotice";
+    private static final ClientPreferences preferences = PreferenceManager.getClientPreferences();
 
-    private final JEditorPane contentPane = new JEditorPane();
+    private final JPanel contentPanel = new JPanel();
+    private final JCheckBox dontShowAgain = new JCheckBox("Don't show again");
     private final ClientGUI clientGui;
+    private final Board flightPathBoard;
 
     /**
      * Creates a dialog telling the player to select a ground board flight path for an aero on an atmospheric board.
@@ -46,15 +55,28 @@ public class FlightPathNotice {
      */
     public FlightPathNotice(ClientGUI clientGui, Board flightPathBoard) {
         this.clientGui = Objects.requireNonNull(clientGui);
-        contentPane.setContentType("text/html");
-        contentPane.setEditable(false);
-        contentPane.setText(Messages.getString("MovementDisplay.flightPathNotice")
+        this.flightPathBoard = Objects.requireNonNull(flightPathBoard);
+    }
+
+    private void initialize() {
+        JEditorPane messagePane = new JEditorPane();
+        messagePane.setContentType("text/html");
+        messagePane.setEditable(false);
+        messagePane.setText(Messages.getString("MovementDisplay.flightPathNotice")
               .formatted(WIDTH, flightPathBoard.getBoardName()));
-        contentPane.addHyperlinkListener(e -> {
+        messagePane.addHyperlinkListener(e -> {
             if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
                 clientGui.showBoardView(flightPathBoard.getBoardId());
             }
         });
+
+        JPanel checkboxPanel = new JPanel();
+        checkboxPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
+        checkboxPanel.add(dontShowAgain);
+
+        contentPanel.setLayout(new BorderLayout());
+        contentPanel.add(messagePane, BorderLayout.CENTER);
+        contentPanel.add(checkboxPanel, BorderLayout.SOUTH);
     }
 
     /**
@@ -62,8 +84,14 @@ public class FlightPathNotice {
      * shown.
      */
     public void show() {
-        clientGui.suspendBoardTooltips();
-        JOptionPane.showMessageDialog(clientGui.getFrame(), contentPane);
-        clientGui.activateBoardTooltips();
+        if (!preferences.hasProperty(SHOW_FLIGHT_PATH_NOTICE) || preferences.getBoolean(SHOW_FLIGHT_PATH_NOTICE)) {
+            initialize();
+            clientGui.suspendBoardTooltips();
+
+            JOptionPane.showMessageDialog(clientGui.getFrame(), contentPanel);
+
+            preferences.setValue(SHOW_FLIGHT_PATH_NOTICE, !dontShowAgain.isSelected());
+            clientGui.activateBoardTooltips();
+        }
     }
 }

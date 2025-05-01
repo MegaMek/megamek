@@ -885,7 +885,7 @@ public class AreaEffectHelper {
             if (entity instanceof ProtoMek) {
                 table = ToHitData.HIT_SPECIAL_PROTO;
             }
-            HitData hit = entity.rollHitLocation(table, Compute.targetSideTable(position, entity));
+            HitData hit = entity.rollHitLocation(table, entity.sideTable(position));
             vDesc.addAll(gameManager.damageEntity(entity, hit, cluster, false,
                     DamageType.IGNORE_PASSENGER, false, true));
 

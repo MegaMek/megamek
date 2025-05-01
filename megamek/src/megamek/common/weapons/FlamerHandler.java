@@ -46,7 +46,7 @@ public class FlamerHandler extends WeaponHandler {
             
             if (bmmFlamerDamage && entityTarget.tracksHeat() &&
                     !entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                            Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+                            ComputeSideTable.sideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
                 FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
             }
         } else if (flamerDoesHeatOnlyDamage) {
@@ -56,7 +56,7 @@ public class FlamerHandler extends WeaponHandler {
             hit.setAttackerId(getAttackerId());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                    Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+                    ComputeSideTable.sideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
                 return;

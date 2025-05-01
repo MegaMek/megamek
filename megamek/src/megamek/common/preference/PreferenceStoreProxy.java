@@ -153,4 +153,9 @@ public abstract class PreferenceStoreProxy implements IPreferenceStore {
             IPreferenceChangeListener listener) {
         store.removePreferenceChangeListener(listener);
     }
+
+    @Override
+    public boolean hasProperty(String name) {
+        return store.hasProperty(name);
+    }
 }

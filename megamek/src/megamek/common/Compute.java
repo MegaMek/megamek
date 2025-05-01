@@ -5071,57 +5071,6 @@ public class Compute {
         return new SensorRangeHelper(minSensorRange, maxSensorRange, minGroundSensorRange, maxGroundSensorRange);
     }
 
-    public static int targetSideTable(Coords inPosition, Targetable target) {
-        return target.sideTable(inPosition);
-    }
-
-    public static int targetSideTable(Entity attacker, Targetable target) {
-        return Compute
-                .targetSideTable(attacker, target, CalledShot.CALLED_NONE);
-    }
-
-    public static int targetSideTable(Entity attacker, Targetable target, int called) {
-        Coords attackPos = attacker.getPosition();
-
-        Entity te = null;
-        if (target instanceof Entity) {
-            te = (Entity) target;
-        }
-
-        boolean usePrior = false;
-        // aeros in the same hex need to adjust position to get side
-        // table
-        if (isAirToAir(attacker.getGame(), attacker, target)
-                && attackPos.equals(target.getPosition())
-                && attacker.isAero() && target.isAero()) {
-            int moveSort = shouldMoveBackHex(attacker, (Entity) target);
-            if (moveSort < 0) {
-                attackPos = attacker.getPriorPosition();
-            }
-            usePrior = moveSort > 0;
-        }
-
-        // if this is an air to ground attack, then attacker position is given by
-        // the direction from which they entered the target hex
-        if (isAirToGround(attacker, target)) {
-            attackPos = attacker.passedThroughPrevious(target.getPosition());
-        }
-
-        if (isGroundToAir(attacker, target) && (null != te)) {
-            int facing = getClosestFlightPathFacing(attacker.getId(), attackPos, te);
-            Coords pos = getClosestFlightPath(attacker.getId(), attackPos, te);
-            return te.sideTable(attackPos, usePrior, facing, pos);
-        }
-
-        if ((null != te) && (called == CalledShot.CALLED_LEFT)) {
-            return te.sideTable(attackPos, usePrior, (te.getFacing() + 5) % 6);
-        } else if ((null != te) && (called == CalledShot.CALLED_RIGHT)) {
-            return te.sideTable(attackPos, usePrior, (te.getFacing() + 1) % 6);
-        }
-
-        return target.sideTable(attackPos, usePrior);
-    }
-
     /**
      * Compares the initiative of two aerospace units in the same hex to determine
      * attack angle.

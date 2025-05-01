@@ -335,7 +335,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // factor in target side
-        toHit.setSideTable(Compute.targetSideTable(ae, target));
+        toHit.setSideTable(ComputeSideTable.sideTable(ae, target));
 
         // done!
         return toHit;

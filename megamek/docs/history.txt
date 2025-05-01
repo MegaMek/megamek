@@ -1,7 +1,7 @@
 MEGAMEK VERSION HISTORY:
 ----------------
 0.50.06
-+ PR #6933: 0.50.06 Deprecation Removal and Clean up. 
++ PR #6933: 0.50.06 Deprecation Removal and Clean up.
 + PR #6901: move sprite, spriteHandler, overlay, toolTip, phaseDisplay and phaseDiplay.dialogs classes into packages
 + PR #6864: Added Heroic and Legendary Skill Levels
 + Fix #6915: Fixed Status of Uncrewed Vehicles
@@ -9,25 +9,27 @@ MEGAMEK VERSION HISTORY:
 + PR #6937: Calculate heat for vibroblades
 + Fix #6946: Fixes the Damage Status box on Label no appearing correctly. #6810
 + Fix #6945: uses bot skill generator when creating armies issue #6927
++ Fix #6953: Fixed Quad-Vees Taking PSRs and Falling While in Vehicle Mode
 + PR #6934: Dereference NPE Removals in MovementDisplay, moved MoveCommand to own class, added tests.
 + Fix #6954: Fixes NPE and missing portrait/deployment in Mek Customization dialog
 + Fix #6955: fuel tanks take zero damage from AE
 + Fix #6956: Correct fluff art for HHWs
++ Fix #6957: BA Artillery doing no damage
 
 0.50.05 (2025-04-25 1800 UTC)
 + Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1
 + PR #6752: Mek jump boosters and jump jets
 + PR #6758: Removed Deprecated methods from MMLogger and updated impacted calls
 + PR #6764: GitHub CodeQL Error Fixes
-+ PR #6763: MM-side fix for MHQ 6373: Prevent impossible Counter-Battery Fire shots from being taken 
-+ PR #6779: Fixed Missing Prone Modifier in Weapon Attack Calculation 
-+ PR #6777: Added Missing Handheld Weapon Unit Type to Messages Properties 
-+ PR #6776: Corrected Spelling of 'Land Air' Unit Type 
-+ PR #6774: Removed 3 Duplicate Callsigns 
-+ PR #6771: Add missing type check for MiscType 
-+ PR #6770: Fixed ConcurrentModification Exceptions In BV Calculation Methods 
-+ PR #6768: Fixed issues with Implicit narrowing conversion in compound assignment. 
-+ PR #6782: add Save As to the board preview in the lobby 
++ PR #6763: MM-side fix for MHQ 6373: Prevent impossible Counter-Battery Fire shots from being taken
++ PR #6779: Fixed Missing Prone Modifier in Weapon Attack Calculation
++ PR #6777: Added Missing Handheld Weapon Unit Type to Messages Properties
++ PR #6776: Corrected Spelling of 'Land Air' Unit Type
++ PR #6774: Removed 3 Duplicate Callsigns
++ PR #6771: Add missing type check for MiscType
++ PR #6770: Fixed ConcurrentModification Exceptions In BV Calculation Methods
++ PR #6768: Fixed issues with Implicit narrowing conversion in compound assignment.
++ PR #6782: add Save As to the board preview in the lobby
 + PR #6795: Fixes for various Artillery and Artillery Flak issues
 + PR #6796: feat: add a callsign to princess instead of numbers
 + PR #6806: Added Method for Variable Cost Check in MiscType
@@ -38,8 +40,8 @@ MEGAMEK VERSION HISTORY:
 + PR #6790: Data updates - Throw the freebirths a bone, quiaff? Clan conventional infantry
 + PR #6762: Update Stalker STK-8S.mtf
 + PR #6761: Stalker Jamison TechBase Fix: Mixed >>> Clan
-+ PR #6760: Update Tomahawk II (Prime).mtf 
-+ PR #6759: Update Mackie MSK-6S introduction date 
++ PR #6760: Update Tomahawk II (Prime).mtf
++ PR #6759: Update Mackie MSK-6S introduction date
 + Fix #6751: Princess will now deploy mines on her turn instead of at the start of the phase.
 + PR #6829: Expanded MathUtility Integer Parsing
 + PR #6832: Corrects custom armor calculation required for megameklab#1820 that fixes megameklab#1808: Conventional infantry custom armor not appearring on record sheet
@@ -141,7 +143,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6617: Preliminary handheld weapon support
 + Fix #6604: Fuel Air Explosives do no damage to off-board units
 + PR #6615: Feat: More princess commands - ignore player/turret, order offboard artillery
-+ Fix #6622: Putting multiple shields on a mek's arm is not flagged as invalid. 
++ Fix #6622: Putting multiple shields on a mek's arm is not flagged as invalid.
 + Fix #6641: Validate that HHWs can't have multiple different ammo bins for a single weapon kind.
 + Fix #6048: All short range artillery fire now happens in the weapon attack phase and uses attacker movement modifiers
 + Fix #6147: Infantry can now be carried in both infantry and cargo bays on vehicles
@@ -149,11 +151,11 @@ MEGAMEK VERSION HISTORY:
 + PR #6643: Fix MekHQ Issue 3655 - vehicle crew requirements for trailers
 + PR #6645: Support multiselect in the Add Unit dialog
 + PR #6647: Allow pasting units into selected player list (if selected)
-+ PR #6667: feat: allow princess to deploy mines in random clear hexes on the map 
++ PR #6667: feat: allow princess to deploy mines in random clear hexes on the map
 + PR #6653: Fixes MekHQ Issue 6026 - Prevents overkilling Aero when they should survive (ACAR)
 + Fix #6654: Prevents crashing when selected skin file is missing
 + Fix #6665: Wind strength adheres to wind min and max settings
-+ PR #6669: Replace Java accent normalization wtih ICU4J, a capable unicode library to normalize text in more scenarios 
++ PR #6669: Replace Java accent normalization wtih ICU4J, a capable unicode library to normalize text in more scenarios
 + PR #6661: Weapon Panel null check and logging
 + Fix #6630: Attempts to fix saving GIFs and improves error messages
 + Fix #6670: Makes gif writer finish the gif at victory phase
@@ -201,11 +203,11 @@ MEGAMEK VERSION HISTORY:
 + Fix MekHQ#6619: Move RestoreUnitAction::copyC3Networks from MekHQ to MegaMek's C3Utils
 + Fix #6867: Excluded Infantry Attack From Edit Unit Damage Dialog
 + PR #6885: fix: wrong access for weapon arc
-+ PR #6886: Change getWeaponArc signature and add JavaDocs 
-+ Fix #6899: fix can not load save in same version 
++ PR #6886: Change getWeaponArc signature and add JavaDocs
++ Fix #6899: fix can not load save in same version
 
 0.50.03 (2025-02-02 2030 UTC)
-+ PR #6335: default the directory filter to Select All in Advanced Board Search 
++ PR #6335: default the directory filter to Select All in Advanced Board Search
 + PR #6335: cleanup duplicate boards
 + PR #6328: Building type enum
 + PR #6340: MML tabbed UI docs update
@@ -232,7 +234,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6409: Campaign Options IIC - MegaMek Portion
 + PR #6415: fixes an error where force consolidation would not set the correct owner of the force
 + PR #6411: Don't load mml scratch files into unit cache
-+ PR #6414: Warnings on Campaign Load - MegaMek Portion 
++ PR #6414: Warnings on Campaign Load - MegaMek Portion
 + Fix #6412: Fix TacOps "Standing Still" modifier description
 + Fix #6373: Fixed "unit that starts and ends a Movement Phase in liquid magma takes an additional damage" so it doesn't apply to units above the magma
 + PR #6427 & #6428: Fix for Princess not ignoring Hidden and Ignored units. - Scoppio

@@ -129,11 +129,11 @@ public class AimedShotHandler implements ActionListener, ItemListener {
             mask[i] = true;
         }
 
-        int side = ComputeSideTable.sideTable(this.firingDisplay.ce(), this.firingDisplay.getTarget());
+        int side = ComputeSideTable.sideTable(firingDisplay.ce(), firingDisplay.getTarget());
 
         // on a tank, remove turret if its missing
         // also, remove body
-        if (this.firingDisplay.getTarget() instanceof Tank) {
+        if (firingDisplay.getTarget() instanceof Tank) {
             mask[Tank.LOC_BODY] = false;
             Tank tank = (Tank) this.firingDisplay.getTarget();
             if (tank.hasNoTurret()) {
@@ -141,7 +141,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
                 mask[turretLoc] = false;
             }
             // remove non-visible sides
-            if (this.firingDisplay.getTarget() instanceof LargeSupportTank) {
+            if (firingDisplay.getTarget() instanceof LargeSupportTank) {
                 if (side == ToHitData.SIDE_FRONT) {
                     mask[LargeSupportTank.LOC_FRONTLEFT] = false;
                     mask[LargeSupportTank.LOC_REARLEFT] = false;

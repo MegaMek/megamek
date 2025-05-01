@@ -5072,23 +5072,22 @@ public class Compute {
     }
 
     /**
-     * Compares the initiative of two aerospace units in the same hex to determine
-     * attack angle.
-     * The attack angle is computed as if the unit with the higher initiative were
-     * in its previous hex.
+     * Compares the initiative of two aerospace units in the same hex to determine attack angle. The attack angle is
+     * computed as if the unit with the higher initiative were in its previous hex.
      *
      * @param e1 The first <code>Entity</code> to compare
      * @param e2 The second <code>Entity</code> to compare
-     * @return &lt; 0 if the first unit has a higher initiative, &gt; 0 if the
-     *         second is higher,
-     *         or 0 if one of the units is not an aerospace unit, does not have a
-     *         valid position,
-     *         or the two units are not in the same hex.
+     *
+     * @return &lt; 0 if the first unit has a higher initiative, &gt; 0 if the second is higher, or 0 if one of the
+     *       units is not an aerospace unit, does not have a valid position, or the two units are not in the same hex.
      */
     public static int shouldMoveBackHex(Entity e1, Entity e2) {
-        if (null == e1.getPosition() || null == e2.getPosition()
-                || !e1.getPosition().equals(e2.getPosition())
-                || !e1.isAero() || !e2.isAero()) {
+        if (null == e1.getPosition()
+              || null == e2.getPosition()
+              || e1.getBoardId() != e2.getBoardId()
+              || !e1.getPosition().equals(e2.getPosition())
+              || !e1.isAero()
+              || !e2.isAero()) {
             return 0;
         }
 
@@ -5109,7 +5108,7 @@ public class Compute {
      * @param missiles - the <code>int</code> number of missiles in the pack.
      */
     public static int missilesHit(int missiles) {
-        return Compute.missilesHit(missiles, 0);
+        return missilesHit(missiles, 0);
     }
 
     /**
@@ -5120,7 +5119,7 @@ public class Compute {
      * @return
      */
     public static int missilesHit(int missiles, int nMod) {
-        return Compute.missilesHit(missiles, nMod, false);
+        return missilesHit(missiles, nMod, false);
     }
 
     /**
@@ -6723,23 +6722,24 @@ public class Compute {
         return false;
     }
 
+    /**
+     * Returns true when an attack of the attacker against the target is considered an A2G attack, see TW p.242-247.
+     * This includes strafing, striking and bombing. Attacks on Hex targets and Entity targets can be A2G attacks.
+     * Artillery attacks, even from an airborne aero unit, do not count as A2G attacks. Attacks from spaceborne aeros
+     * do not count as A2G attacks (they may count as O2G attacks). Also note that flying ground units such as VTOLs
+     * and WiGEs count as ground targets and so attacks against them may count as A2G attacks.
+     *
+     * @param attacker The assumed attacker
+     * @param target The assumed target
+     * @return True if the attack would be considered an A2G attack
+     */
     public static boolean isAirToGround(Entity attacker, Targetable target) {
-        if ((attacker == null) || (target == null)) {
-            return false;
-        }
-
-        // Artillery attacks need to return differently, since none of the usual air to
-        // ground modifiers apply to them
-        if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) {
-            return false;
-        }
-
-        if (attacker.isSpaceborne()) {
-            return false;
-        }
-        // According to errata, VTOL and WiGes are considered ground targets
-        return attacker.isAirborne() && !target.isAirborne() && attacker.isAero();
-
+        return (attacker != null) && (target != null)
+              && (target.getTargetType() != Targetable.TYPE_HEX_ARTILLERY)
+              && !attacker.isSpaceborne()
+              && attacker.isAirborne()
+              && target.isGround()
+              && attacker.isAero();
     }
 
     /**

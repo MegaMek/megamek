@@ -24,7 +24,8 @@ public final class CrossBoardAttackHelper {
      * Returns true when the given attacker can possibly attack the given target wherein attacker and target are not on
      * the same board.
      *
-     * <P>Note: Returns false when attacker and target are on the same board!</P>
+     * <P>Note: Returns false when attacker and target are on the same board! Also returns false when attacker or
+     * target do not have a valid position, i.e. are undeployed or offboard or transported.</P>
      *
      * <P>Note: This method is strict in that when it returns false, no attack is possible. It
      * may however return true when an attack is possible in principle but may still be hindered by some circumstance.
@@ -39,7 +40,8 @@ public final class CrossBoardAttackHelper {
      *       is definitely impossible
      */
     public static boolean isCrossBoardAttackPossible(Entity attacker, Targetable target, Game game) {
-        if ((attacker == null) || (target == null) || game.onTheSameBoard(attacker, target)) {
+        if ((attacker == null) || (target == null) || game.onTheSameBoard(attacker, target)
+              || !game.hasBoardLocationOf(attacker) || !game.hasBoardLocationOf(target)) {
             return false;
         }
 
@@ -49,7 +51,9 @@ public final class CrossBoardAttackHelper {
         }
 
         // An aero on an atmospheric board in a ground board hex is targetable by ground units along its flight path
-        if (Compute.isGroundToAir(attacker, target) && game.onDirectlyConnectedBoards(attacker, target)) {
+        if (Compute.isGroundToAir(attacker, target)
+              && game.onDirectlyConnectedBoards(attacker, target)
+              && inCorrespondingHexes(game, target, attacker)) {
             return true;
         }
 
@@ -76,6 +80,24 @@ public final class CrossBoardAttackHelper {
                      isCrossBoardArtyAttack(attacker, target, game) ||
                      isSurfaceToOrbit(attacker, target, game) ||
                      isAirborneToSurface(attacker, target, game);
+    }
+
+    /**
+     * Returns true when the flying unit is in the precise hex of an atmospheric board that corresponds to the board of
+     * the ground unit. In this case, e.g., the ground unit can make a G2A attack. Note that the flying and ground unit
+     * can both be target or attacker depending on the situation (i.e., order matters).
+     *
+     * @param flying The flying (aero) unit
+     * @param ground The ground unit
+     *
+     * @return True when the flying unit is in the hex "over" the ground unit
+     */
+    private static boolean inCorrespondingHexes(IGame game, Targetable flying, Targetable ground) {
+        return (flying != null)
+              && (ground != null)
+              && game.isOnGroundMap(ground)
+              && game.isOnAtmosphericMap(flying)
+              && game.getBoard(flying).getEmbeddedBoardAt(flying.getPosition()) == game.getBoard(ground).getBoardId();
     }
 
     public static boolean onGroundMapsWithinOneAtmoMap(Game game, Targetable unit1, Targetable unit2) {

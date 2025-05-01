@@ -86,6 +86,11 @@ factions:
     board: 0
     facing: 2
 
+  - fullname: Bulldog Medium Tank
+    at: [ 15,12 ]
+    board: 0
+    facing: 0
+
 #  - fullname: Locust LCT-1V
 #    board: 0
 #    at: [ 4,4 ]
@@ -129,6 +134,7 @@ factions:
     at: [ 8, 2 ]
     board: 2
     facing: 3
+    altitude: 1
 
 #  - fullname: AC/10 Turret (Dual)
 

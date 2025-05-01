@@ -47,12 +47,21 @@ public class ComputeSideTable {
      * @see CalledShot
      */
     public static int sideTable(Entity attacker, Targetable target, int calledShotType) {
-        Coords attackPos = attacker.getPosition();
+        if (target instanceof Entity entityTarget) {
+            return sideTableForEntityTarget(attacker, entityTarget, calledShotType);
 
-        Entity te = null;
-        if (target instanceof Entity) {
-            te = (Entity) target;
+        } else {
+            Coords attackPos = attacker.getPosition();
+            if (Compute.isAirToGround(attacker, target)) {
+                // attacker position is given by the direction from which they entered the target hex
+                attackPos = attacker.passedThroughPrevious(target.getPosition());
+            }
+            return target.sideTable(attackPos, false);
         }
+    }
+
+    private static int sideTableForEntityTarget(Entity attacker, Entity target, int calledShotType) {
+        Coords attackPos = attacker.getPosition();
 
         boolean usePrior = false;
         // aeros in the same hex need to adjust position to get side table
@@ -60,32 +69,32 @@ public class ComputeSideTable {
               && attackPos.equals(target.getPosition())
               && attacker.isAero()
               && target.isAero()) {
-            int moveSort = Compute.shouldMoveBackHex(attacker, te);
+            int moveSort = Compute.shouldMoveBackHex(attacker, target);
             if (moveSort < 0) {
                 attackPos = attacker.getPriorPosition();
             }
             usePrior = moveSort > 0;
         }
 
-        // if this is an air to ground attack, then attacker position is given by
-        // the direction from which they entered the target hex
         if (Compute.isAirToGround(attacker, target)) {
+            // attacker position is given by the direction from which they entered the target hex
             attackPos = attacker.passedThroughPrevious(target.getPosition());
 
-        } else if (Compute.isGroundToAir(attacker, target) && (null != te)) {
-            int facing = Compute.getClosestFlightPathFacing(attacker.getId(), attackPos, te);
-            Coords pos = Compute.getClosestFlightPath(attacker.getId(), attackPos, te);
-            return te.sideTable(attackPos, usePrior, facing, pos);
+        } else if (Compute.isGroundToAir(attacker, target)) {
+            int facing = Compute.getClosestFlightPathFacing(attacker.getId(), attackPos, target);
+            Coords pos = Compute.getClosestFlightPath(attacker.getId(), attackPos, target);
+            return target.sideTable(attackPos, usePrior, facing, pos);
         }
 
-        if ((null != te) && (calledShotType == CalledShot.CALLED_LEFT)) {
-            return te.sideTable(attackPos, usePrior, (te.getFacing() + 5) % 6);
+        if (calledShotType == CalledShot.CALLED_LEFT) {
+            return target.sideTable(attackPos, usePrior, (target.getFacing() + 5) % 6);
 
-        } else if ((null != te) && (calledShotType == CalledShot.CALLED_RIGHT)) {
-            return te.sideTable(attackPos, usePrior, (te.getFacing() + 1) % 6);
+        } else if (calledShotType == CalledShot.CALLED_RIGHT) {
+            return target.sideTable(attackPos, usePrior, (target.getFacing() + 1) % 6);
+
+        } else {
+            return target.sideTable(attackPos, usePrior);
         }
-
-        return target.sideTable(attackPos, usePrior);
     }
 
     private ComputeSideTable() { }

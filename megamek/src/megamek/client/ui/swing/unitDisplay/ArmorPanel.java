@@ -104,26 +104,15 @@ class ArmorPanel extends PicMap {
     }
 
     @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(0, 0);
-    }
-
-    @Override
-    public Dimension getMinimumSize() {
-        return new Dimension(0, 0);
-    }
-
-    @Override
     public void onResize() {
         Rectangle r = getContentBounds();
-        if (r == null) {
-            return;
+        if (r != null) {
+            int w = (getSize().width - r.width) / 2;
+            int h = (getSize().height - r.height) / 2;
+            int dx = Math.max(w, minLeftMargin);
+            int dy = Math.max(h, minTopMargin);
+            setContentMargins(dx, dy, minRightMargin, minBottomMargin);
         }
-        int w = Math.round(((getSize().width - r.width) / 2));
-        int h = Math.round(((getSize().height - r.height) / 2));
-        int dx = w < minLeftMargin ? minLeftMargin : w;
-        int dy = h < minTopMargin ? minTopMargin : h;
-        setContentMargins(dx, dy, minRightMargin, minBottomMargin);
     }
 
     /**

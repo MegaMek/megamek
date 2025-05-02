@@ -63,7 +63,7 @@ public class UnitDisplay extends JPanel {
     // buttons & gizmos for top level
     @Serial
     private static final long serialVersionUID = -2060993542227677984L;
-    public static final Dimension PREFERRED_SIZE = new Dimension(300, 600);
+
     private final JPanel panA1;
     private final JPanel panA2;
     private final JPanel panB1;
@@ -87,6 +87,16 @@ public class UnitDisplay extends JPanel {
     private Entity currentlyDisplaying;
     private final JLabel labTitle;
     private final List<MekDisplayListener> eventListeners = new ArrayList<>();
+
+    JScrollPane mPanScroll;
+    JScrollPane pPanScroll;
+    JScrollPane aPanScroll;
+    JScrollPane wPanScroll;
+    JScrollPane sPanScroll;
+    JScrollPane ePanScroll;
+
+    private static final int SCROLL_STEPS = 24;
+    private static final int SCROLLBAR_WIDTH = 6;
 
     public static final String NON_TABBED_GENERAL = "General";
     public static final String NON_TABBED_PILOT = "Pilot";
@@ -150,23 +160,41 @@ public class UnitDisplay extends JPanel {
         tabStrip.addBgDrawer(bgd);
 
         displayP = new JPanel(new CardLayout());
-        displayP.setPreferredSize(PREFERRED_SIZE);
         mPan = new SummaryPanel(this);
-        mPan.setPreferredSize(PREFERRED_SIZE);
         pPan = new PilotPanel(this);
-        pPan.setPreferredSize(PREFERRED_SIZE);
         aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null, this);
-        aPan.setPreferredSize(PREFERRED_SIZE);
         wPan = new WeaponPanel(this, clientgui != null ? clientgui.getClient() : null);
-        wPan.setPreferredSize(PREFERRED_SIZE);
         sPan = new SystemPanel(this);
-        sPan.setPreferredSize(PREFERRED_SIZE);
         ePan = new ExtraPanel(this);
-        ePan.setPreferredSize(PREFERRED_SIZE);
         JScrollPane scrollPane = new JScrollPane(displayP);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
+        // Wrap in JScrollPane
+        mPanScroll = new JScrollPane(mPan);
+        pPanScroll = new JScrollPane(pPan);
+        aPanScroll = new JScrollPane(aPan);
+        wPanScroll = new JScrollPane(wPan);
+        sPanScroll = new JScrollPane(sPan);
+        ePanScroll = new JScrollPane(ePan);
+        mPanScroll.setBorder(null);
+        pPanScroll.setBorder(null);
+        aPanScroll.setBorder(null);
+        wPanScroll.setBorder(null);
+        sPanScroll.setBorder(null);
+        ePanScroll.setBorder(null);
+        mPanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
+        pPanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
+        aPanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
+        wPanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
+        sPanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
+        ePanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
+        mPanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
+        pPanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
+        aPanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
+        wPanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
+        sPanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
+        ePanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
@@ -187,8 +215,8 @@ public class UnitDisplay extends JPanel {
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
 
-        ((GridBagLayout)getLayout()).setConstraints(scrollPane, c);
-        add(scrollPane);
+        ((GridBagLayout)getLayout()).setConstraints(displayP, c);
+        add(displayP);
 
         if (controller != null) {
             registerKeyboardCommands(this, controller);
@@ -307,12 +335,12 @@ public class UnitDisplay extends JPanel {
         panC1.removeAll();
         panC2.removeAll();
 
-        displayP.add(MekPanelTabStrip.SUMMARY, mPan);
-        displayP.add(MekPanelTabStrip.PILOT, pPan);
-        displayP.add(MekPanelTabStrip.ARMOR, aPan);
-        displayP.add(MekPanelTabStrip.WEAPONS, wPan);
-        displayP.add(MekPanelTabStrip.SYSTEMS, sPan);
-        displayP.add(MekPanelTabStrip.EXTRAS, ePan);
+        displayP.add(MekPanelTabStrip.SUMMARY, mPanScroll);
+        displayP.add(MekPanelTabStrip.PILOT, pPanScroll);
+        displayP.add(MekPanelTabStrip.ARMOR, aPanScroll);
+        displayP.add(MekPanelTabStrip.WEAPONS, wPanScroll);
+        displayP.add(MekPanelTabStrip.SYSTEMS, sPanScroll);
+        displayP.add(MekPanelTabStrip.EXTRAS, ePanScroll);
 
         tabStrip.setTab(MekPanelTabStrip.SUMMARY_INDEX);
 
@@ -337,12 +365,12 @@ public class UnitDisplay extends JPanel {
         panC1.removeAll();
         panC2.removeAll();
 
-        mPan.setVisible(true);
-        pPan.setVisible(true);
-        aPan.setVisible(true);
-        wPan.setVisible(true);
-        sPan.setVisible(true);
-        ePan.setVisible(true);
+        mPanScroll.setVisible(true);
+        pPanScroll.setVisible(true);
+        aPanScroll.setVisible(true);
+        wPanScroll.setVisible(true);
+        sPanScroll.setVisible(true);
+        ePanScroll.setVisible(true);
 
         linkParentChild(UnitDisplay.NON_TABBED_A1, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplay.NON_TABBED_A1));
         linkParentChild(UnitDisplay.NON_TABBED_B1, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplay.NON_TABBED_B1));
@@ -404,24 +432,12 @@ public class UnitDisplay extends JPanel {
      */
     private void addChildPanel(JPanel p, String v) {
         switch (v) {
-            case UnitDisplay.NON_TABBED_GENERAL:
-                p.add(mPan, BorderLayout.CENTER);
-                break;
-            case UnitDisplay.NON_TABBED_PILOT:
-                p.add(pPan, BorderLayout.CENTER);
-                break;
-            case UnitDisplay.NON_TABBED_WEAPON:
-                p.add(wPan, BorderLayout.CENTER);
-                break;
-            case UnitDisplay.NON_TABBED_SYSTEM:
-                p.add(sPan, BorderLayout.CENTER);
-                break;
-            case UnitDisplay.NON_TABBED_EXTRA:
-                p.add(ePan, BorderLayout.CENTER);
-                break;
-            case UnitDisplay.NON_TABBED_ARMOR:
-                p.add(aPan, BorderLayout.CENTER);
-                break;
+            case UnitDisplay.NON_TABBED_GENERAL -> p.add(mPanScroll, BorderLayout.CENTER);
+            case UnitDisplay.NON_TABBED_PILOT -> p.add(pPanScroll, BorderLayout.CENTER);
+            case UnitDisplay.NON_TABBED_WEAPON -> p.add(wPanScroll, BorderLayout.CENTER);
+            case UnitDisplay.NON_TABBED_SYSTEM -> p.add(sPanScroll, BorderLayout.CENTER);
+            case UnitDisplay.NON_TABBED_EXTRA -> p.add(ePanScroll, BorderLayout.CENTER);
+            case UnitDisplay.NON_TABBED_ARMOR -> p.add(aPanScroll, BorderLayout.CENTER);
         }
     }
 
@@ -491,6 +507,9 @@ public class UnitDisplay extends JPanel {
         wPan.displayMek(currentlyDisplaying);
         sPan.displayMek(currentlyDisplaying);
         ePan.displayMek(currentlyDisplaying);
+
+        displayP.revalidate();
+        displayP.repaint();
     }
 
     /**

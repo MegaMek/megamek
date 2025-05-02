@@ -2093,14 +2093,33 @@ public class Board implements Serializable {
         return boardType.isGround();
     }
 
+    /**
+     * @return True if this board is a low altitude (a.k.a. atmospheric) board, either with terrain or without
+     * terrain ("sky").
+     */
     public boolean isLowAltitude() {
-        return boardType.isLowAtmospheric();
+        return boardType.isLowAltitude();
     }
 
+    /**
+     * @return True if this board is a low altitude (a.k.a. atmospheric) board without terrain ("sky").
+     */
+    public boolean isSky() {
+        return boardType.isSky();
+    }
+
+    /**
+     * @return True if this board is a space board, either close to a planet with some atmospheric hexes ("high
+     * altitude") or in deeper space.
+     */
     public boolean isSpace() {
         return boardType.isSpace();
     }
 
+    /**
+     * @return True if this board is a high altitude board, i.e. a space board close to a planet with some atmospheric
+     * hexes.
+     */
     public boolean isHighAltitude() {
         return boardType.isHighAltitude();
     }

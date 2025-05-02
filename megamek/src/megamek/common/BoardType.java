@@ -23,22 +23,22 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * Represents the type of a game map. Note that low atmosphere (aka atmospheric) maps may come with or without
- * terrain and space maps may be high atmospheric maps when they are near a planet.
- * Radar and Capital Radar maps may be used in the Abstract Aerospace Combat rules of SO:AA.
+ * Represents the type of a game board (map). Note that low altitude (aka atmospheric) maps may come with or without
+ * terrain and space maps may be high altitude maps when they are near a planet. Radar and Capital Radar maps may be
+ * used in the Abstract Aerospace Combat rules of SO:AA and SBF.
  */
 public enum BoardType implements Serializable {
     GROUND("G"),
-    
+
     // The following are intentionally not named as in the rules so the temptation to compare directly with them is 
-    // low. Compare using the is... methods
+    // low. Compare using the isXYZ() methods
+
     FAR_SPACE("FS"), // space without planetary surface
     NEAR_SPACE("NS"), // space with planetary surface, aka high atmospheric
     SKY("SA"), // low atmosphere without ground terrain
     SKY_WITH_TERRAIN("GA"), // low atmosphere with ground terrain
 
-    // usable in SBF
-    RADAR("R"), 
+    RADAR("R"),
     CAPITAL_RADAR("C");
 
     private final String code;
@@ -49,18 +49,26 @@ public enum BoardType implements Serializable {
 
     /**
      * @return True if this board type is a space map, either close to a planet with some atmospheric hexes ("high
-     * altitude") or in deeper space.
+     *       altitude") or in deeper space.
      */
     public boolean isSpace() {
         return this == FAR_SPACE || this == NEAR_SPACE;
     }
 
     /**
-     * @return True if this board type is an atmospheric map, either with or without terrain ("sky"). This has
-     * nothing to do with planetary conditions, only the type of board.
+     * @return True if this board type is an atmospheric map, either with or without terrain ("sky"). This has nothing
+     *       to do with planetary conditions, only the type of board.
      */
-    public boolean isLowAtmospheric() {
+    public boolean isLowAltitude() {
         return this == SKY_WITH_TERRAIN || this == SKY;
+    }
+
+    /**
+     * @return True if this board type is an atmospheric map without terrain ("sky"). This has nothing
+     *       to do with planetary conditions, only the type of board.
+     */
+    public boolean isSky() {
+        return this == SKY;
     }
 
     /**
@@ -121,7 +129,7 @@ public enum BoardType implements Serializable {
     }
 
     /**
-     * @return A value to use for ordering boards according to ground, atmospheric, space.
+     * @return A value to use for ordering boards according to ground - atmospheric - space.
      */
     public int orderValue() {
         return switch (this) {

@@ -301,7 +301,7 @@ public interface IAero {
     default PilotingRollData checkVelocityDouble(int velocity, EntityMovementType overallMoveType) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(overallMoveType);
 
-        if ((velocity > (2 * ((Entity) this).getWalkMP())) && !((Entity) this).getGame().getBoard().isSpace()) {
+        if ((velocity > (2 * ((Entity) this).getWalkMP())) && !isSpaceborne()) {
             // append the reason modifier
             roll.append(new PilotingRollData(((Entity) this).getId(), 0, "Velocity greater than 2x safe thrust"));
         } else {
@@ -383,7 +383,7 @@ public interface IAero {
         // Supposed to be -1 for lifting off from an "airfield or landing pad."
         // We will just treat this as having paved terrain
         Coords pos = ((Entity) this).getPosition();
-        Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
+        Hex hex = ((Entity) this).getGame().getHexOf((Entity) this);
         if ((null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
             roll.addModifier(-1, "on landing pad");
         }
@@ -400,10 +400,10 @@ public interface IAero {
         positions.add(pos);
         Hex adjHex;
         for (Coords currPos : positions) {
-            hex = ((Entity) this).getGame().getBoard().getHex(currPos);
+            hex = ((Entity) this).getGame().getHex(currPos, ((Entity) this).getBoardId());
             for (int dir = 0; dir < 6; dir++) {
                 Coords adj = currPos.translated(dir);
-                adjHex = ((Entity) this).getGame().getBoard().getHex(adj);
+                adjHex = ((Entity) this).getGame().getHex(adj, ((Entity) this).getBoardId());
                 if (!positions.contains(adj) && (adjHex != null) && adjHex.getLevel() <= hex.getLevel()) {
                     allAdjacentHigher = false;
                     break;
@@ -761,8 +761,8 @@ public interface IAero {
 
     default String hasRoomForVerticalLanding() {
         Coords pos = ((Entity) this).getPosition();
-        Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
-        if (((Entity) this).getGame().getBoard().getBuildingAt(pos) != null) {
+        Hex hex = ((Entity) this).getGame().getHexOf((Entity) this);
+        if (((Entity) this).getGame().getBuildingAt(pos, ((Entity) this).getBoardId()).isPresent()) {
             return "Buildings in the way";
         }
         // no units in the way

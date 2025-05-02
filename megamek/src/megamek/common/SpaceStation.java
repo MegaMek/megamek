@@ -16,11 +16,14 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.SpaceStationCostCalculator;
 import megamek.common.options.OptionsConstants;
 
+import java.io.Serial;
+
 /**
  * @author Jay Lawson
  * @since Jun 17, 2007
  */
 public class SpaceStation extends Jumpship {
+    @Serial
     private static final long serialVersionUID = -3160156173650960985L;
 
     /** A station over this weight in may built as a modular station. */
@@ -118,28 +121,9 @@ public class SpaceStation extends Jumpship {
         }
     }
 
-    /**
-     * All military space stations automatically have ECM if in space
-     */
-    @Override
-    public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().isSpace()) {
-            return super.hasActiveECM();
-        }
-        return getECMRange() >= 0;
-    }
-
-    /**
-     * What's the range of the ECM equipment?
-     *
-     * @return the <code>int</code> range of this unit's ECM. This value will be
-     *         <code>Entity.NONE</code> if no ECM is active.
-     */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().isSpace()) {
+        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {

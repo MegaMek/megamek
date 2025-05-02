@@ -289,8 +289,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     public int getAirMekCruiseMP(MPCalculationSetting mpCalculationSetting) {
-        if (game != null &&
-                  game.getBoard().isLowAltitude() &&
+        if (game != null && game.isOnAtmosphericMap(this) &&
                   (isLocationBad(Mek.LOC_LT) || isLocationBad(Mek.LOC_RT))) {
             return 0;
         }
@@ -298,8 +297,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     public int getAirMekFlankMP(MPCalculationSetting mpCalculationSetting) {
-        if (game != null &&
-                  game.getBoard().isLowAltitude() &&
+        if (game != null && game.isOnAtmosphericMap(this) &&
                   (isLocationBad(Mek.LOC_LT) || isLocationBad(Mek.LOC_RT))) {
             return 0;
         }
@@ -658,11 +656,11 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
-                  !game.getBoard().isSpace()) {
+        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) && isSpaceborne()) {
+            return Math.min(super.getECMRange(), 0);
+        } else {
             return super.getECMRange();
         }
-        return Math.min(super.getECMRange(), 0);
     }
 
     /**
@@ -862,7 +860,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             // if in atmosphere, then halve next turn's velocity
-            if (!game.getBoard().isSpace() && isDeployed() && (roundNumber > 0)) {
+            if (!isSpaceborne() && isDeployed() && (roundNumber > 0)) {
                 setNextVelocity((int) Math.floor(getNextVelocity() / 2.0));
             }
 
@@ -917,7 +915,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      */
     @Override
     public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
-        boolean inSpace = game != null && game.getBoard().isSpace();
+        boolean inSpace = game != null && isSpaceborne();
         if (previousMovementMode == EntityMovementMode.WIGE) {
             if (afterMode == EntityMovementMode.WIGE) {
                 return EntityMovementMode.AERODYNE;
@@ -992,12 +990,12 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         } else if (toMode == CONV_MODE_FIGHTER) {
             // Standard LAMs can convert from mek to fighter mode in a single round on a space map
             if (fromMode == CONV_MODE_MEK) {
-                return getLAMType() == LAM_BIMODAL || game.getBoard().isSpace();
+                return getLAMType() == LAM_BIMODAL || isSpaceborne();
             }
         } else if (toMode == CONV_MODE_MEK) {
             // Standard LAMs can convert from fighter to mek mode in a single round on a space map
             if (fromMode == CONV_MODE_FIGHTER) {
-                return getLAMType() == LAM_BIMODAL || game.getBoard().isSpace();
+                return getLAMType() == LAM_BIMODAL || isSpaceborne();
             }
         }
         return true;
@@ -1773,7 +1771,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     @Override
     public int getElevation() {
-        if ((game != null) && game.getBoard().isSpace()) {
+        if (isSpaceborne()) {
             return 0;
         }
         // Altitude is not the same as elevation. If an aero is at 0 altitude, then it is grounded and uses elevation

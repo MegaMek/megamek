@@ -94,9 +94,6 @@ public class SmallCraft extends Aero {
         }
     }
 
-    /**
-     * @return Returns the autoEject setting (always off for large craft)
-     */
     @Override
     public boolean isAutoEject() {
         return false;
@@ -362,7 +359,7 @@ public class SmallCraft extends Aero {
 
         // special rules for spheroids in atmosphere
         // http://www.classicbattletech.com/forums/index.php/topic,54077.0.html
-        if (isSpheroid() && table != ToHitData.HIT_SPHEROID_CRASH && !game.getBoard().isSpace()) {
+        if (isSpheroid() && table != ToHitData.HIT_SPHEROID_CRASH && !isSpaceborne()) {
             int preroll = Compute.d6(1);
             if ((table == ToHitData.HIT_ABOVE) && (preroll < 4)) {
                 side = ToHitData.SIDE_FRONT;
@@ -638,7 +635,7 @@ public class SmallCraft extends Aero {
                     arc = Compute.ARC_360;
             }
         } else {
-            if ((game != null) && game.getBoard().isSpace()) {
+            if (isSpaceborne()) {
                 switch (mounted.getLocation()) {
                     case LOC_NOSE:
                         if (mounted.isInWaypointLaunchMode()) {
@@ -809,16 +806,14 @@ public class SmallCraft extends Aero {
         return 3 + getExtraCommGearTons();
     }
 
-    /**
-     * All military small craft automatically have ECM if in space
-     */
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
-                  !game.getBoard().isSpace()) {
+        // Military small craft automatically have ECM if in space
+        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) && isSpaceborne()) {
+            return getECMRange() >= 0;
+        } else {
             return super.hasActiveECM();
         }
-        return getECMRange() >= 0;
     }
 
     /**
@@ -829,8 +824,7 @@ public class SmallCraft extends Aero {
      */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
-                  !game.getBoard().isSpace()) {
+        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {
@@ -856,33 +850,19 @@ public class SmallCraft extends Aero {
         return range;
     }
 
-    /**
-     * @return is the crew of this vessel protected from gravitational effects, see StratOps, pg. 36
-     */
     @Override
     public boolean isCrewProtected() {
         return isMilitary() && (getOriginalWalkMP() > 4);
     }
 
-    /**
-     * Return the height of this small craft above the terrain.
-     */
     @Override
     public int height() {
-        if (isAirborne()) {
-            return 0;
-        }
-        return 1;
+        return isAirborne() ? 0 : 1;
     }
 
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
-    }
-
-    @Override
-    public boolean isFighter() {
-        return false;
     }
 
     /**
@@ -894,11 +874,6 @@ public class SmallCraft extends Aero {
     @Override
     public boolean isBomber() {
         return (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB));
-    }
-
-    @Override
-    public boolean isAerospaceFighter() {
-        return false;
     }
 
     /**

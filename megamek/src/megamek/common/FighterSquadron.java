@@ -189,11 +189,10 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().isSpace()) {
-            return super.hasActiveECM();
-        } else {
+        if (isSpaceborne() && isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return getActiveSubEntities().stream().anyMatch(Entity::hasActiveECM);
+        } else {
+            return super.hasActiveECM();
         }
     }
 
@@ -576,8 +575,8 @@ public class FighterSquadron extends AeroSpaceFighter {
             extBombChoices[type] = 0;
         }
         // add the space bomb attack
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
-                && game.getBoard().isSpace() && !getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
+        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
+                && isSpaceborne() && !getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
             try {
                 addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (Exception ignored) {
@@ -585,7 +584,7 @@ public class FighterSquadron extends AeroSpaceFighter {
             }
         }
 
-        if (!game.getBoard().isSpace() && !getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
+        if (!isSpaceborne() && !getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
             try {
                 addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (Exception ignored) {

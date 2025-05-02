@@ -1091,23 +1091,16 @@ public class Jumpship extends Aero {
      */
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
-                  !game.getBoard().isSpace()) {
+        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) && isSpaceborne()) {
+            return getECMRange() >= 0;
+        } else {
             return super.hasActiveECM();
         }
-        return getECMRange() >= 0;
     }
 
-    /**
-     * What's the range of the ECM equipment?
-     *
-     * @return the <code>int</code> range of this unit's ECM. This value will be
-     *       <code>Entity.NONE</code> if no ECM is active.
-     */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
-                  !game.getBoard().isSpace()) {
+        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {

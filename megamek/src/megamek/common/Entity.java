@@ -3405,7 +3405,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isBoardProhibited(BoardType boardType) {
         return (boardType.isGround() && doomedOnGround()) ||
-                     (boardType.isLowAtmospheric() && doomedInAtmosphere()) ||
+                     (boardType.isLowAltitude() && doomedInAtmosphere()) ||
                      (boardType.isSpace() && doomedInSpace());
     }
 
@@ -12676,8 +12676,10 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns true when this unit is currently on a space board, either close to a planet ("high altitude") or in deep
      * space but only if its position is valid, i.e. not when it is transported or otherwise has a null position or is
-     * off board or undeployed. On a high altitude board, a unit is spaceborne even if it happens to be on an atmosphere
+     * off board or undeployed. On a high altitude board, a unit is spaceborne even if it happens to be in an atmosphere
      * hex.
+     * <p>
+     * This method is safe to call when game is null.
      *
      * @return True when in space
      */
@@ -15605,5 +15607,16 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isInBuilding() {
         return Compute.isInBuilding(game, elevation, position, boardId);
+    }
+
+    /**
+     * Returns true when this Entity's game is not null and the given boolean game option is active in the game. This
+     * is a convenience method to avoid NPEs.
+     *
+     * @param optionName The name of the game option, e.g. OptionsConstants.ADVAERORULES_STRATOPS_ECM
+     * @return True when the Entity is part of a game and the option is active in that game
+     */
+    protected boolean isActiveOption(String optionName) {
+        return (game != null) && game.getOptions().booleanOption(optionName);
     }
 }

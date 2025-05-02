@@ -490,7 +490,7 @@ public class QuadVee extends QuadMek {
                 }
             }
             // are we wheeled and in light snow?
-            Hex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getHexOf(this);
             if ((null != hex) && getMovementMode().isWheeled()
                     && (hex.terrainLevel(Terrains.SNOW) == 1)) {
                 roll.addModifier(1, "thin snow");
@@ -533,7 +533,7 @@ public class QuadVee extends QuadMek {
     @Override
     public boolean canGoHullDown() {
         if (getConversionMode() == CONV_MODE_VEHICLE != convertingNow) {
-            Hex occupiedHex = game.getBoard().getHex(getPosition());
+            Hex occupiedHex = game.getHexOf(this);
             return occupiedHex.containsTerrain(Terrains.FORTIFIED)
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
         }

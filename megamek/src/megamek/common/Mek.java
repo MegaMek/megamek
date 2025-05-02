@@ -1067,7 +1067,7 @@ public abstract class Mek extends Entity {
               .count();
 
         if (!mpCalculationSetting.ignoreSubmergedJumpJets && hasOccupiedHex() && getElevation() < 0) {
-            int waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
+            int waterLevel = game.getHexOf(this).terrainLevel(Terrains.WATER);
             if (waterLevel > 1) {
                 return 0;
             } else if (waterLevel == 1) {

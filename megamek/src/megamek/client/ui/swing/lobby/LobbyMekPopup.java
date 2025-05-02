@@ -855,8 +855,12 @@ class LobbyMekPopup {
             miSelectedCamouflage.addActionListener(evt -> {
                 final CamoChooserDialog camoChooserDialog = new CamoChooserDialog(frame,
                         entity.getCamouflageOrElseOwners());
-                if (camoChooserDialog.showDialog().isConfirmed()) {
-                    exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), false);
+                try {
+                    if (camoChooserDialog.showDialog().isConfirmed()) {
+                        exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), false);
+                    }
+                } finally {
+                    camoChooserDialog.dispose();
                 }
             });
             exportUnitSpriteMenu.add(miSelectedCamouflage);
@@ -869,9 +873,13 @@ class LobbyMekPopup {
             miSelectedCamouflageAndCurrentDamage.addActionListener(evt -> {
                 final CamoChooserDialog camoChooserDialog = new CamoChooserDialog(frame,
                         entity.getCamouflageOrElseOwners());
-                if (camoChooserDialog.showDialog().isConfirmed()) {
-                    exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), true);
-                }
+                        try {
+                            if (camoChooserDialog.showDialog().isConfirmed()) {
+                                exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), true);
+                            }
+                        } finally {
+                            camoChooserDialog.dispose();
+                        }
             });
             exportUnitSpriteMenu.add(miSelectedCamouflageAndCurrentDamage);
         }

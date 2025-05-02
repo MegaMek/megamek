@@ -464,20 +464,23 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
         Player player = getSelectedClient().getLocalPlayer();
         CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(), player.getCamouflage());
-        java.util.List<Entity> playerEntities = game().getPlayerEntities(player, false);
-        if (!playerEntities.isEmpty()) {
-            ccd.setDisplayedEntity(CollectionUtil.anyOneElement(playerEntities));
+        try {
+            java.util.List<Entity> playerEntities = game().getPlayerEntities(player, false);
+            if (!playerEntities.isEmpty()) {
+                ccd.setDisplayedEntity(CollectionUtil.anyOneElement(playerEntities));
+            }
+            // If the dialog was canceled or nothing selected, do nothing
+            if (!ccd.showDialog().isConfirmed()) {
+                return;
+            }
+    
+            // Update the player from the camo selection
+            player.setCamouflage(ccd.getSelectedItem());
+            butCamo.setIcon(player.getCamouflage().getImageIcon());
+            getSelectedClient().sendPlayerInfo();
+        } finally {
+            ccd.dispose();
         }
-
-        // If the dialog was canceled or nothing selected, do nothing
-        if (!ccd.showDialog().isConfirmed()) {
-            return;
-        }
-
-        // Update the player from the camo selection
-        player.setCamouflage(ccd.getSelectedItem());
-        butCamo.setIcon(player.getCamouflage().getImageIcon());
-        getSelectedClient().sendPlayerInfo();
     };
 
     private void setupTeamOverview() {

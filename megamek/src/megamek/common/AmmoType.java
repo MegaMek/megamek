@@ -12222,6 +12222,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Barracuda Ammo";
+        ammo.shortName = "B";
         ammo.setInternalName("Ammo AR10 Barracuda");
         ammo.addLookupName("AR10 Barracuda Ammo");
         ammo.shortName = "Barracuda";
@@ -12256,6 +12257,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Killer Whale Ammo";
+        ammo.shortName = "KW";
         ammo.setInternalName("Ammo AR10 Killer Whale");
         ammo.addLookupName("AR10 KillerWhale Ammo");
         ammo.shortName = "Killer Whale";
@@ -12289,6 +12291,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 White Shark Ammo";
+        ammo.shortName = "WS";
         ammo.setInternalName("Ammo AR10 White Shark");
         ammo.addLookupName("AR10 WhiteShark Ammo");
         ammo.shortName = "White Shark";
@@ -12324,6 +12327,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Barracuda (Tele-Operated) Ammo";
+        ammo.shortName = "B-T";
         ammo.setInternalName("Ammo AR10 Barracuda-T");
         ammo.addLookupName("AR10 BarracudaT Ammo");
         ammo.shortName = "Barracuda-T";
@@ -12354,6 +12358,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Killer Whale (Tele-Operated) Ammo";
+        ammo.shortName = "KW-T";
         ammo.setInternalName("Ammo AR10 Killer Whale-T");
         ammo.addLookupName("AR10 KillerWhaleT Ammo");
         ammo.shortName = "Killer Whale-T";
@@ -12383,6 +12388,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 White Shark (Tele-Operated) Ammo";
+        ammo.shortName = "WS-T";
         ammo.setInternalName("Ammo AR10 White Shark-T");
         ammo.addLookupName("AR10 WhiteSharkT Ammo");
         ammo.shortName = "White Shark-T";
@@ -15220,6 +15226,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Peacemaker Ammo";
+        ammo.shortName = "PM-N";
         ammo.setInternalName("Ammo AR10 Peacemaker");
         ammo.addLookupName("AR10 Peacemaker Ammo");
         ammo.shortName = "Peacemaker";
@@ -15272,6 +15279,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Santa Anna Ammo";
+        ammo.shortName = "SA-N";
         ammo.setInternalName("Ammo AR10 Santa Anna");
         ammo.addLookupName("AR10 SantaAnna Ammo");
         ammo.shortName = "Santa Anna";

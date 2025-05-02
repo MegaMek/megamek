@@ -62,11 +62,13 @@ public class ComputeSideTable {
 
     private static int sideTableForEntityTarget(Entity attacker, Entity target, int calledShotType) {
         Coords attackPos = attacker.getPosition();
+        Game game = attacker.game;
 
         boolean usePrior = false;
         // aeros in the same hex need to adjust position to get side table
         if (Compute.isAirToAir(attacker.getGame(), attacker, target)
               && attackPos.equals(target.getPosition())
+              && game.onTheSameBoard(attacker, target)
               && attacker.isAero()
               && target.isAero()) {
             int moveSort = Compute.shouldMoveBackHex(attacker, target);
@@ -86,14 +88,30 @@ public class ComputeSideTable {
             return target.sideTable(attackPos, usePrior, facing, pos);
         }
 
+        // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
+        // position of the unit on the ground map with the position of the ground map itself in the atmo map
+        Coords effectiveTargetPosition = target.getPosition();
+        if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
+              && (game.onDirectlyConnectedBoards(attacker, target) || CrossBoardAttackHelper.onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
+            if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
+                attackPos = game.getBoard(target).embeddedBoardLocation(attacker.getBoardId());
+            } else if (game.isOnAtmosphericMap(attacker) && game.isOnGroundMap(target)) {
+                effectiveTargetPosition = game.getBoard(attacker).embeddedBoardLocation(target.getBoardId());
+            } else if (game.isOnGroundMap(attacker) && game.isOnGroundMap(target)) {
+                // Different ground maps, here replace both positions with their respective atmo map hexes
+                attackPos = game.getBoard(target).embeddedBoardLocation(attacker.getBoardId());
+                effectiveTargetPosition = game.getBoard(attacker).embeddedBoardLocation(target.getBoardId());
+            }
+        }
+
         if (calledShotType == CalledShot.CALLED_LEFT) {
-            return target.sideTable(attackPos, usePrior, (target.getFacing() + 5) % 6);
+            return target.sideTable(attackPos, usePrior, (target.getFacing() + 5) % 6, effectiveTargetPosition);
 
         } else if (calledShotType == CalledShot.CALLED_RIGHT) {
-            return target.sideTable(attackPos, usePrior, (target.getFacing() + 1) % 6);
+            return target.sideTable(attackPos, usePrior, (target.getFacing() + 1) % 6, effectiveTargetPosition);
 
         } else {
-            return target.sideTable(attackPos, usePrior);
+            return target.sideTable(attackPos, usePrior, target.getFacing(), effectiveTargetPosition);
         }
     }
 

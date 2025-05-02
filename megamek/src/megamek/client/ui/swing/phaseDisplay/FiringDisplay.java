@@ -2054,6 +2054,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
         clearAttacks();
         clearMarkedHexes();
+        if (ce() != null) {
+            clientgui.showBoardView(ce().getBoardId());
+        }
         refreshAll();
     }
 

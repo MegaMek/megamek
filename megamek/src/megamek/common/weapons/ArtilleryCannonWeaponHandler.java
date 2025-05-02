@@ -123,7 +123,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
         } else {
             Board board = game.getBoard(target);
-            if (!board.inSpace()) {
+            if (!board.isSpace()) {
                 targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS()) + 1) / 2);
                 if (board.contains(targetPos)) {
                     // misses and scatters to another hex

@@ -820,7 +820,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
         int hits;
-        if (game.getBoard().inSpace() || waa.isAirToAir(game) || waa.isAirToGround(game)) {
+        if (game.getBoard().isSpace() || waa.isAirToAir(game) || waa.isAirToGround(game)) {
             // Ensures single AMS state is properly updated
             getAMSHitsMod(new Vector<>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
@@ -947,7 +947,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (hits == 0) {
                 r = new Report(3365);
                 r.subject = subjectId;
-                if (target.isAirborne() || game.getBoard().inSpace()) {
+                if (target.isAirborne() || game.getBoard().isSpace()) {
                     r.indent(2);
                 }
                 vPhaseReport.addElement(r);

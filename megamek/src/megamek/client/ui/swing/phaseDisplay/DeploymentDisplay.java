@@ -493,7 +493,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 return;
             }
 
-            if (!board.inSpace()) {
+            if (!board.isSpace()) {
                 int finalElevation;
                 var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
                         board.getHex(coords), game);

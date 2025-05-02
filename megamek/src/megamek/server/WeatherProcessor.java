@@ -70,7 +70,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         }
 
         // first we need to increment the conditions
-        if (conditions.getWeather().isModerateSnowOrSnowFlurries() && board.onGround()) {
+        if (conditions.getWeather().isModerateSnowOrSnowFlurries() && board.isGround()) {
             modSnowTurn = modSnowTurn + 1;
             if (modSnowTurn == 9) {
                 lightSnow = true;
@@ -80,7 +80,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 ice = true;
             }
         }
-        if (conditions.getWeather().isHeavySnow() && board.onGround()) {
+        if (conditions.getWeather().isHeavySnow() && board.isGround()) {
             heavySnowTurn = heavySnowTurn + 1;
             if (heavySnowTurn == 4) {
                 lightSnow = true;
@@ -92,13 +92,13 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 ice = true;
             }
         }
-        if (conditions.getWeather().isSleet() && board.onGround()) {
+        if (conditions.getWeather().isSleet() && board.isGround()) {
             sleetTurn = sleetTurn + 1;
             if (sleetTurn == 14) {
                 ice = true;
             }
         }
-        if (conditions.getWeather().isIceStorm() && board.onGround()) {
+        if (conditions.getWeather().isIceStorm() && board.isGround()) {
             iceTurn = iceTurn + 1;
             if (iceTurn == 9) {
                 ice = true;

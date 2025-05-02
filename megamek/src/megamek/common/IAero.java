@@ -301,7 +301,7 @@ public interface IAero {
     default PilotingRollData checkVelocityDouble(int velocity, EntityMovementType overallMoveType) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(overallMoveType);
 
-        if ((velocity > (2 * ((Entity) this).getWalkMP())) && !((Entity) this).getGame().getBoard().inSpace()) {
+        if ((velocity > (2 * ((Entity) this).getWalkMP())) && !((Entity) this).getGame().getBoard().isSpace()) {
             // append the reason modifier
             roll.append(new PilotingRollData(((Entity) this).getId(), 0, "Velocity greater than 2x safe thrust"));
         } else {
@@ -347,7 +347,7 @@ public interface IAero {
             // an airborne, aerodyne aero is considered to "stall" if it's not moving anywhere, hovering, landing, or
             // going off board
         } else if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid()
-                && !thisEntity.getGame().getBoard(md.getFinalBoardId()).inSpace() && !md.contains(MoveStepType.LAND)
+                && !thisEntity.getGame().getBoard(md.getFinalBoardId()).isSpace() && !md.contains(MoveStepType.LAND)
                 && !md.contains(MoveStepType.VLAND) && !md.contains(MoveStepType.RETURN)
                 && !md.contains(MoveStepType.OFF) && !md.contains(MoveStepType.FLEE)) {
             roll.append(new PilotingRollData(thisEntity.getId(), 0, "stalled out"));

@@ -787,7 +787,7 @@ public class FireControl {
 
         // Check range.
         int distance = shooterState.getPosition().distance(targetState.getPosition());
-        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard().onGround()) {
+        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard().isGround()) {
             // Aerospace firing at each on the ground map have immense range.
             distance /= 16;
         }
@@ -1749,7 +1749,7 @@ public class FireControl {
         if (shooter.isAirborne()
                 && shooter.isLargeCraft()
                 && shooter.isSpheroid()
-                && game.getBoard().onGround()
+                && game.getBoard().isGround()
                 && !target.isAirborne()) {
             // This process takes a long time for no reason; the likelihood of being able to
             // strike or hit an enemy (other than Aero) is next to nil.
@@ -1901,7 +1901,7 @@ public class FireControl {
             return myPlan;
         }
 
-        if (shooter.isAirborne() && shooter.isLargeCraft() && shooter.isSpheroid() && game.getBoard().onGround()) {
+        if (shooter.isAirborne() && shooter.isLargeCraft() && shooter.isSpheroid() && game.getBoard().isGround()) {
             // This process takes a long time for no reason; the likelihood of being able to
             // strike or hit an enemy Aero is next to nil.
             logger.debug(

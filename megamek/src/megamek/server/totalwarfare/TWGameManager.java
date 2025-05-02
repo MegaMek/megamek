@@ -1973,7 +1973,7 @@ public class TWGameManager extends AbstractGameManager {
                     a.liftOff(0);
                 } else {
                     // check for grounding
-                    if (game.getBoard().inAtmosphere() && !entity.isAirborne()) {
+                    if (game.getBoard().isLowAltitude() && !entity.isAirborne()) {
                         // you have to be airborne on the atmospheric map
                         a.liftOff(entity.getAltitude());
                     }
@@ -2971,7 +2971,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // we don't much care about wind direction and such in a hard vacuum
-            boolean spaceGame = game.getBoards().values().stream().allMatch(Board::isSpaceMap);
+            boolean spaceGame = game.getBoards().values().stream().allMatch(Board::isSpace);
             if (!spaceGame) {
                 // Wind direction and strength
                 PlanetaryConditions conditions = game.getPlanetaryConditions();
@@ -3678,7 +3678,7 @@ public class TWGameManager extends AbstractGameManager {
         // launching from an OOC vessel causes damage
         // same thing if faster than 2 velocity in atmosphere
         if ((((Aero) unloader).isOutControlTotal() && !unit.isDoomed()) ||
-                  ((((Aero) unloader).getCurrentVelocity() > 2) && !game.getBoard().inSpace())) {
+                  ((((Aero) unloader).getCurrentVelocity() > 2) && !game.getBoard().isSpace())) {
             Roll diceRoll = Compute.rollD6(2);
             int damage = diceRoll.getIntValue() * 10;
             String rollCalc = damage + "[" + diceRoll.getIntValue() + " * 10]";
@@ -3750,7 +3750,7 @@ public class TWGameManager extends AbstractGameManager {
         // Spheroid - facing
         // Aerodyne - opposite of facing
         // http://www.classicbattletech.com/forums/index.php?topic=65600.msg1568089#new
-        if (game.getBoard().onGround() && (null != curPos)) {
+        if (game.getBoard().isGround() && (null != curPos)) {
             boolean selected = false;
             int count;
             int max = 0;
@@ -5201,9 +5201,9 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
         Board board = game.getBoard(boardId);
-        if ((board == null) || board.inSpace()) {
+        if ((board == null) || board.isSpace()) {
             return false;
-        } else if (board.onGround()) {
+        } else if (board.isGround()) {
             return altitude <= 0;
         } else { // atmospheric board
             // if we're off the map, assume hex ceiling 0
@@ -5251,7 +5251,7 @@ public class TWGameManager extends AbstractGameManager {
 
         Board board = game.getBoard(entity);
         // Low-altitude map: just crash and destroy the unit
-        if (board.inAtmosphere()) {
+        if (board.isLowAltitude()) {
             r = new Report(9393, Report.PUBLIC);
             r.indent();
             r.addDesc(entity);
@@ -21784,7 +21784,7 @@ TargetRoll nTargetRoll,
         Hex entityHex = game.getBoard().getHex(curPos);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK) &&
                   (entityHex != null) &&
-                  game.getBoard().onGround() &&
+                  game.getBoard().isGround() &&
                   !entityHex.containsTerrain(Terrains.ULTRA_SUBLEVEL) &&
                   !((entity instanceof Infantry) || (entity instanceof ProtoMek))) {
             // large support vees will create ultra rough, otherwise rough
@@ -26507,7 +26507,7 @@ TargetRoll nTargetRoll,
                         rollTarget = entity.getBasePilotingRoll(moveType);
                         entity.addPilotingModifierForTerrain(rollTarget, step);
                         int gravMod = game.getPlanetaryConditions().getGravityPilotPenalty();
-                        if ((gravMod != 0) && !game.getBoard().inSpace()) {
+                        if ((gravMod != 0) && !game.getBoard().isSpace()) {
                             rollTarget.addModifier(gravMod, game.getPlanetaryConditions().getGravity() + "G gravity");
                         }
                         rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
@@ -26726,7 +26726,7 @@ TargetRoll nTargetRoll,
                 }
                 if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)
                           // Don't create a pilot entity on low-atmospheric maps
-                          || game.getBoard().inAtmosphere()) {
+                          || game.getBoard().isLowAltitude()) {
                     game.removeEntity(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                     send(createRemoveEntityPacket(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
                 }
@@ -27363,7 +27363,7 @@ TargetRoll nTargetRoll,
             boolean pickedUp = false;
             MekWarrior e = (MekWarrior) mekWarriors.next();
             // Check for owner entities first...
-            for (Entity pe : game.getEntitiesVector(e.getPosition())) {
+            for (Entity pe : game.getEntitiesVector(e.getPosition(), e.getBoardId())) {
                 if (pe.isDoomed() ||
                           pe.isShutDown() ||
                           pe.getCrew().isUnconscious() ||
@@ -27394,7 +27394,7 @@ TargetRoll nTargetRoll,
             }
             // Check for allied entities next...
             if (!pickedUp) {
-                for (Entity pe : game.getEntitiesVector(e.getPosition())) {
+                for (Entity pe : game.getEntitiesVector(e.getPosition(), e.getBoardId())) {
                     if (pe.isDoomed() ||
                               pe.isShutDown() ||
                               pe.getCrew().isUnconscious() ||
@@ -27910,7 +27910,7 @@ TargetRoll nTargetRoll,
         addReport(r);
 
         // if we are on an atmospheric map or the entity is off the map for some reason
-        if (game.getBoard().inAtmosphere() || entity.getPosition() == null) {
+        if (game.getBoard().isLowAltitude() || entity.getPosition() == null) {
             // then just remove the entity
             // TODO : for this and when the unit scatters off the board, we should really still apply damage before
             //  we remove, but this causes all kinds of problems for doEntityFallsInto and related methods which

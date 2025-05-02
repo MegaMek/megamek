@@ -1732,18 +1732,6 @@ public class Board implements Serializable {
         });
     }
 
-    public boolean onGround() {
-        return boardType.isGround();
-    }
-
-    public boolean inAtmosphere() {
-        return boardType.isLowAtmospheric();
-    }
-
-    public boolean inSpace() {
-        return boardType.isSpace();
-    }
-
     /**
      * @return the highest elevation hex on the board.
      */
@@ -2101,16 +2089,20 @@ public class Board implements Serializable {
         return embeddedBoards.keySet();
     }
 
-    public boolean isGroundMap() {
-        return (boardType.isGround());
+    public boolean isGround() {
+        return boardType.isGround();
     }
 
-    public boolean isLowAtmosphereMap() {
-        return (boardType.isLowAtmospheric());
+    public boolean isLowAltitude() {
+        return boardType.isLowAtmospheric();
     }
 
-    public boolean isSpaceMap() {
-        return (boardType.isSpace());
+    public boolean isSpace() {
+        return boardType.isSpace();
+    }
+
+    public boolean isHighAltitude() {
+        return boardType.isHighAltitude();
     }
 
     public void setBoardType(BoardType boardType) {
@@ -2119,10 +2111,6 @@ public class Board implements Serializable {
 
     public BoardType getBoardType() {
         return boardType;
-    }
-
-    public boolean isHighAltitudeMap() {
-        return boardType.isHighAltitude();
     }
 
     @Override

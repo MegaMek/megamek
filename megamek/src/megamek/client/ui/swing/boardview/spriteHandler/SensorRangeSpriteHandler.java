@@ -98,7 +98,7 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
             Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
 
             if (srh != null) {
-                if (entity.isAirborne() && entity.getGame().getBoard().onGround()) {
+                if (entity.isAirborne() && entity.getGame().getBoard().isGround()) {
                     minSensorRange = srh.minGroundSensorRange;
                     maxSensorRange = srh.maxGroundSensorRange;
                     minAirSensorRange = srh.minSensorRange;

@@ -437,8 +437,8 @@ public interface IGame {
         }
         Board lowerBoard = getBoard(lowerBoardId);
         Board higherBoard = getBoard(higherBoardId);
-        if ((lowerBoard.isLowAtmosphereMap() && !higherBoard.isSpaceMap()) || (lowerBoard.isGroundMap() && !higherBoard.isLowAtmosphereMap())
-                  || lowerBoard.isSpaceMap() || higherBoard.isGroundMap()) {
+        if ((lowerBoard.isLowAltitude() && !higherBoard.isSpace()) || (lowerBoard.isGround() && !higherBoard.isLowAltitude())
+                  || lowerBoard.isSpace() || higherBoard.isGround()) {
             LOGGER.error("Can only enclose a ground map in an atmo map or an atmo map in a space map.");
             return;
         }
@@ -623,7 +623,7 @@ public interface IGame {
      * @return True when the location is part of a space board
      */
     default boolean isOnSpaceMap(@Nullable BoardLocation boardLocation) {
-        return hasBoardLocation(boardLocation) && getBoard(boardLocation).isSpaceMap();
+        return hasBoardLocation(boardLocation) && getBoard(boardLocation).isSpace();
     }
 
     /**
@@ -631,7 +631,7 @@ public interface IGame {
      * @return True when the location is not null and a valid ground board location
      */
     default boolean isOnGroundMap(@Nullable BoardLocation boardLocation) {
-        return hasBoardLocation(boardLocation) && getBoard(boardLocation).isGroundMap();
+        return hasBoardLocation(boardLocation) && getBoard(boardLocation).isGround();
     }
 
     /**
@@ -659,7 +659,7 @@ public interface IGame {
     }
 
     default boolean isOnAtmosphericMap(BoardLocation boardLocation) {
-        return hasBoardLocation(boardLocation) && getBoard(boardLocation).isLowAtmosphereMap();
+        return hasBoardLocation(boardLocation) && getBoard(boardLocation).isLowAltitude();
     }
 
     /**
@@ -704,14 +704,14 @@ public interface IGame {
      * @return True when this game has at least one space board (including high-altitude).
      */
     default boolean hasSpaceBoard() {
-        return getBoards().values().stream().anyMatch(Board::inSpace);
+        return getBoards().values().stream().anyMatch(Board::isSpace);
     }
 
     /**
      * @return True when this game has at least one non-space board (low altitude or ground).
      */
     default boolean hasNonSpaceBoard() {
-        return getBoards().values().stream().anyMatch(b -> b.onGround() || b.inAtmosphere());
+        return getBoards().values().stream().anyMatch(b -> b.isGround() || b.isLowAltitude());
     }
 
     /**

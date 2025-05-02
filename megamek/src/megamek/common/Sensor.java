@@ -204,7 +204,7 @@ public class Sensor implements Serializable {
         }
 
         //Most spacecraft sensors only work in space...
-        if (!game.getBoard().inSpace() &&
+        if (!game.getBoard().isSpace() &&
                 (type == TYPE_SPACECRAFT_ESM
                 || type == TYPE_SPACECRAFT_THERMAL
                 || type == TYPE_AERO_THERMAL)) {
@@ -212,12 +212,12 @@ public class Sensor implements Serializable {
         }
 
         //Aero/Small Craft Active Sensors have longer range in space
-        if (game.getBoard().inSpace() && type == TYPE_AERO_SENSOR) {
+        if (game.getBoard().isSpace() && type == TYPE_AERO_SENSOR) {
             range = ASF_RADAR_MAX_RANGE;
         }
 
         //DropShip radar has reduced range when not in space
-        if (!game.getBoard().inSpace() && type == TYPE_SPACECRAFT_RADAR) {
+        if (!game.getBoard().isSpace() && type == TYPE_SPACECRAFT_RADAR) {
             range = LC_RADAR_GROUND_RANGE;
         }
 

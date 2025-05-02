@@ -156,8 +156,8 @@ public final class CrossBoardAttackHelper {
 
     private static boolean isInAtmosphericTypeHex(Targetable targetable, Game game) {
         Board board = game.getBoard(targetable);
-        return board.isLowAtmosphereMap() ||
-                     (board.isSpaceMap() && !BoardHelper.isTrueSpaceHex(game, board, targetable.getPosition()));
+        return board.isLowAltitude() ||
+                     (board.isSpace() && !BoardHelper.isTrueSpaceHex(game, board, targetable.getPosition()));
     }
 
     /**

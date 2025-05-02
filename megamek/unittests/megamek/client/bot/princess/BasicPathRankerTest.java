@@ -1162,7 +1162,7 @@ class BasicPathRankerTest {
         final Hex mockHex = new Hex();
         when(mockBoard.getHex(any(Coords.class))).thenReturn(mockHex);
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
 
         return mockBoard;
     }

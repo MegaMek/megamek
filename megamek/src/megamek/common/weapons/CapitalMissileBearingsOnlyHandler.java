@@ -350,7 +350,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getOldTargetCoords()));
             }
         }
-        if (target.isAirborne() || game.getBoard().inSpace() || ae.usesWeaponBays()) {
+        if (target.isAirborne() || game.getBoard().isSpace() || ae.usesWeaponBays()) {
             // if we added a line to the phase report for calc hits, remove
             // it now
             while (vPhaseReport.size() > id) {
@@ -623,7 +623,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
 
         // is the target at zero velocity
-        if ((targetShip.getCurrentVelocity() == 0) && !(targetShip.isSpheroid() && !game.getBoard().inSpace())) {
+        if ((targetShip.getCurrentVelocity() == 0) && !(targetShip.isSpheroid() && !game.getBoard().isSpace())) {
             toHit.addModifier(-2, "target is not moving");
         }
 
@@ -636,7 +636,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
 
         if (target.isAirborne() && target.isAero()) {
-            if (!(((IAero) target).isSpheroid() && !game.getBoard().inSpace())) {
+            if (!(((IAero) target).isSpheroid() && !game.getBoard().isSpace())) {
                 // get mods for direction of attack
                 int side = toHit.getSideTable();
                 // if this is an aero attack using advanced movement rules then determine side differently
@@ -654,7 +654,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
 
         // Space ECM
-        if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (game.getBoard().isSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             int ecm = ComputeECM.getLargeCraftECM(ae, targetCoords, target.getPosition());
             ecm = Math.min(4, ecm);
             if (ecm > 0) {

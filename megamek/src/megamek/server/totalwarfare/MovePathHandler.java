@@ -519,7 +519,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         "Thrust spent during turn exceeds SI"));
             }
 
-            if (!getGame().getBoard(entity.getBoardId()).inSpace()) {
+            if (!getGame().getBoard(entity.getBoardId()).isSpace()) {
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
                         overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -1093,7 +1093,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                     entity.setElevation(Math.min(entity.getElevation(),
                             1 + hex.maxTerrainFeatureElevation(
-                                    getGame().getBoard(curBoardId).inAtmosphere())));
+                                    getGame().getBoard(curBoardId).isLowAltitude())));
                 }
             }
 
@@ -1608,7 +1608,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             fellDuringMovement = true;
                         }
                         // multiply forward by 16 when on ground hexes
-                        if (getGame().getBoard(curBoardId).onGround()) {
+                        if (getGame().getBoard(curBoardId).isGround()) {
                             forward *= 16;
                         }
                         while (forward > 0) {
@@ -1661,7 +1661,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                 Entity ce = getGame().getEntity(id);
                                 // if we are in atmosphere and not the same altitude
                                 // then skip
-                                if (!getGame().getBoard(curBoardId).inSpace() && (ce.getAltitude() != curAltitude)) {
+                                if (!getGame().getBoard(curBoardId).isSpace() && (ce.getAltitude() != curAltitude)) {
                                     continue;
                                 }
                                 // you can't collide with yourself

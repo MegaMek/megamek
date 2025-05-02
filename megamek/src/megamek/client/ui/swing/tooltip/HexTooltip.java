@@ -224,7 +224,7 @@ public final class HexTooltip {
     }
 
     public static String getTerrainTip(Hex mhex, int boardId, Game game) {
-        boolean inAtmosphere = game.getBoard(boardId).inAtmosphere();
+        boolean inAtmosphere = game.getBoard(boardId).isLowAltitude();
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         Coords mcoords = mhex.getCoords();
         String indicator = IlluminationLevel.determineIlluminationLevel(game, boardId, mcoords).getIndicator();

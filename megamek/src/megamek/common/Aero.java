@@ -1861,7 +1861,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public int sideTableRam(Coords src) {
         int side = super.sideTableRam(src);
-        if (game.useVectorMove() && game.getBoard().inSpace()) {
+        if (game.useVectorMove() && game.getBoard().isSpace()) {
             int newSide = chooseSideRam(src);
             if (newSide != -1) {
                 side = newSide;

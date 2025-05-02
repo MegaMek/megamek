@@ -442,7 +442,7 @@ public class MoveStep implements Serializable {
 
         // need to reduce velocity left for aerospace units (and also reset nTurns) this is handled differently by
         // aerospace units operating on the ground map and by spheroids in atmosphere
-        if (entity.isAirborne() && game.getBoard(targetBoardId).onGround()) {
+        if (entity.isAirborne() && game.getBoard(targetBoardId).isGround()) {
             setNMoved(getNMoved() + 1);
             if ((entity.getMovementMode() != EntityMovementMode.SPHEROID) && (getNMoved() >= 16)) {
                 setVelocityLeft(getVelocityLeft() - 1);
@@ -457,7 +457,7 @@ public class MoveStep implements Serializable {
         setNStraight(getNStraight() + 1);
         // if in atmosphere, then I need to know if this move qualifies the unit for a free turn
         if (useAeroAtmosphere(game, entity)) {
-            if (game.getBoard(targetBoardId).onGround() && (getNStraight() > 7)) {
+            if (game.getBoard(targetBoardId).isGround() && (getNStraight() > 7)) {
                 // if flying on ground map, then you have to fly at least 8 straight hexes between turns (free or not)
                 // http://www.classicbattletech.com/forums/index.php/topic,37171.new.html#new
                 setNTurns(0);
@@ -568,12 +568,12 @@ public class MoveStep implements Serializable {
         }
 
         // if this is a flying aero, then there is no MP cost for moving
-        if ((prev.getAltitude() > 0) || game.getBoard(targetBoardId).inSpace()) {
+        if ((prev.getAltitude() > 0) || game.getBoard(targetBoardId).isSpace()) {
             setMp(0);
             // if this is a spheroid in atmosphere then the cost is always one
             // if it is the very first step, we prepend the cost of hovering for convenience
             if (useSpheroidAtmosphere(game, entity)) {
-                if (game.getBoard(targetBoardId).onGround()) {
+                if (game.getBoard(targetBoardId).isGround()) {
                     if ((distance % 8) == 1) {
                         setMp(1);
                     }
@@ -1152,7 +1152,7 @@ public class MoveStep implements Serializable {
             velocity = a.getCurrentVelocity();
             velocityN = a.getNextVelocity();
             velocityLeft = a.getCurrentVelocity() - entity.delta_distance;
-            if (game.getBoard(targetBoardId).onGround()) {
+            if (game.getBoard(targetBoardId).isGround()) {
                 velocityLeft = a.getCurrentVelocity() - (entity.delta_distance / 16);
             }
             isRolled = false;// a.isRolled();
@@ -1764,7 +1764,7 @@ public class MoveStep implements Serializable {
             return;
         }
 
-        if ((prev.getAltitude() > 0) || game.getBoard(targetBoardId).inSpace()) {
+        if ((prev.getAltitude() > 0) || game.getBoard(targetBoardId).isSpace()) {
             // Ejected crew/pilots just drift or parachute, resulting in a move_none type
             if (entity instanceof EjectedCrew) {
                 movementType = EntityMovementType.MOVE_NONE;
@@ -1812,7 +1812,7 @@ public class MoveStep implements Serializable {
             }
 
             // **Space turning limits**//
-            if (game.getBoard(targetBoardId).inSpace()) {
+            if (game.getBoard(targetBoardId).isSpace()) {
                 // space stations can only turn and launch spacecraft
                 if ((entity instanceof SpaceStation) &&
                           !((type == MoveStepType.TURN_LEFT) ||
@@ -1862,12 +1862,12 @@ public class MoveStep implements Serializable {
             // map, regardless of any other considerations unless they're out of control, in which case, well...
             if (useSpheroidAtmosphere(game, entity) &&
                       (((IAero) entity).isOutControlTotal() ||
-                             (!game.getBoard(targetBoardId).onGround() && (this.getDistance() > 1) ||
-                                    (game.getBoard(targetBoardId).onGround() && (getDistance() > 8))))) {
+                             (!game.getBoard(targetBoardId).isGround() && (this.getDistance() > 1) ||
+                                    (game.getBoard(targetBoardId).isGround() && (getDistance() > 8))))) {
                 return;
             }
 
-            if ((type == MoveStepType.FORWARDS) && game.getBoard(targetBoardId).inAtmosphere() && !a.isOutControl()) {
+            if ((type == MoveStepType.FORWARDS) && game.getBoard(targetBoardId).isLowAltitude() && !a.isOutControl()) {
                 Hex destinationHex = game.getBoard(targetBoardId).getHex(getPosition());
                 if (altitude <= destinationHex.ceiling(true)) {
                     // can't fly into a cliff face or woods (unless out of control)
@@ -1937,7 +1937,7 @@ public class MoveStep implements Serializable {
                 // when Aerospace are flying on the ground map sheet we need an additional check because velocityLeft
                 // is only decremented at intervals of 16 hexes
                 if (useAeroAtmosphere(game, entity) &&
-                          game.getBoard(targetBoardId).onGround() &&
+                          game.getBoard(targetBoardId).isGround() &&
                           (getVelocityLeft() == 0) &&
                           (getNMoved() > 0)) {
                     return;
@@ -2854,7 +2854,7 @@ public class MoveStep implements Serializable {
         boolean carefulExempt = (moveMode == EntityMovementMode.VTOL) || isJumping();
 
         // Apply careful movement MP penalties for fog and light (TO pg 63)
-        if (!game.getBoard(targetBoardId).inSpace() && isCareful() && applyNightPen && !carefulExempt) {
+        if (!game.getBoard(targetBoardId).isSpace() && isCareful() && applyNightPen && !carefulExempt) {
             // Fog
             switch (conditions.getFog()) {
                 case FOG_LIGHT:
@@ -3860,7 +3860,7 @@ public class MoveStep implements Serializable {
         }
 
         // Can't use thrust turns in the first hex of movement (or first 8 if ground)
-        if (game.getBoard(targetBoardId).onGround()) {
+        if (game.getBoard(targetBoardId).isGround()) {
             // if flying on the ground map then they need to move 8 hexes first
             if (distance < 8) {
                 return false;
@@ -3922,7 +3922,7 @@ public class MoveStep implements Serializable {
         }
 
         // different rules if flying on the ground map
-        if (en.game.getBoard(targetBoardId).onGround() && (getElevation() > 0)) {
+        if (en.game.getBoard(targetBoardId).isGround() && (getElevation() > 0)) {
             if (en instanceof Dropship) {
                 thresh = vel * 8;
             } else if (en instanceof SmallCraft) {
@@ -4007,7 +4007,7 @@ public class MoveStep implements Serializable {
             return false;
         }
         // are we in space?
-        if (game.getBoard(targetBoardId).inSpace()) {
+        if (game.getBoard(targetBoardId).isSpace()) {
             return false;
         }
         // are we airborne in non-vacuum?

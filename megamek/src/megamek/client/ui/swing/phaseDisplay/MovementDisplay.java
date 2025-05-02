@@ -948,7 +948,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return (entity != null)
                      && game.hasBoardLocation(finalPosition(), finalBoardId())
                      && entity.isAirborne()
-                     && game.getBoard(entity).isLowAtmosphereMap()
+                     && game.getBoard(entity).isLowAltitude()
                      && game.getBoard(entity).getEmbeddedBoardHexes().contains(finalPosition())
               && cmd.isMoveLegal();
     }
@@ -2284,7 +2284,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // only allow landing on the ground map, not atmosphere or space map
-        if (!game.getBoard(selectedEntity).onGround()) {
+        if (!game.getBoard(selectedEntity).isGround()) {
             return;
         }
 
@@ -2305,7 +2305,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         setRollEnabled(true);
 
-        if (!game.getBoard(ce).inSpace()) {
+        if (!game.getBoard(ce).isSpace()) {
             setRollEnabled(false);
         }
 
@@ -2324,7 +2324,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (!((IAero) ce).isVSTOL()) {
                 return;
             }
-            if (game.getBoard(ce).inSpace()) {
+            if (game.getBoard(ce).isSpace()) {
                 return;
             }
         } else if (!(ce instanceof ProtoMek) &&
@@ -2437,11 +2437,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // if in the atmosphere, limit acceleration to 2x safe thrust
-        if (!game.getBoard(ce).inSpace() && (currentVelocity == (2 * ce.getWalkMP()))) {
+        if (!game.getBoard(ce).isSpace() && (currentVelocity == (2 * ce.getWalkMP()))) {
             setAccEnabled(false);
         }
         // velocity next will get halved before the next turn so allow up to 4 times
-        if (!game.getBoard(ce).inSpace() && (nextVelocity == (4 * ce.getWalkMP()))) {
+        if (!game.getBoard(ce).isSpace() && (nextVelocity == (4 * ce.getWalkMP()))) {
             setAccNEnabled(false);
         }
 
@@ -2476,7 +2476,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         final Board board = game.getBoard(ce);
         // for spheroids in atmosphere we just need to check being on the edge
-        if (a.isSpheroid() && !board.inSpace()) {
+        if (a.isSpheroid() && !board.isSpace()) {
             setFlyOffEnabled((position != null) &&
                                    (ce.getWalkMP() > 0) &&
                                    ((position.getX() == 0) ||
@@ -2799,7 +2799,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (game.getBoard(ce).inSpace()) {
+        if (game.getBoard(ce).isSpace()) {
             return;
         }
 
@@ -4364,7 +4364,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             case ManeuverType.MAN_SIDE_SLIP_LEFT:
                 // If we are on a ground map, slide slip works slightly differently
                 // See Total Warfare pg 85
-                if (game.getBoard(ce()).isGroundMap()) {
+                if (game.getBoard(ce()).isGround()) {
                     for (int i = 0; i < 8; i++) {
                         addStepToMovePath(MoveStepType.LATERAL_LEFT, true, true, type);
                     }
@@ -4378,7 +4378,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             case ManeuverType.MAN_SIDE_SLIP_RIGHT:
                 // If we are on a ground map, slide slip works slightly differently
                 // See Total Warfare pg 85
-                if (game.getBoard(ce()).isGroundMap()) {
+                if (game.getBoard(ce()).isGround()) {
                     for (int i = 0; i < 8; i++) {
                         addStepToMovePath(MoveStepType.LATERAL_RIGHT, true, true, type);
                     }
@@ -5233,9 +5233,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             Board board = game.getBoard(finalBoardId());
             // On Atmospheric maps, elevations are treated as altitudes, so hex ceiling is the ground
-            int ceil = board.getHex(pos).ceiling(board.inAtmosphere());
+            int ceil = board.getHex(pos).ceiling(board.isLowAltitude());
             // On the ground map, Aerospace ignores hex elevations
-            if (board.onGround()) {
+            if (board.isGround()) {
                 ceil = 0;
             }
             choiceDialog.checkPerformability(vel, altitude, ceil, a.isVSTOL(), distance, board,

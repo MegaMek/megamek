@@ -263,7 +263,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
                 }
                 // make sure that entity is above the level of the hex if in
                 // atmosphere
-                if (getGame().getBoard(boardId).inAtmosphere()
+                if (getGame().getBoard(boardId).isLowAltitude()
                           && (entity.getAltitude() <= hex.ceiling(true))) {
                     // you can't be grounded on low atmosphere map
                     entity.setAltitude(hex.ceiling(true) + 1);

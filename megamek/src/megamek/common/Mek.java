@@ -4209,8 +4209,8 @@ public abstract class Mek extends Entity {
             return true;
         }
 
-        if ((game.getBoard(testBoardId).isSpaceMap() && doomedInSpace())
-                  || (game.getBoard(testBoardId).isLowAtmosphereMap() && doomedInAtmosphere())) {
+        if ((game.getBoard(testBoardId).isSpace() && doomedInSpace())
+                  || (game.getBoard(testBoardId).isLowAltitude() && doomedInAtmosphere())) {
             return true;
         }
 

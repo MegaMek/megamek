@@ -2286,7 +2286,7 @@ public abstract class Entity extends TurnOrdered
      * is it possible to go down, or are we landed/just above the water/treeline? assuming passed elevation.
      */
     public boolean canGoDown(int assumedElevation, Coords assumedPos, int boardId) {
-        if ((game == null) || !game.hasBoardLocation(assumedPos, boardId) || game.getBoard(boardId).isSpaceMap()) {
+        if ((game == null) || !game.hasBoardLocation(assumedPos, boardId) || game.getBoard(boardId).isSpace()) {
             return false;
         }
 
@@ -2333,9 +2333,9 @@ public abstract class Entity extends TurnOrdered
             case AERODYNE:
             case SPHEROID:
                 assumedAlt = assumedElevation;
-                if (game.getBoard(boardId).inAtmosphere()) {
+                if (game.getBoard(boardId).isLowAltitude()) {
                     minAlt = Math.max(0, hex.ceiling(true)) + 1;
-                } else if (game.getBoard(boardId).onGround() && isAirborne()) {
+                } else if (game.getBoard(boardId).isGround() && isAirborne()) {
                     minAlt = 1;
                 }
                 // if sensors are damaged then, one higher
@@ -2377,7 +2377,7 @@ public abstract class Entity extends TurnOrdered
      * is it possible to go up, or are we at maximum altitude? assuming passed elevation.
      */
     public boolean canGoUp(int assumedElevation, Coords assumedPos, int boardId) {
-        if ((game == null) || !game.hasBoardLocation(assumedPos, boardId) || game.getBoard(boardId).isSpaceMap()) {
+        if ((game == null) || !game.hasBoardLocation(assumedPos, boardId) || game.getBoard(boardId).isSpace()) {
             return false;
         }
 
@@ -2558,10 +2558,10 @@ public abstract class Entity extends TurnOrdered
      * Convenience method to determine whether this entity is on a ground map with an atmosphere
      */
     public boolean isOnAtmosphericGroundMap() {
-        boolean onGroundOrinAtmosphere = getGame().getBoard().onGround() ||
+        boolean onGroundOrinAtmosphere = getGame().getBoard().isGround() ||
                                                // doesn't make sense in english, but "atmospheric" map actually
                                                // covers maps that are within a planet's gravity well
-                                               getGame().getBoard().inAtmosphere();
+                                               getGame().getBoard().isLowAltitude();
         PlanetaryConditions conditions = getGame().getPlanetaryConditions();
         return conditions.getAtmosphere().isDenserThan(Atmosphere.TRACE) && onGroundOrinAtmosphere;
     }
@@ -4580,7 +4580,7 @@ public abstract class Entity extends TurnOrdered
                       game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB) &&
                       m.getType().hasFlag(AmmoType.F_SPACE_BOMB) &&
                       isBomber() &&
-                      game.getBoard().inSpace()) {
+                      game.getBoard().isSpace()) {
                 try {
                     WeaponMounted bomb = (WeaponMounted) addEquipment(spaceBomb, m.getLocation(), false);
                     if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
@@ -4593,7 +4593,7 @@ public abstract class Entity extends TurnOrdered
                 foundSpaceBomb = true;
             }
 
-            if (!game.getBoard().inSpace() &&
+            if (!game.getBoard().isSpace() &&
                       m.getType().hasFlag(AmmoType.F_GROUND_BOMB) &&
                       !((this instanceof LandAirMek) && (getConversionMode() == LandAirMek.CONV_MODE_MEK))) {
                 if (addedBombAttacks < 1) {
@@ -12693,11 +12693,11 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
         Board board = game.getBoard(this);
-        if (board.inAtmosphere()) {
+        if (board.isLowAltitude()) {
             return (1 == (getAltitude() - board.getHex(position).ceiling(true)));
             //FIXME the ceiling method and this seem to be in disagreement
             // the hex ceiling method is there so the distinction between ground and atmo maps isnt necessary
-        } else if (board.onGround()) {
+        } else if (board.isGround()) {
             return getAltitude() == 1;
         } else {
             return false;

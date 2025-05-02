@@ -710,7 +710,7 @@ public class CLIATMHandler extends ATMHandler {
 
             // Now I need to adjust this for attacks on aeros because they use
             // attack values and different rules
-            if (target.isAirborne() || game.getBoard().inSpace()) {
+            if (target.isAirborne() || game.getBoard().isSpace()) {
                 // this will work differently for cluster and non-cluster
                 // weapons, and differently for capital fighter/fighter
                 // squadrons

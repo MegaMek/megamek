@@ -1131,7 +1131,7 @@ public final class BoardView extends AbstractBoardView
         drawSprites(graphics2D, c3Sprites);
 
         // draw flyover routes
-        if (game.getBoard(boardId).onGround()) {
+        if (game.getBoard(boardId).isGround()) {
             drawSprites(graphics2D, vtolAttackSprites);
             drawSprites(graphics2D, flyOverSprites);
         }
@@ -1937,7 +1937,7 @@ public final class BoardView extends AbstractBoardView
             drawSprites(boardGraph, c3Sprites);
 
             // draw flyover routes
-            if (game.getBoard(boardId).onGround()) {
+            if (game.getBoard(boardId).isGround()) {
                 drawSprites(boardGraph, vtolAttackSprites);
                 drawSprites(boardGraph, flyOverSprites);
             }
@@ -2379,7 +2379,7 @@ public final class BoardView extends AbstractBoardView
 
         // Set the text color according to Preferences or Light Gray in space
         graphics2D.setColor(GUIP.getBoardTextColor());
-        if (game.getBoard(boardId).inSpace()) {
+        if (game.getBoard(boardId).isSpace()) {
             graphics2D.setColor(GUIP.getBoardSpaceTextColor());
         }
 
@@ -5171,7 +5171,7 @@ public final class BoardView extends AbstractBoardView
             return null;
         }
         Board board = game.getBoard(boardId);
-        if (board.inSpace()) {
+        if (board.isSpace()) {
             return null;
         }
 

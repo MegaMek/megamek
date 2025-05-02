@@ -363,7 +363,7 @@ public class LosEffects {
         ai.boardId = boardId;
         ai.targetPos = c2;
         ai.targetEntity = (te != null);
-        if (game.getBoard(boardId).inAtmosphere()) {
+        if (game.getBoard(boardId).isLowAltitude()) {
             // Assume LOS is from Alt 1 above c1 to Alt 1 above c2, due to Low Altitude LOS
             // calc differences from ground.
             ai.attackHeight = (ae == null) ? 1 : ae.getAltitude();
@@ -375,7 +375,7 @@ public class LosEffects {
             ai.lowAltitude = true;
             ai.attackAbsHeight = (ae == null) ? game.getBoard(boardId).getHex(c1).floor() + ai.attackHeight : ai.attackHeight;
             ai.targetAbsHeight = (te == null) ? game.getBoard(boardId).getHex(c2).floor() + ai.targetHeight : ai.targetHeight;
-        } else if (game.getBoard(boardId).onGround()) {
+        } else if (game.getBoard(boardId).isGround()) {
             ai.attackHeight = mekInFirst ? 1 : 0;
             ai.targetHeight = mekInSecond ? 1 : 0;
             ai.attackerIsMek = mekInFirst;
@@ -544,7 +544,7 @@ public class LosEffects {
         }
 
         // Handle Low Atmosphere maps separately
-        if (game.getBoard(boardId).inAtmosphere()) {
+        if (game.getBoard(boardId).isLowAltitude()) {
             return calculateLowAtmoLOS(game, attacker, target, attackerPosition, targetPosition, boardId);
         }
 
@@ -569,7 +569,7 @@ public class LosEffects {
 
         // Adjust units' altitudes for low-altitude map LOS calculations
         // Revisit once we have ground units on low-alt and dual-map functional
-        final boolean lowAlt = game.getBoard(boardId).inAtmosphere();
+        final boolean lowAlt = game.getBoard(boardId).isLowAltitude();
         if (attacker.isAirborne() && lowAlt) {
             ai.attLowAlt = true;
         }
@@ -678,7 +678,7 @@ public class LosEffects {
 
         // Adjust units' altitudes for low-altitude map LOS calculations
         // Revisit once we have ground units on low-alt and dual-map functional
-        final boolean lowAlt = game.getBoard(ai.boardId).inAtmosphere() && !game.getBoard(ai.boardId).onGround();
+        final boolean lowAlt = game.getBoard(ai.boardId).isLowAltitude() && !game.getBoard(ai.boardId).isGround();
         if (attacker.isAirborne() && lowAlt) {
             ai.attLowAlt = true;
         }
@@ -1178,7 +1178,7 @@ public class LosEffects {
           boolean diagramLoS, boolean partialCover) {
 
         // Handle Low Atmosphere hexes differently
-        if (game.getBoard(ai.boardId).inAtmosphere()) {
+        if (game.getBoard(ai.boardId).isLowAltitude()) {
             return losForLowAtmoCoords(game, ai, coords, diagramLoS);
         }
 

@@ -113,7 +113,7 @@ public class EntitySprite extends Sprite {
         this.entity = entity;
         this.radarBlipImage = radarBlipImage;
         this.secondaryPos = secondaryPos;
-        if (bv.getBoard().inSpace()) {
+        if (bv.getBoard().isSpace()) {
             labelBack = LABEL_SPACE_BACK;
         } else {
             labelBack = LABEL_GROUND_BACK;
@@ -523,7 +523,7 @@ public class EntitySprite extends Sprite {
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         boolean isSquadron = entity instanceof FighterSquadron;
 
-        if ((isAero && ((IAero) entity).isSpheroid() && !board.inSpace()) && (secondaryPos == 1)) {
+        if ((isAero && ((IAero) entity).isSpheroid() && !board.isSpace()) && (secondaryPos == 1)) {
             graph.setColor(Color.WHITE);
             graph.draw(bv.getFacingPolys()[entity.getFacing()]);
         }
@@ -543,7 +543,7 @@ public class EntitySprite extends Sprite {
 
             // draw elevation/altitude if non-zero
             if (entity.isAirborne()) {
-                if (!board.inSpace()) {
+                if (!board.isSpace()) {
                     stStr.add(new Status(Color.CYAN, "A", SMALL));
                     stStr.add(new Status(Color.CYAN, Integer.toString(entity.getAltitude()), SMALL));
                 }
@@ -784,7 +784,7 @@ public class EntitySprite extends Sprite {
                       !((entity instanceof Infantry) &&
                               !((Infantry) entity).hasFieldWeapon() &&
                               !((Infantry) entity).isTakingCover()) &&
-                      !((entity instanceof IAero) && ((IAero) entity).isSpheroid() && !board.inSpace())) {
+                      !((entity instanceof IAero) && ((IAero) entity).isSpheroid() && !board.isSpace())) {
                 // Indicate a stacked unit with the same facing that can still move
                 if (shouldIndicateNotDone() && bv.game.getPhase().isMovement()) {
                     var tr = graph.getTransform();

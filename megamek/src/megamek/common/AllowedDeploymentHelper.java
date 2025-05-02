@@ -51,7 +51,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
      * @return All legal deployment elevations/altitudes of the given type
      */
     public List<ElevationOption> findAllowedElevations(@Nullable DeploymentElevationType limitToType) {
-        if (board.inSpace()) {
+        if (board.isSpace()) {
             throw new IllegalStateException("Cannot find allowed deployment elevations in space!");
         }
 
@@ -96,11 +96,11 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
 
     private List<ElevationOption> allowedAeroAltitudes() {
         List<ElevationOption> result = new ArrayList<>();
-        if (board.onGround()) {
+        if (board.isGround()) {
             result.add(new ElevationOption(0, ON_GROUND));
         }
         int startingAltitude = 1;
-        if (board.inAtmosphere()) {
+        if (board.isLowAltitude()) {
             // Stay above terrain on an atmospheric board, but never below altitude 1
             startingAltitude += Math.max(0, board.getHex(coords).ceiling(true));
         }

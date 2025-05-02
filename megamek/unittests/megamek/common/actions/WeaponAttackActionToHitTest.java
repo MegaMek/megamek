@@ -75,7 +75,7 @@ public class WeaponAttackActionToHitTest {
 
         // Mock the board
         mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
 
         // Mock Options
         mockOptions = mock(GameOptions.class);

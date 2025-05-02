@@ -555,10 +555,10 @@ public class Princess extends BotClient {
         int deployElevation = deployEntity.getElevation();
 
         if (deployEntity.isAero()) {
-            if (game.getBoard().onGround()) {
+            if (game.getBoard().isGround()) {
                 // keep the altitude set in the lobby, possibly starting grounded
                 deployElevation = deployEntity.getAltitude();
-            } else if (game.getBoard().inAtmosphere()) {
+            } else if (game.getBoard().isLowAltitude()) {
                 // try to keep the altitude set in the lobby, but stay above the terrain
                 var deploymentHelper = new AllowedDeploymentHelper(deployEntity,
                       deployCoords,
@@ -3291,7 +3291,7 @@ public class Princess extends BotClient {
               false);
 
         // Don't launch at high velocity in atmosphere or the fighters will be destroyed!
-        if (path.getFinalVelocity() > 2 && !game.getBoard().inSpace()) {
+        if (path.getFinalVelocity() > 2 && !game.getBoard().isSpace()) {
             return;
         }
 

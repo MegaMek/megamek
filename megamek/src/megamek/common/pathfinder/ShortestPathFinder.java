@@ -394,7 +394,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      */
     public static int getLevelDiff(final MovePath mp, Coords dest, Board board, boolean ignore) {
         // Ignore level differences if we're not on the ground
-        if (ignore || !board.onGround() || (mp.getFinalElevation() != 0)) {
+        if (ignore || !board.isGround() || (mp.getFinalElevation() != 0)) {
             return 0;
         }
         Hex currHex = board.getHex(mp.getFinalCoords());

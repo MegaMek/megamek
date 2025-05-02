@@ -132,7 +132,7 @@ public class SharedUtility {
         checkNag(rollTarget, nagReport, psrList);
 
         // Atmospheric checks
-        if (!game.getBoard(md.getFinalBoardId()).inSpace() && !md.contains(MoveStepType.LAND)
+        if (!game.getBoard(md.getFinalBoardId()).isSpace() && !md.contains(MoveStepType.LAND)
                 && !md.contains(MoveStepType.VLAND)) {
             // check to see if velocity is 2x thrust
             rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
@@ -417,7 +417,7 @@ public class SharedUtility {
                             entity.addPilotingModifierForTerrain(rollTarget, step);
                             int gravMod = game.getPlanetaryConditions()
                                     .getGravityPilotPenalty();
-                            if ((gravMod != 0) && !board.inSpace()) {
+                            if ((gravMod != 0) && !board.isSpace()) {
                                 rollTarget.addModifier(gravMod, game
                                         .getPlanetaryConditions().getGravity()
                                         + "G gravity");
@@ -643,7 +643,7 @@ public class SharedUtility {
             checkNag(rollTarget, nagReport, psrList);
 
             // Atmospheric checks
-            if (!game.getBoard(curBoardId).inSpace() && !md.contains(MoveStepType.LAND)
+            if (!game.getBoard(curBoardId).isSpace() && !md.contains(MoveStepType.LAND)
                     && !md.contains(MoveStepType.VLAND)) {
                 // check to see if velocity is 2x thrust
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
@@ -773,7 +773,7 @@ public class SharedUtility {
             while (vel > 0) {
                 int steps = 1;
                 // if moving on the ground map, then 16 hexes forward
-                if (game.getBoard().onGround()) {
+                if (game.getBoard().isGround()) {
                     steps = 16;
                 }
                 while (steps > 0 &&

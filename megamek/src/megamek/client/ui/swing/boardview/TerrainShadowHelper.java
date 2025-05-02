@@ -102,7 +102,7 @@ class TerrainShadowHelper {
         }
 
         Board board = boardView.getBoard();
-        if ((board == null) || board.inSpace() || (board.getBoardType() == BoardType.SKY)) {
+        if ((board == null) || board.isSpace() || (board.getBoardType() == BoardType.SKY)) {
             return null;
         }
 

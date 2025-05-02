@@ -106,7 +106,7 @@ public class TWPhasePreparationManager {
                 gameManager.resetActivePlayersDone();
                 gameManager.setIneligible(phase);
 
-                if (gameManager.getGame().getBoard().onGround()) {
+                if (gameManager.getGame().getBoard().isGround()) {
                     gameManager.getGame().setTurnVector(gameManager.getGame().getPlayersList().stream()
                             .filter(Player::hasMinefields)
                             .map(p -> new GameTurn(p.getId()))

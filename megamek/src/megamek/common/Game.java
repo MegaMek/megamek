@@ -3215,7 +3215,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     // a shortcut function for determining whether vectored movement is
     // applicable
     public boolean useVectorMove() {
-        return getOptions().booleanOption(OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT) && getBoard().inSpace();
+        return getOptions().booleanOption(OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT) && getBoard().isSpace();
     }
 
     /**

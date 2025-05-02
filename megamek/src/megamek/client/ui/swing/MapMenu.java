@@ -919,7 +919,7 @@ public class MapMenu extends JPopupMenu {
             }
 
             if (game.getPlanetaryConditions().isRecklessConditions()
-                    && !board.inSpace()
+                    && !board.isSpace()
                     && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
                 item.setActionCommand(MoveCommand.MOVE_RECKLESS.getCmd());
@@ -1009,7 +1009,7 @@ public class MapMenu extends JPopupMenu {
             }
 
             if (game.getPlanetaryConditions().isRecklessConditions()
-                    && !board.inSpace()
+                    && !board.isSpace()
                     && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
                 item.setActionCommand(MoveCommand.MOVE_RECKLESS.getCmd());
@@ -1420,7 +1420,7 @@ public class MapMenu extends JPopupMenu {
         Hex h = board.getHex(coords);
 
         // Clearing hexes and igniting hexes
-        if (isFiringDisplay && !board.inSpace() && !board.inAtmosphere()) {
+        if (isFiringDisplay && !board.isSpace() && !board.isLowAltitude()) {
             menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_CLEAR)));
             if (canStartFires
                     && (h.hasVegetation() || h.containsTerrain(Terrains.FIELDS))) {
@@ -1445,7 +1445,7 @@ public class MapMenu extends JPopupMenu {
         }
 
         if (isFiringDisplay) {
-            if (board.inSpace() && hasAmmoType(AmmoType.T_SCREEN_LAUNCHER)) {
+            if (board.isSpace() && hasAmmoType(AmmoType.T_SCREEN_LAUNCHER)) {
                 menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_SCREEN)));
             } else {
                 if ((hasAmmoType(AmmoType.T_LRM)
@@ -1497,8 +1497,8 @@ public class MapMenu extends JPopupMenu {
         }
 
         if (isTargetingDisplay
-                && !board.inSpace()
-                && !board.inAtmosphere()
+                && !board.isSpace()
+                && !board.isLowAltitude()
                 && (hasAmmoType(AmmoType.T_ARROW_IV)
                         || hasAmmoType(AmmoType.T_SNIPER)
                         || hasAmmoType(AmmoType.T_CRUISE_MISSILE)
@@ -1510,7 +1510,7 @@ public class MapMenu extends JPopupMenu {
             menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
         }
         // Check for adding TAG targeting buildings and hexes
-        if (isTargetingDisplay && myEntity.hasTAG() && !board.inSpace()) {
+        if (isTargetingDisplay && myEntity.hasTAG() && !board.isSpace()) {
             menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_TAG)));
             if (h.containsTerrain(Terrains.FUEL_TANK)
                     || h.containsTerrain(Terrains.BUILDING)

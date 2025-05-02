@@ -450,7 +450,7 @@ public class Dropship extends SmallCraft {
     @Override
     public boolean hasActiveECM() {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+                || !game.getBoard().isSpace()) {
             return super.hasActiveECM();
         }
         return getECMRange() > Entity.NONE;
@@ -465,7 +465,7 @@ public class Dropship extends SmallCraft {
     @Override
     public int getECMRange() {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+                || !game.getBoard().isSpace()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {
@@ -494,7 +494,7 @@ public class Dropship extends SmallCraft {
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         // A grounded dropship with the center hex in level 1 water is immobile.
-        if ((game != null) && !game.getBoard().inSpace() && !isAirborne()) {
+        if ((game != null) && !game.getBoard().isSpace() && !isAirborne()) {
             Hex hex = game.getBoard().getHex(getPosition());
             if ((hex != null) && (hex.containsTerrain(Terrains.WATER, 1) && !hex.containsTerrain(Terrains.ICE))) {
                 return 0;
@@ -520,7 +520,7 @@ public class Dropship extends SmallCraft {
         }
 
         super.setPosition(position, false);
-        if ((getAltitude() == 0) && (null != game) && !game.getBoard().inSpace() && (position != null)) {
+        if ((getAltitude() == 0) && (null != game) && !game.getBoard().isSpace() && (position != null)) {
             secondaryPositions.put(0, position);
             secondaryPositions.put(1, position.translated(getFacing()));
             secondaryPositions.put(2, position.translated((getFacing() + 1) % 6));
@@ -537,7 +537,7 @@ public class Dropship extends SmallCraft {
     @Override
     public void setAltitude(int altitude) {
         super.setAltitude(altitude);
-        if ((getAltitude() == 0) && (game != null) && !game.getBoard().inSpace() && (getPosition() != null)) {
+        if ((getAltitude() == 0) && (game != null) && !game.getBoard().isSpace() && (getPosition() != null)) {
             secondaryPositions.put(0, getPosition());
             secondaryPositions.put(1, getPosition().translated(getFacing()));
             secondaryPositions.put(2, getPosition().translated((getFacing() + 1) % 6));

@@ -124,7 +124,7 @@ public class SpaceStation extends Jumpship {
     @Override
     public boolean hasActiveECM() {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+                || !game.getBoard().isSpace()) {
             return super.hasActiveECM();
         }
         return getECMRange() >= 0;
@@ -139,7 +139,7 @@ public class SpaceStation extends Jumpship {
     @Override
     public int getECMRange() {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+                || !game.getBoard().isSpace()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {

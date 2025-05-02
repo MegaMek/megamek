@@ -159,7 +159,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
 
         // check if extreme range is used
         int maxrange = 4;
-        if (!board.onGround() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
+        if (!board.isGround() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
             maxrange = 5;
         }
 
@@ -441,7 +441,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
 
                 // set the standard ranges, depending on capital or no
                 int rangeMultiplier = wtype.isCapital() ? 2 : 1;
-                if (game.getBoard(firingEntity).onGround()) {
+                if (game.getBoard(firingEntity).isGround()) {
                     rangeMultiplier *= 8;
                 }
 

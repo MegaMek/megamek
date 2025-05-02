@@ -21,7 +21,6 @@ package megamek.client.ui.swing.forceDisplay;
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
@@ -265,7 +264,7 @@ class ForceDisplayMekCellFormatter {
                 msg_vel += aero.getCurrentVelocity();
                 String msg_alt = "";
                 String msg_fuel = "";
-                if (!game.getBoard().inSpace()) {
+                if (!game.getBoard().isSpace()) {
                     msg_alt = ", " + Messages.getString("ChatLounge.compact.altitude") + ": ";
                     msg_alt += aero.getAltitude();
                 }

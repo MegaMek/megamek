@@ -135,7 +135,7 @@ public class AreaEffectHelper {
         // sanity check: if this attack is happening in vacuum through very thin atmo,
         // add that to the phase report and terminate early
 
-        if (game.getBoard().inSpace()
+        if (game.getBoard().isSpace()
                 || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             Report r = new Report(9986);
             r.indent(1);
@@ -208,7 +208,7 @@ public class AreaEffectHelper {
 
         // sanity check: if this attack is happening in vacuum through very thin atmo,
         // add that to the phase report and terminate early
-        if (game.getBoard(boardId).inSpace()
+        if (game.getBoard(boardId).isSpace()
                 || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             Report r = new Report(9986);
             r.indent(1);

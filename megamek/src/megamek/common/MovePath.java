@@ -248,7 +248,7 @@ public class MovePath implements Cloneable, Serializable {
         gravityConcern = ((gravity > 1.0F && cachedEntityState.getJumpMPNoGravity() > 0 ||
                                  (gravity < 1.0F &&
                                         cachedEntityState.getRunMP() > cachedEntityState.getRunMPNoGravity())) &&
-                                game.getBoard(entity.getBoardId()).onGround() &&
+                                game.getBoard(entity.getBoardId()).isGround() &&
                                 !entity.isAirborne());
     }
 

@@ -56,7 +56,7 @@ class ComputeECMTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);
@@ -205,7 +205,7 @@ class ComputeECMTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);
@@ -439,7 +439,7 @@ class ComputeECMTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);

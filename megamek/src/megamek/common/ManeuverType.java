@@ -83,7 +83,7 @@ public class ManeuverType {
                 if (velocity > 0) {
                     // If we're on a ground map, we need to make sure we can move
                     //  all 16 hexes
-                    if (board.isGroundMap()) {
+                    if (board.isGround()) {
                         MovePath tmpMp = mp.clone();                    
                         for (int i = 0; i < 8; i++) {
                             if (type == MAN_SIDE_SLIP_LEFT) {

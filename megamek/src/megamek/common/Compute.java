@@ -446,7 +446,7 @@ public class Compute {
     public static Entity stackingViolation(Game game, Entity entering,
             Coords origPosition, int elevation, Coords dest, int destBoardId, Entity transport, boolean climbMode) {
         // no stacking violations on low-atmosphere and space maps
-        if (!game.getBoard(destBoardId).onGround()) {
+        if (!game.getBoard(destBoardId).isGround()) {
             return null;
         }
 
@@ -1850,7 +1850,7 @@ public class Compute {
             // This is totally crazy, but I don't see how else to do it. Use
             // the unofficial
             // "grounded dropships use individual weapons" for sanity.
-            if (attacker.usesWeaponBays() && game.getBoard().onGround()) {
+            if (attacker.usesWeaponBays() && game.getBoard().isGround()) {
                 distance = (int) Math.ceil(distance / 16.0);
             }
         }
@@ -1881,7 +1881,7 @@ public class Compute {
         }
 
         if (isGroundToAir(attacker, target)) {
-            if (attacker.usesWeaponBays() && game.getBoard().onGround()) {
+            if (attacker.usesWeaponBays() && game.getBoard().isGround()) {
                 distance += (target.getAltitude());
             } else {
                 distance += (2 * target.getAltitude());
@@ -4084,7 +4084,7 @@ public class Compute {
         // Use firing solution if Advanced Sensors is on
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && target.getTargetType() == Targetable.TYPE_ENTITY
-                && game.getBoard().inSpace()) {
+                && game.getBoard().isSpace()) {
             Entity te = (Entity) target;
             return hasAnyFiringSolution(game, te.getId());
         }
@@ -4140,7 +4140,7 @@ public class Compute {
                 // In Low Altitude, Airborne aeros can only see ground targets
                 // they overfly, and only at Alt <=8. It should also spot units
                 // next to this; Low-atmo board with ground units isn't implemented
-                if (game.getBoard().isLowAtmosphereMap()) {
+                if (game.getBoard().isLowAltitude()) {
                     if (attackingEntity.getAltitude() > 8) {
                         return false;
                     }
@@ -4756,7 +4756,7 @@ public class Compute {
         // For Space games with this option, return something different
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && target.getTargetType() == Targetable.TYPE_ENTITY
-                && game.getBoard().inSpace()) {
+                && game.getBoard().isSpace()) {
             Entity te = (Entity) target;
             return hasSensorContact(ae, te.getId());
         }
@@ -4809,7 +4809,7 @@ public class Compute {
         // find an enemy aero on the map
         // but still won't be able to see it and shoot at it beyond normal visual
         // conditions.
-        if (isAirToAir(game, ae, target) && game.getBoard().onGround()) {
+        if (isAirToAir(game, ae, target) && game.getBoard().isGround()) {
             distance = (int) Math.ceil(distance / 16.0);
         }
         return (distance > minSensorRange) && (distance <= maxSensorRange);
@@ -4967,7 +4967,7 @@ public class Compute {
         // the flightline against ground targets
         // TO:AR Errata forum post clarifies that ground
         // mapsheet aero use ground sensor table
-        if (!game.getBoard(ae).onGround() && ae.isAirborne() && !te.isAirborne()) {
+        if (!game.getBoard(ae).isGround() && ae.isAirborne() && !te.isAirborne()) {
             // Can't see anything if above Alt 8.
             if (ae.getAltitude() > 8) {
                 range = 0;
@@ -5248,7 +5248,7 @@ public class Compute {
             return 0;
         }
         Board board = ae.getGame().getBoard();
-        if (board.inSpace()) {
+        if (board.isSpace()) {
             return 0;
         }
 
@@ -5275,7 +5275,7 @@ public class Compute {
      * return the highest target roll. -1 if no Ghost Targets
      */
     public static int getGhostTargetNumber(Entity ae, Coords a, Coords b) {
-        if (ae.getGame().getBoard().inSpace()) {
+        if (ae.getGame().getBoard().isSpace()) {
             // ghost targets don't work in space
             return 0;
         }
@@ -7289,7 +7289,7 @@ public class Compute {
     public static boolean indirectAttackImpossible(Game game, Entity ae, Targetable target, WeaponType wtype,
             Mounted<?> weapon) {
         boolean isLandedSpheroid = ae.isAero() && ((IAero) ae).isSpheroid() && (ae.getAltitude() == 0)
-                && game.getBoard().onGround();
+                && game.getBoard().isGround();
         int altDif = target.getAltitude() - ae.getAltitude();
         boolean noseWeaponAimedAtGroundTarget = (weapon != null) && (weapon.getLocation() == Aero.LOC_NOSE)
                 && (altDif < 1);

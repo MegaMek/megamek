@@ -142,7 +142,7 @@ public final class BoardHelper {
      * @return True for hexes of the atmospheric rows on a high-altitude map
      */
     public static boolean isAtmosphericRow(Game game, Board board, int x) {
-        return board.isHighAltitudeMap() && (x >= 1) && (x < spaceAtmosphereInterfacePosition(game));
+        return board.isHighAltitude() && (x >= 1) && (x < spaceAtmosphereInterfacePosition(game));
     }
 
     /**
@@ -168,7 +168,7 @@ public final class BoardHelper {
      * @return true for hexes of atmospheric rows 1-4 and the ground row on a high-altitude map
      */
     public static boolean isBelowSpaceAtmosphereInterface(Game game, Board board, Coords coords) {
-        return board.isHighAltitudeMap() && (coords.getX() < spaceAtmosphereInterfacePosition(game));
+        return board.isHighAltitude() && (coords.getX() < spaceAtmosphereInterfacePosition(game));
     }
 
     /**
@@ -223,7 +223,7 @@ public final class BoardHelper {
      * @return true for hexes of the space-atmosphere interface on a high-atmosphere map
      */
     public static boolean isSpaceAtmosphereInterface(Game game, Board board, Coords coords) {
-        return board.isHighAltitudeMap() && (coords.getX() == spaceAtmosphereInterfacePosition(game));
+        return board.isHighAltitude() && (coords.getX() == spaceAtmosphereInterfacePosition(game));
     }
 
     /**
@@ -249,7 +249,7 @@ public final class BoardHelper {
      * @return true for the ground row hexes on a high atmospheric map
      */
     public static boolean isGroundRowHex(Board board, int x) {
-        return board.isHighAltitudeMap() && (x == 0);
+        return board.isHighAltitude() && (x == 0);
     }
 
     /**
@@ -261,7 +261,7 @@ public final class BoardHelper {
      * @return true for true space hexes on a space map
      */
     public static boolean isTrueSpaceHex(Game game, Board board, Coords coords) {
-        return board.isSpaceMap() && (!board.isHighAltitudeMap() || (coords.getX() > spaceAtmosphereInterfacePosition(game)));
+        return board.isSpace() && (!board.isHighAltitude() || (coords.getX() > spaceAtmosphereInterfacePosition(game)));
     }
 
     public static int spaceAtmosphereInterfacePosition(Game game) {
@@ -305,7 +305,7 @@ public final class BoardHelper {
      * @return True when a path between the two positions crosses the space/atmosphere interface
      */
     public static boolean crossesSpaceAtmosphereInterface(Game game, Board board, Coords position1, Coords position2) {
-        return board.isHighAltitudeMap() &&
+        return board.isHighAltitude() &&
                      ((isTrueSpaceHex(game, board, position1) && isBelowSpaceAtmosphereInterface(game, board, position2))
                             || (isTrueSpaceHex(game, board, position2) && isBelowSpaceAtmosphereInterface(game, board, position1)));
         // @@MultiBoardTODO: Make this an IMPOSSIBLE reason in loseffects for non-cap weapons

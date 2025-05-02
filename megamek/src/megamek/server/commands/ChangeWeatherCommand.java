@@ -72,7 +72,7 @@ public class ChangeWeatherCommand extends GamemasterServerCommand {
      */
     @Override
     protected void runCommand(int connId, Arguments args) {
-        if (getGameManager().getGame().getBoard().inSpace()) {
+        if (getGameManager().getGame().getBoard().isSpace()) {
             server.sendServerChat(connId, "There is no planetary conditions to change outside of a planet");
             return;
         }

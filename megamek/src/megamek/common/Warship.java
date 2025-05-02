@@ -136,7 +136,7 @@ public class Warship extends Jumpship {
     public boolean hasActiveECM() {
         // All warships automatically have ECM if in space
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+                || !game.getBoard().isSpace()) {
             return super.hasActiveECM();
         }
         return getECMRange() >= 0;
@@ -145,7 +145,7 @@ public class Warship extends Jumpship {
     @Override
     public int getECMRange() {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+                || !game.getBoard().isSpace()) {
             return super.getECMRange();
         }
         int range = 2;

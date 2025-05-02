@@ -3,43 +3,43 @@ name: Test Setup no 1 for multiple boards
 planet: None
 description: uses several boards
 map:
-  - file: Beginner Box/16x17 Grassland 1.board
-    name: Grassland
-    id: 0
+#  - file: Beginner Box/16x17 Grassland 1.board
+#    name: Grassland
+#    id: 0
+#
+#  - file: Battle of Tukayyid Pack/32x17 Pozoristu Mountains (CW).board
+#    name: Mountain Pass
+#    id: 1
+#
+#  - type: sky
+#    width: 35
+#    height: 20
+#    name: Sky
+#    embed:
+#      - at: [ 5, 5 ]
+#        id: 0
+#      - at: [ 8, 9 ]
+#        id: 1
+#      - at: [ 31, 11 ]
+#        id: 3
+#    id: 2
+#
+#  - file: buildingsnobasement/Flughafen 6.board
+#    name: Hangar
+#    id: 3
+#
+#  - file: unofficial/Cakefish/General/50x50 Grass QRF Airbase.board
+#    name: Airport
+#    id: 5
 
-  - file: Battle of Tukayyid Pack/32x17 Pozoristu Mountains (CW).board
-    name: Mountain Pass
-    id: 1
-
-  - type: sky
-    width: 35
-    height: 20
-    name: Sky
-    embed:
-      - at: [ 5, 5 ]
-        id: 0
-      - at: [ 8, 9 ]
-        id: 1
-      - at: [ 31, 11 ]
-        id: 3
-    id: 2
-
-  - file: buildingsnobasement/Flughafen 6.board
-    name: Hangar
-    id: 3
-
-  - file: unofficial/Cakefish/General/50x50 Grass QRF Airbase.board
-    name: Airport
-    id: 5
-
-#  - type: space
-#    width: 15
-#    height: 15
-#    name: Orbit
+  - type: space
+    width: 15
+    height: 15
+    name: Orbit
 #    embed:
 #      - at: [ 1, 7 ]
 #        id: 2
-#    id: 6
+    id: 6
 
 
 options:
@@ -48,6 +48,7 @@ options:
     - aero_ground_move
   off:
     - check_victory
+    - stratops_ecm
 #    - aero_ground_move
 
 factions:
@@ -81,21 +82,21 @@ factions:
 #    board: 1
 #    facing: 2
 
-  - fullname: Bulldog Medium Tank
-    at: [ 13,10 ]
-    board: 0
-    facing: 2
+#  - fullname: Bulldog Medium Tank
+#    at: [ 13,10 ]
+#    board: 0
+#    facing: 2
 
-  - fullname: Bulldog Medium Tank
-    at: [ 11,11 ]
-    board: 0
-    facing: 0
-
-  - fullname: Sprint Scout Helicopter (C3i)
-    at: [ 12,10 ]
-    board: 0
-    facing: 0
-    elevation: 3
+#  - fullname: Bulldog Medium Tank
+#    at: [ 11,11 ]
+#    board: 0
+#    facing: 0
+#
+#  - fullname: Sprint Scout Helicopter (C3i)
+#    at: [ 12,10 ]
+#    board: 0
+#    facing: 0
+#    elevation: 3
 
 #  - fullname: Locust LCT-1V
 #    board: 0
@@ -112,10 +113,10 @@ factions:
 #    board: 5
 #    at: [ 35, 29 ]
 #
-#  - fullname: Cheetah IIC
-#    at: [5, 6]
-#    board: 2
-#    facing: 2
+  - fullname: Cheetah IIC
+    at: [5, 6]
+    board: 6
+    facing: 2
 #    altitude: 5
 #
 #  - fullname: Chippewa CHP-W7T
@@ -136,11 +137,11 @@ factions:
 #    facing: 3
 #    altitude: 5
 
-  - fullname: Cheetah IIC
-    at: [ 8, 2 ]
-    board: 2
-    facing: 3
-    altitude: 1
+#  - fullname: Cheetah IIC
+#    at: [ 8, 2 ]
+#    board: 2
+#    facing: 3
+#    altitude: 1
 
 #  - fullname: AC/10 Turret (Dual)
 

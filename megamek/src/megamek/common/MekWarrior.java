@@ -58,11 +58,6 @@ public class MekWarrior extends EjectedCrew {
         setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#isSelectableThisTurn()
-     */
     @Override
     public boolean isSelectableThisTurn() {
         return (pickedUpById == Entity.NONE) && super.isSelectableThisTurn();

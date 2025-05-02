@@ -27,7 +27,6 @@ import megamek.common.options.IGameOptions;
 import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.TriggeredEvent;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -519,7 +518,7 @@ public interface IGame {
      * @return True when its location exists and is on a board
      */
     default boolean hasBoardLocationOf(@Nullable Targetable targetable) {
-        return targetable!=null && hasBoardLocation(targetable.getPosition(), targetable.getBoardId());
+        return (targetable != null) && hasBoardLocation(targetable.getPosition(), targetable.getBoardId());
     }
 
     /**
@@ -530,9 +529,8 @@ public interface IGame {
      * @return True when the location exists and is on a board
      */
     default boolean hasBoardLocation(@Nullable BoardLocation boardLocation) {
-        return boardLocation != null &&
-                     !boardLocation.isNoLocation() &&
-                     hasBoardLocation(boardLocation.coords(), boardLocation.boardId());
+        return (boardLocation != null) && !boardLocation.isNoLocation()
+              && hasBoardLocation(boardLocation.coords(), boardLocation.boardId());
     }
 
     /**
@@ -692,6 +690,28 @@ public interface IGame {
      */
     default boolean onConnectedBoards(@Nullable Targetable entity1, @Nullable Targetable entity2) {
         return (entity1 != null) && (entity2 != null) && areConnectedBoards(entity1.getBoardId(), entity2.getBoardId());
+    }
+
+    /**
+     * @return True when this game has at least one space board (including high-altitude) and at least one non-space
+     * board (low altitude or ground).
+     */
+    default boolean hasSpaceAndAtmosphericBoards() {
+        return hasSpaceBoard() && hasNonSpaceBoard();
+    }
+
+    /**
+     * @return True when this game has at least one space board (including high-altitude).
+     */
+    default boolean hasSpaceBoard() {
+        return getBoards().values().stream().anyMatch(Board::inSpace);
+    }
+
+    /**
+     * @return True when this game has at least one non-space board (low altitude or ground).
+     */
+    default boolean hasNonSpaceBoard() {
+        return getBoards().values().stream().anyMatch(b -> b.onGround() || b.inAtmosphere());
     }
 
     /**

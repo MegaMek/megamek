@@ -3609,4 +3609,22 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             return Optional.empty();
         }
     }
+
+    /**
+     * @return True if the current game round counts as a round in which spaceborne units may act; when this game has
+     *       only space board(s), this is true for every game round; if it has a mixture of space and other boards, only
+     *       every 7th game round is a space round (TW p.78)
+     */
+    public boolean isSpaceRound() {
+        return !hasSpaceAndAtmosphericBoards() || (getRoundCount() % 7 == 0);
+    }
+
+    /**
+     * @return True if the current game round counts as a round in which non-spaceborne units may act; when this game
+     *       has no space boards, this is true for every game round; if it has a mixture of space and other boards, six
+     *       atmopsheric game rounds are followed by one space round. (TW p.78)
+     */
+    public boolean isAtmosphericRound() {
+        return !hasSpaceAndAtmosphericBoards() || (getRoundCount() % 7 != 0);
+    }
 }

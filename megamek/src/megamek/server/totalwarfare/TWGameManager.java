@@ -16583,7 +16583,7 @@ TargetRoll nTargetRoll,
                                 r.addDesc(e);
                                 r.add(loss);
                                 vReport.add(r);
-                                Hex hex = game.getBoard().getHex(e.getPosition());
+                                Hex hex = game.getHexOf(e);
                                 int elevation = Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
                                 if (e.getElevation() - loss <= elevation) {
                                     crashAirMek(e, target, vReport);

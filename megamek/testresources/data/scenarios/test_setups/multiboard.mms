@@ -32,14 +32,14 @@ map:
     name: Airport
     id: 5
 
-  - type: space
-    width: 15
-    height: 15
-    name: Orbit
-    embed:
-      - at: [ 1, 7 ]
-        id: 2
-    id: 6
+#  - type: space
+#    width: 15
+#    height: 15
+#    name: Orbit
+#    embed:
+#      - at: [ 1, 7 ]
+#        id: 2
+#    id: 6
 
 
 options:

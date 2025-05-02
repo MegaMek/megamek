@@ -1818,7 +1818,16 @@ public abstract class Entity extends TurnOrdered
      * Returns true if this entity is selectable for action. Transported entities can not be selected.
      */
     public boolean isSelectableThisTurn() {
-        return !done && (conveyance == Entity.NONE) && !unloadedThisTurn && !isClearingMinefield() && !isCarcass();
+        return !done && (conveyance == Entity.NONE) && !unloadedThisTurn && !isClearingMinefield() && !isCarcass()
+              && (isSpaceborneInSpaceTurn() || isNonSpaceborneInNonSpaceTurn());
+    }
+
+    private boolean isSpaceborneInSpaceTurn() {
+        return isSpaceborne() && game.isSpaceRound();
+    }
+
+    private boolean isNonSpaceborneInNonSpaceTurn() {
+        return !isSpaceborne() && game.isAtmosphericRound();
     }
 
     /**

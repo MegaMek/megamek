@@ -11718,6 +11718,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Barracuda Ammo";
+        ammo.shortName = "B";
         ammo.setInternalName("Ammo Barracuda");
         ammo.addLookupName("Barracuda Ammo");
         ammo.damagePerShot = 2;
@@ -11749,6 +11750,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "White Shark Ammo";
+        ammo.shortName = "WS";
         ammo.setInternalName("Ammo White Shark");
         ammo.addLookupName("WhiteShark Ammo");
         ammo.addLookupName("White Shark Ammo");
@@ -11782,6 +11784,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "Killer Whale Ammo";
         ammo.setInternalName("Ammo Killer Whale");
+        ammo.shortName = "KW";
         ammo.addLookupName("KillerWhale Ammo");
         ammo.damagePerShot = 4;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
@@ -11813,6 +11816,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Barracuda (Tele-Operated) Ammo";
+        ammo.shortName = "B-T";
         ammo.setInternalName("Ammo Barracuda-T");
         ammo.addLookupName("BarracudaT Ammo");
         ammo.shortName = "Barracuda-T";
@@ -11842,6 +11846,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "White Shark (Tele-Operated) Ammo";
+        ammo.shortName = "WS-T";
         ammo.setInternalName("Ammo White Shark-T");
         ammo.addLookupName("WhiteSharkT Ammo");
         ammo.shortName = "White Shark-T";
@@ -11870,6 +11875,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Killer Whale (Tele-Operated) Ammo";
+        ammo.shortName = "KW-T";
         ammo.setInternalName("Ammo Killer Whale-T");
         ammo.addLookupName("KillerWhaleT Ammo");
         ammo.shortName = "Killer Whale-T";
@@ -11898,6 +11904,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Kraken (Tele-Operated) Ammo";
+        ammo.shortName = "KR-T";
         ammo.setInternalName("Ammo KrakenT");
         ammo.addLookupName("KrakenT Ammo");
         ammo.shortName = "Kraken-T";
@@ -11926,6 +11933,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Kraken Ammo";
+        ammo.shortName = "KR";
         ammo.setInternalName("Ammo Kraken");
         ammo.addLookupName("Kraken Ammo");
         ammo.damagePerShot = 10;

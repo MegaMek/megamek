@@ -45,6 +45,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.client.ui.swing.widget.PMUtil;
+import megamek.client.ui.swing.widget.PicMap;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.Configuration;
@@ -171,30 +172,13 @@ public class UnitDisplay extends JPanel {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         // Wrap in JScrollPane
-        mPanScroll = new JScrollPane(mPan);
-        pPanScroll = new JScrollPane(pPan);
-        aPanScroll = new JScrollPane(aPan);
-        wPanScroll = new JScrollPane(wPan);
-        sPanScroll = new JScrollPane(sPan);
-        ePanScroll = new JScrollPane(ePan);
-        mPanScroll.setBorder(null);
-        pPanScroll.setBorder(null);
-        aPanScroll.setBorder(null);
-        wPanScroll.setBorder(null);
-        sPanScroll.setBorder(null);
-        ePanScroll.setBorder(null);
-        mPanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
-        pPanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
-        aPanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
-        wPanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
-        sPanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
-        ePanScroll.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
-        mPanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
-        pPanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
-        aPanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
-        wPanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
-        sPanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
-        ePanScroll.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
+        mPanScroll = createConfiguredScrollPane(mPan);
+        pPanScroll = createConfiguredScrollPane(pPan);
+        aPanScroll = createConfiguredScrollPane(aPan);
+        wPanScroll = createConfiguredScrollPane(wPan);
+        sPanScroll = createConfiguredScrollPane(sPan);
+        ePanScroll = createConfiguredScrollPane(ePan);
+
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
@@ -510,6 +494,14 @@ public class UnitDisplay extends JPanel {
 
         displayP.revalidate();
         displayP.repaint();
+    }
+
+    private JScrollPane createConfiguredScrollPane(PicMap picMap) {
+        JScrollPane scrollPane = new JScrollPane(picMap);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
+        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
+        return scrollPane;
     }
 
     /**

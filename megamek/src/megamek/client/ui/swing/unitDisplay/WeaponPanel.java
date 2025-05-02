@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -397,6 +398,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private JTextPane wTargetInfo;
     private Targetable target;
 
+    private JSplitPane splitPane;
     // I need to keep a pointer to the weapon list of the
     // currently selected mek.
     private ArrayList<AmmoMounted> vAmmo;
@@ -461,7 +463,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         createTargetDisplay(panelLower);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelMain, panelLower);
+        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelMain, panelLower);
         splitPane.setOpaque(false);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.add(splitPane);
@@ -1005,6 +1007,20 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         int dy = minTopMargin;
         setContentMargins(dx, dy, dx, dy);
+        revalidate();
+        repaint();
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        // Calculate preferred size based on the main split pane's preferred size
+        Dimension splitPanePrefSize = splitPane.getPreferredSize();
+        Insets insets = getInsets();
+        int height = splitPanePrefSize.height + insets.top + insets.bottom;
+
+        // Consider superclass preferred size as well
+        Dimension superPref = super.getPreferredSize();
+        return new Dimension(Math.max(splitPanePrefSize.width, superPref.width), Math.max(height, superPref.height));
     }
 
     private void setBackGround() {
@@ -2779,6 +2795,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         entity.setWeaponSortOrder(weaponSortOrder);
         ((WeaponListModel) weaponList.getModel()).sort(weaponSortOrder.getWeaponSortComparator(entity));
+
+        onResize();
+        addListeners();
     }
 
     private void addListeners() {

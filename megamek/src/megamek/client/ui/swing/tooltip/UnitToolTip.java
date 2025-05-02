@@ -19,6 +19,7 @@ import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.swing.util.UIUtil.DOT_SPACER;
 import static megamek.client.ui.swing.util.UIUtil.ECM_SIGN;
 import static megamek.client.ui.swing.util.UIUtil.repeat;
+import static megamek.common.LandAirMek.CONV_MODE_FIGHTER;
 
 import java.awt.Color;
 import java.text.MessageFormat;
@@ -2226,11 +2227,11 @@ public final class UnitToolTip {
                 String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getWarningColor())));
                 sMove += UIUtil.tag("FONT", attr, sArmor);
             }
-            // Display SI for Aerodynes
-            if (entity instanceof IAero) {
+            // Display SI for Aerodynes, and LAMs only if in Fighter mode
+            if (entity instanceof IAero &&
+                      !(entity instanceof LandAirMek && !(entity.getConversionMode() == CONV_MODE_FIGHTER))) {
                 sMove += DOT_SPACER;
                 IAero unit = (IAero) entity;
-                String SIValue = "SI: " + Integer.toString(unit.getSI());
                 sMove += String.format(" SI: %d", unit.getSI());
             }
 

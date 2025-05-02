@@ -1005,6 +1005,11 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
 
+        if (engine.getEngineType() == Engine.NONE && getEntity().getWalkMP() > 0) {
+            buff.append("Vehicle with no engine must not have nonzero MP\n");
+            correct = false;
+        }
+
         if ((supportVee instanceof Tank supportTank) && (supportTank.fuelTonnagePer100km() > 0.0)
                 && (supportTank.getFuelTonnage() <= 0.0)) {
             buff.append("Support vehicles with ").append(engine.getEngineName())

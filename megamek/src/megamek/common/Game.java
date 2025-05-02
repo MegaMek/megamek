@@ -2630,9 +2630,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Getter for property roundCount.
-     *
-     * @return Value of property roundCount.
+     * @return The current round of the game.
      */
     public int getRoundCount() {
         return getCurrentRound();

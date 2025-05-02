@@ -292,7 +292,7 @@ public class MovePath implements Cloneable, Serializable {
               .append("; ");
 
         steps.forEach(step -> result.append(step.toString()).append(" "));
-        if (game.getBoard(getFinalBoardId())==null) {
+        if (game.getBoard(getFinalBoardId()) == null) {
             result.append("Invalid Board!");
         } else if (!getGame().getBoard(getFinalBoardId()).contains(getFinalCoords())) {
             result.append("OUT!");

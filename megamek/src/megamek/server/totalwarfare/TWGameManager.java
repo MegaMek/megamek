@@ -5650,10 +5650,21 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Process any flee movement actions, including flying off the map
+     * Processes a flee movement action.
      *
-     * @param movePath   The move path which resulted in an entity leaving the map.
-     * @param flewOff    whether this fleeing is a result of accidentally flying off the map
+     * @param movePath   The move path which resulted in the entity leaving the map
+     *
+     * @return Vector of turn reports.
+     */
+    public Vector<Report> processLeaveMap(MovePath movePath) {
+        return processLeaveMap(movePath, false, -1);
+    }
+
+    /**
+     * Processes any flee movement actions, including flying an aero off the map.
+     *
+     * @param movePath   The move path which resulted in an entity leaving the map
+     * @param flewOff    When true, this is an aero flying off the map (intentionally or otherwise)
      * @param returnable the number of rounds until the unit can return to the map (-1 if it can't return)
      *
      * @return Vector of turn reports.
@@ -5661,13 +5672,7 @@ public class TWGameManager extends AbstractGameManager {
     public Vector<Report> processLeaveMap(MovePath movePath, boolean flewOff, int returnable) {
         Entity entity = movePath.getEntity();
         Vector<Report> vReport = new Vector<>();
-        Report r;
-        // Unit has fled the battlefield.
-        r = new Report(2005, Report.PUBLIC);
-        if (flewOff) {
-            r = new Report(9370, Report.PUBLIC);
-        }
-        r.addDesc(entity);
+        Report r = new Report(flewOff ? 9370 : 2005, Report.PUBLIC).addDesc(entity);
 
         OffBoardDirection fleeDirection = calculateEdge(movePath.getFinalCoords(), movePath.getFinalBoardId());
         String retreatEdge = setRetreatEdge(entity, fleeDirection);
@@ -5682,11 +5687,8 @@ public class TWGameManager extends AbstractGameManager {
             entity.setPosition(null);
             entity.setDone(true);
             if (entity.isAero()) {
-                // If we're flying off because we're OOC, when we come back we
-                // should no longer be OOC
-                // If we don't, this causes a major problem as aeros tend to
-                // return, re-deploy then
-                // fly off again instantly.
+                // If we're flying off because we're OOC, when we come back we should no longer be OOC. If we don't,
+                // this causes a major problem as aeros tend to return, re-deploy then fly off again instantly.
                 ((IAero) entity).setOutControl(false);
             }
 
@@ -10328,7 +10330,7 @@ public class TWGameManager extends AbstractGameManager {
             } else if (ea instanceof DisengageAction) {
                 MovePath path = new MovePath(game, entity);
                 path.addStep(MoveStepType.FLEE);
-                addReport(processLeaveMap(path, false, -1));
+                addReport(processLeaveMap(path));
             } else if (ea instanceof ActivateBloodStalkerAction bloodStalkerAction) {
                 Entity target = game.getEntity(bloodStalkerAction.getTargetID());
 

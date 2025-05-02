@@ -1249,7 +1249,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // check for fleeing
         if (md.contains(MovePath.MoveStepType.FLEE)) {
             if (entity.canFlee(entity.getPosition())) {
-                addReport(gameManager.processLeaveMap(md, false, -1));
+                addReport(gameManager.processLeaveMap(md));
             } else {
                 r = new Report(2017, Report.PUBLIC);
                 r.indent();

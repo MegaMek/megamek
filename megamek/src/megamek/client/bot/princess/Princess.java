@@ -581,7 +581,7 @@ public class Princess extends BotClient {
             // Compensate for hex elevation where != 0...
             deployElevation -= deployHex.getLevel();
         }
-        deploy(entityNum, deployCoords, decentFacing, deployElevation);
+        deploy(entityNum, deployCoords, 0, decentFacing, deployElevation, new Vector<>(), false);
     }
 
     /**

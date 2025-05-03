@@ -1319,12 +1319,6 @@ public abstract class BotClient extends Client {
         return new RandomMinefieldDeploymentPlanner(getBoard());
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    protected void receiveBuildingCollapse(Packet packet) {
-        game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));
-    }
-
     /**
      * The bot client doesn't really need a text report
      * Let's save ourselves a little processing time and not deal with any of it

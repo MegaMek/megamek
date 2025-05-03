@@ -1380,9 +1380,7 @@ public class Board implements Serializable {
         Enumeration<Coords> loop = coords.elements();
         while (loop.hasMoreElements()) {
             final Coords other = loop.nextElement();
-
-            // Update the building.
-            this.collapseBuilding(other);
+            collapseBuilding(other);
         }
     }
 
@@ -1393,11 +1391,12 @@ public class Board implements Serializable {
      * @param coords the <code>Building</code> that has collapsed.
      */
     public void collapseBuilding(Coords coords) {
-        final Hex curHex = this.getHex(coords);
+        final Hex curHex = getHex(coords);
 
         // Remove the building from the building map.
         Building bldg = bldgByCoords.get(coords);
         if (bldg == null) {
+            logger.error("No building found at %s".formatted(coords));
             return;
         }
         bldg.removeHex(coords);
@@ -1441,8 +1440,7 @@ public class Board implements Serializable {
         // Update the hex.
         // TODO : Do I need to initialize it???
         // ASSUMPTION: It's faster to update one at a time.
-        this.setHex(coords, curHex);
-
+        setHex(coords, curHex);
     }
 
     /**

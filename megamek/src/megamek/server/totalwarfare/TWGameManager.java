@@ -10380,7 +10380,7 @@ public class TWGameManager extends AbstractGameManager {
                         }
                     }
                     e.setSelfDestructedThisTurn(true);
-                    doFusionEngineExplosion(engineRating, e.getPosition(), vDesc, null);
+                    doFusionEngineExplosion(engineRating, e.getBoardLocation(), vDesc, null);
                     Report.addNewline(vDesc);
                     r = new Report(5410, Report.PUBLIC);
                     r.subject = e.getId();
@@ -17539,7 +17539,7 @@ TargetRoll nTargetRoll,
                     vDesc.addAll(ejectEntity(en, true));
                 }
 
-                doFusionEngineExplosion(engineRating, en.getPosition(), vDesc, null);
+                doFusionEngineExplosion(engineRating, en.getBoardLocation(), vDesc, null);
                 Report.addNewline(vDesc);
                 r = new Report(5410, Report.PUBLIC);
                 r.subject = en.getId();
@@ -17555,16 +17555,24 @@ TargetRoll nTargetRoll,
     /**
      * Extract explosion functionality for generalized explosions in areas.
      */
-    public void doFusionEngineExplosion(int engineRating, Coords position, Vector<Report> vDesc,
+    public void doFusionEngineExplosion(int engineRating, BoardLocation location, Vector<Report> vDesc,
           Vector<Integer> vUnits) {
         int[] myDamages = { engineRating, (engineRating / 10), (engineRating / 20), (engineRating / 40) };
-        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1, true, false);
+        doExplosion(myDamages, true, location.coords(), location.boardId(), false, vDesc, vUnits, 5, -1, true, false);
+    }
+
+    // LEGACY replace with board id version
+    public void doExplosion(int damage, int degradation, boolean autoDestroyInSameHex, Coords position,
+          boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits, int excludedUnitId,
+          boolean canDamageVtol) {
+        doExplosion(damage, degradation, autoDestroyInSameHex, position, 0, allowShelter, vDesc, vUnits,
+              excludedUnitId, canDamageVtol);
     }
 
     /**
      * General function to cause explosions in areas.
      */
-    public void doExplosion(int damage, int degradation, boolean autoDestroyInSameHex, Coords position,
+    public void doExplosion(int damage, int degradation, boolean autoDestroyInSameHex, Coords position, int boardId,
           boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits, int excludedUnitId,
           boolean canDamageVtol) {
         if (degradation < 1) {
@@ -17584,6 +17592,7 @@ TargetRoll nTargetRoll,
         doExplosion(myDamages,
               autoDestroyInSameHex,
               position,
+              boardId,
               allowShelter,
               vDesc,
               vUnits,
@@ -17597,7 +17606,8 @@ TargetRoll nTargetRoll,
      * General function to cause explosions in areas.
      * TODO Luana: Refactor this function so it is less of a mess
      */
-    public void doExplosion(int[] damages, boolean autoDestroyInSameHex, Coords position, boolean allowShelter,
+    public void doExplosion(int[] damages, boolean autoDestroyInSameHex, Coords position,
+          int boardId, boolean allowShelter,
           Vector<Report> vDesc, Vector<Integer> vUnits, int clusterAmt, int excludedUnitId, boolean engineExplosion,
           boolean canDamageVtol) {
         if (vDesc == null) {
@@ -17612,7 +17622,7 @@ TargetRoll nTargetRoll,
         HashSet<Entity> entitiesHit = new HashSet<>();
 
         // We need to damage buildings.
-        Enumeration<Building> buildings = game.getBoard().getBuildings();
+        Enumeration<Building> buildings = game.getBoard(boardId).getBuildings();
         while (buildings.hasMoreElements()) {
             final Building bldg = buildings.nextElement();
 
@@ -17634,7 +17644,7 @@ TargetRoll nTargetRoll,
 
         // We need to damage terrain
         int maxDist = damages.length;
-        Hex hex = game.getBoard().getHex(position);
+        Hex hex = game.getHex(position, boardId);
         // Center hex starts on fire for engine explosions
         if (engineExplosion && (hex != null) && !hex.containsTerrain(Terrains.FIRE)) {
             r = new Report(5136);
@@ -17667,7 +17677,7 @@ TargetRoll nTargetRoll,
         for (int dist = 1; dist < maxDist; dist++) {
             List<Coords> coords = position.allAtDistance(dist);
             for (Coords c : coords) {
-                hex = game.getBoard().getHex(c);
+                hex = game.getHex(c, boardId);
                 if ((hex != null) && hex.hasTerrainFactor()) {
                     r = new Report(3384);
                     r.indent(2);
@@ -17757,7 +17767,7 @@ TargetRoll nTargetRoll,
 
             int damage = damages[range];
 
-            if (allowShelter && canShelter(entityPos, position, entity.relHeight())) {
+            if (allowShelter && canShelter(entityPos, boardId, position, entity.relHeight())) {
                 if (isSheltered()) {
                     r = new Report(6545);
                     r.addDesc(entity);
@@ -17797,7 +17807,7 @@ TargetRoll nTargetRoll,
                 int damage = damages[range];
                 if (allowShelter) {
                     final int absHeight = (transporter == null ? e.relHeight() : transporter.relHeight());
-                    if (canShelter(entityPos, position, absHeight)) {
+                    if (canShelter(entityPos, boardId, position, absHeight)) {
                         if (isSheltered()) {
                             r = new Report(6545);
                             r.addDesc(e);
@@ -17876,10 +17886,10 @@ TargetRoll nTargetRoll,
      *
      * @return a <code>boolean</code> value indicating if the entity of the given height can find shelter
      */
-    public boolean canShelter(Coords entityPosition, Coords position, int entityAbsHeight) {
+    public boolean canShelter(Coords entityPosition, int boardId, Coords position, int entityAbsHeight) {
         // What is the next hex in the direction of the blast?
         Coords shelteringCoords = Coords.nextHex(entityPosition, position);
-        Hex shelteringHex = game.getBoard().getHex(shelteringCoords);
+        Hex shelteringHex = game.getHex(shelteringCoords, boardId);
 
         // This is an error condition. It really shouldn't ever happen.
         if (shelteringHex == null) {
@@ -17897,7 +17907,7 @@ TargetRoll nTargetRoll,
         }
 
         // Get the absolute height of the unit relative to level 0.
-        entityAbsHeight += game.getBoard().getHex(entityPosition).getLevel();
+        entityAbsHeight += game.getHex(entityPosition, boardId).getLevel();
 
         // Now find the height that needs to be sheltered, and compare.
         return entityAbsHeight < shelterLevel;
@@ -21011,7 +21021,7 @@ TargetRoll nTargetRoll,
      * Rolls and resolves critical hits on meks or vehicles. if rollNumber is false, a single hit is applied - needed
      * for MaxTech Heat Scale rule.
      */
-    public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, int critMod, boolean rollNumber,
+    public Vector<Report> criticalEntity(final Entity en, int loc, boolean isRear, int critMod, boolean rollNumber,
           boolean isCapital, int damage, DamageType damageType) {
 
         if (en.hasQuirk("poor_work")) {
@@ -21037,12 +21047,12 @@ TargetRoll nTargetRoll,
         CriticalSlot slot;
         Vector<Report> vDesc = new Vector<>();
         Report r;
-        Coords coords = en.getPosition();
+        final Coords coords = en.getPosition();
         Hex hex = null;
         int hits;
         if (rollNumber) {
             if (null != coords) {
-                hex = game.getBoard().getHex(coords);
+                hex = game.getHexOf(en);
             }
             r = new Report(6305);
             r.subject = en.getId();
@@ -21128,7 +21138,7 @@ TargetRoll nTargetRoll,
                             hex.addTerrain(new Terrain(Terrains.LEGS, hex.terrainLevel(Terrains.LEGS) + 1));
                         }
                     }
-                    sendChangedHex(en.getPosition());
+                    sendChangedHex(coords, en.getBoardId());
                     return vDesc;
                 } else if ((loc == Mek.LOC_RARM) || (loc == Mek.LOC_LARM)) {
                     CriticalSlot cs = en.getCritical(loc, 0);
@@ -21779,21 +21789,21 @@ TargetRoll nTargetRoll,
 
         // if using battlefield wreckage rules, then the destruction of this unit might convert the hex to rough
         Coords curPos = entity.getPosition();
-        Hex entityHex = game.getBoard().getHex(curPos);
+        Hex entityHex = game.getHexOf(entity);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK) &&
                   (entityHex != null) &&
-                  game.getBoard().isGround() &&
+                  game.isOnGroundMap(entity) &&
                   !entityHex.containsTerrain(Terrains.ULTRA_SUBLEVEL) &&
                   !((entity instanceof Infantry) || (entity instanceof ProtoMek))) {
             // large support vees will create ultra rough, otherwise rough
             if (entity instanceof LargeSupportTank) {
                 if (entityHex.terrainLevel(Terrains.ROUGH) < 2) {
                     entityHex.addTerrain(new Terrain(Terrains.ROUGH, 2));
-                    sendChangedHex(curPos);
+                    sendChangedHex(curPos, entity.getBoardId());
                 }
             } else if ((entity.getWeight() >= 40) && !entityHex.containsTerrain(Terrains.ROUGH)) {
                 entityHex.addTerrain(new Terrain(Terrains.ROUGH, 1));
-                sendChangedHex(curPos);
+                sendChangedHex(curPos, entity.getBoardId());
             }
         }
 
@@ -25760,6 +25770,7 @@ TargetRoll nTargetRoll,
                               10,
                               false,
                               bldg.getCoords().nextElement(),
+                              bldg.getBoardId(),
                               true,
                               vRep,
                               null,
@@ -25960,6 +25971,7 @@ TargetRoll nTargetRoll,
                           10,
                           false,
                           bldg.getCoords().nextElement(),
+                          bldg.getBoardId(),
                           true,
                           vRep,
                           null,

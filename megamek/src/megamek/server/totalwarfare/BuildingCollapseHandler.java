@@ -379,7 +379,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             } else {
                 bldg.setCurrentCF(0, coords);
                 bldg.setPhaseCF(0, coords);
-                gameManager.send(createCollapseBuildingPacket(coords));
+                gameManager.send(createCollapseBuildingPacket(coords, bldg.getBoardId()));
                 getGame().getBoard(bldg.getBoardId()).collapseBuilding(coords);
             }
 
@@ -487,7 +487,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             // Update the building.
             bldg.setCurrentCF(0, coords);
             bldg.setPhaseCF(0, coords);
-            gameManager.send(createCollapseBuildingPacket(coords));
+            gameManager.send(createCollapseBuildingPacket(coords, bldg.getBoardId()));
             getGame().getBoard(bldg.getBoardId()).collapseBuilding(coords);
         }
         // if more than half of the hexes are gone, collapse all
@@ -506,7 +506,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      *
      * @return a Packet for the command.
      */
-    Packet createCollapseBuildingPacket(Coords coords) {
-        return new Packet(PacketCommand.BLDG_COLLAPSE, new Vector<>(List.of(coords)));
+    Packet createCollapseBuildingPacket(Coords coords, int boardId) {
+        return new Packet(PacketCommand.BLDG_COLLAPSE, new Vector<>(List.of(coords)), boardId);
     }
 }

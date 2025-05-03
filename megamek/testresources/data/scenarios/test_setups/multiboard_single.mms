@@ -72,13 +72,13 @@ factions:
 #    at: [ 35, 29 ]
 
 
-  - fullname: Scorpion Light Tank (Armor)
-    at: [ 6,12 ]
-    board: 5
-    facing: 2
-    crew:
-      name: Eddie the Eagle
-      piloting: 8
+#  - fullname: Scorpion Light Tank (Armor)
+#    at: [ 6,12 ]
+#    board: 5
+#    facing: 2
+#    crew:
+#      name: Eddie the Eagle
+#      piloting: 8
 
 #  - fullname: Zugvogel Omni Support Aircraft B
 #    at: [ 8,20 ]
@@ -90,11 +90,16 @@ factions:
 #    at: [ 4,4 ]
 #    status: hidden
 
-#  - fullname: Atlas AS7-D
-#    board: 1
-#    at: [ 26,14 ]
-#    facing: 5
-##    status: hidden
+  - fullname: Atlas AS7-D
+    at: [ 27, 22 ]
+    board: 5
+    facing: 3
+
+  - fullname: Atlas AS7-D
+    at: [ 26, 28 ]
+    board: 5
+    facing: 3
+#    status: hidden
 #
 #  - fullname: Brave BRV-1Y
 #    board: 5
@@ -124,11 +129,11 @@ factions:
 #    facing: 3
 #    altitude: 5
 
-  - fullname: Cheetah IIC
-    at: [ 8, 20 ]
-    board: 5
-    facing: 3
-    altitude: 2
+#  - fullname: Cheetah IIC
+#    at: [ 8, 20 ]
+#    board: 5
+#    facing: 3
+#    altitude: 2
 
 #  - fullname: FWL Advanced Laser Turret (3075)
 #    at: [37,26]

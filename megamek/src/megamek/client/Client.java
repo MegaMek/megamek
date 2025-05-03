@@ -223,20 +223,6 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Maintain backwards compatibility. Legacy!
-     *
-     * @param id
-     *                - the <code>int</code> ID of the deployed entity
-     * @param c
-     *                - the <code>Coords</code> where the entity should be deployed
-     * @param nFacing
-     *                - the <code>int</code> direction the entity should face
-     */
-    public void deploy(int id, Coords c, int nFacing, int elevation) {
-        deploy(id, c, 0, nFacing, elevation, new Vector<>(), false);
-    }
-
-    /**
      * Deploy an entity at the given coordinates, with the given facing, and starting with the given units already
      * loaded.
      *
@@ -646,7 +632,8 @@ public class Client extends AbstractClient {
 
     @SuppressWarnings("unchecked")
     protected void receiveBuildingCollapse(Packet packet) {
-        game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));
+        int boardId = packet.getIntValue(1);
+        game.getBoard(boardId).collapseBuilding((Vector<Coords>) packet.getObject(0));
     }
 
     /**

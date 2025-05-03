@@ -1874,7 +1874,9 @@ public class DamageEntityHandler extends AbstractTWRuleHandler {
             r.indent(2);
             vDesc.add(r);
             int[] damages = { (int) Math.floor(damage_orig / 10.0), (int) Math.floor(damage_orig / 20.0) };
-            gameManager.doExplosion(damages, false, te.getPosition(), true, vDesc, null, 5, te.getId(), false, false);
+            gameManager.doExplosion(damages, false, te.getPosition(), te.getBoardId(), true, vDesc, null, 5,
+                  te.getId(), false,
+              false);
             Report.addNewline(vDesc);
             r = new Report(5410, Report.PUBLIC);
             r.subject = te.getId();

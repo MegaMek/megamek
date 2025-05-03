@@ -17,11 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
 */
-
 package megamek.client.commands;
 
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Coords;
+
+import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * @author dirk
@@ -44,7 +46,6 @@ public class DeployCommand extends ClientCommand {
     @Override
     public String run(String[] args) {
         if (args.length == 1) {
-            getClient().getBoard();
             return "The legal deployment zone is: " + legalDeploymentZone();
         } else if (args.length == 5) {
             int id = Integer.parseInt(args[1]);
@@ -52,7 +53,7 @@ public class DeployCommand extends ClientCommand {
                     .parseInt(args[3]) - 1);
             int nFacing = getDirection(args[4]);
 
-            getClient().deploy(id, coord, nFacing, 0);
+            getClient().deploy(id, coord, 0, nFacing, 0, new Vector<>(), false);
             return "Unit " + id + " deployed to " + coord.toFriendlyString()
                     + ". (this is assuming it worked. No error checking done.)";
         }

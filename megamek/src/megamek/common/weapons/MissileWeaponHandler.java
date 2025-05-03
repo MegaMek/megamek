@@ -625,7 +625,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        Building bldg = game.getBuildingAt(target.getPosition(), target.getBoardId()).orElse(null);
         String number = nweapons > 1 ? " (" + nweapons + ")" : "";
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
@@ -820,7 +820,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
         int hits;
-        if (game.getBoard().isSpace() || waa.isAirToAir(game) || waa.isAirToGround(game)) {
+        if (ae.isSpaceborne() || waa.isAirToAir(game) || waa.isAirToGround(game)) {
             // Ensures single AMS state is properly updated
             getAMSHitsMod(new Vector<>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
@@ -947,7 +947,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (hits == 0) {
                 r = new Report(3365);
                 r.subject = subjectId;
-                if (target.isAirborne() || game.getBoard().isSpace()) {
+                if (target.isAirborne() || ae.isSpaceborne()) {
                     r.indent(2);
                 }
                 vPhaseReport.addElement(r);

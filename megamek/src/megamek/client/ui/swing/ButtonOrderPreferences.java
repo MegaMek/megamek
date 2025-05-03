@@ -14,6 +14,11 @@
 
 package megamek.client.ui.swing;
 
+import megamek.client.ui.swing.phaseDisplay.DeploymentDisplay;
+import megamek.client.ui.swing.phaseDisplay.FiringDisplay;
+import megamek.client.ui.swing.phaseDisplay.PhysicalDisplay;
+import megamek.client.ui.swing.phaseDisplay.TargetingPhaseDisplay;
+import megamek.client.ui.swing.phaseDisplay.commands.MoveCommand;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 
@@ -27,7 +32,7 @@ public class ButtonOrderPreferences extends PreferenceStoreProxy {
     protected ButtonOrderPreferences() {
         store = PreferenceManager.getInstance().getPreferenceStore(getClass().getName());
 
-        for (MovementDisplay.MoveCommand cmd : MovementDisplay.MoveCommand.values()) {
+        for (MoveCommand cmd : MoveCommand.values()) {
             store.setDefault(cmd.getCmd(), cmd.ordinal());
         }
 
@@ -54,7 +59,7 @@ public class ButtonOrderPreferences extends PreferenceStoreProxy {
     }
 
     public void setButtonPriorities() {
-        for (MovementDisplay.MoveCommand cmd : MovementDisplay.MoveCommand.values()) {
+        for (MoveCommand cmd : MoveCommand.values()) {
             int priority = store.getInt(cmd.getCmd());
             cmd.setPriority(priority);
         }

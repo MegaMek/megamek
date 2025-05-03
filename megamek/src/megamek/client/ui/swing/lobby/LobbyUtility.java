@@ -50,6 +50,7 @@ import megamek.common.*;
 import megamek.common.force.Force;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
 
 /**
@@ -288,9 +289,11 @@ public class LobbyUtility {
     /**
      * Returns true if a and b share at least one non-hierarchic C3 system (C3i, Naval C3, Nova CEWS). Symmetrical (the
      * order of a and b does not matter).
+     * @deprecated Use {@link megamek.common.util.C3Util#sameNhC3System(Entity, Entity)} instead as it provides the same functionality.
      */
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public static boolean sameNhC3System(Entity a, Entity b) {
-        return (a.hasC3i() && b.hasC3i()) || (a.hasNavalC3() && b.hasNavalC3()) || (a.hasNovaCEWS() && b.hasNovaCEWS());
+        return C3Util.sameNhC3System(a, b);
     }
 
     /** Returns the string with some content shortened like Battle Armor -> BA */

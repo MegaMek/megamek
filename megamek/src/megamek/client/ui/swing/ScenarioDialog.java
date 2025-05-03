@@ -68,9 +68,13 @@ public class ScenarioDialog extends JDialog implements ActionListener {
             curButton.setPreferredSize(new Dimension(84, 72));
             curButton.addActionListener(e -> {
                 final CamoChooserDialog ccd = new CamoChooserDialog(frame, curPlayer.getCamouflage());
-                if (ccd.showDialog().isConfirmed()) {
-                    curPlayer.setCamouflage(ccd.getSelectedItem());
-                    curButton.setIcon(curPlayer.getCamouflage().getImageIcon());
+                try {
+                    if (ccd.showDialog().isConfirmed()) {
+                        curPlayer.setCamouflage(ccd.getSelectedItem());
+                        curButton.setIcon(curPlayer.getCamouflage().getImageIcon());
+                    }
+                } finally {
+                    ccd.dispose();
                 }
             });
         }

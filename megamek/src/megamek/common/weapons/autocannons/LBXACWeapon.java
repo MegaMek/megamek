@@ -76,4 +76,11 @@ public abstract class LBXACWeapon extends AmmoWeapon {
     public int getBattleForceClass() {
         return BFCLASS_FLAK;
     }
+
+    /**
+     * This is an LBX weapon, the Aero AV is 60% of normal.
+     */
+    protected double getBaseAeroDamage() {
+        return Math.ceil(0.6 * this.damage);
+    }
 }

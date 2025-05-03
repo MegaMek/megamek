@@ -98,13 +98,15 @@ import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.TWBoardViewTooltip;
+import megamek.client.ui.swing.Ruler;
+import megamek.client.ui.swing.boardview.toolTip.TWBoardViewTooltip;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.swing.lobby.sorters.*;
 import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
 import megamek.client.ui.swing.minimap.Minimap;
+import megamek.client.ui.swing.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -462,20 +464,23 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
         Player player = getSelectedClient().getLocalPlayer();
         CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(), player.getCamouflage());
-        java.util.List<Entity> playerEntities = game().getPlayerEntities(player, false);
-        if (!playerEntities.isEmpty()) {
-            ccd.setDisplayedEntity(CollectionUtil.anyOneElement(playerEntities));
+        try {
+            java.util.List<Entity> playerEntities = game().getPlayerEntities(player, false);
+            if (!playerEntities.isEmpty()) {
+                ccd.setDisplayedEntity(CollectionUtil.anyOneElement(playerEntities));
+            }
+            // If the dialog was canceled or nothing selected, do nothing
+            if (!ccd.showDialog().isConfirmed()) {
+                return;
+            }
+    
+            // Update the player from the camo selection
+            player.setCamouflage(ccd.getSelectedItem());
+            butCamo.setIcon(player.getCamouflage().getImageIcon());
+            getSelectedClient().sendPlayerInfo();
+        } finally {
+            ccd.dispose();
         }
-
-        // If the dialog was canceled or nothing selected, do nothing
-        if (!ccd.showDialog().isConfirmed()) {
-            return;
-        }
-
-        // Update the player from the camo selection
-        player.setCamouflage(ccd.getSelectedItem());
-        butCamo.setIcon(player.getCamouflage().getImageIcon());
-        getSelectedClient().sendPlayerInfo();
     };
 
     private void setupTeamOverview() {

@@ -50,6 +50,10 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         longRange = 18;
         extremeRange = 24;
         tonnage = 11.0;
+        shortAV = getBaseAeroDamage();
+        medAV = shortAV;
+        longAV = shortAV;
+        extAV = shortAV;
         bv = 148;
         cost = 2000000; // Cost in the AoW is 160000 but not making another version for one field.
         rulesRefs = "71, IO";

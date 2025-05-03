@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.client.ui.swing.boardview.CollapseWarning;
 import org.junit.jupiter.api.Test;
 
 import megamek.common.Board;

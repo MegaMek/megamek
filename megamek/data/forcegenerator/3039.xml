@@ -7600,7 +7600,7 @@
 			</model>
 			<model name='RFL-3N'>
 				<roles>fire_support,anti_aircraft</roles>
-				<availability>IS:8,FC:6,CLAN:1-,HL:8,Periphery.Deep:8,BAN:2</availability>
+				<availability>IS:8,FC:6,CLAN:1-,Periphery:8,HL:8,Periphery.Deep:8,BAN:2</availability>
 			</model>
 			<model name='RFL-4D'>
 				<roles>fire_support,anti_aircraft</roles>

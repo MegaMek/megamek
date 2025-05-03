@@ -87,4 +87,9 @@ public class BVDisplayDialog extends AbstractDialog {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(reportString), null);
     }
+
+    @Override
+    protected void cancelAction() {
+        dispose();
+    }
 }

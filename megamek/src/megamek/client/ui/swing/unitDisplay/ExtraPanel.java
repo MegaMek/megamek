@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
 import javax.swing.*;
 
 import megamek.MMConstants;
@@ -31,11 +30,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.HeatEffects;
 import megamek.client.ui.swing.Slider;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.client.ui.swing.widget.PicMap;
@@ -45,8 +42,6 @@ import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -665,5 +660,14 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             Entity entity = clientgui.getClient().getGame().getEntity(myMekId);
             LobbyUtility.mekReadout(entity, 0, false, clientgui.getFrame());
         }
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension labelPrefSize = panelMain.getPreferredSize();
+        Insets insets = getInsets();
+        int height = labelPrefSize.height + insets.top + insets.bottom + 20;
+        Dimension superPref = super.getPreferredSize();
+        return new Dimension(superPref.width, Math.max(height, superPref.height));
     }
 }

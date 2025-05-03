@@ -1,7 +1,23 @@
 MEGAMEK VERSION HISTORY:
 ----------------
 0.50.06
-+ PR #6934: Dereference NPE Removals in MovementDisplay (CodeQL Fixes)
++ PR #6933: 0.50.06 Deprecation Removal and Clean up.
++ PR #6901: move sprite, spriteHandler, overlay, toolTip, phaseDisplay and phaseDiplay.dialogs classes into packages
++ PR #6864: Added Heroic and Legendary Skill Levels
++ Fix #6915: Fixed Status of Uncrewed Vehicles
++ Fix #6931: Fixes duplicated score key for score logging on basic path ranker
++ PR #6937: Calculate heat for vibroblades
++ Fix #6946: Fixes the Damage Status box on Label no appearing correctly. #6810
++ Fix #6945: uses bot skill generator when creating armies issue #6927
++ Fix #6953: Fixed Quad-Vees Taking PSRs and Falling While in Vehicle Mode
++ PR #6934: Dereference NPE Removals in MovementDisplay, moved MoveCommand to own class, added tests.
++ Fix #6954: Fixes NPE and missing portrait/deployment in Mek Customization dialog
++ Fix #6955: fuel tanks take zero damage from AE
++ Fix #6956: Correct fluff art for HHWs
++ Fix #6958: First iteration to deal with issue #6951 by adding scroll on unit display dialog (tabbed view).
++ Fix #6957: BA Artillery doing no damage
++ Fix #6966: SVs with no engine can't have MP
++ PR #6972: Fix for LBX and IATM Aero Damage (Fix MML/#1810)
 
 0.50.05 (2025-04-25 1800 UTC)
 + Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1

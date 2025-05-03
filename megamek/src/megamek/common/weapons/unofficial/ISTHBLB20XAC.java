@@ -38,7 +38,7 @@ public class ISTHBLB20XAC extends LBXACWeapon {
         extremeRange = 14;
         tonnage = 14.0;
         criticals = 10;
-        shortAV = Math.ceil(damage * 0.6); // This is an LBX weapon, so Aero AV is 60% of normal
+        shortAV = getBaseAeroDamage();
         medAV = shortAV;
         longAV = shortAV;
         extAV = shortAV;

@@ -53,7 +53,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         criticals = 7;
         bv = 198;
         cost = 350000;
-        shortAV = Math.ceil(damage * 0.6); // This is an LBX weapon, so Aero AV is 60% of normal
+        shortAV = getBaseAeroDamage();
         medAV = shortAV;
         longAV = shortAV;
         maxRange = RANGE_LONG;

@@ -39,7 +39,7 @@ public class CLIATM6 extends CLIATMWeapon {
         this.criticals = 3;
         this.bv = 165; // Ammo BV is 39
         this.cost = 250000;
-        this.shortAV = 2*getRackSize(); // This is a streak weapon so we use the rack size for the AV
+        this.shortAV = this.getBaseAeroDamage(); // This is a streak weapon so we use the rack size for the AV
         this.medAV = this.shortAV;
         this.maxRange = RANGE_MED;
         rulesRefs = "65, IO";

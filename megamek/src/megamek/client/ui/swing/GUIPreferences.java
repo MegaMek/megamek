@@ -3506,7 +3506,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(HIGH_PERFORMANCE_GRAPHICS);
     }
 
-    public void setHighPerformantGraphics(boolean value) {
+    public void setHighPerformanceGraphics(boolean value) {
         store.setValue(HIGH_PERFORMANCE_GRAPHICS, value);
     }
 }

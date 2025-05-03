@@ -2971,7 +2971,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         } else if (source.equals(chkHighQualityGraphics)) {
             GUIP.setHighQualityGraphics(chkHighQualityGraphics.isSelected());
         } else if (source.equals(chkHighPerformanceGraphics)) {
-            GUIP.setHighQualityGraphics(chkHighPerformanceGraphics.isSelected());
+            GUIP.setHighPerformanceGraphics(chkHighPerformanceGraphics.isSelected());
         } else if (source.equals(drawFacingArrowsOnMiniMap)) {
             GUIP.setDrawFacingArrowsOnMiniMap(drawFacingArrowsOnMiniMap.isSelected());
         } else if (source.equals(drawSensorRangeOnMiniMap)) {

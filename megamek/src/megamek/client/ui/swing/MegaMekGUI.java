@@ -657,7 +657,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     private boolean validateSaveVersion(final Node n) {
-        if (System.getenv("IGNORE_VERSION_VALIDATION").equalsIgnoreCase("true")) {;
+        String ignoreVersionValidation = System.getenv("IGNORE_VERSION_VALIDATION");
+        if (ignoreVersionValidation != null && ignoreVersionValidation.equalsIgnoreCase("true")) {
             return true;
         }
 

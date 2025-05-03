@@ -1949,7 +1949,7 @@ public class ClientGUI extends AbstractClientGUI
      *
      * @param title    the <code>String</code> title of the dialog box.
      * @param question the <code>String</code> question that has a "Yes" or "No" answer. The question will be split
-     *                 across multiple line on the '\n' characters.c tr23ty
+     *                 across multiple lines on the '\n' characters.
      *
      * @return the <code>ConfirmDialog</code> containing the player's responses. The dialog will already have been shown
      *       to the player, and is only being returned so the calling function can see the answer to the question and

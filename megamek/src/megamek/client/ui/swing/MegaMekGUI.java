@@ -657,6 +657,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     private boolean validateSaveVersion(final Node n) {
+        if (System.getenv("IGNORE_VERSION_VALIDATION").equalsIgnoreCase("true")) {;
+            return true;
+        }
+
         if (!n.hasChildNodes()) {
             final String message = String.format(Messages.getString("MegaMek.LoadGameMissingVersion.message"),
                   SuiteConstants.VERSION);

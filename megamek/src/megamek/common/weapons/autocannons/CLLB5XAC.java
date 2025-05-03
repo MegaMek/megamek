@@ -41,9 +41,9 @@ public class CLLB5XAC extends LBXACWeapon {
         criticals = 4;
         bv = 93;
         cost = 250000;
-        shortAV = 5;
-        medAV = 5;
-        longAV = 5;
+        shortAV = Math.ceil(damage * 0.6); // This is an LBX weapon, so Aero AV is 60% of normal
+        medAV = shortAV;
+        longAV = shortAV;
         maxRange = RANGE_LONG;
         rulesRefs = "207, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

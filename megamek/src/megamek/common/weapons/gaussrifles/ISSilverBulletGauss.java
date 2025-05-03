@@ -53,9 +53,9 @@ public class ISSilverBulletGauss extends GaussWeapon {
         criticals = 7;
         bv = 198;
         cost = 350000;
-        shortAV = 15; // Due to LBXHandler
-        medAV = 15;   // Due to LBXHandler
-        longAV = 15;  // Due to LBXHandler
+        shortAV = Math.ceil(damage * 0.6); // This is an LBX weapon, so Aero AV is 60% of normal
+        medAV = shortAV;
+        longAV = shortAV;
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_SBGAUSS;
         // SB Gauss rifles can neither benefit from a targeting computer nor

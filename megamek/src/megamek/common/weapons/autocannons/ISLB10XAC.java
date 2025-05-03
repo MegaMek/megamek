@@ -39,8 +39,8 @@ public class ISLB10XAC extends LBXACWeapon {
         this.criticals = 6;
         this.bv = 148;
         this.cost = 400000;
-        this.shortAV = 10;
-        this.medAV = 10;
+        this.shortAV = Math.ceil(damage * 0.6); // This is an LBX weapon, so Aero AV is 60% of normal
+        this.medAV = this.shortAV;
         this.maxRange = RANGE_MED;
         rulesRefs = "207, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)

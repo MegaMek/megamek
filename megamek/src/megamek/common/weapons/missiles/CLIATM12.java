@@ -39,8 +39,8 @@ public class CLIATM12 extends CLIATMWeapon {
         this.criticals = 5;
         this.bv = 333; // Ammo BV is 78
         this.cost = 700000;
-        this.shortAV = 24;
-        this.medAV = 24;
+        this.shortAV = 2*getRackSize(); // This is a streak weapon so we use the rack size for the AV
+        this.medAV = this.shortAV;
         this.maxRange = RANGE_MED;
         rulesRefs = "65, IO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

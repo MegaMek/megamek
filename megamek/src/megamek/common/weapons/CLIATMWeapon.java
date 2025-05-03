@@ -118,4 +118,11 @@ public abstract class CLIATMWeapon extends MissileWeapon {
     public String getSortingName() {
         return "ATM IMP " + ((rackSize < 10) ? "0" + rackSize : rackSize);
     }
+
+    /**
+     * This is a streak weapon, so we use the rack size for the Aero damage.
+     */
+    protected double getBaseAeroDamage() {
+        return Math.ceil(2 * this.getRackSize());
+    }
 }

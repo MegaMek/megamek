@@ -235,7 +235,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     md.getFinalFacing(), true);
             gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
             if (entity instanceof Dropship) {
-                gameManager.applyDropShipLandingDamage(md.getFinalCoords(), (Dropship) a);
+                gameManager.applyDropShipLandingDamage(md.getFinalCoords(), md.getFinalBoardId(), (Dropship) a);
             }
             gameManager.checkLandingTerrainEffects(a, true, md.getFinalCoords(), md.getFinalCoords(),
                     md.getFinalBoardId(), md.getFinalFacing());

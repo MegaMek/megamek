@@ -361,7 +361,7 @@ public class BoardEditor extends JPanel
             bv.addOverlay(new KeyBindingsOverlay(bv));
             bv.setUseLosTool(false);
             bv.setDisplayInvalidFields(true);
-            bv.setTooltipProvider(new BoardEditorTooltip(game, bv));
+            bv.setTooltipProvider(new BoardEditorTooltip(bv));
             bvc = bv.getComponent(true);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame,

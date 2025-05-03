@@ -20,8 +20,7 @@ package megamek.client.ui.swing.boardview.toolTip;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.boardview.IBoardView;
-import megamek.client.ui.swing.boardview.toolTip.BoardViewTooltipProvider;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
@@ -30,7 +29,6 @@ import megamek.common.*;
 import java.util.*;
 import java.awt.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
 
@@ -55,21 +53,17 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
             Terrains.FUEL_TANK_MAGN, Terrains.BLDG_FLUFF, Terrains.ROAD_FLUFF, Terrains.WATER_FLUFF,
             Terrains.FOLIAGE_ELEV);
 
-    private final IGame game;
-    private final IBoardView bv;
+    private final BoardView bv;
 
-    public BoardEditorTooltip(IGame game, IBoardView boardView) {
-        this.game = Objects.requireNonNull(game);
-        this.bv = Objects.requireNonNull(boardView);
+    public BoardEditorTooltip(BoardView boardView) {
+        bv = Objects.requireNonNull(boardView);
     }
 
     @Override
     public String getTooltip(Point point, Coords movementTarget) {
         final Coords coords = bv.getCoordsAt(point);
-        if (!game.getBoard().contains(coords)) {
-            return null;
-        }
-        Hex hex = game.getBoard().getHex(coords);
+        Board board = bv.getBoard();
+        Hex hex = board.getHex(coords);
         if (hex == null) {
             return "Error: No hex found at " + coords;
         }
@@ -78,7 +72,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
 
         StringBuilder result = new StringBuilder();
         result.append(UIUtil.fontHTML(GUIP.getUnitToolTipTerrainFGColor()));
-        result.append("<FONT FACE=" + FontHandler.notoFont().getName() + ">");
+        result.append("<FONT FACE=").append(FontHandler.notoFont().getName()).append(">");
 
         // Coordinates and level
         result.append(colorHTML("Hex: ", GUIP.getToolTipLightFGColor()))
@@ -99,7 +93,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
         List<String> terrainLines = new ArrayList<>();
         List<String> autoTerrainLines = new ArrayList<>();
         List<Integer> terrains = Arrays.stream(hex.getTerrainTypes())
-                .boxed().sorted(terrainSorter).collect(Collectors.toList());
+                .boxed().sorted(terrainSorter).toList();
         for (int type: terrains) {
             String line = String.join(GRAYED_DOT_SPACER, createLine(hex, type));
             (Terrains.AUTOMATIC.contains(type) ? autoTerrainLines : terrainLines).add(line);

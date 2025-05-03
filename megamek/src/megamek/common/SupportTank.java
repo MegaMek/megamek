@@ -240,7 +240,7 @@ public class SupportTank extends Tank {
                 return (hex.containsTerrain(Terrains.WOODS) || (hex
                         .containsTerrain(Terrains.BUILDING)))
                         && !(currElevation > hex
-                                .maxTerrainFeatureElevation(game.getBoard()
+                                .maxTerrainFeatureElevation(game.getBoard(testBoardId)
                                         .isLowAltitude()));
             default:
                 return false;

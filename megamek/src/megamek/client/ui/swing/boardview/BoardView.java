@@ -5316,6 +5316,9 @@ public final class BoardView extends AbstractBoardView
         behindTerrainHexSprites.removeAll(sprites);
     }
 
+    /**
+     * @return This BoardView's displayed board.
+     */
     public Board getBoard() {
         return game.getBoard(boardId);
     }

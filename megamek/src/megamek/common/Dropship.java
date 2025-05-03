@@ -449,11 +449,11 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().isSpace()) {
+        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) && isSpaceborne()) {
+            return getECMRange() > Entity.NONE;
+        } else {
             return super.hasActiveECM();
         }
-        return getECMRange() > Entity.NONE;
     }
 
     /**
@@ -464,8 +464,7 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().isSpace()) {
+        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {
@@ -494,8 +493,8 @@ public class Dropship extends SmallCraft {
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         // A grounded dropship with the center hex in level 1 water is immobile.
-        if ((game != null) && !game.getBoard().isSpace() && !isAirborne()) {
-            Hex hex = game.getBoard().getHex(getPosition());
+        if ((game != null) && !isSpaceborne() && !isAirborne()) {
+            Hex hex = game.getHexOf(this);
             if ((hex != null) && (hex.containsTerrain(Terrains.WATER, 1) && !hex.containsTerrain(Terrains.ICE))) {
                 return 0;
             }
@@ -520,7 +519,7 @@ public class Dropship extends SmallCraft {
         }
 
         super.setPosition(position, false);
-        if ((getAltitude() == 0) && (null != game) && !game.getBoard().isSpace() && (position != null)) {
+        if ((getAltitude() == 0) && (null != game) && !isSpaceborne() && (position != null)) {
             secondaryPositions.put(0, position);
             secondaryPositions.put(1, position.translated(getFacing()));
             secondaryPositions.put(2, position.translated((getFacing() + 1) % 6));
@@ -537,7 +536,7 @@ public class Dropship extends SmallCraft {
     @Override
     public void setAltitude(int altitude) {
         super.setAltitude(altitude);
-        if ((getAltitude() == 0) && (game != null) && !game.getBoard().isSpace() && (getPosition() != null)) {
+        if ((getAltitude() == 0) && (game != null) && !isSpaceborne() && (getPosition() != null)) {
             secondaryPositions.put(0, getPosition());
             secondaryPositions.put(1, getPosition().translated(getFacing()));
             secondaryPositions.put(2, getPosition().translated((getFacing() + 1) % 6));
@@ -574,8 +573,7 @@ public class Dropship extends SmallCraft {
             positions.add(getPosition().translated(i));
         }
         for (Coords pos : positions) {
-            Hex hex = game.getBoard().getHex(getPosition());
-            hex = game.getBoard().getHex(pos);
+            Hex hex = game.getHex(pos, getBoardId());
             // if the hex is null, then we are offboard. Don't let units
             // land offboard.
             if (null == hex) {

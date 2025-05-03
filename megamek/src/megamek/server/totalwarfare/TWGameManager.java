@@ -1961,26 +1961,24 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void checkEntityExchange() {
         for (Entity entity : game.inGameTWEntities()) {
-            // apply bombs
+
             if (entity.isBomber()) {
                 ((IBomber) entity).applyBombs();
             }
 
-            if (entity.isAero()) {
-                IAero a = (IAero) entity;
-                if (a.isSpaceborne()) {
+            if (entity.isAero() && entity instanceof IAero aero) {
+                if (aero.isSpaceborne()) {
                     // altitude and elevation don't matter in space
-                    a.liftOff(0);
+                    aero.liftOff(0);
                 } else {
                     // check for grounding
-                    if (game.getBoard().isLowAltitude() && !entity.isAirborne()) {
-                        // you have to be airborne on the atmospheric map
-                        a.liftOff(entity.getAltitude());
+                    if ((aero.getAltitude() != 0) && !aero.isAirborne()) {
+                        aero.liftOff(entity.getAltitude());
                     }
                 }
 
                 if (entity.isFighter()) {
-                    a.updateWeaponGroups();
+                    aero.updateWeaponGroups();
                     entity.loadAllWeapons();
                 }
             }
@@ -3001,9 +2999,9 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
-    void applyDropShipLandingDamage(Coords centralPos, Entity killer) {
+    void applyDropShipLandingDamage(Coords centralPos, int boardId, Entity killer) {
         // first cycle through hexes to figure out final elevation
-        Hex centralHex = game.getBoard().getHex(centralPos);
+        Hex centralHex = game.getHex(centralPos, boardId);
         if (null == centralHex) {
             // shouldn't happen
             return;
@@ -3016,7 +3014,7 @@ public class TWGameManager extends AbstractGameManager {
         positions.add(centralPos);
         for (int i = 0; i < 6; i++) {
             Coords pos = centralPos.translated(i);
-            Hex hex = game.getBoard().getHex(pos);
+            Hex hex = game.getHex(pos, boardId);
             if (null == hex) {
                 continue;
             }
@@ -3027,7 +3025,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         // ok now cycle through hexes and make all changes
         for (Coords pos : positions) {
-            Hex hex = game.getBoard().getHex(pos);
+            Hex hex = game.getHex(pos, boardId);
             hex.setLevel(finalElev);
             // get rid of woods and replace with rough
             if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
@@ -3036,7 +3034,7 @@ public class TWGameManager extends AbstractGameManager {
                 hex.removeTerrain(Terrains.FOLIAGE_ELEV);
                 hex.addTerrain(new Terrain(Terrains.ROUGH, 1));
             }
-            sendChangedHex(pos);
+            sendChangedHex(pos, boardId);
         }
 
         applyDropShipProximityDamage(centralPos, killer);
@@ -5205,7 +5203,7 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         } else if (board.isGround()) {
             return altitude <= 0;
-        } else { // atmospheric board
+        } else { // low altitude board
             // if we're off the map, assume hex ceiling 0
             // Hexes with elevations < 0 are treated as 0 altitude
             int ceiling = 0;
@@ -5341,7 +5339,7 @@ public class TWGameManager extends AbstractGameManager {
         // checks for all of them
         List<Coords> coords = new ArrayList<>();
         coords.add(c);
-        Hex h = game.getBoard().getHex(c);
+        Hex h = game.getHex(c, entity.getBoardId());
         int crateredElevation;
         boolean containsWater = false;
         if (h.containsTerrain(Terrains.WATER)) {
@@ -5353,10 +5351,10 @@ public class TWGameManager extends AbstractGameManager {
         if (entity instanceof Dropship) {
             for (int i = 0; i < 6; i++) {
                 Coords adjCoords = c.translated(i);
-                if (!game.getBoard().contains(adjCoords)) {
+                if (!game.getBoard(entity.getBoardId()).contains(adjCoords)) {
                     continue;
                 }
-                Hex adjHex = game.getBoard().getHex(adjCoords);
+                Hex adjHex = game.getBoard(entity.getBoardId()).getHex(adjCoords);
                 coords.add(adjCoords);
                 if (adjHex.containsTerrain(Terrains.WATER)) {
                     if (containsWater) {
@@ -5385,7 +5383,7 @@ public class TWGameManager extends AbstractGameManager {
             int crash_damage = orig_crash_damage;
             int direction = entity.getFacing();
             // first check for buildings
-            Building bldg = game.getBoard().getBuildingAt(hitCoords);
+            Building bldg = game.getBoard(entity.getBoardId()).getBuildingAt(hitCoords);
             if ((null != bldg) && (bldg.getType() == BuildingType.HARDENED)) {
                 crash_damage *= 2;
             }

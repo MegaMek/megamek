@@ -436,6 +436,6 @@ public enum UnitRole {
             sb.append(Character.toUpperCase(word.charAt(0)))
                   .append(word.substring(1).toLowerCase()).append(" ");
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 }

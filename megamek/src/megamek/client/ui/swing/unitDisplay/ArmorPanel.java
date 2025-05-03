@@ -20,6 +20,7 @@ package megamek.client.ui.swing.unitDisplay;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.io.Serial;
 import java.util.Enumeration;
 
 import megamek.client.ui.swing.widget.*;
@@ -32,6 +33,7 @@ import megamek.logging.MMLogger;
 class ArmorPanel extends PicMap {
     private static final MMLogger logger = MMLogger.create(ArmorPanel.class);
 
+    @Serial
     private static final long serialVersionUID = -3612396252172441104L;
     private TankMapSet tank;
     private MekMapSet mek;
@@ -71,7 +73,7 @@ class ArmorPanel extends PicMap {
     private static final int minAeroTopMargin = 8;
     private static final int minAeroLeftMargin = 8;
 
-    private Game game;
+    private final Game game;
 
     ArmorPanel(Game g, UnitDisplay unitDisplay) {
         game = g;
@@ -102,26 +104,15 @@ class ArmorPanel extends PicMap {
     }
 
     @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(0, 0);
-    }
-
-    @Override
-    public Dimension getMinimumSize() {
-        return new Dimension(0, 0);
-    }
-
-    @Override
     public void onResize() {
         Rectangle r = getContentBounds();
-        if (r == null) {
-            return;
+        if (r != null) {
+            int w = (getSize().width - r.width) / 2;
+            int h = (getSize().height - r.height) / 2;
+            int dx = Math.max(w, minLeftMargin);
+            int dy = Math.max(h, minTopMargin);
+            setContentMargins(dx, dy, minRightMargin, minBottomMargin);
         }
-        int w = Math.round(((getSize().width - r.width) / 2));
-        int h = Math.round(((getSize().height - r.height) / 2));
-        int dx = w < minLeftMargin ? minLeftMargin : w;
-        int dy = h < minTopMargin ? minTopMargin : h;
-        setContentMargins(dx, dy, minRightMargin, minBottomMargin);
     }
 
     /**
@@ -220,8 +211,7 @@ class ArmorPanel extends PicMap {
             minRightMargin = minAeroLeftMargin;
         } else if (en instanceof Aero) {
             ams = aero;
-            if (en instanceof SmallCraft) {
-                SmallCraft sc = (SmallCraft) en;
+            if (en instanceof SmallCraft sc) {
                 if (sc.isSpheroid()) {
                     ams = sphere;
                 }

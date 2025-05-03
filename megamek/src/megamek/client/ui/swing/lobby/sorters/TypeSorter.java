@@ -20,6 +20,7 @@ package megamek.client.ui.swing.lobby.sorters;
 
 import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
+import megamek.common.internationalization.I18n;
 
 /** A Lobby Mek Table sorter that sorts by unit type. */
 public class TypeSorter implements MekTableSorter {
@@ -33,7 +34,7 @@ public class TypeSorter implements MekTableSorter {
 
     @Override
     public String getDisplayName() {
-        return "Unit Type";
+        return I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "TypeSorter.DisplayName");
     }
     
     @Override

@@ -295,6 +295,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_MOVE_PATH_PERSISTENCE = "MinimapMovePathPersistence";
     public static final String FIRE_DISPLAY_TAB_DURING_PHASES = "FireDisplayTabDuringPhases";
     public static final String MOVE_DISPLAY_TAB_DURING_PHASES = "MoveDisplayTabDuringPhases";
+    public static final String HIGH_PERFORMANCE_GRAPHICS = "HighPerformanceGraphics";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
     public static final String MOUSE_WHEEL_ZOOM = "MouseWheelZoom";
@@ -700,6 +701,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
         store.setDefault(MINIMUM_SIZE_WIDTH, 120);
 
+        store.setDefault(HIGH_PERFORMANCE_GRAPHICS, false);
         store.setDefault(MINI_REPORT_POS_X, 200);
         store.setDefault(MINI_REPORT_POS_Y, 150);
         store.setDefault(MINI_REPORT_SIZE_HEIGHT, 300);
@@ -3498,5 +3500,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMovePathPersistenceOnMiniMap(int rounds) {
         store.setValue(MINI_MAP_MOVE_PATH_PERSISTENCE, rounds);
+    }
+
+    public boolean getHighPerformanceGraphics() {
+        return getBoolean(HIGH_PERFORMANCE_GRAPHICS);
+    }
+
+    public void setHighPerformantGraphics(boolean value) {
+        store.setValue(HIGH_PERFORMANCE_GRAPHICS, value);
     }
 }

@@ -1,69 +1,106 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 
+/**
+ * A dialog for displaying detailed unit information in MegaMek.
+ * <p>
+ *  This dialog serves as a container for the UnitDisplay component, which provides detailed information about game
+ *  entities (meks, vehicles, infantry, etc.).
+ *  The dialog can operate in two modes:
+ * </p>
+ * <ul>
+ *   <li>As a persistent, reusable dialog that is hidden when closed</li>
+ *   <li>As a disposable dialog that is destroyed when closed</li>
+ * </ul>
+ * <p>
+ *  The dialog manages its position and size through GUIPreferences, storing separate settings for tabbed and
+ *  non-tabbed display modes.
+ * </p>
+ */
 public class UnitDisplayDialog extends JDialog {
-    static private UnitDisplayDialog dialogInstance = null;
-    static private UnitDisplay unitDisplay = null;
-    
-    //region Variable Declarations
+
     private final ClientGUI clientGUI;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    //endregion Variable Declarations
 
+    /**
+     * Shows an entity in a UnitDisplayDialog, either reusing the existing dialog instance
+     * or creating a new one.
+     *
+     * @param frame the parent frame for the dialog
+     * @param entity the entity to display
+     * @param newInstance if true, creates a new dialog that will be disposed on close;
+     *                    if false, reuses or creates a persistent dialog instance
+     */
     public static void showEntity(final JFrame frame, Entity entity, final boolean newInstance) {
-        UnitDisplayDialog localDialogInstance = null;
-        UnitDisplay localUnitDisplay = null;
-        if (!newInstance) {
-            localDialogInstance = dialogInstance;
-            localUnitDisplay = unitDisplay;
-        }
-        if (localDialogInstance == null || unitDisplay == null) {
-            localDialogInstance = new UnitDisplayDialog(frame, null);
-            localUnitDisplay = new UnitDisplay(null, null);
-            localDialogInstance.add(localUnitDisplay, BorderLayout.CENTER);
-            localDialogInstance.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-            if (!newInstance) {
-                dialogInstance = localDialogInstance;
-                unitDisplay = localUnitDisplay;
-            }
-        }
-        localUnitDisplay.displayEntity(entity);
-        localDialogInstance.setVisible(true);
+        UnitDisplayContainer displayContainer = getDisplayContainer(frame, newInstance);
+        displayContainer.getUnitDisplay().displayEntity(entity);
+        displayContainer.getDialog().setVisible(true);
     }
 
-    //region Constructors
+    /**
+     * Factory method to get the appropriate UnitDisplayContainer based on whether
+     * a new instance is requested.
+     *
+     * @param frame the parent frame for the dialog
+     * @param newInstance if true, returns a DisposableDisplayContainer;
+     *                    if false, returns the shared container instance
+     * @return a UnitDisplayContainer with the appropriate lifecycle management
+     */
+    private static UnitDisplayContainer getDisplayContainer(JFrame frame, boolean newInstance) {
+        return newInstance ?
+                     new DisposableDisplayContainer(frame) :
+                     SharedDisplayContainer.getInstance(frame);
+    }
+
+    /**
+     * Creates a new UnitDisplayDialog.
+     *
+     * @param frame the parent frame for this dialog
+     * @param clientGUI the ClientGUI reference, which can be null for standalone usage
+     */
     public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
         super(frame, "", false);
         this.clientGUI = clientGUI;
@@ -91,6 +128,11 @@ public class UnitDisplayDialog extends JDialog {
     }
     //endregion Constructors
 
+    /**
+     * Saves the current size and position of the dialog to preferences.
+     * Different settings are stored based on whether the display is in
+     * tabbed or non-tabbed mode.
+     */
     public void saveSettings() {
         if ((getSize().width * getSize().height) > 0) {
             if (GUIP.getUnitDisplayStartTabbed()) {
@@ -110,6 +152,12 @@ public class UnitDisplayDialog extends JDialog {
         }
     }
 
+    /**
+     * Overrides the default window event processing to save settings when
+     * the window is deactivated or closing.
+     *
+     * @param e the window event
+     */
     @Override
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
@@ -119,9 +167,10 @@ public class UnitDisplayDialog extends JDialog {
     }
 
     /**
-     * In addition to the default Dialog processKeyEvent, this method
-     * dispatches a KeyEvent to the client gui.
-     * This enables all the gui hotkeys.
+     * Processes key events and forwards them to the client GUI to enable
+     * hotkey functionality throughout the application.
+     *
+     * @param evt the key event to process
      */
     @Override
     protected void processKeyEvent(KeyEvent evt) {

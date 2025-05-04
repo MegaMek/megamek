@@ -30,8 +30,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -43,8 +47,8 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.phaseDisplay.FiringDisplay;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.phaseDisplay.FiringDisplay;
 import megamek.client.ui.swing.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
@@ -2792,6 +2796,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (weaponSortOrder == null) {
             return;
         }
+        removeListeners();
 
         entity.setWeaponSortOrder(weaponSortOrder);
         ((WeaponListModel) weaponList.getModel()).sort(weaponSortOrder.getWeaponSortComparator(entity));

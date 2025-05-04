@@ -1671,6 +1671,7 @@ public class Tank extends Entity {
 
     @Override
     public double getPriceMultiplier() {
+        // TechManual, 1st printing, p285 "Final Unit Cost Formulas Table".
         double priceMultiplier = 1.0;
         if (isOmni()) {
             priceMultiplier *= 1.25;

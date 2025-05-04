@@ -41,6 +41,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import megamek.MMConstants;
 import megamek.Version;
@@ -58,12 +59,14 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.planetaryconditions.WindDirection;
+import megamek.common.util.CollectionUtil;
 import megamek.common.weapons.AttackHandler;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryHelper;
 import megamek.server.victory.VictoryResult;
+import org.apache.commons.collections4.CollectionUtils;
 
 /**
  * The game class is the root of all data about the game in progress. Both the Client and the Server should have one of
@@ -1646,22 +1649,20 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @return The <code>Entity</code> that should be an AFFA target.
      */
     public @Nullable Entity getAffaTarget(Coords coords, Entity ignore) {
-        Vector<Entity> vector = new Vector<>();
-        if (getBoard().contains(coords)) {
-            Hex hex = getBoard().getHex(coords);
-            for (Entity entity : getEntitiesVector(coords)) {
+        List<Entity> candidates = new ArrayList<>();
+        if (hasBoardLocation(coords, ignore.getBoardId())) {
+            Hex hex = getHex(coords, ignore.getBoardId());
+            for (Entity entity : getEntitiesVector(coords, ignore.getBoardId())) {
                 if (entity.isTargetable() && ((entity.getElevation() == 0) // Standing on hex surface
-                                                    || (entity.getElevation() == -hex.depth())) // Standing on hex floor
-                          && (entity.getAltitude() == 0) && !(entity instanceof Infantry) && (entity != ignore)) {
-                    vector.addElement(entity);
+                      || (entity.getElevation() == -hex.depth())) // Standing on hex floor
+                      && (entity.getAltitude() == 0) && !(entity instanceof Infantry) && (entity != ignore)) {
+                    candidates.add(entity);
                 }
             }
         }
-
-        if (!vector.isEmpty()) {
-            int count = vector.size();
-            int random = Compute.randomInt(count);
-            return vector.elementAt(random);
+        if (!candidates.isEmpty()) {
+            int random = Compute.randomInt(candidates.size());
+            return candidates.get(random);
         }
         return null;
     }

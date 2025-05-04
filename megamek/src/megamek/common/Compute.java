@@ -5813,8 +5813,7 @@ public class Compute {
         return toReturn;
     }
 
-    public static boolean canPhysicalTarget(Game game, int entityId,
-            Targetable target) {
+    public static boolean canPhysicalTarget(Game game, int entityId, Targetable target) {
 
         if (PunchAttackAction.toHit(game, entityId, target,
                 PunchAttackAction.LEFT, false).getValue() != TargetRoll.IMPOSSIBLE) {

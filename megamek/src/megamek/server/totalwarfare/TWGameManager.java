@@ -8742,8 +8742,8 @@ public class TWGameManager extends AbstractGameManager {
           PilotingRollData roll, boolean causeAffa, int fallReduction) {
         Vector<Report> vPhaseReport = new Vector<>();
         // use the entity's board ID; can't image a x-board movepath that includes a fall opportunity (aero unit!)
-        Hex srcHex = game.getBoard(entity.getBoardId()).getHex(origSrc);
-        Hex destHex = game.getBoard(entity.getBoardId()).getHex(origDest);
+        Hex srcHex = game.getHex(origSrc, entity.getBoardId());
+        Hex destHex = game.getHex(origDest, entity.getBoardId());
         Coords src, dest;
         // We need to fall into the lower of the two hexes, TW pg 68
         if (srcHex.getLevel() < destHex.getLevel()) {
@@ -8982,8 +8982,8 @@ public class TWGameManager extends AbstractGameManager {
             }
             return displacementReport;
         }
-        final Hex srcHex = game.getBoard().getHex(src);
-        final Hex destHex = game.getBoard().getHex(dest);
+        final Hex srcHex = game.getBoard(entity).getHex(src);
+        final Hex destHex = game.getBoard(entity).getHex(dest);
         final int direction = src.direction(dest);
 
         // Handle null hexes.
@@ -9011,12 +9011,12 @@ public class TWGameManager extends AbstractGameManager {
         // move the entity into the new location gently
         entity.setPosition(dest);
         entity.setElevation(entity.calcElevation(srcHex, destHex));
-        Building bldg = game.getBoard().getBuildingAt(dest);
+        Building bldg = game.getBoard(entity).getBuildingAt(dest);
         if (bldg != null) {
             if (destHex.terrainLevel(Terrains.BLDG_ELEV) > oldElev) {
                 // whoops, into the building we go
                 passBuildingWall(entity,
-                      game.getBoard().getBuildingAt(dest),
+                      game.getBoard(entity).getBuildingAt(dest),
                       src,
                       dest,
                       1,
@@ -9062,8 +9062,8 @@ public class TWGameManager extends AbstractGameManager {
         displacementReport.addAll(doEntityDisplacementMinefieldCheck(entity, src, dest, entity.getElevation()));
         displacementReport.addAll(doSetLocationsExposure(entity, destHex, false, entity.getElevation()));
         if (destHex.containsTerrain(Terrains.BLDG_ELEV) && (entity.getElevation() == 0)) {
-            bldg = game.getBoard().getBuildingAt(dest);
-            if (bldg.rollBasement(dest, game.getBoard(), displacementReport)) {
+            bldg = game.getBoard(entity).getBuildingAt(dest);
+            if (bldg.rollBasement(dest, game.getBoard(entity), displacementReport)) {
                 sendChangedHex(dest);
                 Vector<Building> buildings = new Vector<>();
                 buildings.add(bldg);
@@ -9306,7 +9306,7 @@ public class TWGameManager extends AbstractGameManager {
     private Vector<Report> doEntityDisplacementBogDownCheck(Entity entity, Coords c, int elev) {
         Vector<Report> vReport = new Vector<>();
         Report r;
-        Hex destHex = game.getBoard().getHex(c);
+        Hex destHex = game.getBoard(entity).getHex(c);
         int bgMod = destHex.getBogDownModifier(entity.getMovementMode(), entity instanceof LargeSupportTank);
         if ((bgMod != TargetRoll.AUTOMATIC_SUCCESS) && !entity.getMovementMode().isHoverOrWiGE() && (elev == 0)) {
             PilotingRollData roll = entity.getBasePilotingRoll();
@@ -26708,7 +26708,8 @@ TargetRoll nTargetRoll,
                 vDesc.addAll(destroyEntity(pilot, "deadly ejection", false, false));
             } else {
                 // Add the pilot as an infantry unit on the battlefield.
-                if (game.getBoard().contains(targetCoords)) {
+                if (game.hasBoardLocation(targetCoords, entity.getBoardId())) {
+                    pilot.setBoardId(entity.getBoardId());
                     pilot.setPosition(targetCoords);
                     // report safe ejection
                     r = new Report(6400);
@@ -26736,7 +26737,7 @@ TargetRoll nTargetRoll,
                 }
                 if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)
                           // Don't create a pilot entity on low-atmospheric maps
-                          || game.getBoard().isLowAltitude()) {
+                          || game.isOnAtmosphericMap(entity)) {
                     game.removeEntity(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                     send(createRemoveEntityPacket(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
                 }
@@ -26761,7 +26762,7 @@ TargetRoll nTargetRoll,
                 }
             }
         } // End entity-is-Mek or fighter
-        else if (game.getBoard().contains(entity.getPosition()) && (entity instanceof Tank)) {
+        else if (game.hasBoardLocationOf(entity) && (entity instanceof Tank)) {
             EjectedCrew crew = new EjectedCrew(entity);
             // Need to set game manually; since game.addEntity not called yet
             // Don't want to do this yet, as Entity may not be added
@@ -26774,12 +26775,12 @@ TargetRoll nTargetRoll,
             // Vehicles don't have ejection systems, so crew must abandon into
             // a legal hex
             Coords legalPosition = null;
-            if (!crew.isLocationProhibited(entity.getPosition())) {
+            if (!crew.isLocationProhibited(entity.getPosition(), entity.getBoardId())) {
                 legalPosition = entity.getPosition();
             } else {
                 for (int dir = 0; (dir < 6) && (legalPosition == null); dir++) {
                     Coords adjCoords = entity.getPosition().translated(dir);
-                    if (!crew.isLocationProhibited(adjCoords)) {
+                    if (!crew.isLocationProhibited(adjCoords, entity.getBoardId())) {
                         legalPosition = adjCoords;
                     }
                 }
@@ -26790,6 +26791,7 @@ TargetRoll nTargetRoll,
                 return vDesc;
             }
             crew.setPosition(legalPosition);
+            crew.setBoardId(entity.getBoardId());
             // Add Entity to game
             game.addEntity(crew);
             // Tell clients about new entity
@@ -27126,7 +27128,7 @@ TargetRoll nTargetRoll,
             rollTarget.addModifier(entity.getOInternal(Mek.LOC_HEAD) - entity.getInternal(Mek.LOC_HEAD),
                   "Head Internal Structure Damage");
         }
-        Hex targetHex = game.getBoard().getHex(targetCoords);
+        Hex targetHex = game.getHex(targetCoords, entity.getBoardId());
         // Terrain modifiers should only apply if the unit is on the ground...
         // TO:AR 6th ed p165
         if (!entity.isSpaceborne() && !entity.isAirborne()) {

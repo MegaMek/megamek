@@ -90,15 +90,15 @@ factions:
 #    at: [ 4,4 ]
 #    status: hidden
 
-  - fullname: Atlas AS7-D
+  - fullname: Grasshopper GHR-5N
     at: [ 27, 22 ]
     board: 5
     facing: 3
 
-  - fullname: Atlas AS7-D
-    at: [ 26, 28 ]
-    board: 5
-    facing: 3
+#  - fullname: Atlas AS7-D
+#    at: [ 26, 28 ]
+#    board: 5
+#    facing: 3
 #    status: hidden
 #
 #  - fullname: Brave BRV-1Y

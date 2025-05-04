@@ -97,10 +97,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
      * @param target
      * @return
      */
-    protected static String toHitIsImpossible(Game game, Entity ae,
-            Targetable target, int arm) {
-        String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(
-                game, ae, target);
+    protected static String toHitIsImpossible(Game game, Entity ae, Targetable target, int arm) {
+        String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
         if (physicalImpossible != null) {
             return physicalImpossible;
         }
@@ -179,8 +177,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
     /**
      * To-hit number for the specified arm to punch
      */
-    public static ToHitData toHit(Game game, int attackerId,
-            Targetable target, int arm, boolean zweihandering) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int arm, boolean zweihandering) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null) {
             logger.error("Attacker not valid");

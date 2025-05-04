@@ -41,7 +41,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 
 import megamek.MMConstants;
 import megamek.Version;
@@ -59,14 +58,12 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.planetaryconditions.WindDirection;
-import megamek.common.util.CollectionUtil;
 import megamek.common.weapons.AttackHandler;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryHelper;
 import megamek.server.victory.VictoryResult;
-import org.apache.commons.collections4.CollectionUtils;
 
 /**
  * The game class is the root of all data about the game in progress. Both the Client and the Server should have one of
@@ -3624,6 +3621,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *       atmopsheric game rounds are followed by one space round. (TW p.78)
      */
     public boolean isAtmosphericRound() {
-        return !hasSpaceAndAtmosphericBoards() || (getRoundCount() % 7 != 0);
+        return !hasSpaceAndAtmosphericBoards() || (getRoundCount() % 7 != 0) || getRoundCount() == 0;
     }
 }

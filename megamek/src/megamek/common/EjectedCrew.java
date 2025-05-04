@@ -325,9 +325,9 @@ public class EjectedCrew extends Infantry {
         nextVelocity = velocity;
     }
 
-    // Is this pilot/crew suited for vacuum/harsh environmental conditions?
     @Override
     public boolean doomedInSpace() {
+        // Is this pilot/crew suited for vacuum/harsh environmental conditions?
         return !hasSpaceSuit();
     }
 

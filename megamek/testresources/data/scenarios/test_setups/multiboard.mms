@@ -22,6 +22,8 @@ map:
         id: 1
       - at: [ 31, 11 ]
         id: 3
+      - at: [ 24, 15 ]
+        id: 5
     id: 2
 
   - file: buildingsnobasement/Flughafen 6.board
@@ -45,11 +47,10 @@ map:
 options:
   on:
     - friendly_fire
-    - aero_ground_move
   off:
+    - aero_ground_move
     - check_victory
     - stratops_ecm
-#    - aero_ground_move
 
 factions:
 - name: P1
@@ -102,6 +103,11 @@ factions:
 #    board: 0
 #    at: [ 4,4 ]
 #    status: hidden
+  - fullname: Cheetah IIC
+    at: [ 17, 30 ]
+    board: 5
+    facing: 0
+    altitude: 0
 
 #  - fullname: Atlas AS7-D
 #    board: 1
@@ -124,23 +130,23 @@ factions:
 #    facing: 4
 #    altitude: 5
 #
-  - fullname: Cheetah IIC
-    at: [8, 12]
-    board: 0
-    facing: 0
-    altitude: 5
-
-  - fullname: Cheetah IIC
-    at: [ 8, 2 ]
-    board: 0
-    facing: 3
-    altitude: 5
-
-  - fullname: Cheetah IIC
-    at: [ 8, 2 ]
-    board: 2
-    facing: 3
-    altitude: 1
+#  - fullname: Cheetah IIC
+#    at: [8, 12]
+#    board: 0
+#    facing: 0
+#    altitude: 5
+#
+#  - fullname: Cheetah IIC
+#    at: [ 8, 2 ]
+#    board: 0
+#    facing: 3
+#    altitude: 5
+#
+#  - fullname: Cheetah IIC
+#    at: [ 8, 2 ]
+#    board: 2
+#    facing: 3
+#    altitude: 1
 
 #  - fullname: AC/10 Turret (Dual)
 

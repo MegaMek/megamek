@@ -2070,15 +2070,6 @@ public class Board implements Serializable {
         return null;
     }
 
-    public @Nullable Coords embeddedBoardLocation(int boardId) {
-        for (Map.Entry<Coords, Integer> entry : embeddedBoards.entrySet()) {
-            if (entry.getValue() == boardId) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
     public int getEmbeddedBoardAt(Coords coords) {
         return embeddedBoards.getOrDefault(coords, -1);
     }

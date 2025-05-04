@@ -10746,11 +10746,30 @@ public abstract class Entity extends TurnOrdered
 
     public abstract boolean doomedInVacuum();
 
-    public abstract boolean doomedOnGround();
+    /**
+     * @return True when this unit is not allowed to be or will not survive in any hex of a ground map (unless
+     * it is being transported).
+     */
+    public boolean doomedOnGround() {
+        return false;
+    }
 
-    public abstract boolean doomedInAtmosphere();
+    /**
+     * @return True when this unit is not allowed to be or will not survive in any hex of a low altitude a.k.a.
+     * atmospheric map (unless it is being transported). Note that this has nothing to do with the atmosphere (or
+     * lack of it, depending on planetary conditions), only the map type and scale.
+     */
+    public boolean doomedInAtmosphere() {
+        return true;
+    }
 
-    public abstract boolean doomedInSpace();
+    /**
+     * @return True when this unit is not allowed to be or will not survive in any hex of a space map (unless it is
+     * being transported).
+     */
+    public boolean doomedInSpace() {
+        return true;
+    }
 
     /**
      * Prior to TacOps errata 3.3, armor was rounded up to the nearest half ton As of TacOps errata 3.3, patchwork armor

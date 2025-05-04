@@ -121,13 +121,19 @@ public class MekWarrior extends EjectedCrew {
 
     @Override
     public boolean isCrippled() {
-        return true; //Ejected MekWarriors should always attempt to flee according to Forced Withdrawal.
+        //Ejected MekWarriors should always attempt to flee according to Forced Withdrawal.
+        return true;
     }
 
     @Override
-    //Aero pilots have parachutes and can thus survive being airborne
     public boolean doomedInAtmosphere() {
-        return (game.getEntity(getOriginalRideId()) != null && !game.getEntity(getOriginalRideId()).isAero());
+        if (game == null) {
+            return true;
+        } else {
+            // Aero pilots have parachutes and can thus survive being airborne
+            Entity originalRide = game.getEntityFromAllSources(getOriginalRideId());
+            return originalRide instanceof Aero || originalRide instanceof LandAirMek;
+        }
     }
 
     @Override

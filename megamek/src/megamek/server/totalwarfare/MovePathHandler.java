@@ -183,14 +183,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         if (md.contains(MovePath.MoveStepType.TAKEOFF) && entity.isAero()) {
-            IAero a = (IAero) entity;
-            a.setCurrentVelocity(1);
-            a.liftOff(1);
+            IAero aero = (IAero) entity;
+            if (getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE)) {
+                entity.setPosition(entity.getPosition().translated(entity.getFacing(), aero.getTakeOffLength()));
+            } else {
+                if (!positionOnAtmosphericMap()) {
+                    return;
+                }
+            }
+            aero.setCurrentVelocity(1);
+            aero.liftOff(1);
             if (entity instanceof Dropship) {
                 gameManager.applyDropShipProximityDamage(md.getFinalCoords(), true, md.getFinalFacing(), entity);
             }
-            gameManager.checkForTakeoffDamage(a);
-            entity.setPosition(entity.getPosition().translated(entity.getFacing(), a.getTakeOffLength()));
+            gameManager.checkForTakeoffDamage(aero);
             entity.setDone(true);
             gameManager.entityUpdate(entity.getId());
             return;
@@ -200,7 +206,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
             IAero a = (IAero) entity;
             rollTarget = a.checkVerticalTakeOff();
             if (gameManager.doVerticalTakeOffCheck(entity, rollTarget)) {
-                a.setCurrentVelocity(0);
+                if (!getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE)) {
+                    if (!positionOnAtmosphericMap()) {
+                        return;
+                    }
+                }
+                a.setCurrentVelocity(1);
                 a.liftOff(1);
                 if (entity instanceof Dropship) {
                     gameManager.applyDropShipProximityDamage(md.getFinalCoords(), (Dropship) a);
@@ -1256,6 +1267,27 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 addReport(r);
             }
         }
+    }
+
+    /**
+     * Places the entity on the atmospheric map in the hex corresponding to its current ground map. Used for
+     * lift-off when aero-on-ground movement is not used.
+     *
+     * @return True when successful (false when there is no enclosing atmospheric map)
+     */
+    private boolean positionOnAtmosphericMap() {
+        // without aero on ground movement, lift off places the aero directly on the atmospheric map, TW p. 88
+        Board groundBoard = getGame().getBoard(entity);
+        Board lowAltitudeBoard = getGame().getEnclosingBoard(groundBoard);
+        if (lowAltitudeBoard == null) {
+            // no atmospheric map; must stay on ground. MovementDisplay should prevent this
+            entity.setDone(true);
+            gameManager.entityUpdate(entity.getId());
+            return false;
+        }
+        entity.setBoardId(lowAltitudeBoard.getBoardId());
+        entity.setPosition(lowAltitudeBoard.embeddedBoardPosition(groundBoard.getBoardId()));
+        return true;
     }
 
     /**

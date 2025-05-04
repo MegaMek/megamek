@@ -94,13 +94,13 @@ public class ComputeSideTable {
         if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
               && (game.onDirectlyConnectedBoards(attacker, target) || CrossBoardAttackHelper.onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
             if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
-                attackPos = game.getBoard(target).embeddedBoardLocation(attacker.getBoardId());
+                attackPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
             } else if (game.isOnAtmosphericMap(attacker) && game.isOnGroundMap(target)) {
-                effectiveTargetPosition = game.getBoard(attacker).embeddedBoardLocation(target.getBoardId());
+                effectiveTargetPosition = game.getBoard(attacker).embeddedBoardPosition(target.getBoardId());
             } else if (game.isOnGroundMap(attacker) && game.isOnGroundMap(target)) {
                 // Different ground maps, here replace both positions with their respective atmo map hexes
-                attackPos = game.getBoard(target).embeddedBoardLocation(attacker.getBoardId());
-                effectiveTargetPosition = game.getBoard(attacker).embeddedBoardLocation(target.getBoardId());
+                attackPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
+                effectiveTargetPosition = game.getBoard(attacker).embeddedBoardPosition(target.getBoardId());
             }
         }
 

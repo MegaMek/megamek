@@ -1767,21 +1767,6 @@ public class Tank extends Entity {
         return getMovementMode().equals(EntityMovementMode.SUBMARINE) || super.hasEnvironmentalSealing();
     }
 
-    @Override
-    public boolean doomedOnGround() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInAtmosphere() {
-        return true;
-    }
-
-    @Override
-    public boolean doomedInSpace() {
-        return true;
-    }
-
     /**
      * Checks to see if a Tank is capable of going hull-down. This is true if hull-down rules are enabled and the Tank
      * is in a fortified hex.

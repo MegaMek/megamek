@@ -105,9 +105,9 @@ public class ComputeArc {
             Board attackerAtmoBoard = game.getEnclosingBoard(game.getBoard(attacker));
             Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target));
             if (attackerAtmoBoard.getBoardId() == targetAtmoBoard.getBoardId()) {
-                aPos = attackerAtmoBoard.embeddedBoardLocation(attacker.getBoardId());
+                aPos = attackerAtmoBoard.embeddedBoardPosition(attacker.getBoardId());
                 targetPositions.clear();
-                targetPositions.add(attackerAtmoBoard.embeddedBoardLocation(target.getBoardId()));
+                targetPositions.add(attackerAtmoBoard.embeddedBoardPosition(target.getBoardId()));
             } else {
                 return false;
             }
@@ -117,7 +117,7 @@ public class ComputeArc {
             // For this attack, the ground row hex enclosing the ground map target must be in arc; replace position
             Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target.getBoardId()));
             targetPositions.clear();
-            targetPositions.add(game.getBoard(attacker).embeddedBoardLocation(targetAtmoBoard.getBoardId()));
+            targetPositions.add(game.getBoard(attacker).embeddedBoardPosition(targetAtmoBoard.getBoardId()));
         }
 
         if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
@@ -125,15 +125,15 @@ public class ComputeArc {
             // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
             // position of the unit on the ground map with the position of the ground map itself in the atmo map
             if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
-                aPos = game.getBoard(target).embeddedBoardLocation(attacker.getBoardId());
+                aPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
             } else if (game.isOnAtmosphericMap(attacker) && game.isOnGroundMap(target)) {
                 targetPositions.clear();
-                targetPositions.add(game.getBoard(attacker).embeddedBoardLocation(target.getBoardId()));
+                targetPositions.add(game.getBoard(attacker).embeddedBoardPosition(target.getBoardId()));
             } else if (game.isOnGroundMap(attacker) && game.isOnGroundMap(target)) {
                 // Different ground maps, here replace both positions with their respective atmo map hexes
-                aPos = game.getBoard(target).embeddedBoardLocation(attacker.getBoardId());
+                aPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
                 targetPositions.clear();
-                targetPositions.add(game.getBoard(attacker).embeddedBoardLocation(target.getBoardId()));
+                targetPositions.add(game.getBoard(attacker).embeddedBoardPosition(target.getBoardId()));
             }
         }
 

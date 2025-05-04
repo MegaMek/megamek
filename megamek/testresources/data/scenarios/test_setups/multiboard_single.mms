@@ -21,19 +21,16 @@ map:
 options:
   on:
     - friendly_fire
-    - aero_ground_move
     - tacops_start_fire
   off:
     - check_victory
+    - aero_ground_move
 
-planetaryconditions:                        # default: standard conditions
-  wind:
-    strength: moderate gale                 # default: none; other values: light gale, moderate gale, strong gale
-    # storm, tornado, tornado f4
-    #minimum: light gale                    # default: none
-    #maximum: strong gale                   # default: tornado f4
-    direction: NW                           # default: random; other values: N, NE, SE, S, SW, NW
-    shifting: no                            # default: no
+#planetaryconditions:                        # default: standard conditions
+#  wind:
+#    strength: moderate gale                 # default: none; other values: light gale, moderate gale, strong gale
+#    direction: NW                           # default: random; other values: N, NE, SE, S, SW, NW
+#    shifting: no                            # default: no
 
 
 factions:
@@ -90,10 +87,10 @@ factions:
 #    at: [ 4,4 ]
 #    status: hidden
 
-  - fullname: Grasshopper GHR-5N
-    at: [ 27, 22 ]
-    board: 5
-    facing: 3
+#  - fullname: Grasshopper GHR-5N
+#    at: [ 27, 22 ]
+#    board: 5
+#    facing: 3
 
 #  - fullname: Atlas AS7-D
 #    at: [ 26, 28 ]
@@ -129,11 +126,11 @@ factions:
 #    facing: 3
 #    altitude: 5
 
-#  - fullname: Cheetah IIC
-#    at: [ 8, 20 ]
-#    board: 5
-#    facing: 3
-#    altitude: 2
+  - fullname: Cheetah IIC
+    at: [ 21, 21 ]
+    board: 5
+    facing: 5
+    altitude: 0
 
 #  - fullname: FWL Advanced Laser Turret (3075)
 #    at: [37,26]

@@ -521,7 +521,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public int getMaxBombPoints() {
-        return maxExtBombPoints + maxIntBombPoints;
+        return getMaxExtBombPoints() + getMaxIntBombPoints();
     }
 
     @Override

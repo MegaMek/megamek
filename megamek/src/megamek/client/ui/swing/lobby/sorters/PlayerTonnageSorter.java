@@ -36,64 +36,37 @@ import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
-import megamek.common.Player;
 import megamek.common.internationalization.I18n;
 
 /** A Lobby Mek Table sorter that sorts by 1) player 2) tonnage. */
-public class PlayerTonnageSorter implements MekTableSorter {
+public class PlayerTonnageSorter extends MekTableSorter {
 
     private final Client client;
-    private final Sorting sorting;
 
     /** A Lobby Mek Table sorter that sorts by 1) player 2) tonnage. */
     public PlayerTonnageSorter(ClientGUI clientGUI, Sorting sorting) {
         this(clientGUI.getClient(), sorting);
     }
 
+    /**
+     * A Lobby Mek Table sorter that sorts by 1) player 2) tonnage.
+     * @param client the client instance
+     * @param sorting The sorting direction (ascending or descending).
+     */
     public PlayerTonnageSorter(Client client, Sorting sorting) {
+        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "PlayerTonnageSorter.DisplayName"),
+              MekTableModel.COL_UNIT, sorting);
         this.client = client;
-        this.sorting = sorting;
     }
 
     @Override
     public int compare(final Entity a, final Entity b) {
-        final Player playerA = client.getGame().getPlayer(a.getOwnerId());
-        final Player playerB = client.getGame().getPlayer(b.getOwnerId());
-        final Player localPlayer = client.getLocalPlayer();
-        if (playerA != null && playerB != null) {
-            final int teamA = playerA.getTeam();
-            final int teamB = playerB.getTeam();
-            if (playerA.equals(localPlayer) && !playerB.equals(localPlayer)) {
-                return -1;
-            } else if (!playerA.equals(localPlayer) && playerB.equals(localPlayer)) {
-                return 1;
-            } else if ((teamA == localPlayer.getTeam()) && (teamB != localPlayer.getTeam())) {
-                return -1;
-            } else if ((teamB == localPlayer.getTeam()) && (teamA != localPlayer.getTeam())) {
-                return 1;
-            } else if (teamA != teamB) {
-                return teamA - teamB;
-            } else if (!playerA.equals(playerB)) {
-                return playerA.getName().compareTo(playerB.getName());
-            }
-        }
+        return this.getPlayerTeamIndexPosition(client, a, b).orElse(compareWeight(a, b));
+    }
+
+    private int compareWeight(Entity a, Entity b) {
         double aWeight = a.getWeight();
         double bWeight = b.getWeight();
-        return (int) Math.signum((aWeight - bWeight) * sorting.getDirection());
-    }
-
-    @Override
-    public String getDisplayName() {
-        return I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "PlayerTonnageSorter.DisplayName");
-    }
-
-    @Override
-    public int getColumnIndex() {
-        return MekTableModel.COL_UNIT;
-    }
-
-    @Override
-    public Sorting getSortingDirection() {
-        return sorting;
+        return (int) Math.signum(aWeight - bWeight) * getSortingDirectionInt();
     }
 }

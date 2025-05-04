@@ -23,23 +23,21 @@ import megamek.common.Entity;
 import megamek.common.internationalization.I18n;
 
 /** A Lobby Mek Table sorter that sorts by unit type. */
-public class TypeSorter implements MekTableSorter {
-    
+public class TypeSorter extends MekTableSorter {
+
+    /**
+     * A Lobby Mek Table sorter that sorts by unit type.
+     */
+    public TypeSorter(Sorting sorting) {
+        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "TypeSorter.DisplayName"), MekTableModel.COL_UNIT,
+              sorting);
+    }
+
     @Override
     public int compare(final Entity a, final Entity b) {
         String aType = Entity.getEntityMajorTypeName(a.getEntityType());
         String bType = Entity.getEntityMajorTypeName(b.getEntityType());
-        return aType.compareTo(bType);
-    }
-
-    @Override
-    public String getDisplayName() {
-        return I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "TypeSorter.DisplayName");
-    }
-    
-    @Override
-    public int getColumnIndex() {
-        return MekTableModel.COL_UNIT;
+        return aType.compareTo(bType) * getSortingDirectionInt();
     }
 
 }

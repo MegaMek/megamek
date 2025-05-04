@@ -37,35 +37,18 @@ import megamek.common.Entity;
 import megamek.common.internationalization.I18n;
 
 /** A Lobby Mek Table sorter that sorts by unit ID. */
-public class IDSorter implements MekTableSorter {
-    
-    private final Sorting sorting;
-    
+public class IDSorter extends MekTableSorter {
+
     /** A Lobby Mek Table sorter that sorts by unit ID. */
-    public IDSorter(MekTableSorter.Sorting sorting) {
-        this.sorting = sorting;
+    public IDSorter(Sorting sorting) {
+        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "IDSorter.DisplayName"), MekTableModel.COL_UNIT, sorting);
     }
     
     @Override
     public int compare(final Entity a, final Entity b) {
         int aVal = a.getId();
         int bVal = b.getId();
-        return (aVal - bVal) * sorting.getDirection();
-    }
-
-    @Override
-    public String getDisplayName() {
-        return I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "IDSorter.DisplayName");
-    }
-
-    @Override
-    public int getColumnIndex() {
-        return MekTableModel.COL_UNIT;
-    }
-    
-    @Override
-    public Sorting getSortingDirection() {
-        return sorting;
+        return (aVal - bVal) * getSortingDirectionInt();
     }
 
 }

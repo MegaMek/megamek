@@ -39,40 +39,26 @@ import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 /** A Lobby Mek Table sorter that sorts by tonnage. */
-public class TonnageSorter implements MekTableSorter {
+public class TonnageSorter extends MekTableSorter {
 
-    private final Sorting sorting;
-
-    /** A Lobby Mek Table sorter that sorts by tonnage. */
-    public TonnageSorter(MekTableSorter.Sorting dir) {
-        sorting = dir;
+    /**
+     * A Lobby Mek Table sorter that sorts by tonnage.
+     * @param sorting The sorting direction (ascending or descending).
+     */
+    public TonnageSorter(Sorting sorting) {
+        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "TonnageSorter.DisplayName"), MekTableModel.COL_UNIT,
+              sorting);
     }
 
     @Override
     public int compare(final Entity a, final Entity b) {
         double aWeight = a.getWeight();
         double bWeight = b.getWeight();
-        return (int) Math.signum((aWeight - bWeight) * sorting.getDirection());
-    }
-
-    @Override
-    public String getDisplayName() {
-        return I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "TonnageSorter.DisplayName");
-    }
-
-    @Override
-    public int getColumnIndex() {
-        return MekTableModel.COL_UNIT;
+        return (int) Math.signum(aWeight - bWeight) * getSortingDirectionInt();
     }
 
     @Override
     public boolean isAllowed(IGameOptions opts) {
         return !opts.booleanOption(OptionsConstants.BASE_BLIND_DROP);
     }
-
-    @Override
-    public Sorting getSortingDirection() {
-        return sorting;
-    }
-
 }

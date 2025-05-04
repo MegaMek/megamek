@@ -32,58 +32,52 @@
  */
 package megamek.client.ui.swing.lobby.sorters;
 
+import java.util.List;
+
+import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
-import megamek.common.Player;
 import megamek.common.internationalization.I18n;
 
 /** A Lobby Mek Table sorter that sorts by C3 network association (and by ID after that). */
-public class C3IDSorter implements MekTableSorter {
+public class C3IDSorter extends MekTableSorter {
     
-    private final ClientGUI clientGui;
-    
+    private final Client client;
+
     /** A Lobby Mek Table sorter that sorts mainly by association to C3 networks */
-    public C3IDSorter(ClientGUI cg) {
-        clientGui = cg;
+    public C3IDSorter(ClientGUI clientGUI) {
+        this(clientGUI.getClient());
     }
-    
-    @Override
-    public String getDisplayName() {
-        return I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "C3IDSorter.DisplayName");
-    }
-    
-    @Override
-    public int getColumnIndex() {
-        return MekTableModel.COL_UNIT;
+
+    /** A Lobby Mek Table sorter that sorts mainly by association to C3 networks */
+    public C3IDSorter(Client client) {
+        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "C3IDSorter.DisplayName"), MekTableModel.COL_UNIT);
+        this.client = client;
     }
 
     @Override
     public int compare(final Entity a, final Entity b) {
-        final Player playerA = clientGui.getClient().getGame().getPlayer(a.getOwnerId());
-        final Player playerB = clientGui.getClient().getGame().getPlayer(b.getOwnerId());
-        final Player localPlayer = clientGui.getClient().getLocalPlayer();
-        final int teamA = playerA.getTeam();
-        final int teamB = playerB.getTeam();
+        return this.getPlayerTeamIndexPosition(client, a, b).orElse(compareC3(a, b));
+    }
+
+    private static int compareC3(Entity a, Entity b) {
         String c3NetIdUnitA = a.getC3NetId();
         String c3NetIdUnitB = b.getC3NetId();
         c3NetIdUnitA = (c3NetIdUnitA == null ? "" : c3NetIdUnitA);
         c3NetIdUnitB = (c3NetIdUnitB == null ? "" : c3NetIdUnitB);
-        boolean isUnitAAlone = a.getGame().getEntitiesVector().stream().filter(e -> e.onSameC3NetworkAs(a)).count() <= 1;
-        boolean isUnitBAlone = b.getGame().getEntitiesVector().stream().filter(e -> e.onSameC3NetworkAs(b)).count() <= 1;
+
+        List<Entity> entities = a.getGame().inGameTWEntities();
+
+        boolean isUnitAAlone = isIsUnitAlone(a, entities);
+        boolean isUnitBAlone = isIsUnitAlone(b, entities);
         int unitAID = a.getId();
         int unitBID = b.getId();
-        
+
         boolean unitAHasC3System = a.hasAnyC3System();
         boolean unitBHasC3System = b.hasAnyC3System();
-        
-        if ((teamA == localPlayer.getTeam()) && (teamB != localPlayer.getTeam())) {
-            return -1;
-        } else if ((teamB == localPlayer.getTeam()) && (teamA != localPlayer.getTeam())) {
-            return 1;
-        } else if (teamA != teamB) {
-            return teamA - teamB;
-        } else if (!unitAHasC3System && unitBHasC3System) {
+
+        if (!unitAHasC3System && unitBHasC3System) {
             return 1;
         } else if (unitAHasC3System && !unitBHasC3System) {
             return -1;
@@ -91,43 +85,52 @@ public class C3IDSorter implements MekTableSorter {
             return -1;
         } else if (isUnitAAlone && !isUnitBAlone) {
             return 1;
-        } else if (isUnitAAlone && isUnitBAlone) {
+        } else if (isUnitAAlone) {
             return unitAID - unitBID;
-        } else {
-            // The units are both on a network
-            if (!c3NetIdUnitA.equals(c3NetIdUnitB)) {
-                return c3NetIdUnitA.compareTo(c3NetIdUnitB);
+        }
+        // The units are both on a network
+        if (!c3NetIdUnitA.equals(c3NetIdUnitB)) {
+            return c3NetIdUnitA.compareTo(c3NetIdUnitB);
+        }
+
+        // The units are on the same network; sort by hierarchy (for standard C3) and ID
+        if (a.hasHierarchicalC3()) {
+            // The Company Commander on top
+            if (a.isC3CompanyCommander()) {
+                return -1;
+            } else if (b.isC3CompanyCommander()) {
+                return 1;
             }
-            // The units are on the same network; sort by hierarchy (for standard C3) and ID
-            if (a.hasNhC3()) {
+            // All units below their masters
+            if (b.C3MasterIs(a)) {
+                return -1;
+            } else if (a.C3MasterIs(b)) {
+                return 1;
+            }
+            // Two slaves of the same master sort by ID
+            if (a.hasC3S() && b.hasC3S() && a.getC3MasterId() == b.getC3MasterId()) {
                 return unitAID - unitBID;
-            } else {
-                // The Company Commander on top
-                if (a.isC3CompanyCommander()) {
-                    return -1;
-                } else if (b.isC3CompanyCommander()) {
-                    return 1;
-                }
-                // All units below their masters
-                if (b.C3MasterIs(a)) {
-                    return -1;
-                } else if (a.C3MasterIs(b)) {
-                    return 1;
-                }
-                // Two slaves of the same master sort by ID
-                if (a.hasC3S() && b.hasC3S() && a.getC3MasterId() == b.getC3MasterId()) {
-                    return unitAID - unitBID;
-                }
-                // Slaves of different masters sort by their master's IDs
-                if (a.hasC3S()) {
-                    unitAID = a.getC3MasterId();
-                }
-                if (b.hasC3S()) {
-                    unitBID = b.getC3MasterId();
-                }
-                return unitAID - unitBID;
+            }
+            // Slaves of different masters sort by their master's IDs
+            if (a.hasC3S()) {
+                unitAID = a.getC3MasterId();
+            }
+            if (b.hasC3S()) {
+                unitBID = b.getC3MasterId();
             }
         }
+        return unitAID - unitBID;
+    }
+
+    private static boolean isIsUnitAlone(Entity a, List<Entity> entities) {
+        boolean isUnitAAlone = true;
+        for (Entity e : entities) {
+            if (e != a && e.onSameC3NetworkAs(a)) {
+                isUnitAAlone = false;
+                break;
+            }
+        }
+        return isUnitAAlone;
     }
 
 }

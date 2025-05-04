@@ -37,36 +37,18 @@ import megamek.common.Entity;
 import megamek.common.internationalization.I18n;
 
 /** A Lobby Mek Table sorter that sorts by unit name. */
-public class NameSorter implements MekTableSorter {
-
-    private final Sorting sorting;
+public class NameSorter extends MekTableSorter {
 
     /** A Lobby Mek Table sorter that sorts by unit name. */
     public NameSorter(Sorting sorting) {
-        this.sorting = sorting;
+        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "NameSorter.DisplayName"), MekTableModel.COL_UNIT, sorting);
     }
     
     @Override
     public int compare(final Entity a, final Entity b) {
         String aVal = a.getDisplayName();
         String bVal = b.getDisplayName();
-        return aVal.compareTo(bVal) * sorting.getDirection();
-    }
-    
-    @Override
-    public String getDisplayName() {
-        return I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "NameSorter.DisplayName");
-    }
-    
-    @Override
-    public int getColumnIndex() {
-        return MekTableModel.COL_UNIT;
-    }
-
-    
-    @Override
-    public Sorting getSortingDirection() {
-        return sorting;
+        return aVal.compareTo(bVal) * getSortingDirectionInt();
     }
 
 }

@@ -39,39 +39,23 @@ import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 /** A Lobby Mek Table sorter that sorts by BV. */
-public class BVSorter implements MekTableSorter {
-    private final Sorting sorting;
+public class BVSorter extends MekTableSorter {
 
     /** A Lobby Mek Table sorter that sorts by BV. */
-    public BVSorter(MekTableSorter.Sorting dir) {
-        sorting = dir;
+    public BVSorter(Sorting sorting) {
+          super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "BVSorter.DisplayName"), MekTableModel.COL_BV, sorting);
     }
 
     @Override
     public int compare(final Entity a, final Entity b) {
         int aBV = a.calculateBattleValue();
         int bBV = b.calculateBattleValue();
-        return (aBV - bBV) * sorting.getDirection();
-    }
-
-    @Override
-    public String getDisplayName() {
-        return I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "BVSorter.DisplayName");
-    }
-
-    @Override
-    public int getColumnIndex() {
-        return MekTableModel.COL_BV;
+        return (aBV - bBV) * getSortingDirectionInt();
     }
 
     @Override
     public boolean isAllowed(IGameOptions opts) {
         return !opts.booleanOption(OptionsConstants.BASE_BLIND_DROP);
-    }
-
-    @Override
-    public Sorting getSortingDirection() {
-        return sorting;
     }
 
 }

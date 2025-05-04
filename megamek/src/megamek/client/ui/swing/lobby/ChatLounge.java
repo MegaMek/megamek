@@ -104,7 +104,7 @@ import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.swing.lobby.sorters.*;
-import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
+import megamek.client.ui.swing.lobby.sorters.Sorting;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.swing.util.ScalingPopup;
@@ -519,22 +519,23 @@ public class ChatLounge extends AbstractPhaseDisplay
     /** Initializes the Mek Table sorting algorithms. */
     private void setupSorters() {
         unitSorters.add(new PlayerTransportIDSorter(clientgui));
-        unitSorters.add(new IDSorter(MekTableSorter.Sorting.ASCENDING));
-        unitSorters.add(new IDSorter(MekTableSorter.Sorting.DESCENDING));
-        unitSorters.add(new NameSorter(MekTableSorter.Sorting.ASCENDING));
-        unitSorters.add(new NameSorter(MekTableSorter.Sorting.DESCENDING));
-        unitSorters.add(new TypeSorter());
-        unitSorters.add(new PlayerTonnageSorter(clientgui, MekTableSorter.Sorting.ASCENDING));
-        unitSorters.add(new PlayerTonnageSorter(clientgui, MekTableSorter.Sorting.DESCENDING));
-        unitSorters.add(new PlayerUnitRoleSorter(clientgui, MekTableSorter.Sorting.ASCENDING));
-        unitSorters.add(new PlayerUnitRoleSorter(clientgui, MekTableSorter.Sorting.DESCENDING));
-        unitSorters.add(new TonnageSorter(MekTableSorter.Sorting.ASCENDING));
-        unitSorters.add(new TonnageSorter(MekTableSorter.Sorting.DESCENDING));
+        unitSorters.add(new PlayerTonnageSorter(clientgui, Sorting.ASCENDING));
+        unitSorters.add(new PlayerTonnageSorter(clientgui, Sorting.DESCENDING));
+        unitSorters.add(new PlayerUnitRoleSorter(clientgui, Sorting.ASCENDING));
+        unitSorters.add(new PlayerUnitRoleSorter(clientgui, Sorting.DESCENDING));
+        unitSorters.add(new IDSorter(Sorting.ASCENDING));
+        unitSorters.add(new IDSorter(Sorting.DESCENDING));
+        unitSorters.add(new NameSorter(Sorting.ASCENDING));
+        unitSorters.add(new NameSorter(Sorting.DESCENDING));
+        unitSorters.add(new TypeSorter(Sorting.ASCENDING));
+        unitSorters.add(new TypeSorter(Sorting.DESCENDING));
+        unitSorters.add(new TonnageSorter(Sorting.ASCENDING));
+        unitSorters.add(new TonnageSorter(Sorting.DESCENDING));
         unitSorters.add(new C3IDSorter(clientgui));
-        bvSorters.add(new PlayerBVSorter(clientgui, MekTableSorter.Sorting.ASCENDING));
-        bvSorters.add(new PlayerBVSorter(clientgui, MekTableSorter.Sorting.DESCENDING));
-        bvSorters.add(new BVSorter(MekTableSorter.Sorting.ASCENDING));
-        bvSorters.add(new BVSorter(MekTableSorter.Sorting.DESCENDING));
+        bvSorters.add(new PlayerBVSorter(clientgui, Sorting.ASCENDING));
+        bvSorters.add(new PlayerBVSorter(clientgui, Sorting.DESCENDING));
+        bvSorters.add(new BVSorter(Sorting.ASCENDING));
+        bvSorters.add(new BVSorter(Sorting.DESCENDING));
         activeSorter = unitSorters.get(0);
     }
 
@@ -3311,7 +3312,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             // Add info about the current sorting
             if (activeSorter.getColumnIndex() == i) {
                 headerText += "&nbsp;&nbsp;&nbsp;" + UIUtil.fontHTML(uiGray());
-                if (activeSorter.getSortingDirection() == MekTableSorter.Sorting.ASCENDING) {
+                if (activeSorter.getSortingDirection() == Sorting.ASCENDING) {
                     headerText += "\u25B4 ";
                 } else {
                     headerText += "\u25BE ";

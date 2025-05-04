@@ -39,7 +39,7 @@ import megamek.common.Entity;
 import megamek.common.internationalization.I18n;
 
 /** A Lobby Mek Table sorter that sorts by 1) player 2) transported units 3) ID. */
-public class PlayerTransportIDSorter implements MekTableSorter {
+public class PlayerTransportIDSorter extends MekTableSorter {
 
     private final Client client;
 
@@ -50,23 +50,13 @@ public class PlayerTransportIDSorter implements MekTableSorter {
 
     /** A Lobby Mek Table sorter that sorts by 1) player 2) transported units 3) ID. */
     public PlayerTransportIDSorter(Client client) {
+        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "PlayerTransportIDSorter.DisplayName"),
+              MekTableModel.COL_UNIT);
         this.client = client;
     }
 
     @Override
-    public String getDisplayName() {
-        return I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "PlayerTransportIDSorter.DisplayName");
-    }
-
-    @Override
-    public int getColumnIndex() {
-        return MekTableModel.COL_UNIT;
-    }
-
-    @Override
     public int compare(final Entity a, final Entity b) {
-        // entity.getOwner() does not work properly because teams are
-        // not updated for entities when the user switches teams
         return getPlayerTeamIndexPosition(client, a, b).orElse(compareByUnitAndTransportId(a, b));
     }
 

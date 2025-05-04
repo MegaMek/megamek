@@ -39,19 +39,23 @@ import megamek.common.Entity;
 import megamek.common.internationalization.I18n;
 
 /** A Lobby Mek Table sorter that sorts by 1) player 2) unit role. */
-public class PlayerUnitRoleSorter implements MekTableSorter {
+public class PlayerUnitRoleSorter extends MekTableSorter {
     private final Client client;
-    private final Sorting sorting;
 
     /** A Lobby Mek Table sorter that sorts by 1) player 2) unit role. */
     public PlayerUnitRoleSorter(ClientGUI clientGUI, Sorting sorting) {
         this(clientGUI.getClient(), sorting);
     }
 
-    /** A Lobby Mek Table sorter that sorts by 1) player 2) unit role. */
+    /**
+     * A Lobby Mek Table sorter that sorts by 1) player 2) unit role.
+     * @param client the client instance
+     * @param sorting The sorting direction (ascending or descending).
+     */
     public PlayerUnitRoleSorter(Client client, Sorting sorting) {
+        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "PlayerUnitRoleSorter.DisplayName"),
+              MekTableModel.COL_UNIT, sorting);
         this.client = client;
-        this.sorting = sorting;
     }
 
     @Override
@@ -60,21 +64,6 @@ public class PlayerUnitRoleSorter implements MekTableSorter {
     }
 
     private int compareByRoleString(Entity a, Entity b) {
-        return a.getRole().toString().compareTo(b.getRole().toString()) * sorting.getDirection();
-    }
-
-    @Override
-    public String getDisplayName() {
-        return I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "PlayerUnitRoleSorter.DisplayName");
-    }
-
-    @Override
-    public int getColumnIndex() {
-        return MekTableModel.COL_UNIT;
-    }
-
-    @Override
-    public Sorting getSortingDirection() {
-        return sorting;
+        return a.getRole().toString().compareTo(b.getRole().toString()) * getSortingDirectionInt();
     }
 }

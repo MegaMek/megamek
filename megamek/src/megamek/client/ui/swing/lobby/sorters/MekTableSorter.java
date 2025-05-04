@@ -40,23 +40,26 @@ import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.common.options.IGameOptions;
 
-/** An interface for the Comparators used for the lobby Mek table. */
-public interface MekTableSorter extends Comparator<Entity> {
-    enum Sorting {
-        ASCENDING(1),
-        DESCENDING(-1);
-        private final int direction;
+/**
+ * Abstract Class for Mek Table Sorters.
+ * @author Luana Coppio
+ */
+public abstract class MekTableSorter implements Comparator<Entity> {
 
-        Sorting(int direction) {
-            this.direction = direction;
-        }
+    protected static final String RESOURCE_BUNDLE = "megamek.client.sorters";
+    private final int columnIndex;
+    private final String displayName;
+    private final Sorting sorting;
 
-        public int getDirection() {
-            return direction;
-        }
+    public MekTableSorter(String displayName, int columnIndex) {
+        this(displayName, columnIndex, Sorting.ASCENDING);
     }
 
-    String RESOURCE_BUNDLE = "megamek.client.sorters";
+    public MekTableSorter(String displayName, int columnIndex, Sorting sorting) {
+        this.displayName = displayName;
+        this.columnIndex = columnIndex;
+        this.sorting = sorting;
+    }
 
     /**
      * Compares two entities. The comparison is done by first comparing the
@@ -68,7 +71,9 @@ public interface MekTableSorter extends Comparator<Entity> {
      * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or
      * greater than the second, or empty if there is no comparison possible
      */
-    default OptionalInt getPlayerTeamIndexPosition(Client client, Entity a, Entity b) {
+    protected OptionalInt getPlayerTeamIndexPosition(Client client, Entity a, Entity b) {
+        // entity.getOwner() does not work properly because teams are not necessarily updated correctly for entities
+        // when the user switches teams mid-game
         final Player playerA = client.getGame().getPlayer(a.getOwnerId());
         final Player playerB = client.getGame().getPlayer(b.getOwnerId());
         final Player localPlayer = client.getLocalPlayer();
@@ -98,26 +103,36 @@ public interface MekTableSorter extends Comparator<Entity> {
      * Returns the info that is displayed in the column header to show
      * the sorting that is used, such as "Team / BV".
      */
-    String getDisplayName();
+    public String getDisplayName() {
+        return displayName;
+    }
 
     /**
      * Returns the column index of the Mek Table that this sorter is to be used with.
      */
-    int getColumnIndex();
+    public int getColumnIndex() {
+        return columnIndex;
+    }
 
     /**
      * Returns true if this Sorter is currently allowed. Sorters might not be allowed
      * e.g. when they would give away info in blind drops.
      */
-    default boolean isAllowed(IGameOptions opts) {
+    public boolean isAllowed(IGameOptions opts) {
         return true;
     }
 
     /** Returns the sorting direction. */
-    default Sorting getSortingDirection() {
-        // This probably should be Sorting.ASCENDING, having a default is better than relying on a null behavior
-        // that is implementation dependent
-        return null;
+    public Sorting getSortingDirection() {
+        return sorting;
+    }
+
+    /**
+     * Returns the sorting direction as an int.
+     * @return 1 if sorting is ascending, -1 if sorting is descending.
+     */
+    protected int getSortingDirectionInt() {
+        return sorting.getDirection();
     }
 
     /**
@@ -125,7 +140,7 @@ public interface MekTableSorter extends Comparator<Entity> {
      * @deprecated use {@link Sorting#getDirection()} instead
      */
     @Deprecated(forRemoval = true, since = "0.50.06")
-    default int bigger(Sorting dir) {
+    public int bigger(Sorting dir) {
         return dir == Sorting.ASCENDING ? 1 : -1;
     }
 
@@ -134,7 +149,7 @@ public interface MekTableSorter extends Comparator<Entity> {
      * @deprecated use {@link Sorting#getDirection()} instead
      */
     @Deprecated(forRemoval = true, since = "0.50.06")
-    default int smaller(Sorting dir) {
+    public int smaller(Sorting dir) {
         return dir == Sorting.ASCENDING ? -1 : 1;
     }
 

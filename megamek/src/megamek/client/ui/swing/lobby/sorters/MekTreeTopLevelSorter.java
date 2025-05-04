@@ -46,8 +46,8 @@ public class MekTreeTopLevelSorter implements Comparator<Object> {
 
     private final Client client;
 
-    public MekTreeTopLevelSorter(Client cl) {
-        client = cl;
+    public MekTreeTopLevelSorter(Client client) {
+        this.client = client;
     }
 
     @Override

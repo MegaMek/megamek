@@ -25,10 +25,9 @@ import megamek.common.Entity;
 import megamek.common.internationalization.I18n;
 
 /** A Lobby Mek Table sorter that sorts for 1) Player 2) BV. */
-public class PlayerBVSorter implements MekTableSorter {
+public class PlayerBVSorter extends MekTableSorter {
     
     private final Client client;
-    private final Sorting sorting;
 
     /** A Lobby Mek Table sorter that sorts for 1) Player 2) BV. */
     public PlayerBVSorter(ClientGUI clientGUI, Sorting sorting) {
@@ -36,8 +35,8 @@ public class PlayerBVSorter implements MekTableSorter {
     }
 
     public PlayerBVSorter(Client client, Sorting sorting) {
+        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "PlayerBVSorter.DisplayName"), MekTableModel.COL_BV, sorting);
         this.client = client;
-        this.sorting = sorting;
     }
 
     @Override
@@ -48,22 +47,6 @@ public class PlayerBVSorter implements MekTableSorter {
     private int compareBV(Entity a, Entity b) {
         int aBV = a.calculateBattleValue();
         int bBV = b.calculateBattleValue();
-        return (bBV - aBV) * sorting.getDirection();
+        return (bBV - aBV) * getSortingDirectionInt();
     }
-
-    @Override
-    public String getDisplayName() {
-        return I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "PlayerBVSorter.DisplayName");
-    }
-    
-    @Override
-    public int getColumnIndex() {
-        return MekTableModel.COL_BV;
-    }
-    
-    @Override
-    public Sorting getSortingDirection() {
-        return sorting;
-    }
-
 }

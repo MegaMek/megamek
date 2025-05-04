@@ -575,7 +575,8 @@ public class ChatLounge extends AbstractPhaseDisplay
     /** Sets up the unit (add unit / add army) panel. */
     private void setupUnitConfig() {
         RandomNameGenerator.getInstance();
-        RandomCallsignGenerator.getInstance();
+        //noinspection ResultOfMethodCallIgnored
+        RandomCallsignGenerator.getInstance(); // Method being initialized
 
         MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
         boolean mscLoaded = mekSummaryCache.isInitialized();
@@ -1517,8 +1518,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         getLocalClient(carried).sendLoadEntity(carried.getId(), carrierId, bayNumber);
-        // TODO: it would probably be a good idea
-        // to disable some settings for loaded units in customMekDialog
+        // TODO: it would probably be a good idea to disable some settings for loaded units in customMekDialog
     }
 
     /**
@@ -1662,8 +1662,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         getLocalClient(trailer).sendTowEntity(trailer.getId(), tractor.getId());
-        // TODO: it would probably be a good idea
-        // to disable some settings for loaded units in customMekDialog
+        // TODO: it would probably be a good idea to disable some settings for loaded units in customMekDialog
     }
 
     /**
@@ -3064,28 +3063,38 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         @Override
+        public void mousePressed(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                showPopup(e);
+            }
+        }
+
+        @Override
         public void mouseReleased(MouseEvent e) {
             if (e.isPopupTrigger()) {
-                // If the right mouse button is pressed over an unselected entity,
-                // clear the selection and select that entity instead
-                int row = mekForceTree.getRowForLocation(e.getX(), e.getY());
-                if (!mekForceTree.isRowSelected(row)) {
-                    mekForceTree.setSelectionRow(row);
-                }
                 showPopup(e);
             }
         }
 
         /** Shows the right-click menu on the mek table */
         private void showPopup(MouseEvent e) {
+            TreePath path = mekForceTree.getPathForLocation(e.getX(), e.getY());
+            // If clicked on a valid row and it's not selected, select it
+            if (path != null && !mekForceTree.isPathSelected(path)) {
+                mekForceTree.setSelectionPath(path);
+            }
+
             TreePath[] selection = mekForceTree.getSelectionPaths();
-            java.util.List<Entity> entities = new ArrayList<>();
-            java.util.List<Force> selForces = new ArrayList<>();
+
+            // If the right mouse button is pressed over an unselected entity,
+            // clear the selection and select that entity instead
+            List<Entity> entities = new ArrayList<>();
+            List<Force> selForces = new ArrayList<>();
 
             if (selection != null) {
-                for (TreePath path : selection) {
-                    if (path != null) {
-                        Object selected = path.getLastPathComponent();
+                for (TreePath selPath : selection) {
+                    if (selPath != null) {
+                        Object selected = selPath.getLastPathComponent();
                         if (selected instanceof Entity) {
                             entities.add((Entity) selected);
                         } else if (selected instanceof Force) {
@@ -3094,6 +3103,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     }
                 }
             }
+
             ScalingPopup popup = LobbyMekPopup.getPopup(entities,
                   selForces,
                   new LobbyMekPopupActions(ChatLounge.this),

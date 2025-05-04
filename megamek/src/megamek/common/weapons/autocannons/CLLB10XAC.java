@@ -40,8 +40,8 @@ public class CLLB10XAC extends LBXACWeapon {
         this.criticals = 5;
         this.bv = 148;
         this.cost = 400000;
-        this.shortAV = 10;
-        this.medAV = 10;
+        shortAV = getBaseAeroDamage();
+        this.medAV = this.shortAV;
         this.maxRange = RANGE_MED;
         rulesRefs = "207, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

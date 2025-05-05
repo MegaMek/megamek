@@ -701,7 +701,7 @@ public interface IAero {
                     return "Not enough room on map" + lenString;
                 }
                 if (!hex.isClearForTakeoff()) {
-                    return "Unacceptable terrain for landing" + lenString;
+                    return "Unacceptable terrain for take off" + lenString;
                 }
                 if (hex.getLevel() != elev) {
                     return "Runway must contain no elevation change" + lenString;
@@ -793,31 +793,40 @@ public interface IAero {
         return null;
     }
 
+    /**
+     * Performs necessary changes to this aero unit to place it in airborne mode. Sets the altitude to
+     * the given altitude, changes the movement mode to aerodyne/spheroid movement and clears secondary positions
+     * for DS. Note that altitude should not be 0 but this is not checked.
+     *
+     * @param altitude The altitude to lift off to
+     */
     default void liftOff(int altitude) {
-        if (isSpheroid()) {
-            ((Entity) this).setMovementMode(EntityMovementMode.SPHEROID);
-        } else {
-            ((Entity) this).setMovementMode(EntityMovementMode.AERODYNE);
-        }
-        ((Entity) this).setAltitude(altitude);
+        Entity aero = (Entity) this;
+        aero.setMovementMode(isSpheroid() ? EntityMovementMode.SPHEROID : EntityMovementMode.AERODYNE);
+        aero.setAltitude(altitude);
 
-        HashSet<Coords> positions = ((Entity) this).getOccupiedCoords();
-        ((Entity) this).getSecondaryPositions().clear();
-        if (((Entity) this).getGame() != null) {
-            ((Entity) this).getGame().updateEntityPositionLookup((Entity) this, positions);
+        HashSet<Coords> positions = aero.getOccupiedCoords();
+        aero.getSecondaryPositions().clear();
+        if (aero.getGame() != null) {
+            aero.getGame().updateEntityPositionLookup(aero, positions);
         }
     }
 
+    /**
+     * Performs necessary changes to this aero unit to place it in grounded mode. Sets altitude and elevation,
+     * velocity and next velocity to 0, OOC and related effects to false and the movement mode to WHEELED.
+     */
     default void land() {
-        ((Entity) this).setMovementMode(EntityMovementMode.WHEELED);
-        ((Entity) this).setAltitude(0);
-        ((Entity) this).setElevation(0);
+        Entity aero = (Entity) this;
+        aero.setMovementMode(EntityMovementMode.WHEELED);
+        aero.setAltitude(0);
+        aero.setElevation(0);
         setCurrentVelocity(0);
         setNextVelocity(0);
         setOutControl(false);
         setOutCtrlHeat(false);
         setRandomMove(false);
-        ((Entity) this).delta_distance = 0;
+        aero.delta_distance = 0;
     }
 
     default int getFuelUsed(int thrust) {

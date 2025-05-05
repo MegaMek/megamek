@@ -33,6 +33,30 @@ map:
   - file: unofficial/Cakefish/General/50x50 Grass QRF Airbase.board
     name: Airport
     id: 5
+    postprocess:
+      # make lift off less easy :)
+      - type: addterrain
+        terrain: woods
+        level: 1
+        area:
+          list:
+            - [ 14, 22 ]
+            - [ 13, 26 ]
+            - [ 20, 25 ]
+      - type: addterrain
+        terrain: foliage_elev
+        level: 1
+        area:
+          list:
+            - [ 14, 22 ]
+            - [ 13, 26 ]
+            - [ 20, 25 ]
+
+      - type: hexlevel
+        level: 2
+        area:
+          list:
+            - [ 23, 26 ]
 
   - type: space
     width: 15
@@ -103,11 +127,13 @@ factions:
 #    board: 0
 #    at: [ 4,4 ]
 #    status: hidden
-  - fullname: Cheetah IIC
-    at: [ 17, 30 ]
+  - fullname: Sai S-4
+    at: [ 15, 31 ]
     board: 5
     facing: 0
     altitude: 0
+#    status:
+#      - shutdown doesnt work well on grounded Aero
 
 #  - fullname: Atlas AS7-D
 #    board: 1

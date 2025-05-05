@@ -34,6 +34,7 @@ public class BoardProcessorDeserializer {
     private static final String TYPE_TERRAIN_CONVERT = "convertterrain";
     private static final String TYPE_TERRAIN_ADD = "addterrain";
     private static final String TYPE_THEME = "settheme";
+    private static final String TYPE_HEX_LEVEL = "hexlevel";
     private static final String TERRAIN = "terrain";
     private static final String NEW_TERRAIN = "newterrain";
     private static final String LEVEL = "level";
@@ -53,6 +54,7 @@ public class BoardProcessorDeserializer {
             case TYPE_TERRAIN_REMOVE -> parseRemoveTerrain(node);
             case TYPE_TERRAIN_ADD -> parseAddTerrain(node);
             case TYPE_THEME -> parseChangeTheme(node);
+            case TYPE_HEX_LEVEL -> parseHexLevel(node);
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }
@@ -98,6 +100,12 @@ public class BoardProcessorDeserializer {
         int level = node.get(LEVEL).intValue();
         HexArea area = HexAreaDeserializer.parseShape(node.get("area"));
         return new TerrainAddPostProcessor(terrainType, level, area);
+    }
+
+    private static BoardProcessor parseHexLevel(JsonNode node) {
+        int level = node.get(LEVEL).intValue();
+        HexArea area = HexAreaDeserializer.parseShape(node.get("area"));
+        return new HexLevelPostProcessor(level, area);
     }
 
     private static BoardProcessor parseChangeTheme(JsonNode triggerNode) {

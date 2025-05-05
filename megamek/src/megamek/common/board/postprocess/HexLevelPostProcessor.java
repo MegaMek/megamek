@@ -16,31 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package megamek.common.board.postprocess;
 
 import megamek.common.Board;
 import megamek.common.Coords;
-import megamek.common.Hex;
-import megamek.common.Terrain;
 import megamek.common.hexarea.HexArea;
 
-public class TerrainAddPostProcessor implements BoardProcessor {
+public class HexLevelPostProcessor implements BoardProcessor {
 
-    private final int terrainType;
     private final int level;
     private final HexArea area;
 
     /**
-     * Creates a board processor that adds the given terrain to each hex of the given HexArea.
-     * <p>
-     * Note that no exits settings are added. Note also that the level is not checked for validity.
+     * Creates a board processor that sets the hex level of each hex of the given HexArea to the given level.
      *
-     * @param terrainType the terrain type to add
-     * @param level       the terrain level to add
-     * @param area        the HexArea to apply the change to
+     * @param level the hex level to set
+     * @param area  the HexArea to apply the change to
      */
-    public TerrainAddPostProcessor(int terrainType, int level, HexArea area) {
-        this.terrainType = terrainType;
+    public HexLevelPostProcessor(int level, HexArea area) {
         this.level = level;
         this.area = area;
     }
@@ -52,7 +46,7 @@ public class TerrainAddPostProcessor implements BoardProcessor {
             for (int y = 0; y < board.getHeight(); y++) {
                 for (int x = 0; x < board.getWidth(); x++) {
                     if (area.containsCoords(new Coords(x, y), board)) {
-                        board.getHex(x, y).addTerrain(new Terrain(terrainType, level));
+                        board.getHex(x, y).setLevel(level);
                     }
                 }
             }

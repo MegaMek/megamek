@@ -2252,22 +2252,28 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         final Entity ce = ce();
-        if (ce == null) {
-            return;
-        }
-
-        if (ce.isAero()) {
-            if (ce.isAirborne()) {
-                setTakeOffEnabled(false);
-                setVTakeOffEnabled(false);
-            } else if (!ce.isShutDown()) {
-                setTakeOffEnabled(((IAero) ce).canTakeOffHorizontally());
-                setVTakeOffEnabled(((IAero) ce).canTakeOffVertically());
-            }
+        if ((ce instanceof IAero aero) && ce.isAero() && !ce.isAirborne() && !ce.isShutDown()
+              && (usesAeroOnGroundMovement() || hasAtmosphericMapForLiftOff(game, ce))) {
+            setTakeOffEnabled(aero.canTakeOffHorizontally());
+            setVTakeOffEnabled(aero.canTakeOffVertically());
         } else {
             setTakeOffEnabled(false);
             setVTakeOffEnabled(false);
         }
+    }
+
+    private boolean usesAeroOnGroundMovement() {
+        return game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE);
+    }
+
+    /**
+     * @return True when there is a position on an existing atmospheric map that corresponds to the entity's current
+     * ground map. TW p.88
+     */
+    public static boolean hasAtmosphericMapForLiftOff(IGame game, Entity entity) {
+        Board groundBoard = game.getBoard(entity);
+        return (groundBoard != null) && (game.getEnclosingBoard(groundBoard) != null)
+              && game.getEnclosingBoard(groundBoard).isLowAltitude();
     }
 
     private synchronized void updateLandButtons() {

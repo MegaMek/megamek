@@ -163,6 +163,16 @@ map:
         list:
           - [ 10, 10 ]
 
+    # hexlevel sets the hex levels in a given area
+    - type: hexlevel
+      # required: the new hex level
+      level: 2
+      # required: an area to apply it to, see "areas" section
+      area:
+        list:
+          - [ 10, 10 ]
+
+
 # Optional: game options
 # when not given, the options from the latest game are used
 options:

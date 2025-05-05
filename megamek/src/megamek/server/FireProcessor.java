@@ -60,6 +60,9 @@ public class FireProcessor extends DynamicTerrainProcessor {
      */
     private void resolveFire(int boardId) {
         Board board = game.getBoard(boardId);
+        if (board.isLowAltitude() || board.isSpace()) {
+            return;
+        }
         int width = board.getWidth();
         int height = board.getHeight();
         WindDirection windDirection = game.getPlanetaryConditions().getWindDirection();

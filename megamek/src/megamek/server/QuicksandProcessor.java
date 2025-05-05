@@ -36,24 +36,23 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
                 continue;
             }
             // Cycle through all hexes, checking for quicksand
-            for (int currentXCoord = 0; currentXCoord < board.getWidth(); currentXCoord++) {
-                for (int currentYCoord = 0; currentYCoord < board.getHeight(); currentYCoord++) {
-                    Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                    Hex currentHex = board.getHex(currentXCoord, currentYCoord);
+            for (int x = 0; x < board.getWidth(); x++) {
+                for (int y = 0; y < board.getHeight(); y++) {
+                    Coords currentCoords = new Coords(x, y);
+                    Hex hex = board.getHex(x, y);
 
                     // Check for quicksand that has been around at least one turn (terrain level of 3),
                     // then for any new quicksand this turn (terrain level of 2)
-                    if (currentHex.terrainLevel(Terrains.SWAMP) == 3) {
+                    if (hex.terrainLevel(Terrains.SWAMP) == 3) {
                         // sink any units that occupy this hex
                         for (Entity entity : gameManager.getGame().getEntitiesVector(currentCoords, board.getBoardId())) {
                             if (entity.isStuck()) {
                                 sinkEntityInQuicksand(entity);
                             }
                         }
-                    } else if (currentHex.terrainLevel(Terrains.SWAMP) == 2) {
-                        currentHex.removeTerrain(Terrains.SWAMP);
-                        currentHex.addTerrain(new Terrain(Terrains.SWAMP, 3));
-                        markHexUpdate(currentCoords, board.getBoardId());
+                    } else if (hex.terrainLevel(Terrains.SWAMP) == 2) {
+                        hex.addTerrain(new Terrain(Terrains.SWAMP, 3));
+                        markHexUpdate(currentCoords, board);
                     }
                 }
             }

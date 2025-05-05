@@ -70,6 +70,9 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
 
     private void findElevators() {
         for (Board b : gameManager.getGame().getBoards().values()) {
+            if (b.isLowAltitude() || b.isSpace()) {
+                continue;
+            }
             int height = b.getHeight();
             int width = b.getWidth();
             int exits;

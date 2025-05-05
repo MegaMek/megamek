@@ -52,7 +52,9 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         game = gameManager.getGame();
         this.vPhaseReport = vPhaseReport;
         for (Board board : gameManager.getGame().getBoards().values()) {
-            resolveWeather(board);
+            if (board.isGround()) {
+                resolveWeather(board);
+            }
         }
         this.vPhaseReport = null;
     }

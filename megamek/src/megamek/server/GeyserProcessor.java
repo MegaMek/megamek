@@ -89,6 +89,9 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
 
     private void findGeysers() {
         for (Board board : gameManager.getGame().getBoards().values()) {
+            if (board.isLowAltitude() || board.isSpace()) {
+                continue;
+            }
             for (int x = 0; x < board.getWidth(); x++) {
                 for (int y = 0; y < board.getHeight(); y++) {
                     if (board.getHex(x, y).containsTerrain(Terrains.GEYSER)) {

@@ -230,7 +230,7 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
                      weapon1.getLocation() == weapon2.getLocation() &&
                      weapon1.isRearMounted() == weapon2.isRearMounted() &&
                      ((weapon1.getLinkedBy() == null && weapon2.getLinkedBy() == null) ||
-                            (weapon1.getLinkedBy() != null &&
+                            (weapon1.getLinkedBy() != null && weapon2.getLinkedBy() != null &&
                                    weapon1.getLinkedBy().getType().equals(weapon2.getLinkedBy().getType())));
     }
 

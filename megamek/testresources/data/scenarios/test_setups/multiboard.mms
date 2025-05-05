@@ -127,11 +127,11 @@ factions:
 #    board: 0
 #    at: [ 4,4 ]
 #    status: hidden
-  - fullname: Sai S-4
-    at: [ 15, 31 ]
-    board: 5
-    facing: 0
-    altitude: 0
+#  - fullname: Sai S-4
+#    at: [ 15, 31 ]
+#    board: 5
+#    facing: 0
+#    altitude: 0
 #    status:
 #      - shutdown doesnt work well on grounded Aero
 
@@ -175,6 +175,23 @@ factions:
 #    altitude: 1
 
 #  - fullname: AC/10 Turret (Dual)
+
+#  - fullname: Aurora
+#    at: [24, 7]
+#    board: 5
+#    altitude: 0
+#
+#  - fullname: Lyonesse Escort
+#    at: [ 19, 19 ]
+#    board: 5
+#    facing: 5
+#    altitude: 0
+#
+#  - fullname: Union (3055)
+#    at: [ 25, 13 ]
+#    board: 5
+#    facing: 4
+#    altitude: 0
 
 #  - fullname: Mobile Long Tom Artillery LT-MOB-25
 #    at: [ 30, 24 ]

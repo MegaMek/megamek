@@ -187,6 +187,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 logger.warn("Received lift off without aero-on-ground movement and without atmospheric map.");
             } else {
                 IAero aero = (IAero) entity;
+                int boardId = entity.getBoardId();
                 if (usesAeroOnGroundMovement()) {
                     entity.setPosition(entity.getPosition().translated(entity.getFacing(), aero.getTakeOffLength()));
                 } else {
@@ -195,7 +196,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 aero.setCurrentVelocity(1);
                 aero.liftOff(1);
                 if (entity instanceof Dropship) {
-                    gameManager.applyDropShipProximityDamage(md.getFinalCoords(), true, md.getFinalFacing(), entity);
+                    gameManager.applyDropShipProximityDamage(md.getFinalCoords(), boardId, true, md.getFinalFacing(),
+                          entity);
                 }
                 gameManager.checkForTakeoffDamage(aero);
             }
@@ -204,22 +206,22 @@ class MovePathHandler extends AbstractTWRuleHandler {
             return;
         }
 
-        if (md.contains(MovePath.MoveStepType.VTAKEOFF) && entity.isAero()) {
+        if (md.contains(MovePath.MoveStepType.VTAKEOFF) && entity.isAero() && (entity instanceof IAero aero)) {
             if (!usesAeroOnGroundMovement() && !MovementDisplay.hasAtmosphericMapForLiftOff(getGame(), entity)) {
                 logger.warn("Received lift off without aero-on-ground movement and without atmospheric map.");
             } else {
-                IAero a = (IAero) entity;
-                rollTarget = a.checkVerticalTakeOff();
+                rollTarget = aero.checkVerticalTakeOff();
                 if (gameManager.doVerticalTakeOffCheck(entity, rollTarget)) {
+                    int boardId = entity.getBoardId();
                     if (!usesAeroOnGroundMovement()) {
                         positionOnAtmosphericMap();
                     }
-                    a.setCurrentVelocity(1);
-                    a.liftOff(1);
-                    if (entity instanceof Dropship) {
-                        gameManager.applyDropShipProximityDamage(md.getFinalCoords(), (Dropship) a);
+                    aero.setCurrentVelocity(1);
+                    aero.liftOff(1);
+                    if (entity instanceof Dropship dropship) {
+                        gameManager.applyDropShipProximityDamage(md.getFinalCoords(), boardId, dropship);
                     }
-                    gameManager.checkForTakeoffDamage(a);
+                    gameManager.checkForTakeoffDamage(aero);
                 }
             }
             entity.setDone(true);

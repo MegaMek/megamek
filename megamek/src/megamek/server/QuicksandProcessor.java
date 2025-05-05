@@ -21,30 +21,23 @@ import megamek.server.totalwarfare.TWGameManager;
 
 public class QuicksandProcessor extends DynamicTerrainProcessor {
 
-    Vector<Report> vPhaseReport;
-
     public QuicksandProcessor(TWGameManager gameManager) {
         super(gameManager);
     }
 
     @Override
     public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
-        this.vPhaseReport = vPhaseReport;
         resolveQuicksand();
-        this.vPhaseReport = null;
     }
 
-    /**
-     * Check or quicksand stuff
-     */
     private void resolveQuicksand() {
         for (Board board : gameManager.getGame().getBoards().values()) {
-            int width = board.getWidth();
-            int height = board.getHeight();
-
-            // Cycle through all hexes, checking for screens
-            for (int currentXCoord = 0; currentXCoord < width; currentXCoord++) {
-                for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
+            if (board.isLowAltitude() || board.isSpace()) {
+                continue;
+            }
+            // Cycle through all hexes, checking for quicksand
+            for (int currentXCoord = 0; currentXCoord < board.getWidth(); currentXCoord++) {
+                for (int currentYCoord = 0; currentYCoord < board.getHeight(); currentYCoord++) {
                     Coords currentCoords = new Coords(currentXCoord, currentYCoord);
                     Hex currentHex = board.getHex(currentXCoord, currentYCoord);
 
@@ -54,7 +47,7 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
                         // sink any units that occupy this hex
                         for (Entity entity : gameManager.getGame().getEntitiesVector(currentCoords, board.getBoardId())) {
                             if (entity.isStuck()) {
-                                gameManager.doSinkEntity(entity);
+                                sinkEntityInQuicksand(entity);
                             }
                         }
                     } else if (currentHex.terrainLevel(Terrains.SWAMP) == 2) {
@@ -64,6 +57,15 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
                     }
                 }
             }
+        }
+    }
+
+    private void sinkEntityInQuicksand(Entity entity) {
+        gameManager.addReport(new Report(2445).with(entity));
+        entity.setElevation(entity.getElevation() - 1);
+        // if this means the entity is below the ground, then bye-bye!
+        if (Math.abs(entity.getElevation()) > entity.getHeight()) {
+            gameManager.addReport(gameManager.destroyEntity(entity, "quicksand"));
         }
     }
 }

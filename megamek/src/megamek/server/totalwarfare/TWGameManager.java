@@ -3037,11 +3037,11 @@ public class TWGameManager extends AbstractGameManager {
             sendChangedHex(pos, boardId);
         }
 
-        applyDropShipProximityDamage(centralPos, killer);
+        applyDropShipProximityDamage(centralPos, boardId, killer);
     }
 
-    void applyDropShipProximityDamage(Coords centralPos, Entity killer) {
-        applyDropShipProximityDamage(centralPos, false, 0, killer);
+    void applyDropShipProximityDamage(Coords centralPos, int boardId, Entity killer) {
+        applyDropShipProximityDamage(centralPos, boardId, false, 0, killer);
     }
 
     /**
@@ -3049,22 +3049,20 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @param centralPos - the Coords for the central position of the DropShip
      */
-    void applyDropShipProximityDamage(Coords centralPos, boolean rearArc, int facing, Entity killer) {
+    void applyDropShipProximityDamage(Coords centralPos, int boardId, boolean rearArc, int facing, Entity killer) {
         Vector<Integer> alreadyHit = new Vector<>();
 
         // anything in the central hex or adjacent hexes is destroyed
         Map<BoardLocation, List<Entity>> positionMap = game.getPositionMapMulti();
 
-        for (Entity en : game.getEntitiesVector(centralPos)) {
+        for (Entity en : game.getEntitiesVector(centralPos, boardId)) {
             if (!en.isAirborne()) {
                 addReport(destroyEntity(en, "DropShip proximity damage", false, false));
                 alreadyHit.add(en.getId());
             }
         }
-        Building bldg = game.getBoard().getBuildingAt(centralPos);
-        if (null != bldg) {
-            buildingCollapseHandler.collapseBuilding(bldg, positionMap, centralPos, mainPhaseReport);
-        }
+        game.getBuildingAt(centralPos, boardId).ifPresent(
+              bldg -> buildingCollapseHandler.collapseBuilding(bldg, positionMap, centralPos, mainPhaseReport));
         for (int i = 0; i < 6; i++) {
             Coords pos = centralPos.translated(i);
             for (Entity en : game.getEntitiesVector(pos)) {
@@ -3073,10 +3071,8 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 alreadyHit.add(en.getId());
             }
-            bldg = game.getBoard().getBuildingAt(pos);
-            if (null != bldg) {
-                buildingCollapseHandler.collapseBuilding(bldg, positionMap, pos, mainPhaseReport);
-            }
+            game.getBuildingAt(pos, boardId).ifPresent(
+                  building -> buildingCollapseHandler.collapseBuilding(building, positionMap, pos, mainPhaseReport));
         }
 
         // Report r;
@@ -3092,7 +3088,7 @@ public class TWGameManager extends AbstractGameManager {
                     continue;
                 }
 
-                alreadyHit = artilleryDamageHex(pos,
+                alreadyHit = artilleryDamageHex(pos, boardId,
                       centralPos,
                       damageDice,
                       null,
@@ -21618,7 +21614,7 @@ TargetRoll nTargetRoll,
      *
      * @return a <code>Vector</code> of <code>Report</code> objects that can be sent to the output log.
      */
-    Vector<Report> destroyEntity(Entity entity, String reason) {
+    public Vector<Report> destroyEntity(Entity entity, String reason) {
         return destroyEntity(entity, reason, true);
     }
 
@@ -28156,20 +28152,27 @@ TargetRoll nTargetRoll,
         return reports;
     }
 
-    /**
-     * sink any entities in quicksand in the current hex
-     */
-    public void doSinkEntity(Entity en) {
-        Report r;
-        r = new Report(2445);
-        r.addDesc(en);
-        r.subject = en.getId();
-        addReport(r);
-        en.setElevation(en.getElevation() - 1);
-        // if this means the entity is below the ground, then bye-bye!
-        if (Math.abs(en.getElevation()) > en.getHeight()) {
-            addReport(destroyEntity(en, "quicksand"));
-        }
+    public Vector<Integer> artilleryDamageHex(Coords coords, Coords attackSource, int damage, AmmoType ammo,
+          int subjectId, Entity killer, Entity exclude, boolean flak, int altitude, int targetLevel,
+          Vector<Report> vPhaseReport, boolean asfFlak, Vector<Integer> alreadyHit, boolean variableDamage,
+          DamageFalloff falloff) {
+        // LEGACY replace with board Id version
+        return artilleryDamageHex(coords,
+              0,
+              attackSource,
+              damage,
+              ammo,
+              subjectId,
+              killer,
+              exclude,
+              flak,
+              altitude,
+              targetLevel,
+              vPhaseReport,
+              asfFlak,
+              alreadyHit,
+              variableDamage,
+              falloff);
     }
 
     /**
@@ -28189,8 +28192,8 @@ TargetRoll nTargetRoll,
      * @param alreadyHit     a vector of unit ids for units that have already been hit that will be ignored
      * @param variableDamage if true, treat damage as the number of six-sided dice to roll
      */
-    public Vector<Integer> artilleryDamageHex(Coords coords, Coords attackSource, int damage, AmmoType ammo,
-          int subjectId, Entity killer, Entity exclude, boolean flak, int altitude, int targetLevel,
+    public Vector<Integer> artilleryDamageHex(Coords coords, int boardId, Coords attackSource, int damage,
+          AmmoType ammo, int subjectId, Entity killer, Entity exclude, boolean flak, int altitude, int targetLevel,
           Vector<Report> vPhaseReport, boolean asfFlak, Vector<Integer> alreadyHit, boolean variableDamage,
           DamageFalloff falloff) {
 
@@ -28201,8 +28204,8 @@ TargetRoll nTargetRoll,
                                                     BombType.B_FAE_SMALL ||
                                                     BombType.getBombTypeFromInternalName(ammo.getInternalName()) ==
                                                           BombType.B_FAE_LARGE));
-        Building bldg = game.getBoard().getBuildingAt(coords);
-        Hex hex = game.getBoard().getHex(coords);
+        Building bldg = game.getBuildingAt(coords, boardId).orElse(null);
+        Hex hex = game.getHex(coords, boardId);
         int effectiveLevel = (hex != null) ? hex.getLevel() : 0;
 
         Report r;
@@ -28213,8 +28216,7 @@ TargetRoll nTargetRoll,
             // Non-ASF-targeting flak artillery damages terrain
             if (!asfFlak) {
                 // Report that damage applied to terrain, if there's TF to damage and the level matches
-                Hex h = game.getBoard().getHex(coords);
-                if ((h != null) && h.hasTerrainFactor() && (altitude == h.getLevel())) {
+                if (hex.hasTerrainFactor() && (altitude == hex.getLevel())) {
                     r = new Report(3386);
                     r.indent(2);
                     r.subject = subjectId;
@@ -28308,7 +28310,7 @@ TargetRoll nTargetRoll,
 
             // get units in hex at the specified altitude (elevation + hex level for non-Aerospace) ignoring
             // targetability (if it's there, it's fair)
-            for (Entity entity : game.getEntitiesVector(coords, true)) {
+            for (Entity entity : game.getEntitiesVector(coords, boardId, true)) {
                 // Check: is entity excluded?
                 if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                     continue;
@@ -28447,7 +28449,7 @@ TargetRoll nTargetRoll,
         // We need the actual ammo type in order to handle certain bomb issues
         // correctly.
         BombType ammo = BombType.createBombByType(type);
-        Hex hex = game.getBoard().getHex(center);
+        Hex hex = game.getHexOf(targetHex);
 
         // Unfortunately this HexTarget is a new instance and contains no level data
         // Pretend we know what level the user was aiming at.

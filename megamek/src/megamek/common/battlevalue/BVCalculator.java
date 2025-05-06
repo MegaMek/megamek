@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Vector;
 import java.util.function.Predicate;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
@@ -60,10 +59,7 @@ public abstract class BVCalculator {
     protected CalculationReport bvReport;
     protected boolean ignoreC3;
     protected boolean ignoreSkill;
-    protected Map<String, Double> ammoMap = new HashMap<>();
-    protected List<String> keys = new Vector<>();
-    protected Map<String, String> names = new HashMap<>();
-    protected Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
+
     protected int runMP;
     protected int jumpMP;
     protected int umuMP;
@@ -74,7 +70,6 @@ public abstract class BVCalculator {
     protected boolean switchRearAndFront = false;
     protected boolean heatEfficiencyExceeded = false;
     protected double heatSum;
-    private final Map<Mounted<?>, Integer> collectedDefensiveEquipment = new HashMap<>();
 
     /** The unit's BV without any force adjustments */
     protected double baseBV = -1;
@@ -219,7 +214,6 @@ public abstract class BVCalculator {
 
     protected void processPreparation() {
         reset();
-        assembleAmmo();
         assembleMovementPoints();
 
         String header = "Battle Value Calculation for ";
@@ -277,13 +271,8 @@ public abstract class BVCalculator {
         offensiveValue = 0;
         baseBV = 0;
         adjustedBV = 0;
-        ammoMap.clear();
-        keys.clear();
-        names.clear();
-        weaponsForExcessiveAmmo.clear();
         heatEfficiencyExceeded = false;
         heatSum = 0;
-        collectedDefensiveEquipment.clear();
     }
 
     protected void assembleMovementPoints() {
@@ -536,8 +525,7 @@ public abstract class BVCalculator {
         boolean hasDefensiveEquipment = false;
 
         // We iterate over a copy to avoid any risk of ConcurrentModificationException
-        List<Mounted<?>> ammoCopy = new ArrayList<>(entity.getAmmo());
-        for (Mounted<?> ammo : ammoCopy) {
+        for (Mounted<?> ammo : List.copyOf(entity.getAmmo())) {
             if (ammo.getUsableShotsLeft() == 0) {
                 continue;
             }
@@ -555,9 +543,10 @@ public abstract class BVCalculator {
             }
         }
 
+        final Map<Mounted<?>, Integer> collectedDefensiveEquipment = new HashMap<>();
+
         // We iterate over a copy to avoid any risk of ConcurrentModificationException
-        List<Mounted<?>> equipmentCopy = new ArrayList<>(entity.getEquipment());
-        for (Mounted<?> equipment : equipmentCopy) {
+        for (Mounted<?> equipment : List.copyOf(entity.getEquipment())) {
             if (countsAsDefensiveEquipment(equipment)) {
                 Mounted<?> key = collectedDefensiveEquipment.keySet()
                                        .stream()
@@ -568,9 +557,7 @@ public abstract class BVCalculator {
             }
         }
 
-        // We iterate over a copy to avoid any risk of ConcurrentModificationException
-        Map<Mounted<?>, Integer> collectedDefensiveEquipmentCopy = new HashMap<>(collectedDefensiveEquipment);
-        for (Entry<Mounted<?>, Integer> equipmentEntry : collectedDefensiveEquipmentCopy.entrySet()) {
+        for (Entry<Mounted<?>, Integer> equipmentEntry : collectedDefensiveEquipment.entrySet()) {
             Mounted<?> equipment = equipmentEntry.getKey();
             EquipmentType equipmentType = equipment.getType();
             double equipmentBV = equipmentType.getBV(entity);
@@ -759,7 +746,7 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Forwards to {@link #processWeapon(Mounted<?>, boolean, boolean, int)} with a weaponCount parameter of 1 (single
+     * Forwards to {@link #processWeapon(Mounted, boolean, boolean, int)} with a weaponCount parameter of 1 (single
      * weapon).
      */
     protected double processWeapon(Mounted<?> weapon, boolean showInReport, boolean addToOffensiveValue) {
@@ -960,7 +947,7 @@ public abstract class BVCalculator {
         boolean hasOffensiveEquipment = false;
 
         // We iterate over a copy to avoid any risk of ConcurrentModificationException
-        for (Mounted<?> misc : new ArrayList<>(entity.getMisc())) {
+        for (Mounted<?> misc : List.copyOf(entity.getMisc())) {
             MiscType mtype = (MiscType) misc.getType();
 
             // Don't count destroyed equipment
@@ -1023,12 +1010,15 @@ public abstract class BVCalculator {
         bvReport.startTentativeSection();
         bvReport.addLine("Ammo:", "", "");
         boolean hasAmmo = false;
+        AssembledAmmo assembledAmmo = assembleAmmo();
+        final Map<String, Double> weaponsForExcessiveAmmo = assembledAmmo.weaponsForExcessiveAmmo();
+        final Map<String, Double> ammoMap = assembledAmmo.ammoMap();
+        final List<String> keys = assembledAmmo.keys();
+        final Map<String, String> names = assembledAmmo.names();
 
         // While ConcurrentModificationException are unlikely in this method, we had at least one instance occurring
         // higher in the chain, so we iterate over a copy to completely avoid any risk
-        List<String> safeKeys = new ArrayList<>(keys);
-
-        for (String key : safeKeys) {
+        for (String key : keys) {
             if (!weaponsForExcessiveAmmo.containsKey(key)) {
                 // Coolant Pods have no matching weapon
                 if (key.equals(Integer.valueOf(AmmoType.T_COOLANT_POD).toString() + '1')) {
@@ -1039,17 +1029,26 @@ public abstract class BVCalculator {
             if (!ammoMap.containsKey(key)) {
                 continue;
             }
-            String calculation = "+ ";
+
+            StringBuilder calculationString = new StringBuilder().append("+ ");
 
             if (ammoMap.get(key) > weaponsForExcessiveAmmo.get(key)) {
                 offensiveValue += weaponsForExcessiveAmmo.get(key) * fireControlModifier();
-                calculation += formatForReport(weaponsForExcessiveAmmo.get(key)) + " (Excessive)";
+                calculationString.append(formatForReport(weaponsForExcessiveAmmo.get(key)))
+                      .append(" (Excessive)");
             } else {
                 offensiveValue += ammoMap.get(key) * fireControlModifier();
-                calculation += formatForReport(ammoMap.get(key));
+                calculationString.append(formatForReport(ammoMap.get(key)));
             }
-            calculation += (fireControlModifier() != 1) ? " x " + formatForReport(fireControlModifier()) : "";
-            bvReport.addLine("- " + names.get(key), calculation, "= " + formatForReport(offensiveValue));
+
+            if (fireControlModifier() != 1) {
+                calculationString.append(" x ")
+                      .append(formatForReport(fireControlModifier()));
+            }
+
+            bvReport.addLine("- " + names.get(key), calculationString.toString(),
+                  "= " + formatForReport(offensiveValue));
+
             hasAmmo = true;
         }
 
@@ -1068,6 +1067,7 @@ public abstract class BVCalculator {
     }
 
     protected void processWeight() {
+        // Only a couple of units even has weight relevant for its BV
     }
 
     protected void processSpeedFactor() {
@@ -1098,6 +1098,7 @@ public abstract class BVCalculator {
 
     /** Processes unit type modifiers of TM, p.316. */
     protected void processOffensiveTypeModifier() {
+        // Only some meks have this modifier
     }
 
     /**
@@ -1105,7 +1106,7 @@ public abstract class BVCalculator {
      */
     protected boolean ammoCounts(AmmoMounted ammo) {
         AmmoType ammoType = ammo.getType();
-        return (ammo.getUsableShotsLeft() > 0) &&
+        return ammo.hasUsableShotsLeft() &&
                      (ammoType.getAmmoType() != AmmoType.T_AMS) &&
                      (ammoType.getAmmoType() != AmmoType.T_APDS) &&
                      (ammoType.getAmmoType() != AmmoType.T_SCREEN_LAUNCHER) &&
@@ -1141,8 +1142,16 @@ public abstract class BVCalculator {
         }
     }
 
-    protected void assembleAmmo() {
-        for (AmmoMounted ammo : entity.getAmmo()) {
+    protected record AssembledAmmo(
+          Map<String, Double> weaponsForExcessiveAmmo, Map<String, Double> ammoMap, List<String> keys,
+          Map<String, String> names){}
+
+    protected AssembledAmmo assembleAmmo() {
+        final Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
+        final Map<String, Double> ammoMap = new HashMap<>();
+        final List<String> keys = new ArrayList<>();
+        final Map<String, String> names = new HashMap<>();
+        for (AmmoMounted ammo : List.copyOf(entity.getAmmo())) {
             AmmoType ammoType = ammo.getType();
 
             // don't count depleted ammo, AMS and oneshot ammo
@@ -1160,12 +1169,10 @@ public abstract class BVCalculator {
             }
         }
 
-        for (WeaponMounted weapon : entity.getTotalWeaponList()) {
+        for (WeaponMounted weapon : List.copyOf(entity.getTotalWeaponList())) {
             WeaponType wtype = weapon.getType();
 
-            if (weapon.isDestroyed()
-                      // || wtype.hasFlag(WeaponType.F_AMS)
-                      ||
+            if (weapon.isDestroyed() ||
                       wtype.hasFlag(WeaponType.F_B_POD) ||
                       wtype.hasFlag(WeaponType.F_M_POD) ||
                       wtype instanceof BayWeapon ||
@@ -1191,6 +1198,8 @@ public abstract class BVCalculator {
                 }
             }
         }
+
+        return new AssembledAmmo(weaponsForExcessiveAmmo, ammoMap, keys, names);
     }
 
     protected double getAmmoBV(Mounted<?> ammo) {

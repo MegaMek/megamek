@@ -122,6 +122,7 @@ import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.internationalization.I18n;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -1887,6 +1888,22 @@ public class ChatLounge extends AbstractPhaseDisplay
         // Do nothing
     }
 
+    private void nagAboutNonTileableBoards() {
+        boolean isBoardWidthOdd = mapSettings.getBoardWidth() % 2 != 0;
+        boolean isMapSizeBiggerThanOne = mapSettings.getMapWidth() > 1;
+        if (isBoardWidthOdd && isMapSizeBiggerThanOne && GUIP.getNagForOddSizedBoard()) {
+            InformDialog nag = clientgui.doInformBotherDialog(
+                  I18n.getTextAt("megamek.client.messages", "ChatLounge.board.warning.title"),
+                  I18n.getTextAt("megamek.client.messages","ChatLounge.board.warning.message"),
+                  true
+            );
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForOddSizedBoard(false);
+            }
+        }
+    }
+
     private final ActionListener lobbyListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -2004,12 +2021,13 @@ public class ChatLounge extends AbstractPhaseDisplay
                 refreshMapUI();
                 clientgui.getClient().sendMapSettings(mapSettings);
 
-            } else if (ev.getSource() == butAddX || ev.getSource() == butMapGrowW) {
+            } else if ((ev.getSource() == butAddX) || (ev.getSource() == butMapGrowW)) {
                 int newMapWidth = mapSettings.getMapWidth() + 1;
                 mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
                 clientgui.getClient().sendMapDimensions(mapSettings);
+                nagAboutNonTileableBoards();
 
-            } else if (ev.getSource() == butAddY || ev.getSource() == butMapGrowH) {
+            } else if ((ev.getSource() == butAddY) || (ev.getSource() == butMapGrowH)) {
                 int newMapHeight = mapSettings.getMapHeight() + 1;
                 mapSettings.setMapSize(mapSettings.getMapWidth(), newMapHeight);
                 clientgui.getClient().sendMapDimensions(mapSettings);
@@ -2337,6 +2355,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (newMapWidth >= 1 && newMapWidth <= 20) {
                 mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
                 clientgui.getClient().sendMapDimensions(mapSettings);
+                nagAboutNonTileableBoards();
             }
         } catch (NumberFormatException e) {
             // no number, no new map width
@@ -2361,6 +2380,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (newBoardWidth >= 5 && newBoardWidth <= 200) {
                 mapSettings.setBoardSize(newBoardWidth, mapSettings.getBoardHeight());
                 clientgui.getClient().sendMapSettings(mapSettings);
+                nagAboutNonTileableBoards();
             }
         } catch (NumberFormatException e) {
             // no number, no new board width

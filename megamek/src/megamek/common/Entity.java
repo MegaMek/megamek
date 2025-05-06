@@ -5940,6 +5940,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Checks if the unit has a hierarchic C3 system. (Inverse of {@link #hasNhC3}
+     * @return {@code true} if the unit has a C3 system that is not a C3i, NC3 or Nova CEWS.
+     */
+    public boolean hasHierarchicalC3() {
+        return !hasNhC3();
+    }
+
+    /**
      * Returns true if the unit has a standard C3M/S, a Naval C3 or C3i or a Nova CEWS.
      */
     public boolean hasAnyC3System() {

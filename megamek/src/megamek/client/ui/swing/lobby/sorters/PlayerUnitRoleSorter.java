@@ -1,83 +1,69 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.swing.lobby.sorters;
 
-import megamek.client.ui.Messages;
+import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
-import megamek.common.Player;
+import megamek.common.internationalization.I18n;
 
 /** A Lobby Mek Table sorter that sorts by 1) player 2) unit role. */
-public class PlayerUnitRoleSorter implements MekTableSorter {
-
-    private ClientGUI clientGui;
-    private Sorting direction;
-    private int d;
+public class PlayerUnitRoleSorter extends MekTableSorter {
+    private final Client client;
 
     /** A Lobby Mek Table sorter that sorts by 1) player 2) unit role. */
-    public PlayerUnitRoleSorter(ClientGUI cg, Sorting dir) {
-        clientGui = cg;
-        direction = dir;
-        d = direction == Sorting.ASCENDING ? 1 : -1;
+    public PlayerUnitRoleSorter(ClientGUI clientGUI, Sorting sorting) {
+        this(clientGUI.getClient(), sorting);
+    }
+
+    /**
+     * A Lobby Mek Table sorter that sorts by 1) player 2) unit role.
+     * @param client the client instance
+     * @param sorting The sorting direction (ascending or descending).
+     */
+    public PlayerUnitRoleSorter(Client client, Sorting sorting) {
+        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "PlayerUnitRoleSorter.DisplayName"),
+              MekTableModel.COL_UNIT, sorting);
+        this.client = client;
     }
 
     @Override
     public int compare(final Entity a, final Entity b) {
-        final Player p_a = clientGui.getClient().getGame().getPlayer(a.getOwnerId());
-        final Player p_b = clientGui.getClient().getGame().getPlayer(b.getOwnerId());
-        final Player localPlayer = clientGui.getClient().getLocalPlayer();
-        final int t_a = p_a.getTeam();
-        final int t_b = p_b.getTeam();
-        if (p_a.equals(localPlayer) && !p_b.equals(localPlayer)) {
-            return -1;
-        } else if (!p_a.equals(localPlayer) && p_b.equals(localPlayer)) {
-            return 1;
-        } else if ((t_a == localPlayer.getTeam()) && (t_b != localPlayer.getTeam())) {
-            return -1;
-        } else if ((t_b == localPlayer.getTeam()) && (t_a != localPlayer.getTeam())) {
-            return 1;
-        } else if (t_a != t_b) {
-            return t_a - t_b;
-        } else if (!p_a.equals(p_b)) {
-            return p_a.getName().compareTo(p_b.getName());
-        } else {
-            String aRole = a.getRole().toString();
-            String bRole = b.getRole().toString();
-            return aRole.compareTo(bRole) * d;
-        }
+        return getPlayerTeamIndexPosition(client, a, b).orElse(compareByRoleString(a, b));
     }
 
-    @Override
-    public String getDisplayName() {
-        String msg_player = Messages.getString("ChatLounge.Player");
-        String msg_unitrole = Messages.getString("ChatLounge.UnitRole");
-        return msg_player + ", " + msg_unitrole;
-    }
-
-    @Override
-    public int getColumnIndex() {
-        return MekTableModel.COL_UNIT;
-    }
-
-    @Override
-    public Sorting getSortingDirection() {
-        return direction;
+    private int compareByRoleString(Entity a, Entity b) {
+        return a.getRole().toString().compareTo(b.getRole().toString()) * getSortingDirectionInt();
     }
 }

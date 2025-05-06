@@ -36,41 +36,44 @@ import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**
- * This class defines a single server report. It holds information such as the
- * report ID, who the report is about, who should see the report, and some
- * formatting information.
+ * Report encapsulates a single game event report in MegaMek.
  * <p>
- * Typically, the report will be created by the relevant section in the
- * <code>Server</code>, and added to the phase {@link Report}
- * <code>Vector</code>. The actual text
- * of the report must also be added to the <i>report-messages.properties</i>
- * file.
+ * Each Report contains message text, formatting information, visibility settings,
+ * and the data needed to display the report to players. Reports are typically created
+ * by the server, then transmitted to clients for display.
  * <p>
- * Example:
+ * The actual text of reports comes from the {@code report-messages.properties} resource file.
+ * Each report is identified by a numeric ID that corresponds to a message template in this file.
+ * The template can contain tags that will be replaced with data provided by the Report object:
+ * <ul>
+ *   <li>{@code <data>} - Replaced with values added via {@link #add(String)} or similar methods</li>
+ *   <li>{@code <msg:id1,id2>} - Conditionally shows one of two messages based on a boolean value</li>
+ *   <li>{@code <list>} - Lists all remaining data values, comma-separated</li>
+ *   <li>{@code <newline>} - Inserts a line break</li>
+ * </ul>
  * <p>
- * <code>Report r = new Report(3455);\n
- * r.subject = entity.getId();\n
- * r.indent();\n
- * r.addDesc(entity);\n
- * r.add(6);\n
- * r.choose(true);\n
- * vPhaseReport.addElement(r);</code>
- * <p>
- * Then the following line would be added to <i>report-messages.properties</i>:
- * <p>
- * 3455::&lt;data&gt; (&lt;data&gt;) does &lt;data&gt; damage to the
- * &lt;msg:3456,3457&gt;.\n
- * 3456::tank\n
+ * Example usage:
+ * <pre>
+ * // Create a report with ID 3455
+ * Report r = Report.subjectReport(3455, entity.getId());
+ * r.indent()
+ *  .addDesc(entity)
+ *  .add(6)
+ *  .choose(true);
+ * vPhaseReport.addElement(r);
+ * </pre>
+ *
+ * The corresponding entry in report-messages.properties might be:
+ * <pre>
+ * 3455::&lt;data&gt; (&lt;data&gt;) does &lt;data&gt; damage to the &lt;msg:3456,3457&gt;.
+ * 3456::tank
  * 3457::building
+ * </pre>
+ *
+ * This would produce output like: "Crusader (Bob) does 6 damage to the tank."
  * <p>
- * When the client parses the report, it will fill in the &lt;data&gt; tags with
- * the values that were given to the <code>add</code> methods called on the
- * report object.
- * <p>
- * The example above might produce a report such as this when the
- * <code>getText</code> method was called:
- * <p>
- * " Crusader (Bob) does 6 damage to the tank."
+ * Reports can be public (visible to all) or hidden based on subject entity or player.
+ * They support HTML formatting, entity links, tooltips, and other rich text features.
  *
  * @author Ryan McConnell (oscarmm)
  */

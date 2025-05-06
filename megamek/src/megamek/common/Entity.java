@@ -2104,8 +2104,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * A helper function for fiddling with elevation. Takes the current hex, a hex being moved to, returns the elevation
-     * the Entity will be considered to be at w/r/t its new hex.
+     * Calculates the elevation of the entity in the next hex.
+     * @param current The current hex
+     * @param next The next hex
+     * @param assumedElevation The assumed elevation from the previous hex
+     * @param climb Whether the entity is climbing or not
+     * @return The elevation of the entity in the next hex
+     *
+     * @see Entity#setElevation(int)
      */
     public int calcElevation(Hex current, Hex next, int assumedElevation, boolean climb) {
         int retVal = assumedElevation;
@@ -2115,6 +2121,13 @@ public abstract class Entity extends TurnOrdered
         if (isAero()) {
             return retVal;
         }
+
+        // Special case for DFA attacks into water - we want to land on the bottom of the hex
+        if (isMakingDfa() && (assumedElevation == 0) && next.containsTerrain(Terrains.WATER)
+                  && !next.containsTerrain(Terrains.ICE) && !climb) {
+            return next.floor();
+        }
+
         if (getMovementMode() == EntityMovementMode.WIGE) {
             // Airborne WiGEs remain 1 elevation above underlying terrain, unless climb mode is on, then they
             // maintain current absolute elevation as long as it is at least one level above the ground. WiGEs treat
@@ -2156,14 +2169,13 @@ public abstract class Entity extends TurnOrdered
                           next.containsTerrain(Terrains.WATER) &&
                           current.containsTerrain(Terrains.WATER)) ||
                          getMovementMode().isVTOL() ||
-                         (getMovementMode().isQuadSwim() && hasUMU()) ||
-                         (getMovementMode().isBipedSwim() && hasUMU())) {
+                         (getMovementMode().isQuadSwim() && hasUMU()) || (getMovementMode().isBipedSwim() && hasUMU()))
+        {
             retVal += current.getLevel();
             retVal -= next.getLevel();
         } else {
             // if we're a hovercraft, surface ship, WIGE or a "fully amphibious" vehicle, we
-            // go on the water surface
-            // without adjusting elevation
+            // go on the water surface without adjusting elevation
             if ((getMovementMode() != EntityMovementMode.HOVER) &&
                       (getMovementMode() != EntityMovementMode.NAVAL) &&
                       (getMovementMode() != EntityMovementMode.HYDROFOIL) &&
@@ -2174,16 +2186,14 @@ public abstract class Entity extends TurnOrdered
                     prevWaterLevel = current.terrainLevel(Terrains.WATER);
                     if (!(current.containsTerrain(Terrains.ICE)) || (assumedElevation < 0)) {
                         // count water, only if the entity isn't on ice surface
-                        retVal += current.terrainLevel(Terrains.WATER);
+                        retVal += prevWaterLevel;
                     }
                 }
                 if (next.containsTerrain(Terrains.WATER)) {
                     int waterLevel = next.terrainLevel(Terrains.WATER);
                     if (next.containsTerrain(Terrains.ICE)) {
-                        // a Mek can only climb out onto ice in depth 2 or
-                        // shallower water
-                        // Mek on the surface will stay on the surface
-
+                        // a Mek can only climb out onto ice in depth 2 or shallower water
+                        // Mek on the surf ace will stay on the surface
                         if (((waterLevel == 1) && (prevWaterLevel == 1)) ||
                                   ((prevWaterLevel <= 2) && climb) ||
                                   (assumedElevation >= 0)) {

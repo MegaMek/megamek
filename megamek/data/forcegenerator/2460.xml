@@ -583,6 +583,12 @@
 				<availability>DC:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Griffin' unitType='Mek'>
+            <availability>TH:6,IS:1</availability>
+            <model name='GRF-1A'>
+                <availability>IS:8,MERC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Habitat' unitType='Space Station'>
 			<availability>TH:6,IS:3,Periphery:2</availability>
 			<model name='Small (2400)'>
@@ -1146,12 +1152,12 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
-		<chassis name='Swordsman' unitType='Mek'>
-			<availability>FS:4</availability>
-			<model name='SWD-1'>
-				<availability>General:8</availability>
-			</model>
-		</chassis>
+        <chassis name='Swordsman' unitType='Mek'>
+            <availability>FS!A:8</availability>
+            <model name='SWD-1'>
+                <availability>FS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
 			<availability>IS:4,MERC:2,Periphery:2</availability>
 			<model name='(Original)'>

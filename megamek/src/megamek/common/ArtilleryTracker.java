@@ -93,6 +93,7 @@ public class ArtilleryTracker implements Serializable {
     /**
      * Remove all autohit mods from hexes that were hit previously; used when artillery unit moves.
      * This _should_ be thread-safe.
+     * Only autohit mods are lost when an artillery unit spends MPs (TO:AR pg. 150)
      */
     public void clearHitHexMods() {
         for (Vector<ArtilleryModifier> modVector : weapons.values()) {

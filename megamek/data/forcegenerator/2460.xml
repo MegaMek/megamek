@@ -578,15 +578,9 @@
             </model>
         </chassis>
 		<chassis name='Gladiator' unitType='Mek'>
-			<availability>DC:1</availability>
+			<availability>DC!A:8</availability>
 			<model name='GLD-1R'>
 				<availability>DC:8</availability>
-			</model>
-		</chassis>
-		<chassis name='Griffin' unitType='Mek'>
-			<availability>TH:4:2465</availability>
-			<model name='GRF-1A'>
-				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Habitat' unitType='Space Station'>
@@ -688,7 +682,7 @@
 			</model>
 		</chassis>
 		<chassis name='Kyudo' unitType='Mek'>
-			<availability>TH:6</availability>
+			<availability>TH!A:8!B:8</availability>
 			<model name='KY2-D-01'>
 				<availability>TH:8</availability>
 			</model>
@@ -1103,7 +1097,7 @@
             </model>
         </chassis>
 		<chassis name='Shadow Hawk' unitType='Mek'>
-			<availability>TH:3:2467</availability>
+			<availability>TH!A:6</availability>
 			<model name='SHD-1R'>
 				<availability>TH:8</availability>
 			</model>

@@ -383,7 +383,7 @@ public final class BoardView extends AbstractBoardView
     /**
      * Keeps track of whether all deployment zones should be shown in the Arty Auto Hit Designation phase
      */
-    public boolean showAllDeployment = GUIP.showDeploymentZonesInArtyAuto();
+    public boolean showAllDeployment = false;
 
     private final StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
             .color(GUIP.getWarningColor()).font(FontHandler.notoFont().deriveFont(Font.BOLD)).center();
@@ -5398,5 +5398,10 @@ public final class BoardView extends AbstractBoardView
 
     public void activateTooltip() {
         tooltipSuspended = false;
+    }
+
+    public void toggleShowDeployment() {
+        showAllDeployment = !showAllDeployment;
+        repaint();
     }
 }

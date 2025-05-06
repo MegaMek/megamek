@@ -25,6 +25,7 @@ import java.util.Map;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -328,7 +329,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     private void toggleShowDeployment() {
-        GUIP.setShowDeploymentZonesInArtyAuto(!GUIP.showDeploymentZonesInArtyAuto());
+        clientgui.onAllBoardViews(BoardView::toggleShowDeployment);
     }
 
     private void registerKeyCommands() {

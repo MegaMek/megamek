@@ -960,7 +960,8 @@ public class DamageEntityHandler extends AbstractTWRuleHandler {
                 // on it get destroyed
                 if ((te instanceof VTOL) &&
                           (hit.getLocation() == VTOL.LOC_ROTOR) &&
-                          te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR)) {
+                          te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR)
+                      && (damage > 0)) {
                     r = new Report(6081);
                     r.subject = te_n;
                     r.indent(2);

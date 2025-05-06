@@ -459,7 +459,7 @@ public interface IGame {
      * @return True when the board is enclosed within another board
      */
     default boolean hasEnclosingBoard(int boardId) {
-        return boardExists(getBoard(boardId).getEnclosingBoardId());
+        return boardExists(boardId) && boardExists(getBoard(boardId).getEnclosingBoardId());
     }
 
     default Optional<Board> getEnclosingBoard(int boardId) {

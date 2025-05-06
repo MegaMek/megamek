@@ -39,6 +39,9 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
      */
     private void resolveScreen() {
         for (Board board : gameManager.getGame().getBoards().values()) {
+            if (!board.isSpace()) {
+                continue;
+            }
             // Cycle through all hexes, checking for screens
             for (int x = 0; x < board.getWidth(); x++) {
                 for (int y = 0; y < board.getHeight(); y++) {

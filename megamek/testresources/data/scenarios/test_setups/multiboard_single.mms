@@ -143,19 +143,15 @@ factions:
 #    facing: 5
 
 
-  - fullname: Aurora
-    at: [24, 7]
-    board: 5
-    altitude: 0
+#  - fullname: Aurora
+#    at: [24, 7]
+#    board: 5
+#    altitude: 0
+#
+#  - fullname: Lyonesse Escort
+#    at: [ 19, 19 ]
+#    board: 5
+#    facing: 5
+#    altitude: 0
 
-  - fullname: Lyonesse Escort
-    at: [ 19, 19 ]
-    board: 5
-    facing: 5
-    altitude: 0
-
-  - fullname: Union (3055)
-    at: [ 25, 13 ]
-    board: 5
-    facing: 4
-    altitude: 0
+  - fullname: Nekohono'o (HQ)

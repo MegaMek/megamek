@@ -17,6 +17,7 @@ import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.phaseDisplay.dialog.TargetChoiceDialog;
 import megamek.client.ui.swing.phaseDisplay.TargetingPhaseDisplay;
 import megamek.common.*;
@@ -87,7 +88,9 @@ public class OffBoardTargetOverlay implements IDisplayable {
             return false;
         }
 
-        Mounted<?> selectedArtilleryWeapon = clientgui.getBoardView().getSelectedArtilleryWeapon();
+        Mounted<?> selectedArtilleryWeapon = clientgui.getCurrentBoardView()
+              .map(bv -> ((BoardView) bv).getSelectedArtilleryWeapon())
+              .orElse(null);
 
         // only relevant if we've got an artillery weapon selected for one of our own
         // units

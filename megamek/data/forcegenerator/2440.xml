@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2440-->
-<ratgen>
+<ratgen
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
+>
 	<factions>
 		<faction key='AB' />
 		<faction key='CC'>
@@ -630,7 +633,7 @@
 			</model>
 		</chassis>
 		<chassis name='Kyudo' unitType='Mek'>
-			<availability>TH:6</availability>
+			<availability>TH!A:8</availability>
 			<model name='KY2-D-01'>
 				<availability>TH:8</availability>
 			</model>

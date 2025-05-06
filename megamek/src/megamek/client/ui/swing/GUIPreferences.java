@@ -313,6 +313,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_MECHANICAL_FALL_DAMAGE = "NagForMechanicalFallDamage";
     public static final String NAG_FOR_DOOMED = "NagForDoomed";
     public static final String NAG_FOR_WIGE_LANDING = "NagForWiGELanding";
+    public static final String NAG_FOR_ODD_SIZED_BOARD = "NagForOddSizedBoard";
     public static final String RULER_COLOR_1 = "RulerColor1";
     public static final String RULER_COLOR_2 = "RulerColor2";
     public static final String RULER_POS_X = "RulerPosX";
@@ -739,6 +740,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_MECHANICAL_FALL_DAMAGE, true);
         store.setDefault(NAG_FOR_DOOMED, true);
         store.setDefault(NAG_FOR_WIGE_LANDING, true);
+        store.setDefault(NAG_FOR_ODD_SIZED_BOARD, true);
 
         setDefault(RULER_COLOR_1, DEFAULT_CYAN);
         setDefault(RULER_COLOR_2, DEFAULT_MAGENTA);
@@ -3508,5 +3510,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setHighPerformanceGraphics(boolean value) {
         store.setValue(HIGH_PERFORMANCE_GRAPHICS, value);
+    }
+  
+    public boolean getNagForOddSizedBoard() {
+        return getBoolean(NAG_FOR_ODD_SIZED_BOARD);
+    }
+
+    public void setNagForOddSizedBoard(boolean value) {
+        store.setValue(NAG_FOR_ODD_SIZED_BOARD, value);
     }
 }

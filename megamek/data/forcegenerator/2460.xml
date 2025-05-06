@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2460-->
-<ratgen>
+<ratgen
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
+>
 	<factions>
 		<faction key='AB' />
 		<faction key='CC'>
@@ -324,10 +327,10 @@
 			</model>
 		</chassis>
 		<chassis name='Commando' unitType='Mek'>
-			<availability>LA:6</availability>
+			<availability>LA!A:8</availability>
 			<model name='COM-1A'>
 				<roles>recon</roles>
-				<availability>LA:8,Periphery.Deep:8,Periphery:8</availability>
+				<availability>LA:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Commonwealth Light Cruiser' unitType='Warship'>
@@ -1248,10 +1251,10 @@
 			</model>
 		</chassis>
 		<chassis name='Wasp' unitType='Mek'>
-			<availability>TH:6</availability>
+			<availability>TH!A:8</availability>
 			<model name='WSP-1'>
 				<roles>recon</roles>
-				<availability>CC:8,IS:8,FWL:8,Periphery.Deep:8,Periphery:8</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Whitestreak Jetski' unitType='Naval'>

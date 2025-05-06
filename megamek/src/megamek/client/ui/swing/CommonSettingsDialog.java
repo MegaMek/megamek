@@ -181,6 +181,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox nagForLaunchDoors = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.nagForLaunchDoors"));
     private final JCheckBox nagForSprint = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForSprint"));
+    private final JCheckBox nagForOddSizedBoard = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForOddSizedBoard"));
     private final JCheckBox animateMove = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove"));
     private final JCheckBox showWrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks"));
     private final JCheckBox chkHighQualityGraphics = new JCheckBox(Messages.getString(
@@ -682,6 +683,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(nagForNoUnJamRAC, null));
         comps.add(checkboxEntry(nagForLaunchDoors, null));
         comps.add(checkboxEntry(nagForOverheat, null));
+        comps.add(checkboxEntry(nagForOddSizedBoard, null));
 
         addLineSpacer(comps);
 
@@ -2015,6 +2017,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             nagForCrushingBuildings.setSelected(GUIP.getNagForCrushingBuildings());
             nagForLaunchDoors.setSelected(GUIP.getNagForLaunchDoors());
             nagForSprint.setSelected(GUIP.getNagForSprint());
+            nagForOddSizedBoard.setSelected(GUIP.getNagForOddSizedBoard());
             animateMove.setSelected(GUIP.getShowMoveStep());
             showWrecks.setSelected(GUIP.getShowWrecks());
             tooltipDelay.setText(Integer.toString(GUIP.getTooltipDelay()));
@@ -2426,6 +2429,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setNagForCrushingBuildings(nagForCrushingBuildings.isSelected());
         GUIP.setNagForLaunchDoors(nagForLaunchDoors.isSelected());
         GUIP.setNagForSprint(nagForSprint.isSelected());
+        GUIP.setNagForOddSizedBoard(nagForOddSizedBoard.isSelected());
         GUIP.setShowMoveStep(animateMove.isSelected());
         GUIP.setShowWrecks(showWrecks.isSelected());
         GUIP.setShowWpsinTT(showWpsinTT.isSelected());

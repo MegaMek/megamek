@@ -111,6 +111,7 @@ public abstract class AbstractGame implements IGame {
     }
 
     @Override
+    @Nullable
     public Player getPlayer(int id) {
         return players.get(id);
     }

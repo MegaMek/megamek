@@ -1,36 +1,53 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.swing.lobby.sorters;
 
 import java.util.Comparator;
 
 import megamek.client.Client;
-import megamek.common.*;
-import megamek.common.force.*;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.force.Force;
+import megamek.common.force.Forces;
 
 /** A Comparator for the top level entries of the Mek Tree (forces and force-less entities). */
 public class MekTreeTopLevelSorter implements Comparator<Object> {
 
-    private Client client;
+    private final Client client;
 
-    public MekTreeTopLevelSorter(Client cl) {
-        client = cl;
+    public MekTreeTopLevelSorter(Client client) {
+        this.client = client;
     }
 
     @Override
@@ -48,16 +65,16 @@ public class MekTreeTopLevelSorter implements Comparator<Object> {
         Player ownerB;
         int idA;
         int idB;
-        if (a instanceof Force) {
-            ownerA = forces.getOwner((Force) a);
-            idA = ((Force) a).getId();
+        if (a instanceof Force aForce) {
+            ownerA = forces.getOwner(aForce);
+            idA = aForce.getId();
         } else {
             ownerA = ((Entity) a).getOwner();
             idA = ((Entity) a).getId();
         }
-        if (b instanceof Force) {
-            ownerB = forces.getOwner((Force) b);
-            idB = ((Force) b).getId();
+        if (b instanceof Force bForce) {
+            ownerB = forces.getOwner(bForce);
+            idB = bForce.getId();
         } else {
             ownerB = ((Entity) b).getOwner();
             idB = ((Entity) b).getId();
@@ -87,8 +104,8 @@ public class MekTreeTopLevelSorter implements Comparator<Object> {
             return -1;
         } else if (a instanceof Entity && b instanceof Force) {
             return 1;
-        } else {
-            return idA - idB;
         }
+
+        return idA - idB;
     }
 }

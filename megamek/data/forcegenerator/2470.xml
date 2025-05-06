@@ -1493,10 +1493,10 @@
 			</model>
 		</chassis>
 		<chassis name='Wasp' unitType='Mek'>
-			<availability>TH!A:8!B:8,IS!A:8</availability>
+			<availability>IS!A:8,TH!A:8!B:8,LA!A:6,FWL!A:5,CC!A:5,MERC!A:8</availability>
 			<model name='WSP-1'>
 				<roles>recon</roles>
-				<availability>TH:8,IS:8,CC:5</availability>
+				<availability>TH:8,IS:8,CC:5,MERC:8</availability>
 			</model>
 			<model name='WSP-1A'>
 				<roles>recon</roles>

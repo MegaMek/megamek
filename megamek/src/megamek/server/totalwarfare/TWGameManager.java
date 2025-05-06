@@ -19293,12 +19293,11 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
 
-                // if there's a mast mount in the rotor, it and all other
-                // equipment
-                // on it get destroyed
-                if ((te instanceof VTOL) &&
-                          (hit.getLocation() == VTOL.LOC_ROTOR) &&
-                          te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR)) {
+                // if there's a mast mount in the rotor, it and all other equipment on it get destroyed if it takes
+                // any amount of damage (0 is no damage)
+                if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR) &&
+                          te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) && (damage > 0))
+                {
                     r = new Report(6081);
                     r.subject = te_n;
                     r.indent(2);

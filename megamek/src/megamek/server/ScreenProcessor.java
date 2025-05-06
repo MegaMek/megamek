@@ -32,7 +32,6 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
         this.vPhaseReport = vPhaseReport;
         resolveScreen();
         this.vPhaseReport = null;
-
     }
 
     /**
@@ -40,23 +39,16 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
      */
     private void resolveScreen() {
         for (Board board : gameManager.getGame().getBoards().values()) {
-            int width = board.getWidth();
-            int height = board.getHeight();
-
             // Cycle through all hexes, checking for screens
-            for (int currentXCoord = 0; currentXCoord < width; currentXCoord++) {
-                for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
-                    Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                    Hex currentHex = board.getHex(currentXCoord, currentYCoord);
-
-                    // check for existence of screen
+            for (int x = 0; x < board.getWidth(); x++) {
+                for (int y = 0; y < board.getHeight(); y++) {
+                    Hex currentHex = board.getHex(x, y);
                     if (currentHex.containsTerrain(Terrains.SCREEN)) {
                         if (Compute.d6(2) > 6) {
-                            Report r = new Report(9075, Report.PUBLIC);
-                            r.add(currentCoords.getBoardNum());
-                            vPhaseReport.addElement(r);
+                            Coords currentCoords = new Coords(x, y);
+                            vPhaseReport.addElement(Report.publicReport(9075).add(currentCoords.getBoardNum()));
                             currentHex.removeTerrain(Terrains.SCREEN);
-                            markHexUpdate(currentCoords, board.getBoardId());
+                            markHexUpdate(currentCoords, board);
                         }
                     }
                 }

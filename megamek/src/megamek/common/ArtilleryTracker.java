@@ -16,7 +16,9 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -67,6 +69,22 @@ public class ArtilleryTracker implements Serializable {
      */
     public int getSize() {
         return weapons.size();
+    }
+
+    /**
+     * Remove all autohit mods from hexes that were hit previously; used when artillery unit moves.
+     * This _should_ be thread-safe.
+     */
+    public void clearHitHexMods() {
+        for (Vector<ArtilleryModifier> modVector : weapons.values()) {
+            List<ArtilleryModifier> elementsToBeRemoved = new ArrayList<>();
+            for (ArtilleryModifier mod : modVector) {
+                if (mod.getModifier() == TargetRoll.AUTOMATIC_SUCCESS) {
+                    elementsToBeRemoved.add(mod);
+                }
+            }
+            modVector.removeAll(elementsToBeRemoved);
+        }
     }
 
     public boolean weaponInList(Mounted<?> mounted) {

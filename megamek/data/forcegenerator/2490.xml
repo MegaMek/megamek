@@ -1827,7 +1827,7 @@
 			</model>
 		</chassis>
 		<chassis name='Wasp' unitType='Mek'>
-			<availability>IS!A:8!B:8,TH!A:8!B:8!C:8,LA!A:6!B:1,FWL!A:5!B:1,CC!A:5!B:1,MERC!A:8!B:8</availability>
+			<availability>IS!A:8!B:8,TH!A:8!B:8!C:8,LA!A:6!B:1,FWL!A:5!B:1,PoR!A:8,CC!A:5!B:1,MERC!A:8!B:8</availability>
 			<model name='WSP-1'>
 				<roles>recon</roles>
 				<availability>IS:8,TH!B:8!C:8,FWL!A:8!B:1,MERC:8</availability>

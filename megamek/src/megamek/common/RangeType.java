@@ -73,42 +73,71 @@ public class RangeType {
     /**
      * Returns the range bracket a distance falls into.
      *
-     * @param distance        - the <code>int</code> distance to the target.
-     * @param ranges          - the array of <code>int</code> distances of the weapon.
-     * @param useExtremeRange - <code>true</code> if the maxtech extreme range
-     *                        rules should be used. <code>false</code> if the BMRr range
-     *                        rules are in effect.
-     * @return the <code>int</code> constant for the range bracket.
+     * @param distance        - the distance to the target
+     * @param ranges          - the array of distances of the weapon
+     * @param useExtremeRange - true if extreme range rules should be used
+     * @param useLOSRange     - true if LOS range rules should be used
+     * @return the constant for the range bracket
      */
     public static int rangeBracket(int distance, int[] ranges,
-            boolean useExtremeRange, boolean useLOSRange) {
-        int range;
+          boolean useExtremeRange, boolean useLOSRange) {
+        return calculateRangeBracket(distance, distance, ranges, useExtremeRange, useLOSRange, false);
+    }
 
-        // Determine the range bracket of the distance.
+    /**
+     * Returns the range bracket considering C3 network data.
+     *
+     * @param c3SpotterDistance - the distance from the spotter to the target
+     * @param attackerDistance  - the distance from the attacker to the target
+     * @param ranges            - the array of distances of the weapon
+     * @param useExtremeRange   - true if extreme range rules should be used
+     * @param useLOSRange       - true if LOS range rules should be used
+     * @return the constant for the range bracket
+     */
+    public static int rangeBracketC3(int c3SpotterDistance, int attackerDistance, int[] ranges,
+          boolean useExtremeRange, boolean useLOSRange) {
+        return calculateRangeBracket(c3SpotterDistance, attackerDistance, ranges, useExtremeRange, useLOSRange, true);
+    }
+
+    /**
+     * Helper method to calculate range bracket with or without C3 considerations.
+     *
+     * @param primaryDistance   - the primary distance to check (spotter distance for C3)
+     * @param secondaryDistance - the secondary distance (attacker distance for C3)
+     * @param ranges            - the array of distances of the weapon
+     * @param useExtremeRange   - true if extreme range rules should be used
+     * @param useLOSRange       - true if LOS range rules should be used
+     * @param isC3              - true if using C3 network calculation rules
+     * @return the constant for the range bracket
+     */
+    private static int calculateRangeBracket(int primaryDistance, int secondaryDistance, int[] ranges,
+          boolean useExtremeRange, boolean useLOSRange, boolean isC3) {
         if (null == ranges) {
-            range = RANGE_OUT;
-        } else if (distance > ranges[RANGE_EXTREME]) {
-            if (useLOSRange) {
-                range = RANGE_LOS;
-            } else {
-                range = RANGE_OUT;
-            }
-        } else if (distance > ranges[RANGE_LONG]) {
-            if (useExtremeRange) {
-                range = RANGE_EXTREME;
-            } else {
-                range = RANGE_OUT;
-            }
-        } else if (distance > ranges[RANGE_MEDIUM]) {
-            range = RANGE_LONG;
-        } else if (distance > ranges[RANGE_SHORT]) {
-            range = RANGE_MEDIUM;
-        } else if (distance > ranges[RANGE_MINIMUM]) {
-            range = RANGE_SHORT;
-        } else {
-            range = RANGE_MINIMUM;
+            return RANGE_OUT;
         }
-        // Return the range.
-        return range;
+
+        if (primaryDistance > ranges[RANGE_EXTREME]) {
+            return useLOSRange ? RANGE_LOS : RANGE_OUT;
+        }
+
+        if (primaryDistance > ranges[RANGE_LONG]) {
+            return useExtremeRange ? RANGE_EXTREME : RANGE_OUT;
+        }
+
+        if (primaryDistance > ranges[RANGE_MEDIUM]) {
+            return RANGE_LONG;
+        }
+
+        if (primaryDistance > ranges[RANGE_SHORT]) {
+            return RANGE_MEDIUM;
+        }
+
+        if (isC3
+                  ? (primaryDistance > ranges[RANGE_MINIMUM] || secondaryDistance > ranges[RANGE_MINIMUM])
+                  : (primaryDistance > ranges[RANGE_MINIMUM])) {
+            return RANGE_SHORT;
+        }
+
+        return RANGE_MINIMUM;
     }
 }

@@ -1441,9 +1441,9 @@ public class Compute {
         }
 
         int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
-        // C3 can't benefit from LOS range
-        int c3range = RangeType.rangeBracket(c3dist, weaponRanges,
-                useExtremeRange, false);
+
+         // C3 can't benefit from LOS range.
+        int c3range = RangeType.rangeBracketC3(c3dist, distance, weaponRanges, useExtremeRange, false);
 
         /*
          * Tac Ops Extreme Range Rule p. 85 if the weapons normal range is

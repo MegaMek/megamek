@@ -262,7 +262,7 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public String getRunMPasString() {
+    public String getRunMPasString(boolean gameState) {
         if (hasMyomerBooster()) {
             return getRunMP(MPCalculationSetting.NO_MYOMER_BOOSTER) + "(" + getRunMP() + ")";
         } else {

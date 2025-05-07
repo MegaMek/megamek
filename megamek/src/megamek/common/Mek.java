@@ -989,11 +989,11 @@ public abstract class Mek extends Entity {
      * Returns this entity's running/flank mp as a string.
      */
     @Override
-    public String getRunMPasString() {
+    public String getRunMPasString(boolean gameState) {
         MPBoosters mpBoosters = getMPBoosters();
         if (!mpBoosters.isNone()) {
             String str = getRunMPwithoutMASC() + "(" + getRunMP() + ")";
-            if (game != null) {
+            if (gameState && game != null) {
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()

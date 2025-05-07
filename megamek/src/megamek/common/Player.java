@@ -554,7 +554,7 @@ public final class Player extends TurnOrdered {
      * @return The combined strength (BV/PV) of all the player's assets
      */
     public int getBV() {
-        return game.getInGameObjects()
+        return List.copyOf(game.getInGameObjects())
                      .stream()
                      .filter(this::isMyUnit)
                      .filter(InGameObject::countForStrengthSum)

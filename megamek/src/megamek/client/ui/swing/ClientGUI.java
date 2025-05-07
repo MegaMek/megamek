@@ -85,7 +85,6 @@ import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.phaseDisplay.*;
-import megamek.client.ui.swing.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -503,6 +502,7 @@ public class ClientGUI extends AbstractClientGUI
     public void systemMessage(String message) {
         cb.systemMessage(message);
         cb2.addChatMessage(Messages.getString("ChatterBox.MegaMek") + " " + message);
+        client.getGame().processGameEvent(new GameSystemMessageEvent(this, Messages.getString("ChatterBox.MegaMek") + " " + message));
     }
 
     /**
@@ -3058,8 +3058,7 @@ public class ClientGUI extends AbstractClientGUI
                      ((gameOptionsDialog != null) && gameOptionsDialog.isVisible()) ||
                      UIUtil.isModalDialogDisplayed() ||
                      ((help != null) && help.isVisible()) ||
-                     ((setdlg != null) && setdlg.isVisible()) ||
-                     ((aw != null) && aw.isVisible());
+                     ((setdlg != null) && setdlg.isVisible());
     }
 
     private final ComponentListener resizeListener = new ComponentAdapter() {

@@ -476,7 +476,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
                 && !phase.isVictory() && !phase.isStartingScenario();
         boolean isNotVictory = !phase.isVictory();
 
-        viewAccessibilityWindow.setEnabled(false);
+        viewAccessibilityWindow.setEnabled(isLobby || isInGame);
 
         boardChangeTheme.setEnabled(isBoardEditor);
         boardUndo.setEnabled(isBoardEditor);

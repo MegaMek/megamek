@@ -66,7 +66,7 @@ public class AeroAVModCalculator {
             } else if (weapon instanceof SRMWeapon) {
                 return 2;
             }
-        } else if (linkedBy.hasFlag(MiscType.F_ARTEMIS_PROTO) && weapon.getRackSize() == 2) {
+        } else if (linkedBy.hasFlag(MiscType.F_ARTEMIS_PROTO) && (weapon.getRackSize() == 2)) {
             // The +1 cluster hit bonus only adds a missile hit for SRM2
             return 2;
         } else if (bay && linkedBy.hasFlag(MiscType.F_PPC_CAPACITOR)) {

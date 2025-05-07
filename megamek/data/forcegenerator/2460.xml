@@ -175,7 +175,7 @@
 			</model>
 		</chassis>
 		<chassis name='Archer' unitType='Mek'>
-			<availability>TH:5</availability>
+			<availability>TH!A:6!B:1</availability>
 			<model name='ARC-1A'>
 				<roles>fire_support</roles>
 				<availability>TH:8</availability>
@@ -235,7 +235,7 @@
 			</model>
 		</chassis>
 		<chassis name='BattleAxe' unitType='Mek'>
-			<availability>FS:8</availability>
+            <availability>FS!A:8</availability>
 			<model name='BKX-1X'>
 				<availability>FS:8</availability>
 			</model>
@@ -348,12 +348,9 @@
             </model>
         </chassis>
 		<chassis name='Crossbow' unitType='Mek'>
-			<availability>LA:3</availability>
-			<model name='CRS-6C'>
-				<availability>General:4</availability>
-			</model>
+			<availability>LA!A:8</availability>
 			<model name='CRS-X'>
-				<availability>General:8</availability>
+				<availability>LA:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Cruiser' unitType='Warship'>
@@ -584,9 +581,9 @@
 			</model>
 		</chassis>
         <chassis name='Griffin' unitType='Mek'>
-            <availability>TH:6,IS:1</availability>
+            <availability>TH!A:7!B:5</availability>
             <model name='GRF-1A'>
-                <availability>IS:8,MERC:8</availability>
+                <availability>TH:8</availability>
             </model>
         </chassis>
 		<chassis name='Habitat' unitType='Space Station'>
@@ -610,10 +607,10 @@
             </model>
         </chassis>
 		<chassis name='Helepolis' unitType='Mek'>
-			<availability>TH:2</availability>
+            <availability>TH!A:2</availability>
 			<model name='HEP-1H'>
-				<roles>artillery</roles>
-				<availability>General:8</availability>
+                <roles>mixed_artillery</roles>
+                <availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Hurricane Conventional Fighter' unitType='Conventional Fighter'>
@@ -1013,6 +1010,15 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Orion' unitType='Mek'>
+            <availability>TH!A:7!B:5</availability>
+            <model name='ON1-C'>
+                <availability>TH!B:8</availability>
+            </model>
+            <model name='ON1-H'>
+                <availability>TH:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Pressurized Yard' unitType='Space Station'>
 			<availability>TH:6,IS:3,Periphery:2</availability>
 			<model name='Huge (2450)'>

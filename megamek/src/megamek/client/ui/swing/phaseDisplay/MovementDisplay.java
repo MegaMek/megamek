@@ -2277,10 +2277,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private synchronized void updateLandButtons() {
-
         // Per TW Page 87, 10th Edition, Do not allow landing in an occupied space.
         if ((null != cmd) && (cmd.length() > 0)) {
             setLandEnabled(false);
+            setVLandEnabled(false);
             return;
         }
 
@@ -2289,8 +2289,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
+        // When aero on ground movement is not used, allow landing when over a ground map hex on an atmospheric map
+        if (game.hasBoardLocationOf(selectedEntity)
+              && selectedEntity.isAirborne()
+              && game.getBoard(selectedEntity).isLowAltitude()
+              && game.getBoard(selectedEntity).getEmbeddedBoardHexes().contains(finalPosition())
+              && !usesAeroOnGroundMovement()) {
+            setLandEnabled(true);
+            return;
+        }
+
         // only allow landing on the ground map, not atmosphere or space map
         if (!game.getBoard(selectedEntity).isGround()) {
+            setLandEnabled(false);
             return;
         }
 

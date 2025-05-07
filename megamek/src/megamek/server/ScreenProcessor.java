@@ -21,23 +21,19 @@ import megamek.server.totalwarfare.TWGameManager;
 
 public class ScreenProcessor extends DynamicTerrainProcessor {
 
-    Vector<Report> vPhaseReport;
-
     public ScreenProcessor(TWGameManager gameManager) {
         super(gameManager);
     }
 
     @Override
     public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
-        this.vPhaseReport = vPhaseReport;
-        resolveScreen();
-        this.vPhaseReport = null;
+        resolveScreen(vPhaseReport);
     }
 
     /**
-     * Check to see if screen clears
+     * For each hex of each space board, tests if it contains SCREEN (terrain) and if so, rolls to see if it clears.
      */
-    private void resolveScreen() {
+    private void resolveScreen(Vector<Report> vPhaseReport) {
         for (Board board : gameManager.getGame().getBoards().values()) {
             if (!board.isSpace()) {
                 continue;

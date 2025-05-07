@@ -33,6 +33,7 @@ import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.util.AeroAVModCalculator;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.weapons.CLIATMWeapon;
@@ -179,38 +180,6 @@ public class AeroTROView extends TROView {
     }
 
     
-    /**
-     * Computes any modification to the aerospace AV for linked Artemis, Apollo, or PPC capacitor
-     *
-     * @param weapon   The type of weapon
-     * @param linkedBy The type of equipment the weapon is linked by
-     * @param bay      Whether the weapon is part of a weapon bay
-     * @return         The AV modification, if any
-     */
-    private int aeroAVMod(WeaponType weapon, EquipmentType linkedBy, boolean bay) {
-        if (linkedBy.hasFlag(MiscType.F_ARTEMIS)
-                || linkedBy.hasFlag(MiscType.F_ARTEMIS_V)) {
-            // The 9 and 10 rows of the cluster hits table is only different in the 3 column
-            if (weapon.getAtClass() == WeaponType.CLASS_MML) {
-                if (weapon.getRackSize() >= 7) {
-                    return 2;
-                } else if ((weapon.getRackSize() >= 5) || linkedBy.hasFlag(MiscType.F_ARTEMIS_V)) {
-                    return 1;
-                }
-            } else if (weapon instanceof LRMWeapon) {
-                return weapon.getRackSize() / 5;
-            } else if (weapon instanceof SRMWeapon) {
-                return 2;
-            }
-        } else if (linkedBy.hasFlag(MiscType.F_ARTEMIS_PROTO) && weapon.getRackSize() == 2) {
-            // The +1 cluster hit bonus only adds a missile hit for SRM2
-            return 2;
-        } else if (bay && linkedBy.hasFlag(MiscType.F_PPC_CAPACITOR)) {
-            // PPC capacitors in weapon bays are treated as if always charged
-            return 5;
-        }
-        return 0;
-    }
 
     private Map<String, Object> createBayRow(WeaponMounted bay) {
         final Map<EquipmentKey, Integer> weaponCount = new HashMap<>();
@@ -244,21 +213,21 @@ public class AeroTROView extends TROView {
                     } else {
                         av = (int) Math.ceil(wtype.getShortAV() * multiplier * 0.5);
                     }
-                    baysrv += Math.round(Math.ceil(av * 1.5) / 10.0);
-                    srv += Math.ceil(av * 1.5);
+                    baysrv += (int) Math.round(Math.ceil(av * 1.5) / 10.0);
+                    srv += (int) Math.ceil(av * 1.5);
                     mrv += av;
-                    lrv += Math.ceil(av * 0.5);
-                    erv += Math.ceil(av * 0.5);
+                    lrv += (int) Math.ceil(av * 0.5);
+                    erv += (int) Math.ceil(av * 0.5);
                     continue;
                 }
                 if (linker != null) {
-                    bonus = aeroAVMod(wtype, linker.getType(), true);
+                    bonus = AeroAVModCalculator.calculateBonus(wtype, linker.getType(), true);
                 }
                 if (wtype instanceof MMLWeapon) {
-                    av *= 2; // SRM ammo
+                    av *= 2; // SRM ammo, this is simulating the 2x damage of the MML when using SRM ammo at short range
                 }
             }
-            baysrv += Math.round(av / 10.0);
+            baysrv += (int) Math.round(av / 10.0);
             srv += (int) (wtype.getShortAV() * multiplier) + bonus;
             mrv += (int) (wtype.getMedAV() * multiplier) + bonus;
             lrv += (int) (wtype.getLongAV() * multiplier) + bonus;

@@ -55,10 +55,6 @@ public class BattleArmorBVCalculator extends BVCalculator {
         super(entity);
     }
 
-    private BattleArmor getBattleArmor() {
-        return (BattleArmor) this.entity;
-    }
-
     /**
      * Calculates the Battle Value of a single trooper of this BattleArmor. This
      * value is not influenced by the pilot skill or any force bonuses.
@@ -75,39 +71,39 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
+        BattleArmor battleArmor = (BattleArmor) entity;
         List<String> modifierList = new ArrayList<>();
         double tmmFactor = 1 + (Math.max(tmmRunning, Math.max(tmmJumping, tmmUmu)) / 10.0);
         double tmmBonus = 0.1;
         modifierList.add("BA");
-        if (getBattleArmor().hasCamoSystem()) {
+        if (battleArmor.hasCamoSystem()) {
             tmmBonus += 0.2;
             modifierList.add("Camo");
         }
-        if ((getBattleArmor().getStealthName() != null)
-                  && getBattleArmor().getStealthName().equals(BattleArmor.IMPROVED_STEALTH_ARMOR)) {
+        if ((battleArmor.getStealthName() != null)
+                  && battleArmor.getStealthName().equals(BattleArmor.IMPROVED_STEALTH_ARMOR)) {
             tmmBonus += 0.3;
             modifierList.add("Imp. Stealth");
-        } else if (getBattleArmor().isStealthy()) {
+        } else if (battleArmor.isStealthy()) {
             tmmBonus += 0.2;
             modifierList.add("Stealth");
         }
-        if (getBattleArmor().isMimetic()) {
+        if (battleArmor.isMimetic()) {
             tmmBonus += 0.3;
             modifierList.add("Mimetic");
         }
         String calculation = formatForReport(tmmFactor);
-        if (tmmBonus > 0) {
-            String modifiers = " (" + String.join(", ", modifierList) + ")";
-            calculation += " + " + formatForReport(tmmBonus) + modifiers;
-            tmmFactor += tmmBonus;
-        }
+        String modifiers = " (" + String.join(", ", modifierList) + ")";
+        calculation += " + " + formatForReport(tmmBonus) + modifiers;
+        tmmFactor += tmmBonus;
         bvReport.addLine("TMM Factor:", calculation, "");
         return tmmFactor;
     }
 
     @Override
     protected boolean countAsOffensiveWeapon(Mounted<?> equipment) {
-        // see https://bg.battletech.com/forums/ground-combat/battle-armor-bv/
+        // explanation from https://bg.battletech.com/forums/ground-combat/battle-armor-bv/
+        // may not be available anymore
         return super.countAsOffensiveWeapon(equipment)
                      && !equipment.getType().isAnyOf(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE);
     }
@@ -144,9 +140,10 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected void processWeapons() {
+        BattleArmor battleArmor = (BattleArmor) entity;
         reportPossibleWeaponSection("Weapons:", weaponFilter);
         reportPossibleWeaponSection("Squad Support:", supportFilter);
-        if (getBattleArmor().canMakeAntiMekAttacks()) {
+        if (battleArmor.canMakeAntiMekAttacks()) {
             reportPossibleWeaponSection("Anti-Mek:", antiMekFilter);
         }
     }
@@ -154,10 +151,11 @@ public class BattleArmorBVCalculator extends BVCalculator {
     @Override
     protected void processCalculations() {
         // Test if all troopers are exactly the same without writing to the real report
+        BattleArmor battleArmor = (BattleArmor) entity;
         CalculationReport saveReport = bvReport;
         bvReport = new DummyCalculationReport();
         Set<Double> trooperBVs = new HashSet<>();
-        for (currentTrooper = 1; currentTrooper < getBattleArmor().locations(); currentTrooper++) {
+        for (currentTrooper = 1; currentTrooper < battleArmor.locations(); currentTrooper++) {
             processTrooper();
             trooperBVs.add(baseBV);
         }
@@ -167,10 +165,10 @@ public class BattleArmorBVCalculator extends BVCalculator {
         if (trooperBVs.size() == 1) {
             currentTrooper = 1;
             processTrooper();
-            baseBV *= getBattleArmor().getShootingStrength();
+            baseBV *= battleArmor.getShootingStrength();
         } else {
             double bvSum = 0;
-            for (currentTrooper = 1; currentTrooper < getBattleArmor().locations(); currentTrooper++) {
+            for (currentTrooper = 1; currentTrooper < battleArmor.locations(); currentTrooper++) {
                 bvReport.addSubHeader("Trooper " + currentTrooper + ":");
                 processTrooper();
                 bvSum += baseBV;
@@ -183,11 +181,11 @@ public class BattleArmorBVCalculator extends BVCalculator {
         bvReport.addLine("Total Squad BV:", "", formatForReport(baseBV));
         // we have now added all troopers, divide by current strength, then multiply by
         // the unit size modifier
-        baseBV /= getBattleArmor().getShootingStrength();
-        bvReport.addLine("Average BV per Trooper", "/ " + getBattleArmor().getShootingStrength(),
+        baseBV /= battleArmor.getShootingStrength();
+        bvReport.addLine("Average BV per Trooper", "/ " + battleArmor.getShootingStrength(),
               "= " + formatForReport(baseBV));
 
-        double squadFactor = (0.9 + 0.1 * getBattleArmor().getShootingStrength()) * getBattleArmor().getShootingStrength();
+        double squadFactor = (0.9 + 0.1 * battleArmor.getShootingStrength()) * battleArmor.getShootingStrength();
         bvReport.addLine("Squad Size",
               "x " + squadFactor, "= " + formatForReport(baseBV * squadFactor));
         baseBV *= squadFactor;
@@ -197,11 +195,12 @@ public class BattleArmorBVCalculator extends BVCalculator {
     }
 
     private void processTrooper() {
+        BattleArmor battleArmor = (BattleArmor) entity;
         offensiveValue = 0;
         defensiveValue = 0;
         baseBV = 0;
 
-        if (getBattleArmor().getInternal(currentTrooper) <= 0) {
+        if (battleArmor.getInternal(currentTrooper) <= 0) {
             bvReport.addLine("N/A", "", "");
             bvReport.addEmptyLine();
         } else {
@@ -232,16 +231,18 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected void processArmor() {
+        BattleArmor battleArmor = (BattleArmor) entity;
+
         String modifier = "";
         double armorBV = 2.5;
-        if (getBattleArmor().isFireResistant() || getBattleArmor().isReflective() || getBattleArmor().isReactive()) {
+        if (battleArmor.isFireResistant() || battleArmor.isReflective() || battleArmor.isReactive()) {
             armorBV = 3.5;
-            final String armorName = EquipmentType.getArmorTypeName(getBattleArmor().getArmorType(BattleArmor.LOC_TROOPER_1),
-                  TechConstants.isClan(getBattleArmor().getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
+            final String armorName = EquipmentType.getArmorTypeName(battleArmor.getArmorType(BattleArmor.LOC_TROOPER_1),
+                  TechConstants.isClan(battleArmor.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
             final EquipmentType armor = EquipmentType.get(armorName);
             modifier = " (" + armor.getName().replaceAll("^BA\\s+", "") + ")";
         }
-        int currentArmor = Math.max(0, getBattleArmor().getArmor(currentTrooper));
+        int currentArmor = Math.max(0, battleArmor.getArmor(currentTrooper));
         defensiveValue += currentArmor * armorBV + 1;
         String calculation = "1 + " + currentArmor + " x " + formatForReport(armorBV)
                                    + modifier;
@@ -254,17 +255,18 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected void processDefensiveEquipment() {
+        BattleArmor battleArmor = (BattleArmor) entity;
         List<String> modifierList = new ArrayList<>();
         int bonus = 0;
-        if (getBattleArmor().hasImprovedSensors()) {
+        if (battleArmor.hasImprovedSensors()) {
             bonus += 1;
             modifierList.add("Imp. Sens.");
         }
-        if (getBattleArmor().hasActiveProbe()) {
+        if (battleArmor.hasActiveProbe()) {
             bonus += 1;
             modifierList.add("AP");
         }
-        for (Mounted<?> mounted : getBattleArmor().getMisc()) {
+        for (Mounted<?> mounted : battleArmor.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_ECM)) {
                 if (mounted.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                     bonus += 2;
@@ -282,13 +284,13 @@ public class BattleArmorBVCalculator extends BVCalculator {
             bvReport.addLine("Systems:", calculation, "= " + formatForReport(defensiveValue));
         }
         double amsBonus = 0;
-        for (Mounted<?> weapon : getBattleArmor().getWeaponList()) {
+        for (Mounted<?> weapon : battleArmor.getWeaponList()) {
             if (weapon.getType().hasFlag(WeaponType.F_AMS)) {
                 if (weapon.getLocation() == BattleArmor.LOC_SQUAD) {
-                    amsBonus += weapon.getType().getBV(getBattleArmor());
+                    amsBonus += weapon.getType().getBV(battleArmor);
                 } else {
                     // squad support, count at 1 / trooper count
-                    amsBonus += weapon.getType().getBV(getBattleArmor()) / getBattleArmor().getTotalOInternal();
+                    amsBonus += weapon.getType().getBV(battleArmor) / battleArmor.getTotalOInternal();
                 }
             }
         }
@@ -306,8 +308,9 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected int offensiveSpeedFactorMP() {
-        return Math.max(getBattleArmor().getWalkMP(MPCalculationSetting.BV_CALCULATION),
-              Math.max(getBattleArmor().getJumpMP(MPCalculationSetting.BV_CALCULATION), getBattleArmor().getActiveUMUCount()));
+        BattleArmor battleArmor = (BattleArmor) entity;
+        return Math.max(battleArmor.getWalkMP(MPCalculationSetting.BV_CALCULATION),
+              Math.max(battleArmor.getJumpMP(MPCalculationSetting.BV_CALCULATION), battleArmor.getActiveUMUCount()));
     }
 
     @Override

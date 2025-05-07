@@ -2329,7 +2329,6 @@ public class TWGameManager extends AbstractGameManager {
         MapSettings mapSettings = game.getMapSettings();
         mapSettings.chooseSurpriseBoards();
         Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-        List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
             // Need to set map type prior to loading to adjust foliage height, etc.
@@ -2349,14 +2348,12 @@ public class TWGameManager extends AbstractGameManager {
                 sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + ".board").getFile());
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
-            rotateBoard.add(isRotated);
         }
         Board newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(),
               mapSettings.getBoardHeight(),
               mapSettings.getMapWidth(),
               mapSettings.getMapHeight(),
               sheetBoards,
-              rotateBoard,
               mapSettings.getMedium());
         if (game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF).intValue() > 0) {
             newBoard.setBridgeCF(game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF).intValue());

@@ -186,6 +186,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox showWrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks"));
     private final JCheckBox chkHighQualityGraphics = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.highQualityGraphics"));
+    private final JCheckBox chkHighPerformanceGraphics = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.highPerformanceGraphics"));
     private final JCheckBox showWpsinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT"));
     private final JCheckBox showWpsLocinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsLocinTT"));
     private final JCheckBox showArmorMiniVisTT = new JCheckBox(Messages.getString(
@@ -763,7 +765,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(showWrecks, null));
         comps.add(checkboxEntry(chkHighQualityGraphics,
               Messages.getString("CommonSettingsDialog.highQualityGraphics.tooltip")));
-
+        comps.add(checkboxEntry(chkHighPerformanceGraphics,
+              Messages.getString("CommonSettingsDialog.highPerformanceGraphics.tooltip")));
         showMapsheets.addItemListener(this);
         row = new ArrayList<>();
         row.add(showMapsheets);
@@ -2085,6 +2088,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
             showMapsheets.setSelected(GUIP.getShowMapsheets());
             chkHighQualityGraphics.setSelected(GUIP.getHighQualityGraphics());
+            chkHighPerformanceGraphics.setSelected(GUIP.getHighPerformanceGraphics());
             showDamageLevel.setSelected(GUIP.getShowDamageLevel());
             showDamageDecal.setSelected(GUIP.getShowDamageDecal());
             aOHexShadows.setSelected(GUIP.getAOHexShadows());
@@ -2970,6 +2974,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             GUIP.setShowDamageLevel(showDamageLevel.isSelected());
         } else if (source.equals(chkHighQualityGraphics)) {
             GUIP.setHighQualityGraphics(chkHighQualityGraphics.isSelected());
+        } else if (source.equals(chkHighPerformanceGraphics)) {
+            GUIP.setHighPerformanceGraphics(chkHighPerformanceGraphics.isSelected());
         } else if (source.equals(drawFacingArrowsOnMiniMap)) {
             GUIP.setDrawFacingArrowsOnMiniMap(drawFacingArrowsOnMiniMap.isSelected());
         } else if (source.equals(drawSensorRangeOnMiniMap)) {

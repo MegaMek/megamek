@@ -675,10 +675,16 @@ public final class UIUtil {
     public static void setHighQualityRendering(Graphics graph) {
         if (GUIPreferences.getInstance().getHighQualityGraphics()) {
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
                   RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        }
+        if (GUIPreferences.getInstance().getHighPerformanceGraphics()) {
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                  RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        } else if (GUIPreferences.getInstance().getHighQualityGraphics()) {
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                   RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         }

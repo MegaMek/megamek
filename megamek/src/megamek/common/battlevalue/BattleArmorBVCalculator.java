@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common.battlevalue;
 
@@ -35,12 +49,10 @@ import megamek.common.equipment.WeaponMounted;
 
 public class BattleArmorBVCalculator extends BVCalculator {
 
-    private final BattleArmor battleArmor;
     private int currentTrooper;
 
     BattleArmorBVCalculator(Entity entity) {
         super(entity);
-        battleArmor = (BattleArmor) entity;
     }
 
     /**
@@ -59,6 +71,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
+        BattleArmor battleArmor = (BattleArmor) entity;
         List<String> modifierList = new ArrayList<>();
         double tmmFactor = 1 + (Math.max(tmmRunning, Math.max(tmmJumping, tmmUmu)) / 10.0);
         double tmmBonus = 0.1;
@@ -68,7 +81,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
             modifierList.add("Camo");
         }
         if ((battleArmor.getStealthName() != null)
-                && battleArmor.getStealthName().equals(BattleArmor.IMPROVED_STEALTH_ARMOR)) {
+                  && battleArmor.getStealthName().equals(BattleArmor.IMPROVED_STEALTH_ARMOR)) {
             tmmBonus += 0.3;
             modifierList.add("Imp. Stealth");
         } else if (battleArmor.isStealthy()) {
@@ -80,20 +93,19 @@ public class BattleArmorBVCalculator extends BVCalculator {
             modifierList.add("Mimetic");
         }
         String calculation = formatForReport(tmmFactor);
-        if (tmmBonus > 0) {
-            String modifiers = " (" + String.join(", ", modifierList) + ")";
-            calculation += " + " + formatForReport(tmmBonus) + modifiers;
-            tmmFactor += tmmBonus;
-        }
+        String modifiers = " (" + String.join(", ", modifierList) + ")";
+        calculation += " + " + formatForReport(tmmBonus) + modifiers;
+        tmmFactor += tmmBonus;
         bvReport.addLine("TMM Factor:", calculation, "");
         return tmmFactor;
     }
 
     @Override
     protected boolean countAsOffensiveWeapon(Mounted<?> equipment) {
-        // see https://bg.battletech.com/forums/ground-combat/battle-armor-bv/
+        // explanation from https://bg.battletech.com/forums/ground-combat/battle-armor-bv/
+        // may not be available anymore
         return super.countAsOffensiveWeapon(equipment)
-                && !equipment.getType().isAnyOf(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE);
+                     && !equipment.getType().isAnyOf(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE);
     }
 
     protected void reportPossibleWeaponSection(String name, Predicate<Mounted<?>> weaponFilter) {
@@ -106,28 +118,29 @@ public class BattleArmorBVCalculator extends BVCalculator {
     private boolean isAnyBattleClaw(Mounted<?> mounted) {
         EquipmentType type = mounted.getType();
         return (type instanceof MiscType)
-                && (type.hasFlag(MiscType.F_VIBROCLAW) || type.hasFlag(MiscType.F_MAGNET_CLAW));
+                     && (type.hasFlag(MiscType.F_VIBROCLAW) || type.hasFlag(MiscType.F_MAGNET_CLAW));
     }
 
     Predicate<Mounted<?>> weaponFilter = m -> (m.getLocation() == BattleArmor.LOC_SQUAD)
-            && !m.isSquadSupportWeapon() && !isAnyBattleClaw(m);
+                                                    && !m.isSquadSupportWeapon() && !isAnyBattleClaw(m);
 
     Predicate<Mounted<?>> supportFilter = m -> (m instanceof WeaponMounted) && !m.getType().hasFlag(WeaponType.F_INFANTRY)
-            && ((m.getLocation() == currentTrooper) || m.isSquadSupportWeapon());
+                                                     && ((m.getLocation() == currentTrooper) || m.isSquadSupportWeapon());
 
     Predicate<Mounted<?>> antiMekClawFilter = m -> (m instanceof MiscMounted)
-            && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper))
-            && (isAnyBattleClaw(m));
+                                                         && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper))
+                                                         && (isAnyBattleClaw(m));
 
     Predicate<Mounted<?>> antiMekWeaponFilter = m -> (m instanceof WeaponMounted)
-            && !m.getType().hasFlag(WeaponType.F_INFANTRY) && !m.getType().hasFlag(WeaponType.F_MISSILE)
-            && !m.isBodyMounted()
-            && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper));
+                                                           && !m.getType().hasFlag(WeaponType.F_INFANTRY) && !m.getType().hasFlag(WeaponType.F_MISSILE)
+                                                           && !m.isBodyMounted()
+                                                           && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper));
 
     Predicate<Mounted<?>> antiMekFilter = m -> antiMekClawFilter.test(m) || antiMekWeaponFilter.test(m);
 
     @Override
     protected void processWeapons() {
+        BattleArmor battleArmor = (BattleArmor) entity;
         reportPossibleWeaponSection("Weapons:", weaponFilter);
         reportPossibleWeaponSection("Squad Support:", supportFilter);
         if (battleArmor.canMakeAntiMekAttacks()) {
@@ -138,6 +151,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
     @Override
     protected void processCalculations() {
         // Test if all troopers are exactly the same without writing to the real report
+        BattleArmor battleArmor = (BattleArmor) entity;
         CalculationReport saveReport = bvReport;
         bvReport = new DummyCalculationReport();
         Set<Double> trooperBVs = new HashSet<>();
@@ -169,18 +183,19 @@ public class BattleArmorBVCalculator extends BVCalculator {
         // the unit size modifier
         baseBV /= battleArmor.getShootingStrength();
         bvReport.addLine("Average BV per Trooper", "/ " + battleArmor.getShootingStrength(),
-                "= " + formatForReport(baseBV));
+              "= " + formatForReport(baseBV));
 
         double squadFactor = (0.9 + 0.1 * battleArmor.getShootingStrength()) * battleArmor.getShootingStrength();
         bvReport.addLine("Squad Size",
-                "x " + squadFactor, "= " + formatForReport(baseBV * squadFactor));
+              "x " + squadFactor, "= " + formatForReport(baseBV * squadFactor));
         baseBV *= squadFactor;
         bvReport.addLine("--- Base Unit BV:",
-                formatForReport(baseBV) + ", rn",
-                "= " + (int) Math.round(baseBV));
+              formatForReport(baseBV) + ", rn",
+              "= " + (int) Math.round(baseBV));
     }
 
     private void processTrooper() {
+        BattleArmor battleArmor = (BattleArmor) entity;
         offensiveValue = 0;
         defensiveValue = 0;
         baseBV = 0;
@@ -204,30 +219,33 @@ public class BattleArmorBVCalculator extends BVCalculator {
         bvReport.addEmptyLine();
         bvReport.addSubHeader("Trooper Battle Value:");
         bvReport.addLine("",
-                formatForReport(defensiveValue) + " + " + formatForReport(offensiveValue) + ", rn",
-                "= " + formatForReport(baseBV));
+              formatForReport(defensiveValue) + " + " + formatForReport(offensiveValue) + ", rn",
+              "= " + formatForReport(baseBV));
     }
 
     @Override
     protected boolean ammoCounts(AmmoMounted ammo) {
         return super.ammoCounts(ammo)
-                && ((ammo.getLocation() == BattleArmor.LOC_SQUAD) || (ammo.getLocation() == currentTrooper));
+                     && ((ammo.getLocation() == BattleArmor.LOC_SQUAD) || (ammo.getLocation() == currentTrooper));
     }
 
     @Override
     protected void processArmor() {
+        BattleArmor battleArmor = (BattleArmor) entity;
+
         String modifier = "";
         double armorBV = 2.5;
         if (battleArmor.isFireResistant() || battleArmor.isReflective() || battleArmor.isReactive()) {
             armorBV = 3.5;
             final String armorName = EquipmentType.getArmorTypeName(battleArmor.getArmorType(BattleArmor.LOC_TROOPER_1),
-                    TechConstants.isClan(battleArmor.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
+                  TechConstants.isClan(battleArmor.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
             final EquipmentType armor = EquipmentType.get(armorName);
             modifier = " (" + armor.getName().replaceAll("^BA\\s+", "") + ")";
         }
-        defensiveValue += battleArmor.getArmor(currentTrooper) * armorBV + 1;
-        String calculation = "1 + " + battleArmor.getArmor(currentTrooper) + " x " + formatForReport(armorBV)
-                + modifier;
+        int currentArmor = Math.max(0, battleArmor.getArmor(currentTrooper));
+        defensiveValue += currentArmor * armorBV + 1;
+        String calculation = "1 + " + currentArmor + " x " + formatForReport(armorBV)
+                                   + modifier;
         bvReport.addLine("Armor:", calculation, formatForReport(defensiveValue));
     }
 
@@ -237,6 +255,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected void processDefensiveEquipment() {
+        BattleArmor battleArmor = (BattleArmor) entity;
         List<String> modifierList = new ArrayList<>();
         int bonus = 0;
         if (battleArmor.hasImprovedSensors()) {
@@ -278,7 +297,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
         if (amsBonus > 0) {
             defensiveValue += amsBonus;
             bvReport.addLine("AMS:", "+ " + formatForReport(amsBonus),
-                    "= " + formatForReport(defensiveValue));
+                  "= " + formatForReport(defensiveValue));
         }
     }
 
@@ -289,8 +308,9 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected int offensiveSpeedFactorMP() {
+        BattleArmor battleArmor = (BattleArmor) entity;
         return Math.max(battleArmor.getWalkMP(MPCalculationSetting.BV_CALCULATION),
-                Math.max(battleArmor.getJumpMP(MPCalculationSetting.BV_CALCULATION), battleArmor.getActiveUMUCount()));
+              Math.max(battleArmor.getJumpMP(MPCalculationSetting.BV_CALCULATION), battleArmor.getActiveUMUCount()));
     }
 
     @Override

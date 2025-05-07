@@ -787,17 +787,8 @@
 				<availability>CC!A:8!B:1</availability>
 			</model>
 		</chassis>
-        <chassis name='Flea' unitType='Mek'>
-            <availability>FWL!A:8</availability>
-            <model name='FLE-14'>
-                <availability>FWL:6</availability>
-            </model>
-            <model name='FLE-4'>
-                <availability>FWL:8</availability>
-            </model>
-        </chassis>
 		<chassis name='Firestarter' unitType='Mek'>
-			<availability>IS!A:3,TH!A:3,PoR!A:2,MERC!A:3</availability>
+			<availability>IS!A:3!B:1,TH!A:3!B:1,MERC!A:3!B:1</availability>
 			<model name='FS9-A'>
 			    <roles>anti_infantry,recon</roles>
 				<availability>IS:8,TH:8,MERC:8</availability>
@@ -808,11 +799,12 @@
 			</model>
 		</chassis>
 		<chassis name='Flea' unitType='Mek'>
-			<availability>FWL!A:8!B:1</availability>
+			<availability>FWL!A:8!B:8!C:1</availability>
 			<model name='FLE-14'>
 				<availability>FWL!A:5!B:5</availability>
 			</model>
 			<model name='FLE-15'>
+                <roles>anti_infantry</roles>
 				<availability>FWL!A:6!B:6</availability>
 			</model>
 			<model name='FLE-4'>

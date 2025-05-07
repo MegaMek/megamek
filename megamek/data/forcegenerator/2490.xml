@@ -384,10 +384,10 @@
 			</model>
 		</chassis>
 		<chassis name='Chameleon' unitType='Mek'>
-			<availability>CC:3-</availability>
+			<availability>TH!C:1</availability>
 			<model name='TRC-4B'>
 				<roles>training</roles>
-				<availability>General:8</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Chi-Ha Infantry Combat Vehicle' unitType='Tank'>
@@ -567,9 +567,9 @@
             </model>
         </chassis>
 		<chassis name='Eisenfaust' unitType='Mek'>
-			<availability>LA:2-</availability>
-			<model name='EFT-2'>
-				<availability>General:8</availability>
+			<availability>LA!B:8</availability>
+			<model name='EFT-4J'>
+				<availability>LA:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Emperor' unitType='Mek'>
@@ -746,15 +746,18 @@
             </model>
         </chassis>
 		<chassis name='Gladiator' unitType='Mek'>
-			<availability>CC:1,OA:1,PoR:1,LA:1,FWL:1,FS:1,MERC:1,DC:1,TC:1,Periphery:1</availability>
+			<availability>DC!B:8!C:8,PoR!A:8!B:8,MERC!A:8</availability>
+            <model name='GLD-1R'>
+                <availability>DC!B:6!C:8,PoR:8</availability>
+            </model>
 			<model name='GLD-2R'>
-				<availability>DC:8</availability>
+				<availability>DC:8,PoR!A:6</availability>
 			</model>
 			<model name='GLD-3R'>
-				<availability>General:8,MERC:8</availability>
+				<availability>MERC:6</availability>
 			</model>
 			<model name='GLD-4R'>
-				<availability>General:4,MERC:4</availability>
+				<availability>MERC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Goblin Medium Tank' unitType='Tank'>
@@ -777,12 +780,9 @@
 			</model>
 		</chassis>
 		<chassis name='Griffin' unitType='Mek'>
-			<availability>TH:8,IS:2</availability>
-			<model name='GRF-1A'>
-				<availability>IS:6,MERC:6</availability>
-			</model>
+			<availability>LA!A:8,FWL!A:4</availability>
 			<model name='GRF-1N'>
-				<availability>General:6:2492</availability>
+				<availability>LA:8,FWL:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Guillotine' unitType='Mek'>
@@ -955,15 +955,15 @@
 			</model>
 		</chassis>
 		<chassis name='Icarus II' unitType='Mek'>
-			<availability>FWL.pm:6,FWL:6</availability>
+			<availability>FWL!A:8</availability>
 			<model name='ICR-1S'>
-				<availability>General:8</availability>
+				<availability>FWL:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Icarus' unitType='Mek'>
-			<availability>FWL:1</availability>
+			<availability>FWL!A:6!B:8</availability>
 			<model name='ICR-1X'>
-				<availability>General:8</availability>
+				<availability>FWL:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Ignis Infantry Support Tank' unitType='Tank'>
@@ -1049,7 +1049,7 @@
 			</model>
 		</chassis>
 		<chassis name='Kyudo' unitType='Mek'>
-			<availability>TH:6</availability>
+			<availability>TH!A:8!B:8!C:8</availability>
 			<model name='KY2-D-01'>
 				<availability>TH:8</availability>
 			</model>
@@ -1538,10 +1538,10 @@
             </model>
         </chassis>
 		<chassis name='Rifleman' unitType='Mek'>
-			<availability>TH:4:2504</availability>
+			<availability>TH!A:4</availability>
 			<model name='RFL-1N'>
 				<roles>fire_support</roles>
-				<availability>IS:8</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Riga Frigate' unitType='Warship'>
@@ -1606,9 +1606,9 @@
 			</model>
 		</chassis>
 		<chassis name='Shadow Hawk' unitType='Mek'>
-			<availability>TH:6,LA:1,IS:2</availability>
+			<availability>IS!A:2,TH!A:8!B:6,DC!A:8,PoR:0,CC!A:8,MERC!A:2</availability>
 			<model name='SHD-1R'>
-				<availability>IS:8</availability>
+				<availability>IS:8,TH:8,MERC:8</availability>
 			</model>
 		</chassis>
         <chassis name='Sherpa Armored Truck' unitType='Tank'>
@@ -1669,12 +1669,12 @@
 			</model>
 		</chassis>
 		<chassis name='Swordsman' unitType='Mek'>
-			<availability>FS:4</availability>
+			<availability>FS!A:8!B:8!C:8</availability>
 			<model name='SWD-1'>
-				<availability>General:6</availability>
+				<availability>FS!B:6!C:8</availability>
 			</model>
 			<model name='SWD-2'>
-				<availability>General:8</availability>
+				<availability>FS!A:8!B:8!C:1</availability>
 			</model>
 		</chassis>
 		<chassis name='Sylvester Transport' unitType='Warship'>
@@ -1859,12 +1859,12 @@
 			</model>
 		</chassis>
         <chassis name='Wolverine' unitType='Mek'>
-            <availability>FS:4+</availability>
+            <availability>FS!A:4!B:4</availability>
             <model name='WVR-1R'>
-                <availability>FS:2</availability>
+                <availability>FS:8</availability>
             </model>
             <model name='WVR-3R'>
-                <availability>FS:4</availability>
+                <availability>FS!A:3</availability>
             </model>
         </chassis>
 		<chassis name='Ymir' unitType='Mek'>

@@ -25,7 +25,9 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -88,6 +90,7 @@ import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
@@ -1872,7 +1875,25 @@ public class ClientGUI extends AbstractClientGUI
         doAlertDialog(title, message, JOptionPane.ERROR_MESSAGE);
     }
 
-    public void doAlertDialog(String title, String message, int msgTyoe) {
+
+    /**
+     * Brings up a dialog that displays a message using a default
+     * icon determined by the <code>messageType</code> parameter.
+     *
+     * @param message   the <code>Object</code> to display
+     * @param title     the title string for the dialog
+     * @param messageType the type of message to be displayed:
+     *                  <code>ERROR_MESSAGE</code>,
+     *                  <code>INFORMATION_MESSAGE</code>,
+     *                  <code>WARNING_MESSAGE</code>,
+     *                  <code>QUESTION_MESSAGE</code>,
+     *                  or <code>PLAIN_MESSAGE</code>
+     * @exception HeadlessException if
+     *   <code>GraphicsEnvironment.isHeadless</code> returns
+     *   <code>true</code>
+     * @see java.awt.GraphicsEnvironment#isHeadless
+     */
+    public void doAlertDialog(String title, String message, int messageType) {
         JTextPane textArea = new JTextPane();
         Report.setupStylesheet(textArea);
         BASE64ToolKit toolKit = new BASE64ToolKit();
@@ -1884,7 +1905,25 @@ public class ClientGUI extends AbstractClientGUI
         textArea.setText("<pre>" + message + "</pre>");
         scrollPane.setPreferredSize(new Dimension((int) (clientGuiPanel.getSize().getWidth() / 1.5),
               (int) (clientGuiPanel.getSize().getHeight() / 1.5)));
-        JOptionPane.showMessageDialog(frame, scrollPane, title, msgTyoe);
+        JOptionPane.showMessageDialog(frame, scrollPane, title, messageType);
+    }
+
+    /**
+     * Pops up a dialog box giving the player information on a subject. It also includes a checkbox if they don't
+     * want to be bothered again by it.
+     *
+     * @param title the <code>String</code> title of the dialog box.
+     * @param message the <code>String</code> message to display.
+     * @param includeCheckBox if <code>true</code>, a checkbox will be included in the dialog box
+     * @return {@link InformDialog} containing the player's responses. The dialog will already have been shown
+     */
+    public InformDialog doInformBotherDialog(String title, String message, boolean includeCheckBox) {
+        InformDialog informDialog = new InformDialog(frame, title, message, includeCheckBox);
+        informDialog.setAlwaysOnTop(true);
+        informDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        informDialog.setVisible(true);
+        informDialog.dispose();
+        return informDialog;
     }
 
     /**
@@ -1910,7 +1949,7 @@ public class ClientGUI extends AbstractClientGUI
      *
      * @param title    the <code>String</code> title of the dialog box.
      * @param question the <code>String</code> question that has a "Yes" or "No" answer. The question will be split
-     *                 across multiple line on the '\n' characters.
+     *                 across multiple lines on the '\n' characters.
      *
      * @return the <code>ConfirmDialog</code> containing the player's responses. The dialog will already have been shown
      *       to the player, and is only being returned so the calling function can see the answer to the question and
@@ -1919,6 +1958,27 @@ public class ClientGUI extends AbstractClientGUI
     public ConfirmDialog doYesNoBotherDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
         confirm.setVisible(true);
+        confirm.dispose();
+        return confirm;
+    }
+
+    /**
+     * Pops up a dialog box asking a yes/no question
+     * <p>
+     * The player will be given a chance to not show the dialog again.
+     *
+     * @param title    the <code>String</code> title of the dialog box.
+     * @param question the <code>String</code> question that has a "Yes" or "No" answer. The question will be split
+     *                 across multiple line on the '\n' characters.c tr23ty
+     *
+     * @return the <code>ConfirmDialog</code> containing the player's responses. The dialog will already have been shown
+     *       to the player, and is only being returned so the calling function can see the answer to the question and
+     *       the state of the "Show again?" question.
+     */
+    public ConfirmDialog doWarnNoBotherDialog(String title, String question) {
+        ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
+        confirm.setVisible(true);
+        confirm.dispose();
         return confirm;
     }
 

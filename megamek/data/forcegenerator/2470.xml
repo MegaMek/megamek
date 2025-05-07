@@ -178,14 +178,14 @@
 			</model>
 		</chassis>
 		<chassis name='Archer' unitType='Mek'>
-			<availability>TH:7</availability>
+			<availability>TH!A:6!B:4</availability>
 			<model name='ARC-1A'>
 				<roles>fire_support</roles>
 				<availability>TH:8</availability>
 			</model>
 			<model name='ARC-2R'>
 				<roles>fire_support</roles>
-				<availability>TH:2+:2474</availability>
+				<availability>TH!A:6</availability>
 			</model>
 		</chassis>
 		<chassis name='Ares Assault Craft' unitType='Small Craft'>
@@ -256,15 +256,15 @@
 			</model>
 		</chassis>
 		<chassis name='BattleAxe' unitType='Mek'>
-			<availability>FS:8</availability>
+            <availability>FS!A:8!B:1</availability>
 			<model name='BKX-1X'>
-				<availability>FS:6</availability>
+				<availability>FS:8</availability>
 			</model>
 			<model name='BKX-7K'>
-				<availability>FS:6</availability>
+				<availability>FS!A:6</availability>
 			</model>
 			<model name='BKX-7NC'>
-				<availability>FS:3</availability>
+				<availability>FS!A:5</availability>
 			</model>
 		</chassis>
 		<chassis name='Black Eagle' unitType='Dropship'>
@@ -386,15 +386,15 @@
             </model>
         </chassis>
 		<chassis name='Crossbow' unitType='Mek'>
-			<availability>LA:3</availability>
+			<availability>LA!A:8!B:1</availability>
 			<model name='CRS-6B'>
-				<availability>General:8</availability>
+				<availability>LA!A:6</availability>
 			</model>
 			<model name='CRS-6C'>
-				<availability>General:4</availability>
+				<availability>LA!A:4</availability>
 			</model>
 			<model name='CRS-X'>
-				<availability>General:4</availability>
+				<availability>LA:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Cruiser' unitType='Warship'>
@@ -637,9 +637,9 @@
 			</model>
 		</chassis>
 		<chassis name='Griffin' unitType='Mek'>
-			<availability>TH:6,IS:1</availability>
+			<availability>TH!A:7!B:5</availability>
 			<model name='GRF-1A'>
-				<availability>IS:8,MERC:8</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Habitat' unitType='Space Station'>
@@ -651,12 +651,9 @@
 			</model>
 		</chassis>
 		<chassis name='Hammerhands' unitType='Mek'>
-			<availability>FS:4</availability>
+			<availability>FS!A:4</availability>
 			<model name='HMH-3D'>
-				<availability>General:8</availability>
-			</model>
-			<model name='HMH-4D'>
-				<availability>General:4</availability>
+				<availability>FS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Hammerhead' unitType='AeroSpaceFighter'>
@@ -732,23 +729,23 @@
 			</model>
 		</chassis>
 		<chassis name='Hector' unitType='Mek'>
-			<availability>Periphery.MW:2,Periphery.ME:2,FWL:8</availability>
+			<availability>FWL!A:8</availability>
 			<model name='HOR-1B'>
-				<availability>General:8</availability>
+				<availability>FWL:8</availability>
 			</model>
 			<model name='HOR-1C'>
-				<availability>General:4</availability>
+				<availability>FWL:5</availability>
 			</model>
 		</chassis>
 		<chassis name='Helepolis' unitType='Mek'>
-			<availability>TH:4</availability>
+            <availability>TH!A:3!B:1</availability>
 			<model name='HEP-1H'>
-				<roles>artillery</roles>
-				<availability>General:8</availability>
+				<roles>mixed_artillery</roles>
+				<availability>TH!B:8</availability>
 			</model>
 			<model name='HEP-2X'>
 				<roles>mixed_artillery</roles>
-				<availability>General:4:2488</availability>
+				<availability>TH!A:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Hurricane Conventional Fighter' unitType='Conventional Fighter'>
@@ -1182,10 +1179,19 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Orion' unitType='Mek'>
+            <availability>TH!A:7!B:5</availability>
+            <model name='ON1-C'>
+                <availability>TH!B:6</availability>
+            </model>
+            <model name='ON1-H'>
+                <availability>TH:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Ostwar' unitType='Mek'>
-			<availability>CC:3,LA:2,FWL:5,IS:2,MERC:2,DC:2</availability>
+			<availability>FWL!A:4,CC!A:8</availability>
 			<model name='OWR-2M'>
-				<availability>General:8</availability>
+				<availability>FWL:8,CC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Patron' unitType='Mek'>
@@ -1476,9 +1482,9 @@
 			</model>
 		</chassis>
 		<chassis name='Von Rohrs (Hebi)' unitType='Mek'>
-			<availability>PoR:1,DC:6</availability>
+			<availability>DC!A:8</availability>
 			<model name='VON 4RH-5'>
-				<availability>General:8</availability>
+				<availability>DC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Vulture' unitType='Dropship'>

@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2398-->
-<ratgen>
+<ratgen
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
+>
 	<factions>
 		<faction key='CC'>
 			<salvage pct='6'>TH:9,FWL:5,FS:4,TC:1</salvage>
@@ -562,12 +565,9 @@
 			</model>
 		</chassis>
 		<chassis name='Mackie' unitType='Mek'>
-			<availability>TH:8</availability>
+			<availability>TH!A:8</availability>
 			<model name='MSK-5S'>
-				<availability>LA:4,General:4</availability>
-			</model>
-			<model name='MSK-6S'>
-				<availability>General:6,FWL:6</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 	    <chassis name='Marsden MBT' unitType='Tank'>

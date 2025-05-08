@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import megamek.MegaMek;
 import megamek.logging.MMLogger;
 
@@ -190,6 +191,10 @@ public enum SkillLevel {
                     return VETERAN;
                 case 3:
                     return ELITE;
+                case 4:
+                    return HEROIC;
+                case 5:
+                    return LEGENDARY;
                 default:
                     break;
             }

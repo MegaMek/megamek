@@ -346,12 +346,9 @@
             </model>
         </chassis>
 		<chassis name='Banshee' unitType='Mek'>
-			<availability>TH:6-,LA:5,FS:5,MERC:5,DC:5</availability>
-			<model name='BNC-1E'>
-				<availability>TH:2,Periphery.Deep:5,Periphery:5</availability>
-			</model>
+			<availability>TH!B:1!C:2!D:3</availability>
 			<model name='BNC-3E'>
-				<availability>General:8,Periphery.Deep:8,MERC:8,Periphery:8</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Baron Destroyer' unitType='Warship'>
@@ -701,14 +698,14 @@
 			</model>
 		</chassis>
 		<chassis name='Emperor' unitType='Mek'>
-			<availability>TH:6</availability>
+			<availability>TH!A:6!B:4!C:1</availability>
 			<model name='EMP-1A'>
                 <roles>command</roles>
-				<availability>TH:4,General:8</availability>
+				<availability>TH!B:4!C:8</availability>
 			</model>
 			<model name='EMP-5A'>
                 <roles>command</roles>
-				<availability>General:6</availability>
+				<availability>TH!A:5!B:1</availability>
 			</model>
 		</chassis>
 		<chassis name='Engineering Vehicle' unitType='Tank'>
@@ -1313,18 +1310,18 @@
 			</model>
 		</chassis>
 		<chassis name='Longbow' unitType='Mek'>
-			<availability>FWL:9</availability>
+			<availability>FWL!A:8!B:8!C:8</availability>
 			<model name='LGB-0C'>
                 <roles>fire_support</roles>
-				<availability>FWL:6</availability>
+				<availability>FWL!A:4!B:8!C:8</availability>
 			</model>
 			<model name='LGB-0W'>
 				<roles>fire_support</roles>
-				<availability>FWL:8:2529</availability>
+				<availability>FWL!A:8!B:1</availability>
 			</model>
             <model name='LGB-0W2'>
                 <roles>fire_support</roles>
-                <availability>FWL:6:2531</availability>
+                <availability>FWL!A:6</availability>
             </model>
 		</chassis>
         <chassis name='Luciano White Wolverine' unitType='Tank'>
@@ -1359,12 +1356,15 @@
 			</model>
 		</chassis>
 		<chassis name='Mackie' unitType='Mek'>
-			<availability>TH:4-,LA:4-,IS:3-,FWL:3-,Periphery.Deep:5,Periphery:5</availability>
-			<model name='MSK-6S'>
-				<availability>General:3,FWL:3</availability>
+			<availability>TH!A:6!B:5!C:5!D:5,PoR!A:8,MERC!A:8!B:8</availability>
+            <model name='MSK-5S'>
+                <availability>PoR:8,MERC!A:6!B:8</availability>
+            </model>
+            <model name='MSK-6S'>
+				<availability>MERC!A:8</availability>
 			</model>
 			<model name='MSK-7A'>
-				<availability>General:6</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Manatee' unitType='Dropship'>
@@ -2099,15 +2099,15 @@
 			</model>
 		</chassis>
 		<chassis name='Victor' unitType='Mek'>
-			<availability>TH:4</availability>
+			<availability>TH!A:4!B:1</availability>
 			<model name='VTR-9A'>
-				<availability>CC:1,IS:1,FS:1</availability>
+                <availability>TH:4</availability>
 			</model>
 			<model name='VTR-9A1'>
-				<availability>CC:1,IS:1,FS:1</availability>
+                <availability>TH:5</availability>
 			</model>
 			<model name='VTR-9B'>
-				<availability>General:6,Periphery.Deep:6,Periphery:6</availability>
+                <availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Vigilant Corvette' unitType='Warship'>
@@ -2198,18 +2198,18 @@
             </model>
         </chassis>
 		<chassis name='Xanthos' unitType='Mek'>
-			<availability>CC:5</availability>
+			<availability>CC!A:8</availability>
 			<model name='XNT-2O'>
-				<availability>General:8</availability>
+				<availability>CC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Ymir' unitType='Mek'>
-			<availability>LA:5</availability>
+			<availability>LA!A:8!B:8!C:8</availability>
 			<model name='BWP-2B'>
-				<availability>General:8</availability>
+			    <availability>LA:8</availability>
 			</model>
 			<model name='BWP-2E'>
-				<availability>General:2</availability>
+				<availability>LA!A:4!B:1</availability>
 			</model>
 		</chassis>
 	</units>

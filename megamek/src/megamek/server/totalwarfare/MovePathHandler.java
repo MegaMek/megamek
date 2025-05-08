@@ -189,12 +189,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         if (md.contains(MovePath.MoveStepType.TAKEOFF) && entity.isAero()) {
-            if (!usesAeroOnGroundMovement() && !MovementDisplay.hasAtmosphericMapForLiftOff(getGame(), entity)) {
+            if (!usingAeroOnGroundMovement() && !MovementDisplay.hasAtmosphericMapForLiftOff(getGame(), entity)) {
                 logger.warn("Received lift off without aero-on-ground movement and without atmospheric map.");
             } else {
                 IAero aero = (IAero) entity;
                 int boardId = entity.getBoardId();
-                if (usesAeroOnGroundMovement()) {
+                if (usingAeroOnGroundMovement()) {
                     entity.setPosition(entity.getPosition().translated(entity.getFacing(), aero.getTakeOffLength()));
                 } else {
                     positionOnAtmosphericMap();
@@ -213,13 +213,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         if (md.contains(MovePath.MoveStepType.VTAKEOFF) && entity.isAero() && (entity instanceof IAero aero)) {
-            if (!usesAeroOnGroundMovement() && !MovementDisplay.hasAtmosphericMapForLiftOff(getGame(), entity)) {
+            if (!usingAeroOnGroundMovement() && !MovementDisplay.hasAtmosphericMapForLiftOff(getGame(), entity)) {
                 logger.warn("Received lift off without aero-on-ground movement and without atmospheric map.");
             } else {
                 rollTarget = aero.checkVerticalTakeOff();
                 if (gameManager.doVerticalTakeOffCheck(entity, rollTarget)) {
                     int boardId = entity.getBoardId();
-                    if (!usesAeroOnGroundMovement()) {
+                    if (!usingAeroOnGroundMovement()) {
                         positionOnAtmosphericMap();
                     }
                     aero.setCurrentVelocity(1);
@@ -235,8 +235,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
             return;
         }
 
-        if (md.contains(MovePath.MoveStepType.LAND) && entity.isAero()) {
+        if ((md.contains(MovePath.MoveStepType.LAND) || (md instanceof HorizontalAtmoLandingMovePath))
+              && entity.isAero()) {
             IAero a = (IAero) entity;
+            entity.setBoardId(md.getFinalBoardId());
             rollTarget = a.checkLanding(md.getLastStepMovementType(), md.getFinalVelocity(),
                     md.getFinalCoords(), md.getFinalFacing(), false);
             gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
@@ -1287,7 +1289,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * hasAtmosphericMapForLiftOff().
      *
      * @return True when successful (false when there is no enclosing atmospheric map)
-     * @see #hasAtmosphericMapForLiftOff()
      */
     private void positionOnAtmosphericMap() {
         // without aero on ground movement, lift off places the aero directly on the atmospheric map, TW p. 88
@@ -1785,7 +1786,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
 
                 // if in the atmosphere, check for a potential crash
-                if (gameManager.checkCrash(entity, step.getPosition(), step.getTargetBoardId(), step.getAltitude())) {
+                if (gameManager.checkCrash(entity, step.getPosition(), step.getBoardId(), step.getAltitude())) {
                     addReport(gameManager.processCrash(entity, md.getFinalVelocity(), curPos));
                     crashedDuringMovement = true;
                     // don't do the rest
@@ -2380,7 +2381,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (leapDistance > 2) {
                     // skill check for leg damage
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
-                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getTargetBoardId());
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getBoardId());
                     rollTarget.append(new PilotingRollData(entity.getId(),
                             2 * leapDistance, Messages.getString("TacOps.leaping.leg_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
@@ -2403,7 +2404,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
                     // skill check for fall
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
-                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getTargetBoardId());
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getBoardId());
                     rollTarget.append(new PilotingRollData(entity.getId(),
                             leapDistance, Messages.getString("TacOps.leaping.fall_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
@@ -2626,7 +2627,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         .collect(Collectors.toList());
                 if (chaffDispensers.size() > 0) {
                     chaffDispensers.get(0).setFired(true);
-                    gameManager.createSmoke(curPos, getGame().getBoard(step.getTargetBoardId()),
+                    gameManager.createSmoke(curPos, getGame().getBoard(step.getBoardId()),
                           SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
                     Hex hex = getGame().getBoard(curBoardId).getHex(curPos);
                     hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
@@ -2865,7 +2866,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
 
                 // check for inferno wash-off
-                gameManager.checkForWashedInfernos(entity, curPos, step.getTargetBoardId());
+                gameManager.checkForWashedInfernos(entity, curPos, step.getBoardId());
             }
 
             // In water, may or may not be a new hex, necessary to
@@ -3480,7 +3481,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // Not being swarmed
                     entity.setProne(true);
                     // check to see if we washed off infernos
-                    gameManager.checkForWashedInfernos(entity, curPos, step.getTargetBoardId());
+                    gameManager.checkForWashedInfernos(entity, curPos, step.getBoardId());
                 } else {
                     // Being swarmed
                     entity.setPosition(curPos);
@@ -3494,7 +3495,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // roll failed, go prone but don't dislodge swarmers
                     entity.setProne(true);
                     // check to see if we washed off infernos
-                    gameManager.checkForWashedInfernos(entity, curPos, step.getTargetBoardId());
+                    gameManager.checkForWashedInfernos(entity, curPos, step.getBoardId());
                     break;
                 }
             }
@@ -3605,7 +3606,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         return newPosition;
     }
 
-    private boolean usesAeroOnGroundMovement() {
+    private boolean usingAeroOnGroundMovement() {
         return getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE);
     }
 }

@@ -293,6 +293,21 @@ public class Hex implements Serializable {
     }
 
     /**
+     * Returns the altitude ceiling, i.e. highest terrain feature influencing aero movement, of this hex. If
+     * inAtmosphere is false, the hex is assumed to be a ground map hex and the return value is 0, as airborne aero
+     * movement ignores all terrain features of a ground map (TW p.92). Otherwise the hex is assumed to be on a low
+     * altitude map and the hex level and a few terrains set an altitude of this hex. Note that the returned value is
+     * never below 0 to avoid having to deal with negative altitudes.
+     *
+     * @param inAtmosphere True if the ceiling should be determined for an atmospheric or ground map
+     *
+     * @return the altitude ceiling, i.e. highest terrain feature influencing aero movement, of this hex
+     */
+    public int ceilingAltitude(boolean inAtmosphere) {
+        return inAtmosphere ? Math.max(0, level + maxTerrainFeatureElevation(true)) : 0;
+    }
+
+    /**
      * @param inAtmosphere Determines if the ceiling should be determined for an atmospheric map
      *                     (eg, altitudes) or ground map (eg, levels)
      * @return the elevation or altitude of the terrain feature that rises the highest above the

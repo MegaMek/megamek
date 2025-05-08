@@ -181,11 +181,11 @@ factions:
 #    board: 5
 #    altitude: 0
 #
-#  - fullname: Lyonesse Escort
-#    at: [ 19, 19 ]
-#    board: 5
-#    facing: 5
-#    altitude: 0
+  - fullname: Lyonesse Escort
+    at: [ 24, 15 ]
+    board: 2
+    facing: 5
+    altitude: 1
 #
 #  - fullname: Union (3055)
 #    at: [ 25, 13 ]

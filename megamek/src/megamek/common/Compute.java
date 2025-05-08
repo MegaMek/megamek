@@ -617,7 +617,7 @@ public class Compute {
             throw new IllegalArgumentException("Entity invalid. ID " + entityId);
         }
 
-        Board board = game.getBoard(moveStep.getTargetBoardId());
+        Board board = game.getBoard(moveStep.getBoardId());
         final Hex srcHex = board.getHex(src);
         final Hex destHex = board.getHex(dest);
         final boolean isInfantry = (entity instanceof Infantry);
@@ -5927,7 +5927,7 @@ public class Compute {
      */
     public static boolean canMoveOnPavement(Game game, Coords src,
             Coords dest, MoveStep moveStep) {
-        Board board = game.getBoard(moveStep.getTargetBoardId());
+        Board board = game.getBoard(moveStep.getBoardId());
         final Hex srcHex = board.getHex(src);
         final Hex destHex = board.getHex(dest);
         final int src2destDir = src.direction(dest);

@@ -7746,7 +7746,7 @@ public abstract class Entity extends TurnOrdered
         // If we aren't traveling along a road, apply terrain modifiers
         boolean previousStepCountsAsPavement = (prevStep == null) || prevStep.isPavementStep();
         if (!previousStepCountsAsPavement || !currStep.isPavementStep()) {
-            addPilotingModifierForTerrain(roll, lastPos, currStep.getTargetBoardId());
+            addPilotingModifierForTerrain(roll, lastPos, currStep.getBoardId());
         }
 
         boolean prevStepPavement = (prevStep != null) ?
@@ -7796,7 +7796,7 @@ public abstract class Entity extends TurnOrdered
     public PilotingRollData checkRubbleMove(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos,
           Coords curPos, boolean isLastStep, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
-        addPilotingModifierForTerrain(roll, curPos, step.getTargetBoardId(), true);
+        addPilotingModifierForTerrain(roll, curPos, step.getBoardId(), true);
 
         if (!lastPos.equals(curPos) &&
                   ((moveType != EntityMovementType.MOVE_JUMP) || isLastStep) &&
@@ -7843,7 +7843,7 @@ public abstract class Entity extends TurnOrdered
                 roll.addModifier(-1, "Swamp Beast");
             }
 
-            addPilotingModifierForTerrain(roll, curPos, step.getTargetBoardId(), false);
+            addPilotingModifierForTerrain(roll, curPos, step.getBoardId(), false);
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -7938,7 +7938,7 @@ public abstract class Entity extends TurnOrdered
         if ((prevPos == null) || (prevPos.equals(curPos) && !(this instanceof ProtoMek))) {
             return 0;
         }
-        Board board = game.getBoard(step.getTargetBoardId());
+        Board board = game.getBoard(step.getBoardId());
         Hex curHex = board.getHex(curPos);
         Hex prevHex = board.getHex(prevPos);
 
@@ -11117,7 +11117,7 @@ public abstract class Entity extends TurnOrdered
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll, MoveStep step) {
         if (step.getElevation() <= 0) {
-            addPilotingModifierForTerrain(roll, step.getPosition(), step.getTargetBoardId());
+            addPilotingModifierForTerrain(roll, step.getPosition(), step.getBoardId());
         }
     }
 

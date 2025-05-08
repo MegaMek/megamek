@@ -227,7 +227,7 @@ public class SharedUtility {
             curPos = step.getPosition();
             curFacing = step.getFacing();
             curElevation = step.getElevation();
-            curBoardId = step.getTargetBoardId();
+            curBoardId = step.getBoardId();
             Board board = game.getBoard(curBoardId);
 
             final Hex curHex = board.getHex(curPos);
@@ -261,7 +261,7 @@ public class SharedUtility {
                         - (curElevation + curHex.getLevel());
                 if (leapDistance > 2) {
                     rollTarget = entity.getBasePilotingRoll(moveType);
-                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getTargetBoardId());
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getBoardId());
                     rollTarget.append(
                         new PilotingRollData(
                             entity.getId(),
@@ -271,7 +271,7 @@ public class SharedUtility {
                     );
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                     rollTarget = entity.getBasePilotingRoll(moveType);
-                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getTargetBoardId());
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getBoardId());
                     rollTarget.append(
                         new PilotingRollData(
                             entity.getId(),

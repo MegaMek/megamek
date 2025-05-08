@@ -125,7 +125,8 @@ public class MovePath implements Cloneable, Serializable {
         BRACE(false, "Brace"),
         CHAFF(false, "Chaff"),
         PICKUP_CARGO(false, "Pickup Cargo"),
-        DROP_CARGO(false, "Drop Cargo");
+        DROP_CARGO(false, "Drop Cargo"),
+        CHANGE_BOARD(true, "Change Board");
 
         private final boolean entersNewHex;
         private final String humanReadableLabel;
@@ -366,6 +367,22 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(new MoveStep(this, MoveStepType.MANEUVER, -1, -1, manType));
     }
 
+    /**
+     * Creates a complete move path for a horizontal aero landing from an atmospheric hex onto a ground hex (i.e.
+     * when not using the aero-on-ground-map movement option). The given location is the start hex for the landing
+     * process on the ground map, not the final resting hex of the unit when it has landed.
+     *
+     * @param location The target location to begin the landing on the ground map
+     * @return A move path to send to the server to initiate landing
+     */
+    public static MovePath createHLandFromAtmosphericHexMovePath(Game game, Entity entity, BoardLocation location) {
+//        MovePath path = new MovePath(game, entity);
+//        path.addStep(MoveStep.createChangeBoardMoveStep(path, location.coords(), location.boardId()), false);
+//        path.addStep(MoveStepType.LAND);
+//        return path;
+        return new HorizontalAtmoLandingMovePath(game, entity, location);
+    }
+
     public boolean canShift() {
         return ((getEntity() instanceof QuadMek
                        // QuadVee cannot shift in vee mode
@@ -409,7 +426,7 @@ public class MovePath implements Cloneable, Serializable {
         return false;
     }
 
-    protected MovePath addStep(final MoveStep step) {
+    public MovePath addStep(final MoveStep step) {
         return addStep(step, true);
     }
 
@@ -460,7 +477,7 @@ public class MovePath implements Cloneable, Serializable {
 
         // jumping into heavy woods is danger
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
-            Hex hex = game.getBoard(step.getTargetBoardId()).getHex(step.getPosition());
+            Hex hex = game.getBoard(step.getBoardId()).getHex(step.getPosition());
             if ((hex != null) && isJumping() && step.isEndPos(this)) {
                 PilotingRollData psr = entity.checkLandingInHeavyWoods(step.getMovementType(false), hex);
                 if (psr.getValue() != PilotingRollData.CHECK_FALSE) {
@@ -519,6 +536,10 @@ public class MovePath implements Cloneable, Serializable {
             MoveStep lastStep = steps.get(steps.size() - 1);
             MoveStep prevStep = steps.get(0);
             for (MoveStep s : steps) {
+                if (s.getType() == MoveStepType.CHANGE_BOARD) {
+                    // these steps never require rolls
+                    continue;
+                }
                 if (s.getMovementType(false) == EntityMovementType.MOVE_ILLEGAL) {
                     break;
                 }
@@ -658,8 +679,8 @@ public class MovePath implements Cloneable, Serializable {
             // and we are not exceeding the maximum five hexes.
             if (last.isStrafingStep()) {
                 if (step.getFacing() != last.getFacing() ||
-                          (step.getElevation() + getGame().getBoard(step.getTargetBoardId()).getHex(step.getPosition()).floor() !=
-                                 last.getElevation() + getGame().getBoard(step.getTargetBoardId()).getHex(last.getPosition()).floor()) ||
+                          (step.getElevation() + getGame().getBoard(step.getBoardId()).getHex(step.getPosition()).floor() !=
+                                 last.getElevation() + getGame().getBoard(step.getBoardId()).getHex(last.getPosition()).floor()) ||
                           steps.stream().filter(MoveStep::isStrafingStep).count() > 5) {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     return;
@@ -880,7 +901,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public boolean isValidPositionForBrace(MoveStep step) {
-        return isValidPositionForBrace(step.getPosition(), step.getTargetBoardId(), step.getFacing());
+        return isValidPositionForBrace(step.getPosition(), step.getBoardId(), step.getFacing());
     }
 
     /**
@@ -1015,7 +1036,7 @@ public class MovePath implements Cloneable, Serializable {
             // legacy; vector movement will not carry over to atmo or ground maps (?)
             return entity.getBoardId();
         } else if (getLastStep() != null) {
-            return getLastStep().getTargetBoardId();
+            return getLastStep().getBoardId();
         } else {
             return entity.getBoardId();
         }
@@ -1103,7 +1124,7 @@ public class MovePath implements Cloneable, Serializable {
     public int getMaxElevation() {
         int maxElev = 0;
         for (MoveStep step : steps) {
-            maxElev = Math.max(maxElev, getGame().getBoard(step.getTargetBoardId()).getHex(step.getPosition()).getLevel());
+            maxElev = Math.max(maxElev, getGame().getBoard(step.getBoardId()).getHex(step.getPosition()).getLevel());
         }
         return maxElev;
     }
@@ -1795,7 +1816,7 @@ public class MovePath implements Cloneable, Serializable {
         Coords highestCoords = null;
         int highestElevation = 0;
         for (MoveStep step : steps) {
-            if (getGame().getBoard(step.getTargetBoardId()).getHex(step.getPosition()).getLevel() > highestElevation) {
+            if (getGame().getBoard(step.getBoardId()).getHex(step.getPosition()).getLevel() > highestElevation) {
                 highestElevation = step.getElevation();
                 highestCoords = step.getPosition();
             }

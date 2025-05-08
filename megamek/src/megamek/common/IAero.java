@@ -713,20 +713,27 @@ public interface IAero {
     }
 
     default String hasRoomForHorizontalLanding() {
+        return hasRoomForHorizontalLanding(((Entity) this).getBoardId(), ((Entity) this).getPosition());
+    }
+
+    default String hasRoomForHorizontalLanding(int assumedBoardId, Coords assumedPosition) {
         Entity thisEntity = ((Entity) this);
-        Coords pos = thisEntity.getPosition();
+        Game game = thisEntity.getGame();
+        if (game == null || !game.hasBoardLocationOf(thisEntity)) {
+            return "Unit is not on a board.";
+        }
         // walk along the hexes in the facing of the unit
-        Board board = thisEntity.getGame().getBoard(thisEntity);
-        Hex hex = board.getHex(pos);
+        Board board = game.getBoard(assumedBoardId);
+        Hex hex = board.getHex(assumedPosition);
         int elev = hex.getLevel();
         int facing = thisEntity.getFacing();
         String lenString = " (" + getLandingLength() + " hexes required)";
         // dropships need a a landing strip three hexes wide
         Vector<Coords> startingPos = new Vector<>();
-        startingPos.add(thisEntity.getPosition());
+        startingPos.add(assumedPosition);
         if (this instanceof Dropship) {
-            startingPos.add(thisEntity.getPosition().translated((facing + 5) % 6));
-            startingPos.add(thisEntity.getPosition().translated((facing + 1) % 6));
+            startingPos.add(assumedPosition.translated((facing + 5) % 6));
+            startingPos.add(assumedPosition.translated((facing + 1) % 6));
         }
         for (Coords position : startingPos) {
             for (int i = 0; i < getLandingLength(); i++) {
@@ -736,7 +743,7 @@ public interface IAero {
                     return "Buildings in the way" + lenString;
                 }
                 // no units in the way
-                for (Entity en : thisEntity.getGame().getEntitiesVector(position, thisEntity.getBoardId())) {
+                for (Entity en : thisEntity.getGame().getEntitiesVector(position, assumedBoardId)) {
                     if (!en.isAirborne()) {
                         return "Ground units in the way" + lenString;
                     }

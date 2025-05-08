@@ -1512,6 +1512,22 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         if (ce() == null) {
             return;
         }
+
+        // TODO: Allow targeting off-board ASF once multi-map-level play is implemented
+        // TODO: allow targeting off-board hexes once Counter-Battery Fire reworked to target hexes
+        // Only allow re-targeting of off-board units observed for Counter-battery fire
+        if (t!= null && t.isOffBoard()) {
+            if (t instanceof Entity entity) {
+                // Observed off-board artillery can be targeted, but not other units.
+                if (!entity.isOffBoardObserved(ce().getOwner().getTeam())) {
+                    return;
+                }
+            } else {
+                // Currently off-board hexes cannot be targeted.
+                return;
+            }
+        }
+
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         Mounted<?> weapon = ce().getEquipment(weaponId);
         // Some weapons pick an automatic target

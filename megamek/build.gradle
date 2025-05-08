@@ -2,9 +2,9 @@ import java.time.LocalDateTime
 
 plugins {
     id 'application'
-    id 'com.palantir.git-version' version '3.1.0'
+    id 'com.palantir.git-version' version '3.2.0'
     id 'edu.sc.seis.launch4j' version '3.0.6'
-    id "io.sentry.jvm.gradle" version '5.3.0'
+    id "io.sentry.jvm.gradle" version '5.5.0'
     id 'jacoco'
     id 'java'
 }
@@ -35,23 +35,23 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.3'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.3'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.19.0'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.0'
 
-    implementation 'com.formdev:flatlaf:3.5.4'
-    implementation 'com.formdev:flatlaf-extras:3.5.4'
+    implementation 'com.formdev:flatlaf:3.6'
+    implementation 'com.formdev:flatlaf-extras:3.6'
 
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
 
     implementation 'com.thoughtworks.xstream:xstream:1.4.21'
 
-    implementation 'commons-io:commons-io:2.18.0'
+    implementation 'commons-io:commons-io:2.19.0'
 
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
 
-    implementation 'org.apache.commons:commons-collections4:4.5.0-M3'
+    implementation 'org.apache.commons:commons-collections4:4.5.0'
     implementation 'org.apache.commons:commons-lang3:3.17.0'
-    implementation 'org.apache.commons:commons-text:1.13.0'
+    implementation 'org.apache.commons:commons-text:1.13.1'
 
     implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
     implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
@@ -66,10 +66,10 @@ dependencies {
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.2'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.1'
-    testImplementation 'org.mockito:mockito-core:5.16.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.2'
+    testImplementation 'org.mockito:mockito-core:5.17.0'
 }
 
 application {

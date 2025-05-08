@@ -224,4 +224,9 @@ public class ASStatsDialog extends AbstractDialog {
     private void printCards() {
         new ASCardPrinter(tablePanel.getSortedElements(), getFrame()).printCards();
     }
+
+    @Override
+    protected void cancelAction() {
+        dispose();
+    }
 }

@@ -229,9 +229,9 @@
 			</model>
 		</chassis>
 		<chassis name='Banshee' unitType='Mek'>
-			<availability>TH:5</availability>
+			<availability>TH!A:4!B:5</availability>
 			<model name='BNC-1E'>
-				<availability>TH:8,Periphery.Deep:8,Periphery:8</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='BattleAxe' unitType='Mek'>
@@ -431,9 +431,9 @@
             </model>
         </chassis>
 		<chassis name='Emperor' unitType='Mek'>
-			<availability>TH:6</availability>
+			<availability>TH!A:4</availability>
 			<model name='EMP-1A'>
-				<availability>TH:8,General:8</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Essex I Destroyer' unitType='Warship'>
@@ -741,12 +741,12 @@
 			</model>
 		</chassis>
 		<chassis name='Mackie' unitType='Mek'>
-			<availability>TH:8,LA:4,IS:4,FWL:4</availability>
+			<availability>TH!A:8!B:8,FS!A:8,LA!A:3,FWL!A:8,DC!A:8,CC!A:8</availability>
 			<model name='MSK-5S'>
-				<availability>LA:1,General:1</availability>
+				<availability>IS:8,TH!B:4</availability>
 			</model>
 			<model name='MSK-6S'>
-				<availability>General:6,FWL:6</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Manatee' unitType='Dropship'>
@@ -1285,9 +1285,9 @@
 			</model>
 		</chassis>
 		<chassis name='Ymir' unitType='Mek'>
-            <availability>LA:4:2462</availability>
+            <availability>LA!A:8</availability>
             <model name='BWP-X1 &apos;Bipedal Weapons Platform&apos;'>
-                <availability>General:8</availability>
+                <availability>LA:8</availability>
             </model>
 		</chassis>
 	</units>

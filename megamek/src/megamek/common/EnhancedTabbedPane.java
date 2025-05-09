@@ -1467,7 +1467,6 @@ public class EnhancedTabbedPane extends JTabbedPane {
                 final Rectangle newBounds = ensureValidSizeAndPosition(storedWindowBounds.get(), 400, 300);
                 compSize = new Dimension(newBounds.width, newBounds.height);
                 location = new Point(newBounds.x, newBounds.y);
-                System.out.println("Rectangle: "+newBounds);
             } else {
                 // Use the tab size as default size
                 compSize = ensureValidSize(getTabContentSize(tabIndex), 400, 300);

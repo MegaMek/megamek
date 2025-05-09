@@ -2947,10 +2947,8 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Convenience method to drop all cargo.
-     *
-     * @deprecated no indicated uses.
+     * TODO HHW - Psi
      */
-    @Deprecated(since = "0.50.05", forRemoval = true)
     public void dropGroundObjects() {
         carriedObjects.clear();
     }
@@ -2967,9 +2965,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @deprecated no indicated uses.
+     * TODO HHW - Psi
      */
-    @Deprecated(since = "0.50.05", forRemoval = true)
     public void setCarriedObjects(Map<Integer, ICarryable> value) {
         carriedObjects = value;
     }

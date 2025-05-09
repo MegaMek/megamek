@@ -1257,10 +1257,10 @@
 			</model>
 		</chassis>
 		<chassis name='Wasp' unitType='Mek'>
-			<availability>TH!A:8</availability>
+			<availability>IS:1+:2469,TH!A:8,PoR:0,RWR:1+:2469</availability>
 			<model name='WSP-1'>
 				<roles>recon</roles>
-				<availability>TH:8</availability>
+				<availability>TH:8,IS!A:8,RWR!A:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Whitestreak Jetski' unitType='Naval'>

@@ -715,18 +715,18 @@
             </model>
         </chassis>
 		<chassis name='Commando' unitType='Mek'>
-			<availability>LA:8+</availability>
+			<availability>LA:8+,TC!A:3!B:3,RWR!A:3!B:3,Periphery.R!A:3!B:1,Periphery.DD:1+</availability>
 			<model name='COM-1A'>
 				<roles>recon</roles>
-				<availability>LA!B:4!C:6!D:8</availability>
+				<availability>LA!B:4!C:6!D:8,TC!A:5!B:8,RWR!A:3!B:8,Periphery.R:8,Periphery.DD:8</availability>
 			</model>
 			<model name='COM-1D'>
 				<roles>recon</roles>
-				<availability>LA!B:6!C:5!D:4</availability>
+				<availability>LA!B:6!C:5!D:4,TC!A:8,RWR!A:5,Periphery.R:2+,Periphery.DD:1+</availability>
 			</model>
 			<model name='COM-2D'>
 				<roles>recon</roles>
-				<availability>LA!A:8!B:5!C:1</availability>
+				<availability>LA!A:8!B:5!C:1,RWR!A:2</availability>
 			</model>
 		</chassis>
 		<chassis name='Commonwealth Light Cruiser' unitType='Warship'>
@@ -1065,7 +1065,7 @@
 		    </model>
 		</chassis>
 		<chassis name='Falcon' unitType='Mek'>
-			<availability>SL:4+,SL.R:4+,TH:4+,LA:1+</availability>
+			<availability>SL:4+,SL.R:4+,TH:4+,LA:1+:2583</availability>
 			<model name='FLC-4N'>
 				<availability>SL:8,SL.R:8,TH:8,LA:8</availability>
 			</model>
@@ -1108,23 +1108,23 @@
 			</model>
 		</chassis>
 		<chassis name='Firebee' unitType='Mek'>
-			<availability>CC!A:7!B:7!C:7!D:7</availability>
+			<availability>CC!A:7!B:7!C:7!D:7,TC!A:4!B:5,MOC!A:4!B:5,Periphery.HR!A:3!B:5,Periphery.CM!A:5!B:5,Periphery.ME!A:1!B:1</availability>
 			<model name='FRB-1E (WAM-B)'>
-				<availability>CC!B:4!C:6!D:8</availability>
+				<availability>CC!B:4!C:6!D:8,TC!A:5!B:8,MOC!A:5!B:8,Periphery.HR:8,Periphery.CM:8,Periphery.ME:8</availability>
 			</model>
 			<model name='FRB-2E'>
-				<availability>CC!A:8!B:8!C:6</availability>
+				<availability>CC!A:8!B:8!C:6,TC!A:5,MOC!A:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Firestarter' unitType='Mek'>
-			<availability>SL:2,SL.R:2,IS:3+,TH:2</availability>
+			<availability>SL:2,SL.R:2,IS:3+,TH:2,MERC:3+,TC:2+,MOC:2+,RWR:2+</availability>
 			<model name='FS9-A'>
                 <roles>anti_infantry,recon</roles>
-				<availability>SL:8,SL.R:8,IS:8,TH:8,MERC:8</availability>
+				<availability>SL:8,SL.R:8,IS:8,TH:8,MERC:8,TC:8,MOC:8,RWR:8</availability>
 			</model>
 			<model name='FS9-K'>
                 <roles>anti_infantry,recon</roles>
-				<availability>SL:3,SL.R:3,IS:3,TH:3,MERC:3</availability>
+				<availability>SL:3,SL.R:3,IS:3,TH:3,MERC:3,TC:3,MOC:3,RWR:3</availability>
 			</model>
 		</chassis>
 		<chassis name='Flatbed Truck' unitType='Tank'>
@@ -1151,16 +1151,16 @@
 			</model>
 		</chassis>
         <chassis name='Flea' unitType='Mek'>
-            <availability>FWL!A:6!B:6!C:6!D:6</availability>
+            <availability>FWL!A:6!B:6!C:6!D:6,MOC!A:3!B:1,Periphery.CM!A:2,Periphery.ME!A:2,Periphery.MW!A:2</availability>
             <model name='FLE-14'>
                 <availability>FWL!B:1!C:2!D:3</availability>
             </model>
             <model name='FLE-15'>
                 <roles>anti_infantry</roles>
-                <availability>FWL!A:6!B:6!C:6</availability>
+                <availability>FWL!A:6!B:6!C:6,MOC!A:1!B:5,Periphery.CM:5,Periphery.ME:5,Periphery.MW:5</availability>
             </model>
             <model name='FLE-4'>
-                <availability>FWL!A:8!B:6</availability>
+                <availability>FWL!A:8!B:6,MOC:8,Periphery.CM:8,Periphery.ME:8,Periphery.MW:8</availability>
             </model>
         </chassis>
 		<chassis name='Foot Platoon' unitType='Infantry'>
@@ -1819,18 +1819,18 @@
 			</model>
 		</chassis>
 		<chassis name='Locust' unitType='Mek'>
-			<availability>SL:6+,SL.R:7,IS!A:4!B:3!C:2,TH:5+,FS!A:5!B:4!C:1,LA!A:5!B:4!C:3,FWL!A:4!B:1,MERC:3+</availability>
+			<availability>SL:6+,SL.R:7,IS!A:4!B:3!C:2,TH:5+,FS!A:5!B:4!C:1,LA!A:5!B:4!C:3,FWL!A:4!B:1,MERC:3+,TC!A:4,MOC!A:4,RWR!A:4,OA!A:2</availability>
 			<model name='LCT-1M'>
                 <roles>recon</roles>
                 <availability>FS:8+</availability>
             </model>
             <model name='LCT-1S'>
 				<roles>recon</roles>
-				<availability>LA:8+</availability>
+				<availability>LA:8+,RWR:1</availability>
 			</model>
 			<model name='LCT-1V'>
 				<roles>recon</roles>
-				<availability>SL:8,SL.R:5,IS:8,TH:8,FS:6,LA:5,MERC:8</availability>
+				<availability>SL:8,SL.R:5,IS:8,TH:8,FS:6,LA:5,MERC:8,TC:8,MOC:8,RWR:8,OA:8</availability>
 			</model>
 			<model name='LCT-1Vb'>
 				<roles>recon</roles>
@@ -2342,10 +2342,10 @@
 			</model>
 		</chassis>
 		<chassis name='Ostscout' unitType='Mek'>
-			<availability>SL:3+,SL.R:2+,TH:3+,LA:1+</availability>
+			<availability>SL:3+,SL.R:2+,TH:3+,LA:1+:2605</availability>
 			<model name='OTT-7J'>
 				<roles>recon</roles>
-				<availability>SL:8,SL.R:0,TH:8,LA:8</availability>
+				<availability>SL:8,SL.R:0,TH:8,LA!A:8</availability>
 			</model>
 			<model name='OTT-7Jb'>
 				<roles>recon</roles>
@@ -2785,14 +2785,14 @@
 			</model>
 		</chassis>
 		<chassis name='Stinger' unitType='Mek'>
-			<availability>SL!A:7!B:7!C:7!D:6!F:5,SL.R:7,IS!A:5!B:4!C:1,TH:7,FS!A:6!B:3!C:1,FWL!A:6!B:3!C:1,DC!A:6!B:5!C:4,MERC!A:5!B:5</availability>
+			<availability>SL!A:7!B:7!C:7!D:6!F:5,SL.R:7,IS!A:5!B:4!C:1,TH:7,FS!A:6!B:3!C:1,FWL!A:6!B:3!C:1,DC!A:6!B:5!C:4,MERC!A:5!B:5,TC!A:4!B:1,MOC!A:3!B:1,RWR!A:3!B:1,OA!A:2,Periphery.HR!A:3,Periphery!A:2,Periphery.Deep:1+</availability>
 			<model name='STG-3G'>
 				<roles>recon</roles>
-				<availability>SL:6+,SL.R:6+,IS:6+,TH:6+,DC!A:7!B:6!C:5,CC!A:6!B:5!C:4,MERC!A:6!B:4</availability>
+				<availability>SL:6+,SL.R:6+,IS:6+,TH:6+,DC!A:7!B:6!C:5,CC!A:6!B:5!C:4,MERC!A:6!B:4,TC!A:6,MOC!A:5,RWR!A:5,Periphery.HR!A:5</availability>
 			</model>
 			<model name='STG-3R'>
 				<roles>recon</roles>
-				<availability>SL:7,SL.R:7,IS:7,TH:7,MERC:7</availability>
+				<availability>SL:7,SL.R:7,IS:7,TH:7,MERC:7,TC:8,MOC:8,RWR:8,OA:8,Periphery:8,Periphery.Deep:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Stoat Scout Car' unitType='Tank'>
@@ -2853,9 +2853,9 @@
 			</model>
 		</chassis>
 		<chassis name='Thorn' unitType='Mek'>
-			<availability>SL:5+,SL.R:6,TH:5+</availability>
+			<availability>SL:5+,SL.R:6,TH:5+,RWR!A:3</availability>
 			<model name='THE-F'>
-				<availability>TH!C:6!D:8!F:8</availability>
+				<availability>TH!C:6!D:8!F:8,RWR:8</availability>
 			</model>
 			<model name='THE-N'>
 				<availability>SL:8,SL.R:8,TH:6</availability>
@@ -2890,14 +2890,14 @@
 			</model>
 		</chassis>
 		<chassis name='Toro' unitType='Mek'>
-			<availability>TC:8</availability>
+			<availability>TC!A:8!B:6,MOC!A:3!B:3,OA!A:3!B:2,Periphery.HR!A:8!B:5,Periphery.CM!A:4!B:4,Periphery.ME!A:2!B:1,Periphery.MW!A:1!B:1,Periphery.OS!A:2!B:1</availability>
 			<model name='TR-A-1'>
 				<roles>fire_support</roles>
-				<availability>General:4</availability>
+				<availability>TC!A:6!B:8,MOC!A:3!B:8,OA:5,Periphery.HR:8,Periphery.CM:8,Periphery.ME:8,Periphery.MW:8,Periphery.OS:8</availability>
 			</model>
 			<model name='TR-A-6'>
 				<roles>fire_support</roles>
-				<availability>General:6</availability>
+				<availability>TC!A:7,MOC!A:5,OA!A:5</availability>
 			</model>
 		</chassis>
 		<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
@@ -2946,9 +2946,9 @@
 			</model>
 		</chassis>
         <chassis name='Trooper' unitType='Mek'>
-            <availability>FWL!C:3!D:4</availability>
+            <availability>FWL!C:3!D:4,MOC!A:1!B:5,Periphery.CM!A:3!B:5,Periphery.ME!A:3!B:5,Periphery.MW!A:3!B:5</availability>
             <model name='TP-1R'>
-                <availability>FWL:8</availability>
+                <availability>FWL:8,MOC:8,Periphery.CM:8,Periphery.ME:8,Periphery.MW:8</availability>
             </model>
         </chassis>
 		<chassis name='Turhan Urban Combat Vehicle' unitType='Tank'>
@@ -3071,14 +3071,14 @@
 			</model>
 		</chassis>
 		<chassis name='Wasp' unitType='Mek'>
-			<availability>SL:8,SL.R!A:6!B:7!C:8!D:8!F:8,IS!A:6!B:6!C:6!D:6,TH:7,FS!A:8!B:8!C:8!D:8,FWL!A:6!B:5!C:4!D:3,DC!A:6!B:6!C:6!D:8,MERC!A:4!B:5!C:5</availability>
+			<availability>SL:8,SL.R!A:6!B:7!C:8!D:8!F:8,IS!A:6!B:6!C:6!D:6,TH:7,FS!A:8!B:8!C:8!D:8,FWL!A:6!B:5!C:4!D:3,DC!A:6!B:6!C:6!D:8,MERC!A:4!B:5!C:5,TC!A:6!B:3,MOC!A:6!B:1,RWR!A:6!B:3,OA!A:4!B:1,Periphery.HR!A:6,Periphery!A:5!B:5,Periphery.Deep!A:2</availability>
 			<model name='WSP-1'>
 				<roles>recon</roles>
-				<availability>SL:3-,SL.R:0,IS!B:6!C:8!D:8,TH:0,FWL!B:4!C:8!D:8,DC!B:4!C:8!D:8,MERC!B:6!C:8</availability>
+				<availability>SL:3-,SL.R:0,IS!B:6!C:8!D:8,TH:0,FWL!B:4!C:8!D:8,DC!B:4!C:8!D:8,MERC!B:6!C:8,TC!B:8,RWR!A:6!B:8,MOC:7,OA:7,Periphery:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='WSP-1A'>
 				<roles>recon</roles>
-				<availability>SL!A:8!B:8!C:7!D:6!F:5,SL.R:8,IS!A:8!B:8,TH:8,DC!A:8!B:6!C:3,MERC!A:8!B:4</availability>
+				<availability>SL!A:8!B:8!C:7!D:6!F:5,SL.R:8,IS!A:8!B:8,TH:8,DC!A:8!B:6!C:3,MERC!A:8!B:4,TC!A:8!B:1,MOC!A:5!B:1,RWR!A:8!B:1,OA!A:2,Periphery.HR!A:3,Periphery!A:2,Periphery.Deep:1+</availability>
 			</model>
 		</chassis>
         <chassis name='Wayland Mobile Base' unitType='Tank'>

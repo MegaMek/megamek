@@ -541,6 +541,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
          * @param tabIndex  The new index of the tab that was moved
          * @param component The component that was moved
          */
+        @SuppressWarnings("unused")
         default void onTabMoved(int oldIndex, int tabIndex, Component component) {
         }
 
@@ -550,6 +551,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
          * @param tabIndex  The index of the tab being detached
          * @param component The component in the tab
          */
+        @SuppressWarnings("unused")
         default boolean onTabDetaching(int tabIndex, Component component) {
             return true;
         }
@@ -560,6 +562,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
          * @param window  The window containing the detached tab
          * @param tabInfo Information about the detached tab
          */
+        @SuppressWarnings("unused")
         default void onTabDetached(Window window, DetachedTabInfo tabInfo) {
         }
 
@@ -568,6 +571,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
          *
          * @param tabInfo Information about the tab being reattached
          */
+        @SuppressWarnings("unused")
         default boolean onTabReattaching(DetachedTabInfo tabInfo) {
             return true;
         }
@@ -578,6 +582,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
          * @param tabIndex  The index where the tab was inserted
          * @param component The component that was reattached
          */
+        @SuppressWarnings("unused")
         default void onTabReattached(int tabIndex, Component component) {
         }
 
@@ -588,6 +593,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
          * @param component The component in the tab
          * @param event     The event that triggered the close (may be null)
          */
+        @SuppressWarnings("unused")
         default void onTabCloseRequest(int tabIndex, Component component, InputEvent event) {
         }
 
@@ -597,6 +603,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
          * @param tabIndex  The index of the tab that was removed
          * @param component The component that was removed
          */
+        @SuppressWarnings("unused")
         default void onTabRemoved(int tabIndex, Component component) {
         }
     }

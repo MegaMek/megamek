@@ -3530,6 +3530,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MINI_MAP_MOVE_PATH_PERSISTENCE, rounds);
     }
     
+    /**
+     * Returns the size and position of a saved named window.
+     * @param name The name of the window.
+     * @return An Optional containing the Rectangle representing the size and position, or an empty Optional if not found.
+     */
     public Optional<Rectangle> getNamedWindowSizeAndPosition(String name) {
         final String storedData = getString(name + _WINDOW);
         if (storedData == null) {
@@ -3550,12 +3555,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
         }
     }
 
+    /**
+     * Saves the size and position of a named window.
+     * @param name The name of the window.
+     * @param component The component representing the window.
+     */
     public void setNamedWindowSizeAndPosition(String name, Window component) {
         Dimension size = component.getSize();
         Point pos = component.getLocation();
         store.setValue(name + _WINDOW, pos.x + DELIMITER + pos.y + DELIMITER + size.width + DELIMITER + size.height);
     }
 
+    /**
+     * Returns the tab order for a given saved name (for example: the name of a window).
+     * @param name The name of the tab order.
+     * @return A List of Strings representing the tab order, or null if not found.
+     */
     public @Nullable List<String> getTabOrder(String name) {
         final String storedData = getString(name + _TABORDER);
         if (storedData == null) {
@@ -3565,6 +3580,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return storedTabOrder;
     }
 
+    /**
+     * Saves the tab order for a given name (for example: the name of a window).
+     * @param name The name of the tab order.
+     * @param order A List of Strings representing the tab order.
+     */
     public void setTabOrder(String name, List<String> order) {
         final String storedTabOrder = String.join(DELIMITER, order);
         store.setValue(name + _TABORDER, storedTabOrder);

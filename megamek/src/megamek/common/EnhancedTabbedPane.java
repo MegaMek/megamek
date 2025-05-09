@@ -135,9 +135,8 @@ public class EnhancedTabbedPane extends JTabbedPane {
     private boolean tabReorderingEnabled = false;
     private boolean actionButtonsAlignAfterTabs = true;
     private int minimumTabsCount = 0;
-    private final String noTabsMessage = "<All tabs detached>\n" +
-            "Double-click to reattach all tabs";
-    private final String tabReattachTabbedBarDoubleclickHint = "Double-click to reattach all tabs";
+    private final String noTabsMessage = Messages.getString("EnhancedTabbedPane.noTabsMessage");
+    private final String tabReattachTabbedBarDoubleclickHint = Messages.getString("EnhancedTabbedPane.tabReattachTabbedBarDoubleclickHint");
     private boolean shouldShowNoTabsMessage = false;
     private boolean shouldShowReattachHint = false;
     private boolean isShowingDockingPreview = false;

@@ -1,24 +1,39 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.common.actions.DfaAttackAction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -265,5 +281,50 @@ class EntityTest {
         } catch (Exception ex) {
             fail(ex.getMessage());
         }
+    }
+
+    @Test
+    public void testCalcElevationDuringDfaIntoWater() {
+        // Create a Mech that is capable of DFA
+        Mek mek = new BipedMek();
+        int postDfaElevationOnTargetUnderwater = 1;
+        int assumedElevationOnDfaIsAlwaysZero = 0;
+        mek.setElevation(postDfaElevationOnTargetUnderwater); // post DFA elevation
+
+        // Setup hexes
+        Hex sameHex = createWaterHexWithDepth(2);
+
+        // Create a DFA attack to simulate we're in DFA resolution
+        DfaAttackAction dfaAction = new DfaAttackAction(1, 2, new Coords(0, 0));
+        mek.setDisplacementAttack(dfaAction);
+        assertEquals(-2,
+              mek.calcElevation(sameHex, sameHex, assumedElevationOnDfaIsAlwaysZero, false),
+              "DFA attack should end at bottom of water hex (-2)");
+    }
+
+    @Test
+    public void testCalcElevationIntoWater() {
+        // Create a mech for normal movement
+        BipedMek mek = new BipedMek();
+
+        assertAll("Check elevation",
+              () -> assertEquals(-1, mek.calcElevation(createWaterHexWithDepth(2), createWaterHexWithDepth(1),
+                          createWaterHexWithDepth(2).floor(), false),
+                    "Normal movement should maintain consistent elevation"),
+              () -> assertEquals(-1, mek.calcElevation(createWaterHexWithDepth(0), createWaterHexWithDepth(1)),
+                    "Normal movement should maintain consistent elevation"),
+              () -> assertEquals(-1, mek.calcElevation(createWaterHexWithDepth(3), createWaterHexWithDepth(1),
+                          createWaterHexWithDepth(3).floor(), false),
+                    "Normal movement should maintain consistent elevation"),
+              () -> assertEquals(-3, mek.calcElevation(createWaterHexWithDepth(1), createWaterHexWithDepth(3),
+                          createWaterHexWithDepth(1).floor(), false),
+                    "Normal movement should maintain consistent elevation")
+        );
+    }
+
+    private static Hex createWaterHexWithDepth(int depth) {
+        Hex sourceHex = new Hex(0);
+        sourceHex.addTerrain(new Terrain(Terrains.WATER, depth));
+        return sourceHex;
     }
 }

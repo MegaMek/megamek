@@ -30,37 +30,22 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.common.battlevalue;
+package megamek.client.ui.swing.lobby.sorters;
 
-import megamek.common.Entity;
-import megamek.common.HandheldWeapon;
+/**
+ * Enum representing sorting directions.
+ * @author Luana Coppio
+ */
+public enum Sorting {
+    ASCENDING(1), DESCENDING(-1);
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+    private final int direction;
 
-public class HandheldWeaponBVCalculator extends BVCalculator {
-    HandheldWeaponBVCalculator(Entity entity) {
-        super(entity);
+    Sorting(int direction) {
+        this.direction = direction;
     }
 
-    @Override
-    protected void processDefensiveValue() {
-        processArmor();
-        // HHWs can mount AMS, so here we are.
-        processDefensiveEquipment();
-    }
-
-    @Override
-    protected void processArmor() {
-        var armor = entity.getTotalArmor();
-        var armorBV = armor * 2;
-        defensiveValue += armorBV;
-        bvReport.addLine("Armor:", formatForReport(armor) + " (Total Armor Factor) x 2", "= " + formatForReport(armorBV));
-    }
-
-    @Override
-    protected void processOffensiveValue() {
-        processWeapons();
-        processAmmo();
-        processOffensiveEquipment();
+    public int getDirection() {
+        return direction;
     }
 }

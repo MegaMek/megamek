@@ -1,31 +1,47 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.swing.unitDisplay;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -53,8 +69,9 @@ public class SummaryPanel extends PicMap {
 
     private final UnitDisplay unitDisplay;
     private final JLabel unitInfo;
+    private final JPanel contentPanel;
 
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final GUIPreferences GUI_PREFERENCES = GUIPreferences.getInstance();
 
     /**
      * @param unitDisplay the UnitDisplay UI to attach to
@@ -63,12 +80,24 @@ public class SummaryPanel extends PicMap {
         this.unitDisplay = unitDisplay;
         setBackGround();
 
-        JComponent panel = this;
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS ));
-        panel.add(Box.createRigidArea(new Dimension(0,10)));
+        contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setOpaque(false);
 
-        unitInfo = new JLabel("<HTML>UnitInfo</HTML>", SwingConstants.LEFT );
-        panel.add(unitInfo);
+        // Add spacing at top
+        contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        // Create the unit info label
+        unitInfo = new JLabel("<HTML>UnitInfo</HTML>", SwingConstants.LEFT);
+        unitInfo.setOpaque(false);
+        contentPanel.add(unitInfo);
+
+        // Use BorderLayout to ensure the content panel is properly sized
+        setLayout(new BorderLayout());
+        add(contentPanel, BorderLayout.NORTH);
+
+        // Add a "push" component to allow proper scrolling
+        add(Box.createVerticalGlue(), BorderLayout.CENTER);
     }
 
     private void setBackGround() {
@@ -163,15 +192,15 @@ public class SummaryPanel extends PicMap {
             Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
 
             if (mhex != null) {
-                String terrainTip = HexTooltip.getTerrainTip(mhex, GUIP, entity.getGame());
-                String attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
+                String terrainTip = HexTooltip.getTerrainTip(mhex, GUI_PREFERENCES, entity.getGame());
+                String attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUI_PREFERENCES.getUnitToolTipTerrainBGColor()));
                 col = UIUtil.tag("TD", attr, terrainTip);
                 row = UIUtil.tag("TR", "", col);
                 rows += row;
 
-                String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), GUIP);
+                String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), GUI_PREFERENCES);
                 if (!hexTip.isEmpty()) {
-                    attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
+                    attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUI_PREFERENCES.getUnitToolTipTerrainBGColor()));
                     col = UIUtil.tag("TD", attr, hexTip);
                     row = UIUtil.tag("TR", "", col);
                     rows += row;
@@ -185,11 +214,22 @@ public class SummaryPanel extends PicMap {
 
             String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0 width=100%", rows);
             txt = padLeft(table);
-            //txt = table;
         }
 
         unitInfo.setText(UnitToolTip.wrapWithHTML(txt));
-        unitInfo.setOpaque(false);
+
+        // Force a revalidation to ensure proper sizing
+        contentPanel.revalidate();
+        contentPanel.setSize(contentPanel.getPreferredSize());
+        // Request focus to ensure scrollbars update
+        SwingUtilities.invokeLater(() -> {
+            revalidate();
+            getParent().revalidate();
+            if (getParent().getParent() instanceof JScrollPane) {
+                getParent().getParent().revalidate();
+            }
+        });
+
     }
 
     private String padLeft(String html) {
@@ -197,12 +237,22 @@ public class SummaryPanel extends PicMap {
         String col = UIUtil.tag("TD", "", html);
         String row = UIUtil.tag("TR", "", col);
         String attr = String.format("CELLSPACING=0 CELLPADDING=%s width=100%%", dist);
-        String table = UIUtil.tag("TABLE", attr, row);
-        return table;
+        return UIUtil.tag("TABLE", attr, row);
     }
 
     @Override
     public void onResize() {
+        revalidate();
+    }
 
+    @Override
+    public Dimension getPreferredSize() {
+        // Make sure the preferred size is at least as tall as the content
+        Dimension dimension = super.getPreferredSize();
+        if (contentPanel != null) {
+            Dimension contentSize = contentPanel.getPreferredSize();
+            dimension.height = Math.max(dimension.height, contentSize.height + 20); // Add padding
+        }
+        return dimension;
     }
 }

@@ -11718,6 +11718,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Barracuda Ammo";
+        ammo.shortName = "B";
         ammo.setInternalName("Ammo Barracuda");
         ammo.addLookupName("Barracuda Ammo");
         ammo.damagePerShot = 2;
@@ -11749,6 +11750,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "White Shark Ammo";
+        ammo.shortName = "WS";
         ammo.setInternalName("Ammo White Shark");
         ammo.addLookupName("WhiteShark Ammo");
         ammo.addLookupName("White Shark Ammo");
@@ -11782,6 +11784,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "Killer Whale Ammo";
         ammo.setInternalName("Ammo Killer Whale");
+        ammo.shortName = "KW";
         ammo.addLookupName("KillerWhale Ammo");
         ammo.damagePerShot = 4;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
@@ -11813,6 +11816,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Barracuda (Tele-Operated) Ammo";
+        ammo.shortName = "B-T";
         ammo.setInternalName("Ammo Barracuda-T");
         ammo.addLookupName("BarracudaT Ammo");
         ammo.shortName = "Barracuda-T";
@@ -11842,6 +11846,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "White Shark (Tele-Operated) Ammo";
+        ammo.shortName = "WS-T";
         ammo.setInternalName("Ammo White Shark-T");
         ammo.addLookupName("WhiteSharkT Ammo");
         ammo.shortName = "White Shark-T";
@@ -11870,6 +11875,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Killer Whale (Tele-Operated) Ammo";
+        ammo.shortName = "KW-T";
         ammo.setInternalName("Ammo Killer Whale-T");
         ammo.addLookupName("KillerWhaleT Ammo");
         ammo.shortName = "Killer Whale-T";
@@ -11898,6 +11904,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Kraken (Tele-Operated) Ammo";
+        ammo.shortName = "KR-T";
         ammo.setInternalName("Ammo KrakenT");
         ammo.addLookupName("KrakenT Ammo");
         ammo.shortName = "Kraken-T";
@@ -11926,6 +11933,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Kraken Ammo";
+        ammo.shortName = "KR";
         ammo.setInternalName("Ammo Kraken");
         ammo.addLookupName("Kraken Ammo");
         ammo.damagePerShot = 10;
@@ -12214,9 +12222,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Barracuda Ammo";
+        ammo.shortName = "B";
         ammo.setInternalName("Ammo AR10 Barracuda");
         ammo.addLookupName("AR10 Barracuda Ammo");
-        ammo.shortName = "Barracuda";
         ammo.damagePerShot = 2;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -12248,9 +12256,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Killer Whale Ammo";
+        ammo.shortName = "KW";
         ammo.setInternalName("Ammo AR10 Killer Whale");
         ammo.addLookupName("AR10 KillerWhale Ammo");
-        ammo.shortName = "Killer Whale";
         ammo.damagePerShot = 4;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -12281,9 +12289,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 White Shark Ammo";
+        ammo.shortName = "WS";
         ammo.setInternalName("Ammo AR10 White Shark");
         ammo.addLookupName("AR10 WhiteShark Ammo");
-        ammo.shortName = "White Shark";
         ammo.damagePerShot = 3;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -12316,9 +12324,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Barracuda (Tele-Operated) Ammo";
+        ammo.shortName = "B-T";
         ammo.setInternalName("Ammo AR10 Barracuda-T");
         ammo.addLookupName("AR10 BarracudaT Ammo");
-        ammo.shortName = "Barracuda-T";
         ammo.damagePerShot = 2;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -12346,9 +12354,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Killer Whale (Tele-Operated) Ammo";
+        ammo.shortName = "KW-T";
         ammo.setInternalName("Ammo AR10 Killer Whale-T");
         ammo.addLookupName("AR10 KillerWhaleT Ammo");
-        ammo.shortName = "Killer Whale-T";
         ammo.damagePerShot = 4;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -12375,9 +12383,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 White Shark (Tele-Operated) Ammo";
+        ammo.shortName = "WS-T";
         ammo.setInternalName("Ammo AR10 White Shark-T");
         ammo.addLookupName("AR10 WhiteSharkT Ammo");
-        ammo.shortName = "White Shark-T";
         ammo.damagePerShot = 3;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -15212,9 +15220,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Peacemaker Ammo";
+        ammo.shortName = "PM-N";
         ammo.setInternalName("Ammo AR10 Peacemaker");
         ammo.addLookupName("AR10 Peacemaker Ammo");
-        ammo.shortName = "Peacemaker";
         ammo.damagePerShot = 1000;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.tonnage = 50.0;
@@ -15241,7 +15249,6 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Peacemaker Ammo");
         ammo.addLookupName("CLPeacemaker Ammo");
         ammo.addLookupName("Ammo Clan Peacemaker");
-        ammo.shortName = "Peacemaker";
         ammo.damagePerShot = 1000;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
         ammo.tonnage = 50.0;
@@ -15264,9 +15271,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Santa Anna Ammo";
+        ammo.shortName = "SA-N";
         ammo.setInternalName("Ammo AR10 Santa Anna");
         ammo.addLookupName("AR10 SantaAnna Ammo");
-        ammo.shortName = "Santa Anna";
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.tonnage = 40.0;

@@ -30,37 +30,30 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.common.battlevalue;
+package megamek.client.ui.dialogs;
 
-import megamek.common.Entity;
-import megamek.common.HandheldWeapon;
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import javax.swing.JDialog;
 
-public class HandheldWeaponBVCalculator extends BVCalculator {
-    HandheldWeaponBVCalculator(Entity entity) {
-        super(entity);
-    }
+/**
+ * Interface for classes that contain a UnitDisplay and a JDialog, this simplifies the access into the unitDisplayDialog
+ * when needed.
+ * @author Luana Coppio
+ */
+public interface UnitDisplayContainer {
 
-    @Override
-    protected void processDefensiveValue() {
-        processArmor();
-        // HHWs can mount AMS, so here we are.
-        processDefensiveEquipment();
-    }
+    /**
+     * Returns a UnitDisplay instance
+     *
+     * @return the UnitDisplay component
+     */
+    UnitDisplay getUnitDisplay();
 
-    @Override
-    protected void processArmor() {
-        var armor = entity.getTotalArmor();
-        var armorBV = armor * 2;
-        defensiveValue += armorBV;
-        bvReport.addLine("Armor:", formatForReport(armor) + " (Total Armor Factor) x 2", "= " + formatForReport(armorBV));
-    }
-
-    @Override
-    protected void processOffensiveValue() {
-        processWeapons();
-        processAmmo();
-        processOffensiveEquipment();
-    }
+    /**
+     * Returns a dialog window
+     *
+     * @return a JDialog instance
+     */
+    JDialog getDialog();
 }

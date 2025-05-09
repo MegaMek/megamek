@@ -78,7 +78,10 @@ public class EnhancedTabbedPane extends JTabbedPane {
             Component tabComponentInstance, // The component returned by getTabComponentAt(originalIndex)
             boolean isEnabled) {
     }
-        // Track detached tabs
+    /**
+     * Information about a detached tab, including its title, icon, and the
+     * component it contains.
+     */
     public static class DetachedTabInfo {
         String title;
         Icon icon;

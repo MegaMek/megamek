@@ -2207,7 +2207,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
             JButton closeButton = new JButton(closeButtonText);
             closeButton.setFont(closeButton.getFont().deriveFont(Font.BOLD, 18f));
             closeButton.setPreferredSize(new Dimension(18, 18));
-            closeButton.setToolTipText("Close this tab (Shift+click to skip save confirmation)");
+            closeButton.setToolTipText(Messages.getString("EnhancedTabbedPane.closeButton.tooltip"));
             closeButton.setContentAreaFilled(false);
             closeButton.setBorder(BorderFactory.createEmptyBorder(-3, 0, 0, 2));
             closeButton.setBorderPainted(false);

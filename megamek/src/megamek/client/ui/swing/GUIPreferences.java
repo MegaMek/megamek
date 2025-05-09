@@ -3512,11 +3512,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         if (windowCoords.length < 4) {
             return Optional.empty();
         }
-        int x = Integer.parseInt(windowCoords[0]);
-        int y = Integer.parseInt(windowCoords[1]);
-        int width = Integer.parseInt(windowCoords[2]);
-        int height = Integer.parseInt(windowCoords[3]);
-        return Optional.of(new Rectangle(x,y,width,height));
+        try {
+            int x = Integer.parseInt(windowCoords[0]);
+            int y = Integer.parseInt(windowCoords[1]);
+            int width = Integer.parseInt(windowCoords[2]);
+            int height = Integer.parseInt(windowCoords[3]);
+            return Optional.of(new Rectangle(x,y,width,height));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
     }
 
     public void setNamedWindowSizeAndPosition(String name, Window component) {

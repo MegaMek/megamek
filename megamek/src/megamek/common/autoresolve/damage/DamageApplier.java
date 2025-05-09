@@ -341,7 +341,14 @@ public interface DamageApplier<E extends Entity> {
      * @param hitDetails the hit details
      */
     default HitDetails damageArmor(HitDetails hitDetails) {
+        var hit = hitDetails.hit();
         var currentArmorValue = Math.max(hitDetails.setArmorValueTo(), 0);
+        if (hit.getLocation() < 0 || hit.getLocation() > 7) {
+            hit.setLocation(getRandomHitLocation());
+        }
+        if (hit.getLocation() < 0 || hit.getLocation() > 7) {
+            hit.setLocation(0);
+        }
         entity().setArmor(currentArmorValue, hitDetails.hit());
         logger.trace("[{}] Damage: {} - Armor at: {}", entity().getDisplayName(), hitDetails.damageToApply(), currentArmorValue);
         return hitDetails;

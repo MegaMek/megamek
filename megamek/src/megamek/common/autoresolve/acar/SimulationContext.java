@@ -47,7 +47,7 @@ public class SimulationContext implements IGame {
 
     private static final MMLogger logger = MMLogger.create(SimulationContext.class);
     private static final int MAX_ROUND_LIMIT = 1000;
-
+    private final long seed;
     private final SimulationOptions options;
 
     /**
@@ -78,6 +78,7 @@ public class SimulationContext implements IGame {
     protected int currentRound = -1;
     protected int turnIndex = AWAITING_FIRST_TURN;
     private final Map<Integer, List<Formation>> board = new HashMap<>();
+    private final Board originalBoard;
     /**
      * Tools for the game
      */
@@ -91,7 +92,13 @@ public class SimulationContext implements IGame {
     private final Vector<Entity> graveyard = new Vector<>();
 
     public SimulationContext(SimulationOptions gameOptions, SetupForces setupForces, Board board) {
+        this(gameOptions, setupForces, board, System.nanoTime());
+    }
+
+    public SimulationContext(SimulationOptions gameOptions, SetupForces setupForces, Board board, long seed) {
+        this.seed = seed;
         this.options = gameOptions;
+        this.originalBoard = board;
         setBoard(0, board);
         setupForces.createForcesOnSimulation(this);
         setupForces.addOrdersToForces(this);
@@ -569,10 +576,10 @@ public class SimulationContext implements IGame {
 
     @Override
     public Map<Integer, Board> getBoards() {
-        return Map.of();
+        return Map.of(0, originalBoard);
     }
 
-    public int getBoardSize () {
+    public int getBoardSize() {
         return board.size();
     }
 
@@ -755,4 +762,7 @@ public class SimulationContext implements IGame {
         forces = new Forces(this);
     }
 
+    public long getSeed() {
+        return seed;
+    }
 }

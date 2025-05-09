@@ -3533,7 +3533,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                 try {
                     boards.put(name);
                 } catch (Exception e) {
-                    LOGGER.error(e, "");
+                    LOGGER.error(e, "{} {} - {}",
+                          Thread.currentThread().getId(), Thread.currentThread().getName(),
+                          e.getMessage());
                 }
             }
         }

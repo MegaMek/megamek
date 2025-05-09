@@ -40,10 +40,14 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 
@@ -66,7 +70,15 @@ import megamek.client.ui.swing.GUIPreferences;
  */
 public class EnhancedTabbedPane extends JTabbedPane {
 
-    // Track detached tabs
+    private static record TabRestorationInfo(
+            String title,
+            Icon icon,
+            Component contentPane, // The component returned by getComponentAt(originalIndex)
+            String tooltip,
+            Component tabComponentInstance, // The component returned by getTabComponentAt(originalIndex)
+            boolean isEnabled) {
+    }
+        // Track detached tabs
     public static class DetachedTabInfo {
         String title;
         Icon icon;
@@ -409,9 +421,129 @@ public class EnhancedTabbedPane extends JTabbedPane {
     }
 
     /**
+     * Gets the current order of tabs by their titles.
+     *
+     * @return A list of tab titles in their current display order.
+     */
+    public List<String> getTabOrder() {
+        List<String> tabOrder = new ArrayList<>();
+        for (int i = 0; i < getTabCount(); i++) {
+            tabOrder.add(getTitleAt(i));
+        }
+        return tabOrder;
+    }
+
+    /**
+     * Sets the order of tabs based on a list of tab titles.
+     * Tabs in {@code desiredOrder} that are currently present will be reordered.
+     * Tabs present in the pane but not in {@code desiredOrder} will be appended
+     * to the end, maintaining their relative order among themselves.
+     * Tabs in {@code desiredOrder} but not currently present in the pane are ignored.
+     *
+     * @param desiredOrder A list of tab titles representing the desired order.
+     */
+    public void setTabOrder(List<String> desiredOrder) {
+        if (desiredOrder == null || desiredOrder.isEmpty()) {
+            return;
+        }
+        int currentTabCount = getTabCount();
+        if (currentTabCount == 0) {
+            return;
+        }
+
+        List<TabRestorationInfo> tabsToRestoreInNewOrder = new ArrayList<>();
+        Map<String, TabRestorationInfo> currentTabsMap = new LinkedHashMap<>();
+
+        // Store all current tabs details
+        for (int i = 0; i < currentTabCount; i++) {
+            String title = getTitleAt(i);
+            Icon icon = getIconAt(i);
+            Component contentPane = getComponentAt(i);
+            String tooltip = getToolTipTextAt(i);
+            Component tabComp = getTabComponentAt(i);
+            boolean isEnabled = isEnabledAt(i);
+
+            TabRestorationInfo info = new TabRestorationInfo(title, icon, contentPane, tooltip, tabComp, isEnabled);
+            currentTabsMap.put(title, info);
+        }
+
+        // Populate tabsToRestoreInNewOrder based on desiredOrder
+        for (String title : desiredOrder) {
+            TabRestorationInfo info = currentTabsMap.remove(title);
+            if (info != null) {
+                tabsToRestoreInNewOrder.add(info);
+            }
+        }
+
+        // Add remaining tabs (those not in desiredOrder) to the end
+        tabsToRestoreInNewOrder.addAll(currentTabsMap.values());
+
+        // If tabs are already in the target order, do nothing.
+        if (areTabsAlreadyInOrder(tabsToRestoreInNewOrder)) {
+            return;
+        }
+
+        // Clear and Re-add tabs in the new order
+        super.removeAll();
+        for (TabRestorationInfo info : tabsToRestoreInNewOrder) {
+            super.insertTab(info.title(), info.icon(), info.contentPane(), info.tooltip(), getTabCount());
+            int newIndex = getTabCount() - 1;
+
+            if (info.tabComponentInstance() != null) {
+                super.setTabComponentAt(newIndex, info.tabComponentInstance());
+                if (info.tabComponentInstance() instanceof CloseableTab closeableTab) {
+                    closeableTab.setParentPane(this);
+                }
+            }
+            super.setEnabledAt(newIndex, info.isEnabled());
+        }
+
+        // Select the first tab if any exist
+        if (getTabCount() > 0) {
+            setSelectedIndex(0);
+        }
+
+        // Update UI elements
+        positionActionButtons();
+        updateNoTabsMessageVisibility();
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Helper method to check if the current tabs are already in the desired order.
+     *
+     * @param desiredTabsInOrder List of TabRestorationInfo in the desired order.
+     * @return true if tabs are already in order, false otherwise.
+     */
+    private boolean areTabsAlreadyInOrder(List<TabRestorationInfo> desiredTabsInOrder) {
+        if (desiredTabsInOrder.size() != getTabCount()) {
+            return false; // Different number of tabs means not in order
+        }
+        for (int i = 0; i < getTabCount(); i++) {
+            // Compare based on title, assuming titles are unique enough for ordering.
+            if (!Objects.equals(getTitleAt(i), desiredTabsInOrder.get(i).title())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Interface for listeners that are notified of tab state changes
      */
     public interface TabStateListener {
+
+        /**
+         * Called after a tab has been moved
+         *
+         * @param oldIndex  The original index of the tab that was moved
+         * @param tabIndex  The new index of the tab that was moved
+         * @param component The component that was moved
+         */
+        default void onTabMoved(int oldIndex, int tabIndex, Component component) {
+        }
+
         /**
          * Called before a tab is detached from the pane
          *
@@ -491,6 +623,12 @@ public class EnhancedTabbedPane extends JTabbedPane {
      */
     public boolean removeTabStateListener(TabStateListener listener) {
         return tabStateListeners.remove(listener);
+    }
+
+    protected void fireTabMoved(int oldIndex, int tabIndex, Component component) {
+        for (TabStateListener listener : tabStateListeners) {
+            listener.onTabMoved(oldIndex, tabIndex, component);
+        }
     }
 
     // Event firing methods
@@ -987,9 +1125,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
         boolean isSelected = (getSelectedIndex() == tabIndex);
 
         // If we have a custom tab component, try to match its appearance
-        if (tabComponent instanceof CloseableTab closeableTab) {
-            title = closeableTab.getTitle(); // Get the title from the enhanced tab
-
+        if (tabComponent instanceof CloseableTab) {
             JLabel titleLabel = new JLabel(title);
             titleLabel.setIcon(icon);
             titleLabel.setHorizontalTextPosition(JLabel.RIGHT);
@@ -1191,6 +1327,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
         }
 
         setSelectedIndex(toIndex);
+        fireTabMoved(fromIndex, toIndex, component);
     }
 
     public int addCloseableTab(String title, Icon icon, Component component) {
@@ -1233,6 +1370,47 @@ public class EnhancedTabbedPane extends JTabbedPane {
     };
 
     /**
+     * Returns the tab title at <code>index</code>.
+     *
+     * @param index  the index of the item being queried
+     * @return the title at <code>index</code>
+     * @see #setTitleAt
+     */
+    @Override
+    public String getTitleAt(int index) {
+        if (index < 0 || index >= getTabCount()) {
+            return null;
+        }
+        if (getTabComponentAt(index) instanceof CloseableTab closeableTab) {
+            return closeableTab.getTitle();
+        } else {
+            return super.getTitleAt(index);
+        }
+    }
+
+    /**
+     * Sets the title at <code>index</code> to <code>title</code> which
+     * can be <code>null</code>.
+     * The title is not shown if a tab component for this tab was specified.
+     *
+     * @param index the tab index where the title should be set
+     * @param title the title to be displayed in the tab
+     *
+     * @see #getTitleAt
+     */
+    @Override
+    public void setTitleAt(int index, String title) {
+        if (index < 0 || index >= getTabCount()) {
+            return;
+        }
+        if (getTabComponentAt(index) instanceof CloseableTab closeableTab) {
+            closeableTab.setTitle(title);
+        } else {
+            super.setTitleAt(index, title);
+        }
+    }
+
+    /**
      * Detaches a tab from the pane and creates a floating window
      *
      * @param tab      An CloseableTab instance representing the tab to detach
@@ -1259,17 +1437,14 @@ public class EnhancedTabbedPane extends JTabbedPane {
         }
 
         // Extract tab information once
-        String title;
+        String title = getTitleAt(tabIndex);
         Icon icon = getIconAt(tabIndex);
         Component component = getComponentAt(tabIndex);
         Component componentWindow = null;
         Component tabComponent = getTabComponentAt(tabIndex);
         Dimension compSize;
         if (tabComponent instanceof CloseableTab closeableTab) {
-            title = closeableTab.getTitle();
             componentWindow = closeableTab.component;
-        } else {
-            title = getTitleAt(tabIndex);
         }
         if (componentWindow != null || component instanceof JFrame || component instanceof JDialog) {
             // Is a window, probably it has his own size management... but we initialize it

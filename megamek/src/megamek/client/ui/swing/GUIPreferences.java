@@ -38,6 +38,7 @@ import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementType;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
@@ -45,6 +46,9 @@ import megamek.common.preference.PreferenceStoreProxy;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class GUIPreferences extends PreferenceStoreProxy {
@@ -75,7 +79,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
 
     /* --End advanced settings-- */
-
     public static final String BOARD_MOVE_DEFAULT_CLIMB_MODE = "BoardMoveDefaultClimbMode";
     public static final String BOARD_MOVE_DEFAULT_COLOR = "BoardMoveDefaultColor";
     public static final String BOARD_MOVE_ILLEGAL_COLOR = "BoardMoveIllegalColor";
@@ -462,6 +465,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_MAP_BLUE = new Color(60, 140, 240); // greenish blue
     private static final Color DEFAULT_MAP_RED = new Color(200, 40, 40); // red
     private static final Color DEFAULT_MAP_GREEN = new Color(40, 210, 40); // light green
+
+    private static final String DELIMITER = ";";
+    private static final String _TABORDER = "_tabOrder";
+    private static final String _WINDOW = "_window";
 
     protected static GUIPreferences instance = new GUIPreferences();
 
@@ -3524,11 +3531,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
     
     public Optional<Rectangle> getNamedWindowSizeAndPosition(String name) {
-        final String storedData = getString(name + "_window");
+        final String storedData = getString(name + _WINDOW);
         if (storedData == null) {
             return Optional.empty();
         }
-        String[] windowCoords = storedData.split(";");
+        String[] windowCoords = storedData.split(DELIMITER);
         if (windowCoords.length < 4) {
             return Optional.empty();
         }
@@ -3546,9 +3553,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setNamedWindowSizeAndPosition(String name, Window component) {
         Dimension size = component.getSize();
         Point pos = component.getLocation();
-        store.setValue(name + "_window", pos.x + ";" + pos.y + ";" + size.width + ";" + size.height);
+        store.setValue(name + _WINDOW, pos.x + DELIMITER + pos.y + DELIMITER + size.width + DELIMITER + size.height);
     }
 
+    public @Nullable List<String> getTabOrder(String name) {
+        final String storedData = getString(name + _TABORDER);
+        if (storedData == null) {
+            return null;
+        }
+        final List<String> storedTabOrder = Arrays.asList(storedData.split(DELIMITER));
+        return storedTabOrder;
+    }
+
+    public void setTabOrder(String name, List<String> order) {
+        final String storedTabOrder = String.join(DELIMITER, order);
+        store.setValue(name + _TABORDER, storedTabOrder);
+    }
 
     public boolean getNagForOddSizedBoard() {
         return getBoolean(NAG_FOR_ODD_SIZED_BOARD);

@@ -106,14 +106,12 @@ public class SharedUtility {
 
             // check for landing
             if (step.getType() == MoveStepType.LAND) {
-                rollTarget = ((IAero) entity).checkLanding(moveType,
-                        step.getVelocity(), curPos, curFacing, false);
+                rollTarget = ((IAero) entity).getLandingControlRoll(step.getVelocity(), curPos, curFacing, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
 
             if (step.getType() == MoveStepType.VLAND) {
-                rollTarget = ((IAero) entity).checkLanding(moveType,
-                        step.getVelocity(), curPos, curFacing, true);
+                rollTarget = ((IAero) entity).getLandingControlRoll(step.getVelocity(), curPos, curFacing, true);
                 checkNag(rollTarget, nagReport, psrList);
             }
 
@@ -242,14 +240,12 @@ public class SharedUtility {
             // check for landing
             if ((step.getType() == MoveStepType.LAND)
                     && entity.isAero()) {
-                rollTarget = ((IAero) entity).checkLanding(moveType,
-                        step.getVelocity(), curPos, curFacing, false);
+                rollTarget = ((IAero) entity).getLandingControlRoll(step.getVelocity(), curPos, curFacing, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
             if ((step.getType() == MoveStepType.VLAND)
                     && entity.isAero()) {
-                rollTarget = ((IAero) entity).checkLanding(moveType,
-                        step.getVelocity(), curPos, curFacing, true);
+                rollTarget = ((IAero) entity).getLandingControlRoll(step.getVelocity(), curPos, curFacing, true);
                 checkNag(rollTarget, nagReport, psrList);
             }
 

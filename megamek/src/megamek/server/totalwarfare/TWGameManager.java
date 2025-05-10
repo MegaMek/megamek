@@ -5303,8 +5303,7 @@ public class TWGameManager extends AbstractGameManager {
             if (canCrashLand) {
                 // Generate piloting roll to attempt to land.  This includes all landing mods from
                 // TW pg 86
-                PilotingRollData rollTarget = aero.checkLanding(EntityMovementType.MOVE_FLYING,
-                      aero.getCurrentVelocity(),
+                PilotingRollData rollTarget = aero.getLandingControlRoll(aero.getCurrentVelocity(),
                       c,
                       entity.getFacing(),
                       vertical);

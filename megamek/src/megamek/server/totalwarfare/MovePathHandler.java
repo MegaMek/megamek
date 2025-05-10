@@ -235,37 +235,22 @@ class MovePathHandler extends AbstractTWRuleHandler {
             return;
         }
 
-        if (md.contains(MovePath.MoveStepType.LAND) && entity.isAero()) {
-            IAero a = (IAero) entity;
+        if ((md.contains(MovePath.MoveStepType.LAND) || md.contains(MovePath.MoveStepType.VLAND)) && entity.isAero()) {
+            IAero aero = (IAero) entity;
+            boolean isVertical = md.contains(MovePath.MoveStepType.VLAND);
             entity.setBoardId(md.getFinalBoardId());
-            rollTarget = a.checkLanding(md.getLastStepMovementType(), md.getFinalVelocity(),
-                    md.getFinalCoords(), md.getFinalFacing(), false);
+            rollTarget = aero.getLandingControlRoll(md);
             gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
-            gameManager.checkLandingTerrainEffects(a, true, md.getFinalCoords(),
-                    md.getFinalCoords().translated(md.getFinalFacing(), a.getLandingLength()),
-                  md.getFinalBoardId(), md.getFinalFacing());
-            a.land();
-            entity.setPosition(md.getFinalCoords().translated(md.getFinalFacing(),
-                    a.getLandingLength()));
-            entity.setDone(true);
-            gameManager.entityUpdate(entity.getId());
-            return;
-        }
-
-        if (md.contains(MovePath.MoveStepType.VLAND) && entity.isAero()) {
-            IAero a = (IAero) entity;
-            entity.setBoardId(md.getFinalBoardId());
-            rollTarget = a.checkLanding(md.getLastStepMovementType(),
-                    md.getFinalVelocity(), md.getFinalCoords(),
-                    md.getFinalFacing(), true);
-            gameManager.attemptLanding(entity, rollTarget, gameManager.getMainPhaseReport());
-            if (entity instanceof Dropship) {
-                gameManager.applyDropShipLandingDamage(md.getFinalCoords(), md.getFinalBoardId(), (Dropship) a);
+            if (isVertical && entity instanceof Dropship) {
+                gameManager.applyDropShipLandingDamage(md.getFinalCoords(), md.getFinalBoardId(), (Dropship) aero);
             }
-            gameManager.checkLandingTerrainEffects(a, true, md.getFinalCoords(), md.getFinalCoords(),
-                    md.getFinalBoardId(), md.getFinalFacing());
-            a.land();
-            entity.setPosition(md.getFinalCoords());
+            Coords finalPosition = isVertical ?
+                  md.getFinalCoords() :
+                  md.getFinalCoords().translated(md.getFinalFacing(), aero.getLandingLength());
+            gameManager.checkLandingTerrainEffects(aero, isVertical, md.getFinalCoords(), finalPosition,
+                  md.getFinalBoardId(), md.getFinalFacing());
+            aero.land();
+            entity.setPosition(finalPosition);
             entity.setDone(true);
             gameManager.entityUpdate(entity.getId());
             return;

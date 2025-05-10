@@ -941,9 +941,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 accumLegal ? validTextColor : invalidTextColor,
                 accumTypeCount == 1 ? "" : "x" + accumTypeCount,
                 accumType, unicodeIcon, accumMP, "*".repeat(accumDanger)));
-        if (accumLegal && shouldDesignateFlightPath(ce())) {
-            turnDetails.add(">> Designate flight path!");
-        }
         return turnDetails;
     }
 
@@ -1467,6 +1464,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                           unusedVelocity &&
                           !offOrReturn &&
                           !cmd.contains(MoveStepType.LAND) &&
+                      !cmd.contains(MoveStepType.VLAND) &&
                           !cmd.contains(MoveStepType.EJECT) &&
                           !cmd.contains(MoveStepType.FLEE)) {
                     String title = Messages.getString("MovementDisplay.VelocityLeft.title");
@@ -1677,8 +1675,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             extendPathTo(dest, boardId, MoveStepType.FORWARDS);
             if (shouldDesignateFlightPath(ce())) {
                 gear = GEAR_FLIGHTPATH;
-                Board flightPathBoard = game.getBoard(flightPathTarget(ce()));
-                new FlightPathNotice(clientgui, flightPathBoard).show();
+                clientgui.showBoardView(flightPathTarget(ce()));
+                new FlightPathNotice(clientgui).show();
             }
         } else if (gear == GEAR_BACKUP) {
             extendPathTo(dest, boardId, MoveStepType.BACKWARDS);
@@ -6109,7 +6107,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         addStepToMovePath(MoveStepType.LAND);
         Board landingBoard = game.getBoard(groundMapAtAtmosphericHex());
         clientgui.showBoardView(landingBoard.getBoardId());
-        new LandingHexNotice(clientgui, landingBoard).show();
+        new LandingHexNotice(clientgui).show();
     }
 
     private void performAeroVLand() {
@@ -6155,7 +6153,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         addStepToMovePath(MoveStepType.VLAND);
         Board landingBoard = game.getBoard(groundMapAtAtmosphericHex());
         clientgui.showBoardView(landingBoard.getBoardId());
-        new LandingHexNotice(clientgui, landingBoard).show();
+        new LandingHexNotice(clientgui).show();
     }
 
     private boolean hasLandingMoveStep() {

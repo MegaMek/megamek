@@ -3040,8 +3040,7 @@ public class Compute {
         return toHit;
     }
 
-    public static ToHitData getStrafingTerrainModifier(Game game,
-            int eistatus, Hex hex) {
+    public static ToHitData getStrafingTerrainModifier(Game game, int eistatus, Hex hex) {
         ToHitData toHit = new ToHitData();
         // Smoke and woods. With L3, the effects STACK.
         int woodsLevel = hex.terrainLevel(Terrains.WOODS);

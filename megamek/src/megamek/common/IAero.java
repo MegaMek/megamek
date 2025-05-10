@@ -421,21 +421,30 @@ public interface IAero {
     }
 
     /**
-     * Compute the PilotingRollData for a landing control roll (see TW pg 86).
+     * Computes the PilotingRollData for a landing control roll (see TW pg 86).
      *
-     * @param moveType
-     * @param velocity
-     *                   Velocity when the check is to be made, this needs to be
-     *                   passed
-     *                   as the check could happen as part of a Move Path
-     * @param landingPos
-     *                   The final position the Aero will land on.
-     * @param isVertical
-     *                   If this a vertical or horizontal landing
-     * @return A PilotingRollData tha represents the landing control roll that
-     *         must be passed
+     * @param path The landing move path to process (must contain a LAND or VLAND move step)
+     *
+     * @return A PilotingRollData tha represents the landing control roll that must be passed
      */
-    default PilotingRollData checkLanding(EntityMovementType moveType, int velocity, Coords landingPos, int face,
+    default PilotingRollData getLandingControlRoll(MovePath path) {
+        return getLandingControlRoll(path.getFinalVelocity(),
+              path.getFinalCoords(),
+              path.getFinalFacing(),
+              path.contains(MoveStepType.VLAND));
+    }
+
+    /**
+     * Computes the PilotingRollData for a landing control roll (see TW pg 86).
+     *
+     * @param velocity   Velocity when the check is to be made, this needs to be passed as the check could happen as
+     *                   part of a Move Path
+     * @param landingPos The touch down position (for a horizontal landing, that is not the final position)
+     * @param isVertical If this a vertical or horizontal landing
+     *
+     * @return A PilotingRollData tha represents the landing control roll that must be passed
+     */
+    default PilotingRollData getLandingControlRoll(int velocity, Coords landingPos, int face,
             boolean isVertical) {
         // Base piloting skill
         PilotingRollData roll = new PilotingRollData(((Entity) this).getId(), ((Entity) this).getCrew().getPiloting(),

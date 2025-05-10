@@ -2096,16 +2096,19 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     }
                     // Otherwise, check for a dead-zone, TW pg 243
                     Coords prevCoords = ae.passedThroughPrevious(target.getPosition());
-                    Hex prevHex = game.getBoard(ae).getHex(prevCoords);
+                    Hex prevHex = game.getHex(prevCoords, ae.getPassedThroughBoardId());
                     Hex currHex = game.getHexOf(target);
                     int prevElev = prevHex.getLevel();
                     int currElev = currHex.getLevel();
+                        //should this check be outside the present if()?
                     if ((prevElev - currElev - target.relHeight()) > 2) {
+                        //FIXME - dead zone for strafing??? I dont think that exists
                         return Messages.getString("WeaponAttackAction.DeadZone");
                     }
                 }
 
                 // Only direct-fire energy weapons can strafe
+                //FIXME we have different checks for this in FiringDisplay, here and in MML for some table
                 boolean isDirectFireEnergy = (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
                                                     (wtype.hasFlag(WeaponType.F_LASER) ||
                                                            wtype.hasFlag(WeaponType.F_PPC) ||
@@ -4228,7 +4231,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     // Additional Nap-of-Earth restrictions for strafing
                     if (ae.getAltitude() == 1) {
                         Coords prevCoords = ae.passedThroughPrevious(target.getPosition());
-                        Hex prevHex = game.getBoard(ae).getHex(prevCoords);
+                        Hex prevHex = game.getHex(prevCoords, ae.getPassedThroughBoardId());
                         toHit.append(Compute.getStrafingTerrainModifier(game, eistatus, prevHex));
                     }
                 } else {

@@ -20,75 +20,29 @@ package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.common.Board;
-import megamek.common.preference.ClientPreferences;
-import megamek.common.preference.PreferenceManager;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
-import java.util.Objects;
 
 /**
- * A dialog telling the player to select a ground board flight path for an aero on an atmospheric board.
+ * @see #LandingHexNotice(ClientGUI)
  */
-public class LandingHexNotice {
-
-    private static final int WIDTH = 500;
-    private static final String SHOW_FLIGHT_PATH_NOTICE = "ShowLandingHexNotice";
-    private static final ClientPreferences preferences = PreferenceManager.getClientPreferences();
-
-    private final JPanel contentPanel = new JPanel();
-    private final JCheckBox dontShowAgain = new JCheckBox("Don't show again");
-    private final ClientGUI clientGui;
-    private final Board flightPathBoard;
+public class LandingHexNotice extends SimpleNagNotice {
 
     /**
-     * Creates a dialog telling the player to select a ground board flight path for an aero on an atmospheric board.
-     *
-     * @param flightPathBoard The ground Board on which the flight path must be planned
-     * @see #show()
+     * Creates a dialog telling the player to select a touch down hex for a horizontal or vertical landing from
+     * an atmospheric board (when the aero-on-ground movement option is not used).
      */
-    public LandingHexNotice(ClientGUI clientGui, Board flightPathBoard) {
-        this.clientGui = Objects.requireNonNull(clientGui);
-        this.flightPathBoard = Objects.requireNonNull(flightPathBoard);
+    public LandingHexNotice(ClientGUI clientGui) {
+        super(clientGui);
     }
 
-    private void initialize() {
-        JEditorPane messagePane = new JEditorPane();
-        messagePane.setContentType("text/html");
-        messagePane.setEditable(false);
-        messagePane.setText(Messages.getString("MovementDisplay.landingHexNotice")
-              .formatted(WIDTH, flightPathBoard.getBoardName()));
-        messagePane.addHyperlinkListener(e -> {
-            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                clientGui.showBoardView(flightPathBoard.getBoardId());
-            }
-        });
-
-        JPanel checkboxPanel = new JPanel();
-        checkboxPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
-        checkboxPanel.add(dontShowAgain);
-
-        contentPanel.setLayout(new BorderLayout());
-        contentPanel.add(messagePane, BorderLayout.CENTER);
-        contentPanel.add(checkboxPanel, BorderLayout.SOUTH);
+    protected String message() {
+        return Messages.getString("LandingHexNotice.message");
     }
 
-    /**
-     * Sets this flight path notice dialog visible. Will also suspend tooltips on the boardviews while the dialog is
-     * shown.
-     */
-    public void show() {
-        if (!preferences.hasProperty(SHOW_FLIGHT_PATH_NOTICE) || preferences.getBoolean(SHOW_FLIGHT_PATH_NOTICE)) {
-            initialize();
-            clientGui.suspendBoardTooltips();
+    protected String title() {
+        return Messages.getString("LandingHexNotice.title");
+    }
 
-            JOptionPane.showMessageDialog(clientGui.getFrame(), contentPanel);
-
-            preferences.setValue(SHOW_FLIGHT_PATH_NOTICE, !dontShowAgain.isSelected());
-            clientGui.activateBoardTooltips();
-        }
+    protected String preferenceKey() {
+        return "ShowLandingHexNotice";
     }
 }

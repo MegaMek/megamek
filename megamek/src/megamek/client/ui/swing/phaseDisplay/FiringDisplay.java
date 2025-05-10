@@ -1013,11 +1013,15 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         updateTarget();
     }
 
-    private void doStrafe() {
+    private void startStrafe() {
         target(null);
         clearAttacks();
         isStrafing = true;
         setStatusBarText(Messages.getString("FiringDisplay.Strafing.StatusLabel"));
+        Entity strafingUnit = ce();
+        if (strafingUnit != null) {
+            clientgui.showBoardView(strafingUnit.getPassedThroughBoardId());
+        }
         refreshAll();
     }
 
@@ -1887,7 +1891,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CLEAR_WEAPON.getCmd())) {
             doClearWeaponJam();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_STRAFE.getCmd())) {
-            doStrafe();
+            startStrafe();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_ACTIVATE_SPA.getCmd())) {
             doActivateSpecialAbility();
         }
@@ -1943,8 +1947,15 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
     private void updateStrafe() {
         Entity entity = ce();
-        setStrafeEnabled((entity != null) && entity.isAero() && !entity.isSpheroid() && (entity.getAltitude() <= 3)
-              && (entity.getAltitude() > 0) && equippedForStrafing(entity));
+        setStrafeEnabled((entity != null)
+              && entity.isAero()
+              && !entity.getPassedThrough().isEmpty()
+              && game.hasBoard(entity.getPassedThroughBoardId())
+              && game.getBoard(entity.getPassedThroughBoardId()).isGround()
+              && !entity.isSpheroid()
+              && (entity.getAltitude() <= 3)
+              && (entity.getAltitude() > 0)
+              && equippedForStrafing(entity));
     }
 
     private boolean equippedForStrafing(Entity entity) {

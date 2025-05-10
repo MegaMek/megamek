@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.phaseDisplay.dialog;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -30,6 +31,11 @@ import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.util.Objects;
 
+/**
+ * This is a class to display a simple modal info dialog using JOptionPane. When a preference key is given by an
+ * implementing class, the dialog will show a "Dont show again" checkbox and the dialog will autmatically store the
+ * result of the checkbox and act accordingly.
+ */
 public abstract class SimpleNagNotice {
 
     private static final ClientPreferences preferences = PreferenceManager.getClientPreferences();
@@ -37,7 +43,7 @@ public abstract class SimpleNagNotice {
     private static final int DEFAULT_WIDTH = 500;
 
     private final JPanel contentPanel = new JPanel();
-    private final JCheckBox dontShowAgain = new JCheckBox("Don't show again");
+    private final JCheckBox dontShowAgain = new JCheckBox(Messages.getString("SimpleNagNotice.dontShowAgain"));
     private final ClientGUI clientGui;
 
     private boolean initialized = false;
@@ -107,9 +113,9 @@ public abstract class SimpleNagNotice {
     }
 
     /**
-     * Shows this notice dialog unless there is a Client Preferences entry for it that says it should not be shown.
-     * In that case, this method returns without doing anything. Note that while the dialog is shown, BoardView
-     * tooltips are suspended so they don't overlap the dialog.
+     * Shows this notice dialog unless there is a Client Preferences entry for it that says it should not be shown. In
+     * that case, this method returns without doing anything. Note that while the dialog is shown, BoardView tooltips
+     * are suspended so they don't overlap the dialog.
      */
     public void show() {
         // Show the notice unless the preference key is used and has been stored previously, saying not to show it

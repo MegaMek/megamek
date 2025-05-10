@@ -192,11 +192,11 @@ factions:
       board: 2
       facing: 3
       altitude: 1
-#
-#  - fullname: Skulker Wheeled Scout Tank C
-#    at: [ 23, 18 ]
-#    board: 5
-#    facing: 0
+
+    - fullname: Skulker Wheeled Scout Tank C
+      at: [ 23, 18 ]
+      board: 5
+      facing: 0
 
 #
 #  - fullname: Union (3055)

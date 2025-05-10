@@ -3607,6 +3607,19 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
+     * Returns true when there is a building of any type (building, fuel tank, bridge) at the given location. This is
+     * safe to call with any parameter values.
+     *
+     * @param boardId The board ID
+     * @param coords  The position on the board
+     *
+     * @return True when there is a building
+     */
+    public boolean hasBuildingAt(@Nullable Coords coords, int boardId) {
+        return getBuildingAt(coords, boardId).isPresent();
+    }
+
+    /**
      * @return True if the current game round counts as a round in which spaceborne units may act; when this game has
      *       only space board(s), this is true for every game round; if it has a mixture of space and other boards, only
      *       every 7th game round is a space round (TW p.78)

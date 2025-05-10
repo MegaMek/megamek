@@ -1188,16 +1188,15 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
         ArrayList<Targetable> targets = new ArrayList<>();
         if (isStrafing) {
+            int boardId = ce().getPassedThroughBoardId();
             for (Coords c : strafingCoords) {
-                targets.add(new HexTarget(c, Targetable.TYPE_HEX_CLEAR));
-                Building bldg = game.getBoard(ce()).getBuildingAt(c);
-                if (bldg != null) {
-                    targets.add(new BuildingTarget(c, game.getBoard(ce()), false));
+                targets.add(new HexTarget(c, boardId, Targetable.TYPE_HEX_CLEAR));
+                if (game.hasBuildingAt(c, boardId)) {
+                    targets.add(new BuildingTarget(c, game.getBoard(boardId), false));
                 }
                 // Target all ground units (non-airborne, VTOLs still count)
-                for (Entity t : game.getEntitiesVector(c)) {
-                    boolean infInBuilding = Compute.isInBuilding(game, t)
-                            && (t instanceof Infantry);
+                for (Entity t : game.getEntitiesVector(c, boardId)) {
+                    boolean infInBuilding = Compute.isInBuilding(game, t) && (t instanceof Infantry);
                     if (!t.isAirborne() && !infInBuilding) {
                         targets.add(t);
                     }

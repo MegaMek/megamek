@@ -254,6 +254,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         if (md.contains(MovePath.MoveStepType.VLAND) && entity.isAero()) {
             IAero a = (IAero) entity;
+            entity.setBoardId(md.getFinalBoardId());
             rollTarget = a.checkLanding(md.getLastStepMovementType(),
                     md.getFinalVelocity(), md.getFinalCoords(),
                     md.getFinalFacing(), true);

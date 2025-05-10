@@ -60,6 +60,7 @@ import megamek.client.ui.swing.boardview.CollapseWarning;
 import megamek.client.ui.swing.boardview.overlay.AbstractBoardViewOverlay;
 import megamek.client.ui.swing.phaseDisplay.commands.MoveCommand;
 import megamek.client.ui.swing.phaseDisplay.dialog.FlightPathNotice;
+import megamek.client.ui.swing.phaseDisplay.dialog.LandingHexNotice;
 import megamek.client.ui.swing.phaseDisplay.dialog.ManeuverChoiceDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.MineLayingDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.TargetChoiceDialog;
@@ -175,7 +176,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     /** Used to designate a ground map flight path for an aero on an atmospheric map. */
     public static final int GEAR_FLIGHTPATH = 13;
     /** Used to choose a ground map hex for landing an aero from an atmospheric map (aero-on-ground move off). */
-    public static final int GEAR_LANDING_AERO_HORIZONTAL = 14;
+    public static final int GEAR_LANDING_AERO = 14;
     public static final int GEAR_SUB_STANDARD = 0;
     public static final int GEAR_SUB_MEKBOOSTERS = 2;
 
@@ -957,7 +958,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private int flightPathTarget(Entity entity) {
         if (shouldDesignateFlightPath(entity)) {
-            return game.getBoard(entity).getEmbeddedBoardAt(finalPosition());
+            return groundMapAtAtmosphericHex();
+        } else {
+            return 0;
+        }
+    }
+
+    private int groundMapAtAtmosphericHex() {
+        if (game.hasBoardLocation(finalPosition(), finalBoardId())
+              && game.getBoard(finalBoardId()).isLowAltitude()
+              && game.getBoard(finalBoardId()).getEmbeddedBoardHexes().contains(finalPosition())) {
+            return game.getBoard(finalBoardId()).getEmbeddedBoardAt(finalPosition());
         } else {
             return 0;
         }
@@ -1834,25 +1845,36 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if ((currentlySelectedEntity != null) && (gear == GEAR_LANDING_AERO_HORIZONTAL)
+        if ((currentlySelectedEntity != null) && (gear == GEAR_LANDING_AERO)
               && (boardViewEvent.getBoardId() ==
               game.getBoard(currentlySelectedEntity).getEmbeddedBoardAt(currentlySelectedEntity.getPosition()))
               && (boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
-              && (currentlySelectedEntity instanceof IAero aero)) {
-            String horizontalFailMessage = aero.hasRoomForHorizontalLanding(boardViewEvent.getBoardId(), 
-                  boardViewEvent.getCoords());
-            if (horizontalFailMessage != null) {
+              && (currentlySelectedEntity instanceof IAero aero)
+              && hasLandingMoveStep()) {
+            String failMessage;
+            if (cmd.contains(MoveStepType.LAND)) {
+                failMessage = aero.hasRoomForHorizontalLanding(boardViewEvent.getBoardId(), boardViewEvent.getCoords());
+            } else {
+                failMessage = aero.hasRoomForVerticalLanding(boardViewEvent.getBoardId(), boardViewEvent.getCoords());
+            }
+            if (failMessage != null) {
                 String title = Messages.getString("MovementDisplay.NoLandingDialog.title");
-                String body = Messages.getString("MovementDisplay.NoLandingDialog.message", horizontalFailMessage);
+                String body = Messages.getString("MovementDisplay.NoLandingDialog.message", failMessage);
                 clientgui.doAlertDialog(title, body);
             } else {
                 if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.LandDialog.title"),
                       Messages.getString("MovementDisplay.LandDialog.message"))) {
                     // directly finalize landing
                     clear();
-                    cmd = MovePath.createHLandFromAtmosphericHexMovePath(game,
-                          currentlySelectedEntity,
-                          boardViewEvent.getBoardLocation());
+                    if (cmd.contains(MoveStepType.LAND)) {
+                        cmd = AtmosphericLandingMovePath.createHorizontalLandingPath(game,
+                              currentlySelectedEntity,
+                              boardViewEvent.getBoardLocation());
+                    } else {
+                        cmd = AtmosphericLandingMovePath.createVerticalLandingPath(game,
+                              currentlySelectedEntity,
+                              boardViewEvent.getBoardLocation());
+                    }
                     ready();
                 }
             }
@@ -5355,23 +5377,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 addStepToMovePath(MoveStepType.VTAKEOFF);
                 ready();
             }
+
         } else if (actionCmd.equals(MoveCommand.MOVE_LAND.getCmd())) {
-            performAeroLand();
+            performAeroHLand();
 
         } else if (actionCmd.equals(MoveCommand.MOVE_VERT_LAND.getCmd())) {
-            if (ce().isAero() && (null != ((IAero) ce()).hasRoomForVerticalLanding())) {
-                String title = Messages.getString("MovementDisplay.NoLandingDialog.title");
-                String body = Messages.getString("MovementDisplay.NoLandingDialog.message",
-                      ((IAero) ce()).hasRoomForVerticalLanding());
-                clientgui.doAlertDialog(title, body);
-            } else {
-                if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.LandDialog.title"),
-                      Messages.getString("MovementDisplay.LandDialog.message"))) {
-                    clear();
-                    addStepToMovePath(MoveStepType.VLAND);
-                    ready();
-                }
-            }
+            performAeroVLand();
+
         } else if (actionCmd.equals(MoveCommand.MOVE_ENVELOPE.getCmd())) {
             computeMovementEnvelope(clientgui.getUnitDisplay().getCurrentEntity());
         } else if (actionCmd.equals(MoveCommand.MOVE_TRAITOR.getCmd())) {
@@ -6050,20 +6062,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return cmd;
     }
 
-    private void performAeroLand() {
+    private void performAeroHLand() {
         Entity entity = ce();
         if (!(entity instanceof IAero aero) || !entity.isAero()) {
             LOGGER.warn("Selected aero landing for a non-aero unit!");
             return;
         }
         if (usingAeroOnGroundMovement()) {
-            performAeroLandWithGroundMove(aero);
+            performAeroHLandWithGroundMove(aero);
         } else {
-            performAeroLandNoGroundMove(entity);
+            performAeroHLandNoGroundMove(entity);
         }
     }
 
-    private void performAeroLandWithGroundMove(IAero aero) {
+    private void performAeroHLandWithGroundMove(IAero aero) {
         if (!game.isOnGroundMap((Entity) aero)) {
             LOGGER.warn("Selected aero landing for unit that isnt on a ground map!");
             return;
@@ -6084,7 +6096,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
-    private void performAeroLandNoGroundMove(Entity entity) {
+    private void performAeroHLandNoGroundMove(Entity entity) {
         if (!game.hasBoardLocationOf(entity)
               || !entity.isAirborne()
               || !game.isOnAtmosphericMap(entity)
@@ -6092,8 +6104,61 @@ public class MovementDisplay extends ActionPhaseDisplay {
             LOGGER.warn("Selected aero landing for unit that has nowhere to land!");
             return;
         }
-        gear = GEAR_LANDING_AERO_HORIZONTAL;
-        //TODO choose landing hex
+        gear = GEAR_LANDING_AERO;
+        cmd = new MovePath(game, entity);
+        addStepToMovePath(MoveStepType.LAND);
+        Board landingBoard = game.getBoard(groundMapAtAtmosphericHex());
+        clientgui.showBoardView(landingBoard.getBoardId());
+        new LandingHexNotice(clientgui, landingBoard).show();
+    }
 
+    private void performAeroVLand() {
+        Entity entity = ce();
+        if (!(entity instanceof IAero aero) || !entity.isAero()) {
+            LOGGER.warn("Selected aero landing for a non-aero unit!");
+            return;
+        }
+        if (usingAeroOnGroundMovement()) {
+            performAeroVLandWithGroundMove(aero);
+        } else {
+            performAeroVLandNoGroundMove(entity);
+        }
+    }
+
+    private void performAeroVLandWithGroundMove(IAero aero) {
+        if (null != aero.hasRoomForVerticalLanding()) {
+            String title = Messages.getString("MovementDisplay.NoLandingDialog.title");
+            String body = Messages.getString("MovementDisplay.NoLandingDialog.message",
+                  aero.hasRoomForVerticalLanding());
+            clientgui.doAlertDialog(title, body);
+        } else {
+            if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.LandDialog.title"),
+                  Messages.getString("MovementDisplay.LandDialog.message"))) {
+                clear();
+                addStepToMovePath(MoveStepType.VLAND);
+                ready();
+            }
+        }
+    }
+
+    private void performAeroVLandNoGroundMove(Entity entity) {
+        if (!game.hasBoardLocationOf(entity)
+              || !entity.isAirborne()
+              || !game.isOnAtmosphericMap(entity)
+              || !game.getBoard(entity).getEmbeddedBoardHexes().contains(finalPosition())) {
+            LOGGER.warn("Selected aero landing for unit that has nowhere to land!");
+            return;
+        }
+
+        gear = GEAR_LANDING_AERO;
+        cmd = new MovePath(game, entity);
+        addStepToMovePath(MoveStepType.VLAND);
+        Board landingBoard = game.getBoard(groundMapAtAtmosphericHex());
+        clientgui.showBoardView(landingBoard.getBoardId());
+        new LandingHexNotice(clientgui, landingBoard).show();
+    }
+
+    private boolean hasLandingMoveStep() {
+        return cmd != null && (cmd.contains(MoveStepType.LAND) || cmd.contains(MoveStepType.VLAND));
     }
 }

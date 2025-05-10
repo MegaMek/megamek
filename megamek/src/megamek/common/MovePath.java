@@ -367,22 +367,6 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(new MoveStep(this, MoveStepType.MANEUVER, -1, -1, manType));
     }
 
-    /**
-     * Creates a complete move path for a horizontal aero landing from an atmospheric hex onto a ground hex (i.e.
-     * when not using the aero-on-ground-map movement option). The given location is the start hex for the landing
-     * process on the ground map, not the final resting hex of the unit when it has landed.
-     *
-     * @param location The target location to begin the landing on the ground map
-     * @return A move path to send to the server to initiate landing
-     */
-    public static MovePath createHLandFromAtmosphericHexMovePath(Game game, Entity entity, BoardLocation location) {
-//        MovePath path = new MovePath(game, entity);
-//        path.addStep(MoveStep.createChangeBoardMoveStep(path, location.coords(), location.boardId()), false);
-//        path.addStep(MoveStepType.LAND);
-//        return path;
-        return new HorizontalAtmoLandingMovePath(game, entity, location);
-    }
-
     public boolean canShift() {
         return ((getEntity() instanceof QuadMek
                        // QuadVee cannot shift in vee mode

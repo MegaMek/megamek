@@ -767,13 +767,16 @@ public interface IAero {
     }
 
     default String hasRoomForVerticalLanding() {
-        Coords pos = ((Entity) this).getPosition();
-        Hex hex = ((Entity) this).getGame().getHexOf((Entity) this);
-        if (((Entity) this).getGame().getBuildingAt(pos, ((Entity) this).getBoardId()).isPresent()) {
+        return hasRoomForVerticalLanding(((Entity) this).getBoardId(), ((Entity) this).getPosition());
+    }
+
+    default String hasRoomForVerticalLanding(int assumedBoardId, Coords assumedPosition) {
+        Hex hex = ((Entity) this).getGame().getHex(assumedPosition, assumedBoardId);
+        if (((Entity) this).getGame().getBuildingAt(assumedPosition, ((Entity) this).getBoardId()).isPresent()) {
             return "Buildings in the way";
         }
         // no units in the way
-        for (Entity en : ((Entity) this).getGame().getEntitiesVector(pos)) {
+        for (Entity en : ((Entity) this).getGame().getEntitiesVector(assumedPosition, assumedBoardId)) {
             if (!en.isAirborne()) {
                 return "Ground units in the way";
             }

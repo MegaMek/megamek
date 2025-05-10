@@ -34,6 +34,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -89,7 +91,6 @@ import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.tileset.EntityImage;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.phaseDisplay.*;
-import megamek.client.ui.swing.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -264,6 +265,8 @@ public class ClientGUI extends AbstractClientGUI
     public MegaMekController controller;
     private ChatterBox cb;
     public ChatterBoxOverlay cb2;
+    private boolean wasBoardFocused = false;
+    private BoardView bv;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
     private FleeZoneSpriteHandler fleeZoneSpriteHandler;
@@ -419,6 +422,21 @@ public class ClientGUI extends AbstractClientGUI
         registerCommand(new BotHelpCommand(this));
     }
 
+    private void initializeFocusTracking() {
+        bv.getPanel().addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                wasBoardFocused = true;
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                wasBoardFocused = false;
+                bv.setChatterBoxActive(false);
+            }
+        });
+    }
+
     @Override
     public BoardView getBoardView() {
         return (BoardView) boardViews.get(0);
@@ -435,6 +453,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public void setUnitDisplayDialog(final UnitDisplayDialog unitDisplayDialog) {
         this.unitDisplayDialog = unitDisplayDialog;
+        this.unitDisplayDialog.setFocusableWindowState(false);
     }
 
     public ForceDisplayPanel getForceDisplayPanel() {
@@ -451,6 +470,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public void setForceDisplayDialog(final ForceDisplayDialog forceDisplayDialog) {
         this.forceDisplayDialog = forceDisplayDialog;
+        this.forceDisplayDialog.setFocusableWindowState(false);
     }
 
     public JDialog getMiniMapDialog() {
@@ -479,6 +499,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public void setMiniReportDisplayDialog(final MiniReportDisplayDialog miniReportDisplayDialog) {
         this.miniReportDisplayDialog = miniReportDisplayDialog;
+        this.miniReportDisplayDialog.setFocusableWindowState(false);
     }
 
     public PlayerListDialog getPlayerListDialog() {
@@ -487,6 +508,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public void setPlayerListDialog(final PlayerListDialog playerListDialog) {
         this.playerListDialog = playerListDialog;
+        this.playerListDialog.setFocusableWindowState(false);
     }
 
     @Override
@@ -703,6 +725,7 @@ public class ClientGUI extends AbstractClientGUI
             setPlayerListDialog(new PlayerListDialog(frame, client, false));
         }
         getPlayerListDialog().setVisible(true);
+        conditionalRequestFocus();
     }
 
     public void miniReportDisplayAddReportPages() {
@@ -1449,6 +1472,17 @@ public class ClientGUI extends AbstractClientGUI
         GUIP.setMinimapEnabled(GUIP.getUnitDisplayEnabled());
     }
 
+    private void conditionalRequestFocus() {
+        if (wasBoardFocused) {
+            requestFocus();
+        }
+    }
+
+    private void requestFocus() {
+        frame.requestFocusInWindow();
+        bv.getPanel().requestFocusInWindow();
+    }
+
     /**
      * Toggles the accessibility window
      */
@@ -1559,12 +1593,14 @@ public class ClientGUI extends AbstractClientGUI
     void setMiniReportVisible(boolean visible) {
         if (getMiniReportDisplayDialog() != null) {
             setMiniReportLocation(visible);
+            if (visible) conditionalRequestFocus();
         }
     }
 
     void setPlayerListVisible(boolean visible) {
         if (visible) {
             showPlayerList();
+            conditionalRequestFocus();
         } else {
             if (getPlayerListDialog() != null) {
                 getPlayerListDialog().setVisible(visible);
@@ -1644,6 +1680,7 @@ public class ClientGUI extends AbstractClientGUI
     void setBotCommandsDialogVisible(boolean visible) {
         if (getBotCommandsDialog() != null) {
             getBotCommandsDialog().setVisible(visible);
+            if (visible) conditionalRequestFocus();
         }
     }
 
@@ -1660,6 +1697,7 @@ public class ClientGUI extends AbstractClientGUI
     public void setForceDisplayVisible(boolean visible) {
         if (getForceDisplayDialog() != null) {
             getForceDisplayDialog().setVisible(visible);
+            if (visible) conditionalRequestFocus();
         }
     }
 
@@ -1719,6 +1757,7 @@ public class ClientGUI extends AbstractClientGUI
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(false);
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    if (visible) conditionalRequestFocus();
                     break;
                 case 1:
                     panA2.add(boardViewsContainer.getPanel());
@@ -1728,6 +1767,7 @@ public class ClientGUI extends AbstractClientGUI
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(true);
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    if (visible) conditionalRequestFocus();
                     break;
             }
         } else {
@@ -1740,6 +1780,7 @@ public class ClientGUI extends AbstractClientGUI
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(false);
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
+                    if (visible) conditionalRequestFocus();
                     break;
                 case 1:
                     panA1.add(boardViewsContainer.getPanel());
@@ -1749,6 +1790,7 @@ public class ClientGUI extends AbstractClientGUI
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(true);
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
+                    if (visible) conditionalRequestFocus();
                     break;
             }
         }
@@ -1770,6 +1812,7 @@ public class ClientGUI extends AbstractClientGUI
                     getMiniReportDisplayDialog().setVisible(visible);
                     getMiniReportDisplay().setVisible(visible);
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    if (visible) conditionalRequestFocus();
                     break;
                 case 1:
                     panA2.add(boardViewsContainer.getPanel());
@@ -1778,6 +1821,7 @@ public class ClientGUI extends AbstractClientGUI
                     getMiniReportDisplayDialog().setVisible(false);
                     getMiniReportDisplay().setVisible(visible);
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    if (visible) conditionalRequestFocus();
                     break;
             }
         } else {
@@ -1789,6 +1833,7 @@ public class ClientGUI extends AbstractClientGUI
                     getMiniReportDisplayDialog().setVisible(visible);
                     getMiniReportDisplay().setVisible(visible);
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
+                    if (visible) conditionalRequestFocus();
                     break;
                 case 1:
                     panA1.add(boardViewsContainer.getPanel());
@@ -1797,12 +1842,14 @@ public class ClientGUI extends AbstractClientGUI
                     getMiniReportDisplayDialog().setVisible(false);
                     getMiniReportDisplay().setVisible(visible);
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
+                    if (visible) conditionalRequestFocus();
                     break;
             }
         }
 
         revalidatePanels();
         setsetDividerLocations();
+        conditionalRequestFocus();
     }
 
     private boolean fillPopup(BoardViewEvent event) {

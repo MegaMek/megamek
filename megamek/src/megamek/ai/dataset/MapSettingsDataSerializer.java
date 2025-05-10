@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
@@ -35,7 +39,7 @@ import megamek.ai.dataset.MapSettingsData.Field;
  * @author Luana Coppio
  */
 public class MapSettingsDataSerializer
-      extends EntityDataSerializer<MapSettingsData.Field, MapSettingsData>{
+      extends EntityDataSerializer<Field, MapSettingsData> {
 
     /**
      * Creates a serializer with default field order.

@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,12 +24,16 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,15 +45,13 @@ import megamek.common.IAero;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.UnitRole;
-import megamek.common.equipment.WeaponMounted;
-import megamek.logging.MMLogger;
 
 /**
  * Flexible container for unit action data using a map-based approach with enum keys.
  * @author Luana Coppio
  */
 public class UnitAction extends EntityDataMap<UnitAction.Field> {
-    private static final MMLogger logger = MMLogger.create(UnitAction.class);
+
     /**
      * Enum defining all available unit action fields.
      */

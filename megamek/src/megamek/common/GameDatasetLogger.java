@@ -19,6 +19,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import megamek.SuiteConstants;
+import megamek.Version;
 import megamek.ai.dataset.*;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.EntityAction;
@@ -34,7 +36,9 @@ import megamek.logging.MMLogger;
  */
 public class GameDatasetLogger {
     private static final MMLogger logger = MMLogger.create(GameDatasetLogger.class);
+
     public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
+    private static final Version VERSION = new Version("1.0.0");
 
     private final UnitActionSerializer unitActionSerializer = new UnitActionSerializer();
     private final UnitAttackSerializer unitAttackSerializer = new UnitAttackSerializer();
@@ -95,7 +99,8 @@ public class GameDatasetLogger {
     }
 
     private void initialize() {
-        appendToFile("# Log file created at " + LocalDateTime.now());
+        appendToFile("# Log file created at " + LocalDateTime.now() + " MegaMek Version " + SuiteConstants.VERSION);
+        appendToFile("# GameDatasetLogger - " + VERSION);
     }
 
     /**

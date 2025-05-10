@@ -628,12 +628,12 @@
 			</model>
 		</chassis>
 		<chassis name='Gladiator' unitType='Mek'>
-			<availability>DC!A:8!B:8,PoR!A:8</availability>
+			<availability>DC!A:8!B:8,PoR!A:8,MERC:2+:2476</availability>
 			<model name='GLD-1R'>
-				<availability>DC:8,PoR:8</availability>
+				<availability>DC:8,PoR:8,MERC:8</availability>
 			</model>
 			<model name='GLD-2R'>
-				<availability>DC!A:3</availability>
+				<availability>DC!A:3,MERC!A:1</availability>
 			</model>
 		</chassis>
 		<chassis name='Griffin' unitType='Mek'>
@@ -755,9 +755,9 @@
 			</model>
 		</chassis>
 		<chassis name='Icarus' unitType='Mek'>
-			<availability>FWL!A:8</availability>
+			<availability>FWL!A:8,TC:0,Periphery.HR:1+:2480,Periphery.CM:1+:2480,Periphery.ME:1+:2480,Periphery.MW:1+:2480</availability>
 			<model name='ICR-1X'>
-				<availability>FWL:8</availability>
+				<availability>FWL:8,Periphery.HR:8,Periphery.CM:8,Periphery.ME:8,Periphery.MW:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Intrepid Assault Craft' unitType='Small Craft'>
@@ -1205,9 +1205,9 @@
 			</model>
 		</chassis>
 		<chassis name='Phoenix' unitType='Mek'>
-            <availability>RWR:5:2476</availability>
+            <availability>RWR:5,Periphery.MW:1+:2484</availability>
             <model name='PX-1R'>
-                <availability>General:8</availability>
+                <availability>RWR:8,Periphery.MW:8</availability>
             </model>
 		</chassis>
 		<chassis name='Pressurized Yard' unitType='Space Station'>
@@ -1314,9 +1314,9 @@
             </model>
         </chassis>
 		<chassis name='Shadow Hawk' unitType='Mek'>
-			<availability>TH!A:6!B:6</availability>
+			<availability>IS:1+:2477,TH!A:6!B:6,MERC:1+:2478,TC:1+:2477,RWR:1+:2472,Periphery:1+:2482,Periphery.Deep:0</availability>
 			<model name='SHD-1R'>
-				<availability>TH:8</availability>
+				<availability>TH:8,IS:8,MERC:8,TC:8,RWR:8,Periphery:8</availability>
 			</model>
 		</chassis>
         <chassis name='Sherpa Armored Truck' unitType='Tank'>
@@ -1371,9 +1371,9 @@
 			</model>
 		</chassis>
 		<chassis name='Swordsman' unitType='Mek'>
-			<availability>FS!A:8!B:8</availability>
+			<availability>FS!A:8!B:8,TC:0,Periphery.HR:1+:2487,Periphery.OS:1+:2487</availability>
 			<model name='SWD-1'>
-				<availability>FS!B:8</availability>
+				<availability>FS!B:8,Periphery.HR:8,Periphery.OS:8</availability>
 			</model>
 			<model name='SWD-2'>
 				<availability>FS!A:8!B:1</availability>
@@ -1534,9 +1534,9 @@
 			</model>
 		</chassis>
         <chassis name='Wolverine' unitType='Mek'>
-            <availability>FS!A:4</availability>
+            <availability>FS!A:4,TC:1+:2481</availability>
             <model name='WVR-1R'>
-                <availability>FS:8</availability>
+                <availability>FS:8,TC:8</availability>
             </model>
         </chassis>
 		<chassis name='Ymir' unitType='Mek'>

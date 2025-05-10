@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -415,8 +417,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
         updateTarget();
 
-        Entity entity = clientgui.getClient().getGame().getEntity(currentEntity);
-        entity.dodging = true;
+        Optional<Entity> entity = Optional.ofNullable(clientgui.getClient().getGame().getEntity(currentEntity));
+        entity.ifPresent(e -> e.dodging = true);
     }
 
     /**
@@ -1186,15 +1188,34 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (clientgui.doYesNoDialog(
                 Messages.getString("PhysicalDisplay.DodgeDialog.title"),
                 Messages.getString("PhysicalDisplay.DodgeDialog.message"))) {
-            disableButtons();
-
             Entity entity = clientgui.getClient().getGame().getEntity(currentEntity);
-            entity.dodging = true;
+            if (entity != null) {
+                disableButtons();
+                entity.dodging = true;
 
-            DodgeAction act = new DodgeAction(currentEntity);
-            addAttack(act);
+                DodgeAction act = new DodgeAction(currentEntity);
+                addAttack(act);
 
-            ready();
+                ready();
+            } else {
+                try {
+                    throw new NullPointerException("Entity ID=" + currentEntity + " is null");
+                } catch (NullPointerException e1) {
+                    int playerId = clientgui.getClient().getLocalPlayerNumber();
+                    String entities = clientgui.getClient()
+                                            .getGame()
+                                            .inGameTWEntities()
+                                            .stream()
+                                            .filter(e -> e != null && e.getOwnerId() == playerId)
+                                            .map(Entity::toString)
+                                            .collect(Collectors.joining(", "));
+                    logger.error(e1, "Current Entity ID {} returned empty from clientgui.getClient().getGame()" +
+                                         ".getEntity" +
+                                       "(currentEntity), present units are: {}", currentEntity, entities);
+                    logger.errorDialog("Unable to do action",
+                          "An unknown event happened and it was impossible to do the action you selected");
+                }
+            }
         }
     }
 

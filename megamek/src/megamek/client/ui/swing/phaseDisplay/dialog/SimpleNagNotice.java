@@ -42,18 +42,44 @@ public abstract class SimpleNagNotice {
 
     private boolean initialized = false;
 
-    public SimpleNagNotice(ClientGUI clientGui) {
+    protected SimpleNagNotice(ClientGUI clientGui) {
         this.clientGui = Objects.requireNonNull(clientGui);
     }
 
+    /**
+     * Override this method to provide the (localized) message to show in the notice. The message will be shown as HTML
+     * and HTML and BODY tags will be added. Therefore, HTML tags can be used in the message but it should not include
+     * HTML, HEAD or BODY tags.
+     *
+     * @return A message to show in the dialog.
+     */
     protected abstract String message();
 
+    /**
+     * Override this method to provide the (localized) title for the notice dialog.
+     *
+     * @return A title for the dialog
+     */
     protected abstract String title();
 
+    /**
+     * This method may be overridden to provide a non-empty and unique key String for the Client Preferences. When this
+     * is done, a "Dont show again" checkbox will be shown and the result will be stored in the Client Preferences using
+     * the given key. When this is done and the checkbox is activated, this notice will no longer be shown when show()
+     * is called.
+     *
+     * @return A key to store a "Dont show again" value in the Client Preferences
+     */
     protected String preferenceKey() {
         return "";
     }
 
+    /**
+     * This method may be overridden to provide a width for the notice dialog. The default width is 500. The value is
+     * internally scaled with the present GUI scaling.
+     *
+     * @return A width value for the dialog
+     */
     protected int getWidth() {
         return DEFAULT_WIDTH;
     }
@@ -62,8 +88,7 @@ public abstract class SimpleNagNotice {
         JEditorPane messagePane = new JEditorPane();
         messagePane.setContentType("text/html");
         messagePane.setEditable(false);
-        String message = "<HTML><BODY WIDTH=%d>".formatted(getWidth());
-        message += message() + "</BODY></HTML>";
+        String message = "<HTML><BODY WIDTH=%d>%s</BODY></HTML>".formatted(getWidth(), message());
         messagePane.setText(message);
 
         contentPanel.setLayout(new BorderLayout());
@@ -82,13 +107,13 @@ public abstract class SimpleNagNotice {
     }
 
     /**
-     * Sets this flight path notice dialog visible. Will also suspend tooltips on the boardviews while the dialog is
-     * shown.
+     * Shows this notice dialog unless there is a Client Preferences entry for it that says it should not be shown.
+     * In that case, this method returns without doing anything. Note that while the dialog is shown, BoardView
+     * tooltips are suspended so they don't overlap the dialog.
      */
     public void show() {
         // Show the notice unless the preference key is used and has been stored previously, saying not to show it
-        if (usesPreference()
-              && preferences.hasProperty(preferenceKey()) && !preferences.getBoolean(preferenceKey())) {
+        if (usesPreference() && preferences.hasProperty(preferenceKey()) && !preferences.getBoolean(preferenceKey())) {
             return;
         }
 

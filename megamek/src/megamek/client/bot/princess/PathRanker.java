@@ -327,7 +327,25 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     /**
-     * Returns the probability of success of a move path
+     * Calculates the probability that a unit can successfully complete the given movement path.
+     * <p>
+     * This method evaluates all piloting skill rolls required along the path and computes the 
+     * combined probability of passing all of them. It accounts for:
+     * <ul>
+     *   <li>Piloting skill rolls from difficult terrain, elevation changes, etc.</li>
+     *   <li>MASC failure chances if MASC is activated during the move</li>
+     *   <li>Supercharger failure chances if a supercharger is used</li>
+     * </ul>
+     * <p>
+     * The method skips "getting up" and "careful stand" piloting rolls as these are handled
+     * separately when evaluating immobile status. Results are cached to avoid redundant
+     * calculations during path evaluation.
+     * <p>
+     * The probability is expressed as a value between 0.0 (guaranteed failure) and 
+     * 1.0 (guaranteed success).
+     *
+     * @param movePath The movement path to evaluate
+     * @return The probability (0.0 to 1.0) that all required piloting rolls will succeed
      */
     protected double getMovePathSuccessProbability(MovePath movePath) {
         // introduced a caching mechanism, as the success probability was being

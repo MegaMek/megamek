@@ -1,23 +1,41 @@
 /*
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
+
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
@@ -29,17 +47,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 17-Aug-2013 10:47 PM
  */
 public class BehaviorSettings implements Serializable {
     private static final MMLogger logger = MMLogger.create(BehaviorSettings.class);
-
     // region Variable Declarations
     private static final long serialVersionUID = -1895924639830817372L;
 
@@ -126,6 +139,7 @@ public class BehaviorSettings implements Serializable {
     private int antiCrowding = 0; // How much do I want to avoid crowding my teammates?
     private int favorHigherTMM = 0; // How much do I want to favor moving in my turn?
     private boolean iAmAPirate = false; // Am I a pirate?
+    private boolean ignoreDamageOutput = false;
     private boolean experimental = false; // running experimental features?
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     // endregion Variable Declarations
@@ -154,15 +168,10 @@ public class BehaviorSettings implements Serializable {
         copy.setFavorHigherTMM(getFavorHigherTMM());
         copy.setIAmAPirate(iAmAPirate());
         copy.setExperimental(isExperimental());
-        for (final String t : getStrategicBuildingTargets()) {
-            copy.addStrategicTarget(t);
-        }
-        for (final Integer p : getPriorityUnitTargets()) {
-            copy.addPriorityUnit(p);
-        }
-        for (final Integer i : getIgnoredUnitTargets()) {
-            copy.addIgnoredUnitTarget(i);
-        }
+        copy.setIgnoreDamageOutput(isIgnoreDamageOutput());
+        getStrategicBuildingTargets().forEach(copy::addStrategicTarget);
+        getPriorityUnitTargets().forEach(copy::addPriorityUnit);
+        getIgnoredUnitTargets().forEach(copy::addIgnoredUnitTarget);
 
         return copy;
     }
@@ -172,6 +181,20 @@ public class BehaviorSettings implements Serializable {
      */
     public boolean isExperimental() {
         return experimental;
+    }
+
+    /**
+     * @return TRUE if I am running experimental features.
+     */
+    public boolean isIgnoreDamageOutput() {
+        return ignoreDamageOutput;
+    }
+
+    /**
+     * @param ignoreDamageOutput Set TRUE if I am running experimental features.
+     */
+    public void setIgnoreDamageOutput(boolean ignoreDamageOutput) {
+        this.ignoreDamageOutput = ignoreDamageOutput;
     }
 
     /**
@@ -815,6 +838,8 @@ public class BehaviorSettings implements Serializable {
                 setFavorHigherTMM(child.getTextContent());
             } else if ("iAmAPirate".equalsIgnoreCase(child.getNodeName())) {
                 setIAmAPirate(child.getTextContent());
+            } else if ("ignoreDamageOutput".equalsIgnoreCase(child.getNodeName())) {
+                setIgnoreDamageOutput(Boolean.parseBoolean(child.getTextContent()));
             } else if ("experimental".equalsIgnoreCase(child.getNodeName())) {
                 setExperimental(child.getTextContent());
             } else if ("strategicTargets".equalsIgnoreCase(child.getNodeName())) {
@@ -911,6 +936,10 @@ public class BehaviorSettings implements Serializable {
             experimentalNode.setTextContent("" + isExperimental());
             behavior.appendChild(experimentalNode);
 
+            final Element ignoreDamageOutput = doc.createElement("ignoreDamageOutput");
+            ignoreDamageOutput.setTextContent("" + isIgnoreDamageOutput());
+            behavior.appendChild(ignoreDamageOutput);
+
             final Element targetsNode = doc.createElement("strategicBuildingTargets");
             if (includeTargets) {
                 for (final String t : getStrategicBuildingTargets()) {
@@ -960,6 +989,7 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t AntiCrowding: ").append(getAntiCrowding()).append(":").append(getAntiCrowding());
         out.append("\n\t FavorHigherTMM: ").append(getFavorHigherTMM()).append(":").append(getFavorHigherTMM());
         out.append("\n\t I am a Pirate: ").append(iAmAPirate());
+        out.append("\n\t I Ignore Damage Output: ").append(isIgnoreDamageOutput());
         out.append("\n\t Experimental: ").append(isExperimental());
         out.append("\n\t Targets:");
         out.append("\n\t\t Priority Coords: ");
@@ -1020,6 +1050,8 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (iAmAPirate != that.iAmAPirate) {
             return false;
+        } else if (ignoreDamageOutput != that.ignoreDamageOutput) {
+            return false;
         } else if (experimental != that.experimental) {
             return false;
         } else {
@@ -1046,6 +1078,7 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + herdMentalityIndex;
         result = 31 * result + braveryIndex;
         result = 31 * result + (iAmAPirate ? 1 : 0);
+        result = 31 * result + (ignoreDamageOutput ? 1 : 0);
         result = 31 * result + (experimental ? 1 : 0);
         return result;
     }

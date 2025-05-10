@@ -68,11 +68,12 @@ class BehaviorSettingsFactoryTest {
         // Test loading a null behavior settings file.
         assertFalse(testFactory.loadBehaviorSettings(null));
         var expectedBehaviors = Set.of(BehaviorSettingsFactory.BERSERK_BEHAVIOR_DESCRIPTION,
-            BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION,
-            BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION,
-            BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION,
-            BehaviorSettingsFactory.PIRATE_BEHAVIOR_DESCRIPTION,
-            BehaviorSettingsFactory.RUTHLESS_BEHAVIOR_DESCRIPTION);
+              BehaviorSettingsFactory.CONVOY_BEHAVIOR_DESCRIPTION,
+              BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION,
+              BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION,
+              BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION,
+              BehaviorSettingsFactory.PIRATE_BEHAVIOR_DESCRIPTION,
+              BehaviorSettingsFactory.RUTHLESS_BEHAVIOR_DESCRIPTION);
         assertEquals(expectedBehaviors, Sets.newSet(testFactory.getBehaviorNames()));
     }
 
@@ -80,11 +81,12 @@ class BehaviorSettingsFactoryTest {
     void testLoadBehaviorSettingsWithTestDocument() {
         assertTrue(testFactory.loadBehaviorSettings(buildTestDocument()));
         var expectedBehaviors = Set.of(BehaviorSettingsFactory.BERSERK_BEHAVIOR_DESCRIPTION,
-            BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION,
-            BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION,
-            BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION,
-            BehaviorSettingsFactory.PIRATE_BEHAVIOR_DESCRIPTION,
-            BehaviorSettingsFactory.RUTHLESS_BEHAVIOR_DESCRIPTION);
+              BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION,
+              BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION,
+              BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION,
+              BehaviorSettingsFactory.CONVOY_BEHAVIOR_DESCRIPTION,
+              BehaviorSettingsFactory.PIRATE_BEHAVIOR_DESCRIPTION,
+              BehaviorSettingsFactory.RUTHLESS_BEHAVIOR_DESCRIPTION);
         assertTrue(Sets.newSet(testFactory.getBehaviorNames()).containsAll(expectedBehaviors));
     }
 }

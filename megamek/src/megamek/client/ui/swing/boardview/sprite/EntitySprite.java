@@ -249,7 +249,7 @@ public class EntitySprite extends Sprite {
             bounds.add(4 * (labelRect.height + 2) + labelRect.x + labelRect.width, labelRect.y);
         }
 
-        // Move to board position, save this origin for correct drawing
+        // Move to the board position, save this origin for correct drawing
         hexOrigin = bounds.getLocation();
         Point ePos;
         if (secondaryPos == -1) {
@@ -263,9 +263,9 @@ public class EntitySprite extends Sprite {
         }
 
         entityRect = new Rectangle(bounds.x + (int) (20 * bv.getScale()),
-              bounds.y + (int) (14 * bv.getScale() ),
-              (int) (44 * bv.getScale() ),
-              (int) (44 * bv.getScale() ));
+              bounds.y + (int) (14 * bv.getScale()),
+              (int) (44 * bv.getScale()),
+              (int) (44 * bv.getScale()));
 
         return bounds;
     }
@@ -277,7 +277,7 @@ public class EntitySprite extends Sprite {
         }
 
         int face = (entity.isCommander() && !onlyDetectedBySensors()) ? Font.ITALIC : Font.PLAIN;
-        labelFont = new Font(MMConstants.FONT_SANS_SERIF, face, (int) (10 * Math.max(bv.getScale() , 0.9)));
+        labelFont = new Font(MMConstants.FONT_SANS_SERIF, face, (int) (10 * Math.max(bv.getScale(), 0.9)));
 
         // Check the hexes in directions 2, 5, 1, 4 if they are free of entities
         // and place the label in the direction of the first free hex
@@ -289,28 +289,29 @@ public class EntitySprite extends Sprite {
 
         if (position != null) {
             if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
-                labelRect.setLocation((int) (bv.getHexSize().width * 0.55), (int) (0.75 * bv.getHexSize() .height));
+                labelRect.setLocation((int) (bv.getHexSize().width * 0.55), (int) (0.75 * bv.getHexSize().height));
                 labelPos = Positioning.RIGHT;
             } else if (bv.game.getEntitiesVector(position.translated("NW"), true).isEmpty()) {
-                labelRect.setLocation((int) (bv.getHexSize() .width * 0.45) - labelRect.width,
-                      (int) (0.25 * bv.getHexSize() .height) - labelRect.height);
+                labelRect.setLocation((int) (bv.getHexSize().width * 0.45) - labelRect.width,
+                      (int) (0.25 * bv.getHexSize().height) - labelRect.height);
                 labelPos = Positioning.LEFT;
             } else if (bv.game.getEntitiesVector(position.translated("NE"), true).isEmpty()) {
-                labelRect.setLocation((int) (bv.getHexSize() .width * 0.55),
-                      (int) (0.25 * bv.getHexSize() .height) - labelRect.height);
+                labelRect.setLocation((int) (bv.getHexSize().width * 0.55),
+                      (int) (0.25 * bv.getHexSize().height) - labelRect.height);
                 labelPos = Positioning.RIGHT;
             } else if (bv.game.getEntitiesVector(position.translated("SW"), true).isEmpty()) {
-                labelRect.setLocation((int) (bv.getHexSize() .width * 0.45) - labelRect.width,
-                      (int) (0.75 * bv.getHexSize() .height));
+                labelRect.setLocation((int) (bv.getHexSize().width * 0.45) - labelRect.width,
+                      (int) (0.75 * bv.getHexSize().height));
                 labelPos = Positioning.LEFT;
             } else {
-                labelRect.setLocation(bv.getHexSize() .width / 2 - labelRect.width / 2, (int) (0.75 * bv.getHexSize() .height));
+                labelRect.setLocation(bv.getHexSize().width / 2 - labelRect.width / 2,
+                      (int) (0.75 * bv.getHexSize().height));
                 labelPos = Positioning.RIGHT;
             }
         }
 
         // If multiple units are present in a hex, fan out the labels
-        // In the deployment phase, indexOf returns -1 for the current unit
+        // In the deployment phase; indexOf returns -1 for the current unit
         int indexEntity = bv.game.getEntitiesVector(position, true).indexOf(entity);
         int numEntity = bv.game.getEntitiesVector(position, true).size();
 
@@ -322,8 +323,7 @@ public class EntitySprite extends Sprite {
             labelRect.y += (bv.getPanel().getFontMetrics(labelFont).getAscent() + 4);
         }
 
-        // If the label has changed, force a redraw (necessary
-        // for the Deployment phase
+        // If the label has changed, force redrawing. Necessary for the Deployment phase
         if (!labelRect.equals(oldRect)) {
             image = null;
         }
@@ -335,113 +335,124 @@ public class EntitySprite extends Sprite {
         final String status;
         final boolean small;
 
-        Status(Color c, String s) {
-            color = c;
-            status = Messages.getString("BoardView1." + s);
+        Status(Color color, String status) {
+            this.color = color;
+            this.status = Messages.getString("BoardView1." + status);
             small = false;
-            if (color.equals(GUIP.getWarningColor())) {
+
+            if (this.color.equals(GUIP.getWarningColor())) {
                 criticalStatus = true;
             }
         }
 
-        Status(Color c, String s, Object... objs) {
-            color = c;
-            status = Messages.getString("BoardView1." + s, objs);
+        Status(Color color, String status, Object... objs) {
+            this.color = color;
+            this.status = Messages.getString("BoardView1." + status, objs);
             small = false;
-            if (color.equals(GUIP.getWarningColor())) {
+            if (this.color.equals(GUIP.getWarningColor())) {
                 criticalStatus = true;
             }
         }
 
-        Status(Color c, String s, boolean direct) {
-            color = c;
-            status = s;
+        Status(Color color, String status, boolean direct) {
+            this.color = color;
+            this.status = status;
             small = false;
-            if (color.equals(GUIP.getWarningColor())) {
+            if (this.color.equals(GUIP.getWarningColor())) {
                 criticalStatus = true;
             }
         }
 
-        Status(Color c, String s, int t) {
-            color = c;
-            status = s;
+        Status(Color color, String status, int t) {
+            this.color = color;
+            this.status = status;
             small = true;
         }
 
-        Status(Color c, int b, int t) {
-            color = c;
+        Status(Color color, int b, int t) {
+            this.color = color;
             status = null;
             small = true;
         }
     }
 
-    private void drawStatusStrings(Graphics2D g, ArrayList<Status> statusStrings) {
+    private void drawStatusStrings(Graphics2D graphics2D, ArrayList<Status> statusStrings) {
         if (statusStrings.isEmpty()) {
             return;
         }
 
-        // The small info blobs
-        g.setFont(labelFont);
+        // We pull out just the height as that is the size we want for the Rectangle. We use this for all width/height
+        // variables to ensure equal size and remove the warnings from IDEA about wrong values.
+        int squareEdge = labelRect.height;
 
-        Rectangle stR = new Rectangle(labelRect.x, labelRect.y, labelRect.width, labelRect.height);
+        // The small info blobs
+        graphics2D.setFont(labelFont);
+
+        Rectangle rectangle = new Rectangle(labelRect.x, labelRect.y, squareEdge, squareEdge);
         if (labelPos == Positioning.LEFT) {
-            stR.translate(labelRect.width - labelRect.height, 0);
+            rectangle.translate(labelRect.width - labelRect.height, 0);
         }
 
         for (Status curStatus : statusStrings) {
             if (curStatus.small) {
                 if (labelPos == Positioning.RIGHT) {
-                    stR.translate(-labelRect.height - 2, 0);
+                    rectangle.translate(-labelRect.height - 2, 0);
                 } else {
-                    stR.translate(labelRect.height + 2, 0);
+                    rectangle.translate(labelRect.height + 2, 0);
                 }
-                g.setColor(LABEL_BACK);
-                g.fillRoundRect(stR.x, stR.y, stR.width, stR.height, 5, 5);
+
+                graphics2D.setColor(LABEL_BACK);
+                graphics2D.fillRoundRect(rectangle.x, rectangle.y, squareEdge, squareEdge, 5, 5);
                 if (curStatus.status == null) {
                     Color damageColor = getDamageColor();
                     if (damageColor != null) {
-                        g.setColor(damageColor);
-                        g.fillRoundRect(stR.x + 2, stR.y + 2, stR.width - 4, stR.height - 4, 5, 5);
+                        graphics2D.setColor(damageColor);
+                        graphics2D.fillRoundRect(rectangle.x + 2,
+                              rectangle.y + 2,
+                              rectangle.width - 4,
+                              rectangle.height - 4,
+                              5,
+                              5);
                     }
 
                 } else {
                     new StringDrawer(curStatus.status).center()
                           .color(curStatus.color)
-                          .at(stR.x + stR.height / 2, stR.y + stR.height / 2)
-                          .draw(g);
+                          .at(rectangle.x + rectangle.height / 2, rectangle.y + rectangle.height / 2)
+                          .draw(graphics2D);
                 }
             }
         }
 
         if ((bv.getScale() < 0.55) && criticalStatus) {
-            // When zoomed far out, status wouldn't be readable, therefore draw a big "!" (and the label is red)
-            Font bigFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (42 * bv.getScale() ));
-            new StringDrawer("!").at(bv.getHexSize() .width / 2, bv.getHexSize() .height / 2)
+            // When zoomed far out, status wouldn't be readable, therefore, draw a big "!" (and the label is red)
+            Font bigFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (42 * bv.getScale()));
+            new StringDrawer("!").at(bv.getHexSize().width / 2, bv.getHexSize().height / 2)
                   .color(GUIP.getWarningColor())
                   .outline(Color.WHITE, 1)
                   .center()
                   .font(bigFont)
-                  .draw(g);
+                  .draw(graphics2D);
         } else {
             // Critical status texts
-            Font boldFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (12 * bv.getScale() ));
-            int y = (int) ((float) bv.getHexSize() .height / 2 + bv.getScale() * (statusStrings.size() - 1) * 7);
+            Font boldFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (12 * bv.getScale()));
+            int y = (int) (bv.getHexSize().height / 2.0f + bv.getScale() * (statusStrings.size() - 1) * 7);
             for (Status curStatus : statusStrings) {
                 if (!curStatus.small) { // Critical status
-                    new StringDrawer(curStatus.status).at(bv.getHexSize() .width / 2, y)
+                    new StringDrawer(curStatus.status).at(bv.getHexSize().width / 2, y)
                           .color(curStatus.color)
                           .outline(Color.BLACK, 1)
                           .center()
                           .font(boldFont)
-                          .draw(g);
-                    y -= (int) (14 * bv.getScale() );
+                          .draw(graphics2D);
+                    y -= (int) (14 * bv.getScale());
                 }
             }
         }
     }
 
     /**
-     * Creates the sprite for this entity. Fortunately it is no longer an extra pain to create transparent images in
+     * Creates the sprite for this entity. Fortunately, it is no longer an extra pain to create transparent images in
      * AWT.
      */
     @Override
@@ -489,19 +500,23 @@ public class EntitySprite extends Sprite {
                 boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
 
                 if (drawMotiveWreckage) {
-                    Image motiveWreckage = bv.getScaledImage(bv.getTileManager().bottomLayerMotiveMarkerFor(entity), true);
+                    Image motiveWreckage = bv.getScaledImage(bv.getTileManager().bottomLayerMotiveMarkerFor(entity),
+                          true);
                     if (null != motiveWreckage) {
                         graph.drawImage(motiveWreckage, 0, 0, this);
                     }
                 }
 
-                graph.drawImage(bv.getScaledImage(bv.getTileManager().imageFor(entity, secondaryPos), true), 0, 0, this);
+                graph.drawImage(bv.getScaledImage(bv.getTileManager().imageFor(entity, secondaryPos), true),
+                      0,
+                      0,
+                      this);
                 graph.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             }
         }
 
         // scale the following draws according to board zoom
-        graph.scale(bv.getScale() , bv.getScale() );
+        graph.scale(bv.getScale(), bv.getScale());
 
         boolean isTank = (entity instanceof Tank);
         boolean isInfantry = (entity instanceof Infantry);
@@ -519,12 +534,12 @@ public class EntitySprite extends Sprite {
             ArrayList<Status> stStr = new ArrayList<>();
             criticalStatus = false;
 
-            // Determine if the entity has a locked turret, and if it is a gun emplacement
+            // Determine if the entity has a locked turret and if it is a gun emplacement
             boolean turretLocked = false;
             int crewStunned = 0;
-            if (entity instanceof Tank) {
-                turretLocked = !((Tank) entity).hasNoTurret() && !entity.canChangeSecondaryFacing();
-                crewStunned = ((Tank) entity).getStunnedTurns();
+            if (entity instanceof Tank tankEntity) {
+                turretLocked = !tankEntity.hasNoTurret() && !tankEntity.canChangeSecondaryFacing();
+                crewStunned = tankEntity.getStunnedTurns();
             }
 
             // draw elevation/altitude if non-zero
@@ -694,7 +709,7 @@ public class EntitySprite extends Sprite {
 
             // Unit Label
             // no scaling for the label, its size is changed by varying the font size directly => better control
-            graph.scale(1 / bv.getScale() , 1 / bv.getScale() );
+            graph.scale(1 / bv.getScale(), 1 / bv.getScale());
 
             // Label background
             if (!getAdjShortName().isBlank()) {
@@ -710,7 +725,8 @@ public class EntitySprite extends Sprite {
                     if (GUIP.getTeamColoring()) {
                         boolean isLocalTeam = entity.getOwner().getTeam() ==
                                                     bv.getClientgui().getClient().getLocalPlayer().getTeam();
-                        boolean isLocalPlayer = entity.getOwner().equals(bv.getClientgui().getClient().getLocalPlayer());
+                        boolean isLocalPlayer = entity.getOwner()
+                                                      .equals(bv.getClientgui().getClient().getLocalPlayer());
                         if (isLocalPlayer) {
                             graph.setColor(GUIP.getMyUnitColor());
                         } else if (isLocalTeam) {
@@ -761,20 +777,22 @@ public class EntitySprite extends Sprite {
             drawStatusStrings(graph, stStr);
 
             // from here, scale the following draws according to board zoom
-            graph.scale(bv.getScale() , bv.getScale() );
+            graph.scale(bv.getScale(), bv.getScale());
 
             // draw facing
             graph.setColor(Color.white);
             if ((entity.getFacing() != -1) &&
-                      !(isInfantry && !((Infantry) entity).hasFieldWeapon() && !((Infantry) entity).isTakingCover()) &&
-                      !(isAero && ((IAero) entity).isSpheroid() && !board.inSpace())) {
+                      !((entity instanceof Infantry) &&
+                              !((Infantry) entity).hasFieldWeapon() &&
+                              !((Infantry) entity).isTakingCover()) &&
+                      !((entity instanceof IAero) && ((IAero) entity).isSpheroid() && !board.inSpace())) {
                 // Indicate a stacked unit with the same facing that can still move
                 if (shouldIndicateNotDone() && bv.game.getPhase().isMovement()) {
                     var tr = graph.getTransform();
                     // rotate the arrow slightly
-                    graph.scale(1 / bv.getScale() , 1 / bv.getScale() );
-                    graph.rotate(Math.PI / 24, bv.getHexSize() .width / 2.0, bv.getHexSize() .height / 2.0);
-                    graph.scale(bv.getScale() , bv.getScale() );
+                    graph.scale(1 / bv.getScale(), 1 / bv.getScale());
+                    graph.rotate(Math.PI / 24, bv.getHexSize().width / 2.0, bv.getHexSize().height / 2.0);
+                    graph.scale(bv.getScale(), bv.getScale());
                     graph.setColor(GUIP.getWarningColor());
                     graph.fill(bv.getFacingPolys()[entity.getFacing()]);
                     graph.setColor(Color.LIGHT_GRAY);
@@ -898,16 +916,16 @@ public class EntitySprite extends Sprite {
     }
 
     /**
-     * We only want to show double-blind visibility indicators on our own meks and teammates meks (assuming team vision
-     * option).
+     * We only want to show double-blind visibility indicators on our own meks and teammates' meks (assuming the `team
+     * vision` option is on).
      */
     private boolean trackThisEntitiesVisibilityInfo(Entity e) {
         return EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(bv.getLocalPlayer(), e);
     }
 
     /**
-     * @return determine if this EntitySprite is only detected by an enemies sensors and hence should only be a sensor
-     *       return.
+     * @return determine if this {@link EntitySprite} is only detected by an enemies sensor and hence should only be a
+     *       sensor return.
      */
     public boolean onlyDetectedBySensors() {
         return EntityVisibilityUtils.onlyDetectedBySensors(bv.getLocalPlayer(), entity);
@@ -935,6 +953,10 @@ public class EntitySprite extends Sprite {
         return entity.getPosition();
     }
 
+    /**
+     * @deprecated No indicated uses.
+     */
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public String getPlayerColor() {
         if (onlyDetectedBySensors()) {
             // TODO : Make me customizable

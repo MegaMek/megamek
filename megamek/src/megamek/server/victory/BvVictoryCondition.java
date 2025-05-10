@@ -24,6 +24,7 @@ import megamek.common.IGame;
 import megamek.common.Player;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is a base interface with default helper methods for bv-checking VictoryConditions
@@ -42,6 +43,13 @@ public interface BvVictoryCondition extends VictoryCondition, Serializable {
                 .filter(Player::isNotObserver)
                 .filter(p -> p.isEnemyOf(player))
                 .mapToInt(Player::getBV).sum();
+    }
+
+    default int getEnemyBV(List<Player> players, Player player) {
+        return players.stream()
+                     .filter(Player::isNotObserver)
+                     .filter(p -> p.isEnemyOf(player))
+                     .mapToInt(Player::getBV).sum();
     }
 
     default int getEnemyInitialBV(IGame game, Player player) {

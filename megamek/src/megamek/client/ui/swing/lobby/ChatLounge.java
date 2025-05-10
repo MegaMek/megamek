@@ -98,13 +98,11 @@ import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.Ruler;
 import megamek.client.ui.swing.boardview.toolTip.TWBoardViewTooltip;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.swing.lobby.sorters.*;
-import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.swing.util.ScalingPopup;
@@ -122,6 +120,7 @@ import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.internationalization.I18n;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -464,20 +463,23 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
         Player player = getSelectedClient().getLocalPlayer();
         CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(), player.getCamouflage());
-        java.util.List<Entity> playerEntities = game().getPlayerEntities(player, false);
-        if (!playerEntities.isEmpty()) {
-            ccd.setDisplayedEntity(CollectionUtil.anyOneElement(playerEntities));
+        try {
+            java.util.List<Entity> playerEntities = game().getPlayerEntities(player, false);
+            if (!playerEntities.isEmpty()) {
+                ccd.setDisplayedEntity(CollectionUtil.anyOneElement(playerEntities));
+            }
+            // If the dialog was canceled or nothing selected, do nothing
+            if (!ccd.showDialog().isConfirmed()) {
+                return;
+            }
+    
+            // Update the player from the camo selection
+            player.setCamouflage(ccd.getSelectedItem());
+            butCamo.setIcon(player.getCamouflage().getImageIcon());
+            getSelectedClient().sendPlayerInfo();
+        } finally {
+            ccd.dispose();
         }
-
-        // If the dialog was canceled or nothing selected, do nothing
-        if (!ccd.showDialog().isConfirmed()) {
-            return;
-        }
-
-        // Update the player from the camo selection
-        player.setCamouflage(ccd.getSelectedItem());
-        butCamo.setIcon(player.getCamouflage().getImageIcon());
-        getSelectedClient().sendPlayerInfo();
     };
 
     private void setupTeamOverview() {
@@ -516,22 +518,23 @@ public class ChatLounge extends AbstractPhaseDisplay
     /** Initializes the Mek Table sorting algorithms. */
     private void setupSorters() {
         unitSorters.add(new PlayerTransportIDSorter(clientgui));
-        unitSorters.add(new IDSorter(MekTableSorter.Sorting.ASCENDING));
-        unitSorters.add(new IDSorter(MekTableSorter.Sorting.DESCENDING));
-        unitSorters.add(new NameSorter(MekTableSorter.Sorting.ASCENDING));
-        unitSorters.add(new NameSorter(MekTableSorter.Sorting.DESCENDING));
-        unitSorters.add(new TypeSorter());
-        unitSorters.add(new PlayerTonnageSorter(clientgui, MekTableSorter.Sorting.ASCENDING));
-        unitSorters.add(new PlayerTonnageSorter(clientgui, MekTableSorter.Sorting.DESCENDING));
-        unitSorters.add(new PlayerUnitRoleSorter(clientgui, MekTableSorter.Sorting.ASCENDING));
-        unitSorters.add(new PlayerUnitRoleSorter(clientgui, MekTableSorter.Sorting.DESCENDING));
-        unitSorters.add(new TonnageSorter(MekTableSorter.Sorting.ASCENDING));
-        unitSorters.add(new TonnageSorter(MekTableSorter.Sorting.DESCENDING));
+        unitSorters.add(new PlayerTonnageSorter(clientgui, Sorting.ASCENDING));
+        unitSorters.add(new PlayerTonnageSorter(clientgui, Sorting.DESCENDING));
+        unitSorters.add(new PlayerUnitRoleSorter(clientgui, Sorting.ASCENDING));
+        unitSorters.add(new PlayerUnitRoleSorter(clientgui, Sorting.DESCENDING));
+        unitSorters.add(new IDSorter(Sorting.ASCENDING));
+        unitSorters.add(new IDSorter(Sorting.DESCENDING));
+        unitSorters.add(new NameSorter(Sorting.ASCENDING));
+        unitSorters.add(new NameSorter(Sorting.DESCENDING));
+        unitSorters.add(new TypeSorter(Sorting.ASCENDING));
+        unitSorters.add(new TypeSorter(Sorting.DESCENDING));
+        unitSorters.add(new TonnageSorter(Sorting.ASCENDING));
+        unitSorters.add(new TonnageSorter(Sorting.DESCENDING));
         unitSorters.add(new C3IDSorter(clientgui));
-        bvSorters.add(new PlayerBVSorter(clientgui, MekTableSorter.Sorting.ASCENDING));
-        bvSorters.add(new PlayerBVSorter(clientgui, MekTableSorter.Sorting.DESCENDING));
-        bvSorters.add(new BVSorter(MekTableSorter.Sorting.ASCENDING));
-        bvSorters.add(new BVSorter(MekTableSorter.Sorting.DESCENDING));
+        bvSorters.add(new PlayerBVSorter(clientgui, Sorting.ASCENDING));
+        bvSorters.add(new PlayerBVSorter(clientgui, Sorting.DESCENDING));
+        bvSorters.add(new BVSorter(Sorting.ASCENDING));
+        bvSorters.add(new BVSorter(Sorting.DESCENDING));
         activeSorter = unitSorters.get(0);
     }
 
@@ -572,7 +575,8 @@ public class ChatLounge extends AbstractPhaseDisplay
     /** Sets up the unit (add unit / add army) panel. */
     private void setupUnitConfig() {
         RandomNameGenerator.getInstance();
-        RandomCallsignGenerator.getInstance();
+        //noinspection ResultOfMethodCallIgnored
+        RandomCallsignGenerator.getInstance(); // Method being initialized
 
         MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
         boolean mscLoaded = mekSummaryCache.isInitialized();
@@ -1514,8 +1518,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         getLocalClient(carried).sendLoadEntity(carried.getId(), carrierId, bayNumber);
-        // TODO: it would probably be a good idea
-        // to disable some settings for loaded units in customMekDialog
+        // TODO: it would probably be a good idea to disable some settings for loaded units in customMekDialog
     }
 
     /**
@@ -1659,8 +1662,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         getLocalClient(trailer).sendTowEntity(trailer.getId(), tractor.getId());
-        // TODO: it would probably be a good idea
-        // to disable some settings for loaded units in customMekDialog
+        // TODO: it would probably be a good idea to disable some settings for loaded units in customMekDialog
     }
 
     /**
@@ -1883,6 +1885,22 @@ public class ChatLounge extends AbstractPhaseDisplay
         // Do nothing
     }
 
+    private void nagAboutNonTileableBoards() {
+        boolean isBoardWidthOdd = mapSettings.getBoardWidth() % 2 != 0;
+        boolean isMapSizeBiggerThanOne = mapSettings.getMapWidth() > 1;
+        if (isBoardWidthOdd && isMapSizeBiggerThanOne && GUIP.getNagForOddSizedBoard()) {
+            InformDialog nag = clientgui.doInformBotherDialog(
+                  I18n.getTextAt("megamek.client.messages", "ChatLounge.board.warning.title"),
+                  I18n.getTextAt("megamek.client.messages","ChatLounge.board.warning.message"),
+                  true
+            );
+            // do they want to be bothered again?
+            if (!nag.getShowAgain()) {
+                GUIP.setNagForOddSizedBoard(false);
+            }
+        }
+    }
+
     private final ActionListener lobbyListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent ev) {
@@ -2000,12 +2018,13 @@ public class ChatLounge extends AbstractPhaseDisplay
                 refreshMapUI();
                 clientgui.getClient().sendMapSettings(mapSettings);
 
-            } else if (ev.getSource() == butAddX || ev.getSource() == butMapGrowW) {
+            } else if ((ev.getSource() == butAddX) || (ev.getSource() == butMapGrowW)) {
                 int newMapWidth = mapSettings.getMapWidth() + 1;
                 mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
                 clientgui.getClient().sendMapDimensions(mapSettings);
+                nagAboutNonTileableBoards();
 
-            } else if (ev.getSource() == butAddY || ev.getSource() == butMapGrowH) {
+            } else if ((ev.getSource() == butAddY) || (ev.getSource() == butMapGrowH)) {
                 int newMapHeight = mapSettings.getMapHeight() + 1;
                 mapSettings.setMapSize(mapSettings.getMapWidth(), newMapHeight);
                 clientgui.getClient().sendMapDimensions(mapSettings);
@@ -2333,6 +2352,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (newMapWidth >= 1 && newMapWidth <= 20) {
                 mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
                 clientgui.getClient().sendMapDimensions(mapSettings);
+                nagAboutNonTileableBoards();
             }
         } catch (NumberFormatException e) {
             // no number, no new map width
@@ -2357,6 +2377,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (newBoardWidth >= 5 && newBoardWidth <= 200) {
                 mapSettings.setBoardSize(newBoardWidth, mapSettings.getBoardHeight());
                 clientgui.getClient().sendMapSettings(mapSettings);
+                nagAboutNonTileableBoards();
             }
         } catch (NumberFormatException e) {
             // no number, no new board width
@@ -3061,28 +3082,38 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         @Override
+        public void mousePressed(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                showPopup(e);
+            }
+        }
+
+        @Override
         public void mouseReleased(MouseEvent e) {
             if (e.isPopupTrigger()) {
-                // If the right mouse button is pressed over an unselected entity,
-                // clear the selection and select that entity instead
-                int row = mekForceTree.getRowForLocation(e.getX(), e.getY());
-                if (!mekForceTree.isRowSelected(row)) {
-                    mekForceTree.setSelectionRow(row);
-                }
                 showPopup(e);
             }
         }
 
         /** Shows the right-click menu on the mek table */
         private void showPopup(MouseEvent e) {
+            TreePath path = mekForceTree.getPathForLocation(e.getX(), e.getY());
+            // If clicked on a valid row and it's not selected, select it
+            if (path != null && !mekForceTree.isPathSelected(path)) {
+                mekForceTree.setSelectionPath(path);
+            }
+
             TreePath[] selection = mekForceTree.getSelectionPaths();
-            java.util.List<Entity> entities = new ArrayList<>();
-            java.util.List<Force> selForces = new ArrayList<>();
+
+            // If the right mouse button is pressed over an unselected entity,
+            // clear the selection and select that entity instead
+            List<Entity> entities = new ArrayList<>();
+            List<Force> selForces = new ArrayList<>();
 
             if (selection != null) {
-                for (TreePath path : selection) {
-                    if (path != null) {
-                        Object selected = path.getLastPathComponent();
+                for (TreePath selPath : selection) {
+                    if (selPath != null) {
+                        Object selected = selPath.getLastPathComponent();
                         if (selected instanceof Entity) {
                             entities.add((Entity) selected);
                         } else if (selected instanceof Force) {
@@ -3091,6 +3122,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     }
                 }
             }
+
             ScalingPopup popup = LobbyMekPopup.getPopup(entities,
                   selForces,
                   new LobbyMekPopupActions(ChatLounge.this),
@@ -3308,7 +3340,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             // Add info about the current sorting
             if (activeSorter.getColumnIndex() == i) {
                 headerText += "&nbsp;&nbsp;&nbsp;" + UIUtil.fontHTML(uiGray());
-                if (activeSorter.getSortingDirection() == MekTableSorter.Sorting.ASCENDING) {
+                if (activeSorter.getSortingDirection() == Sorting.ASCENDING) {
                     headerText += "\u25B4 ";
                 } else {
                     headerText += "\u25BE ";

@@ -25,13 +25,17 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -83,11 +87,11 @@ import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.phaseDisplay.*;
-import megamek.client.ui.swing.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
@@ -256,6 +260,7 @@ public class ClientGUI extends AbstractClientGUI
     public MegaMekController controller;
     private ChatterBox cb;
     public ChatterBoxOverlay cb2;
+    private boolean wasBoardFocused = false;
     private BoardView bv;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
@@ -413,6 +418,21 @@ public class ClientGUI extends AbstractClientGUI
         registerCommand(new BotHelpCommand(this));
     }
 
+    private void initializeFocusTracking() {
+        bv.getPanel().addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                wasBoardFocused = true;
+            }
+    
+            @Override
+            public void focusLost(FocusEvent e) {
+                wasBoardFocused = false;
+                bv.setChatterBoxActive(false);
+            }
+        });
+    }
+
     @Override
     public BoardView getBoardView() {
         return bv;
@@ -429,6 +449,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public void setUnitDisplayDialog(final UnitDisplayDialog unitDisplayDialog) {
         this.unitDisplayDialog = unitDisplayDialog;
+        this.unitDisplayDialog.setFocusableWindowState(false);
     }
 
     public ForceDisplayPanel getForceDisplayPanel() {
@@ -445,6 +466,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public void setForceDisplayDialog(final ForceDisplayDialog forceDisplayDialog) {
         this.forceDisplayDialog = forceDisplayDialog;
+        this.forceDisplayDialog.setFocusableWindowState(false);
     }
 
     public JDialog getMiniMapDialog() {
@@ -453,6 +475,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public void setMiniMapDialog(final JDialog miniMapDialog) {
         minimapW = miniMapDialog;
+        minimapW.setFocusableWindowState(false);
     }
 
     public JDialog getBotCommandsDialog() {
@@ -477,6 +500,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public void setMiniReportDisplayDialog(final MiniReportDisplayDialog miniReportDisplayDialog) {
         this.miniReportDisplayDialog = miniReportDisplayDialog;
+        this.miniReportDisplayDialog.setFocusableWindowState(false);
     }
 
     public PlayerListDialog getPlayerListDialog() {
@@ -485,6 +509,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public void setPlayerListDialog(final PlayerListDialog playerListDialog) {
         this.playerListDialog = playerListDialog;
+        this.playerListDialog.setFocusableWindowState(false);
     }
 
     @Override
@@ -589,6 +614,7 @@ public class ClientGUI extends AbstractClientGUI
             panTop.add(splitPaneA, BorderLayout.CENTER);
 
             bv.addBoardViewListener(this);
+            initializeFocusTracking();
         } catch (Exception ex) {
             logger.fatal(ex, "initialize");
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
@@ -727,6 +753,7 @@ public class ClientGUI extends AbstractClientGUI
             setPlayerListDialog(new PlayerListDialog(frame, client, false));
         }
         getPlayerListDialog().setVisible(true);
+        conditionalRequestFocus();
     }
 
     public void miniReportDisplayAddReportPages() {
@@ -1484,6 +1511,17 @@ public class ClientGUI extends AbstractClientGUI
         GUIP.setMinimapEnabled(GUIP.getUnitDisplayEnabled());
     }
 
+    private void conditionalRequestFocus() {
+        if (wasBoardFocused) {
+            requestFocus();
+        }
+    }
+
+    private void requestFocus() {
+        frame.requestFocusInWindow();
+        bv.getPanel().requestFocusInWindow();
+    }
+
     /**
      * Toggles the accessibility window
      */
@@ -1590,18 +1628,21 @@ public class ClientGUI extends AbstractClientGUI
     void setMapVisible(boolean visible) {
         if (getMiniMapDialog() != null) {
             getMiniMapDialog().setVisible(visible);
+            if (visible) conditionalRequestFocus();
         }
     }
 
     void setMiniReportVisible(boolean visible) {
         if (getMiniReportDisplayDialog() != null) {
             setMiniReportLocation(visible);
+            if (visible) conditionalRequestFocus();
         }
     }
 
     void setPlayerListVisible(boolean visible) {
         if (visible) {
             showPlayerList();
+            conditionalRequestFocus();
         } else {
             if (getPlayerListDialog() != null) {
                 getPlayerListDialog().setVisible(visible);
@@ -1681,6 +1722,7 @@ public class ClientGUI extends AbstractClientGUI
     void setBotCommandsDialogVisible(boolean visible) {
         if (getBotCommandsDialog() != null) {
             getBotCommandsDialog().setVisible(visible);
+            if (visible) conditionalRequestFocus();
         }
     }
 
@@ -1697,6 +1739,7 @@ public class ClientGUI extends AbstractClientGUI
     public void setForceDisplayVisible(boolean visible) {
         if (getForceDisplayDialog() != null) {
             getForceDisplayDialog().setVisible(visible);
+            if (visible) conditionalRequestFocus();
         }
     }
 
@@ -1756,6 +1799,7 @@ public class ClientGUI extends AbstractClientGUI
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(false);
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    if (visible) conditionalRequestFocus();
                     break;
                 case 1:
                     panA2.add(boardViewsContainer.getPanel());
@@ -1765,6 +1809,7 @@ public class ClientGUI extends AbstractClientGUI
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(true);
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    if (visible) conditionalRequestFocus();
                     break;
             }
         } else {
@@ -1777,6 +1822,7 @@ public class ClientGUI extends AbstractClientGUI
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(false);
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
+                    if (visible) conditionalRequestFocus();
                     break;
                 case 1:
                     panA1.add(boardViewsContainer.getPanel());
@@ -1786,6 +1832,7 @@ public class ClientGUI extends AbstractClientGUI
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(true);
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
+                    if (visible) conditionalRequestFocus();
                     break;
             }
         }
@@ -1807,6 +1854,7 @@ public class ClientGUI extends AbstractClientGUI
                     getMiniReportDisplayDialog().setVisible(visible);
                     getMiniReportDisplay().setVisible(visible);
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    if (visible) conditionalRequestFocus();
                     break;
                 case 1:
                     panA2.add(boardViewsContainer.getPanel());
@@ -1815,6 +1863,7 @@ public class ClientGUI extends AbstractClientGUI
                     getMiniReportDisplayDialog().setVisible(false);
                     getMiniReportDisplay().setVisible(visible);
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    if (visible) conditionalRequestFocus();
                     break;
             }
         } else {
@@ -1826,6 +1875,7 @@ public class ClientGUI extends AbstractClientGUI
                     getMiniReportDisplayDialog().setVisible(visible);
                     getMiniReportDisplay().setVisible(visible);
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
+                    if (visible) conditionalRequestFocus();
                     break;
                 case 1:
                     panA1.add(boardViewsContainer.getPanel());
@@ -1834,12 +1884,14 @@ public class ClientGUI extends AbstractClientGUI
                     getMiniReportDisplayDialog().setVisible(false);
                     getMiniReportDisplay().setVisible(visible);
                     hideEmptyPanel(panA2, splitPaneA, 1.0);
+                    if (visible) conditionalRequestFocus();
                     break;
             }
         }
 
         revalidatePanels();
         setsetDividerLocations();
+        conditionalRequestFocus();
     }
 
     private boolean fillPopup(Coords coords) {
@@ -1872,7 +1924,25 @@ public class ClientGUI extends AbstractClientGUI
         doAlertDialog(title, message, JOptionPane.ERROR_MESSAGE);
     }
 
-    public void doAlertDialog(String title, String message, int msgTyoe) {
+
+    /**
+     * Brings up a dialog that displays a message using a default
+     * icon determined by the <code>messageType</code> parameter.
+     *
+     * @param message   the <code>Object</code> to display
+     * @param title     the title string for the dialog
+     * @param messageType the type of message to be displayed:
+     *                  <code>ERROR_MESSAGE</code>,
+     *                  <code>INFORMATION_MESSAGE</code>,
+     *                  <code>WARNING_MESSAGE</code>,
+     *                  <code>QUESTION_MESSAGE</code>,
+     *                  or <code>PLAIN_MESSAGE</code>
+     * @exception HeadlessException if
+     *   <code>GraphicsEnvironment.isHeadless</code> returns
+     *   <code>true</code>
+     * @see java.awt.GraphicsEnvironment#isHeadless
+     */
+    public void doAlertDialog(String title, String message, int messageType) {
         JTextPane textArea = new JTextPane();
         Report.setupStylesheet(textArea);
         BASE64ToolKit toolKit = new BASE64ToolKit();
@@ -1884,7 +1954,25 @@ public class ClientGUI extends AbstractClientGUI
         textArea.setText("<pre>" + message + "</pre>");
         scrollPane.setPreferredSize(new Dimension((int) (clientGuiPanel.getSize().getWidth() / 1.5),
               (int) (clientGuiPanel.getSize().getHeight() / 1.5)));
-        JOptionPane.showMessageDialog(frame, scrollPane, title, msgTyoe);
+        JOptionPane.showMessageDialog(frame, scrollPane, title, messageType);
+    }
+
+    /**
+     * Pops up a dialog box giving the player information on a subject. It also includes a checkbox if they don't
+     * want to be bothered again by it.
+     *
+     * @param title the <code>String</code> title of the dialog box.
+     * @param message the <code>String</code> message to display.
+     * @param includeCheckBox if <code>true</code>, a checkbox will be included in the dialog box
+     * @return {@link InformDialog} containing the player's responses. The dialog will already have been shown
+     */
+    public InformDialog doInformBotherDialog(String title, String message, boolean includeCheckBox) {
+        InformDialog informDialog = new InformDialog(frame, title, message, includeCheckBox);
+        informDialog.setAlwaysOnTop(true);
+        informDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        informDialog.setVisible(true);
+        informDialog.dispose();
+        return informDialog;
     }
 
     /**
@@ -1910,7 +1998,7 @@ public class ClientGUI extends AbstractClientGUI
      *
      * @param title    the <code>String</code> title of the dialog box.
      * @param question the <code>String</code> question that has a "Yes" or "No" answer. The question will be split
-     *                 across multiple line on the '\n' characters.
+     *                 across multiple lines on the '\n' characters.
      *
      * @return the <code>ConfirmDialog</code> containing the player's responses. The dialog will already have been shown
      *       to the player, and is only being returned so the calling function can see the answer to the question and
@@ -1919,6 +2007,27 @@ public class ClientGUI extends AbstractClientGUI
     public ConfirmDialog doYesNoBotherDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
         confirm.setVisible(true);
+        confirm.dispose();
+        return confirm;
+    }
+
+    /**
+     * Pops up a dialog box asking a yes/no question
+     * <p>
+     * The player will be given a chance to not show the dialog again.
+     *
+     * @param title    the <code>String</code> title of the dialog box.
+     * @param question the <code>String</code> question that has a "Yes" or "No" answer. The question will be split
+     *                 across multiple line on the '\n' characters.c tr23ty
+     *
+     * @return the <code>ConfirmDialog</code> containing the player's responses. The dialog will already have been shown
+     *       to the player, and is only being returned so the calling function can see the answer to the question and
+     *       the state of the "Show again?" question.
+     */
+    public ConfirmDialog doWarnNoBotherDialog(String title, String question) {
+        ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
+        confirm.setVisible(true);
+        confirm.dispose();
         return confirm;
     }
 
@@ -2396,8 +2505,6 @@ public class ClientGUI extends AbstractClientGUI
                 // and the equals function of Player isn't powerful enough.
                 bv.setLocalPlayer(client.getLocalPlayer());
             }
-            // Make sure the ChatterBox starts out deactivated.
-            bv.setChatterBoxActive(false);
 
             // Swap to this phase's panel.
             GamePhase phase = getClient().getGame().getPhase();

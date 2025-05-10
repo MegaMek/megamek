@@ -38,7 +38,10 @@ import megamek.common.util.fileUtils.MegaMekFile;
 /**
  * Very cumbersome class that handles set of polygonal areas and labels for
  * PicMap component to represent single mek unit in MekDisplay
+ * @deprecated Don't use anything, this class is deprecated and will be removed in the future. There is no
+ * substitute display class for the ArmlessMekMapSet as this type of mek is no longer supported.
  */
+@Deprecated(since="0.50.06", forRemoval = true)
 public class ArmlessMekMapSet implements DisplayMapSet {
 
         // Because of keeping all areas of single type in one array

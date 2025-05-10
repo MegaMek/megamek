@@ -242,8 +242,7 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
                 }));
                 futures.add(executor.submit(() -> {
                     try {
-                        return Resolver.simulationRun(
-                                setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()))
+                        return Resolver.simulationRun(setupForces, SimulationOptions.empty(), board)
                             .resolveSimulation();
                     } catch (Exception e) {
                         logger.error(e, e);

@@ -181,11 +181,17 @@ factions:
 #    board: 5
 #    altitude: 0
 #
-  - fullname: Lyonesse Escort
+  - fullname: Zugvogel Omni Support Aircraft B
     at: [ 24, 15 ]
     board: 2
     facing: 5
     altitude: 1
+
+  - fullname: Skulker Wheeled Scout Tank C
+    at: [ 23, 18 ]
+    board: 5
+    facing: 0
+
 #
 #  - fullname: Union (3055)
 #    at: [ 25, 13 ]

@@ -4617,6 +4617,11 @@ public final class BoardView extends AbstractBoardView
         // Keep track of allied ECCM and enemy ECM
         Map<Coords, ECMEffects> eccmAffectedCoords = new HashMap<>();
         for (ECMInfo ecmInfo : allEcmInfo) {
+            // only units on this board
+            if (!isOnThisBord(ecmInfo.getEntity())) {
+                continue;
+            }
+
             // Can't see ECM field of unspotted unit
             Player localPlayer = getLocalPlayer();
             if ((ecmInfo.getEntity() != null) && (localPlayer != null)

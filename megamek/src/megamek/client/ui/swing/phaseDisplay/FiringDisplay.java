@@ -1942,11 +1942,16 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     private void updateStrafe() {
-        if (ce().isAero()) {
-            setStrafeEnabled(ce().getAltitude() <= 3 && !((IAero) ce()).isSpheroid());
-        } else {
-            setStrafeEnabled(false);
-        }
+        Entity entity = ce();
+        setStrafeEnabled((entity != null) && entity.isAero() && !entity.isSpheroid() && (entity.getAltitude() <= 3)
+              && (entity.getAltitude() > 0) && equippedForStrafing(entity));
+    }
+
+    private boolean equippedForStrafing(Entity entity) {
+        return entity.getIndividualWeaponList().stream()
+              .map(Mounted::getType)
+              .filter(type -> type.hasFlag(WeaponType.F_ENERGY))
+              .anyMatch(type -> type.getAmmoType() == AmmoType.F_NONE);
     }
 
     private void updateActivateSPA() {

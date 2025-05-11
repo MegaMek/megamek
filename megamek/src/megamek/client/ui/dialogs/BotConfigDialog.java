@@ -334,69 +334,72 @@ public class BotConfigDialog extends AbstractButtonDialog
         panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
         result.add(panContent);
 
-        panContent.add(buildSlider(braverySlidebar,
+        panContent.add(buildSliderWithDynamicTitle(braverySlidebar,
               Messages.getString("BotConfigDialog.braverySliderMin"),
               Messages.getString("BotConfigDialog.braverySliderMax"),
               Messages.getString("BotConfigDialog.braveryTooltip"),
-              Messages.getString("BotConfigDialog.braverySliderTitle")));
+              "BotConfigDialog.braverySliderTitle"));
         panContent.add(Box.createVerticalStrut(7));
 
-        panContent.add(buildSlider(selfPreservationSlidebar,
+        panContent.add(buildSliderWithDynamicTitle(selfPreservationSlidebar,
               Messages.getString("BotConfigDialog.selfPreservationSliderMin"),
               Messages.getString("BotConfigDialog.selfPreservationSliderMax"),
               Messages.getString("BotConfigDialog.selfPreservationTooltip"),
-              Messages.getString("BotConfigDialog.selfPreservationSliderTitle")));
+              "BotConfigDialog.selfPreservationSliderTitle"));
         panContent.add(Box.createVerticalStrut(7));
 
-        panContent.add(buildSlider(aggressionSlidebar,
+        panContent.add(buildSliderWithDynamicTitle(aggressionSlidebar,
               Messages.getString("BotConfigDialog.aggressionSliderMin"),
               Messages.getString("BotConfigDialog.aggressionSliderMax"),
               Messages.getString("BotConfigDialog.aggressionTooltip"),
-              Messages.getString("BotConfigDialog.aggressionSliderTitle")));
+              "BotConfigDialog.aggressionSliderTitle"));
         panContent.add(Box.createVerticalStrut(7));
 
-        panContent.add(buildSlider(herdingSlidebar,
+        panContent.add(buildSliderWithDynamicTitle(herdingSlidebar,
               Messages.getString("BotConfigDialog.herdingSliderMin"),
               Messages.getString("BotConfigDialog.herdingSliderMax"),
               Messages.getString("BotConfigDialog.herdingToolTip"),
-              Messages.getString("BotConfigDialog.herdingSliderTitle")));
+              "BotConfigDialog.herdingSliderTitle"));
         panContent.add(Box.createVerticalStrut(7));
 
-        panContent.add(buildSlider(fallShameSlidebar,
+        panContent.add(buildSliderWithDynamicTitle(fallShameSlidebar,
               Messages.getString("BotConfigDialog.fallShameSliderMin"),
               Messages.getString("BotConfigDialog.fallShameSliderMax"),
               Messages.getString("BotConfigDialog.fallShameToolTip"),
-              Messages.getString("BotConfigDialog.fallShameSliderTitle")));
+              "BotConfigDialog.fallShameSliderTitle"));
 
         if (CLIENT_PREFERENCES.getEnableExperimentalBotFeatures()) {
-            panContent.add(buildSlider(antiCrowdingSlidebar,
+            panContent.add(buildSliderWithDynamicTitle(antiCrowdingSlidebar,
                   Messages.getString("BotConfigDialog.antiCrowdingSliderMin"),
                   Messages.getString("BotConfigDialog.antiCrowdingSliderMax"),
                   Messages.getString("BotConfigDialog.antiCrowdingToolTip"),
-                  Messages.getString("BotConfigDialog.antiCrowdingTitle")));
+                  "BotConfigDialog.antiCrowdingTitle"));
             panContent.add(Box.createVerticalStrut(7));
 
-            panContent.add(buildSlider(favorHigherTMMSlidebar,
+            panContent.add(buildSliderWithDynamicTitle(favorHigherTMMSlidebar,
                   Messages.getString("BotConfigDialog.favorHigherTMMSliderMin"),
                   Messages.getString("BotConfigDialog.favorHigherTMMSliderMax"),
                   Messages.getString("BotConfigDialog.favorHigherTMMToolTip"),
-                  Messages.getString("BotConfigDialog.favorHigherTMMTitle")));
-            panContent.add(Box.createVerticalStrut(7));
-
-            panContent.add(buildSlider(numberOfEnemiesToConsiderFacingSlidebar,
-                  Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingMin"),
-                  Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingMax"),
-                  Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingToolTip"),
-                  Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingTitle")));
-            panContent.add(Box.createVerticalStrut(7));
-
-            panContent.add(buildSlider(allowFacingToleranceSlidebar,
-                  Messages.getString("BotConfigDialog.allowFacingToleranceMin"),
-                  Messages.getString("BotConfigDialog.allowFacingToleranceMax"),
-                  Messages.getString("BotConfigDialog.allowFacingToleranceTitle"),
-                  Messages.getString("BotConfigDialog.allowFacingToleranceToolTip")));
+                  "BotConfigDialog.favorHigherTMMTitle"));
             panContent.add(Box.createVerticalStrut(7));
         }
+
+        panContent.add(buildSliderWithDynamicTitle(numberOfEnemiesToConsiderFacingSlidebar,
+              Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingMin",
+                    BehaviorSettings.MIN_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING),
+              Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingMax",
+                    BehaviorSettings.MAX_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING),
+              Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingToolTip"),
+              "BotConfigDialog.numberOfEnemiesToConsiderFacingTitle"));
+        panContent.add(Box.createVerticalStrut(7));
+
+        panContent.add(buildSliderWithDynamicTitle(allowFacingToleranceSlidebar,
+              Messages.getString("BotConfigDialog.allowFacingToleranceMin"),
+              Messages.getString("BotConfigDialog.allowFacingToleranceMax"),
+              Messages.getString("BotConfigDialog.allowFacingToleranceToolTip",
+                    BehaviorSettings.MAX_ALLOW_FACING_TOLERANCE),
+              "BotConfigDialog.allowFacingToleranceTitle"));
+        panContent.add(Box.createVerticalStrut(7));
 
         iAmAPirateCheck.setToolTipText(Messages.getString("BotConfigDialog.iAmAPirateCheckToolTip"));
         iAmAPirateCheck.addActionListener(this);
@@ -583,9 +586,12 @@ public class BotConfigDialog extends AbstractButtonDialog
                             chosenPreset.isExperimental() != experimentalCheck.isSelected());
     }
 
-    private JPanel buildSlider(JSlider thisSlider, String minMsgProperty, String maxMsgProperty, String toolTip,
-          String title) {
-        TitledBorder border = BorderFactory.createTitledBorder(title);
+    /**
+     * Setup the slider panel with a dynamic title that changes when the slider is moved.
+     */
+    private JPanel buildSliderWithDynamicTitle(JSlider thisSlider, String minMsgProperty, String maxMsgProperty, String toolTip,
+          String titleKey) {
+        TitledBorder border = BorderFactory.createTitledBorder(Messages.getString(titleKey, thisSlider.getValue()));
         border.setTitlePosition(TitledBorder.TOP);
         border.setTitleJustification(TitledBorder.CENTER);
         var result = new TipPanel();
@@ -596,7 +602,12 @@ public class BotConfigDialog extends AbstractButtonDialog
         thisSlider.setPaintLabels(false);
         thisSlider.setSnapToTicks(true);
         thisSlider.addChangeListener(this);
-
+        thisSlider.addChangeListener(e -> {
+            if (e.getSource() == thisSlider) {
+                border.setTitle(Messages.getString(titleKey, thisSlider.getValue()));
+                result.updateUI();
+            }
+        });
         var panLabels = new JPanel();
         panLabels.setLayout(new BoxLayout(panLabels, BoxLayout.LINE_AXIS));
         panLabels.add(new JLabel(minMsgProperty, SwingConstants.LEFT));

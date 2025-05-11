@@ -403,9 +403,11 @@ public class Princess extends BotClient {
             getStrategicBuildingTargets().add(coords);
         }
         spinUpThreshold = null;
-        // path rankers need to be reinitialized since the behavior settings changed, this will
-        // propagate any changes the BasicPathRanker needs.
-        initializePathRankers();
+        if (initialized) {
+            // path rankers need to be reinitialized since the behavior settings changed, this will
+            // propagate any changes the BasicPathRanker needs.
+            initializePathRankers();
+        }
     }
 
     /**

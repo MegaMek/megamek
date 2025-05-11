@@ -239,9 +239,11 @@ public class BehaviorSettingsFactory {
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             DOMSource source = new DOMSource(behaviorDoc);
 
-            Writer writer = new FileWriter(behaviorFile);
-            StreamResult result = new StreamResult(writer);
-            transformer.transform(source, result);
+            try (Writer writer = new FileWriter(behaviorFile)) {
+                StreamResult result = new StreamResult(writer);
+                transformer.transform(source, result);
+            }
+
         } catch (Exception e) {
             logger.error(e, "Save Behavior Settings Exception");
             return false;

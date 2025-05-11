@@ -506,8 +506,8 @@ public class BotConfigDialog extends AbstractButtonDialog
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
         favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
-        iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
         exclusiveHerdingCheck.setSelected(princessBehavior.isExclusiveHerding());
+        iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
         experimentalCheck.setSelected(princessBehavior.isExperimental());
     }
 
@@ -526,9 +526,13 @@ public class BotConfigDialog extends AbstractButtonDialog
             int end = t.indexOf(")");
             String[] tokens = t.substring(begin, end).split(",");
             if (tokens.length == 2) {
-                int x = Integer.parseInt(tokens[0].strip());
-                int y = Integer.parseInt(tokens[1].strip());
-                targetsListModel.addElement(new Coords(x, y));
+                try {
+                    int x = Integer.parseInt(tokens[0].strip());
+                    int y = Integer.parseInt(tokens[1].strip());
+                    targetsListModel.addElement(new Coords(x, y));
+                } catch (NumberFormatException e1) {
+                    logger.error(e1, "Error parsing target coordinates: {} - {}", t, t.substring(begin, end));
+                }
             }
         }
         targetsListModel.addAll(princessBehavior.getPriorityUnitTargets());

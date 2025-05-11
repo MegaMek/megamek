@@ -153,6 +153,7 @@ public class BehaviorSettings implements Serializable {
         copy.setSelfPreservationIndex(getSelfPreservationIndex());
         copy.setAntiCrowding(getAntiCrowding());
         copy.setFavorHigherTMM(getFavorHigherTMM());
+        copy.setExclusiveHerding(isExclusiveHerding());
         copy.setIAmAPirate(iAmAPirate());
         copy.setExperimental(isExperimental());
         for (final String t : getStrategicBuildingTargets()) {
@@ -356,7 +357,11 @@ public class BehaviorSettings implements Serializable {
         if (!StringUtil.isPositiveInteger(id)) {
             return;
         }
-        addPriorityUnit(Integer.parseInt(id));
+        try {
+            addPriorityUnit(Integer.parseInt(id));
+        } catch (final NumberFormatException ex) {
+            logger.error(ex, "Invalid unit ID: {}", id);
+        }
     }
 
     /**
@@ -377,7 +382,11 @@ public class BehaviorSettings implements Serializable {
         if (!StringUtil.isPositiveInteger(id)) {
             return;
         }
-        removePriorityUnit(Integer.parseInt(id));
+        try {
+            removePriorityUnit(Integer.parseInt(id));
+        } catch (final NumberFormatException ex) {
+            logger.error(ex, "Invalid unit ID: {}", id);
+        }
     }
 
     /**

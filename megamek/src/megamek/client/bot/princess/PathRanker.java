@@ -282,17 +282,15 @@ public abstract class PathRanker implements IPathRanker {
      */
     @Override
     public Targetable findClosestEnemy(Entity me, Coords position, Game game,
-            boolean includeStrategicTargets) {
+            boolean includeStrategicTargets, int minDistance) {
         int range = Integer.MAX_VALUE;
         Targetable closest = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
         var ignoredTargets = owner.getBehaviorSettings().getIgnoredUnitTargets();
         var priorityTargets = getOwner().getBehaviorSettings().getPriorityUnitTargets();
         for (Entity enemy : enemies) {
-            // Skip airborne aero units as they're further away than they seem and hard to
-            // catch.
-            // Also, skip withdrawing enemy bot units that are not priority targets
-            // skip ignored units
+            // Skip airborne aero units as they're further away than they seem and hard to catch.
+            // Also, skip withdrawing enemy bot units that are not priority targets skip ignored units
             if (enemy.isAirborneAeroOnGroundMap()
                 || (!priorityTargets.contains(enemy.getId()) && getOwner().getHonorUtil().isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal()))
                 || ignoredTargets.contains(enemy.getId())) {
@@ -300,13 +298,13 @@ public abstract class PathRanker implements IPathRanker {
             }
 
             // If a unit has not moved, assume it will move away from me.
-            int unmovedDistMod = 0;
+            int unmovedDistanceModifier = 0;
             if (enemy.isSelectableThisTurn() && !enemy.isImmobile()) {
-                unmovedDistMod = enemy.getWalkMP();
+                unmovedDistanceModifier = enemy.getWalkMP();
             }
 
             int distance = position.distance(enemy.getPosition());
-            if ((distance + unmovedDistMod) < range) {
+            if (((distance + unmovedDistanceModifier) < range) && ((distance + unmovedDistanceModifier) >= minDistance)) {
                 range = distance;
                 closest = enemy;
             }

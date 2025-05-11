@@ -1502,6 +1502,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
         updateTarget();
         updateDonePanel();
+        refreshAll();
     }
 
     /**
@@ -1719,7 +1720,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             clearAttacks();
             addAttack(new TorsoTwistAction(currentEntity, direction));
             ce().setSecondaryFacing(direction);
-            clientgui.updateFiringArc(ce());
             updateForNewAction();
         }
     }

@@ -3373,8 +3373,7 @@ public class ClientGUI extends AbstractClientGUI
             return;
         }
 
-        if (curPanel instanceof MovementDisplay) {
-            MovementDisplay md = (MovementDisplay) curPanel;
+        if (curPanel instanceof MovementDisplay md) {
             if (entity.getId() == md.getCurrentEntity()) {
                 firingArcSpriteHandler.update(entity, getDisplayedWeapon().get(), md.getPlannedMovement());
                 return;
@@ -3384,6 +3383,7 @@ public class ClientGUI extends AbstractClientGUI
         // not in an ActionPhase - or - the unit is not the acting unit:
         // show for viewed entity, no move or actions to be taken into account
         firingArcSpriteHandler.update(entity, getDisplayedWeapon().get());
+        showFiringSolutions(entity);
     }
 
     /**

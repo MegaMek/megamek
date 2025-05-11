@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.swing.*;
@@ -105,54 +106,63 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     private static final String OK_ACTION = "Ok_Action";
     private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
-    private transient BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
+    private final transient BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
     private BehaviorSettings princessBehavior;
 
-    private JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
-    private TipTextField nameField = new TipTextField("", 16);
+    private final JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
+    private final TipTextField nameField = new TipTextField("", 16);
 
-    private JButton addTargetButton = new TipButton(Messages.getString("BotConfigDialog.addHexTarget"));
-    private JButton addUnitButton = new TipButton(Messages.getString("BotConfigDialog.addUnitTarget"));
-    private JButton removeTargetButton = new TipButton(Messages.getString("BotConfigDialog.removeTarget"));
-    private DefaultListModel<Object> targetsListModel = new DefaultListModel<>();
-    private TipList<Object> targetsList = new TipList<>(targetsListModel);
+    private final JButton addTargetButton = new TipButton(Messages.getString("BotConfigDialog.addHexTarget"));
+    private final JButton addUnitButton = new TipButton(Messages.getString("BotConfigDialog.addUnitTarget"));
+    private final JButton removeTargetButton = new TipButton(Messages.getString("BotConfigDialog.removeTarget"));
+    private final DefaultListModel<Object> targetsListModel = new DefaultListModel<>();
+    private final TipList<Object> targetsList = new TipList<>(targetsListModel);
 
-    private MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString(
+    private final MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString(
           "BotConfigDialog.forcedWithdrawalCheck"));
 
-    private MMToggleButton iAmAPirateCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.iAmAPirateCheck"));
+    private final MMToggleButton iAmAPirateCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog" +
+                                                                                             ".iAmAPirateCheck"));
 
-    private MMToggleButton experimentalCheck = new TipMMToggleButton(Messages.getString(
+    private final MMToggleButton experimentalCheck = new TipMMToggleButton(Messages.getString(
           "BotConfigDialog.experimentalCheck"));
 
 
-    private JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
-    private MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
-    private MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
-    private JLabel fleeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
-    private MMComboBox<CardinalEdge> fleeEdgeCombo = new TipCombo<>("EdgeToFlee", CardinalEdge.values());
+    private final JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
+    private final MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
+    private final MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog" +
+                                                                                             ".autoFleeCheck"));
+    private final JLabel fleeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
+    private final MMComboBox<CardinalEdge> fleeEdgeCombo = new TipCombo<>("EdgeToFlee", CardinalEdge.values());
 
-    private TipSlider aggressionSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
-    private TipSlider fallShameSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
-    private TipSlider herdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
-    private TipSlider selfPreservationSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
-    private TipSlider braverySlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
-    private TipSlider antiCrowdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
-    private TipSlider favorHigherTMMSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
+    private final TipSlider aggressionSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private final TipSlider fallShameSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private final TipSlider herdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private final TipSlider selfPreservationSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private final TipSlider braverySlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private final TipSlider antiCrowdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
+    private final TipSlider favorHigherTMMSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
+    private final TipSlider numberOfEnemiesToConsiderFacingSlidebar = new TipSlider(SwingConstants.HORIZONTAL,
+          BehaviorSettings.MIN_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING,
+          BehaviorSettings.MAX_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING,
+          BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
+    private final TipSlider allowFacingToleranceSlidebar = new TipSlider(SwingConstants.HORIZONTAL,
+          BehaviorSettings.MIN_ALLOW_FACING_TOLERANCE,
+          BehaviorSettings.MAX_ALLOW_FACING_TOLERANCE,
+          BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
 
-    private TipButton savePreset = new TipButton(Messages.getString("BotConfigDialog.save"));
-    private TipButton saveNewPreset = new TipButton(Messages.getString("BotConfigDialog.saveNew"));
+    private final TipButton savePreset = new TipButton(Messages.getString("BotConfigDialog.save"));
+    private final TipButton saveNewPreset = new TipButton(Messages.getString("BotConfigDialog.saveNew"));
 
-    private JButton princessHelpButton = new JButton(Messages.getString("BotConfigDialog.help"));
+    private final JButton princessHelpButton = new JButton(Messages.getString("BotConfigDialog.help"));
 
-    private JPanel presetsPanel;
-    private JLabel chooseLabel = new JLabel(Messages.getString("BotConfigDialog.behaviorNameLabel"));
+    private final JLabel chooseLabel = new JLabel(Messages.getString("BotConfigDialog.behaviorNameLabel"));
     /**
      * A copy of the current presets. Modifications will only be saved when accepted.
      */
     private List<String> presets;
-    private PresetsModel presetsModel = new PresetsModel();
-    private JList<String> presetsList = new JList<>(presetsModel);
+    private final PresetsModel presetsModel = new PresetsModel();
+    private final JList<String> presetsList = new JList<>(presetsModel);
 
     private final JButton butOK = new JButton(Messages.getString("Okay"));
     private final JButton butCancel = new JButton(Messages.getString("Cancel"));
@@ -229,7 +239,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         var princessScroll = new JScrollPane(princessPanel());
         princessScroll.getVerticalScrollBar().setUnitIncrement(16);
         princessScroll.setBorder(null);
-        presetsPanel = presetsPanel();
+        JPanel presetsPanel = presetsPanel();
 
         var result = new JPanel(new BorderLayout(0, 0));
         result.setAlignmentX(LEFT_ALIGNMENT);
@@ -372,6 +382,20 @@ public class BotConfigDialog extends AbstractButtonDialog
                   Messages.getString("BotConfigDialog.favorHigherTMMToolTip"),
                   Messages.getString("BotConfigDialog.favorHigherTMMTitle")));
             panContent.add(Box.createVerticalStrut(7));
+
+            panContent.add(buildSlider(numberOfEnemiesToConsiderFacingSlidebar,
+                  Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingMin"),
+                  Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingMax"),
+                  Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingToolTip"),
+                  Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingTitle")));
+            panContent.add(Box.createVerticalStrut(7));
+
+            panContent.add(buildSlider(allowFacingToleranceSlidebar,
+                  Messages.getString("BotConfigDialog.allowFacingToleranceMin"),
+                  Messages.getString("BotConfigDialog.allowFacingToleranceMax"),
+                  Messages.getString("BotConfigDialog.allowFacingToleranceTitle"),
+                  Messages.getString("BotConfigDialog.allowFacingToleranceToolTip")));
+            panContent.add(Box.createVerticalStrut(7));
         }
 
         iAmAPirateCheck.setToolTipText(Messages.getString("BotConfigDialog.iAmAPirateCheckToolTip"));
@@ -487,7 +511,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         return result;
     }
 
-    /** Returns the full behavior setting that the player entered in this dialog. */
+    /** Returns the full behavior setting */
     public BehaviorSettings getBehaviorSettings() {
         savePrincessProperties();
         return princessBehavior;
@@ -501,6 +525,8 @@ public class BotConfigDialog extends AbstractButtonDialog
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
         favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
+        numberOfEnemiesToConsiderFacingSlidebar.setValue(princessBehavior.getNumberOfEnemiesToConsiderFacing());
+        allowFacingToleranceSlidebar.setValue(princessBehavior.getAllowFacingTolerance());
         iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
         experimentalCheck.setSelected(princessBehavior.isExperimental());
     }
@@ -551,6 +577,8 @@ public class BotConfigDialog extends AbstractButtonDialog
                             chosenPreset.getBraveryIndex() != braverySlidebar.getValue() ||
                             chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue() ||
                             chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
+                            chosenPreset.getNumberOfEnemiesToConsiderFacing() != numberOfEnemiesToConsiderFacingSlidebar.getValue() ||
+                            chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
                             chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
                             chosenPreset.isExperimental() != experimentalCheck.isSelected());
     }
@@ -729,8 +757,11 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setBraveryIndex(braverySlidebar.getValue());
         newBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
         newBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
+        newBehavior.setNumberOfEnemiesToConsiderFacing(numberOfEnemiesToConsiderFacingSlidebar.getValue());
+        newBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         newBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
         newBehavior.setExperimental(experimentalCheck.isSelected());
+
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
     }
@@ -768,6 +799,8 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setBraveryIndex(braverySlidebar.getValue());
         tempBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         tempBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
+        tempBehavior.setNumberOfEnemiesToConsiderFacing(numberOfEnemiesToConsiderFacingSlidebar.getValue());
+        tempBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         tempBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
         tempBehavior.setExperimental(experimentalCheck.isSelected());
 
@@ -804,7 +837,7 @@ public class BotConfigDialog extends AbstractButtonDialog
     }
 
     /** Shows a popup menu for a behavior preset, allowing to delete it. */
-    private transient MouseListener presetsMouseListener = new MouseAdapter() {
+    private final transient MouseListener presetsMouseListener = new MouseAdapter() {
 
         @Override
         public void mouseReleased(MouseEvent e) {
@@ -906,7 +939,7 @@ public class BotConfigDialog extends AbstractButtonDialog
      * A renderer for the Behavior Presets list. Adapts the font size to the gui scaling and colors the special list
      * elements (other bot Configurations and original Config).
      */
-    private class PresetsRenderer extends DefaultListCellRenderer {
+    private static class PresetsRenderer extends DefaultListCellRenderer {
 
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
@@ -934,8 +967,7 @@ public class BotConfigDialog extends AbstractButtonDialog
 
             String content;
             boolean invalid = true;
-            if (value instanceof Coords) {
-                Coords coords = (Coords) value;
+            if (value instanceof Coords coords) {
                 content = Messages.getString("BotConfigDialog.hexListIntro", coords.getX() + 1, coords.getY() + 1);
                 if (client != null) {
                     Board board = client.getBoard();
@@ -949,24 +981,7 @@ public class BotConfigDialog extends AbstractButtonDialog
                     } else if (!board.getHex(coords).containsAnyTerrainOf(BUILDING, FUEL_TANK, BRIDGE)) {
                         content += Messages.getString("BotConfigDialog.hexListNoBg");
                     } else {
-                        final Hex hex = board.getHex(coords);
-                        final Building bldg = board.getBuildingAt(coords);
-                        if (hex.containsTerrain(BUILDING)) {
-                            content += Messages.getString("BotConfigDialog.hexListBldg",
-                                  bldg.getType().toString(),
-                                  Building.className(bldg.getBldgClass()),
-                                  hex.terrainLevel(BLDG_ELEV),
-                                  hex.terrainLevel(BLDG_CF));
-                        } else if (hex.containsTerrain(FUEL_TANK)) {
-                            content += Messages.getString("BotConfigDialog.hexListFuel",
-                                  hex.terrainLevel(FUEL_TANK_CF),
-                                  hex.terrainLevel(FUEL_TANK_MAGN));
-                        } else {
-                            content += Messages.getString("BotConfigDialog.hexListBrdg",
-                                  bldg.getType().toString(),
-                                  hex.terrainLevel(BRIDGE_ELEV),
-                                  hex.terrainLevel(BRIDGE_CF));
-                        }
+                        content += buildingInfoIfPresent(coords, board);
                         invalid = false;
                     }
                 } else {
@@ -974,8 +989,11 @@ public class BotConfigDialog extends AbstractButtonDialog
                 }
             } else {
                 int unitID = (int) value;
-                if (client != null && client.getGame().getEntity(unitID) != null) {
-                    Entity entity = client.getGame().getEntity(unitID);
+                Optional<Entity> optEntity = Optional.ofNullable(client)
+                                                   .map(Client::getGame)
+                                                   .map(game -> game.getEntity(unitID));
+                if (optEntity.isPresent()) {
+                    Entity entity = optEntity.get();
                     content = Messages.getString("BotConfigDialog.unitListEntry", unitID, entity.getShortNameRaw());
                     invalid = false;
                 } else {
@@ -986,6 +1004,35 @@ public class BotConfigDialog extends AbstractButtonDialog
             comp.setForeground(invalid ? UIUtil.uiGray() : null);
             return comp;
         }
+    }
+
+    /**
+     * Returns a string with the building information if present.
+     * @param coords Position on the board for possible building
+     * @param board The board to check for building information
+     * @return String with building information if there is any building there
+     */
+    static String buildingInfoIfPresent(Coords coords, Board board) {
+        final Hex hex = board.getHex(coords);
+        final Building bldg = board.getBuildingAt(coords);
+        String content = "";
+        if (hex.containsTerrain(BUILDING)) {
+            content += Messages.getString("BotConfigDialog.hexListBldg",
+                  bldg.getType().toString(),
+                  Building.className(bldg.getBldgClass()),
+                  hex.terrainLevel(BLDG_ELEV),
+                  hex.terrainLevel(BLDG_CF));
+        } else if (hex.containsTerrain(FUEL_TANK)) {
+            content += Messages.getString("BotConfigDialog.hexListFuel",
+                  hex.terrainLevel(FUEL_TANK_CF),
+                  hex.terrainLevel(FUEL_TANK_MAGN));
+        } else {
+            content += Messages.getString("BotConfigDialog.hexListBrdg",
+                  bldg.getType().toString(),
+                  hex.terrainLevel(BRIDGE_ELEV),
+                  hex.terrainLevel(BRIDGE_CF));
+        }
+        return content;
     }
 
     @Override

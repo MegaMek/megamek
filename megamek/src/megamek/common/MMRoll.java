@@ -184,7 +184,7 @@ public class MMRoll extends Roll {
     public String getReport() {
 
         // Build a buffer as we go.
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         // Include the id.
         buffer.append("Roll #").append(this.id).append(" - range: [").append(

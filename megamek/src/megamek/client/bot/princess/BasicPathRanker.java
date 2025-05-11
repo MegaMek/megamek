@@ -41,6 +41,7 @@ import java.util.stream.Stream;
  */
 public class BasicPathRanker extends PathRanker {
     private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
+    public static final int FACING_MOD_MULTIPLIER = 50;
 
     // this is a value used to indicate how much we value the unit being at its
     // destination
@@ -51,8 +52,10 @@ public class BasicPathRanker extends PathRanker {
     // what it's doing
     private final int UNIT_DESTRUCTION_FACTOR = 1000;
 
+    private final FacingDiffCalculator facingDiffCalculator = new FacingDiffCalculator();
+    private final UnitsMedianCoordinateCalculator unitsMedianCoordinateCalculator =
+          new UnitsMedianCoordinateCalculator(4);
     protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
-    private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     protected final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
 
     private PathEnumerator pathEnumerator;
@@ -383,53 +386,14 @@ public class BasicPathRanker extends PathRanker {
         return herdingMod;
     }
 
-    protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path, @Nullable Coords closestPosition) {
-        // limit to the 5 closest enemies
-        int facingDiff = getFacingDiff(movingUnit, game, closestPosition, path);
-        double facingMod = Math.max(0.0, 50 * (facingDiff - 1));
-        logger.trace("facing mod [-{} = max(0, 50 * ({}) - 1)]", facingMod, facingDiff);
+    protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,
+          @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition) {
+        int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit, path, game.getBoard().getCenter(),
+              enemyMedianPosition, closestEnemyPosition);
+        double facingMod = FACING_MOD_MULTIPLIER * facingDiff;
+
+        logger.trace("facing mod [(-){} = {} * {}]", facingMod, FACING_MOD_MULTIPLIER, facingDiff);
         return facingMod;
-    }
-
-    private int getFacingDiff(Entity movingUnit, Game game, @Nullable Coords closestPosition, final MovePath path) {
-        Coords toFace = closestPosition == null ? game.getBoard().getCenter() : closestPosition;
-        int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
-        int currentFacing = path.getFinalFacing();
-        int facingDiff;
-        // -1 is bias towards facing left, 1 is bias towards facing right
-        int biasTowardsFacing = getBiasTowardsFacing(movingUnit);
-        desiredFacing -= biasTowardsFacing;
-        if (desiredFacing < 0) {
-            desiredFacing += 6;
-        }
-        if (currentFacing == desiredFacing) {
-            facingDiff = 0;
-        } else if ((currentFacing == ((desiredFacing + 1) % 6))
-                || (currentFacing == ((desiredFacing + 5) % 6))) {
-            facingDiff = 1;
-        } else if ((currentFacing == ((desiredFacing + 2) % 6))
-                || (currentFacing == ((desiredFacing + 4) % 6))) {
-            facingDiff = 2;
-        } else {
-            facingDiff = 3;
-        }
-        return facingDiff;
-    }
-
-    private static int getBiasTowardsFacing(Entity movingUnit) {
-        int biasTowardsFacing = 0;
-        if (movingUnit.isMek()) {
-            // if we're a mek, we want to face the enemy towards the side that has more armor left
-            Mek mek = (Mek) movingUnit;
-            int leftArmor = mek.getArmor(Mek.LOC_LARM) + mek.getArmor(Mek.LOC_LLEG) + mek.getArmor(Mek.LOC_LT) + mek.getArmor(Mek.LOC_LLEG);
-            int rightArmor = mek.getArmor(Mek.LOC_RARM) + mek.getArmor(Mek.LOC_RLEG) + mek.getArmor(Mek.LOC_RT) + mek.getArmor(Mek.LOC_RLEG);
-            if (leftArmor > rightArmor) {
-                biasTowardsFacing = -1;
-            } else if (rightArmor > leftArmor) {
-                biasTowardsFacing = 1;
-            }
-        }
-        return biasTowardsFacing;
     }
 
     /**
@@ -628,11 +592,14 @@ public class BasicPathRanker extends PathRanker {
         scores.put("selfPreservationIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
         scores.put("movementMod", movementMod);
         // Try to face the enemy.
-        Coords medianEnemyPosition = getEnemiesMedianCoordinate(enemies, movingUnit);
-
-        double facingMod = calculateFacingMod(movingUnit, game, pathCopy, medianEnemyPosition);
-        scores.put("facing", (double) movingUnit.getFacing());
+        Coords medianEnemyPosition = unitsMedianCoordinateCalculator.getEnemiesMedianCoordinate(enemies,
+              path.getFinalCoords());
+        Coords closestEnemyPositionNotZeroDistance =
+              Optional.ofNullable(findClosestEnemy(movingUnit, pathCopy.getFinalCoords(), game, false, 1))
+                    .map(Targetable::getPosition).orElse(null);
+        double facingMod = calculateFacingMod(movingUnit, game, pathCopy, medianEnemyPosition, closestEnemyPositionNotZeroDistance);
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
+        scores.put("facingDiff", facingMod / FACING_MOD_MULTIPLIER);
         scores.put("facingMod", facingMod);
 
         var formula = new StringBuilder(256);
@@ -693,10 +660,11 @@ public class BasicPathRanker extends PathRanker {
         }
 
         formula.append(" - facingMod [")
-            .append(LOG_DECIMAL.format(facingMod))
-            .append(" = max(0, 50 * {")
-            .append(getFacingDiff(movingUnit, game, medianEnemyPosition, pathCopy))
-            .append(" - 1})]");
+              .append((int) facingMod).append(" = ")
+              .append(FACING_MOD_MULTIPLIER)
+              .append(" * ")
+              .append((int) (facingMod / FACING_MOD_MULTIPLIER))
+              .append("]");
 
         logger.trace("{}", formula);
 
@@ -712,21 +680,6 @@ public class BasicPathRanker extends PathRanker {
 
     protected boolean isExtremeRange(Game game) {
         return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
-    }
-
-    private static Coords getEnemiesMedianCoordinate(List<Entity> enemies, Entity movingUnit) {
-        List<Entity> closestEnemies = enemies.stream().filter(e -> e.getPosition() != null).sorted((e1, e2) -> {
-            boolean hasMoved1 = e1.isDone();
-            boolean hasMoved2 = e2.isDone();
-            double bonusDistance1 = hasMoved1 ? 0 : e1.getRunMP();
-            double bonusDistance2 = hasMoved2 ? 0 : e2.getRunMP();
-            double dist1 = e1.getPosition().distance(movingUnit.getPosition()) - bonusDistance1;
-            double dist2 = e2.getPosition().distance(movingUnit.getPosition()) - bonusDistance2;
-            return Double.compare(dist1, dist2);
-        }).limit(5).toList();
-
-        Coords medianPosition = Coords.median(closestEnemies.stream().map(Entity::getPosition).toList());
-        return medianPosition;
     }
 
     protected double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {

@@ -1,15 +1,35 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community. 
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks 
+ * of The Topps Company, Inc. All Rights Reserved.
+ * 
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of 
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.swing;
 
@@ -18,6 +38,7 @@ import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementType;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
@@ -25,6 +46,10 @@ import megamek.common.preference.PreferenceStoreProxy;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -54,7 +79,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
 
     /* --End advanced settings-- */
-
     public static final String BOARD_MOVE_DEFAULT_CLIMB_MODE = "BoardMoveDefaultClimbMode";
     public static final String BOARD_MOVE_DEFAULT_COLOR = "BoardMoveDefaultColor";
     public static final String BOARD_MOVE_ILLEGAL_COLOR = "BoardMoveIllegalColor";
@@ -441,6 +465,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_MAP_BLUE = new Color(60, 140, 240); // greenish blue
     private static final Color DEFAULT_MAP_RED = new Color(200, 40, 40); // red
     private static final Color DEFAULT_MAP_GREEN = new Color(40, 210, 40); // light green
+
+    private static final String DELIMITER = ";";
+    private static final String _TABORDER = "_tabOrder";
+    private static final String _WINDOW = "_window";
 
     protected static GUIPreferences instance = new GUIPreferences();
 
@@ -3500,6 +3528,66 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMovePathPersistenceOnMiniMap(int rounds) {
         store.setValue(MINI_MAP_MOVE_PATH_PERSISTENCE, rounds);
+    }
+    
+    /**
+     * Returns the size and position of a saved named window.
+     * @param name The name of the window.
+     * @return An Optional containing the Rectangle representing the size and position, or an empty Optional if not found.
+     */
+    public Optional<Rectangle> getNamedWindowSizeAndPosition(String name) {
+        final String storedData = getString(name + _WINDOW);
+        if (storedData == null) {
+            return Optional.empty();
+        }
+        String[] windowCoords = storedData.split(DELIMITER);
+        if (windowCoords.length < 4) {
+            return Optional.empty();
+        }
+        try {
+            int x = Integer.parseInt(windowCoords[0]);
+            int y = Integer.parseInt(windowCoords[1]);
+            int width = Integer.parseInt(windowCoords[2]);
+            int height = Integer.parseInt(windowCoords[3]);
+            return Optional.of(new Rectangle(x,y,width,height));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Saves the size and position of a named window.
+     * @param name The name of the window.
+     * @param component The component representing the window.
+     */
+    public void setNamedWindowSizeAndPosition(String name, Window component) {
+        Dimension size = component.getSize();
+        Point pos = component.getLocation();
+        store.setValue(name + _WINDOW, pos.x + DELIMITER + pos.y + DELIMITER + size.width + DELIMITER + size.height);
+    }
+
+    /**
+     * Returns the tab order for a given saved name (for example: the name of a window).
+     * @param name The name of the tab order.
+     * @return A List of Strings representing the tab order, or null if not found.
+     */
+    public @Nullable List<String> getTabOrder(String name) {
+        final String storedData = getString(name + _TABORDER);
+        if (storedData == null) {
+            return null;
+        }
+        final List<String> storedTabOrder = Arrays.asList(storedData.split(DELIMITER));
+        return storedTabOrder;
+    }
+
+    /**
+     * Saves the tab order for a given name (for example: the name of a window).
+     * @param name The name of the tab order.
+     * @param order A List of Strings representing the tab order.
+     */
+    public void setTabOrder(String name, List<String> order) {
+        final String storedTabOrder = String.join(DELIMITER, order);
+        store.setValue(name + _TABORDER, storedTabOrder);
     }
 
     public boolean getNagForOddSizedBoard() {

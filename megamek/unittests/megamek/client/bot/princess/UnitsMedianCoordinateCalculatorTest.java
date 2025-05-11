@@ -124,8 +124,8 @@ class UnitsMedianCoordinateCalculatorTest {
 
         // Initial positions - enemy1 and enemy2 are closest
         Entity enemy1 = enemyMoved(new Coords(11, 11));
-        Entity enemy2 = enemyMoved(new Coords(12, 10));
-        Entity enemy3 = enemyMoved(new Coords(14, 14));
+        Entity enemy2 = enemyImmobile(new Coords(12, 10));
+        Entity enemy3 = enemyImmobile(new Coords(14, 14));
 
         List<Entity> enemies = List.of(enemy1, enemy2, enemy3);
 
@@ -145,18 +145,22 @@ class UnitsMedianCoordinateCalculatorTest {
     }
 
     private static Entity enemy(Coords coords) {
-        return createUnitMock(coords, false);
+        return createUnitMock(coords, false, false);
+    }
+
+    private static Entity enemyImmobile(Coords coords) {
+        return createUnitMock(coords, false, true);
     }
 
     private static Entity enemyMoved(Coords coords) {
-        return createUnitMock(coords, true);
+        return createUnitMock(coords, true, false);
     }
 
-    private static Entity createUnitMock(Coords coords, boolean moved) {
+    private static Entity createUnitMock(Coords coords, boolean moved, boolean immobile) {
         Entity entity = mock(BipedMek.class);
         when(entity.getPosition()).thenReturn(coords);
         when(entity.isSelectableThisTurn()).thenReturn(!moved);
-        when(entity.isImmobile()).thenReturn(false);
+        when(entity.isImmobile()).thenReturn(immobile);
         when(entity.getWalkMP()).thenReturn(2);
         return entity;
     }

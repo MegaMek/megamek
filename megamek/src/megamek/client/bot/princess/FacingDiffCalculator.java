@@ -134,7 +134,8 @@ class FacingDiffCalculator {
             // Otherwise, we face the median position of the closest units
             toFace = enemyMedianPosition;
         } else {
-            // If we don't have a target, we face the center of the board
+            // If we don't have any enemies we want to face the secondary position, which usually means the center of
+            // the board
             toFace = secondaryPosition;
         }
         return toFace;

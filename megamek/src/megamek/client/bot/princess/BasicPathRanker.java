@@ -41,6 +41,7 @@ import java.util.stream.Stream;
  */
 public class BasicPathRanker extends PathRanker {
     private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
+    public static final int FACING_MOD_MULTIPLIER = 50;
 
     // this is a value used to indicate how much we value the unit being at its
     // destination
@@ -55,7 +56,6 @@ public class BasicPathRanker extends PathRanker {
     private final UnitsMedianCoordinateCalculator unitsMedianCoordinateCalculator =
           new UnitsMedianCoordinateCalculator(4);
     protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
-    private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     protected final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
 
     private PathEnumerator pathEnumerator;
@@ -390,9 +390,9 @@ public class BasicPathRanker extends PathRanker {
           @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition) {
         int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit, path, game.getBoard().getCenter(),
               enemyMedianPosition, closestEnemyPosition);
-        double facingMod = 50 * facingDiff;
+        double facingMod = FACING_MOD_MULTIPLIER * facingDiff;
 
-        logger.trace("facing mod [(-){} = 50 * {}]", facingMod, facingDiff);
+        logger.trace("facing mod [(-){} = {} * {}]", facingMod, FACING_MOD_MULTIPLIER, facingDiff);
         return facingMod;
     }
 
@@ -599,7 +599,7 @@ public class BasicPathRanker extends PathRanker {
                     .map(Targetable::getPosition).orElse(null);
         double facingMod = calculateFacingMod(movingUnit, game, pathCopy, medianEnemyPosition, closestEnemyPositionNotZeroDistance);
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
-        scores.put("facingDiff", facingMod / 50);
+        scores.put("facingDiff", facingMod / FACING_MOD_MULTIPLIER);
         scores.put("facingMod", facingMod);
 
         var formula = new StringBuilder(256);
@@ -660,10 +660,11 @@ public class BasicPathRanker extends PathRanker {
         }
 
         formula.append(" - facingMod [")
-            .append((int) facingMod)
-            .append(" = 50 * ")
-            .append((int) (facingMod / 50))
-            .append("]");
+              .append((int) facingMod).append(" = ")
+              .append(FACING_MOD_MULTIPLIER)
+              .append(" * ")
+              .append((int) (facingMod / FACING_MOD_MULTIPLIER))
+              .append("]");
 
         logger.trace("{}", formula);
 

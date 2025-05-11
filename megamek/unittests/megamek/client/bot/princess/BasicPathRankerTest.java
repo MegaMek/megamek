@@ -405,7 +405,6 @@ class BasicPathRankerTest {
      */
     private static class RankPathResultBuilder {
         private final DecimalFormat decimalFormat;
-        private final NumberFormat intFormat;
         private final NumberFormat percentFormat;
 
         private double fallModValue;
@@ -432,9 +431,8 @@ class BasicPathRankerTest {
 
         private boolean noFriends = false;
 
-        public RankPathResultBuilder(DecimalFormat decimalFormat, NumberFormat intFormat, NumberFormat percentFormat) {
+        public RankPathResultBuilder(DecimalFormat decimalFormat, NumberFormat percentFormat) {
             this.decimalFormat = decimalFormat;
-            this.intFormat = intFormat;
             this.percentFormat = percentFormat;
         }
 
@@ -508,9 +506,9 @@ class BasicPathRankerTest {
                       .append(decimalFormat.format(herdMentalityValue));
             }
 
-            result.append("] - facingMod [").append(intFormat.format(facingModValue))
-                  .append(" = ").append(intFormat.format(facingModConstant))
-                  .append(" * ").append(intFormat.format(facingDiff)).append("]");
+            result.append("] - facingMod [").append(facingModValue)
+                  .append(" = ").append(facingModConstant)
+                  .append(" * ").append(facingDiff).append("]");
 
             return result.toString();
         }
@@ -629,7 +627,7 @@ class BasicPathRankerTest {
         Coords friendsCoords = new Coords(10, 10);
 
         // Create a builder for the results - we'll reuse this for all test cases
-        RankPathResultBuilder builder = new RankPathResultBuilder(LOG_DECIMAL, LOG_INT, LOG_PERCENT);
+        RankPathResultBuilder builder = new RankPathResultBuilder(LOG_DECIMAL, LOG_PERCENT);
 
         // TEST CASE 1: Base case - default conditions
         final double baseRank = -51.25; // The rank I expect to get with the above settings.

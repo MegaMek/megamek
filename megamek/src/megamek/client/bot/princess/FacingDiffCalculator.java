@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.bot.common;
+package megamek.client.bot.princess;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -54,7 +54,9 @@ import megamek.common.annotations.Nullable;
  * @author Luana Coppio
  * @since 0.50.06
  */
-public class FacingDiffCalculator {
+class FacingDiffCalculator {
+
+    FacingDiffCalculator() {}
 
     /**
      * Calculates the difference between a unit's current facing and its optimal facing.
@@ -71,7 +73,7 @@ public class FacingDiffCalculator {
      *
      * @return The facing difference, from 0 (optimal) to 3 (opposite direction)
      */
-    public int getFacingDiff(final Entity unit, final MovePath path, final Coords secondaryTargetPosition,
+    int getFacingDiff(final Entity unit, final MovePath path, final Coords secondaryTargetPosition,
           @Nullable final Coords enemyMedianPosition, @Nullable final Coords closestEnemyPosition) {
         Coords toFace = selectOneCoordsToFace(path, secondaryTargetPosition, enemyMedianPosition, closestEnemyPosition);
         int desiredFacing = getDesiredFacing(unit, path, toFace);

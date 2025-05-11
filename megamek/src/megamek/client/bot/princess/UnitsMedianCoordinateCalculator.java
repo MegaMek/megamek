@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.bot.common;
+package megamek.client.bot.princess;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -56,11 +56,11 @@ import java.util.List;
  * @author Luana Coppio
  * @since 0.50.06
  */
-public class UnitsMedianCoordinateCalculator {
+class UnitsMedianCoordinateCalculator {
 
     private final int numberOfUnitToConsider;
 
-    public UnitsMedianCoordinateCalculator(int numberOfUnitToConsider) {
+    UnitsMedianCoordinateCalculator(int numberOfUnitToConsider) {
         this.numberOfUnitToConsider = numberOfUnitToConsider;
     }
 
@@ -79,7 +79,7 @@ public class UnitsMedianCoordinateCalculator {
      * @return The median coordinate of the closest enemies, representing the central threat position. Returns null
      * if there are no enemies.
      */
-    public @Nullable Coords getEnemiesMedianCoordinate(List<Entity> enemies, Coords position) {
+    @Nullable Coords getEnemiesMedianCoordinate(List<Entity> enemies, Coords position) {
         List<Coords> coords = enemies.stream().filter(e -> e.getPosition() != null).sorted((e1, e2) -> {
             // Consider that those who have not moved will move away from me
             boolean hasNotMoved1 = e1.isSelectableThisTurn() && !e1.isImmobile();

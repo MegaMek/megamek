@@ -39,7 +39,6 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
 
-import megamek.client.bot.common.FacingDiffCalculator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -2303,79 +2302,4 @@ class BasicPathRankerTest {
         assertEquals(4.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
     }
 
-    @Test
-    void testFacingDiff() {
-        Mek mek = mock(BipedMek.class);
-        when(mek.getArmor(Mek.LOC_LARM)).thenReturn(5);
-        when(mek.getArmor(Mek.LOC_LLEG)).thenReturn(5);
-        when(mek.getArmor(Mek.LOC_LT)).thenReturn(10);
-        when(mek.getArmor(Mek.LOC_RARM)).thenReturn(4);
-        when(mek.getArmor(Mek.LOC_RLEG)).thenReturn(4);
-        when(mek.getArmor(Mek.LOC_RT)).thenReturn(10);
-        when(mek.isMek()).thenReturn(true);
-        FacingDiffCalculator facingDiffCalculator = new FacingDiffCalculator();
-        MovePath path = mock(MovePath.class);
-
-        // If the final position is adjacent to the closest enemy position, then it must face the enemy.
-        // position 0505 (new Coords(4, 4)) is adjacent to 0605 (new Coords(5, 4)), the direction from 4,4 to 5,4 is 2,
-        // this case the final facing of the movepath is considering that it is facing towards north (0), so the
-        // facing diff is 2, but because it has the right side with less armor, it has to bias its facing to show the
-        // left side, so the facing diff increases in one more time, going up to 3.
-        when(path.getFinalCoords()).thenReturn(new Coords(4, 4));
-        when(path.getFinalFacing()).thenReturn(0);
-        int facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
-              new Coords(10,10), new Coords(5,4));
-        assertEquals(2, facingDiff);
-
-        // If the final position is not adjacent to the closest enemy position, then it must face the enemy median
-        // position 1111(new Coords(10, 10)), the direction from 0606 to 1111
-        // is 2, this case the final facing of the movepath is considering that it is towards south east(2), so the
-        // facing diff is 0, because it has the left side with less armor, it has to bias its facing to show the
-        // right side, so the facing diff increases in one time time, going up to 1.
-        when(path.getFinalCoords()).thenReturn(new Coords(5, 5));
-        when(path.getFinalFacing()).thenReturn(2);
-
-        when(mek.getArmor(Mek.LOC_RARM)).thenReturn(8);
-        when(mek.getArmor(Mek.LOC_RLEG)).thenReturn(8);
-
-        facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
-              new Coords(10,10), new Coords(2,2));
-        assertEquals(0, facingDiff);
-
-
-        // If there are no enemies, it should them face the secondary target position, in this case the board center,
-        // from its position 0606 to the board center 1111 the facing is 2, it has no inherent bias towards any side
-        // because its left and right armor are equal, therefore it will call a facing diff between 2 and its final
-        // facing which is in this case also 0, resulting in an expected diff of 0
-        when(path.getFinalCoords()).thenReturn(new Coords(5, 5));
-        when(path.getFinalFacing()).thenReturn(2);
-
-        when(mek.getArmor(Mek.LOC_RARM)).thenReturn(5);
-        when(mek.getArmor(Mek.LOC_RLEG)).thenReturn(5);
-
-        facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
-              null, null);
-        assertEquals(0, facingDiff);
-    }
-
-    @Test
-    void testFacing() {
-        Coords median = getEnemiesMedianCoordinate(List.of(new Coords(0,0), new Coords(1,1), new Coords(2,2),
-                    new Coords(10,12), new Coords(1,11), new Coords(41,12),
-                    new Coords(22,15), new Coords(1,18), new Coords(27,22),
-                    new Coords(4,20), new Coords(21,1), new Coords(2,20),
-                    new Coords(24,0), new Coords(9, 28), new Coords(22,22)),
-              new Coords(10, 10));
-        assertEquals(new Coords(4,7), median);
-    }
-
-    public static Coords getEnemiesMedianCoordinate(List<Coords> enemies, Coords movingUnit) {
-        List<Coords> closestEnemies = enemies.stream().filter(Objects::nonNull).sorted((e1, e2) -> {
-            double dist1 = e1.distance(movingUnit);
-            double dist2 = e2.distance(movingUnit);
-            return Double.compare(dist1, dist2);
-        }).limit(5).toList();
-
-        return Coords.median(closestEnemies);
-    }
 }

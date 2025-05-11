@@ -18,6 +18,7 @@ import megamek.client.bot.princess.Princess;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.InGameObject;
+import megamek.common.Player;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.TeamArgument;
@@ -40,9 +41,18 @@ public class IgnorePlayerCommand implements ChatCommand {
     @Override
     public void execute(Princess princess, Arguments arguments) {
         int playerId = arguments.getInt(PLAYER_ID);
-        princess.getGame().getInGameObjects().stream().filter(e -> e instanceof Entity entity && entity.getOwner() != null)
-            .filter(e -> ((Entity) e).getOwner().getTeam() == playerId)
-            .map(InGameObject::getId)
-            .forEach(i -> princess.getBehaviorSettings().addIgnoredUnitTarget(i));
+        Player player = princess.getGame().getPlayer(playerId);
+        if (player != null) {
+            princess.getGame()
+                  .getInGameObjects()
+                  .stream()
+                  .filter(e -> e instanceof Entity entity && entity.getOwner() != null)
+                  .filter(e -> ((Entity) e).getOwner().getTeam() == playerId)
+                  .map(InGameObject::getId)
+                  .forEach(i -> princess.getBehaviorSettings().addIgnoredUnitTarget(i));
+            princess.sendChat(Messages.getString("Princess.command.ignorePlayer.playerAdded", player.getName()));
+        } else {
+            princess.sendChat(Messages.getString("Princess.command.ignorePlayer.playerNotFound", playerId));
+        }
     }
 }

@@ -56,7 +56,11 @@ import megamek.common.annotations.Nullable;
  */
 class FacingDiffCalculator {
 
-    FacingDiffCalculator() {}
+    private final int allowFacingTolerance;
+    
+    FacingDiffCalculator(int allowFacingTolerance) {
+        this.allowFacingTolerance = allowFacingTolerance;
+    }
 
     /**
      * Calculates the difference between a unit's current facing and its optimal facing.
@@ -153,18 +157,18 @@ class FacingDiffCalculator {
      *
      * @return The facing difference (0-2) (there is a built-in tolerance for 1 turn click)
      */
-    private static int getFacingDiff(int currentFacing, int desiredFacing) {
+    private int getFacingDiff(int currentFacing, int desiredFacing) {
         int facingDiff;
         if (currentFacing == desiredFacing) {
             facingDiff = 0;
         } else if ((currentFacing == ((desiredFacing + 1) % 6)) || (currentFacing == ((desiredFacing + 5) % 6))) {
-            facingDiff = 0;
-        } else if ((currentFacing == ((desiredFacing + 2) % 6)) || (currentFacing == ((desiredFacing + 4) % 6))) {
             facingDiff = 1;
-        } else {
+        } else if ((currentFacing == ((desiredFacing + 2) % 6)) || (currentFacing == ((desiredFacing + 4) % 6))) {
             facingDiff = 2;
+        } else {
+            facingDiff = 3;
         }
-        return facingDiff;
+        return Math.max(0, facingDiff - allowFacingTolerance);
     }
 
     /**

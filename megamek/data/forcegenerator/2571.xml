@@ -426,12 +426,12 @@
             </model>
         </chassis>
 		<chassis name='Banshee' unitType='Mek'>
-			<availability>SL:0,SL.R:0,IS!A:1!B:2!C:3!D:4,TH:3-,CC:0,MERC!A:6!B:5!C:1</availability>
+			<availability>SL:0,SL.R:0,IS!A:1!B:2!C:3!D:4,TH:3-,CC:0,MERC!A:6!B:5!C:1,TC!A:3,MOC!A:2,RWR!A:3,Periphery:1+,Periphery.Deep:1+</availability>
 			<model name='BNC-1E'>
-				<availability>MERC!B:4!C:8</availability>
+				<availability>MERC!B:4!C:8,TC:6,RWR:8,MOC:8,Periphery:8</availability>
 			</model>
 			<model name='BNC-3E'>
-				<availability>SL:0,SL.R:0,IS:8,TH:8,FWL:0,MERC:8</availability>
+				<availability>SL:0,SL.R:0,IS:8,TH:8,FWL:0,MERC:8,TC:7,MOC:5,RWR:6</availability>
 			</model>
 			<model name='BNC-3M'>
 				<availability>FWL:8</availability>
@@ -1861,18 +1861,18 @@
 			</model>
 		</chassis>
 		<chassis name='Longbow' unitType='Mek'>
-			<availability>SL:4+,SL.R:3+,IS!A:4!B:1,TH:5+,LA!A:5!B:1,FWL!A:6!B:6!C:6!D:6,CC:0,MERC!A:4!B:1</availability>
+			<availability>SL:4+,SL.R:3+,IS!A:4!B:1,TH:5+,LA!A:5!B:1,FWL!A:6!B:6!C:6!D:6,CC:0,MERC!A:4!B:1,TC:1+,MOC:1+,Periphery:1+,Periphery.Deep:1+</availability>
 			<model name='LGB-0C'>
                 <roles>fire_support</roles>
-				<availability>FWL!B:4!C:8!D:8,MERC!B:8</availability>
+				<availability>FWL!B:4!C:8!D:8,MERC!B:8,TC:8,MOC:8,Periphery:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='LGB-0W'>
 				<roles>fire_support</roles>
-				<availability>FWL!A:8!B:3!C:1,DC:8,MERC:7</availability>
+				<availability>FWL!A:8!B:3!C:1,DC:8,MERC:7,TC:1+</availability>
 			</model>
 			<model name='LGB-0W2'>
                 <roles>fire_support</roles>
-				<availability>FWL!A:6!B:3!C:1,DC:5,MERC:4</availability>
+				<availability>FWL!A:6!B:3!C:1,DC:5,MERC:4,TC:1+</availability>
 			</model>
 			<model name='LGB-7Q'>
 				<roles>fire_support</roles>
@@ -2770,12 +2770,12 @@
             </model>
         </chassis>
 		<chassis name='Stalker' unitType='Mek'>
-			<availability>SL!A:7!B:6!C:5!D:3,SL.R:6,TH:6+</availability>
+			<availability>SL!A:7!B:6!C:5!D:3,SL.R:6,TH:6+,IS:1+:2599,TC:1+:2604,Periphery:1+:2609</availability>
 			<model name='STK-3F'>
-				<availability>SL:8,SL.R:8,TH:8</availability>
+				<availability>SL:8,SL.R:8,TH:8,IS:8,TC:8,Periphery:8</availability>
 			</model>
 			<model name='STK-3H'>
-				<availability>SL:5,SL.R:5,TH:5</availability>
+				<availability>SL:5,SL.R:5,TH:5,IS:5</availability>
 			</model>
 		</chassis>
 		<chassis name='Star Dagger' unitType='AeroSpaceFighter'>
@@ -3025,7 +3025,7 @@
 			</model>
 		</chassis>
 		<chassis name='Victor' unitType='Mek'>
-			<availability>SL!A:5!B:4!C:3!D:1,SL.R:4,IS!A:3!B:1,TH!A:4!B:1,FS!A:8!B:1,FWL!A:2!B:1,DC!A:4!B:1,MERC:1+</availability>
+			<availability>SL!A:5!B:4!C:3!D:1,SL.R:4,IS!A:3!B:1,TH!A:4!B:1,FS!A:8!B:1,FWL!A:2!B:1,DC!A:4!B:1,MERC:1+,TC:1+:2600</availability>
 			<model name='VTR-9A'>
 				<availability>SL:4,SL.R:0,IS:5,TH:4,FWL:8,MERC:8</availability>
 			</model>
@@ -3033,7 +3033,7 @@
 				<availability>SL:5,SL.R:4-,TH:5</availability>
 			</model>
 			<model name='VTR-9B'>
-				<availability>SL:8,SL.R:8,IS:8,TH:8,MERC:8</availability>
+				<availability>SL:8,SL.R:8,IS:8,TH:8,MERC:8,TC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Vigilant Corvette' unitType='Warship'>
@@ -3168,7 +3168,7 @@
 			</model>
 		</chassis>
 		<chassis name='Xanthos' unitType='Mek'>
-			<availability>SL!C:1!D:2,SL.R:0,CC:4+,TH:0</availability>
+			<availability>SL!C:1!D:2,SL.R:0,TH:0,CC:4+,MOC:1+:2584</availability>
 			<model name='XNT-2O'>
 				<availability>CC!B:1!C:2!D:3</availability>
 			</model>

@@ -247,9 +247,9 @@
             </model>
         </chassis>
 		<chassis name='Banshee' unitType='Mek'>
-			<availability>TH!A:4!B:5!C:6</availability>
+			<availability>TH!A:4!B:5!C:6,TC:1+:2480,RWR:1+:2475</availability>
 			<model name='BNC-1E'>
-				<availability>TH!A:4!B:8!C:8</availability>
+				<availability>TH!A:4!B:8!C:8,TC:8,RWR:8</availability>
 			</model>
 			<model name='BNC-3E'>
 				<availability>TH!A:8!B:1</availability>

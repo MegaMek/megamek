@@ -346,12 +346,12 @@
             </model>
         </chassis>
 		<chassis name='Banshee' unitType='Mek'>
-			<availability>TH!B:1!C:2!D:3,MERC!A:2!B:3</availability>
+			<availability>TH!B:1!C:2!D:3,MERC!A:2!B:3,TC!A:3,MOC!A:2,RWR!A:3,Periphery:1+,Periphery.Deep:0</availability>
             <model name='BNC-1E'>
-                <availability>MERC:8</availability>
+                <availability>MERC:8,TC:7,RWR:8,MOC:8,Periphery:8</availability>
             </model>
             <model name='BNC-3E'>
-				<availability>TH:8</availability>
+				<availability>TH:8,TC:6,RWR:5</availability>
 			</model>
 		</chassis>
 		<chassis name='Baron Destroyer' unitType='Warship'>
@@ -1313,10 +1313,10 @@
 			</model>
 		</chassis>
 		<chassis name='Longbow' unitType='Mek'>
-			<availability>FWL!A:8!B:8!C:8</availability>
+			<availability>FWL!A:8!B:8!C:8,MERC:1+:2534,TC:1+:2534,Periphery.CM:1+:2534,Periphery.ME:1+:2535,Periphery.MW:1+:2535,Periphery:1+:2539,Periphery.Deep:0</availability>
 			<model name='LGB-0C'>
                 <roles>fire_support</roles>
-				<availability>FWL!A:4!B:8!C:8</availability>
+				<availability>FWL!A:4!B:8!C:8,MERC:8,TC:8,Periphery.CM:8,Periphery.ME:8,Periphery.MW:8,Periphery:8</availability>
 			</model>
 			<model name='LGB-0W'>
 				<roles>fire_support</roles>

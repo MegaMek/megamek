@@ -21,6 +21,7 @@ package megamek.client.bot.princess;
 
 import megamek.client.bot.BotLogger;
 import megamek.client.bot.common.FacingDiffCalculator;
+import megamek.client.bot.common.UnitsMedianCoordinateCalculator;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
@@ -57,6 +58,8 @@ public class BasicPathRanker extends PathRanker {
     private final int UNIT_DESTRUCTION_FACTOR = 1000;
 
     private final FacingDiffCalculator facingDiffCalculator = new FacingDiffCalculator();
+    private final UnitsMedianCoordinateCalculator unitsMedianCoordinateCalculator =
+          new UnitsMedianCoordinateCalculator(4);
     protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     protected final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
@@ -391,7 +394,6 @@ public class BasicPathRanker extends PathRanker {
 
     protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,
           @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition) {
-        // limit to the 5 closest enemies
         int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit, path, game.getBoard().getCenter(),
               enemyMedianPosition, closestEnemyPosition);
         double facingMod = 50 * facingDiff;
@@ -596,7 +598,8 @@ public class BasicPathRanker extends PathRanker {
         scores.put("selfPreservationIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
         scores.put("movementMod", movementMod);
         // Try to face the enemy.
-        Coords medianEnemyPosition = getEnemiesMedianCoordinate(enemies, path.getFinalCoords());
+        Coords medianEnemyPosition = unitsMedianCoordinateCalculator.getEnemiesMedianCoordinate(enemies,
+              path.getFinalCoords());
         Coords closestEnemyPositionNotZeroDistance =
               Optional.ofNullable(findClosestEnemy(movingUnit, pathCopy.getFinalCoords(), game, false, 1))
                     .map(Targetable::getPosition).orElse(null);
@@ -682,21 +685,6 @@ public class BasicPathRanker extends PathRanker {
 
     protected boolean isExtremeRange(Game game) {
         return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
-    }
-
-    private static Coords getEnemiesMedianCoordinate(List<Entity> enemies, Coords position) {
-        List<Entity> closestEnemies = enemies.stream().filter(e -> e.getPosition() != null).sorted((e1, e2) -> {
-            // Consider that those who have not moved will move away from me
-            boolean hasNotMoved1 = e1.isSelectableThisTurn() && !e1.isImmobile();
-            boolean hasNotMoved2 = e2.isSelectableThisTurn() && !e2.isImmobile();
-            double bonusDistance1 = hasNotMoved1 ? e1.getWalkMP() : 0;
-            double bonusDistance2 = hasNotMoved2 ? e2.getWalkMP() : 0;
-            double dist1 = Math.max(0, e1.getPosition().distance(position) + bonusDistance1);
-            double dist2 = Math.max(0, e2.getPosition().distance(position) + bonusDistance2);
-            return Double.compare(dist1, dist2);
-        }).limit(5).toList();
-
-        return Coords.median(closestEnemies.stream().map(Entity::getPosition).toList());
     }
 
     protected double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {

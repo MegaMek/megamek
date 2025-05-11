@@ -1310,7 +1310,7 @@ class BasicPathRankerTest {
     }
 
     List<Hex> setupHexes(List<Coords> coords) {
-        List<Hex> hexes = new ArrayList<Hex>();
+        List<Hex> hexes = new ArrayList<>();
         for (Coords c : coords) {
             Hex mockHex = mock(Hex.class);
             when(mockHex.getTerrainTypes()).thenReturn(new int[0]);
@@ -2297,9 +2297,9 @@ class BasicPathRankerTest {
         final Crew mockCrew = mock(Crew.class);
         when(mockUnit.getCrew()).thenReturn(mockCrew);
         when(mockCrew.getPiloting()).thenReturn(5);
-
+        // hex.getTerrainTypesSet()
         // Test _possible_ black ice hazard value (1/3 lower)
-        when(mockPenultimateHex.getTerrainTypes()).thenReturn(new int[] { Terrains.PAVEMENT });
+        when(mockPenultimateHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.PAVEMENT)));
         assertEquals(4.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
     }
 

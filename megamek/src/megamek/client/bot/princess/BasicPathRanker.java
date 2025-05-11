@@ -395,62 +395,9 @@ public class BasicPathRanker extends PathRanker {
         int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit, path, game.getBoard().getCenter(),
               enemyMedianPosition, closestEnemyPosition);
         double facingMod = 50 * facingDiff;
+
         logger.trace("facing mod [(-){} = 50 * {}]", facingMod, facingDiff);
         return facingMod;
-    }
-
-    private int getFacingDiff(Entity movingUnit, Game game, @Nullable Coords enemyMedianPosition,
-          @Nullable Coords closestEnemyPosition, final MovePath path) {
-        Coords toFace;
-        if ((closestEnemyPosition != null) && closestEnemyPosition.distance(movingUnit.getPosition()) == 1) {
-            // The closestEnemyPosition is the position of the closest enemy, if we are moving in direction of it and
-            // landing beside it (reason why dist == 1), we want to face it.
-            toFace = closestEnemyPosition;
-        } else if (enemyMedianPosition != null) {
-            // Otherwise, we face the median position of the closest units
-            toFace = enemyMedianPosition;
-        } else {
-            // If we don't have a target, we face the center of the board
-            toFace = game.getBoard().getCenter();
-        }
-
-        int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
-        int currentFacing = path.getFinalFacing();
-        int facingDiff;
-        // -1 is bias towards facing left, 1 is bias towards facing right
-        desiredFacing += getBiasTowardsFacing(movingUnit);
-        desiredFacing %= 6;
-        if (desiredFacing < 0) {
-            desiredFacing += 6;
-        }
-        if (currentFacing == desiredFacing) {
-            facingDiff = 0;
-        } else if ((currentFacing == ((desiredFacing + 1) % 6))
-                || (currentFacing == ((desiredFacing + 5) % 6))) {
-            facingDiff = 1;
-        } else if ((currentFacing == ((desiredFacing + 2) % 6))
-                || (currentFacing == ((desiredFacing + 4) % 6))) {
-            facingDiff = 2;
-        } else {
-            facingDiff = 3;
-        }
-        return facingDiff;
-    }
-
-    private static int getBiasTowardsFacing(Entity movingUnit) {
-        int biasTowardsFacing = 0;
-        if (movingUnit.isMek()) {
-            // if we're a mek, we want to face the enemy towards the side that has more armor left
-            Mek mek = (Mek) movingUnit;
-            int leftArmor = mek.getArmor(Mek.LOC_LARM) + mek.getArmor(Mek.LOC_LLEG) + mek.getArmor(Mek.LOC_LT) + mek.getArmor(Mek.LOC_LLEG);
-            int rightArmor = mek.getArmor(Mek.LOC_RARM) + mek.getArmor(Mek.LOC_RLEG) + mek.getArmor(Mek.LOC_RT) + mek.getArmor(Mek.LOC_RLEG);
-            if (leftArmor > rightArmor) {
-                biasTowardsFacing = -1;
-            } else if (rightArmor > leftArmor) {
-                biasTowardsFacing = 1;
-            }
-        }
-        return biasTowardsFacing;
     }
 
     /**

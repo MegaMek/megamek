@@ -289,4 +289,9 @@ public class SBFStatsDialog extends AbstractDialog {
         }
         return result.toString();
     }
+
+    @Override
+    protected void cancelAction() {
+        dispose();
+    }
 }

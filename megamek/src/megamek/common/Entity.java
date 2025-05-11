@@ -2947,10 +2947,8 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Convenience method to drop all cargo.
-     *
-     * @deprecated no indicated uses.
+     * TODO HHW - Psi
      */
-    @Deprecated(since = "0.50.05", forRemoval = true)
     public void dropGroundObjects() {
         carriedObjects.clear();
     }
@@ -2967,9 +2965,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @deprecated no indicated uses.
+     * TODO HHW - Psi
      */
-    @Deprecated(since = "0.50.05", forRemoval = true)
     public void setCarriedObjects(Map<Integer, ICarryable> value) {
         carriedObjects = value;
     }
@@ -3125,8 +3122,25 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns this entity's running/flank mp as a string.
+     * Includes both the base mp and the potential mp with speed enhancers,
+     * including the current status of such speed enhancers.
+     * @return A string like <code>9(15)</code> if there is no current {@link Game},
+     * or a string like <code>9(15) MASC:0(3+)</code> if there is one.
      */
     public String getRunMPasString() {
+        return getRunMPasString(true);
+    }
+
+    /**
+     * Returns this entity's running/flank mp as a string.
+     * Includes both the base mp and the potential mp with speed enhancers,
+     * optionally including the current status of such speed enhancers.
+     * @param gameState Set this to <code>true</code> to include information about the current state of equipment
+     *                  like MASC.
+     * @return A string like <code>9(15)</code> if <code>gameState</code> is <code>false</code> or there is no
+     * current {@link Game}, or a string like <code>9(15) MASC:0(3+)</code> otherwise.
+     */
+    public String getRunMPasString(boolean gameState) {
         return Integer.toString(getRunMP());
     }
 

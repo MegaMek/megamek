@@ -755,9 +755,9 @@
             </model>
         </chassis>
 		<chassis name='Gladiator' unitType='Mek'>
-			<availability>DC!B:8!C:8,PoR!A:8!B:8,MERC!A:8</availability>
+			<availability>DC!B:8!C:8,PoR!A:8!B:8,MERC!A:8,RWR:1+,OA:1+,Periphery.R:1+,Periphery.DD!A:2,Periphery.OS:1+</availability>
             <model name='GLD-1R'>
-                <availability>DC!B:6!C:8,PoR:8,MERC:1</availability>
+                <availability>DC!B:6!C:8,PoR:8,MERC:1,RWR:8,OA:8,Periphery.R:8,Periphery.DD:8,Periphery.OS:8</availability>
             </model>
 			<model name='GLD-2R'>
 				<availability>DC:8,PoR!A:6</availability>
@@ -1485,9 +1485,12 @@
 			</model>
 		</chassis>
 		<chassis name='Phoenix' unitType='Mek'>
-            <availability>RWR:6,Periphery.MW!A:1</availability>
+            <availability>RWR!A:5!B:3,Periphery.MW!A:1,Periphery.R!A:2,Periphery.DD:1+</availability>
             <model name='PX-1R'>
-                <availability>RWR:8,Periphery.MW:8</availability>
+                <availability>RWR:8,Periphery.MW:8,Periphery.R:8,Periphery.DD:8</availability>
+            </model>
+            <model name='PX-3R'>
+                <availability>RWR!A:3</availability>
             </model>
 		</chassis>
 		<chassis name='Pinto Corvette' unitType='Warship'>
@@ -1630,9 +1633,9 @@
 			</model>
 		</chassis>
 		<chassis name='Shadow Hawk' unitType='Mek'>
-			<availability>IS!A:2,TH!A:8!B:6,DC!A:8,PoR:0,CC!A:8,MERC!A:2,TC!A:3,Periphery:1+,Periphery.MW!A:2,Periphery.Deep:1+:2492</availability>
+			<availability>IS!A:2,TH!A:8!B:6,DC!A:8,PoR:0,CC!A:8,MERC!A:2,TC!A:3,RWR!A:2,OA:1+,Periphery:1+,Periphery.MW!A:2,Periphery.Deep:1+:2492</availability>
 			<model name='SHD-1R'>
-				<availability>IS:8,TH:8,MERC:8,TC:8,Periphery:8,Periphery.Deep:8</availability>
+				<availability>IS:8,TH:8,MERC:8,TC:8,RWR:8,OA:8,Periphery:8,Periphery.Deep:8</availability>
 			</model>
 		</chassis>
         <chassis name='Sherpa Armored Truck' unitType='Tank'>
@@ -1693,9 +1696,9 @@
 			</model>
 		</chassis>
 		<chassis name='Swordsman' unitType='Mek'>
-			<availability>FS!A:8!B:8!C:8,TC:0,Periphery.HR:1+,Periphery.OS:1+</availability>
+			<availability>FS!A:8!B:8!C:8,TC:0,OA:1+,Periphery.HR:1+,Periphery.OS:1+</availability>
 			<model name='SWD-1'>
-				<availability>FS!B:6!C:8,Periphery.HR:8,Periphery.OS:8</availability>
+				<availability>FS!B:6!C:8,OA:8,Periphery.HR:8,Periphery.OS:8</availability>
 			</model>
 			<model name='SWD-2'>
 				<availability>FS!A:8!B:8!C:1</availability>
@@ -1898,9 +1901,9 @@
 			</model>
 		</chassis>
         <chassis name='Wolverine' unitType='Mek'>
-            <availability>IS:1+:2500,FS!A:4!B:4,TC!A:3,Periphery.HR:1+,Periphery.OS:1+,Periphery:1+:2491,Periphery.Deep:1+:2505</availability>
+            <availability>IS:1+:2500,FS!A:4!B:4,TC!A:3,RWR!A:2,OA:1+,Periphery.HR:1+,Periphery.OS:1+,Periphery:1+:2491,Periphery.Deep:1+:2505</availability>
             <model name='WVR-1R'>
-                <availability>FS:8,TC:8,Periphery:8,Periphery.Deep:8</availability>
+                <availability>FS:8,TC:8,RWR:8,OA:8,Periphery:8,Periphery.Deep:8</availability>
             </model>
             <model name='WVR-3R'>
                 <availability>IS!A:8,FS!A:3,TC:3</availability>

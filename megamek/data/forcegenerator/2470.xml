@@ -178,10 +178,10 @@
 			</model>
 		</chassis>
 		<chassis name='Archer' unitType='Mek'>
-			<availability>TH!A:6!B:4,IS:1+:2479,TC:1+:2484,RWR!A:3</availability>
+			<availability>TH!A:6!B:4,IS:1+:2479,TC:1+:2484,RWR!A:3,PIR:1+:2479</availability>
 			<model name='ARC-1A'>
 				<roles>fire_support</roles>
-				<availability>TH:8,IS:8,TC:8,RWR:8</availability>
+				<availability>TH:8,IS:8,TC:8,RWR:8,PIR:8</availability>
 			</model>
 			<model name='ARC-2R'>
 				<roles>fire_support</roles>
@@ -247,18 +247,18 @@
             </model>
         </chassis>
 		<chassis name='Banshee' unitType='Mek'>
-			<availability>TH!A:4!B:5!C:6,TC:1+:2480,RWR:1+:2475</availability>
+			<availability>TH!A:4!B:5!C:6,TC:1+:2480,RWR:1+:2475,PIR:1+:2480</availability>
 			<model name='BNC-1E'>
-				<availability>TH!A:4!B:8!C:8,TC:8,RWR:8</availability>
+				<availability>TH!A:4!B:8!C:8,TC:8,RWR:8,PIR:8</availability>
 			</model>
 			<model name='BNC-3E'>
 				<availability>TH!A:8!B:1</availability>
 			</model>
 		</chassis>
 		<chassis name='BattleAxe' unitType='Mek'>
-            <availability>FS!A:8!B:1</availability>
+            <availability>FS!A:8!B:1,PIR:1+:2480</availability>
 			<model name='BKX-1X'>
-				<availability>FS:8</availability>
+				<availability>FS:8,PIR:8</availability>
 			</model>
 			<model name='BKX-7K'>
 				<availability>FS!A:6</availability>
@@ -1314,9 +1314,9 @@
             </model>
         </chassis>
 		<chassis name='Shadow Hawk' unitType='Mek'>
-			<availability>IS:1+:2477,TH!A:6!B:6,MERC:1+:2478,TC:1+:2477,RWR:1+:2472,Periphery:1+:2482,Periphery.Deep:0</availability>
+			<availability>IS:1+:2477,TH!A:6!B:6,MERC:1+:2478,TC:1+:2477,RWR:1+:2472,Periphery:1+:2482,Periphery.Deep:0,PIR:1+:2477</availability>
 			<model name='SHD-1R'>
-				<availability>TH:8,IS:8,MERC:8,TC:8,RWR:8,Periphery:8</availability>
+				<availability>TH:8,IS:8,MERC:8,TC:8,RWR:8,Periphery:8,PIR:8</availability>
 			</model>
 		</chassis>
         <chassis name='Sherpa Armored Truck' unitType='Tank'>
@@ -1502,10 +1502,10 @@
 			</model>
 		</chassis>
 		<chassis name='Wasp' unitType='Mek'>
-			<availability>IS!A:8,TH!A:8!B:8,LA!A:6,FWL!A:5,CC!A:5,MERC!A:8,TC:1+:2474,RWR!A:2,OA:1+:2479</availability>
+			<availability>IS!A:8,TH!A:8!B:8,LA!A:6,FWL!A:5,CC!A:5,MERC!A:8,TC:1+:2474,RWR!A:2,OA:1+:2479,PIR:1+:2474</availability>
 			<model name='WSP-1'>
 				<roles>recon</roles>
-				<availability>TH:8,IS:8,CC:5,MERC:8,TC:8,RWR:8,OA:8</availability>
+				<availability>TH:8,IS:8,CC:5,MERC:8,TC:8,RWR:8,OA:8,PIR:8</availability>
 			</model>
 			<model name='WSP-1A'>
 				<roles>recon</roles>

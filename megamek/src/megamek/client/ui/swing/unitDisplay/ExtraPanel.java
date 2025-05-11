@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
 import javax.swing.*;
 
 import megamek.MMConstants;
@@ -661,5 +660,14 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             Entity entity = clientgui.getClient().getGame().getEntity(myMekId);
             LobbyUtility.mekReadout(entity, 0, false, clientgui.getFrame());
         }
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension labelPrefSize = panelMain.getPreferredSize();
+        Insets insets = getInsets();
+        int height = labelPrefSize.height + insets.top + insets.bottom + 20;
+        Dimension superPref = super.getPreferredSize();
+        return new Dimension(superPref.width, Math.max(height, superPref.height));
     }
 }

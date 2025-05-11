@@ -125,6 +125,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
+        if (md.getMpUsed() > 0) {
+            // All auto-hit hexes for this unit (not including preset targets) are cleared
+            // if any MP are expended.
+            entity.aTracker.clearHitHexMods();
+        }
+
         if (md.contains(MovePath.MoveStepType.EJECT)) {
             if (entity.isLargeCraft() && !entity.isCarcass()) {
                 r = new Report(2026);

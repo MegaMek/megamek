@@ -40,8 +40,8 @@ public class CLLB20XAC extends LBXACWeapon {
         criticals = 9;
         bv = 237;
         cost = 600000;
-        shortAV = 20;
-        medAV = 20;
+        shortAV = getBaseAeroDamage();
+        medAV = shortAV;
         maxRange = RANGE_MED;
         rulesRefs = "207, TM";
         flags = flags.andNot(F_PROTO_WEAPON);

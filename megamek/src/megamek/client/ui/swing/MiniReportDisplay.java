@@ -289,24 +289,27 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         if (ae.getSource().equals(butSwitchLocation)) {
             GUIP.toggleMiniReportLocation();
         } else if (ae.getSource().equals(butPlayerSearchDown)) {
-            String searchPattern = comboPlayer.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, true);
+            searchPattern(comboPlayer, true);
         } else if (ae.getSource().equals(butPlayerSearchUp)) {
-            String searchPattern = comboPlayer.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, false);
+            searchPattern(comboPlayer, false);
         } else if (ae.getSource().equals(butEntitySearchDown)) {
-            String searchPattern = comboEntity.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, true);
+            searchPattern(comboEntity, true);
         } else if (ae.getSource().equals(butEntitySearchUp)) {
-            String searchPattern = comboEntity.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, false);
+            searchPattern(comboEntity, false);
         } else if (ae.getSource().equals(butQuickSearchDown)) {
-            String searchPattern = comboQuick.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, true);
+            searchPattern(comboQuick, true);
         } else if (ae.getSource().equals(butQuickSearchUp)) {
-            String searchPattern = comboQuick.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, false);
+            searchPattern(comboQuick, false);
         }
+    }
+
+    private void searchPattern(JComboBox<String> combo, boolean searchDown) {
+        if (combo.getSelectedItem() == null) {
+            return;
+        }
+
+        String searchPattern = combo.getSelectedItem().toString().trim();
+        searchTextPane(searchPattern, searchDown);
     }
 
     private JScrollPane loadHtmlScrollPane(String t) {

@@ -2338,7 +2338,7 @@ public class Princess extends BotClient {
                   getMaxWeaponRange(entity),
                   fallTolerance,
                   getEnemyEntities(),
-                  getFriendEntities());
+                  getBehaviorSettings().isExclusiveHerding() ? getEntitiesOwned() : getFriendEntities());
 
             final long stop_time = System.currentTimeMillis();
 

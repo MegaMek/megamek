@@ -125,6 +125,7 @@ public class BehaviorSettings implements Serializable {
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
     private int antiCrowding = 0; // How much do I want to avoid crowding my teammates?
     private int favorHigherTMM = 0; // How much do I want to favor moving in my turn?
+    private boolean exclusiveHerding = false; // should I only herd with my units or consider also friends?
     private boolean iAmAPirate = false; // Am I a pirate?
     private boolean experimental = false; // running experimental features?
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
@@ -205,7 +206,25 @@ public class BehaviorSettings implements Serializable {
      * @param iAmAPirate Set TRUE if I am a bloody pirate.
      */
     public void setIAmAPirate(String iAmAPirate) {
-        this.iAmAPirate = Boolean.parseBoolean(iAmAPirate);
+        setIAmAPirate(Boolean.parseBoolean(iAmAPirate));
+    }
+
+    /**
+     * @return TRUE if I should only herd with my units.
+     */
+    public boolean isExclusiveHerding() {
+        return exclusiveHerding;
+    }
+
+    /**
+     * @param exclusiveHerding Set TRUE if I should only herd with my units.
+     */
+    public void setExclusiveHerding(boolean exclusiveHerding) {
+        this.exclusiveHerding = exclusiveHerding;
+    }
+
+    public void setExclusiveHerding(String exclusiveHerding) {
+        setExclusiveHerding(Boolean.parseBoolean(exclusiveHerding));
     }
 
     /**
@@ -813,6 +832,8 @@ public class BehaviorSettings implements Serializable {
                 setAntiCrowding(child.getTextContent());
             } else if ("favorHigherTMM".equalsIgnoreCase(child.getNodeName())) {
                 setFavorHigherTMM(child.getTextContent());
+            } else if ("exclusiveHerding".equalsIgnoreCase(child.getNodeName())) {
+                setExclusiveHerding(child.getTextContent());
             } else if ("iAmAPirate".equalsIgnoreCase(child.getNodeName())) {
                 setIAmAPirate(child.getTextContent());
             } else if ("experimental".equalsIgnoreCase(child.getNodeName())) {
@@ -907,6 +928,10 @@ public class BehaviorSettings implements Serializable {
             iAmAPirateNode.setTextContent("" + iAmAPirate());
             behavior.appendChild(iAmAPirateNode);
 
+            final Element exclusiveHerdingNode = doc.createElement("exclusiveHerding");
+            exclusiveHerdingNode.setTextContent("" + isExclusiveHerding());
+            behavior.appendChild(exclusiveHerdingNode);
+
             final Element experimentalNode = doc.createElement("experimental");
             experimentalNode.setTextContent("" + isExperimental());
             behavior.appendChild(experimentalNode);
@@ -959,6 +984,7 @@ public class BehaviorSettings implements Serializable {
                 .append(getHerdMentalityValue(getHerdMentalityIndex()));
         out.append("\n\t AntiCrowding: ").append(getAntiCrowding()).append(":").append(getAntiCrowding());
         out.append("\n\t FavorHigherTMM: ").append(getFavorHigherTMM()).append(":").append(getFavorHigherTMM());
+        out.append("\n\t Exclusive Herding: ").append(isExclusiveHerding());
         out.append("\n\t I am a Pirate: ").append(iAmAPirate());
         out.append("\n\t Experimental: ").append(isExperimental());
         out.append("\n\t Targets:");
@@ -1018,6 +1044,8 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (!ignoredUnitTargets.equals(that.ignoredUnitTargets)) {
             return false;
+        } else if(exclusiveHerding != that.exclusiveHerding) {
+            return false;
         } else if (iAmAPirate != that.iAmAPirate) {
             return false;
         } else if (experimental != that.experimental) {
@@ -1045,6 +1073,7 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + ignoredUnitTargets.hashCode();
         result = 31 * result + herdMentalityIndex;
         result = 31 * result + braveryIndex;
+        result = 31 * result + (exclusiveHerding ? 1 : 0);
         result = 31 * result + (iAmAPirate ? 1 : 0);
         result = 31 * result + (experimental ? 1 : 0);
         return result;

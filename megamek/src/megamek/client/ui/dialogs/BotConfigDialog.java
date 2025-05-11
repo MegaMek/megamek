@@ -121,7 +121,8 @@ public class BotConfigDialog extends AbstractButtonDialog
           "BotConfigDialog.forcedWithdrawalCheck"));
 
     private MMToggleButton iAmAPirateCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.iAmAPirateCheck"));
-
+    private MMToggleButton exclusiveHerdingCheck = new TipMMToggleButton(Messages.getString(
+          "BotConfigDialog.exclusiveHerdingCheck"));
     private MMToggleButton experimentalCheck = new TipMMToggleButton(Messages.getString(
           "BotConfigDialog.experimentalCheck"));
 
@@ -374,6 +375,10 @@ public class BotConfigDialog extends AbstractButtonDialog
             panContent.add(Box.createVerticalStrut(7));
         }
 
+        exclusiveHerdingCheck.setToolTipText(Messages.getString("BotConfigDialog.exclusiveHerdingCheckToolTip"));
+        exclusiveHerdingCheck.addActionListener(this);
+        panContent.add(exclusiveHerdingCheck);
+
         iAmAPirateCheck.setToolTipText(Messages.getString("BotConfigDialog.iAmAPirateCheckToolTip"));
         iAmAPirateCheck.addActionListener(this);
         panContent.add(iAmAPirateCheck);
@@ -502,6 +507,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
         favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
         iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
+        exclusiveHerdingCheck.setSelected(princessBehavior.isExclusiveHerding());
         experimentalCheck.setSelected(princessBehavior.isExperimental());
     }
 
@@ -552,6 +558,7 @@ public class BotConfigDialog extends AbstractButtonDialog
                             chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue() ||
                             chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
                             chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
+                            chosenPreset.isExclusiveHerding() != exclusiveHerdingCheck.isSelected() ||
                             chosenPreset.isExperimental() != experimentalCheck.isSelected());
     }
 
@@ -730,6 +737,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
         newBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         newBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
+        newBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
         newBehavior.setExperimental(experimentalCheck.isSelected());
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
@@ -769,6 +777,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         tempBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
         tempBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
+        tempBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
         tempBehavior.setExperimental(experimentalCheck.isSelected());
 
         for (int i = 0; i < targetsListModel.getSize(); i++) {

@@ -478,6 +478,7 @@ public class BehaviorSettingsFactory {
             pirateBehavior.setBraveryIndex(10);
             pirateBehavior.setAntiCrowding(5);
             pirateBehavior.setFavorHigherTMM(5);
+            pirateBehavior.setExclusiveHerding(true);
             pirateBehavior.setIAmAPirate(true);
             return pirateBehavior;
         } catch (Exception e) {

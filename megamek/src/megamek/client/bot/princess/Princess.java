@@ -402,8 +402,12 @@ public class Princess extends BotClient {
             final Coords coords = new Coords(MathUtility.parseInt(x) - 1, MathUtility.parseInt(y) - 1);
             getStrategicBuildingTargets().add(coords);
         }
-
         spinUpThreshold = null;
+        if (initialized) {
+            // path rankers need to be reinitialized since the behavior settings changed, this will
+            // propagate any changes the BasicPathRanker needs.
+            initializePathRankers();
+        }
     }
 
     /**

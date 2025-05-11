@@ -175,10 +175,10 @@
 			</model>
 		</chassis>
 		<chassis name='Archer' unitType='Mek'>
-			<availability>TH!A:6!B:1</availability>
+			<availability>TH!A:6!B:1,RWR:1+:2468</availability>
 			<model name='ARC-1A'>
 				<roles>fire_support</roles>
-				<availability>TH:8</availability>
+				<availability>TH:8,RWR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Ares Assault Craft' unitType='Small Craft'>

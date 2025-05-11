@@ -178,10 +178,10 @@
 			</model>
 		</chassis>
 		<chassis name='Archer' unitType='Mek'>
-			<availability>TH!A:6!B:4</availability>
+			<availability>TH!A:6!B:4,IS:1+:2479,TC:1+:2484,RWR!A:3</availability>
 			<model name='ARC-1A'>
 				<roles>fire_support</roles>
-				<availability>TH:8</availability>
+				<availability>TH:8,IS:8,TC:8,RWR:8</availability>
 			</model>
 			<model name='ARC-2R'>
 				<roles>fire_support</roles>
@@ -637,9 +637,9 @@
 			</model>
 		</chassis>
 		<chassis name='Griffin' unitType='Mek'>
-			<availability>TH!A:7!B:5</availability>
+			<availability>TH!A:7!B:5,RWR:1+:2475</availability>
 			<model name='GRF-1A'>
-				<availability>TH:8</availability>
+				<availability>TH:8,RWR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Habitat' unitType='Space Station'>
@@ -729,12 +729,12 @@
 			</model>
 		</chassis>
 		<chassis name='Hector' unitType='Mek'>
-			<availability>FWL!A:8</availability>
+			<availability>FWL!A:8,MOC:1+:2481</availability>
 			<model name='HOR-1B'>
-				<availability>FWL:8</availability>
+				<availability>FWL:8,MOC:8</availability>
 			</model>
 			<model name='HOR-1C'>
-				<availability>FWL:5</availability>
+				<availability>FWL:5,MOC:3</availability>
 			</model>
 		</chassis>
 		<chassis name='Helepolis' unitType='Mek'>
@@ -1192,9 +1192,9 @@
             </model>
         </chassis>
 		<chassis name='Ostwar' unitType='Mek'>
-			<availability>FWL!A:4,CC!A:8</availability>
+			<availability>FWL!A:4,CC!A:8,TC:1+:2480,MOC:1+:2485</availability>
 			<model name='OWR-2M'>
-				<availability>FWL:8,CC:8</availability>
+				<availability>FWL:8,CC:8,TC:8,MOC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Patron' unitType='Mek'>

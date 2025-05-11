@@ -217,14 +217,14 @@
 			</model>
 		</chassis>
 		<chassis name='Archer' unitType='Mek'>
-			<availability>IS!A:5!B:1,TH!A:7!B:6!C:4!D:1,FWL!A:6!B:1,MERC!A:8!B:8</availability>
+			<availability>IS!A:5!B:1,TH!A:7!B:6!C:4!D:1,FWL!A:6!B:1,MERC!A:8!B:8,TC!A:3,MOC!A:3,RWR!A:3</availability>
 			<model name='ARC-1A'>
 				<roles>fire_support</roles>
-				<availability>IS!A:6!B:8,TH!C:6!D:8,PoR:8,MERC:8</availability>
+				<availability>IS!A:6!B:8,TH!C:6!D:8,PoR:8,MERC:8,TC:8,MOC:8,RWR:8</availability>
 			</model>
 			<model name='ARC-2R'>
 				<roles>fire_support</roles>
-				<availability>IS!A:8!B:1,TH!A:8!B:8!C:1,PoR:1+,MERC:1+</availability>
+				<availability>IS!A:8!B:1,TH!A:8!B:8!C:1,PoR:1+,MERC:1+,TC:1+,MOC:1+,RWR!A:3</availability>
 			</model>
 		</chassis>
 		<chassis name='Ares Assault Craft' unitType='Small Craft'>
@@ -1060,12 +1060,12 @@
 			</model>
 		</chassis>
 		<chassis name='Hector' unitType='Mek'>
-			<availability>FWL!A:8!B:5!C:1</availability>
+			<availability>FWL!A:8!B:5!C:1,MOC:1+</availability>
 			<model name='HOR-1B'>
-				<availability>FWL:8</availability>
+				<availability>FWL:8,MOC:8</availability>
 			</model>
 			<model name='HOR-1C'>
-				<availability>FWL:5</availability>
+				<availability>FWL:5,MOC:3</availability>
 			</model>
 		</chassis>
         <chassis name='Hector Road Train Tractor' unitType='Tank'>
@@ -1223,9 +1223,9 @@
 			</model>
 		</chassis>
 		<chassis name='Koschei' unitType='Mek'>
-			<availability>CC!A:5!B:3</availability>
+			<availability>CC!A:5!B:3,TC:1+,MOC:1+</availability>
 			<model name='KSC-3I'>
-				<availability>CC:8</availability>
+				<availability>CC:8,TC:8,MOC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Kyudo' unitType='Mek'>
@@ -1667,28 +1667,28 @@
 			</model>
 		</chassis>
 		<chassis name='Orion' unitType='Mek'>
-            <availability>TH!A:7!B:5!C:3!D:1</availability>
+            <availability>TH!A:7!B:5!C:3!D:1,LA:1+:2535,FWL:1+:2535,MOC:1+:2545</availability>
             <model name='ON1-C'>
-                <availability>TH!C:6!D:8</availability>
+                <availability>TH!C:6!D:8,LA!C:5,FWL!C:5,MOC:8</availability>
             </model>
             <model name='ON1-H'>
-                <availability>TH!B:8!C:6!D:4</availability>
+                <availability>TH!B:8!C:6!D:4,LA!C:8,FWL!B:8,MOC:1+</availability>
             </model>
 			<model name='ON1-K'>
-				<availability>TH!A:8</availability>
+				<availability>TH!A:8,LA:1+,FWL:1+</availability>
 			</model>
 		</chassis>
 		<chassis name='Ostroc' unitType='Mek'>
-			<availability>TH!A:4,DC!A:4,CC!A:4</availability>
+			<availability>TH!A:4,DC!A:4,CC!A:4,RWR:1+:2521</availability>
 			<model name='OSR-2C'>
 				<roles>urban</roles>
-				<availability>TH:8,DC:8,CC:8</availability>
+				<availability>TH:8,DC:8,CC:8,RWR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Ostwar' unitType='Mek'>
-			<availability>FWL!A:5!B:3!C:1,CC!B:4!C:8</availability>
+			<availability>FWL!A:5!B:3!C:1,CC!B:4!C:8,TC!A:2,MOC!A:2</availability>
 			<model name='OWR-2M'>
-				<availability>FWL:8,CC:8</availability>
+				<availability>FWL:8,CC:8,TC:8,MOC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Paramour Mobile Repair Vehicle' unitType='Tank'>
@@ -2006,12 +2006,12 @@
 			</model>
 		</chassis>
 		<chassis name='Thunderbolt' unitType='Mek'>
-			<availability>IS!A:3,TH!A:4!B:1,LA!A:4,FWL!A:4,PoR:0,CC!A:4!B:1,MERC!A:3!B:1</availability>
+			<availability>IS!A:3,TH!A:4!B:1,LA!A:4,FWL!A:4,PoR:0,CC!A:4!B:1,MERC!A:3!B:1,TC!A:3,MOC:1+,RWR:1+</availability>
 			<model name='TDR-1C'>
-				<availability>CC!B:8,MERC:8</availability>
+				<availability>CC!B:8,MERC:8,TC:8,MOC:8</availability>
 			</model>
 			<model name='TDR-5S'>
-				<availability>IS:8,TH:8,CC!A:8!B:1,MERC!A:1</availability>
+				<availability>IS:8,TH:8,CC!A:8!B:1,MERC!A:1,TC:1+,RWR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Toro' unitType='Mek'>
@@ -2130,12 +2130,12 @@
 			</model>
 		</chassis>
 		<chassis name='Von Rohrs (Hebi)' unitType='Mek'>
-			<availability>DC!B:5!C:1,PoR!A:8!B:5</availability>
+			<availability>DC!B:5!C:1,PoR!A:8!B:5,Periphery.DD:1+</availability>
 			<model name='VON 4RH-5'>
-				<availability>DC:8,PoR:8</availability>
+				<availability>DC:8,PoR:8,Periphery.DD:8</availability>
 			</model>
             <model name='VON 4RH-6'>
-                <availability>DC:1,PoR:5</availability>
+                <availability>DC:1,PoR:5,Periphery.DD:5</availability>
             </model>
 		</chassis>
 		<chassis name='Vulcan' unitType='AeroSpaceFighter'>
@@ -2156,7 +2156,7 @@
 			</model>
 		</chassis>
 		<chassis name='Warhammer' unitType='Mek'>
-			<availability>IS!A:3,TH!A:5!B:2!C:1,FS!A:2,DC!A:5,PoR:0,MERC!A:1</availability>
+			<availability>IS:1+:2525,TH!A:5!B:2!C:1,FS:1+:2520,DC:1+:2520,PoR:0,MERC:1+:2525</availability>
 			<model name='WHM-6R'>
 				<availability>IS:8,TH:8,MERC:8</availability>
 			</model>

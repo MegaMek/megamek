@@ -186,14 +186,14 @@
 			</model>
 		</chassis>
 		<chassis name='Archer' unitType='Mek'>
-			<availability>IS!A:5,TH!A:8!B:4,DC!A:4,PoR:0,MERC!A:8</availability>
+			<availability>IS!A:5,TH!A:8!B:4,DC!A:4,PoR:0,MERC!A:8,TC!A:3,RWR!A:3</availability>
 			<model name='ARC-1A'>
 				<roles>fire_support</roles>
-				<availability>IS:8,TH!B:6,MERC:8</availability>
+				<availability>IS:8,TH!B:6,MERC:8,TC:8,RWR:8</availability>
 			</model>
 			<model name='ARC-2R'>
 				<roles>fire_support</roles>
-			<availability>TH!A:8!B:1</availability>
+			<availability>TH!A:8!B:1,IS:1+,RWR:1+</availability>
 			</model>
 		</chassis>
 		<chassis name='Ares Assault Craft' unitType='Small Craft'>
@@ -789,12 +789,12 @@
 			</model>
 		</chassis>
 		<chassis name='Griffin' unitType='Mek'>
-			<availability>IS:1+:2502,TH!A:7!B:5,LA!A:8,FWL!A:4,MERC:1+:2503,TC:1+:2507</availability>
+			<availability>IS:1+:2502,TH!A:7!B:5,LA!A:8,FWL!A:4,MERC:1+:2503,TC:1+:2507,RWR:1+:2502</availability>
             <model name='GRF-1A'>
-                <availability>TH:8</availability>
+                <availability>TH:8,RWR:8</availability>
             </model>
 			<model name='GRF-1N'>
-				<availability>IS!A:8,LA:8,FWL:8,MERC:8,TC:8</availability>
+				<availability>IS!A:8,TH!A:8,LA:8,FWL:8,MERC:8,TC:8,RWR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Guillotine' unitType='Mek'>
@@ -906,12 +906,12 @@
 			</model>
 		</chassis>
 		<chassis name='Hector' unitType='Mek'>
-			<availability>FWL!A:8!B:5</availability>
+			<availability>FWL!A:8!B:5,MOC:1+</availability>
 			<model name='HOR-1B'>
-				<availability>FWL:8</availability>
+				<availability>FWL:8,MOC:8</availability>
 			</model>
 			<model name='HOR-1C'>
-				<availability>FWL:5</availability>
+				<availability>FWL:5,MOC:8</availability>
 			</model>
 		</chassis>
         <chassis name='Hector Road Train Tractor' unitType='Tank'>
@@ -1055,9 +1055,9 @@
 			</model>
 		</chassis>
 		<chassis name='Koschei' unitType='Mek'>
-			<availability>CC!A:5</availability>
+			<availability>CC!A:5,TC:1+:2514</availability>
 			<model name='KSC-3I'>
-				<availability>CC:8</availability>
+				<availability>CC:8,TC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Kyudo' unitType='Mek'>
@@ -1472,9 +1472,9 @@
 			</model>
 		</chassis>
 		<chassis name='Ostwar' unitType='Mek'>
-			<availability>FWL!A:5!B:1,CC!A:8!B:1</availability>
+			<availability>FWL!A:5!B:1,CC!A:8!B:1,TC!A:2,MOC!A:2</availability>
 			<model name='OWR-2M'>
-				<availability>FWL:8,CC:8</availability>
+				<availability>FWL:8,CC:8,TC:8,MOC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Patron' unitType='Mek'>
@@ -1724,12 +1724,12 @@
 			</model>
 		</chassis>
 		<chassis name='Thunderbolt' unitType='Mek'>
-			<availability>FWL!A:3,CC!A:3</availability>
+			<availability>IS:1+:2515,FWL:1+:2510,CC!A:3,TC:1+:2510,RWR:1+:2515</availability>
 			<model name='TDR-1C'>
-				<availability>CC:8</availability>
+				<availability>CC:8,TC:8</availability>
 			</model>
 			<model name='TDR-5S'>
-				<availability>FWL:8,CC:5</availability>
+				<availability>IS:8,FWL:8,CC:5,RWR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Toro' unitType='Mek'>

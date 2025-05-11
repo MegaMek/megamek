@@ -60,7 +60,16 @@ class UnitsMedianCoordinateCalculator {
 
     private final int numberOfUnitToConsider;
 
+    /**
+     * Constructor for UnitsMedianCoordinateCalculator.
+     * @param numberOfUnitToConsider The number of closest enemy units to consider for median calculation.
+     *                               Must be greater than 0.
+     * @throws IllegalArgumentException if numberOfUnitToConsider is less than or equal to 0.
+     */
     UnitsMedianCoordinateCalculator(int numberOfUnitToConsider) {
+        if (numberOfUnitToConsider <= 0) {
+            throw new IllegalArgumentException("numberOfUnitToConsider must be greater than 0");
+        }
         this.numberOfUnitToConsider = numberOfUnitToConsider;
     }
 

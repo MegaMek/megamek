@@ -314,6 +314,7 @@ public class BehaviorSettingsFactory {
             berserkBehavior.setBraveryIndex(9);
             berserkBehavior.setAntiCrowding(0);
             berserkBehavior.setFavorHigherTMM(0);
+            berserkBehavior.setNumberOfEnemiesToConsiderFacing(4);
             return berserkBehavior;
         } catch (Exception e) {
             logger.error(e, "Berserker Behavior Exception");
@@ -354,6 +355,7 @@ public class BehaviorSettingsFactory {
             cowardlyBehavior.setBraveryIndex(2);
             cowardlyBehavior.setAntiCrowding(0);
             cowardlyBehavior.setFavorHigherTMM(0);
+            cowardlyBehavior.setNumberOfEnemiesToConsiderFacing(4);
             return cowardlyBehavior;
         } catch (Exception e) {
             logger.error(e, "Cowardly Behavior Exception");
@@ -395,6 +397,8 @@ public class BehaviorSettingsFactory {
             escapeBehavior.setBraveryIndex(2);
             escapeBehavior.setAntiCrowding(0);
             escapeBehavior.setFavorHigherTMM(0);
+            escapeBehavior.setNumberOfEnemiesToConsiderFacing(4);
+
             return escapeBehavior;
         } catch (Exception e) {
             logger.error(e, "Escape Behavior Exception");
@@ -436,6 +440,7 @@ public class BehaviorSettingsFactory {
             ruthlessBehavior.setBraveryIndex(7);
             ruthlessBehavior.setAntiCrowding(10);
             ruthlessBehavior.setFavorHigherTMM(8);
+            ruthlessBehavior.setNumberOfEnemiesToConsiderFacing(4);
             return ruthlessBehavior;
         } catch (Exception e) {
             logger.error(e, "Ruthless Behavior Exception");
@@ -479,6 +484,7 @@ public class BehaviorSettingsFactory {
             pirateBehavior.setAntiCrowding(5);
             pirateBehavior.setFavorHigherTMM(5);
             pirateBehavior.setIAmAPirate(true);
+            pirateBehavior.setNumberOfEnemiesToConsiderFacing(2);
             return pirateBehavior;
         } catch (Exception e) {
             logger.error(e, "Pirate Behavior Exception");
@@ -523,6 +529,7 @@ public class BehaviorSettingsFactory {
             defaultBehavior.setBraveryIndex(5);
             defaultBehavior.setAntiCrowding(0);
             defaultBehavior.setFavorHigherTMM(0);
+            defaultBehavior.setNumberOfEnemiesToConsiderFacing(4);
             return defaultBehavior;
         } catch (Exception e) {
             logger.error(e, "Default Behavior Exception");

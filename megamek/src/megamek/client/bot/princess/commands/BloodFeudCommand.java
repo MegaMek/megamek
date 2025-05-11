@@ -43,7 +43,7 @@ public class BloodFeudCommand implements ChatCommand {
             princess.getHonorUtil().setEnemyDishonored(playerArg.getValue());
             princess.sendChat(Messages.getString("Princess.command.bloodFeud.playerAdded", playerArg.getValue()));
         } else {
-            princess.sendChat(Messages.getString("Princess.command.bloodFeud.playerNotFound", player.getName()));
+            princess.sendChat(Messages.getString("Princess.command.bloodFeud.playerNotFound", playerArg.getValue()));
         }
     }
 }

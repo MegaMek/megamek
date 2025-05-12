@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Vector;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -36,6 +37,11 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
  * @since 12/23/13 9:16 AM
  */
 class MovePathTest {
+
+    @BeforeAll
+    static void setUp() {
+        EquipmentType.initializeTypes();
+    }
 
     @Test
     void testGetLastStep() {
@@ -67,5 +73,73 @@ class MovePathTest {
 
         stepVector.add(null);
         assertEquals(mockStep4, testPath.getLastStep());
+    }
+
+    @Test
+    void testJumpMovePath() {
+        Board board = new Board(1, 4);
+        board.setHex(0, 0, new Hex(0));
+        board.setHex(0, 1, new Hex(0, new Terrain[] {new Terrain(Terrains.BUILDING, 4)}, "lunar"));
+        board.setHex(0, 2, new Hex(0, new Terrain[] {new Terrain(Terrains.BUILDING, 4)}, "lunar"));
+        board.setHex(0, 3, new Hex(0));
+
+        Game game = new Game();
+        game.setBoard(board);
+
+        Entity mek = new BipedMek();
+        mek.setOriginalWalkMP(8);
+        mek.setOriginalJumpMP(8);
+        mek.setId(5);
+        game.addEntity(mek);
+
+        mek.setPosition(new Coords(0, 0));
+        mek.setFacing(3);
+
+        MovePath movePath =
+              new MovePath(game, mek)
+                    .addStep(MovePath.MoveStepType.START_JUMP)
+                    .addStep(MovePath.MoveStepType.FORWARDS)
+                    .addStep(MovePath.MoveStepType.FORWARDS)
+                    .addStep(MovePath.MoveStepType.FORWARDS);
+
+        assertEquals(0, movePath.getStepVector().get(0).getElevation());
+        assertEquals(0, movePath.getStepVector().get(1).getElevation());
+        assertEquals(0, movePath.getStepVector().get(2).getElevation());
+        assertEquals(0, movePath.getStepVector().get(3).getElevation());
+    }
+
+    @Test
+    void testHoverJumpMovePath() {
+        Board board = new Board(1, 4);
+        board.setHex(0, 0, new Hex(0));
+        board.setHex(0, 1, new Hex(0, new Terrain[] {new Terrain(Terrains.BUILDING, 4)}, "lunar"));
+        board.setHex(0, 2, new Hex(0, new Terrain[] {new Terrain(Terrains.BUILDING, 4)}, "lunar"));
+        board.setHex(0, 3, new Hex(0));
+
+        Game game = new Game();
+        game.setBoard(board);
+
+        SupportTank hover = new SupportTank();
+        hover.setMovementMode(EntityMovementMode.HOVER);
+
+        hover.setOriginalWalkMP(8);
+        hover.setOriginalJumpMP(8);
+        hover.setId(5);
+        game.addEntity(hover);
+
+        hover.setPosition(new Coords(0, 0));
+        hover.setFacing(3);
+
+        MovePath movePath =
+              new MovePath(game, hover)
+                    .addStep(MovePath.MoveStepType.START_JUMP)
+                    .addStep(MovePath.MoveStepType.FORWARDS)
+                    .addStep(MovePath.MoveStepType.FORWARDS)
+                    .addStep(MovePath.MoveStepType.FORWARDS);
+        // This should be 0 - 4 - 8 - 8 in real time game
+        assertEquals(0, movePath.getStepVector().get(0).getElevation());
+        assertEquals(4, movePath.getStepVector().get(1).getElevation());
+        assertEquals(8, movePath.getStepVector().get(2).getElevation());
+        assertEquals(8, movePath.getStepVector().get(3).getElevation());
     }
 }

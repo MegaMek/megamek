@@ -340,7 +340,7 @@ public class UnitEditorDialog extends JDialog {
             if (mounted.isSplit()) {
                 hits += entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT, eqNum, mounted.getSecondLocation());
             }
-            if (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+            if ((mounted.getType() instanceof MiscType) && (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING))) {
                 hits = entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT, eqNum, Mek.LOC_LT);
                 hits += entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT, eqNum, Mek.LOC_RT);
             }

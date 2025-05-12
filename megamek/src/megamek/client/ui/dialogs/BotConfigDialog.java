@@ -121,17 +121,16 @@ public class BotConfigDialog extends AbstractButtonDialog
     private final MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString(
           "BotConfigDialog.forcedWithdrawalCheck"));
 
-    private final MMToggleButton iAmAPirateCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog" +
-                                                                                             ".iAmAPirateCheck"));
-
+    private final MMToggleButton iAmAPirateCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.iAmAPirateCheck"));
+    private final MMToggleButton exclusiveHerdingCheck = new TipMMToggleButton(Messages.getString(
+          "BotConfigDialog.exclusiveHerdingCheck"));
     private final MMToggleButton experimentalCheck = new TipMMToggleButton(Messages.getString(
           "BotConfigDialog.experimentalCheck"));
 
 
     private final JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private final MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
-    private final MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog" +
-                                                                                             ".autoFleeCheck"));
+    private final MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
     private final JLabel fleeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
     private final MMComboBox<CardinalEdge> fleeEdgeCombo = new TipCombo<>("EdgeToFlee", CardinalEdge.values());
 
@@ -368,22 +367,6 @@ public class BotConfigDialog extends AbstractButtonDialog
               Messages.getString("BotConfigDialog.fallShameToolTip"),
               "BotConfigDialog.fallShameSliderTitle"));
 
-        if (CLIENT_PREFERENCES.getEnableExperimentalBotFeatures()) {
-            panContent.add(buildSliderWithDynamicTitle(antiCrowdingSlidebar,
-                  Messages.getString("BotConfigDialog.antiCrowdingSliderMin"),
-                  Messages.getString("BotConfigDialog.antiCrowdingSliderMax"),
-                  Messages.getString("BotConfigDialog.antiCrowdingToolTip"),
-                  "BotConfigDialog.antiCrowdingTitle"));
-            panContent.add(Box.createVerticalStrut(7));
-
-            panContent.add(buildSliderWithDynamicTitle(favorHigherTMMSlidebar,
-                  Messages.getString("BotConfigDialog.favorHigherTMMSliderMin"),
-                  Messages.getString("BotConfigDialog.favorHigherTMMSliderMax"),
-                  Messages.getString("BotConfigDialog.favorHigherTMMToolTip"),
-                  "BotConfigDialog.favorHigherTMMTitle"));
-            panContent.add(Box.createVerticalStrut(7));
-        }
-
         panContent.add(buildSliderWithDynamicTitle(numberOfEnemiesToConsiderFacingSlidebar,
               Messages.getString("BotConfigDialog.numberOfEnemiesToConsiderFacingMin",
                     BehaviorSettings.MIN_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING),
@@ -400,6 +383,26 @@ public class BotConfigDialog extends AbstractButtonDialog
                     BehaviorSettings.MAX_ALLOW_FACING_TOLERANCE),
               "BotConfigDialog.allowFacingToleranceTitle"));
         panContent.add(Box.createVerticalStrut(7));
+
+        if (CLIENT_PREFERENCES.getEnableExperimentalBotFeatures()) {
+            panContent.add(buildSliderWithDynamicTitle(antiCrowdingSlidebar,
+                  Messages.getString("BotConfigDialog.antiCrowdingSliderMin"),
+                  Messages.getString("BotConfigDialog.antiCrowdingSliderMax"),
+                  Messages.getString("BotConfigDialog.antiCrowdingToolTip"),
+                  "BotConfigDialog.antiCrowdingTitle"));
+            panContent.add(Box.createVerticalStrut(7));
+
+            panContent.add(buildSliderWithDynamicTitle(favorHigherTMMSlidebar,
+                  Messages.getString("BotConfigDialog.favorHigherTMMSliderMin"),
+                  Messages.getString("BotConfigDialog.favorHigherTMMSliderMax"),
+                  Messages.getString("BotConfigDialog.favorHigherTMMToolTip"),
+                  "BotConfigDialog.favorHigherTMMTitle"));
+            panContent.add(Box.createVerticalStrut(7));
+        }
+
+        exclusiveHerdingCheck.setToolTipText(Messages.getString("BotConfigDialog.exclusiveHerdingCheckToolTip"));
+        exclusiveHerdingCheck.addActionListener(this);
+        panContent.add(exclusiveHerdingCheck);
 
         iAmAPirateCheck.setToolTipText(Messages.getString("BotConfigDialog.iAmAPirateCheckToolTip"));
         iAmAPirateCheck.addActionListener(this);
@@ -528,10 +531,11 @@ public class BotConfigDialog extends AbstractButtonDialog
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
         favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
-        numberOfEnemiesToConsiderFacingSlidebar.setValue(princessBehavior.getNumberOfEnemiesToConsiderFacing());
-        allowFacingToleranceSlidebar.setValue(princessBehavior.getAllowFacingTolerance());
+        exclusiveHerdingCheck.setSelected(princessBehavior.isExclusiveHerding());
         iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
         experimentalCheck.setSelected(princessBehavior.isExperimental());
+        numberOfEnemiesToConsiderFacingSlidebar.setValue(princessBehavior.getNumberOfEnemiesToConsiderFacing());
+        allowFacingToleranceSlidebar.setValue(princessBehavior.getAllowFacingTolerance());
     }
 
     private void updateDialogFields() {
@@ -549,9 +553,13 @@ public class BotConfigDialog extends AbstractButtonDialog
             int end = t.indexOf(")");
             String[] tokens = t.substring(begin, end).split(",");
             if (tokens.length == 2) {
-                int x = Integer.parseInt(tokens[0].strip());
-                int y = Integer.parseInt(tokens[1].strip());
-                targetsListModel.addElement(new Coords(x, y));
+                try {
+                    int x = Integer.parseInt(tokens[0].strip());
+                    int y = Integer.parseInt(tokens[1].strip());
+                    targetsListModel.addElement(new Coords(x, y));
+                } catch (NumberFormatException e1) {
+                    logger.error(e1, "Error parsing target coordinates: {} - {}", t, t.substring(begin, end));
+                }
             }
         }
         targetsListModel.addAll(princessBehavior.getPriorityUnitTargets());
@@ -580,17 +588,17 @@ public class BotConfigDialog extends AbstractButtonDialog
                             chosenPreset.getBraveryIndex() != braverySlidebar.getValue() ||
                             chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue() ||
                             chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
+                            chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
+                            chosenPreset.isExclusiveHerding() != exclusiveHerdingCheck.isSelected() ||
                             chosenPreset.getNumberOfEnemiesToConsiderFacing() != numberOfEnemiesToConsiderFacingSlidebar.getValue() ||
                             chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
-                            chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
                             chosenPreset.isExperimental() != experimentalCheck.isSelected());
     }
-
     /**
      * Setup the slider panel with a dynamic title that changes when the slider is moved.
      */
-    private JPanel buildSliderWithDynamicTitle(JSlider thisSlider, String minMsgProperty, String maxMsgProperty, String toolTip,
-          String titleKey) {
+    private JPanel buildSliderWithDynamicTitle(JSlider thisSlider, String minMsgProperty, String maxMsgProperty,
+          String toolTip, String titleKey) {
         TitledBorder border = BorderFactory.createTitledBorder(Messages.getString(titleKey, thisSlider.getValue()));
         border.setTitlePosition(TitledBorder.TOP);
         border.setTitleJustification(TitledBorder.CENTER);
@@ -771,8 +779,8 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setNumberOfEnemiesToConsiderFacing(numberOfEnemiesToConsiderFacingSlidebar.getValue());
         newBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         newBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
+        newBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
         newBehavior.setExperimental(experimentalCheck.isSelected());
-
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
     }
@@ -813,6 +821,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setNumberOfEnemiesToConsiderFacing(numberOfEnemiesToConsiderFacingSlidebar.getValue());
         tempBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         tempBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
+        tempBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
         tempBehavior.setExperimental(experimentalCheck.isSelected());
 
         for (int i = 0; i < targetsListModel.getSize(); i++) {

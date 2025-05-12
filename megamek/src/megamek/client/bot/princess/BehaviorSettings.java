@@ -19,6 +19,11 @@
  */
 package megamek.client.bot.princess;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
@@ -29,11 +34,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -117,11 +117,10 @@ public class BehaviorSettings implements Serializable {
     public static final int MAX_ALLOW_FACING_TOLERANCE = 2;
     public static final int MIN_ALLOW_FACING_TOLERANCE = 0;
     public static final int DEFAULT_ALLOW_FACING_TOLERANCE = 1;
-    // allowFacingTolerance
+
     private String description = BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION;
 
     private boolean forcedWithdrawal = true; // Will I follow the Forced Withdrawal rules?
-    private boolean goHome = false; // Should I immediately proceed to my home board edge?
     private boolean autoFlee = false; // Should I flee even if I'm not crippled?
     private int selfPreservationIndex = 5; // How worried about enemy damage am I?
     private int fallShameIndex = 5; // How much do I want to avoid failed Piloting Rolls?
@@ -137,6 +136,7 @@ public class BehaviorSettings implements Serializable {
     private int favorHigherTMM = 0; // How much do I want to favor moving in my turn?
     private int numberOfEnemiesToConsiderFacing = DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING; // How many enemies do I want to consider when calculating facing?
     private int allowFacingTolerance = DEFAULT_ALLOW_FACING_TOLERANCE; // How much tolerance do I want to allow for facing?
+    private boolean exclusiveHerding = false; // should I only herd with my units or consider also friends?
     private boolean iAmAPirate = false; // Am I a pirate?
     private boolean experimental = false; // running experimental features?
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
@@ -166,6 +166,7 @@ public class BehaviorSettings implements Serializable {
         copy.setFavorHigherTMM(getFavorHigherTMM());
         copy.setNumberOfEnemiesToConsiderFacing(getNumberOfEnemiesToConsiderFacing());
         copy.setAllowFacingTolerance(getAllowFacingTolerance());
+        copy.setExclusiveHerding(isExclusiveHerding());
         copy.setIAmAPirate(iAmAPirate());
         copy.setExperimental(isExperimental());
         for (final String t : getStrategicBuildingTargets()) {
@@ -219,7 +220,25 @@ public class BehaviorSettings implements Serializable {
      * @param iAmAPirate Set TRUE if I am a bloody pirate.
      */
     public void setIAmAPirate(String iAmAPirate) {
-        this.iAmAPirate = Boolean.parseBoolean(iAmAPirate);
+        setIAmAPirate(Boolean.parseBoolean(iAmAPirate));
+    }
+
+    /**
+     * @return TRUE if I should only herd with my units.
+     */
+    public boolean isExclusiveHerding() {
+        return exclusiveHerding;
+    }
+
+    /**
+     * @param exclusiveHerding Set TRUE if I should only herd with my units.
+     */
+    public void setExclusiveHerding(boolean exclusiveHerding) {
+        this.exclusiveHerding = exclusiveHerding;
+    }
+
+    public void setExclusiveHerding(String exclusiveHerding) {
+        setExclusiveHerding(Boolean.parseBoolean(exclusiveHerding));
     }
 
     /**
@@ -315,6 +334,7 @@ public class BehaviorSettings implements Serializable {
     /**
      * Remove the given unit ID from the ignored target list.
      */
+    @SuppressWarnings("unused")
     public void removeIgnoredUnitTarget(int unitID) {
         ignoredUnitTargets.remove(unitID);
     }
@@ -351,7 +371,11 @@ public class BehaviorSettings implements Serializable {
         if (!StringUtil.isPositiveInteger(id)) {
             return;
         }
-        addPriorityUnit(Integer.parseInt(id));
+        try {
+            addPriorityUnit(Integer.parseInt(id));
+        } catch (final NumberFormatException ex) {
+            logger.error(ex, "Invalid unit ID: {}", id);
+        }
     }
 
     /**
@@ -372,7 +396,11 @@ public class BehaviorSettings implements Serializable {
         if (!StringUtil.isPositiveInteger(id)) {
             return;
         }
-        removePriorityUnit(Integer.parseInt(id));
+        try {
+            removePriorityUnit(Integer.parseInt(id));
+        } catch (final NumberFormatException ex) {
+            logger.error(ex, "Invalid unit ID: {}", id);
+        }
     }
 
     /**
@@ -591,7 +619,9 @@ public class BehaviorSettings implements Serializable {
      *
      * @param destinationEdge the index of the {@link CardinalEdge} princess should
      *                        flee to. See {@link CardinalEdge#getIndex()}
+     * @deprecated unused
      */
+    @Deprecated(since="0.50.06", forRemoval = true)
     public void setDestinationEdge(final String destinationEdge) throws PrincessException {
         try {
             setDestinationEdge(Integer.parseInt(destinationEdge.trim()));
@@ -701,10 +731,6 @@ public class BehaviorSettings implements Serializable {
         }
     }
 
-    public int getFavorHigherTMM() {
-        return favorHigherTMM;
-    }
-
     public int getNumberOfEnemiesToConsiderFacing() {
         return numberOfEnemiesToConsiderFacing;
     }
@@ -721,19 +747,6 @@ public class BehaviorSettings implements Serializable {
         this.numberOfEnemiesToConsiderFacing = MathUtility.clamp(numberOfEnemiesToConsiderFacing,
               MIN_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING,
               MAX_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
-    }
-
-    public void setFavorHigherTMM(int favorHigherTMM) {
-        this.favorHigherTMM = validateIndex(favorHigherTMM);
-    }
-
-    public void setFavorHigherTMM(String favorHigherTMM) throws PrincessException {
-        try {
-            this.favorHigherTMM = validateIndex(Integer.parseInt(favorHigherTMM));
-        } catch (final NumberFormatException e) {
-            this.favorHigherTMM = 0;
-            throw new PrincessException(e);
-        }
     }
 
     public int getAllowFacingTolerance() {
@@ -753,6 +766,22 @@ public class BehaviorSettings implements Serializable {
         }
     }
 
+    public int getFavorHigherTMM() {
+        return favorHigherTMM;
+    }
+
+    public void setFavorHigherTMM(int favorHigherTMM) {
+        this.favorHigherTMM = validateIndex(favorHigherTMM);
+    }
+
+    public void setFavorHigherTMM(String favorHigherTMM) throws PrincessException {
+        try {
+            this.favorHigherTMM = validateIndex(Integer.parseInt(favorHigherTMM));
+        } catch (final NumberFormatException e) {
+            throw new PrincessException(e);
+        }
+    }
+
     /**
      * How close to I want to get to my enemies?
      *
@@ -769,7 +798,7 @@ public class BehaviorSettings implements Serializable {
     /**
      * How worried about enemy damage am I?
      *
-     * @return Index of the current self preservation value.
+     * @return Index of the current self-preservation value.
      */
     public int getSelfPreservationIndex() {
         return selfPreservationIndex;
@@ -778,7 +807,7 @@ public class BehaviorSettings implements Serializable {
     /**
      * How worried about enemy damage am I?
      *
-     * @return The current self preservation value.
+     * @return The current self-preservation value.
      */
     public double getSelfPreservationValue() {
         return getSelfPreservationValue(selfPreservationIndex);
@@ -788,7 +817,7 @@ public class BehaviorSettings implements Serializable {
      * How worried about enemy damage am I?
      *
      * @param index The index [0-10] of the self-preservation value desired.
-     * @return The self preservation value at the specified index.
+     * @return The self-preservation value at the specified index.
      */
     public double getSelfPreservationValue(int index) {
         return SELF_PRESERVATION_VALUES[validateIndex(index)];
@@ -797,7 +826,7 @@ public class BehaviorSettings implements Serializable {
     /**
      * How worried about enemy damage am I?
      *
-     * @param selfPreservationIndex The index [0-10] of the self preservation value
+     * @param selfPreservationIndex The index [0-10] of the self-preservation value
      *                              to be used.
      */
     public void setSelfPreservationIndex(final int selfPreservationIndex) {
@@ -807,7 +836,7 @@ public class BehaviorSettings implements Serializable {
     /**
      * How worried about enemy damage am I?
      *
-     * @param index The index ["0"-"10"] of the self preservation value to be used.
+     * @param index The index ["0"-"10"] of the self-preservation value to be used.
      */
     public void setSelfPreservationIndex(final String index) throws PrincessException {
         try {
@@ -856,6 +885,8 @@ public class BehaviorSettings implements Serializable {
                 setNumberOfEnemiesToConsiderFacing(child.getTextContent());
             } else if ("allowFacingTolerance".equalsIgnoreCase(child.getNodeName())) {
                 setAllowFacingTolerance(child.getTextContent());
+            } else if ("exclusiveHerding".equalsIgnoreCase(child.getNodeName())) {
+                setExclusiveHerding(child.getTextContent());
             } else if ("iAmAPirate".equalsIgnoreCase(child.getNodeName())) {
                 setIAmAPirate(child.getTextContent());
             } else if ("experimental".equalsIgnoreCase(child.getNodeName())) {
@@ -910,9 +941,11 @@ public class BehaviorSettings implements Serializable {
             forcedWithdrawalNode.setTextContent("" + isForcedWithdrawal());
             behavior.appendChild(forcedWithdrawalNode);
 
+            // Unnecessary ============ to delete
             final Element goHomeNode = doc.createElement("goHome");
             goHomeNode.setTextContent("" + shouldGoHome());
             behavior.appendChild(goHomeNode);
+            // ========================
 
             final Element autoFleeNode = doc.createElement("autoFlee");
             autoFleeNode.setTextContent("" + shouldAutoFlee());
@@ -957,6 +990,10 @@ public class BehaviorSettings implements Serializable {
             final Element iAmAPirateNode = doc.createElement("iAmAPirate");
             iAmAPirateNode.setTextContent("" + iAmAPirate());
             behavior.appendChild(iAmAPirateNode);
+
+            final Element exclusiveHerdingNode = doc.createElement("exclusiveHerding");
+            exclusiveHerdingNode.setTextContent("" + isExclusiveHerding());
+            behavior.appendChild(exclusiveHerdingNode);
 
             final Element experimentalNode = doc.createElement("experimental");
             experimentalNode.setTextContent("" + isExperimental());
@@ -1006,11 +1043,13 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t Fall Shame: ").append(getFallShameIndex()).append(":")
                 .append(getFallShameValue(getFallShameIndex()));
         out.append("\n\t Bravery: ").append(getBraveryIndex()).append(":").append(getBraveryValue(getBraveryIndex()));
-        out.append("\n\t Herd Mentality: ").append(getHerdMentalityIndex()).append(":")
-                .append(getHerdMentalityValue(getHerdMentalityIndex()));
         out.append("\n\t AntiCrowding: ").append(getAntiCrowding());
         out.append("\n\t FavorHigherTMM: ").append(getFavorHigherTMM());
         out.append("\n\t NumberOfEnemiesToConsiderFacing: ").append(getNumberOfEnemiesToConsiderFacing());
+        out.append("\n\t AllowFacingTolerance: ").append(getAllowFacingTolerance());
+        out.append("\n\t Herd Mentality: ").append(getHerdMentalityIndex()).append(":")
+                .append(getHerdMentalityValue(getHerdMentalityIndex()));
+        out.append("\n\t Exclusive Herding: ").append(isExclusiveHerding());
         out.append("\n\t I am a Pirate: ").append(iAmAPirate());
         out.append("\n\t Experimental: ").append(isExperimental());
         out.append("\n\t Targets:");
@@ -1046,8 +1085,6 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (forcedWithdrawal != that.forcedWithdrawal) {
             return false;
-        } else if (goHome != that.goHome) {
-            return false;
         } else if (herdMentalityIndex != that.herdMentalityIndex) {
             return false;
         } else if (hyperAggressionIndex != that.hyperAggressionIndex) {
@@ -1059,6 +1096,8 @@ public class BehaviorSettings implements Serializable {
         } else if (favorHigherTMM != that.favorHigherTMM) {
             return false;
         } else if (numberOfEnemiesToConsiderFacing != that.numberOfEnemiesToConsiderFacing) {
+            return false;
+        } else if (allowFacingTolerance != that.allowFacingTolerance) {
             return false;
         } else if (!description.equals(that.description)) {
             return false;
@@ -1072,22 +1111,18 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (!ignoredUnitTargets.equals(that.ignoredUnitTargets)) {
             return false;
-        } else if (allowFacingTolerance != that.allowFacingTolerance) {
+        } else if (exclusiveHerding != that.exclusiveHerding) {
             return false;
         } else if (iAmAPirate != that.iAmAPirate) {
             return false;
-        } else if (experimental != that.experimental) {
-            return false;
-        } else {
-            return true;
         }
+        return experimental == that.experimental;
     }
 
     @Override
     public int hashCode() {
         int result = description.hashCode();
         result = 31 * result + (forcedWithdrawal ? 1 : 0);
-        result = 31 * result + (goHome ? 1 : 0);
         result = 31 * result + (autoFlee ? 1 : 0);
         result = 31 * result + selfPreservationIndex;
         result = 31 * result + fallShameIndex;
@@ -1099,10 +1134,11 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + strategicBuildingTargets.hashCode();
         result = 31 * result + priorityUnitTargets.hashCode();
         result = 31 * result + ignoredUnitTargets.hashCode();
-        result = 31 * result + herdMentalityIndex;
         result = 31 * result + numberOfEnemiesToConsiderFacing;
         result = 31 * result + allowFacingTolerance;
+        result = 31 * result + herdMentalityIndex;
         result = 31 * result + braveryIndex;
+        result = 31 * result + (exclusiveHerding ? 1 : 0);
         result = 31 * result + (iAmAPirate ? 1 : 0);
         result = 31 * result + (experimental ? 1 : 0);
         return result;

@@ -6416,23 +6416,6 @@
                 <availability>WOB:5+</availability>
             </model>
         </chassis>
-        <chassis name='Jump Platoon (LCAF)' unitType='Infantry'>
-            <availability>LA!A:3!B:3</availability>
-            <model name='(Laser 3058+)'>
-                <roles>anti_mek</roles>
-                <availability>LA!A:6!B:3</availability>
-            </model>
-            <model name='(MG 3058+)'>
-                <roles>anti_infantry</roles>
-                <availability>LA!A:3</availability>
-            </model>
-            <model name='(Rifle 3058+)'>
-                <availability>LA!A:7!B:3</availability>
-            </model>
-            <model name='(SRM 3058+)'>
-                <availability>LA!A:5</availability>
-            </model>
-        </chassis>
         <chassis name='Jump Platoon (FWLM)' unitType='Infantry'>
             <availability>FWL!A:6!B:5!C:3!D:1</availability>
             <model name='(Flamer 3035+)'>
@@ -6471,6 +6454,24 @@
             </model>
             <model name='(SRM 3035+)'>
                 <availability>FWL:5+</availability>
+            </model>
+        </chassis>
+        <chassis name='Jump Platoon (LCAF)' unitType='Infantry'>
+            <availability>LA!A:3!B:3</availability>
+            <model name='(Laser 3058+)'>
+                <roles>anti_mek</roles>
+                <availability>LA!A:6!B:3</availability>
+            </model>
+            <model name='(MG 3058+)'>
+                <roles>anti_infantry</roles>
+                <availability>LA!A:3</availability>
+            </model>
+            <model name='(Rifle 3058+)'>
+                <roles>anti_mek</roles>
+                <availability>LA!A:7!B:3</availability>
+            </model>
+            <model name='(SRM 3058+)'>
+                <availability>LA!A:5</availability>
             </model>
         </chassis>
         <chassis name='Jump Platoon (Taurian 3047+)' unitType='Infantry'>
@@ -7912,22 +7913,6 @@
                 <availability>WOB:6+</availability>
             </model>
         </chassis>
-        <chassis name='Mechanized Tracked Platoon (LCAF)' unitType='Infantry'>
-            <availability>LA!A:3</availability>
-            <model name='(Laser 3058+)'>
-                <availability>LA:6</availability>
-            </model>
-            <model name='(MG 3058+)'>
-                <roles>anti_infantry</roles>
-                <availability>LA:4</availability>
-            </model>
-            <model name='(Rifle 3058+)'>
-                <availability>LA:7</availability>
-            </model>
-            <model name='(SRM 3058+)'>
-                <availability>LA:5</availability>
-            </model>
-        </chassis>
         <chassis name='Mechanized Tracked Platoon (FWLM)' unitType='Infantry'>
             <availability>FWL!A:7!B:6!C:5!D:1</availability>
             <model name='(Combat Engineers 3035+)'>
@@ -7962,6 +7947,22 @@
             </model>
             <model name='(SRM 3035+)'>
                 <availability>FWL:5+</availability>
+            </model>
+        </chassis>
+        <chassis name='Mechanized Tracked Platoon (LCAF)' unitType='Infantry'>
+            <availability>LA!A:3</availability>
+            <model name='(Laser 3058+)'>
+                <availability>LA!A:6</availability>
+            </model>
+            <model name='(MG 3058+)'>
+                <roles>anti_infantry</roles>
+                <availability>LA!A:4</availability>
+            </model>
+            <model name='(Rifle 3058+)'>
+                <availability>LA!A:7</availability>
+            </model>
+            <model name='(SRM 3058+)'>
+                <availability>LA!A:5</availability>
             </model>
         </chassis>
         <chassis name='Mechanized Tracked Platoon (Taurian 3047+)' unitType='Infantry'>

@@ -31,7 +31,7 @@ public abstract class SimpleConfirmDialog extends SimpleNagNotice {
         super(clientGui);
     }
 
-    public boolean isOKSelected() {
+    public boolean isOkSelected() {
         return isOKSelected;
     }
 
@@ -62,5 +62,9 @@ public abstract class SimpleConfirmDialog extends SimpleNagNotice {
               == JOptionPane.OK_OPTION;
 
         clientGui.activateBoardTooltips();
+    }
+
+    public final void ask() {
+        show();
     }
 }

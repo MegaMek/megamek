@@ -187,8 +187,8 @@ factions:
 #    facing: 5
 #    altitude: 1
 
-    - fullname: Cheetah IIC
-      at: [ 24, 14 ]
+    - fullname: King Karnov Transport KC-6
+      at: [ 24, 15 ]
       board: 2
       facing: 3
       altitude: 1

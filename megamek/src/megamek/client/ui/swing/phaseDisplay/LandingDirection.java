@@ -20,10 +20,16 @@ package megamek.client.ui.swing.phaseDisplay;
 
 import megamek.common.MovePath;
 
+/**
+ * This enum is used to indicate whether a landing is horizontal or vertical.
+ */
 public enum LandingDirection {
     VERTICAL, HORIZONTAL;
 
-    MovePath.MoveStepType moveStepType() {
+    /**
+     * @return The MoveStepType that is used to indicate a landing of this direction in a move path.
+     */
+    public MovePath.MoveStepType moveStepType() {
         return this == VERTICAL ? MovePath.MoveStepType.VLAND : MovePath.MoveStepType.LAND;
     }
 

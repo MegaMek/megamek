@@ -18,38 +18,26 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.phaseDisplay.LandingDirection;
+
 public class AtmosphericLandingMovePath extends MovePath {
 
     private final BoardLocation groundMapLandingLocation;
 
-    private AtmosphericLandingMovePath(Game game, Entity entity, BoardLocation location, boolean isVertical) {
-        super(game, entity);
-        groundMapLandingLocation = location;
-        addStep(isVertical ? MoveStepType.VLAND : MovePath.MoveStepType.LAND);
-    }
-
     /**
-     * Creates a complete move path for a vertical aero landing from an atmospheric hex onto a ground hex (i.e.
-     * when not using the aero-on-ground-map movement option). The given location is the hex for the landing
-     * process on the ground map.
-     *
-     * @param location The target location to land to on the ground map
-     */
-    public static MovePath createVerticalLandingPath(Game game, Entity entity, BoardLocation location) {
-        return new AtmosphericLandingMovePath(game, entity, location, true);
-    }
-
-    /**
-     * Creates a complete move path for a horizontal aero landing from an atmospheric hex onto a ground hex (i.e.
-     * when not using the aero-on-ground-map movement option). The given location is the start hex for the landing
-     * process on the ground map, not the final resting hex of the unit when it has landed (this is done for
-     * simplicity so the usual landing strip checks can be used. For player convenience this could be changed
-     * to use the landing hex and check backwards).
+     * Creates a complete move path for an aero landing from an atmospheric hex onto a ground hex (i.e. when not using
+     * the aero-on-ground-map movement option). For a horizontal landing, the given location is the start hex for the
+     * landing process on the ground map, not the final resting hex of the unit when it has landed (this is done for
+     * simplicity so the usual landing strip checks can be used. For player convenience this could be changed to use the
+     * landing hex and check backwards).
      *
      * @param location The target location to begin the landing on the ground map
      */
-    public static MovePath createHorizontalLandingPath(Game game, Entity entity, BoardLocation location) {
-        return new AtmosphericLandingMovePath(game, entity, location, false);
+    public AtmosphericLandingMovePath(Game game, Entity entity, BoardLocation location,
+          LandingDirection landingDirection) {
+        super(game, entity);
+        groundMapLandingLocation = location;
+        addStep(landingDirection.moveStepType());
     }
 
     @Override

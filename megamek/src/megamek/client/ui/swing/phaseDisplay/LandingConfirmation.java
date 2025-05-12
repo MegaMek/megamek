@@ -21,19 +21,23 @@ package megamek.client.ui.swing.phaseDisplay;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 
-public class ConfirmLandingDialog extends SimpleConfirmDialog {
+public class LandingConfirmation extends SimpleConfirmDialog {
 
-    protected ConfirmLandingDialog(ClientGUI clientGui) {
+    /**
+     * Creates a dialog asking the player if a planned landing should be performed, ending the movement phase for
+     * this unit directly.
+     */
+    protected LandingConfirmation(ClientGUI clientGui) {
         super(clientGui);
     }
 
     @Override
     protected String message() {
-        return Messages.getString("MovementDisplay.LandDialog.message");
+        return Messages.getString("LandingConfirmation.message");
     }
 
     @Override
     protected String title() {
-        return Messages.getString("MovementDisplay.LandDialog.title");
+        return Messages.getString("LandingConfirmation.title");
     }
 }

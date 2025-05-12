@@ -162,6 +162,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private List<Entity> towedUnits = null;
 
+    /**
+     * A dialog asking if a planned landing should be performed, ending the movement phase for this unit immediately.
+     */
+    LandingConfirmation landingConfirmation = new LandingConfirmation(clientgui);
+
     public static final int GEAR_LAND = 0;
     public static final int GEAR_BACKUP = 1;
     public static final int GEAR_JUMP = 2;
@@ -1693,6 +1698,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 gear = GEAR_FLIGHTPATH;
                 setStatusBarText(Messages.getString("MovementDisplay.status.designateFlightPath"));
                 new FlightPathNotice(clientgui).show();
+                var fpn = new FlightPathNotice(clientgui);
+                fpn.show();
             }
         } else if (gear == GEAR_BACKUP) {
             extendPathTo(dest, boardId, MoveStepType.BACKWARDS);
@@ -6070,9 +6077,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             String body = Messages.getString("MovementDisplay.NoLandingDialog.message", failMessage);
             clientgui.doAlertDialog(title, body);
         } else {
-            if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.LandDialog.title"),
-                  Messages.getString("MovementDisplay.LandDialog.message"))) {
-                // directly finalize landing
+            landingConfirmation.ask();
+            if (landingConfirmation.isOkSelected()) {
                 clear();
                 addStepToMovePath(landingDirection.moveStepType());
                 ready();
@@ -6098,8 +6104,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         new LandingHexNotice(clientgui).show();
     }
 
-    ConfirmLandingDialog confirmLandingDialog = new ConfirmLandingDialog(clientgui);
-
     private void finalizeAeroLandFromAtmoMap(IAero aero, BoardViewEvent event) {
         if (!hasLandingMoveStep()) {
             LOGGER.error("No landing move path; can't determine if vertical or horizontal landing!");
@@ -6112,16 +6116,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             String body = Messages.getString("MovementDisplay.NoLandingDialog.message", failMessage);
             clientgui.doAlertDialog(title, body);
         } else {
-            confirmLandingDialog.show();
-            if (confirmLandingDialog.isOKSelected()) {
-                // directly finalize landing
+            landingConfirmation.ask();
+            if (landingConfirmation.isOkSelected()) {
                 clear();
-                BoardLocation location = event.getBoardLocation();
-                if (cmd.contains(MoveStepType.LAND)) {
-                    cmd = AtmosphericLandingMovePath.createHorizontalLandingPath(game, (Entity) aero, location);
-                } else {
-                    cmd = AtmosphericLandingMovePath.createVerticalLandingPath(game, (Entity) aero, location);
-                }
+                cmd = new AtmosphericLandingMovePath(game, (Entity) aero, event.getBoardLocation(), landingDirection);
                 ready();
             }
         }

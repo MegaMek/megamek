@@ -76,9 +76,9 @@ public abstract class AbstractWreckSprite extends Sprite {
      */
     @Override
     public void prepare() {
-        if (entity.getPosition() != null && entity.getGame() != null && entity.getGame().getBoard() != null
-            && entity.getGame().getBoard().getHex(entity.getPosition()) != null &&
-            entity.getGame().getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.ULTRA_SUBLEVEL)) {
+        if (entity.getPosition() != null && entity.getGame() != null
+            && entity.getGame().getHexOf(entity) != null &&
+            entity.getGame().getHexOf(entity).containsTerrain(Terrains.ULTRA_SUBLEVEL)) {
            return; //Don't show wrecks for "Ultra Sublevels" - The unit fell through the map!
         }
 
@@ -89,7 +89,7 @@ public abstract class AbstractWreckSprite extends Sprite {
         // if the entity is underwater or would sink underwater, we want to make the wreckage translucent
         // so it looks like it sunk
         boolean entityIsUnderwater = (entity.relHeight() < 0) ||
-                ((entity.relHeight() >= 0) && entity.getGame().getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.WATER)) &&
+                ((entity.relHeight() >= 0) && entity.getGame().getHexOf(entity).containsTerrain(Terrains.WATER)) &&
                 !EntityWreckHelper.entityOnBridge(entity);
 
         if (entityIsUnderwater) {
@@ -132,7 +132,7 @@ public abstract class AbstractWreckSprite extends Sprite {
 
         if (EntityWreckHelper.displayDevastation(entity)) {
             // objects in space should not have craters
-            wreck = entity.getGame().getBoard().isSpace() ?
+            wreck = entity.isSpaceborne() ?
                     bv.getTileManager().wreckMarkerFor(entity, secondaryPos) :
                      bv.getTileManager().getCraterFor(entity, secondaryPos);
         } else {

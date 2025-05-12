@@ -168,11 +168,11 @@ factions:
 #    facing: 3
 #    altitude: 5
 #
-#  - fullname: Cheetah IIC
-#    at: [ 8, 2 ]
-#    board: 2
-#    facing: 3
-#    altitude: 1
+  - fullname: Cheetah IIC
+    at: [ 24, 14 ]
+    board: 2
+    facing: 3
+    altitude: 2
 
 #  - fullname: AC/10 Turret (Dual)
 
@@ -187,16 +187,16 @@ factions:
 #    facing: 5
 #    altitude: 1
 
-    - fullname: King Karnov Transport KC-6
-      at: [ 24, 15 ]
-      board: 2
-      facing: 3
-      altitude: 1
+#    - fullname: King Karnov Transport KC-6
+#      at: [ 24, 15 ]
+#      board: 2
+#      facing: 3
+#      altitude: 1
 
-#    - fullname: Skulker Wheeled Scout Tank C
-#      at: [ 23, 18 ]
-#      board: 5
-#      facing: 0
+  - fullname: Skulker Wheeled Scout Tank C
+    at: [ 23, 18 ]
+    board: 5
+    facing: 0
 
 #
 #  - fullname: Union (3055)

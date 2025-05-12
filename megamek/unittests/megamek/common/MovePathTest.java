@@ -27,7 +27,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.Vector;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -75,71 +77,91 @@ class MovePathTest {
         assertEquals(mockStep4, testPath.getLastStep());
     }
 
-    @Test
-    void testJumpMovePath() {
-        Board board = new Board(1, 4);
-        board.setHex(0, 0, new Hex(0));
-        board.setHex(0, 1, new Hex(0, new Terrain[] {new Terrain(Terrains.BUILDING, 4)}, "lunar"));
-        board.setHex(0, 2, new Hex(0, new Terrain[] {new Terrain(Terrains.BUILDING, 4)}, "lunar"));
-        board.setHex(0, 3, new Hex(0));
+    @Nested
+    class JumpingUnits {
 
-        Game game = new Game();
-        game.setBoard(board);
+        private static final Board BOARD_FOR_JUMPING;
+        static {
+            var building = new Terrain[] {
+                  new Terrain(Terrains.BUILDING, 2),
+                  new Terrain(Terrains.BLDG_CF, 100),
+                  new Terrain(Terrains.BLDG_ELEV, 4),
+                  new Terrain(Terrains.BLDG_BASEMENT_TYPE, 2)
+            };
+            BOARD_FOR_JUMPING = new Board(1, 4);
+            BOARD_FOR_JUMPING.setHex(0, 0, new Hex(0));
+            BOARD_FOR_JUMPING.setHex(0, 1, new Hex(0, building, null));
+            BOARD_FOR_JUMPING.setHex(0, 2, new Hex(0, building, null));
+            BOARD_FOR_JUMPING.setHex(0, 3, new Hex(0));
+        }
 
-        Entity mek = new BipedMek();
-        mek.setOriginalWalkMP(8);
-        mek.setOriginalJumpMP(8);
-        mek.setId(5);
-        game.addEntity(mek);
+        @Test
+        void testJumpMovePath() {
+            Game game = new Game();
+            game.setBoard(BOARD_FOR_JUMPING);
+            Entity mek = new BipedMek();
+            mek.setOriginalWalkMP(8);
+            mek.setOriginalJumpMP(8);
+            mek.setId(5);
+            game.addEntity(mek);
 
-        mek.setPosition(new Coords(0, 0));
-        mek.setFacing(3);
+            mek.setPosition(new Coords(0, 0));
+            mek.setFacing(3);
 
-        MovePath movePath =
-              new MovePath(game, mek)
-                    .addStep(MovePath.MoveStepType.START_JUMP)
-                    .addStep(MovePath.MoveStepType.FORWARDS)
-                    .addStep(MovePath.MoveStepType.FORWARDS)
-                    .addStep(MovePath.MoveStepType.FORWARDS);
+            MovePath movePath = new MovePath(game, mek).addStep(MovePath.MoveStepType.START_JUMP)
+                                      .addStep(MovePath.MoveStepType.FORWARDS)
+                                      .addStep(MovePath.MoveStepType.FORWARDS)
+                                      .addStep(MovePath.MoveStepType.FORWARDS);
 
-        assertEquals(0, movePath.getStepVector().get(0).getElevation());
-        assertEquals(0, movePath.getStepVector().get(1).getElevation());
-        assertEquals(0, movePath.getStepVector().get(2).getElevation());
-        assertEquals(0, movePath.getStepVector().get(3).getElevation());
-    }
+            movePath.getStepVector().stream().map(StepLog::new).forEach(System.out::println);
 
-    @Test
-    void testHoverJumpMovePath() {
-        Board board = new Board(1, 4);
-        board.setHex(0, 0, new Hex(0));
-        board.setHex(0, 1, new Hex(0, new Terrain[] {new Terrain(Terrains.BUILDING, 4)}, "lunar"));
-        board.setHex(0, 2, new Hex(0, new Terrain[] {new Terrain(Terrains.BUILDING, 4)}, "lunar"));
-        board.setHex(0, 3, new Hex(0));
+            assertEquals(0, movePath.getStepVector().get(0).getElevation());
+            assertEquals(4, movePath.getStepVector().get(1).getElevation());
+            assertEquals(4, movePath.getStepVector().get(2).getElevation());
+            assertEquals(0, movePath.getStepVector().get(3).getElevation());
+        }
 
-        Game game = new Game();
-        game.setBoard(board);
+        @Test
+        void testHoverJumpMovePath() {
+            Game game = new Game();
+            game.setBoard(BOARD_FOR_JUMPING);
 
-        SupportTank hover = new SupportTank();
-        hover.setMovementMode(EntityMovementMode.HOVER);
+            SupportTank hover = new SupportTank();
+            hover.setMovementMode(EntityMovementMode.HOVER);
 
-        hover.setOriginalWalkMP(8);
-        hover.setOriginalJumpMP(8);
-        hover.setId(5);
-        game.addEntity(hover);
+            hover.setOriginalWalkMP(8);
+            hover.setOriginalJumpMP(8);
+            hover.setId(5);
+            game.addEntity(hover);
 
-        hover.setPosition(new Coords(0, 0));
-        hover.setFacing(3);
+            hover.setPosition(new Coords(0, 0));
+            hover.setFacing(3);
 
-        MovePath movePath =
-              new MovePath(game, hover)
-                    .addStep(MovePath.MoveStepType.START_JUMP)
-                    .addStep(MovePath.MoveStepType.FORWARDS)
-                    .addStep(MovePath.MoveStepType.FORWARDS)
-                    .addStep(MovePath.MoveStepType.FORWARDS);
-        // This should be 0 - 4 - 8 - 8 in real time game
-        assertEquals(0, movePath.getStepVector().get(0).getElevation());
-        assertEquals(4, movePath.getStepVector().get(1).getElevation());
-        assertEquals(8, movePath.getStepVector().get(2).getElevation());
-        assertEquals(8, movePath.getStepVector().get(3).getElevation());
+            MovePath movePath = new MovePath(game, hover).addStep(MovePath.MoveStepType.START_JUMP)
+                                      .addStep(MovePath.MoveStepType.FORWARDS)
+                                      .addStep(MovePath.MoveStepType.FORWARDS)
+                                      .addStep(MovePath.MoveStepType.FORWARDS);
+
+            movePath.getStepVector().stream().map(StepLog::new).forEach(System.out::println);
+
+            // This should be 0 - 4 - 8 - 8 in real time game
+            assertEquals(0, movePath.getStepVector().get(0).getElevation());
+            assertEquals(4, movePath.getStepVector().get(1).getElevation());
+            assertEquals(8, movePath.getStepVector().get(2).getElevation());
+            assertEquals(8, movePath.getStepVector().get(3).getElevation());
+        }
+
+        private record StepLog(MoveStep step) {
+            @Override
+            public String toString() {
+                return new ToStringBuilder(this).append("step", step)
+                             .append("entity", step.getEntity())
+                             .append("mode", step.getMovementMode())
+                             .append("distance", step.getDistance())
+                             .append("elevation", step.getElevation())
+                             .append("position", step.getPosition())
+                             .toString();
+            }
+        }
     }
 }

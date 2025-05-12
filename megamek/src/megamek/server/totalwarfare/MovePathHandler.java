@@ -3001,18 +3001,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Handle mounting units to small craft/DropShip
             if (step.getType() == MovePath.MoveStepType.MOUNT) {
-                Targetable mountee = step.getTarget(getGame());
-                if (mountee instanceof Entity) {
-                    Entity dropShip = (Entity) mountee;
-                    if (!dropShip.canLoad(entity)) {
+                Targetable targetToMountInto = step.getTarget(getGame());
+                if (targetToMountInto instanceof Entity entityToMountInto ) {
+                    if (!entityToMountInto.canLoad(entity)) {
                         // Something is fishy in Denmark.
                         logger
-                                .error(dropShip.getShortName() + " can not load " + entity.getShortName());
+                                .error(entityToMountInto.getShortName() + " can not load " + entity.getShortName());
                     } else {
                         // Have the indicated unit load this unit.
                         entity.setDone(true);
-                        gameManager.loadUnit(dropShip, entity, entity.getTargetBay());
-                        Bay currentBay = dropShip.getBay(entity);
+                        gameManager.loadUnit(entityToMountInto, entity, entity.getTargetBay());
+                        Bay currentBay = entityToMountInto.getBay(entity);
                         if ((null != currentBay) && (Compute.d6(2) == 2)) {
                             r = new Report(9390);
                             r.subject = entity.getId();
@@ -3022,7 +3021,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             currentBay.destroyDoorNext();
                         }
                         // Stop looking.
-                        gameManager.entityUpdate(dropShip.getId());
+                        curPos = entity.getPosition();
+                        gameManager.entityUpdate(entityToMountInto.getId());
                         return;
                     }
                 }

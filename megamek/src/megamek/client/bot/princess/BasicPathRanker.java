@@ -52,9 +52,8 @@ public class BasicPathRanker extends PathRanker {
     // what it's doing
     private final int UNIT_DESTRUCTION_FACTOR = 1000;
 
-    private final FacingDiffCalculator facingDiffCalculator = new FacingDiffCalculator();
-    private final UnitsMedianCoordinateCalculator unitsMedianCoordinateCalculator =
-          new UnitsMedianCoordinateCalculator(4);
+    private final FacingDiffCalculator facingDiffCalculator;
+    private final UnitsMedianCoordinateCalculator unitsMedianCoordinateCalculator;
     protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
     protected final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
 
@@ -69,6 +68,9 @@ public class BasicPathRanker extends PathRanker {
     public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
         bestDamageByEnemies = new TreeMap<>();
+        BehaviorSettings behaviorSettings = getOwner().getBehaviorSettings();
+        this.unitsMedianCoordinateCalculator = new UnitsMedianCoordinateCalculator(behaviorSettings.getNumberOfEnemiesToConsiderFacing());
+        this.facingDiffCalculator = new FacingDiffCalculator(behaviorSettings.getAllowFacingTolerance());
         logger.debug("Using {} behavior.", getOwner().getBehaviorSettings().getDescription());
     }
 

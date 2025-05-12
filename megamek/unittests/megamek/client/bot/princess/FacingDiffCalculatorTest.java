@@ -32,17 +32,15 @@
  */
 package megamek.client.bot.princess;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import megamek.common.BipedMek;
 import megamek.common.Coords;
 import megamek.common.Mek;
 import megamek.common.MovePath;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Luana Coppio
@@ -50,7 +48,7 @@ import static org.mockito.Mockito.when;
 class FacingDiffCalculatorTest {
 
     @Test
-    void testFacingDiff() {
+    void testFacingDiffWithoutToleranceValue() {
         Mek mek = mock(BipedMek.class);
         when(mek.getArmor(Mek.LOC_LARM)).thenReturn(5);
         when(mek.getArmor(Mek.LOC_LLEG)).thenReturn(5);
@@ -59,7 +57,7 @@ class FacingDiffCalculatorTest {
         when(mek.getArmor(Mek.LOC_RLEG)).thenReturn(4);
         when(mek.getArmor(Mek.LOC_RT)).thenReturn(10);
         when(mek.isMek()).thenReturn(true);
-        FacingDiffCalculator facingDiffCalculator = new FacingDiffCalculator();
+        FacingDiffCalculator facingDiffCalculator = new FacingDiffCalculator(0);
         MovePath path = mock(MovePath.class);
 
         // If the final position is adjacent to the closest enemy position, then it must face the enemy.
@@ -71,13 +69,70 @@ class FacingDiffCalculatorTest {
         when(path.getFinalFacing()).thenReturn(0);
         int facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
               new Coords(10,10), new Coords(5,4));
-        assertEquals(2, facingDiff);
+        assertEquals(3, facingDiff);
 
         // If the final position is not adjacent to the closest enemy position, then it must face the enemy median
         // position 1111(new Coords(10, 10)), the direction from 0606 to 1111
         // is 2, this case the final facing of the movepath is considering that it is towards south east(2), so the
         // facing diff is 0, because it has the left side with less armor, it has to bias its facing to show the
         // right side, so the facing diff increases in one time time, going up to 1.
+        when(path.getFinalCoords()).thenReturn(new Coords(5, 5));
+        when(path.getFinalFacing()).thenReturn(2);
+
+        when(mek.getArmor(Mek.LOC_RARM)).thenReturn(8);
+        when(mek.getArmor(Mek.LOC_RLEG)).thenReturn(8);
+
+        facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
+              new Coords(10,10), new Coords(2,2));
+        assertEquals(1, facingDiff);
+
+
+        // If there are no enemies, it should them face the secondary target position, in this case the board center,
+        // from its position 0606 to the board center 1111 the facing is 2, it has no inherent bias towards any side
+        // because its left and right armor are equal, therefore it will call a facing diff between 2 and its final
+        // facing which is in this case also 0, resulting in an expected diff of 0
+        when(path.getFinalCoords()).thenReturn(new Coords(5, 5));
+        when(path.getFinalFacing()).thenReturn(2);
+
+        when(mek.getArmor(Mek.LOC_RARM)).thenReturn(5);
+        when(mek.getArmor(Mek.LOC_RLEG)).thenReturn(5);
+
+        facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
+              null, null);
+        assertEquals(0, facingDiff);
+    }
+
+    @Test
+    void testFacingDiffWithTolerance() {
+        Mek mek = mock(BipedMek.class);
+        when(mek.getArmor(Mek.LOC_LARM)).thenReturn(5);
+        when(mek.getArmor(Mek.LOC_LLEG)).thenReturn(5);
+        when(mek.getArmor(Mek.LOC_LT)).thenReturn(10);
+        when(mek.getArmor(Mek.LOC_RARM)).thenReturn(4);
+        when(mek.getArmor(Mek.LOC_RLEG)).thenReturn(4);
+        when(mek.getArmor(Mek.LOC_RT)).thenReturn(10);
+        when(mek.isMek()).thenReturn(true);
+        FacingDiffCalculator facingDiffCalculator = new FacingDiffCalculator(1);
+        MovePath path = mock(MovePath.class);
+
+        // If the final position is adjacent to the closest enemy position, then it must face the enemy.
+        // position 0505 (new Coords(4, 4)) is adjacent to 0605 (new Coords(5, 4)), the direction from 4,4 to 5,4 is 2,
+        // this case the final facing of the movepath is considering that it is facing towards north (0), so the
+        // facing diff is 2, but because it has the right side with less armor, it has to bias its facing to show the
+        // left side, so the facing diff increases in one more time, going up to 3, 1 tolerance means the result is
+        // offset by -1, so 2.
+        when(path.getFinalCoords()).thenReturn(new Coords(4, 4));
+        when(path.getFinalFacing()).thenReturn(0);
+        int facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
+              new Coords(10,10), new Coords(5,4));
+        assertEquals(2, facingDiff);
+
+        // If the final position is not adjacent to the closest enemy position, then it must face the enemy median
+        // position 1111(new Coords(10, 10)), the direction from 0606 to 1111
+        // is 2, this case the final facing of the movepath is considering that it is towards south east(2), so the
+        // facing diff is 0, because it has the left side with less armor, it has to bias its facing to show the
+        // right side, so the facing diff increases in one time time, going up to 1, but 1 tolerance means the result is
+        // offset by -1, so 2.
         when(path.getFinalCoords()).thenReturn(new Coords(5, 5));
         when(path.getFinalFacing()).thenReturn(2);
 

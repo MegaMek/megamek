@@ -1474,6 +1474,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
         updateTarget();
         updateDonePanel();
+        refreshAll();
     }
 
     /**
@@ -1696,7 +1697,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             clearAttacks();
             addAttack(new TorsoTwistAction(currentEntity, direction));
             ce().setSecondaryFacing(direction);
-            clientgui.updateFiringArc(ce());
             updateForNewAction();
         }
     }

@@ -86,6 +86,11 @@ class BasicPathRankerTest {
         when(mockBehavior.getHyperAggressionValue()).thenReturn(BehaviorSettings.HYPER_AGGRESSION_VALUES[5]);
         when(mockBehavior.getHerdMentalityValue()).thenReturn(BehaviorSettings.HERD_MENTALITY_VALUES[5]);
         when(mockBehavior.getSelfPreservationValue()).thenReturn(BehaviorSettings.SELF_PRESERVATION_VALUES[5]);
+        when(mockBehavior.getFavorHigherTMM()).thenReturn(0);
+        when(mockBehavior.getAntiCrowding()).thenReturn(0);
+        when(mockBehavior.getAllowFacingTolerance()).thenReturn(1);
+        when(mockBehavior.getNumberOfEnemiesToConsiderFacing()).thenReturn(4);
+
 
         mockFireControl = mock(FireControl.class);
 

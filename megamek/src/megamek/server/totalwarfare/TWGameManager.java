@@ -23749,9 +23749,8 @@ TargetRoll nTargetRoll,
     private Report filterReport(Report r, Player p, boolean omitCheck) {
         if ((r.subject == Entity.NONE) && (r.type != Report.PLAYER) && (r.type != Report.PUBLIC)) {
             // Reports that don't have a subject should be public.
-            logger.error("Attempting to filter a Report object that is not public yet " +
-                               "but has no subject.\n\t\tmessageId: " +
-                               r.messageId);
+            logger.info("Attempting to filter a Report object that is not public yet but has no subject. messageId: {}",
+                  r.messageId);
             return r;
         }
         if ((r.type == Report.PUBLIC) || ((p == null) && !omitCheck)) {

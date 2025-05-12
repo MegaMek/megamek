@@ -3560,7 +3560,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     @Override
     public ReportEntry getNewReport(int messageId) {
-        return new Report(messageId);
+        return new Report(messageId).makePublic();
     }
 
     /**

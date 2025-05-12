@@ -42,11 +42,10 @@ public abstract class SimpleNagNotice {
 
     private static final int DEFAULT_WIDTH = 500;
 
-    private final JPanel contentPanel = new JPanel();
     private final JCheckBox dontShowAgain = new JCheckBox(Messages.getString("SimpleNagNotice.dontShowAgain"));
-    private final ClientGUI clientGui;
-
-    private boolean initialized = false;
+    protected final JPanel contentPanel = new JPanel();
+    protected final ClientGUI clientGui;
+    protected boolean initialized = false;
 
     protected SimpleNagNotice(ClientGUI clientGui) {
         this.clientGui = Objects.requireNonNull(clientGui);
@@ -90,7 +89,7 @@ public abstract class SimpleNagNotice {
         return DEFAULT_WIDTH;
     }
 
-    private void initialize() {
+    protected void initialize() {
         JEditorPane messagePane = new JEditorPane();
         messagePane.setContentType("text/html");
         messagePane.setEditable(false);

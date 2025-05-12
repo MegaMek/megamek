@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.client.ui.swing.phaseDisplay.LandingDirection;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
@@ -721,8 +722,18 @@ public interface IAero {
         return null;
     }
 
+    default String hasRoomForLanding(LandingDirection landingDirection) {
+        return landingDirection.isHorizontal() ? hasRoomForHorizontalLanding() : hasRoomForVerticalLanding();
+    }
+
     default String hasRoomForHorizontalLanding() {
         return hasRoomForHorizontalLanding(((Entity) this).getBoardId(), ((Entity) this).getPosition());
+    }
+
+    default String hasRoomForLanding(int assumedBoardId, Coords assumedPosition, LandingDirection landingDirection) {
+        return landingDirection == LandingDirection.HORIZONTAL ?
+              hasRoomForHorizontalLanding(assumedBoardId, assumedPosition) :
+              hasRoomForVerticalLanding(assumedBoardId, assumedPosition);
     }
 
     default String hasRoomForHorizontalLanding(int assumedBoardId, Coords assumedPosition) {

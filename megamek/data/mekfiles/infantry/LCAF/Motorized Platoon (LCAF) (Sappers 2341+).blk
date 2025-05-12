@@ -1,0 +1,68 @@
+#Saved from version 0.50.06 on 2025-04-27
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Motorized Platoon (LCAF)
+</Name>
+
+<Model>
+(Sappers 2341+)
+</Model>
+
+<year>
+2341
+</year>
+
+<originalBuildYear>
+2341
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Troopers Equipment>
+Ballistic Plate, Standard
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+Equipped with a variety of tools these platoons engage in some of the most dangerous tasks assigned to combat engineers - explosive ordnance disposal, clearing minefields, and explosive demolition of obstacles and buildings. As such they are equipped with much heavier protective gear than normally found among infantry.
+</capabilities>
+
+<overview>
+Sapper is an old term for combat engineers, especially those involved with explosives, demolitions, and mines.  These activities are conducted in peacetime, such as EOD (explosive ordnance disposal) and clearing leftover minefields, as well as breaching minefields and destroying critical bunkers and bridges while under active fire.
+</overview>
+
+<notes>
+Intro date based on Lyran faction start date. Ballistic plate armor chosen for damage divisor and ATOW stats and general description.
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<Primary>
+Submachine Gun
+</Primary>
+
+<specialization>
+10
+</specialization>
+

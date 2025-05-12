@@ -6346,7 +6346,7 @@
             </model>
         </chassis>
 		<chassis name='Jump Platoon' unitType='Infantry'>
-			<availability>IS:8,FWL:1-,CS:0,Periphery:7,TC:2-,MH:0,HL:6,Periphery.Deep:5+</availability>
+			<availability>IS:8,LA:6+,FWL:1-,CS:0,Periphery:7,TC:2-,MH:0,HL:6,Periphery.Deep:5+</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
 				<availability>IS:8,FWL:0,WOB:3-,Periphery:8,TC:3-,HL:8,Periphery.Deep:8</availability>
@@ -6414,6 +6414,23 @@
             </model>
             <model name='(SRM)'>
                 <availability>WOB:5+</availability>
+            </model>
+        </chassis>
+        <chassis name='Jump Platoon (LCAF)' unitType='Infantry'>
+            <availability>LA!A:3!B:3</availability>
+            <model name='(Laser 3058+)'>
+                <roles>anti_mek</roles>
+                <availability>LA!A:6!B:3</availability>
+            </model>
+            <model name='(MG 3058+)'>
+                <roles>anti_infantry</roles>
+                <availability>LA!A:3</availability>
+            </model>
+            <model name='(Rifle 3058+)'>
+                <availability>LA!A:7!B:3</availability>
+            </model>
+            <model name='(SRM 3058+)'>
+                <availability>LA!A:5</availability>
             </model>
         </chassis>
         <chassis name='Jump Platoon (FWLM)' unitType='Infantry'>
@@ -7821,7 +7838,7 @@
             </model>
         </chassis>
 		<chassis name='Mechanized Tracked Platoon' unitType='Infantry'>
-			<availability>IS:7,FWL:0,CS:2,WOB:3,Periphery:7,TC:3-,MH:0,HL:6,Periphery.Deep:6+</availability>
+			<availability>IS:7,LA:6+,FWL:0,CS:2,WOB:3,Periphery:7,TC:3-,MH:0,HL:6,Periphery.Deep:6+</availability>
 			<model name='(Bridging)'>
 				<roles>engineer</roles>
 				<availability>IS:2,CS:8,WOB:5,Periphery:1,Periphery.Deep:0</availability>
@@ -7893,6 +7910,22 @@
             </model>
             <model name='(SRM)'>
                 <availability>WOB:6+</availability>
+            </model>
+        </chassis>
+        <chassis name='Mechanized Tracked Platoon (LCAF)' unitType='Infantry'>
+            <availability>LA!A:3</availability>
+            <model name='(Laser 3058+)'>
+                <availability>LA:6</availability>
+            </model>
+            <model name='(MG 3058+)'>
+                <roles>anti_infantry</roles>
+                <availability>LA:4</availability>
+            </model>
+            <model name='(Rifle 3058+)'>
+                <availability>LA:7</availability>
+            </model>
+            <model name='(SRM 3058+)'>
+                <availability>LA:5</availability>
             </model>
         </chassis>
         <chassis name='Mechanized Tracked Platoon (FWLM)' unitType='Infantry'>

@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3060-->
-<ratgen>
+<ratgen
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd">
 	<factions>
 		<faction key='ARDC'>
 			<pctOmni>0,0,2,5,10</pctOmni>

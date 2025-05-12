@@ -418,7 +418,7 @@ public class MiscType extends EquipmentType {
         if (flag instanceof MiscTypeFlag) {
             return super.hasFlag(flag);
         } else {
-            LOGGER.warn("Incorrect flag check: make sure to test only MiscTypeFlags on a MiscType.");
+            LOGGER.warn("Incorrect flag check: make sure to test only MiscTypeFlags on a MiscType.", new Throwable("Invalid MiscType"));
             return false;
         }
     }

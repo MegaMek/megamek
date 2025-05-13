@@ -13931,7 +13931,7 @@
 			</model>
 			<model name='(Needler Heavy)'>
 				<roles>incendiary,anti_infantry</roles>
-				<availability>LA:3,IS:2,LA:0,FWL:0,DA:0,DGM:0,DO:0,DoO:0,DTA:0,MCM:0,MSC:0,PG:0,PR:0,RCM:0,RFS:0,SC:0,TP:0,CS:0,FS:2,WOB:0,Periphery:2</availability>
+				<availability>IS:2,LA:0,FWL:0,DA:0,DGM:0,DO:0,DoO:0,DTA:0,MCM:0,MSC:0,PG:0,PR:0,RCM:0,RFS:0,SC:0,TP:0,CS:0,FS:2,WOB:0,Periphery:2</availability>
 			</model>
 			<model name='(Nonlethal)'>
 				<roles>urban,anti_infantry</roles>

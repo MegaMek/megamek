@@ -6049,11 +6049,11 @@
 			</model>
 			<model name='(Rifle Mountain)'>
 				<roles>mountaineer</roles>
-				<availability>IS:3,WOB.PM:1,Periphery:3</availability>
+				<availability>IS:3,LA:2,WOB.PM:1,Periphery:3</availability>
 			</model>
 			<model name='(Rifle Paratrooper)'>
 				<roles>paratrooper</roles>
-				<availability>IS:3,WOB:0,WOB.PM:1+,Periphery:2</availability>
+				<availability>IS:3,LA:2,WOB:0,WOB.PM:1+,Periphery:2</availability>
 			</model>
 			<model name='(Rifle)'>
 				<availability>IS:8,LA!D:6!F:7,FWL!D:6!F:7,CS:0,WOB:0,WOB.PM:7,Periphery:8,TC:7,CDP:7,HL:7,Periphery.Deep:6</availability>
@@ -11334,7 +11334,7 @@
             </model>
             <model name='(Laser XCT 3057+)'>
                 <roles>xct</roles>
-                <availability>LA:1</availability>
+                <availability>LA:1+</availability>
             </model>
             <model name='(LRM 3065+)'>
                 <roles>fire_support</roles>

@@ -25976,10 +25976,6 @@ public class TWGameManager extends AbstractGameManager {
     public boolean checkIgnition(Coords c, TargetRoll roll, boolean bInferno, int entityId,
           Vector<Report> vPhaseReport) {
 
-        if (vPhaseReport == null) {
-            return false;
-        }
-
         Hex hex = game.getBoard().getHex(c);
 
         // The hex might be null due to spreadFire translation
@@ -26000,7 +25996,7 @@ public class TWGameManager extends AbstractGameManager {
         Roll diceRoll = Compute.rollD6(2);
         Report r;
 
-        if (entityId != Entity.NONE) {
+        if ((vPhaseReport != null) && (entityId != Entity.NONE)) {
             r = new Report(3430);
             r.indent(2);
             r.subject = entityId;

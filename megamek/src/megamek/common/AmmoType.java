@@ -358,11 +358,8 @@ public class AmmoType extends EquipmentType {
     private double ammoRatio;
     private String subMunitionName = "";
 
-    // Short name of Ammo or RS Printing
-    protected String shortName = "";
-
-    // short name of base ammo type shared by all munitions
-    protected String baseName = "";
+    // Reference to the base ammo type, if any
+    protected AmmoType base = null;
 
     // Collate artillery / artillery cannon types for flak check
     // Add ADA here when implemented
@@ -577,6 +574,10 @@ public class AmmoType extends EquipmentType {
 
     public boolean isCapital() {
         return capital;
+    }
+
+    public boolean hasCustomKgPerShot() {
+        return kgPerShot > 0;
     }
 
     /**
@@ -15489,7 +15490,7 @@ public class AmmoType extends EquipmentType {
             AmmoType munition = new AmmoType();
             munition.setTonnage(base.getTonnage(null));
             munition.subMunitionName = name;
-            munition.baseName = base.shortName;
+            munition.base = base;
 
             // Manipulate the base round's names, depending on ammoType.
             switch (base.ammoType) {
@@ -16017,7 +16018,7 @@ public class AmmoType extends EquipmentType {
     }
 
     public String getBaseName() {
-        return baseName.isBlank() ? getShortName() : baseName;
+        return (base!=null) ? base.getShortName() : getShortName();
     }
 
     public String getSubMunitionName() {

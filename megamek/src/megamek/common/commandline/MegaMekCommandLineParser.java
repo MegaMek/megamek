@@ -99,7 +99,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
     }
 
     @Override
-    protected void start() throws ParseException {
+    protected void start() throws ParseException {;
         if (getTokenType() == TOK_OPTION) {
             final String tokenVal = getTokenValue();
             nextToken();
@@ -113,6 +113,9 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         break;
                     case EQEDB:
                         processExtendedEquipmentDb();
+                        break;
+                    case EQYAMLDB:
+                        processYamlEquipmentDb();
                         break;
                     case EQWDB:
                         processWeaponEquipmentDb();
@@ -188,6 +191,18 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             megamek.common.EquipmentType.writeEquipmentExtendedDatabase(new File(filename));
         } else {
             throw new ParseException("file name expected");
+        }
+        System.exit(0);
+    }
+
+    private void processYamlEquipmentDb() throws ParseException {
+        String targetFolder;
+        if (getTokenType() == TOK_LITERAL) {
+            targetFolder = getTokenValue();
+            nextToken();
+            megamek.common.EquipmentType.writeEquipmentYamlDatabase(targetFolder);
+        } else {
+            throw new ParseException("folder name expected");
         }
         System.exit(0);
     }

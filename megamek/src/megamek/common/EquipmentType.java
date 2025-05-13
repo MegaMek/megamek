@@ -39,6 +39,8 @@ import java.io.FileWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.yaml.snakeyaml.Yaml;
+
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.weapons.autocannons.HVACWeapon;
@@ -146,7 +148,7 @@ public class EquipmentType implements ITechnology {
      */
     protected String sortingName;
 
-    private Vector<String> namesVector = new Vector<String>();
+    protected Vector<String> namesVector = new Vector<String>();
 
     protected double tonnage = 0;
     protected int criticals = 0;
@@ -1136,6 +1138,151 @@ public class EquipmentType implements ITechnology {
         } catch (Exception e) {
             logger.error("", e);
         }
+    }
+
+        private static String sanitizeFileName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return null;
+        }
+        String sanitized = name;
+        sanitized = sanitized.replaceAll("[\\<>:\"/\\\\|?*\\p{Cntrl}]", "");
+        sanitized = sanitized.replaceAll("[. ]+$", "");
+        sanitized = sanitized.replaceAll("^_|_$", "");
+        if (sanitized.isEmpty()) {
+            return null;
+        }
+        return sanitized;
+    }
+
+    public static void writeEquipmentYamlDatabase(String targetFolder) {
+        try {
+            logger.info("Exporting YAML files to " + targetFolder);
+            HashMap <String, Boolean> seen = new HashMap<>();
+            
+            org.yaml.snakeyaml.DumperOptions options = new org.yaml.snakeyaml.DumperOptions();
+            options.setDefaultFlowStyle(org.yaml.snakeyaml.DumperOptions.FlowStyle.BLOCK);
+            options.setPrettyFlow(true); // Ensures pretty printing for block collections
+            Yaml yaml = new Yaml(options);
+            // Write everything except ammo types that come from mutations
+            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes.hasMoreElements(); ) {
+                EquipmentType equipmentType = equipmentTypes.nextElement();
+                if (equipmentType instanceof AmmoType ammo) {
+                    if (ammo.base != null) {
+                        continue;
+                    }
+                }
+                writeEquipmentYamlEntry(equipmentType, targetFolder, yaml, seen);
+            }
+            // Now write the ammo types that comes from mutations
+            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes.hasMoreElements(); ) {
+                EquipmentType equipmentType = equipmentTypes.nextElement();
+                if (equipmentType instanceof AmmoType ammo) {
+                    if (ammo.base == null) {
+                        continue;
+                    }
+                } else {
+                    continue;
+                }
+                writeEquipmentYamlEntry(equipmentType, targetFolder, yaml, seen);
+            }
+        } catch (Exception e) {
+            System.out.println("Error writing YAML database: " + e.getMessage());
+            logger.error("", e);
+        }
+    }
+
+    private static void writeEquipmentYamlEntry(EquipmentType equipmentType, String targetFolder, Yaml yamlProcessor, HashMap <String, Boolean> seen)
+            throws Exception {
+        String typeFolder;
+        String seenKey = null;
+        if (equipmentType instanceof AmmoType) {
+            typeFolder = "ammo";
+        } else if (equipmentType instanceof WeaponType) {
+            typeFolder = "weapon";
+        } else if (equipmentType instanceof MiscType) {
+            typeFolder = "misc";
+        } else {
+            throw new Exception("Failed YAML export for unknown equipment type: " + equipmentType.getName());
+        }
+        
+        File parentDir = new File(targetFolder + File.separator + typeFolder);
+        if (!parentDir.exists()) {
+            if (!parentDir.mkdirs()) {
+                throw new Exception("Could not create directory: " + parentDir.getAbsolutePath());
+            }
+        }
+        String fileName = null;
+        String content = null;
+        boolean appendMode = false;
+        System.out.println("- "+equipmentType.getName());
+        if (equipmentType instanceof AmmoType ammo) {
+            if (ammo.base != null) {
+                fileName = ammo.base.getShortName();
+            } else {
+                fileName = ammo.getShortName();
+            }
+            content = ammo.getYamlData(yamlProcessor);
+        } else
+        if (equipmentType instanceof WeaponType weapon) {
+            fileName =  weapon.getShortName();
+            content = weapon.getYamlData(yamlProcessor);
+        } else 
+        if (equipmentType instanceof MiscType misc) {
+            fileName =  misc.getShortName();
+            content = misc.getYamlData(yamlProcessor);
+        }
+        //TODO: BombType, SmallWeaponAmmoType, ArmorType
+        fileName = sanitizeFileName(fileName);
+        if (fileName == null) {
+            throw new Exception("Filename could not be determined for equipment type: " + equipmentType.getName() + ". Skipping YAML export for this item.");
+        }
+        if (content == null) {
+            throw new Exception("Content for YAML export is null for: " + fileName + ". Skipping.");
+        }
+        seenKey = typeFolder+"_"+fileName;
+        if (equipmentType instanceof AmmoType ammo) {
+            if (ammo.base != null) {
+                if (!seen.containsKey(seenKey)) {
+                    throw new Exception("Not found seen key "+seenKey+ " for ammo mutation "+ammo.getName());
+                };
+            }
+        }
+        final String fullPath = parentDir.getAbsolutePath() + File.separator + fileName + ".yaml";
+        appendMode = seen.containsKey(seenKey);
+        final File f = new File(fullPath);
+        final BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f, appendMode));
+        if (appendMode) {
+            bufferedWriter.write("---\n");
+        } else {
+            bufferedWriter.write("version: 1.0\n"); // We might need it in the future...
+        }
+        bufferedWriter.write(content);
+        bufferedWriter.flush();
+        bufferedWriter.close();
+        seen.put(seenKey, true);
+    }
+    
+    public String getYamlData(Yaml yamlProcessor) {
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("id", this.internalName);
+        data.put("name", this.name);
+        if (this.shortName != null && !this.shortName.isEmpty()) {
+            data.put("shortName", this.shortName);
+        }
+        if (this.namesVector != null && !this.namesVector.isEmpty()) {
+            List<String> aliases = new ArrayList<>();
+            for (String aliasName : this.namesVector) {
+                if (aliasName == null) continue;
+                if (aliasName.equals(this.internalName)) continue;
+                if (aliasName.equals(this.name)) continue;
+                if (aliasName.equals(this.shortName)) continue;
+                aliases.add(aliasName);
+            }
+            if (!aliases.isEmpty()) {
+                data.put("aliases", aliases);
+            }
+        }
+        return yamlProcessor.dump(data);
     }
 
     public static void writeEquipmentExtendedDatabase(File f) {

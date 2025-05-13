@@ -13712,7 +13712,7 @@
                 <availability>LA:2-</availability>
             </model>
             <model name='(Gauss 3065+)'>
-                <availability>LA!C:1!D:1</availability>
+                <availability>LA!B:1!C:1</availability>
             </model>
             <model name='(Gauss 3074+)'>
                 <availability>LA!A:3!B:1</availability>
@@ -14455,7 +14455,7 @@
 				<availability>IS:3,LA:0,FWL:0,DTA:0,RCM:0,CS:0,WOB:0,WOB.PM:1+,Periphery:2</availability>
 			</model>
 			<model name='(Gauss)'>
-				<availability>IS:4,FWL:0,DTA:0,RCM:0,CS:0,WOB:0,WOB.PM:2+</availability>
+				<availability>IS:4,LA:0,FWL:0,DTA:0,RCM:0,CS:0,WOB:0,WOB.PM:2+</availability>
 			</model>
 			<model name='(LRM)'>
                 <roles>fire_support</roles>

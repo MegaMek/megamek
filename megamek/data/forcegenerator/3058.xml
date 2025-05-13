@@ -4081,7 +4081,7 @@
 			</model>
 		</chassis>
 		<chassis name='Field Artillery' unitType='Infantry'>
-			<availability>HL:2,IS:3,LA:0,FWL:0,CS:0,WOB:2,Periphery:3,MH:0</availability>
+			<availability>HL:2,IS:3,LA:1,FWL:0,CS:0,WOB:2,Periphery:3,MH:0</availability>
 			<model name='(Arrow IV)'>
 				<roles>missile_artillery</roles>
 				<availability>CC:5,MOC:1,IS:4,CIR:1</availability>

@@ -18,17 +18,18 @@
  */
 package megamek.common.icons;
 
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import javax.swing.ImageIcon;
+
 import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
 import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.PrintWriter;
-import java.io.Serializable;
 
 /**
  * An AbstractIcon is an abstract class that ensures standardized and isolated image code for icons
@@ -223,21 +224,25 @@ public abstract class AbstractIcon implements Serializable {
     protected void parseNode(final Node workingNode) {
         switch (workingNode.getNodeName()) {
             case "category":
-                // setCategory(MMXMLUtility.unEscape(workingNode.getTextContent().trim()));
-
-                //start <50.01 compatibility handlers, the above-commented code can be uncommented
-                // when the below handlers are removed
+                // <50.01 compatibility handlers,
                 String category = MMXMLUtility.unEscape(workingNode.getTextContent().trim());
                 category = category.replaceAll("Aero ", "Aerospace ");
                 category = category.replaceAll("Mech ", "Mek ");
                 category = category.replaceAll("MechWarrior", "MekWarrior");
                 category = category.replaceAll("ProtoMech", "ProtoMek");
 
+                // <50.07 compatibility handlers
+                category = category.replaceAll("Mek Tech", "MekTech");
+
                 setCategory(category);
-                //end <50.01 compatibility handlers
                 break;
             case "filename":
-                setFilename(MMXMLUtility.unEscape(workingNode.getTextContent().trim()));
+                filename = MMXMLUtility.unEscape(workingNode.getTextContent().trim());
+
+                // <50.07 compatibility handlers
+                filename = filename.replaceAll("MekTek", "MekTech");
+
+                setFilename(filename);
                 break;
             default:
                 break;

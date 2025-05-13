@@ -58,6 +58,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.IClientGUI;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.ScalingPopup;
+import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.actions.AttackAction;
@@ -714,7 +715,9 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     }
                     if (dirtyMap || dirty[j / 10][k / 10]) {
                         gg.setColor(terrainColor(h));
-                        if (h.containsTerrain(SPACE)) {
+                        if (board.isHighAltitude()) {
+                            paintHighAltCoord(gg, j, k);
+                        } else if (board.isSpace()) {
                             paintSpaceCoord(gg, j, k);
                         } else if (h.containsTerrain(SKY)) {
                             paintLowAtmoSkyCoord(gg, j, k, paintBorders && zoom > 1);
@@ -748,6 +751,41 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                         Hex h = board.getHex(j, k);
                         paintHeight(g, h, j, k);
                     }
+                }
+            }
+
+            if (board.isHighAltitude()
+                  && (HEX_SIDE[zoom] >= 10)) {
+                int baseX = HEX_SIDE[zoom] + leftMargin;
+                int baseY = (board.getHeight() + 1) * HEX_SIDE_BY_COS30[zoom] + topMargin;
+                new StringDrawer("Ground Hexes").at(baseX, baseY).fontSize(HEX_SIDE[zoom])
+                      .rotate(Math.toRadians(90)).center().color(Color.BLACK).draw(g);
+
+                if ((game != null) && !game.getPlanetaryConditions().getAtmosphere().isVacuum()) {
+                    baseX = HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom] + leftMargin;
+                    new StringDrawer("Atmospheric Row 1").at(baseX, baseY).fontSize(HEX_SIDE[zoom])
+                          .rotate(Math.toRadians(90)).center().color(Color.LIGHT_GRAY).draw(g);
+
+                    baseX = (4 * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + HEX_SIDE[zoom]) + leftMargin;
+                    new StringDrawer("Atmospheric Row 4").at(baseX, baseY).fontSize(HEX_SIDE[zoom])
+                          .rotate(Math.toRadians(90)).center().color(Color.GRAY).draw(g);
+
+                    if (game.getPlanetaryConditions().getAtmosphere().isVeryHigh()) {
+                        baseX = (7 * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + HEX_SIDE[zoom]) + leftMargin;
+                        new StringDrawer("Atmospheric Row 7").at(baseX, baseY).fontSize(HEX_SIDE[zoom])
+                              .rotate(Math.toRadians(90)).center().color(Color.GRAY).draw(g);
+                    }
+
+                    baseX = (BoardHelper.spaceAtmosphereInterfacePosition(game)
+                          * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + HEX_SIDE[zoom]) + leftMargin;
+                    new StringDrawer("Space/Atmosphere Interface").at(baseX, baseY).fontSize(HEX_SIDE[zoom])
+                          .rotate(Math.toRadians(90)).center().color(Color.GRAY).draw(g);
+                }
+
+                if (board.getWidth() > 15) {
+                    baseX = (15 * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + HEX_SIDE[zoom]) + leftMargin;
+                    new StringDrawer("End of Gravity").at(baseX, baseY).fontSize(HEX_SIDE[zoom])
+                          .rotate(Math.toRadians(90)).center().color(Color.GRAY).draw(g);
                 }
             }
 
@@ -1141,6 +1179,45 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g.setColor(new Color(c / factor, c / factor, c, alpha)); // blue star
         }
         g.fillRect(baseX + dx, baseY + dy, 1, 1);
+    }
+
+    private void paintHighAltCoord(Graphics g, int x, int y) {
+        int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
+        int baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
+        int[] xPoints = xPoints(x);
+        int[] yPoints = yPoints(x, y);
+
+        int spaceInterfacePosition = BoardHelper.spaceAtmosphereInterfacePosition(game);
+        // Draw in atmosphere in a high-altitude map (unless planetary conditions say its vacuum)
+        if (BoardHelper.isAtmosphericRow(game, board, x)) {
+            int atmosphericRow = BoardHelper.effectiveAtmosphericRowNumber(game, board, x);
+            // Add atmosphere
+            int step = 120 / (spaceInterfacePosition - 1);
+            g.setColor(new Color(75 - step/2 * atmosphericRow,
+                  150 - step * atmosphericRow, 150 - step * atmosphericRow));
+        } else if (BoardHelper.isGroundRowHex(board, x)) {
+            g.setColor(Color.GREEN);
+        }
+        g.fillPolygon(xPoints, yPoints, 6);
+        if (paintBorders && zoom > 1) {
+            g.setColor(new Color(20, 20, 60));
+        }
+        g.drawPolygon(xPoints, yPoints, 6);
+
+        if (x > spaceInterfacePosition) {
+            // Drop in a star
+            int dx = (int) (Math.random() * HEX_SIDE[zoom]);
+            int dy = (int) ((Math.random() - 0.5) * HEX_SIDE_BY_COS30[zoom]);
+            int c = (int) (Math.random() * 180);
+            g.setColor(new Color(c, c, c));
+            if (Math.random() < 0.1) {
+                g.setColor(new Color(c, c / 10, c / 10)); // red star
+            } else if (Math.random() < 0.1) {
+                int factor = (int) (Math.random() * 10) + 1;
+                g.setColor(new Color(c / factor, c / factor, c)); // blue star
+            }
+            g.fillRect(baseX + dx, baseY + dy, 1, 1);
+        }
     }
 
     private void paintMoveTrack(Graphics2D g, Line line) {

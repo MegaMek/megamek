@@ -264,6 +264,10 @@ public final class BoardHelper {
         return board.isSpace() && (!board.isHighAltitude() || (coords.getX() > spaceAtmosphereInterfacePosition(game)));
     }
 
+    /**
+     * @return The coordinate of the space-atmosphere interface in the given game (i.e., for the atmospheric
+     * pressure). Returns -1 for vacuum, 8 in very high atmospheric pressure and 5 otherwise.
+     */
     public static int spaceAtmosphereInterfacePosition(Game game) {
         return switch (game.getPlanetaryConditions().getAtmosphere()) {
             case VACUUM -> -1;

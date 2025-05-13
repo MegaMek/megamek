@@ -58,7 +58,7 @@ map:
           list:
             - [ 23, 26 ]
 
-  - type: space
+  - type: highaltitude
     width: 15
     height: 15
     name: Orbit
@@ -66,6 +66,12 @@ map:
       - at: [ 1, 7 ]
         id: 2
     id: 6
+
+  - type: space
+    width: 25
+    height: 25
+    name: Interplanetary
+    id: 8
 
 
 options:

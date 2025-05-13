@@ -63,9 +63,15 @@ map:
   width: 65
   height: 35
 
-# space map
+# (deep) space map
 map:
   type: space
+  width: 65
+  height: 35
+
+# high altitude space map
+map:
+  type: highaltitude
   width: 65
   height: 35
 

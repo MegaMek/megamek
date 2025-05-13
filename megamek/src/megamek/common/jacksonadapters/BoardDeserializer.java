@@ -163,8 +163,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
                     board.setBoardId(parseId(mapNode));
                     parseEmbeddedBoards(board, mapNode);
                     return board;
-                case ATMOSPHERIC:
-                case LOW_ALTITUDE:
+                case ATMOSPHERIC, LOW_ALTITUDE:
                     board = Board.getSkyBoard(mapWidth, mapHeight);
                     board.setBoardType(BoardType.SKY_WITH_TERRAIN);
                     board.setMapName(processName(mapNode).orElse("Atmospheric Map"));
@@ -179,11 +178,12 @@ public class BoardDeserializer extends StdDeserializer<Board> {
                     parseEmbeddedBoards(board, mapNode);
                     return board;
                 case HIGH_ALTITUDE:
-                    // TODO: dont have that type yet
+                    board = Board.getSpaceBoard(mapWidth, mapHeight);
                     board.setBoardType(BoardType.NEAR_SPACE);
-                    board.setMapName(processName(mapNode).orElse("High-Atmosphere Map"));
+                    board.setMapName(processName(mapNode).orElse("High-Altitude Map"));
                     board.setBoardId(parseId(mapNode));
-                    break;
+                    parseEmbeddedBoards(board, mapNode);
+                    return board;
             }
         } else {
             // ground map

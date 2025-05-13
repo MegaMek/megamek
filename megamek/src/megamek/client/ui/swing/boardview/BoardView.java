@@ -2306,6 +2306,73 @@ public final class BoardView extends AbstractBoardView
             }
         }
 
+        AffineTransform scaleTransform = new AffineTransform();
+        scaleTransform.scale(scale, scale);
+
+        int spaceInterfacePosition = BoardHelper.spaceAtmosphereInterfacePosition(game);
+        // Draw in atmosphere in a high-altitude map (unless planetary conditions say its vacuum)
+        if (BoardHelper.isAtmosphericRow(game, getBoard(), coords)) {
+            int atmosphericRow = BoardHelper.effectiveAtmosphericRowNumber(game, getBoard(), coords);
+            // First, fade out the stars
+            int alphaStepStars = 120 / (spaceInterfacePosition - 1);
+            graphics2D.setColor(new Color(0, 0, 0, 250 - atmosphericRow * alphaStepStars));
+            graphics2D.fill(scaleTransform.createTransformedShape(HEX_POLY));
+            // Add atmosphere
+            int alphaStep = 160 / (spaceInterfacePosition - 1);
+            graphics2D.setColor(new Color(0, 250, 250, 190 - atmosphericRow * alphaStep));
+            graphics2D.fill(scaleTransform.createTransformedShape(HEX_POLY));
+        }
+
+        // Draw in the space/atmosphere interface in a high-altitude map
+        if (BoardHelper.isSpaceAtmosphereInterface(game, getBoard(), coords)) {
+            Polygon halfHex = new Polygon();
+            halfHex.addPoint(21, 0);
+            halfHex.addPoint(42, 0);
+            halfHex.addPoint(42, 71);
+            halfHex.addPoint(21, 71);
+            halfHex.addPoint(0, 36);
+            halfHex.addPoint(0, 35);
+            graphics2D.setColor(new Color(0, 250, 250, 15));
+            graphics2D.fill(scaleTransform.createTransformedShape(halfHex));
+            Polygon line = new Polygon();
+            line.addPoint(42, 0);
+            line.addPoint(42, 71);
+            graphics2D.setColor(new Color(130, 130, 130, 100));
+            BasicStroke bs1 = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND,
+                  1.0f, new float[] { 3f, 5f }, 0f);
+            graphics2D.setStroke(bs1);
+            AffineTransform oldTransform = graphics2D.getTransform();
+            graphics2D.transform(scaleTransform);
+            graphics2D.draw(line);
+            graphics2D.setTransform(oldTransform);
+        }
+
+        // Draw in ground in a high-altitude map
+        if (BoardHelper.isGroundRowHex(getBoard(), coords)) {
+            // Atmosphere
+            if (!game.getPlanetaryConditions().getAtmosphere().isVacuum()) {
+                int atmosphericRow = BoardHelper.effectiveAtmosphericRowNumber(game, getBoard(), 1) - 1;
+                // First, fade out the stars
+                int alphaStepStars = 120 / (spaceInterfacePosition - 1);
+                graphics2D.setColor(new Color(0, 0, 0, 250 - atmosphericRow * alphaStepStars));
+                graphics2D.fill(scaleTransform.createTransformedShape(HEX_POLY));
+                // Add atmosphere
+                int alphaStep = 160 / (spaceInterfacePosition - 1);
+                graphics2D.setColor(new Color(0, 250, 250, 190 - atmosphericRow * alphaStep));
+                graphics2D.fill(scaleTransform.createTransformedShape(HEX_POLY));
+            }
+
+            Polygon leftTriangle = new Polygon();
+            leftTriangle.addPoint(21, 0);
+            leftTriangle.addPoint(21, 71);
+            leftTriangle.addPoint(0, 36);
+            leftTriangle.addPoint(0, 35);
+            graphics2D.setColor(new Color(40, 80, 40));
+            graphics2D.fill(scaleTransform.createTransformedShape(leftTriangle));
+            graphics2D.setColor(new Color(40, 140, 40));
+            graphics2D.draw(scaleTransform.createTransformedShape(HexDrawUtilities.getHexCrossLine01(4, 2)));
+        }
+
         if (getBoard().embeddedBoardCoords().contains(coords)) {
             drawEmbeddedBoard(graphics2D);
         }
@@ -4855,8 +4922,6 @@ public final class BoardView extends AbstractBoardView
                     bgGraph.dispose();
                 }
                 graphics.drawImage(scrollPaneBgBuffer, 0, 0, null);
-//                new StringDrawer("BV " + boardViewId).fontSize(24).at(80, 20).color(Color.GREEN).outline(Color.BLACK,
-//                      1).draw(g);
             }
         };
         scrollPane.setBorder(new MegaMekBorder(bvSkinSpec));

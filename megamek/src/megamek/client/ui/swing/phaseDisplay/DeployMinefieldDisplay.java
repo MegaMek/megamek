@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.swing.phaseDisplay.dialog.MineDensityDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.SeaMineDepthDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.VibrabombSettingDialog;
@@ -143,7 +144,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     }
 
     private Player p;
-    private Vector<Minefield> deployedMinefields = new Vector<>();
+    private final Vector<Minefield> deployedMinefields = new Vector<>();
 
     protected final ClientGUI clientgui;
 
@@ -155,18 +156,13 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         super(clientgui);
         this.clientgui = clientgui;
         clientgui.getClient().getGame().addGameListener(this);
-
-        setupStatusBar(Messages
-                .getString("DeployMinefieldDisplay.waitingForDeployMinefieldPhase"));
-
+        setupStatusBar(Messages.getString("DeployMinefieldDisplay.waitingForDeployMinefieldPhase"));
         p = clientgui.getClient().getLocalPlayer();
 
         setButtons();
         setButtonsTooltips();
-
         butDone.setText(Messages.getString("DeployMinefieldDisplay.Done"));
         butDone.setEnabled(false);
-
         setupButtonPanel();
     }
 
@@ -218,13 +214,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
      */
     private void endMyTurn() {
         stopTimer();
-
-        // end my turn, then.
         disableButtons();
-        clientgui.getBoardView().select(null);
-        clientgui.getBoardView().highlight(null);
-        clientgui.getBoardView().cursor(null);
-
+        clientgui.onAllBoardViews(IBoardView::clearMarkedHexes);
     }
 
     /**
@@ -242,19 +233,20 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         butDone.setEnabled(false);
     }
 
-    private void deployMinefield(Coords coords) {
+    private void deployMinefield(BoardViewEvent event) {
     	Game game = clientgui.getClient().getGame();
-
-        if (!game.getBoard().contains(coords)) {
+        if (!game.hasBoardLocation(event.getBoardLocation())) {
             return;
         }
 
         // check if this is a water hex
         boolean sea = false;
-        Hex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getHex(event.getBoardLocation());
         if (hex.containsTerrain(Terrains.WATER)) {
             sea = true;
         }
+
+        Coords coords = event.getCoords();
 
         if (currentCommand == DeployMinefieldCommand.REMOVE_MINES) {
             if (!game.containsMinefield(coords) &&
@@ -440,34 +432,31 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     }
 
     @Override
-    public void clear() {
-
-    }
+    public void clear() { }
 
     //
     // BoardListener
     //
     @Override
-    public void hexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent event) {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
 
-        if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
+        if (event.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
             return;
         }
 
         // ignore buttons other than 1
-        if (!clientgui.getClient().isMyTurn()
-                || ((b.getButton() != MouseEvent.BUTTON1))) {
+        if (!isMyTurn() || ((event.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
 
         // check for a deployment
-        clientgui.getBoardView().select(b.getCoords());
-        deployMinefield(b.getCoords());
+        event.getBoardView().select(event.getCoords());
+        deployMinefield(event);
     }
 
     //
@@ -482,17 +471,12 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         endMyTurn();
 
-        if (clientgui.getClient().isMyTurn()) {
+        if (isMyTurn()) {
             beginMyTurn();
             setStatusBarText(Messages.getString("DeployMinefieldDisplay.its_your_turn"));
             clientgui.bingMyTurn();
         } else {
-            String playerName;
-            if (e.getPlayer() != null) {
-                playerName = e.getPlayer().getName();
-            } else {
-                playerName = "Unknown";
-            }
+            String playerName = (e.getPlayer() != null) ? e.getPlayer().getName() : "Unknown";
             setStatusBarText(Messages.getString("DeployMinefieldDisplay.its_others_turn", playerName));
             clientgui.bingOthersTurn();
         }
@@ -500,13 +484,11 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-        // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
 
-        if (clientgui.getClient().isMyTurn()
-                && !clientgui.getClient().getGame().getPhase().isDeployMinefields()) {
+        if (isMyTurn() && !clientgui.getClient().getGame().getPhase().isDeployMinefields()) {
             endMyTurn();
         }
 
@@ -520,13 +502,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public void actionPerformed(ActionEvent ev) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (!clientgui.getClient().isMyTurn()) {
-            // odd...
+        if (isIgnoringEvents() || !isMyTurn()) {
             return;
         }
 
@@ -584,6 +560,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
-        clientgui.getBoardView().removeBoardViewListener(this);
+        clientgui.onAllBoardViews(bv -> bv.removeBoardViewListener(this));
     }
 }

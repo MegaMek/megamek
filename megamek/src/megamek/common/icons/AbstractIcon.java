@@ -224,8 +224,9 @@ public abstract class AbstractIcon implements Serializable {
     protected void parseNode(final Node workingNode) {
         switch (workingNode.getNodeName()) {
             case "category":
-                // <50.01 compatibility handlers,
                 String category = MMXMLUtility.unEscape(workingNode.getTextContent().trim());
+
+                // <50.01 compatibility handlers,
                 category = category.replaceAll("Aero ", "Aerospace ");
                 category = category.replaceAll("Mech ", "Mek ");
                 category = category.replaceAll("MechWarrior", "MekWarrior");

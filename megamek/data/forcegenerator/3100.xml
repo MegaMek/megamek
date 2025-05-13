@@ -7958,7 +7958,7 @@
 				<availability>IS:5-,LA!D:1!F:3,FWL!C:1!D:1!F:2,DA!C:1!D:1!F:2,OP!C:1!D:1!F:2,DTA!C:1!D:1!F:2,MSC!C:1!D:1!F:2,RF!C:1!D:1!F:2,RCM:3-,Periphery:7-,TC:6-,CDP:6-,HL:6-</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>IS:7,LA!D:1!F:3,FWL:4,DA:4,OP:4,DTA:4,MSC:4,RF:4,RCM:4,Periphery:7,TC:5,CDP:5,HL:7,Periphery.Deep:5</availability>
+				<availability>IS:7,LA:5,FWL:4,DA:4,OP:4,DTA:4,MSC:4,RF:4,RCM:4,Periphery:7,TC:5,CDP:5,HL:7,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Rifle AA)'>
 				<roles>anti_aircraft</roles>

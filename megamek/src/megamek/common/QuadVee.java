@@ -423,7 +423,7 @@ public class QuadVee extends QuadMek {
     @Override
     public int height() {
         if (getConversionMode() == CONV_MODE_VEHICLE) {
-            return 0;
+            return 1;
         }
         return super.height();
     }

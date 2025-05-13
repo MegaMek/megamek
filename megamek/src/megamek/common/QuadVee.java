@@ -289,11 +289,7 @@ public class QuadVee extends QuadMek {
             return  mpBoosters;
         }
 
-        return switch (mpBoosters) {
-            case MASC_AND_SUPERCHARGER, SUPERCHARGER_ONLY -> MPBoosters.SUPERCHARGER_ONLY;
-            case MASC_ONLY -> MPBoosters.NONE;
-            default -> mpBoosters;
-        };
+        return  MPBoosters.NONE;
     }
 
     /**

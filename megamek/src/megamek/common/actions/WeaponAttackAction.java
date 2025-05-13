@@ -3385,7 +3385,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
                     weatherToHitMods.addModifier(1, conditions.getWind().toString());
                 }
-            } else if (conditions.getWind().isModerateGale()) {
+            } else if (conditions.getWind().isStrongGale()) {
                 if (wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC) && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     weatherToHitMods.addModifier(1, conditions.getWind().toString());
                 } else if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {

@@ -44,10 +44,10 @@ public class TWBoardTransformer {
     private static Board setupBoardFromMapSettings(MapSettings mapSettings) {
         mapSettings.chooseSurpriseBoards();
         Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-        List<Boolean> rotateBoard = rotateBoards(mapSettings, sheetBoards);
+        rotateBoards(mapSettings, sheetBoards);
         return BoardUtilities.combine(mapSettings.getBoardWidth(),
             mapSettings.getBoardHeight(), mapSettings.getMapWidth(),
-            mapSettings.getMapHeight(), sheetBoards, rotateBoard,
+            mapSettings.getMapHeight(), sheetBoards,
             mapSettings.getMedium());
     }
 
@@ -68,8 +68,7 @@ public class TWBoardTransformer {
         }
     }
 
-    private static List<Boolean> rotateBoards(MapSettings mapSettings, Board[] sheetBoards) {
-        List<Boolean> rotateBoard = new ArrayList<>();
+    private static void rotateBoards(MapSettings mapSettings, Board[] sheetBoards) {
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
             // Need to set map type prior to loading to adjust foliage height, etc.
@@ -90,9 +89,7 @@ public class TWBoardTransformer {
                 sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + ".board").getFile());
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
-            rotateBoard.add(isRotated);
         }
-        return rotateBoard;
     }
 
 }

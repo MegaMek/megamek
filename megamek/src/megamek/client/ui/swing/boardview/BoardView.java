@@ -981,13 +981,11 @@ public final class BoardView extends AbstractBoardView
         if (!(graphics instanceof Graphics2D graphics2D)) {
             return;
         }
-
         if (GUIP.getShowFPS()) {
             paintCompsStartTime = System.nanoTime();
         }
 
         UIUtil.setHighQualityRendering(graphics2D);
-
         Rectangle viewRect = scrollPane.getVisibleRect();
 
         if (!isTileImagesLoaded()) {

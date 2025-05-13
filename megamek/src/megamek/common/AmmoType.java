@@ -358,9 +358,6 @@ public class AmmoType extends EquipmentType {
     private double ammoRatio;
     private String subMunitionName = "";
 
-    // Short name of Ammo or RS Printing
-    protected String shortName = "";
-
     // short name of base ammo type shared by all munitions
     protected String baseName = "";
 

@@ -19,6 +19,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6966: SVs with no engine can't have MP
 + PR #6972: Fix for LBX and IATM Aero Damage (Fix MML/#1810)
 + Fix #6959: Fixes various memory leaks of dialogs never being disposed
++ Fix #7049: Fix for save games containing attached Narc pods (of any kind) failing to load
 
 0.50.05 (2025-04-25 1800 UTC)
 + Fix #6652: ProtoMek BV fixed for melee weapons and LRM-1

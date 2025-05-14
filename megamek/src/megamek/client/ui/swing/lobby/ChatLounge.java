@@ -147,6 +147,8 @@ public class ChatLounge extends AbstractPhaseDisplay
     static final int MEK_TABLE_ROW_HEIGHT_FULL = 65;
     static final int MEK_TREE_ROW_HEIGHT_FULL = 40;
     private static final int MAP_POPUP_OFFSET = -2; // a slight offset so cursor sits inside popup
+    public static final String HEADER_TEXT_ARROW_UP = "\u25B4 ";
+    public static final String HEADER_TEXT_ARROW_DOWN = "\u25BE ";
 
     private final JTabbedPane panTabs = new JTabbedPane();
     private final JPanel panUnits = new JPanel();
@@ -298,7 +300,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     transient LobbyKeyDispatcher lobbyKeyDispatcher = new LobbyKeyDispatcher(this);
 
     private static final String CL_KEY_FILE_EXTENSION_XML = ".xml";
-    private static final String CL_KEY_FILEPATH_MAP_ASSEMBLY_HELP = "docs/Map and Board Stuff/MapAssemblyHelp.html";
+    private static final String CL_KEY_FILEPATH_MAP_ASSEMBLY_HELP = "docs/help/en/Map and Board Stuff/MapAssemblyHelp.html";
     private static final String CL_KEY_FILEPATH_MAP_SETUP = "/mapsetup";
     private static final String CL_KEY_NAME_HELP_PANE = "helpPane";
 
@@ -3098,7 +3100,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         /** Shows the right-click menu on the mek table */
         private void showPopup(MouseEvent e) {
             TreePath path = mekForceTree.getPathForLocation(e.getX(), e.getY());
-            // If clicked on a valid row and it's not selected, select it
+            // If clicked on a valid row, and it's not selected, select it
             if (path != null && !mekForceTree.isPathSelected(path)) {
                 mekForceTree.setSelectionPath(path);
             }
@@ -3341,9 +3343,9 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (activeSorter.getColumnIndex() == i) {
                 headerText += "&nbsp;&nbsp;&nbsp;" + UIUtil.fontHTML(uiGray());
                 if (activeSorter.getSortingDirection() == Sorting.ASCENDING) {
-                    headerText += "\u25B4 ";
+                    headerText += HEADER_TEXT_ARROW_UP;
                 } else {
-                    headerText += "\u25BE ";
+                    headerText += HEADER_TEXT_ARROW_DOWN;
                 }
                 headerText += activeSorter.getDisplayName();
             }
@@ -3362,7 +3364,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /**
-     * Returns the owner of the given entity. Should be used over entity.getowner().
+     * Returns the owner of the given entity.
+     * Use this one over {@link Entity#getOwner()}.
+     * @return the owner of the entity
      */
     private Player ownerOf(Entity entity) {
         return clientgui.getClient().getGame().getPlayer(entity.getOwnerId());
@@ -3530,8 +3534,16 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (!boards.contains(name)) {
                 try {
                     boards.put(name);
+                } catch (InterruptedException e) {
+                    LOGGER.warn(e, "[Thread=({}){}] Failed to load image {} for board, common on startup",
+                          Thread.currentThread().getId(),
+                          Thread.currentThread().getName(),
+                          name);
                 } catch (Exception e) {
-                    LOGGER.error(e, "");
+                    LOGGER.error(e, "[Thread=({}){}] Failed to load image {} for board",
+                          Thread.currentThread().getId(),
+                          Thread.currentThread().getName(),
+                          name);
                 }
             }
         }

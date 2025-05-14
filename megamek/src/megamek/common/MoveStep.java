@@ -496,6 +496,7 @@ public class MoveStep implements Serializable {
                                       game.getBoard(boardId).getHex(entity.getPosition()).getLevel()) - hex.getLevel();
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
             int depth = -hex.depth(true);
+            int ceiling = hex.ceiling();
 
             // Set depth to 0 (surface level) in several cases:
             // 1. Jumping onto ice-covered water hex,
@@ -527,12 +528,13 @@ public class MoveStep implements Serializable {
                 setElevation(Math.max(depth, Math.min(building, maxElevation)));
             } else {
                 int subDepth = Math.max(depth, building);
-                // Put jumping Hover or WiGE at their elevation above the substrate level, or they get implicitly
-                // landed (which affects their movement next turn)
-                if (entity.getMovementMode().isHoverOrWiGE()) {
-                    setElevation(elevation + subDepth);
-                } else {
-                    setElevation(subDepth);
+
+                switch (entity.getMovementMode()) {
+                    // WiGE ends the jump at 1 elevation
+                    case WIGE -> setElevation(ceiling + 1);
+                    // Hover ends the jump above the water
+                    case HOVER -> setElevation(ceiling);
+                    default -> setElevation(subDepth);
                 }
             }
             if (climbMode() && (maxElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV))) {

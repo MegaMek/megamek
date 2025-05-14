@@ -27,6 +27,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import megamek.common.Coords;
 import megamek.common.EntityFluff;
+import megamek.common.NarcPod;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.options.AbstractOptions;
 import megamek.server.victory.VictoryCondition;
@@ -73,6 +74,8 @@ public class SerializationHelper {
     /**
      * Factory method that produces an XStream object suitable for loading MegaMek
      * save games
+     *
+     * @return XStream instance to deserialize into a Game instance
      */
     public static XStream getLoadSaveGameXStream() {
         XStream xStream = getSaveGameXStream();
@@ -107,6 +110,40 @@ public class SerializationHelper {
                     reader.moveUp();
                 }
                 return (foundX && foundY) ? new Coords(x, y) : null;
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // Necessary because, while Java 17+ supports Record serialization/deserialization, XStream 1.4.x
+        // does not (natively).
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == NarcPod.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int team = -1;
+                int location = -1;
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "team" -> team = Integer.parseInt(reader.getValue());
+                            case "location" -> location = Integer.parseInt(reader.getValue());
+                        }
+                        reader.moveUp();
+                    } catch (NumberFormatException e) {
+                        // Narc Pods with malformed entries will be silently ignored
+                        return null;
+                    }
+                }
+                return ((team > -1) && (location > -1)) ? new NarcPod(team, location) : null;
             }
 
             @Override

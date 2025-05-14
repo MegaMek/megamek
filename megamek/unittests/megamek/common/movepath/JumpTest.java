@@ -61,6 +61,9 @@ public class JumpTest {
     class JumpIntoBuilding {
         private static final Board BOARD;
         private static final Board BOARD_MORE_FORGIVING;
+        private static final Board BOARD_INSIDE_BUILDING;
+        private static final Board BOARD_JUMP_OUT_OF_BUILDING;
+
         static {
             BOARD = new Board(1, 6);
             BOARD.load("""
@@ -72,6 +75,7 @@ hex 0104 0 "bldg_elev:4;building:2:8;bldg_cf:100" ""
 hex 0105 0 "bldg_elev:4;building:2:9;bldg_cf:100" ""
 hex 0106 0 "bldg_elev:4;building:2:1;bldg_cf:100" ""
 end""");
+
             BOARD_MORE_FORGIVING = new Board(1, 6);
             BOARD_MORE_FORGIVING.load("""
 size 1 6
@@ -82,6 +86,24 @@ hex 0104 0 "bldg_elev:4;building:2:8;bldg_cf:100" ""
 hex 0105 0 "bldg_elev:4;building:2:9;bldg_cf:100" ""
 hex 0106 0 "bldg_elev:4;building:2:1;bldg_cf:100" ""
 end""");
+
+            BOARD_INSIDE_BUILDING = new Board(1, 4);
+            BOARD_INSIDE_BUILDING.load("""
+size 1 4
+hex 0101 0 "bldg_elev:90;building:2:8;bldg_cf:100" ""
+hex 0102 0 "bldg_elev:90;building:2:9;bldg_cf:100" ""
+hex 0103 0 "bldg_elev:90;building:2:9;bldg_cf:100" ""
+hex 0104 0 "bldg_elev:90;building:2:1;bldg_cf:100" ""
+end""");
+
+            BOARD_JUMP_OUT_OF_BUILDING = new Board(1, 4);
+            BOARD_JUMP_OUT_OF_BUILDING.load("""
+size 1 4
+hex 0101 0 "bldg_elev:90;building:2:1;bldg_cf:100" ""
+hex 0102 0 "" ""
+hex 0103 0 "bldg_elev:90;building:2:8;bldg_cf:100" ""
+hex 0104 0 "bldg_elev:90;building:2:9;bldg_cf:100" ""
+end""");
         }
 
         private Game game;
@@ -90,6 +112,87 @@ end""");
         void setUpEach() {
             game = new Game();
             game.setBoard(BOARD_MORE_FORGIVING);
+        }
+
+        @Test
+        void canJumpFromInsideBuilding1ToBuilding2() {
+            game.setBoard(BOARD_JUMP_OUT_OF_BUILDING);
+            int startingElevation = 5;
+            MovePath movePath = getMovePathFor(new BattleArmor(),
+                  startingElevation,
+                  EntityMovementMode.INF_LEG,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.DOWN,
+                  MovePath.MoveStepType.DOWN,
+                  MovePath.MoveStepType.DOWN,
+                  MovePath.MoveStepType.DOWN,
+                  MovePath.MoveStepType.DOWN,
+                  MovePath.MoveStepType.DOWN,
+                  MovePath.MoveStepType.DOWN,
+                  MovePath.MoveStepType.DOWN
+            );
+
+            assertTrue(movePath.isMoveLegal(),
+                  "A BA or infantry can only jump from inside a building to outside of it, or from out to in");
+
+            assertMoveSteps(movePath,5, 0, 13, 12, 11, 10, 9, 8, 7, 6, 5);
+        }
+
+        @Test
+        void canJumpFromInsideBuildingToOutside() {
+            game.setBoard(BOARD_JUMP_OUT_OF_BUILDING);
+            int startingElevation = 5;
+            MovePath movePath = getMovePathFor(new BattleArmor(),
+                  startingElevation,
+                  EntityMovementMode.INF_LEG,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS
+            );
+
+            assertTrue(movePath.isMoveLegal(),
+                  "A BA or infantry can only jump from inside a building to outside of it, or from out to in");
+
+            assertMoveSteps(movePath,5, 0);
+        }
+
+
+        @Test
+        void cantJumpDeepInsideTheBuildingFromInsideItself() {
+            game.setBoard(BOARD_INSIDE_BUILDING);
+            int startingElevation = 2;
+            MovePath movePath = getMovePathFor(new BattleArmor(),
+                  startingElevation,
+                  EntityMovementMode.INF_LEG,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS
+            );
+
+            assertFalse(movePath.isMoveLegal(),
+                  "A BA or infantry can only jump from inside a building to outside of it, or from out to in");
+
+            assertMoveSteps(movePath,2, 2, 2, 2);
+        }
+
+        @Test
+        void cantJumpUpAnyLevelInsideTheBuildingFromInsideItself() {
+            game.setBoard(BOARD_INSIDE_BUILDING);
+            int startingElevation = 2;
+            MovePath movePath = getMovePathFor(new BattleArmor(),
+                  startingElevation,
+                  EntityMovementMode.INF_LEG,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.UP
+            );
+
+            assertFalse(movePath.isMoveLegal(),
+                  "A BA or infantry can only jump from inside a building to outside of it, or from out to in");
+
+            assertMoveSteps(movePath,2, 2, 3);
         }
 
         @Test
@@ -241,9 +344,14 @@ end""");
             }
         }
 
+        private MovePath getMovePathFor(Entity entity, int startingElevation, EntityMovementMode movementMode,
+              MovePath.MoveStepType ... steps) {
+            return getMovePath(new MovePath(game, initializeUnit(entity, game, movementMode, startingElevation)), steps);
+        }
+
         private MovePath getMovePathFor(Entity entity, EntityMovementMode movementMode,
               MovePath.MoveStepType ... steps) {
-            return getMovePath(new MovePath(game, initializeUnit(entity, game, movementMode)), steps);
+            return getMovePathFor(entity, Integer.MAX_VALUE,movementMode, steps);
         }
     }
 
@@ -430,7 +538,20 @@ end""");
         }
     }
 
-    private static <T extends Entity> T initializeUnit(T unit, Game game, EntityMovementMode movementMode) {
+    private static <T extends Entity> T initializeUnit(
+          T unit,
+          Game game,
+          EntityMovementMode movementMode
+    ) {
+        return initializeUnit(unit, game, movementMode, Integer.MAX_VALUE);
+    }
+
+    private static <T extends Entity> T initializeUnit(
+          T unit,
+          Game game,
+          EntityMovementMode movementMode,
+          int startingElevation
+    ) {
         if (movementMode != null) {
             unit.setMovementMode(movementMode);
         }
@@ -445,8 +566,13 @@ end""");
         game.addEntity(unit);
         unit.setPosition(new Coords(0, 0));
         unit.setFacing(3);
-        int elevation = EntityMovementMode.WIGE.equals(movementMode) ? 1 : 0;
-        unit.setElevation(game.getBoard().getHex(unit.getPosition()).ceiling() + elevation);
+
+        if (startingElevation != Integer.MAX_VALUE) {
+            unit.setElevation(startingElevation);
+        } else {
+            int elevationModifier = EntityMovementMode.WIGE.equals(movementMode) ? 1 : 0;
+            unit.setElevation(game.getBoard().getHex(unit.getPosition()).ceiling() + elevationModifier);
+        }
 
         return unit;
     }

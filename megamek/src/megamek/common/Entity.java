@@ -7865,8 +7865,8 @@ public abstract class Entity extends TurnOrdered
      *       within a building
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep, Coords curPos, Coords prevPos) {
-        if ((prevPos == null) || (prevPos.equals(curPos) && !(this instanceof ProtoMek)) ||
-                  (prevPos.equals(curPos) && !(this instanceof Infantry))) {
+        if ((prevPos == null) ||
+                  (prevPos.equals(curPos) && (!(this instanceof ProtoMek) && !(this instanceof Infantry)))) {
             return 0;
         }
         Hex curHex = game.getBoard().getHex(curPos);

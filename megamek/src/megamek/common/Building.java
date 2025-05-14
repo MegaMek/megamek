@@ -610,11 +610,10 @@ public class Building implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof Building)) {
+        if (!(obj instanceof Building other)) {
             return false;
         }
         // True until we're talking about more than one Board per Game.
-        final Building other = (Building) obj;
         return (id == other.id);
     }
 

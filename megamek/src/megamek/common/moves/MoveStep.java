@@ -35,12 +35,18 @@ package megamek.common.moves;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.Vector;
 
 import megamek.common.*;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.MPBoosters;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.planetaryconditions.Atmosphere;
@@ -493,9 +499,23 @@ public class MoveStep implements Serializable {
             setElevation(getElevation() + 1);
         } else if (isJumping()) {
             Hex hex = game.getBoard().getHex(getPosition());
-            int maxElevation = (getAvailableJumpMP(entity) +
-                                      entity.getElevation() +
-                                      game.getBoard().getHex(entity.getPosition()).getLevel()) - hex.getLevel();
+            Optional<Building> optionalBuilding = Optional.ofNullable(game.getBoard().getBuildingAt(entity.getPosition()));
+
+            boolean isInsideTheSameBuilding = false;
+            if (optionalBuilding.isPresent()) {
+                Optional<Building> optionalBuildingAtCurrentStep =
+                      Optional.ofNullable(game.getBoard().getBuildingAt(getPosition()));
+                if (optionalBuildingAtCurrentStep.isPresent()) {
+                    isInsideTheSameBuilding = optionalBuildingAtCurrentStep.get().equals(optionalBuilding.get());
+                }
+            }
+
+            int maxElevation = entity.getElevation();
+            if (!isInsideTheSameBuilding) {
+                maxElevation = (getAvailableJumpMP(entity) + entity.getElevation() +
+                                       game.getBoard().getHex(entity.getPosition()).getLevel()) - hex.getLevel();
+            }
+
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
             int depth = -hex.depth(true);
             int ceiling = hex.ceiling();
@@ -527,6 +547,7 @@ public class MoveStep implements Serializable {
             }
             if ((entity instanceof Infantry) && !grdDropship) {
                 // infantry can jump into a building
+                // Maybe this line is a bit too much, but it seems to work by coincidence
                 setElevation(Math.max(depth, Math.min(building, maxElevation)));
             } else {
                 int subDepth = Math.max(depth, building);
@@ -3301,6 +3322,16 @@ public class MoveStep implements Serializable {
                   (src != entity.getPosition()) &&
                   (isJumping() || (entity.getMovementMode() == EntityMovementMode.VTOL)) &&
                   (srcEl < srcHex.terrainLevel(Terrains.BLDG_ELEV))) {
+            return false;
+        }
+
+        // Jumping inside a building to another hex of the same building is illegal
+        Coords startingPosition = getEntity().getPosition();
+        Hex startingHex = game.getBoard().getHex(startingPosition);
+        if (!destHex.getCoords().equals(startingPosition) && isJumping() && startingHex.containsTerrain(Terrains.BUILDING) &&
+                  destHex.containsTerrain(Terrains.BUILDING) &&
+                  srcEl < srcHex.terrainLevel(Terrains.BLDG_ELEV) &&
+                  (game.getBoard().getBuildingAt(startingPosition).equals(game.getBoard().getBuildingAt(getPosition())))) {
             return false;
         }
 

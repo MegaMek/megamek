@@ -7711,7 +7711,7 @@
             </model>
         </chassis>
         <chassis name='Field Gun Platoon (LCAF)' unitType='Infantry'>
-            <availability>LA!A:7!B:5!C:4!D:2</availability>
+            <availability>LA!A:7!B:6!C:4!D:2</availability>
             <model name='(Motorized AC10 3058+)'>
                 <roles>field_gun,paratrooper</roles>
                 <availability>LA:3</availability>
@@ -8310,7 +8310,7 @@
             </model>
         </chassis>
         <chassis name='Foot Platoon (LCAF)' unitType='Infantry'>
-            <availability>LA:6</availability>
+            <availability>LA:7+</availability>
             <model name='(Flamer 3058+)'>
                 <roles>urban</roles>
                 <availability>LA:3-</availability>

@@ -6165,7 +6165,7 @@
             </model>
         </chassis>
         <chassis name='Foot Platoon (LCAF)' unitType='Infantry'>
-            <availability>LA:6</availability>
+            <availability>LA:7+</availability>
             <model name='(Flamer 3058+)'>
                 <roles>urban</roles>
                 <availability>LA:3-</availability>

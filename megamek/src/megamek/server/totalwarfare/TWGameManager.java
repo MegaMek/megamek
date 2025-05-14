@@ -25976,10 +25976,6 @@ public class TWGameManager extends AbstractGameManager {
     public boolean checkIgnition(Coords c, TargetRoll roll, boolean bInferno, int entityId,
           Vector<Report> vPhaseReport) {
 
-        if (vPhaseReport == null) {
-            return false;
-        }
-
         Hex hex = game.getBoard().getHex(c);
 
         // The hex might be null due to spreadFire translation
@@ -26000,7 +25996,7 @@ public class TWGameManager extends AbstractGameManager {
         Roll diceRoll = Compute.rollD6(2);
         Report r;
 
-        if (entityId != Entity.NONE) {
+        if ((vPhaseReport != null) && (entityId != Entity.NONE)) {
             r = new Report(3430);
             r.indent(2);
             r.subject = entityId;
@@ -26690,9 +26686,8 @@ public class TWGameManager extends AbstractGameManager {
     private Report filterReport(Report r, Player p, boolean omitCheck) {
         if ((r.subject == Entity.NONE) && (r.type != Report.PLAYER) && (r.type != Report.PUBLIC)) {
             // Reports that don't have a subject should be public.
-            logger.error("Attempting to filter a Report object that is not public yet " +
-                               "but has no subject.\n\t\tmessageId: " +
-                               r.messageId);
+            logger.info("Attempting to filter a Report object that is not public yet but has no subject. messageId: {}",
+                  r.messageId);
             return r;
         }
         if ((r.type == Report.PUBLIC) || ((p == null) && !omitCheck)) {
@@ -28565,7 +28560,7 @@ public class TWGameManager extends AbstractGameManager {
             // Track the load of each floor (and of the roof) separately.
             // Track all units that fall into the basement in this hex.
             // track all floors, ground at index 0, the first floor is at
-            // index 1, the second is at index 1, etc., and the roof is
+            // index 1, the second is at index 2, etc., and the roof is
             // at index (numFloors).
             // if bridge is present, bridge will be numFloors+1
             double[] loads = new double[numLoads + 1];
@@ -28634,8 +28629,17 @@ public class TWGameManager extends AbstractGameManager {
                         wigeLoad += load;
                         if (wigeLoad > currentCF * 4) {
                             topFloorCollapse = true;
-                            loads[numFloors - 1] += loads[numFloors];
-                            loads[numFloors] = 0;
+                            // There are bridges with 0 elevation, so the numFloors is 0, meaning that
+                            // loads[numFloors-1] would cause an out of bounds exception.
+                            // which is why there are so many checks and safeguards in the next few lines.
+                            if (numFloors < loads.length) {
+                                if (numFloors > 0) {
+                                    loads[numFloors - 1] += loads[numFloors];
+                                }
+                                loads[numFloors] = 0;
+                            }
+
+
                         }
                     } else {
                         loads[floor] += load;

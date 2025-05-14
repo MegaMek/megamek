@@ -358,9 +358,6 @@ public class AmmoType extends EquipmentType {
     private double ammoRatio;
     private String subMunitionName = "";
 
-    // Short name of Ammo or RS Printing
-    protected String shortName = "";
-
     // short name of base ammo type shared by all munitions
     protected String baseName = "";
 
@@ -483,7 +480,7 @@ public class AmmoType extends EquipmentType {
         if (flag instanceof AmmoTypeFlag) {
             return super.hasFlag(flag);
         } else {
-            LOGGER.warn("Incorrect flag check: make sure to test only AmmoTypeFlags on an AmmoType.");
+            LOGGER.warn("Incorrect flag check: make sure to test only AmmoTypeFlags on an AmmoType.", new Throwable("Invalid AmmoType"));
             return false;
         }
     }
@@ -15672,7 +15669,6 @@ public class AmmoType extends EquipmentType {
             // check for cost
             double cost = base.cost;
             double bv = base.bv;
-
             if (((munition.getAmmoType() == T_LONG_TOM) ||
                        (munition.getAmmoType() == T_LONG_TOM_CANNON) ||
                        (munition.getAmmoType() == T_SNIPER) ||
@@ -15891,24 +15887,21 @@ public class AmmoType extends EquipmentType {
                 cost *= 2;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) ||
-                       (munition.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                       (munition.getAmmoType() == AmmoType.T_MML) ||
+            if (((munition.getAmmoType() == AmmoType.T_MML) ||
+                       (munition.getAmmoType() == AmmoType.T_LRM) ||
                        (munition.getAmmoType() == AmmoType.T_SRM) ||
-                       (munition.getAmmoType() == AmmoType.T_SRM_IMP) ||
-                       (munition.getAmmoType() == AmmoType.T_NLRM)) &&
-                      ((munition.getMunitionType().contains(Munitions.M_DEAD_FIRE)))) {
-                cost *= 0.6;
-                // TODO - DEAD-FIRE AMMO needs BV which is not a constant but launcher Ammo.
+                       (munition.getAmmoType() == AmmoType.T_SRM_IMP)) &&
+                      (munition.getMunitionType().contains(Munitions.M_ARTEMIS_V_CAPABLE))) {
+                cost *= 2;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_MML) ||
+                       (munition.getAmmoType() == AmmoType.T_LRM) ||
                        (munition.getAmmoType() == AmmoType.T_SRM) ||
                        (munition.getAmmoType() == AmmoType.T_SRM_IMP)) &&
-                      ((munition.getMunitionType().contains(Munitions.M_TANDEM_CHARGE)) ||
-                             (munition.getMunitionType().contains(Munitions.M_ARTEMIS_V_CAPABLE)))) {
+                      ((munition.getMunitionType().contains(Munitions.M_TANDEM_CHARGE)))) {
                 cost *= 5;
-                bv *= 2;
+                bv *= 2.0;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) ||
@@ -15924,29 +15917,32 @@ public class AmmoType extends EquipmentType {
             }
 
             if (munition.getMunitionType().contains(Munitions.M_DEAD_FIRE)) {
+                cost *= 0.6;
                 if (munition.getAmmoType() == AmmoType.T_MML) {
                     if (base.rackSize == 3) {
-                        bv = base.hasFlag(F_MML_LRM) ? 3 : 4;
+                        bv = 6;
                     } else if (base.rackSize == 5) {
-                        bv = base.hasFlag(F_MML_LRM) ? 4 : 6;
+                        bv = base.hasFlag(F_MML_LRM) ? 9 : 8;
                     } else if (base.rackSize == 7) {
-                        bv = base.hasFlag(F_MML_LRM) ? 6 : 10;
+                        bv = base.hasFlag(F_MML_LRM) ? 12 : 11;
                     } else if (base.rackSize == 9) {
-                        bv = base.hasFlag(F_MML_LRM) ? 8 : 14;
+                        bv = base.hasFlag(F_MML_LRM) ? 17 : 15;
                     }
                 } else {
                     if (base.rackSize == 2) {
-                        bv = 2;
-                    } else if (base.rackSize == 4) {
                         bv = 4;
+                    } else if (base.rackSize == 4) {
+                        bv = 7;
+                    } else if (base.rackSize == 5) {
+                        bv = 9;
                     } else if (base.rackSize == 6) {
-                        bv = 5;
+                        bv = 10;
                     } else if (base.rackSize == 10) {
-                        bv = 16;
+                        bv = 17;
                     } else if (base.rackSize == 15) {
-                        bv = 27;
+                        bv = 26;
                     } else if (base.rackSize == 20) {
-                        bv = 36;
+                        bv = 35;
                     }
                 }
             }

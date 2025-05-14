@@ -225,8 +225,8 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected boolean ammoCounts(AmmoMounted ammo) {
-        return super.ammoCounts(ammo)
-                     && ((ammo.getLocation() == BattleArmor.LOC_SQUAD) || (ammo.getLocation() == currentTrooper));
+        return ((ammo.getLocation() == BattleArmor.LOC_SQUAD) || (ammo.getLocation() == currentTrooper))
+                     && super.ammoCounts(ammo);
     }
 
     @Override

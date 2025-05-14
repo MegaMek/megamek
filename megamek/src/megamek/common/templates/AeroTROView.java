@@ -25,6 +25,7 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EntityFluff;
+import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.Messages;
 import megamek.common.MiscType;
@@ -32,8 +33,14 @@ import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.util.AeroAVModCalculator;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
+import megamek.common.weapons.CLIATMWeapon;
+import megamek.common.weapons.lrms.LRMWeapon;
+import megamek.common.weapons.missiles.ATMWeapon;
+import megamek.common.weapons.missiles.MMLWeapon;
+import megamek.common.weapons.srms.SRMWeapon;
 
 /**
  * Creates a TRO template model for aerospace and conventional fighters.
@@ -172,14 +179,18 @@ public class AeroTROView extends TROView {
         return nameWidth;
     }
 
+    
+
     private Map<String, Object> createBayRow(WeaponMounted bay) {
         final Map<EquipmentKey, Integer> weaponCount = new HashMap<>();
         int heat = 0;
+        int baysrv = 0;
         int srv = 0;
         int mrv = 0;
         int lrv = 0;
         int erv = 0;
-        final int multiplier = bay.getType().isCapital() ? 10 : 1;
+        final boolean isCapital = bay.getType().isCapital();
+        final int multiplier = isCapital ? 10 : 1;
         Mounted<?> linker = null;
         // FIXME: Consider new AmmoType::equals / BombType::equals
         final Map<AmmoType, Integer> shotsByAmmoType = bay.getBayAmmo()
@@ -192,11 +203,35 @@ public class AeroTROView extends TROView {
                 linker = wMount.getLinkedBy();
             }
             weaponCount.merge(new EquipmentKey(wtype, wMount.getSize()), 1, Integer::sum);
+            int bonus = 0;
             heat += wtype.getHeat();
-            srv += (int) (wtype.getShortAV() * multiplier);
-            mrv += (int) (wtype.getMedAV() * multiplier);
-            lrv += (int) (wtype.getLongAV() * multiplier);
-            erv += (int) (wtype.getExtAV() * multiplier);
+            int av = (int) (wtype.getShortAV() * multiplier) + bonus;
+            if (!isCapital) {
+                if (wtype instanceof ATMWeapon || wtype instanceof CLIATMWeapon) {
+                    if (wtype instanceof CLIATMWeapon) {
+                        av = (int) wtype.getShortAV() * multiplier;
+                    } else {
+                        av = (int) Math.ceil(wtype.getShortAV() * multiplier * 0.5);
+                    }
+                    baysrv += (int) Math.round(Math.ceil(av * 1.5) / 10.0);
+                    srv += (int) Math.ceil(av * 1.5);
+                    mrv += av;
+                    lrv += (int) Math.ceil(av * 0.5);
+                    erv += (int) Math.ceil(av * 0.5);
+                    continue;
+                }
+                if (linker != null) {
+                    bonus = AeroAVModCalculator.calculateBonus(wtype, linker.getType(), true);
+                }
+                if (wtype instanceof MMLWeapon) {
+                    av *= 2; // SRM ammo, this is simulating the 2x damage of the MML when using SRM ammo at short range
+                }
+            }
+            baysrv += (int) Math.round(av / 10.0);
+            srv += (int) (wtype.getShortAV() * multiplier) + bonus;
+            mrv += (int) (wtype.getMedAV() * multiplier) + bonus;
+            lrv += (int) (wtype.getLongAV() * multiplier) + bonus;
+            erv += (int) (wtype.getExtAV() * multiplier) + bonus;
         }
         final Map<String, Object> retVal = new HashMap<>();
         final List<String> weapons = new ArrayList<>();
@@ -214,7 +249,7 @@ public class AeroTROView extends TROView {
               Messages.getString("TROView.shots"))));
         retVal.put("weapons", weapons);
         retVal.put("heat", heat);
-        retVal.put("srv", Math.round(srv / 10.0) + "(" + srv + ")");
+        retVal.put("srv", baysrv + "(" + srv + ")");
         retVal.put("mrv", Math.round(mrv / 10.0) + "(" + mrv + ")");
         retVal.put("lrv", Math.round(lrv / 10.0) + "(" + lrv + ")");
         retVal.put("erv", Math.round(erv / 10.0) + "(" + erv + ")");

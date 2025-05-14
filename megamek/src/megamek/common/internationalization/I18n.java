@@ -53,9 +53,11 @@ public class I18n {
             throws IOException {
             // The below is one approach; there are multiple ways to do this
             String resourceName = toResourceName(toBundleName(baseName, locale), "properties");
-            try (InputStream is = loader.getResourceAsStream(resourceName);
-                 InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-                return new PropertyResourceBundle(isr);
+            try (InputStream is = loader.getResourceAsStream(resourceName)) {
+                assert is != null;
+                try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                    return new PropertyResourceBundle(isr);
+                }
             }
         }
     }
@@ -110,8 +112,10 @@ public class I18n {
 
     // Only handles Latin characters like ø.
     // Characters from other scripts will be left unchanged.
-    // This is probably unnecessary at this time, but if it becomes relevant, replace "Latin-ASCII" with "Any-Latin; Latin-ASCII" to attempt to convert other scripts to ASCII.
-    // The Any-Latin transliteration will attempt phonetic transliteration based on the most likely pronunciation for the given characters,
+    // This is probably unnecessary at this time, but if it becomes relevant, replace "Latin-ASCII" with "Any-Latin;
+    // Latin-ASCII" to attempt to convert other scripts to ASCII.
+    // The Any-Latin transliteration will attempt phonetic transliteration based on the most likely pronunciation for
+    // the given characters,
     private static final Transliterator normalizer = Transliterator.getInstance("Latin-ASCII");
 
     private static final ConcurrentHashMap<String,String> normalizationCache = new ConcurrentHashMap<>();

@@ -129,8 +129,9 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         dialog.setModal(true);
         dialog.getTask().execute();
         dialog.setVisible(true);
-
-        return dialog.returnCode;
+        final int returnCode = dialog.returnCode;
+        dialog.dispose();
+        return returnCode;
     }
 
     private AutoResolveChanceDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces, Board board) {

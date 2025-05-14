@@ -64,8 +64,13 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
     }
 
     @Override
-    protected void assembleAmmo() {
-        for (AmmoMounted ammo : entity.getAmmo()) {
+    protected AssembledAmmo assembleAmmo() {
+        final Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
+        final Map<String, Double> ammoMap = new HashMap<>();
+        final List<String> keys = new ArrayList<>();
+        final Map<String, String> names = new HashMap<>();
+
+        for (AmmoMounted ammo : List.copyOf(entity.getAmmo())) {
             AmmoType ammoType = ammo.getType();
 
             // don't count depleted ammo, AMS and oneshot ammo
@@ -87,7 +92,7 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
             }
         }
 
-        for (Mounted<?> weapon : entity.getTotalWeaponList()) {
+        for (Mounted<?> weapon : List.copyOf(entity.getTotalWeaponList())) {
             WeaponType wtype = (WeaponType) weapon.getType();
 
             if (weapon.isDestroyed() ||
@@ -117,6 +122,7 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
                 }
             }
         }
+        return new AssembledAmmo(weaponsForExcessiveAmmo, ammoMap, keys, names);
     }
 
     @Override
@@ -292,6 +298,12 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
     protected void processAmmo(int bvLocation) {
         bvReport.startTentativeSection();
         boolean hasAmmo = false;
+        AssembledAmmo assembledAmmo = assembleAmmo();
+        final Map<String, Double> weaponsForExcessiveAmmo = assembledAmmo.weaponsForExcessiveAmmo();
+        final Map<String, Double> ammoMap = assembledAmmo.ammoMap();
+        final List<String> keys = assembledAmmo.keys();
+        final Map<String, String> names = assembledAmmo.names();
+
         for (String key : keys) {
             if (!key.startsWith(bvLocation + ":")) {
                 continue;

@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 import static megamek.common.SpecialHexDisplay.Type.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import megamek.client.ui.swing.GUIPreferences;
@@ -975,6 +976,14 @@ public class Board implements Serializable {
      */
     public void load(InputStream is) {
         load(is, null, false);
+    }
+
+    public void load(String boardString) {
+        try (InputStream is = new ByteArrayInputStream(boardString.getBytes(StandardCharsets.UTF_8))) {
+            load(is, null, false);
+        } catch (IOException ex) {
+            logger.error(ex, "Error loading string to build board - {}", ex.getMessage());
+        }
     }
 
     public void load(InputStream is, @Nullable List<String> errors, boolean continueLoadOnError) {

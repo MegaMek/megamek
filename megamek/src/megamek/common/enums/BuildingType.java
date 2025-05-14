@@ -36,7 +36,7 @@ public enum BuildingType {
     private final int type;
     private final int defaultCF;
     
-    private BuildingType(String name, int type, int defaultCF) {
+    BuildingType(String name, int type, int defaultCF) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
                 MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);

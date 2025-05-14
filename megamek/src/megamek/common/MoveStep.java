@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.concurrent.Callable;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.enums.BuildingType;
@@ -1968,6 +1969,25 @@ public class MoveStep implements Serializable {
 
             return;
         } // end AERO stuff
+
+        if (isInfantry && isJumping() && stepType == MoveStepType.DOWN) {
+            if (game.getBoard().getHex(curPos).containsTerrain(Terrains.BUILDING)) {
+                Coords startingPosition = entity.getPosition();
+                Coords adjacentCoords = curPos.translated(curPos.direction(startingPosition));
+                Hex adjacentHex = game.getBoard().getHex(adjacentCoords);
+
+                boolean hasLOS = LosEffects.calculateLOS(
+                          game, entity, new FloorTarget(curPos, game.getBoard(), getElevation())
+                ).canSee();
+
+                if (adjacentHex.ceiling() >= getElevation() || !hasLOS) {
+                    return; // can't enter the building from this direction
+                } else {
+                    // we can enter the building, but we need to roll anti-mek skill
+                    danger = true;
+                }
+            }
+        }
 
         if (prev.isDiggingIn) {
             isDiggingIn = true;

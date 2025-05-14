@@ -3625,7 +3625,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *       every 7th game round is a space round (TW p.78)
      */
     public boolean isSpaceRound() {
-        return !hasSpaceAndAtmosphericBoards() || ((getRoundCount() > 0) && (getRoundCount() % 7 == 0));
+        //FIXME only for testing:
+        return true;
+        // This is correct:
+//        return !hasSpaceAndAtmosphericBoards() || ((getRoundCount() > 0) && (getRoundCount() % 7 == 0));
     }
 
     /**

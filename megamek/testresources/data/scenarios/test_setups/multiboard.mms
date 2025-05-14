@@ -59,8 +59,8 @@ map:
             - [ 23, 26 ]
 
   - type: highaltitude
-    width: 15
-    height: 15
+    width: 20
+    height: 20
     name: Orbit
     embed:
       - at: [ 1, 7 ]
@@ -174,17 +174,17 @@ factions:
 #    facing: 3
 #    altitude: 5
 #
-  - fullname: Cheetah IIC
-    at: [ 24, 14 ]
-    board: 2
-    facing: 3
-    altitude: 2
+#  - fullname: Cheetah IIC
+#    at: [ 24, 14 ]
+#    board: 2
+#    facing: 3
+#    altitude: 2
 
 #  - fullname: AC/10 Turret (Dual)
 
-#  - fullname: Aurora
-#    at: [24, 7]
-#    board: 5
+  - fullname: Aurora
+    at: [10, 10]
+    board: 6
 #    altitude: 0
 #
 #  - fullname: Zugvogel Omni Support Aircraft B
@@ -205,10 +205,10 @@ factions:
     facing: 0
 
 #
-#  - fullname: Union (3055)
-#    at: [ 25, 13 ]
-#    board: 5
-#    facing: 4
+  - fullname: Union (3055)
+    at: [ 25, 13 ]
+    board: 8
+    facing: 4
 #    altitude: 0
 
 #  - fullname: Mobile Long Tom Artillery LT-MOB-25

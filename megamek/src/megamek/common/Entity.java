@@ -7175,7 +7175,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // okay, let's figure out the stuff then
-        roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType), "Base piloting skill");
+        roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType), (this instanceof Infantry) ?
+                                                                                     "Anti-Mek skill":
+                                                                                     "Base piloting skill");
 
         // Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll object and adjust as necessary
         roll = addEntityBonuses(roll);
@@ -7851,7 +7853,8 @@ public abstract class Entity extends TurnOrdered
      *       within a building
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep, Coords curPos, Coords prevPos) {
-        if ((prevPos == null) || (prevPos.equals(curPos) && !(this instanceof ProtoMek))) {
+        if ((prevPos == null) || (prevPos.equals(curPos) && !(this instanceof ProtoMek)) ||
+                  (prevPos.equals(curPos) && !(this instanceof Infantry))) {
             return 0;
         }
         Hex curHex = game.getBoard().getHex(curPos);

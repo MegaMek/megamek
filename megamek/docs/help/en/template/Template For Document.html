@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Title</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            margin-top: 30px;
+            border-left: 4px solid rgba(0, 0, 0, 0.3);
+            padding-left: 10px;
+        }
+
+        .quotation {
+            border-left: 4px solid rgba(0, 0, 0, 0.3);
+            padding-left: 10px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .config-image {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        table.config-table, td.config-image, td.config-details {
+            border: 0;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        code {
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .command {
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: 10px;
+            border-left: 3px solid rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .command code {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .nav-container {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .nav-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .nav-list li {
+            margin-bottom: 5px;
+        }
+
+        .nav-list a {
+            text-decoration: none;
+        }
+
+        .nav-list a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .config-image {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<h1 id="top">Document Title</h1>
+
+<p class="quotation">This is a template file for creating document htmls that can be rendered inside MM help dialogs.</p>
+
+<!-- Table of Contents -->
+<div class="nav-container">
+    <div class="nav-title">Table of Contents</div>
+    <ul class="nav-list">
+        <li><a href="#section1">Section 1</a></li>
+        <li><a href="#section2">Section 2</a></li>
+        <li><a href="#section3">Section 3</a></li>
+        <!-- Add more sections as needed -->
+    </ul>
+</div>
+
+<!-- Section 1 -->
+<h2 id="section1">Section 1</h2>
+<p>
+    Your content goes here. This is a placeholder paragraph that you can replace with your actual content.
+</p>
+<ul>
+    <li>List item 1</li>
+    <li>List item 2</li>
+    <li>List item 3</li>
+</ul>
+
+<!-- Section 2 with Image + Text Table Example -->
+<h2 id="section2">Section 2</h2>
+
+<!-- Example of table with image and text side by side -->
+<table class="config-table">
+    <tr>
+        <td class="config-image">
+            <img src="example-image.jpg" alt="Example Image" style="max-width: 100%;">
+        </td>
+        <td class="config-details">
+            <p>This is an example of text next to an image using a table layout for JLabel compatibility.</p>
+
+            <h3>Subsection Title</h3>
+            <p>Additional text content goes here.</p>
+
+            <ul>
+                <li><strong>Item 1</strong> - Description of item 1.</li>
+                <li><strong>Item 2</strong> - Description of item 2.</li>
+                <li><strong>Item 3</strong> - Description of item 3.</li>
+            </ul>
+
+            <p>More explanatory text can go here.</p>
+        </td>
+    </tr>
+</table>
+
+<!-- Section 3 with Regular Table -->
+<h2 id="section3">Section 3</h2>
+<p>
+    This section demonstrates a standard table with headers and data rows.
+</p>
+
+<div class="table-container">
+    <table>
+        <tr>
+            <th>Header 1</th>
+            <th>Header 2</th>
+            <th>Header 3</th>
+        </tr>
+        <tr>
+            <td><strong>Row 1 Item</strong></td>
+            <td>Description</td>
+            <td>Additional info</td>
+        </tr>
+        <tr>
+            <td><strong>Row 2 Item</strong></td>
+            <td>Description</td>
+            <td>Additional info</td>
+        </tr>
+        <tr>
+            <td><strong>Row 3 Item</strong></td>
+            <td>Description</td>
+            <td>Additional info</td>
+        </tr>
+    </table>
+</div>
+
+<!-- Code Example Section -->
+<h2 id="code-example">Code Example</h2>
+<p>
+    Here's an example of how to display command syntax:
+</p>
+
+<div class="command">
+    <code>command_name parameter1 parameter2</code>
+</div>
+
+<p>The command above does something useful.</p>
+
+<!-- List of items in container -->
+<h2 id="list-section">List Section</h2>
+<div class="container" style="display: block;">
+    <h3>Group 1</h3>
+    <ul>
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+    </ul>
+
+    <h3>Group 2</h3>
+    <ul>
+        <li>Item A</li>
+        <li>Item B</li>
+        <li>Item C</li>
+    </ul>
+</div>
+
+<p><a href="#top">Back to Top</a></p>
+</body>
+</html>

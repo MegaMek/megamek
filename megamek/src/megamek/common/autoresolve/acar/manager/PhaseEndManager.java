@@ -77,7 +77,7 @@ public class PhaseEndManager implements SimulationManagerHelper {
             case VICTORY:
                 endPhaseCleanup();
                 reporter.closeTheFile();
-                reporter.addSummary();
+                reporter.addSummary(simulationManager());
                 break;
             default:
                 break;

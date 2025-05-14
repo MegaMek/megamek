@@ -15,6 +15,7 @@ package megamek.common.autoresolve.acar;
 
 import megamek.common.BoardLocation;
 import megamek.common.IGame;
+import megamek.common.MapSettings;
 import megamek.common.Player;
 import megamek.common.ReportEntry;
 import megamek.common.autoresolve.acar.action.*;
@@ -26,6 +27,7 @@ import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
 import megamek.common.enums.GamePhase;
 import megamek.common.net.packets.Packet;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import megamek.server.AbstractGameManager;
@@ -288,5 +290,4 @@ public class SimulationManager extends AbstractGameManager {
     public void send(int connId, Packet p) {
         // DO NOTHING
     }
-
 }

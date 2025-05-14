@@ -1,0 +1,72 @@
+#Saved from version 0.50.05 on 2025-05-12
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Mechanized Tracked Platoon (LCAF)
+</Name>
+
+<Model>
+(Gauss 3074+)
+</Model>
+
+<year>
+3074
+</year>
+
+<originalBuildYear>
+3074
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+Despite it's industry-leading production of Gauss Rifles for mechanized forces, including massive models for use on WarShips, Lyran domestic development and employment of infantry-scale Gauss weapons lags the other Successor States.  Lyran troopers facing increasingly well armored battle armor of Clan and Blakist design lead the to the development of the Gungnir Heavy Support weapon, which is gradually replacing the lighter Grand Mauler in the anti-battle armor role.
+</capabilities>
+
+<overview>
+After the removal of historically Lyran systems from the unified Federated Commonwealth, many changes took place to restore and reinforce the Lyran nature of military forces posted there.  Infantry armor production was quickly updated with the first production runs seeing little more than a logo change.  Later production would see more visible changes to resemble the older Lyran style while retaining the protection capabilities of the FedCom model.
+</overview>
+
+<notes>
+Intro date based on Gungnir prototype date
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Rifle (TK Assault)
+</Primary>
+
+<Secondary>
+Gauss Rifle (Gungnir Heavy Support)
+</Secondary>
+

@@ -111,7 +111,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             // Track the load of each floor (and of the roof) separately.
             // Track all units that fall into the basement in this hex.
             // track all floors, ground at index 0, the first floor is at
-            // index 1, the second is at index 1, etc., and the roof is
+            // index 1, the second is at index 2, etc., and the roof is
             // at index (numFloors).
             // if bridge is present, bridge will be numFloors+1
             double[] loads = new double[numLoads + 1];
@@ -181,8 +181,15 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         wigeLoad += load;
                         if (wigeLoad > currentCF * 4) {
                             topFloorCollapse = true;
-                            loads[numFloors - 1] += loads[numFloors];
-                            loads[numFloors] = 0;
+                            // There are bridges with 0 elevation, so the numFloors is 0, meaning that
+                            // loads[numFloors-1] would cause an out of bounds exception.
+                            // which is why there are so many checks and safeguards in the next few lines.
+                            if (numFloors < loads.length) {
+                                if (numFloors > 0) {
+                                    loads[numFloors - 1] += loads[numFloors];
+                                }
+                                loads[numFloors] = 0;
+                            }
                         }
                     } else {
                         loads[floor] += load;

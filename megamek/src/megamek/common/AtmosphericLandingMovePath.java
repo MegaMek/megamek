@@ -18,8 +18,6 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.phaseDisplay.LandingDirection;
-
 public class AtmosphericLandingMovePath extends MovePath {
 
     private final BoardLocation groundMapLandingLocation;

@@ -60,6 +60,7 @@ import megamek.client.ui.swing.boardview.CollapseWarning;
 import megamek.client.ui.swing.boardview.overlay.AbstractBoardViewOverlay;
 import megamek.client.ui.swing.phaseDisplay.commands.MoveCommand;
 import megamek.client.ui.swing.phaseDisplay.dialog.FlightPathNotice;
+import megamek.client.ui.swing.phaseDisplay.dialog.LandingConfirmation;
 import megamek.client.ui.swing.phaseDisplay.dialog.LandingHexNotice;
 import megamek.client.ui.swing.phaseDisplay.dialog.ManeuverChoiceDialog;
 import megamek.client.ui.swing.phaseDisplay.dialog.MineLayingDialog;
@@ -92,7 +93,7 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
-import static megamek.client.ui.swing.phaseDisplay.LandingDirection.*;
+import static megamek.common.LandingDirection.*;
 
 public class MovementDisplay extends ActionPhaseDisplay {
     private static final MMLogger LOGGER = MMLogger.create(MovementDisplay.class);
@@ -1698,8 +1699,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 gear = GEAR_FLIGHTPATH;
                 setStatusBarText(Messages.getString("MovementDisplay.status.designateFlightPath"));
                 new FlightPathNotice(clientgui).show();
-                var fpn = new FlightPathNotice(clientgui);
-                fpn.show();
             }
         } else if (gear == GEAR_BACKUP) {
             extendPathTo(dest, boardId, MoveStepType.BACKWARDS);
@@ -1788,37 +1787,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
-    /**
-     * Returns the hexes of a straight flight path that has the given direction (facing) on the given Board and crosses
-     * the hex at the given flightPathPosition. If the board is null or does not contain the flightPathPosition, an
-     * empty list is returned.
-     *
-     * @param board              The Board on which the flight path is located
-     * @param flightPathPosition Coords that the flight path crosses
-     * @param facing             The direction of the flight path
-     *
-     * @return A Coords list, ordered from first to last hex entered
-     */
-    public static List<Coords> flightPathPositions(Board board, Coords flightPathPosition, int facing) {
-        List<Coords> positions = new ArrayList<>();
-        if (board == null || !board.contains(flightPathPosition)) {
-            return positions;
-        }
-        // traverse hexes in reverse direction from the chosen position to find the first hex off the board
-        int reverseFacing = (facing + 3) % 6;
-        Coords current = flightPathPosition;
-        while (board.contains(current)) {
-            current = current.translated(reverseFacing);
-        }
-        // now traverse hexes in the right direction to the board edge; these form the flight path
-        current = current.translated(facing);
-        while (board.contains(current)) {
-            positions.add(current);
-            current = current.translated(facing);
-        }
-        return positions;
-    }
-
     //
     // BoardListener
     //
@@ -1858,8 +1826,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             clearFlightPath();
             flightPathPosition = boardViewEvent.getCoords();
-            currentlySelectedEntity.setPassedThrough(new Vector<>(flightPathPositions(game.getBoard(boardViewEvent.getBoardId()), flightPathPosition,
-                  finalFacing())));
+            List<Coords> line = BoardHelper.coordsLine(game.getBoard(boardViewEvent.getBoardId()),
+                  flightPathPosition,
+                  finalFacing());
+            currentlySelectedEntity.setPassedThrough(new Vector<>(line));
             flightPath = new FlyOverSprite(boardViewEvent.getBoardView(), currentlySelectedEntity);
             boardViewEvent.getBoardView().addSprite(flightPath);
             updateDonePanel();

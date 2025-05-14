@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import megamek.client.ui.swing.phaseDisplay.LandingDirection;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;

@@ -16,9 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.phaseDisplay;
-
-import megamek.common.MovePath;
+package megamek.common;
 
 /**
  * This enum is used to indicate whether a landing is horizontal or vertical.

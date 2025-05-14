@@ -288,7 +288,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // Replace ordinary passed through for these? Must also store the board id
         if (md.getFlightPathHex() != null && !md.getFlightPathHex().isNoLocation()) {
             BoardLocation location = md.getFlightPathHex();
-            entity.setPassedThrough(new Vector<>(MovementDisplay.flightPathPositions(getGame().getBoard(location),
+            entity.setPassedThrough(new Vector<>(BoardHelper.coordsLine(getGame().getBoard(location),
                   location.coords(),
                   md.getFinalFacing())));
         }
@@ -424,7 +424,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // board
         if ((md.getFlightPathHex() != null) && !md.getFlightPathHex().isNoLocation()) {
             BoardLocation location = md.getFlightPathHex();
-            entity.setPassedThrough(new Vector<>(MovementDisplay.flightPathPositions(getGame().getBoard(location),
+            entity.setPassedThrough(new Vector<>(BoardHelper.coordsLine(getGame().getBoard(location),
                   location.coords(),
                   md.getFinalFacing())));
             List<Integer> facings = new ArrayList<>();

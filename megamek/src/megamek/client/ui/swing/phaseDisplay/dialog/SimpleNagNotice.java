@@ -117,23 +117,27 @@ public abstract class SimpleNagNotice {
      * are suspended so they don't overlap the dialog.
      */
     public void show() {
-        // Show the notice unless the preference key is used and has been stored previously, saying not to show it
-        if (usesPreference() && preferences.hasProperty(preferenceKey()) && !preferences.getBoolean(preferenceKey())) {
-            return;
+        try {
+            // Show the notice unless the preference key is used and has been stored previously, saying not to show it
+            if (usesPreference()
+                  && preferences.hasProperty(preferenceKey())
+                  && !preferences.getBoolean(preferenceKey())) {
+                return;
+            }
+
+            if (!initialized) {
+                initialized = true;
+                initialize();
+            }
+
+            clientGui.suspendBoardTooltips();
+
+            JOptionPane.showMessageDialog(clientGui.getFrame(), contentPanel, title(), JOptionPane.PLAIN_MESSAGE);
+            if (usesPreference()) {
+                preferences.setValue(preferenceKey(), !dontShowAgain.isSelected());
+            }
+        } finally {
+            clientGui.activateBoardTooltips();
         }
-
-        if (!initialized) {
-            initialized = true;
-            initialize();
-        }
-
-        clientGui.suspendBoardTooltips();
-
-        JOptionPane.showMessageDialog(clientGui.getFrame(), contentPanel, title(), JOptionPane.PLAIN_MESSAGE);
-        if (usesPreference()) {
-            preferences.setValue(preferenceKey(), !dontShowAgain.isSelected());
-        }
-
-        clientGui.activateBoardTooltips();
     }
 }

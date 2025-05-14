@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.phaseDisplay;
+package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.phaseDisplay.dialog.SimpleNagNotice;
 
 import javax.swing.JOptionPane;
 
@@ -50,18 +49,21 @@ public abstract class SimpleConfirmDialog extends SimpleNagNotice {
      */
     @Override
     public final void show() {
-        if (!initialized) {
-            initialized = true;
-            initialize();
+        try {
+            if (!initialized) {
+                initialized = true;
+                initialize();
+            }
+
+            clientGui.suspendBoardTooltips();
+
+            isOKSelected = JOptionPane.showConfirmDialog(clientGui.getFrame(),
+                  contentPanel,
+                  title(),
+                  JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
+        } finally {
+            clientGui.activateBoardTooltips();
         }
-
-        clientGui.suspendBoardTooltips();
-
-        isOKSelected = JOptionPane.showConfirmDialog(clientGui.getFrame(), contentPanel, title(),
-              JOptionPane.OK_CANCEL_OPTION)
-              == JOptionPane.OK_OPTION;
-
-        clientGui.activateBoardTooltips();
     }
 
     public final void ask() {

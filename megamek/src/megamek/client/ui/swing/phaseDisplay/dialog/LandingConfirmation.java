@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.phaseDisplay;
+package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -27,7 +27,7 @@ public class LandingConfirmation extends SimpleConfirmDialog {
      * Creates a dialog asking the player if a planned landing should be performed, ending the movement phase for
      * this unit directly.
      */
-    protected LandingConfirmation(ClientGUI clientGui) {
+    public LandingConfirmation(ClientGUI clientGui) {
         super(clientGui);
     }
 

@@ -128,17 +128,22 @@ public class SerializationHelper {
 
             @Override
             public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-                int team = 0;
-                int location = 0;
+                int team = -1;
+                int location = -1;
                 while (reader.hasMoreChildren()) {
                     reader.moveDown();
-                    switch (reader.getNodeName()) {
-                        case "team" -> team = Integer.parseInt(reader.getValue());
-                        case "location" -> location = Integer.parseInt(reader.getValue());
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "team" -> team = Integer.parseInt(reader.getValue());
+                            case "location" -> location = Integer.parseInt(reader.getValue());
+                        }
+                        reader.moveUp();
+                    } catch (NumberFormatException e) {
+                        // Narc Pods with malformed entries will be silently ignored
+                        return null;
                     }
-                    reader.moveUp();
                 }
-                return new NarcPod(team, location);
+                return ((team > -1) && (location > -1)) ? new NarcPod(team, location) : null;
             }
 
             @Override

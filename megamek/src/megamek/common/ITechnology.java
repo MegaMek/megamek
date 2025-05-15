@@ -61,9 +61,11 @@ public interface ITechnology {
         private final int index;
         private final String name;
         private static final Map<Integer, TechRating> INDEX_LOOKUP = new HashMap<>();
+        private static final Map<String, TechRating> NAME_LOOKUP = new HashMap<>();
         static {
             for (TechRating tr : values()) {
                 INDEX_LOOKUP.put(tr.index, tr);
+                NAME_LOOKUP.put(tr.name, tr);
             }
         }
         TechRating(int idx, String name) { this.index = idx; this.name = name; }
@@ -72,6 +74,11 @@ public interface ITechnology {
         public static TechRating fromIndex(int idx) {
             TechRating tr = INDEX_LOOKUP.get(idx);
             if (tr == null) throw new IllegalArgumentException("Invalid TechRating index: " + idx);
+            return tr;
+        }
+        public static TechRating fromName(String name) {
+            TechRating tr = NAME_LOOKUP.get(name);
+            if (tr == null) throw new IllegalArgumentException("Invalid TechRating name: " + name);
             return tr;
         }
     }

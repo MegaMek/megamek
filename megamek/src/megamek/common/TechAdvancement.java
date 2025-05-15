@@ -196,6 +196,23 @@ public class TechAdvancement implements ITechnology {
     }
 
     /**
+     * Indicate whether the years for prototype, production, common, extinction, and reintroduction
+     * for IS factions should be considered approximate.
+     *
+     * @param phases the phases to set as approximate
+     * @return a reference to this object
+     */
+    public TechAdvancement setISApproximate(AdvancementPhase... phases) {
+        for (AdvancementPhase phase : AdvancementPhase.values()) {
+            isApproximate.put(phase, false);
+        }
+        for (AdvancementPhase phase : phases) {
+            isApproximate.put(phase, true);
+        }
+        return this;
+    }
+
+    /**
      * Provide years for prototype, production, common, extinction, and reintroduction for Clan factions.
      *
      * @param prog A map of tech progression years.
@@ -263,6 +280,22 @@ public class TechAdvancement implements ITechnology {
         }
         return this;
     }
+    /**
+     * Indicate whether the years for prototype, production, common, extinction, and reintroduction
+     * for Clan factions should be considered approximate.
+     *
+     * @param phases the phases to set as approximate
+     * @return a reference to this object
+     */
+    public TechAdvancement setClanApproximate(AdvancementPhase... phases) {
+        for (AdvancementPhase phase : AdvancementPhase.values()) {
+            clanApproximate.put(phase, false);
+        }
+        for (AdvancementPhase phase : phases) {
+            clanApproximate.put(phase, true);
+        }
+        return this;
+    }
 
     /**
      * A convenience method that will set identical values for IS and Clan factions.
@@ -308,6 +341,17 @@ public class TechAdvancement implements ITechnology {
     public TechAdvancement setApproximate(boolean... approx) {
         setISApproximate(approx);
         setClanApproximate(approx);
+        return this;
+    }
+
+    /**
+     * A convenience method that will set identical values for IS and Clan factions.
+     * @param phases the phases to set as approximate
+     * @return
+     */
+    public TechAdvancement setApproximate(AdvancementPhase... phases) {
+        setISApproximate(phases);
+        setClanApproximate(phases);
         return this;
     }
 

@@ -418,7 +418,7 @@ public class MiscType extends EquipmentType {
         if (flag instanceof MiscTypeFlag) {
             return super.hasFlag(flag);
         } else {
-            LOGGER.warn("Incorrect flag check: make sure to test only MiscTypeFlags on a MiscType.");
+            LOGGER.warn("Incorrect flag check: make sure to test only MiscTypeFlags on a MiscType.", new Throwable("Invalid MiscType"));
             return false;
         }
     }
@@ -7666,7 +7666,11 @@ public class MiscType extends EquipmentType {
               .setUnofficial(false)
               .setTechRating(RATING_E)
               .setAvailability(RATING_X, RATING_E, RATING_F, RATING_F)
-              .setAdvancement(2575, DATE_NONE, DATE_NONE, 2820, DATE_NONE)
+              // Book doesn't give a reintro date, but there are several units starting 3073 with an
+              // inexplicable insulator.
+              // Best we can tell this is an oversight.
+              .setAdvancement(2575, DATE_NONE, DATE_NONE, 2820, 3073)
+              .setApproximate(false, false, false, false, true)
               .setPrototypeFactions(F_TH)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;

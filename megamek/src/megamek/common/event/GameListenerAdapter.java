@@ -103,4 +103,8 @@ public class GameListenerAdapter implements GameListener {
     public void gameVictory(PostGameResolution e) {
     }
 
+    @Override
+    public void gameSystemMessage(GameSystemMessageEvent e) {
+    }
+
 }

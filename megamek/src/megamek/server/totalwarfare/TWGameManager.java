@@ -10605,6 +10605,42 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
+    void resolveBoobyTraps() {
+        Vector<Report> vDesc = new Vector<>();
+        Report r;
+        for (Entity e : game.getEntitiesVector()) {
+            if (e.hasBoobyTrap() &&
+                      e.getBoobyTrap().curMode().isArmed() &&
+                      e.isBoobyTrapInitiated()) {
+                int damage = e.getBoobyTrapDamage();
+                r = new Report(11000, Report.PUBLIC);
+                r.subject = e.getId();
+                r.addDesc(e);
+                r.indent(2);
+                r.add(damage);
+                vDesc.add(r);
+                if (e instanceof Mek mek) {
+                    if (mek.isAutoEject() &&
+                              (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
+                                     (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                                            mek.isCondEjectEngine()))) {
+                        vDesc.addAll(ejectEntity(e, true));
+                    }
+                }
+                e.setSelfDestructedThisTurn(true);
+                e.setBoobyTrapInitiated(false);
+                doBoobyTrapExplosion(damage, e.getPosition(), vDesc, null);
+                Report.addNewline(vDesc);
+                r = new Report(5410, Report.PUBLIC);
+                r.subject = e.getId();
+                r.indent(2);
+                Report.addNewline(vDesc);
+                vDesc.add(r);
+            }
+        }
+        addReport(vDesc);
+    }
+
     /*
      * Called during the weapons firing phase to initiate self destruction.
      */
@@ -20523,6 +20559,15 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Extract explosion functionality for generalized explosions in areas.
      */
+    public void doBoobyTrapExplosion(int engineRating, Coords position, Vector<Report> vDesc,
+          Vector<Integer> vUnits) {
+        int[] myDamages = { engineRating, (engineRating / 2), (engineRating / 4), (engineRating / 8) };
+        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1, true, false);
+    }
+
+    /**
+     * Extract explosion functionality for generalized explosions in areas.
+     */
     public void doFusionEngineExplosion(int engineRating, Coords position, Vector<Report> vDesc,
           Vector<Integer> vUnits) {
         int[] myDamages = { engineRating, (engineRating / 10), (engineRating / 20), (engineRating / 40) };
@@ -27286,6 +27331,17 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         try {
+            if ((m.getType() instanceof MiscType miscType) &&
+                      miscType.isBoobyTrap() &&
+                      mode != 0 &&
+                      e.hasBoobyTrap()) {
+                sendServerChat("There is no turning back now...");
+                e.setBoobyTrapInitiated(true);
+                m.setMode(mode);
+                m.setModeSwitchable(false);
+                entityUpdate(e.getId());
+            }
+
             // Check for BA dumping body mounted missile launchers
             if ((e instanceof BattleArmor) &&
                       (!m.isMissing()) &&
@@ -27324,7 +27380,6 @@ public class TWGameManager extends AbstractGameManager {
                         logger.error(message);
                         sendServerChat(message);
                     }
-
                 }
             }
         } catch (Exception ex) {

@@ -186,7 +186,7 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
 
     public String getHotKeyDesc() {
         String result;
-
+        
         result = "<BR>";
 
         switch (this) {
@@ -204,15 +204,6 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
                                 msgToggleMoveJump +
                                 ": " +
                                 KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
-                break;
-            case MOVE_BACK_UP:
-                result += KeyCommandBind.getDesc(KeyCommandBind.MOVE_BACKUP);
-                break;
-            case MOVE_GO_PRONE:
-                result += KeyCommandBind.getDesc(KeyCommandBind.MOVE_GOPRONE);
-                break;
-            case MOVE_GET_UP:
-                result += KeyCommandBind.getDesc(KeyCommandBind.MOVE_GETUP);
                 break;
             case MOVE_TURN:
                 String msgLeft = Messages.getString("Left");

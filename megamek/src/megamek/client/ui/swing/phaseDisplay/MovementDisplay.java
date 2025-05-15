@@ -296,6 +296,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
         buttons.get(MoveCommand.MOVE_GET_UP).doClick();
     }
 
+    private void moveStepForward() {
+        cmd.addStep(MoveStepType.FORWARDS);
+        updateMove();
+    }
+
+    private void moveStepBackward() {
+        cmd.addStep(MoveStepType.BACKWARDS);
+        updateMove();
+    }
+
     private void performToggleConversionMode() {
         final Entity currentlySelectedEntity = ce();
 
@@ -345,6 +355,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         controller.registerCommandAction(KeyCommandBind.MOVE_BACKUP, this, this::moveBackUp);
         controller.registerCommandAction(KeyCommandBind.MOVE_GOPRONE, this, this::moveGoProne);
         controller.registerCommandAction(KeyCommandBind.MOVE_GETUP, this, this::moveGetUp);
+        controller.registerCommandAction(KeyCommandBind.MOVE_STEPFORWARD, this, this::moveStepForward);
+        controller.registerCommandAction(KeyCommandBind.MOVE_STEPBACKWARD, this, this::moveStepBackward);
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE, this, this::performToggleConversionMode);
     }
 

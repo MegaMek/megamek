@@ -43,7 +43,11 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
           KeyCommandBind.DONE_NO_ACTION);
 
     /** The keybinds to be shown during the movement phase */
-    private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(KeyCommandBind.TOGGLE_MOVEMODE,
+    private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(KeyCommandBind.MOVE_STEPFORWARD,
+          KeyCommandBind.MOVE_STEPBACKWARD,
+          KeyCommandBind.TURN_LEFT,
+          KeyCommandBind.TURN_RIGHT,
+          KeyCommandBind.TOGGLE_MOVEMODE,
           KeyCommandBind.MOVE_BACKUP,
           KeyCommandBind.MOVE_GOPRONE,
           KeyCommandBind.MOVE_GETUP,

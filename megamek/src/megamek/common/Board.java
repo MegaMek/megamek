@@ -1026,11 +1026,12 @@ public class Board implements Serializable {
         load(is, null, false);
     }
 
-    public void load(String boardString) {
+    public void load(String boardString, @Nullable List<String> errors) {
         try (InputStream is = new ByteArrayInputStream(boardString.getBytes(StandardCharsets.UTF_8))) {
-            load(is, null, false);
+            load(is, errors, false);
         } catch (IOException ex) {
             logger.error(ex, "Error loading string to build board - {}", ex.getMessage());
+            throw new IllegalArgumentException("Error loading string to build board - " + ex.getMessage());
         }
     }
 

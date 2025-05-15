@@ -40,6 +40,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for MovePath executing JUMP the Jump movement type.
@@ -50,6 +52,197 @@ public class JumpTest {
     @BeforeAll
     static void setUp() {
         EquipmentType.initializeTypes();
+    }
+
+
+    @Nested
+    class JumpIntoBuilding {
+        private static final Board BOARD;
+        private static final Board BOARD_MORE_FORGIVING;
+        static {
+            BOARD = new Board(1, 6);
+            BOARD.load("""
+size 1 6
+hex 0101 -1 "" ""
+hex 0102 0 "" ""
+hex 0103 0 "bldg_elev:2;building:2:8;bldg_cf:50" ""
+hex 0104 0 "bldg_elev:4;building:2:8;bldg_cf:100" ""
+hex 0105 0 "bldg_elev:4;building:2:9;bldg_cf:100" ""
+hex 0106 0 "bldg_elev:4;building:2:1;bldg_cf:100" ""
+end""");
+            BOARD_MORE_FORGIVING = new Board(1, 6);
+            BOARD_MORE_FORGIVING.load("""
+size 1 6
+hex 0101 0 "" ""
+hex 0102 0 "" ""
+hex 0103 0 "bldg_elev:2;building:2:8;bldg_cf:50" ""
+hex 0104 0 "bldg_elev:4;building:2:8;bldg_cf:100" ""
+hex 0105 0 "bldg_elev:4;building:2:9;bldg_cf:100" ""
+hex 0106 0 "bldg_elev:4;building:2:1;bldg_cf:100" ""
+end""");
+        }
+
+        private Game game;
+
+        @BeforeEach
+        void setUpEach() {
+            game = new Game();
+            game.setBoard(BOARD_MORE_FORGIVING);
+        }
+
+        @Test
+        void jumpIntoTheBuildingThroughTheFrontWindowSuccess() {
+            game.setBoard(BOARD_MORE_FORGIVING);
+            MovePath movePath = getMovePathFor(new BattleArmor(),
+                  EntityMovementMode.INF_LEG,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.DOWN
+            );
+
+            assertTrue(movePath.isMoveLegal(),
+                  "A BA cannot jump into a building lower floors comming from a connected side and not on LOS");
+
+            assertMoveSteps(movePath,0, 0, 2, 4, 3);
+        }
+
+        @Test
+        void cantJumpIntoTheBuildingThroughTheRoof() {
+            MovePath movePath = getMovePathFor(new BattleArmor(),
+                  EntityMovementMode.INF_LEG,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.DOWN
+            );
+
+            assertFalse(movePath.isMoveLegal(),
+                  "A BA cannot jump into a building lower floors comming from a connected side and not on LOS");
+
+            assertMoveSteps(movePath, 0, 0, 2, 4, 4, 3);
+        }
+
+        @Test
+        void cantJumpIntoTheBuildingThroughTheWindowWithNoLOS() {
+            game.setBoard(BOARD);
+            MovePath movePath = getMovePathFor(new BattleArmor(), EntityMovementMode.INF_LEG,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.DOWN
+            );
+
+            assertFalse(movePath.isMoveLegal(), "A BA can jump into a building lower floors coming from an exit side" +
+                                                     " and if the LOS is unblocked");
+            assertMoveSteps(movePath, -1, 0, 2, 4, 3);
+        }
+
+        @Test
+        void cantJumpIntoTheBuildingThroughTheWindowButItsOnSameLevelOfNeighboringBuilding() {
+            MovePath movePath = getMovePathFor(new BattleArmor(), EntityMovementMode.INF_LEG,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.DOWN,
+                  MovePath.MoveStepType.DOWN
+            );
+
+            assertFalse(movePath.isMoveLegal(), "A BA cant jump into a building lower floors coming from a side " +
+                                                      "which is covered by another building of same height");
+
+            assertMoveSteps(movePath, 0, 0, 2, 4, 3, 2);
+        }
+
+        @Test
+        void cantJumpIntoTheBuildingThroughTheWindowOnSouthComingFromNorth() {
+            MovePath movePath = getMovePathFor(new BattleArmor(),
+                  EntityMovementMode.INF_LEG,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.DOWN
+                  // try to land in the middle of the building comming through the roof
+            );
+
+            assertFalse(movePath.isMoveLegal(),
+                  "A BA cannot jump into a building lower floors comming from a connected side");
+
+            assertMoveSteps(movePath, 0, 0, 2, 4, 4, 4, 3);
+        }
+
+        @Test
+        void cantJumpIntoTheBuildingInTheLastRoofTopHex() {
+            MovePath movePath = getMovePathFor(new BattleArmor(),
+                  EntityMovementMode.INF_LEG,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS
+            );
+
+            assertTrue(movePath.isMoveLegal(),
+                  "This is a sanity check, this jump should work");
+            assertMoveSteps(movePath, 0, 0, 2, 4, 4, 4);
+        }
+
+        @Test
+        void cantJumpIntoTheBuildingThroughTheBlockedWindow() {
+            MovePath movePath = getMovePathFor(new BattleArmor(),
+                  EntityMovementMode.INF_LEG,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.DOWN,
+                  MovePath.MoveStepType.DOWN,
+                  MovePath.MoveStepType.DOWN,
+                  MovePath.MoveStepType.DOWN
+            );
+            assertFalse(movePath.isMoveLegal(),
+                  "A BA cannot jump into a building lower floors comming from an exit side");
+            assertMoveSteps(movePath, 0, 0, 2, 4, 3, 2, 1, 0);
+        }
+
+        @Test
+        void bipedMekJumpPath() {
+            MovePath movePath = getMovePathFor(new BipedMek(), EntityMovementMode.BIPED,
+                  MovePath.MoveStepType.START_JUMP,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.FORWARDS,
+                  MovePath.MoveStepType.DOWN
+            );
+
+            assertFalse(movePath.isMoveLegal(), "A Mek cannot jump into a building lower floors");
+            assertMoveSteps(movePath, 0, 0, 2, 4, 4, 4, 3);
+        }
+
+        private void assertMoveSteps(MovePath movePath, int ... expectedElevations) {
+            for (int i = 0; i < movePath.getStepVector().size(); i++) {
+                var hex = game.getBoard().getHex(movePath.getStepVector().get(i).getPosition());
+                assertEquals(expectedElevations[i], movePath.getStepVector().get(i).getElevation(),
+                      "Step " + i + ": " + new StepLog(movePath.getStepVector().get(i)) +
+                            " hex " + hex.toString());
+            }
+        }
+
+        private MovePath getMovePathFor(Entity entity, EntityMovementMode movementMode,
+              MovePath.MoveStepType ... steps) {
+            return getMovePath(new MovePath(game, initializeUnit(entity, game, movementMode)), steps);
+        }
     }
 
     @Nested
@@ -209,9 +402,10 @@ public class JumpTest {
             assertEquals(3, movePath.getStepVector().get(2).getElevation(),
                   "Jumping over a bridge, level 0 with elevation 2, on top of an ultra sublevel");
             assertEquals(1, movePath.getStepVector().get(3).getElevation(),
-                  "WiGE jumping over a water hex, level 0 with depth 2, should stay at elevation 0");
+                  "WiGE jumping over a water hex, level 0 with depth 2, should stay at elevation 1");
             assertEquals(2, movePath.getStepVector().get(4).getElevation(),
-                  "Jumping into a bridge, level 0 with elevation 1, on top of a water hex with depth 2");
+                  "Jumping into a bridge, level 0 with elevation 1, on top of a water hex with depth 2, wige stays at" +
+                        " one elevation above the bridge");
         }
 
         @Test
@@ -238,7 +432,11 @@ public class JumpTest {
         if (movementMode != null) {
             unit.setMovementMode(movementMode);
         }
-        unit.setWeight(50.0);
+        if (unit instanceof Infantry) {
+            unit.setWeight(5.0);
+        } else {
+            unit.setWeight(50.0);
+        }
         unit.setOriginalWalkMP(8);
         unit.setOriginalJumpMP(8);
         unit.setId(5);
@@ -270,12 +468,25 @@ public class JumpTest {
      * @return the MovePath
      */
     private static MovePath getMovePath(MovePath path) {
-        MovePath movePath = path.addStep(MovePath.MoveStepType.START_JUMP)
-                                  .addStep(MovePath.MoveStepType.FORWARDS)
-                                  .addStep(MovePath.MoveStepType.FORWARDS)
-                                  .addStep(MovePath.MoveStepType.FORWARDS)
-                                  .addStep(MovePath.MoveStepType.FORWARDS);
-        movePath.getStepVector().stream().map(StepLog::new).forEach(System.out::println);
+        return getMovePath(path,
+              MovePath.MoveStepType.START_JUMP,
+              MovePath.MoveStepType.FORWARDS,
+              MovePath.MoveStepType.FORWARDS,
+              MovePath.MoveStepType.FORWARDS,
+              MovePath.MoveStepType.FORWARDS);
+    }
+
+    /**
+     * Generates the movepath for the test
+     * @param path the game
+     * @return the MovePath
+     */
+    private static MovePath getMovePath(final MovePath path,final MovePath.MoveStepType... steps) {
+        MovePath movePath = path.clone();
+        for (var step : steps) {
+            movePath = movePath.addStep(step);
+        }
         return movePath;
     }
+
 }

@@ -9314,7 +9314,7 @@
                 <availability>CS:3-,WOB!C:3!D:2!F:1,CIR:0</availability>
             </model>
 			<model name='SHD-5M'>
-				<availability>IS:2+:3053,LA:1+:3053,FWL:4+,DC:2+,CC:3+,CS:4+:3053,WOB3+,FC:2+:3053,CIR:0</availability>
+				<availability>IS:2+:3053,LA:1+:3053,FWL:4+,DC:2+,CC:3+,CS:4+:3053,WOB:3+,FC:2+:3053,CIR:0</availability>
 			</model>
 			<model name='SHD-5S'>
 				<roles>ew_support,spotter</roles>

@@ -319,7 +319,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Small
-          new TechAdvancement(ITechnology.TechBase.ALL)
+          new TechAdvancement(TechBase.ALL)
                 .setISAdvancement(Map.of(
                     AdvancementPhase.PROTOTYPE, 2625,
                     AdvancementPhase.PRODUCTION, 2631,

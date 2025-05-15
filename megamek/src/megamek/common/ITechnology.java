@@ -26,6 +26,7 @@ public interface ITechnology {
 
     // --- Tech Base Enum ---
     enum TechBase {
+        UNKNOWN(-1),
         ALL(0),
         IS(1),
         CLAN(2);

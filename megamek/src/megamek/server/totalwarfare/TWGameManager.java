@@ -32301,9 +32301,9 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vFullReport = new Vector<>();
         vFullReport.add(new Report(5002, Report.PUBLIC));
         int damage_bonus = Math.max(0, game.getPlanetaryConditions().getWind().ordinal() - Wind.MOD_GALE.ordinal());
-        // cycle through each team and damage 1d6 airborne VTOL/WiGE
+        // cycle through each team and damage 1d6 airborne VTOL/WiGE vehicles
         for (Team team : game.getTeams()) {
-            Vector<Integer> airborne = getAirborneVTOL(team);
+            Vector<Integer> airborne = getAirborneVTOLForSand(team);
             if (!airborne.isEmpty()) {
                 // how many units are affected
                 int unitsAffected = Math.min(Compute.d6(), airborne.size());
@@ -32328,18 +32328,16 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * cycle through entities on team and collect all the airborne VTOL/WIGE
-     *
+     * Cycle through entities on team and collect all the airborne VTOL/WIGE vehicles
+     * Only vehicles can be affected by Blowing Sand (TO:AR 6th Ed. pg. 60)
      * @return a vector of relevant entity ids
      */
-    public Vector<Integer> getAirborneVTOL(Team team) {
+    public Vector<Integer> getAirborneVTOLForSand(Team team) {
         Vector<Integer> units = new Vector<>();
         for (Entity entity : game.getEntitiesVector()) {
             for (Player player : team.players()) {
                 if (entity.getOwner().equals(player)) {
-                    if (((entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.WIGE)) &&
-                              (!entity.isDestroyed()) &&
-                              (entity.getElevation() > 0)) {
+                    if (entity.isAirborneVTOLorWIGE() && !(entity instanceof LandAirMek)) {
                         units.add(entity.getId());
                     }
                 }

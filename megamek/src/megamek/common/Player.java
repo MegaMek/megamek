@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.hexarea.BorderHexArea;
@@ -625,43 +626,59 @@ public final class Player extends TurnOrdered {
     /**
      * @return the bonus to this player's initiative rolls for the highest value initiative (i.e. the 'commander')
      */
-    public int getCommandBonus() {
+    public int getOverallCommandBonus() {
         if (game == null) {
             return 0;
         }
+        boolean useCommandInit = game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
+        // entities are owned by this player, active, and not individual pilots
+        ArrayList<Entity> entities =
+              game.getInGameObjects()
+                    .stream()
+                    .filter(Entity.class::isInstance)
+                    .map(Entity.class::cast)
+                    .filter(entity ->
+                                  (null != entity.getOwner()) &&
+                                        entity.getOwner().equals(this)
+                    ).collect(Collectors.toCollection(ArrayList::new));
         int commandb = 0;
-        for (InGameObject unit : game.getInGameObjects()) {
-            if (unit instanceof Entity) {
-                Entity entity = (Entity) unit;
-                boolean useCommandInit = game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
-                boolean checkThisTurn = ((null != entity.getOwner()) &&
-                                               entity.getOwner().equals(this) &&
-                                               !entity.isDestroyed() &&
-                                               entity.getCrew().isActive() &&
-                                               !entity.isCaptured() &&
-                                               !(entity instanceof MekWarrior)) &&
-                                              ((entity.isDeployed() && !entity.isOffBoard()) ||
-                                                     (entity.getDeployRound() == (game.getCurrentRound() + 1)));
-                if (checkThisTurn) {
-                    int bonus = 0;
-                    if (useCommandInit) {
-                        bonus = entity.getCrew().getCommandBonus();
-                    }
-                    //Even if the RPG option is not enabled, we still get the command bonus provided by special equipment.
-                    //Since we are not designating a single force commander at this point, we assume a superheavy tripod
-                    //is the force commander if that gives the highest bonus.
-                    if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
-                        bonus += 2;
-                    }
-                    //Once we've gotten the status of the command console (if any), reset the flag that tracks
-                    //the previous turn's action.
-                    if (bonus > commandb) {
-                        commandb = bonus;
-                    }
-                }
+        for (Entity entity : entities) {
+            int bonus = getIndividualCommandBonus(entity, useCommandInit);
+            if (bonus > commandb) {
+                commandb = bonus;
             }
         }
         return commandb;
+    }
+
+    /**
+     * Calculate command bonus for an individual entity within the player's force or team
+     * TODO: move all of this into Entity
+     * @param entity being considered
+     * @param useCommandInit boolean based on game options
+     * @return
+     */
+    public int getIndividualCommandBonus(Entity entity, boolean useCommandInit) {
+        int bonus = 0;
+        // Only consider this during normal rounds when unit is deployed on board, or about to deploy this round.
+        if (!entity.isDestroyed() &&
+                  entity.getCrew().isActive() &&
+                  !entity.isCaptured() &&
+                  !(entity instanceof MekWarrior) &&
+                  (entity.isDeployed() && !entity.isOffBoard()) ||
+                  (entity.getDeployRound() == (game.getCurrentRound() + 1))
+        ) {
+            if (useCommandInit) {
+                bonus = entity.getCrew().getCommandBonus();
+            }
+            //Even if the RPG option is not enabled, we still get the command bonus provided by special equipment.
+            //Since we are not designating a single force commander at this point, we assume a superheavy tripod
+            //is the force commander if that gives the highest bonus.
+            if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
+                bonus += 2;
+            }
+        }
+        return bonus;
     }
 
     public String getColorForPlayer() {

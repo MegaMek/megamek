@@ -29,6 +29,7 @@ import java.util.Objects;
 
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
 
 /**
  * The Team class holds information about a team. It holds the initiative for the team, and contains a list of players
@@ -128,7 +129,7 @@ public final class Team extends TurnOrdered {
 
     /**
      * Return the number of "normal" turns that this item requires. This is normally the sum of multi-unit turns and the
-     * other turns. A team without any "normal" turns must return it's number of even turns to produce a fair
+     * other turns. A team without any "normal" turns must return its number of even turns to produce a fair
      * distribution of moves.
      *
      * @return the <code>int</code> number of "normal" turns this item should take in a phase.
@@ -224,7 +225,7 @@ public final class Team extends TurnOrdered {
 
         for (Player player : players) {
             dynamicBonus = Math.max(dynamicBonus, player.getTurnInitBonus());
-            dynamicBonus = Math.max(dynamicBonus, player.getCommandBonus());
+            dynamicBonus = Math.max(dynamicBonus, player.getOverallCommandBonus());
 
             // this is a special case: it's an arbitrary bonus associated with a player
             constantBonus = Math.max(constantBonus, player.getConstantInitBonus());

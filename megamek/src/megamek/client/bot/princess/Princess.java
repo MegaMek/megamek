@@ -3438,6 +3438,9 @@ public class Princess extends BotClient {
 
                             path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
                             return;
+                        } else {
+                            // Still increase the index so the loop finishes!
+                            dismountIndex++;
                         }
                     }
                 } else {

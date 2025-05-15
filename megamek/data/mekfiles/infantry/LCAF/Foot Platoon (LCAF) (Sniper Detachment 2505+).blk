@@ -1,0 +1,72 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-26
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Foot Platoon (LCAF)
+</Name>
+
+<Model>
+(Sniper Detachment 2505+)
+</Model>
+
+<year>
+2505
+</year>
+
+<originalBuildYear>
+2505
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Troopers Equipment>
+Sneak Suit (Camo/IR)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+Operating in small shooter/spotter teams these infantry are ill equipped for direct conflict.  They are best served in positions where their limited damage can be applied at a critical point. Advanced infantry stealth technology was made a priorty for these teams, giving them a greater chance of staying undiscovered.
+</capabilities>
+
+<overview>
+Most large military forces include some form of sniper detachment.  They are used to eliminate key enemy personnel, act as spotters for distant fire support, provide overwatch, or simply engage targets that are out of reach of common infantry weapons without resorting to calling for response by heavier units.
+</overview>
+
+<notes>
+Hammel Marksman selected as representative weapon of decent but not overwhelming range. Intro date based on common availability for two-system stealth suit.
+</notes>
+
+<squad_size>
+2
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<secondn>
+1
+</secondn>
+
+<Primary>
+Sniper Rifle (Hammel Marksman)
+</Primary>
+
+<Secondary>
+Submachine Gun
+</Secondary>
+

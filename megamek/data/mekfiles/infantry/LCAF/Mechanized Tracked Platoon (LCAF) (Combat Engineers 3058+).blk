@@ -1,0 +1,73 @@
+#Saved from version 0.50.06 on 2025-04-27
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Mechanized Tracked Platoon (LCAF)
+</Name>
+
+<Model>
+(Combat Engineers 3058+)
+</Model>
+
+<year>
+3058
+</year>
+
+<originalBuildYear>
+3058
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Vibro-Shovel
+Vibro-Shovel
+Vibro-Shovel
+Vibro-Shovel
+Vibro-Shovel
+Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+Using a combination of bridging equipment and light earthmoving vehicles these troops assist conventional forces in crossing minor obstacles and improving defensive fighting positions.
+</capabilities>
+
+<overview>
+Combat engineers are support troops used to improve the mobility and protection of combat forces.  They can also be found in non-combat situations such as natural disaster response, helping government assistance reach those in need and constructing temporary camps for evacuees.
+</overview>
+
+<notes>
+Intro date based on LCAF/LAAF armor kit prototype date
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<Primary>
+Submachine Gun
+</Primary>
+
+<specialization>
+33
+</specialization>
+

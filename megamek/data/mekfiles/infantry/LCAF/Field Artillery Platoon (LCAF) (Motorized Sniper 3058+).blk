@@ -1,0 +1,74 @@
+#Saved from version 0.50.05 on 2025-05-12
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Artillery Platoon (LCAF)
+</Name>
+
+<Model>
+(Motorized Sniper 3058+)
+</Model>
+
+<year>
+3058
+</year>
+
+<originalBuildYear>
+3058
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Troopers Equipment>
+Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISSniper
+ISSniperAmmo
+</Field Guns Equipment>
+
+<capabilities>
+Towed artillery is a common means of providing integrated ranged fire support to infantry commands without relying on attached combat vehicles.  They also serve a secondary role of providing potent defense against air attack. The motorized version is built light enough to be moved by common VTOLs enabling them to keep pace with air mobile forces.
+</capabilities>
+
+<overview>
+After the removal of historically Lyran systems from the unified Federated Commonwealth, many changes took place to restore and reinforce the Lyran nature of military forces posted there.  Infantry armor production was quickly updated with the first production runs seeing little more than a logo change.  Later production would see more visible changes to resemble the older Lyran style while retaining the protection capabilities of the FedCom model.
+</overview>
+
+<notes>
+Intro date based on LCAF/LAAF armor kit prototype date
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+1
+</secondn>
+
+<Primary>
+Submachine Gun
+</Primary>
+
+<Secondary>
+Rifle (TK Assault)
+</Secondary>
+

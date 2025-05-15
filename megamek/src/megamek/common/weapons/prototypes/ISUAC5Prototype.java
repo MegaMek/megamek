@@ -56,14 +56,14 @@ public class ISUAC5Prototype extends UACWeapon {
         maxRange = RANGE_LONG;
         flags = flags.or(F_PROTOTYPE);
         rulesRefs = "104, IO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.X)
                 .setISAdvancement(3029, DATE_NONE, DATE_NONE, 3035, DATE_NONE)
                 .setISApproximate(false, false, false, true, false)
-                .setPrototypeFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

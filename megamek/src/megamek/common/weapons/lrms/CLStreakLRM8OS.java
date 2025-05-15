@@ -55,10 +55,10 @@ public class CLStreakLRM8OS extends StreakLRMWeapon {
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         //But LRM Tech Base and Avail Ratings.
         rulesRefs = "327, TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
+            .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
             .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)
-            .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
+            .setPrototypeFactions(Faction.CCY).setProductionFactions(Faction.CJF)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

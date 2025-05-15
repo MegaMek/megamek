@@ -60,15 +60,15 @@ public class ISASEWMissileWeapon extends ThunderBoltWeapon {
         this.capital = false;
         this.missileArmor = 30;
         rulesRefs = "358, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+        .setTechRating(TechRating.E)
+        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
         .setISAdvancement(3067, 3073, DATE_NONE, DATE_NONE, DATE_NONE)
         .setISApproximate(false, false, false, false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
+        .setPrototypeFactions(Faction.LC)
+        .setProductionFactions(Faction.LC);
     }
 
     @Override

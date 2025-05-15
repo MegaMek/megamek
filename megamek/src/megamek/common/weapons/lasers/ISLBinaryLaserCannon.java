@@ -46,11 +46,11 @@ public class ISLBinaryLaserCannon extends LaserWeapon {
         flags = flags.andNot(F_PROTO_WEAPON);
         // Nothing to see here, move along
         rulesRefs = "Unofficial";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+        techAdvancement.setTechBase(TechBase.IS)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.D)
                 .setISAdvancement(2852, DATE_NONE, 3077)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_WB).setStaticTechLevel(SimpleTechLevel.UNOFFICIAL);
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.WB).setStaticTechLevel(SimpleTechLevel.UNOFFICIAL);
     }
 }

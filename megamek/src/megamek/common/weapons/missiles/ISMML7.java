@@ -56,14 +56,14 @@ public class ISMML7 extends MMLWeapon {
         maxRange = RANGE_LONG;
         rulesRefs = "229, TM";
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
-                .setProductionFactions(F_MERC, F_WB)
+                .setProductionFactions(Faction.MERC, Faction.WB)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

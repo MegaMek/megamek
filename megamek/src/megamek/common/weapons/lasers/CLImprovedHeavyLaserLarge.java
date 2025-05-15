@@ -50,11 +50,11 @@ public class CLImprovedHeavyLaserLarge extends LaserWeapon {
         explosive = true;
         rulesRefs = "321, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
                 .setClanAdvancement(DATE_NONE, 3069, 3085, DATE_NONE, DATE_NONE)
-                .setPrototypeFactions(F_CGS)
-                .setProductionFactions(F_RD)
+                .setPrototypeFactions(Faction.CGS)
+                .setProductionFactions(Faction.RD)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

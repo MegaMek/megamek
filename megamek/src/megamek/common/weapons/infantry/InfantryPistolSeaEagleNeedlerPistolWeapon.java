@@ -48,11 +48,11 @@ public class InfantryPistolSeaEagleNeedlerPistolWeapon extends InfantryWeapon {
 		shots = 10;
 		bursts = 2;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3030, 3035, 3052, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3030, 3035, 3052, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
-				.setPrototypeFactions(F_FW)
-				.setProductionFactions(F_FW).setTechRating(RATING_D)
-				.setAvailability(RATING_X, RATING_F, RATING_D, RATING_C);
+				.setPrototypeFactions(Faction.FW)
+				.setProductionFactions(Faction.FW).setTechRating(TechRating.D)
+				.setAvailability(TechRating.X, TechRating.F, TechRating.D, TechRating.C);
 
 	}
 }

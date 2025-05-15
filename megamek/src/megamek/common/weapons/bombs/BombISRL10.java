@@ -51,15 +51,15 @@ public class BombISRL10 extends MissileWeapon {
         this.toHitModifier = 1;
         this.ammoType = AmmoType.T_RL_BOMB;
         rulesRefs = "229, TM";
-        new TechAdvancement(TECH_BASE_IS)
+        new TechAdvancement(TechBase.IS)
             .setIntroLevel(false)
             .setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
+            .setTechRating(TechRating.B)
+            .setAvailability(TechRating.X, TechRating.X, TechRating.B, TechRating.B)
             .setISAdvancement(3060, 3064, 3067, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false, false, false)
-            .setPrototypeFactions(F_MH)
-            .setProductionFactions(F_MH);
+            .setPrototypeFactions(Faction.MH)
+            .setProductionFactions(Faction.MH);
     }
 
     @Override

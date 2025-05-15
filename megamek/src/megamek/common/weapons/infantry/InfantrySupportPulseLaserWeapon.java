@@ -49,12 +49,12 @@ public class InfantrySupportPulseLaserWeapon extends InfantryWeapon {
 		bursts = 4;
 		rulesRefs = "273, TM";
 		tonnage = .150;
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2605, 2610, 2650, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2605, 2610, 2650, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2605, 2610, 2650, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH).setTechRating(RATING_E)
-		        .setAvailability(RATING_D, RATING_E, RATING_D, RATING_C);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+		        .setProductionFactions(Faction.TH).setTechRating(TechRating.E)
+		        .setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.C);
 
 	}
 }

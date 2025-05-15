@@ -40,11 +40,11 @@ public class InfantryLaserCarbineBrightstarL15 extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_E)
-                .setAvailability(new int[]{RATING_X, RATING_E, RATING_E, RATING_E})
+                .setTechBase(TechBase.CLAN)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.E)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setProductionFactions(F_CLAN);
+                .setProductionFactions(Faction.CLAN);
     }
 }

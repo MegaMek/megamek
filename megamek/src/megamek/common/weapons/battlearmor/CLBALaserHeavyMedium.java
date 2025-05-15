@@ -47,14 +47,14 @@ public class CLBALaserHeavyMedium extends LaserWeapon {
         maxRange = RANGE_SHORT;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
                 .setClanAdvancement(3057, 3059, 3062, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSA)
-                .setProductionFactions(F_CSA);
+                .setPrototypeFactions(Faction.CSA)
+                .setProductionFactions(Faction.CSA);
     }
 }

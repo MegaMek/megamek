@@ -46,17 +46,17 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
         this.missileArmor = 40;
         this.maxRange = RANGE_EXT;
         rulesRefs = "210, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_C, RATING_E, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.C, TechRating.E, TechRating.E, TechRating.D)
                 .setISAdvancement(2200, 2305, 3055, 2950, 3051)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2200, 2305, 3055, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TA)
-                .setReintroductionFactions(F_FS, F_LC);
+                .setPrototypeFactions(Faction.TA)
+                .setProductionFactions(Faction.TA)
+                .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 }

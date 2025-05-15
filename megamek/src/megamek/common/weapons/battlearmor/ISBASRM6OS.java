@@ -48,14 +48,14 @@ public class ISBASRM6OS extends SRMWeapon {
                 .andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
+                .setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_B)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.B)
                 .setISAdvancement(3050, 3050, 3051, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS, F_LC);
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS, Faction.LC);
     }
 }

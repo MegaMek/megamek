@@ -30,9 +30,9 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
         criticals  = 7;
         tankslots = 1;
         rulesRefs = "88, IO:AE";
-        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+        techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.F)
                 .setISAdvancement(3133, DATE_NONE, DATE_NONE, 3138, DATE_NONE)
-                .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setPrototypeFactions(Faction.RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

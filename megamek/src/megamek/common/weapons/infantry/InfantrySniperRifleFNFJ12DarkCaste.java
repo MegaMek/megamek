@@ -47,11 +47,11 @@ public class InfantrySniperRifleFNFJ12DarkCaste extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #1";
        techAdvancement
-       .setTechBase(TECH_BASE_CLAN)
-       .setTechRating(RATING_E)
-       .setAvailability(RATING_X,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.CLAN)
+       .setTechRating(TechRating.E)
+       .setAvailability(TechRating.X,TechRating.E,TechRating.E,TechRating.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2835,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_TH);
+       .setProductionFactions(Faction.TH);
    }
 }

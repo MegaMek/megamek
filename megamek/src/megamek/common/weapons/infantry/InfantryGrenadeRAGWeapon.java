@@ -45,12 +45,12 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
         infantryDamage = 0.30;
         infantryRange = 1;
         rulesRefs = " 273, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3062, 3065, 3085, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3062, 3065, 3085, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(3062, 3065, 3085, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS).setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS).setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
 
     }
 }

@@ -38,11 +38,11 @@ public class InfantryLaserPistolBR25 extends InfantryWeapon {
         bursts = 1; // Bursts value is now always shown
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         rulesRefs = "Shrapnel #9";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(TechAdvancement.DATE_NONE, TechAdvancement.DATE_NONE, TechAdvancement.DATE_ES, TechAdvancement.DATE_NONE, TechAdvancement.DATE_NONE);
-        techAdvancement.setTechRating(TechAdvancement.RATING_D);
-        techAdvancement.setAvailability(new int[]{TechAdvancement.RATING_D, TechAdvancement.RATING_D, TechAdvancement.RATING_D, TechAdvancement.RATING_C});
+        techAdvancement.setTechBase(TechBase.IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE);
+        techAdvancement.setTechRating(TechRating.D);
+        techAdvancement.setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.C);
         techAdvancement.setISApproximate(false, false, true, false, false);
-        techAdvancement.setProductionFactions(TechAdvancement.F_TC);
+        techAdvancement.setProductionFactions(Faction.TC);
     }
 }

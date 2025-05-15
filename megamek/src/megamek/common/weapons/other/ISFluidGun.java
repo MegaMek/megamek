@@ -39,11 +39,11 @@ public class ISFluidGun extends FluidGunWeapon {
         rulesRefs = "313, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         // December 2021 - CGL requested we move this to Advanced.
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false);
     }

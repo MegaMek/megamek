@@ -39,15 +39,15 @@ public class ISTAG extends TAGWeapon {
         cost = 50000;
         rulesRefs = "238, TM";
         flags = flags.andNot(F_PROTO_WEAPON).andNot(F_BA_WEAPON);
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
                 .setISAdvancement(2593, 2600, 3045, 2835, 3044)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 }

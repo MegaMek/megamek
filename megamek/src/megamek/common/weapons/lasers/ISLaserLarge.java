@@ -45,16 +45,16 @@ public class ISLaserLarge extends LaserWeapon {
         medAV = 8;
         maxRange = RANGE_MED;
         rulesRefs = "227, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(true)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_D, RATING_C, RATING_B)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.B, TechRating.D, TechRating.C, TechRating.B)
                 .setISAdvancement(2306, 2316, 2320, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2306, 2316, 2320, 2850, DATE_NONE)
                 .setClanApproximate(false, false, false, true, false)
-                .setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TH);
+                .setPrototypeFactions(Faction.TA)
+                .setProductionFactions(Faction.TH);
     }
 }

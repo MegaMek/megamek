@@ -45,12 +45,12 @@ public class InfantryPistolSonicStunnerWeapon extends InfantryWeapon {
 		ammoWeight = 0.0003;
 		shots = 30;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2365, 2375, 2400, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2365, 2375, 2400, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setClanAdvancement(2365, 2375, 2400, DATE_NONE, DATE_NONE)
-				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-				.setProductionFactions(F_TH).setTechRating(RATING_D)
-				.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+				.setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+				.setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B);
 
 	}
 }

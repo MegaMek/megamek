@@ -35,9 +35,9 @@ public abstract class BayWeapon extends Weapon {
         super();
         // Tech progression for Small Craft or DropShip, using primitive for production and standard
         // for common.
-        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
-                .setAdvancement(DATE_ES, 2200, 2400).setProductionFactions(F_TA)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+        techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL)
+                .setAdvancement(DATE_ES, 2200, 2400).setProductionFactions(Faction.TA)
+                .setTechRating(TechRating.D).setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

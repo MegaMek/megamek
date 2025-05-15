@@ -47,16 +47,16 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
         maxRange = RANGE_SHORT;
         rulesRefs = "230, TM";
         flags = flags.andNot(F_PROTO_WEAPON);
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.D)
                 .setISAdvancement(2645, 2647, 2650, 2845, 3035)
                 .setISApproximate(false, false, true,false, false)
                 .setClanAdvancement(2645, 2647, 2650, 2845, DATE_NONE)
                 .setClanApproximate(false, false, true,false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH);
     }
 }

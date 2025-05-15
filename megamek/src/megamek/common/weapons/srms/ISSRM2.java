@@ -54,16 +54,16 @@ public class ISSRM2 extends SRMWeapon {
         maxRange = RANGE_SHORT;
         rulesRefs = "229, TM";
         flags = flags.andNot(F_PROTO_WEAPON);
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
         	.setIntroLevel(true)
         	.setUnofficial(false)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setTechRating(TechRating.C)
+            .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
             .setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setClanAdvancement(2365, 2370, 2400, 2836, DATE_NONE)
             .setClanApproximate(false, false, false, false, false)
-            .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH);
+            .setPrototypeFactions(Faction.TH)
+            .setProductionFactions(Faction.TH);
     }
 }

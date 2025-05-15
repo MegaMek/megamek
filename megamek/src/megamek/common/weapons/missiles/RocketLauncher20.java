@@ -55,15 +55,15 @@ public class RocketLauncher20 extends RLWeapon {
         medAV = 12;
         maxRange = RANGE_MED;
         rulesRefs = "229, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
         	.setIntroLevel(false)
         	.setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            .setTechRating(TechRating.B)
+            .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
             .setISAdvancement(DATE_NONE, 3064, 3067, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setClanAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
             .setClanApproximate(false, false, false,false, false)
-            .setProductionFactions(F_MH);
+            .setProductionFactions(Faction.MH);
     }
 }

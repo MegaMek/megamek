@@ -42,10 +42,10 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
 		shots = 10;
 		tonnage = .060;
 		rulesRefs = "176, AToW-C";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3074, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3074, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_LC).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+		        .setPrototypeFactions(Faction.LC)
+		        .setProductionFactions(Faction.LC).setTechRating(TechRating.E)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
 	}
 }

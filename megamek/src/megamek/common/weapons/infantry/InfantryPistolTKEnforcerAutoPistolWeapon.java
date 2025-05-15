@@ -48,11 +48,11 @@ public class InfantryPistolTKEnforcerAutoPistolWeapon extends InfantryWeapon {
 		shots = 20;
 		bursts = 5;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3058, 3085, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3055, 3058, 3085, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_LC).setTechRating(RATING_C)
-		        .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B);
+		        .setPrototypeFactions(Faction.LC)
+		        .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.B, TechRating.B);
 
 	}
 }

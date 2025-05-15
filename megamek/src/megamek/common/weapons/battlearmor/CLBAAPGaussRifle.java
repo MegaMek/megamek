@@ -44,14 +44,14 @@ public class CLBAAPGaussRifle extends Weapon {
         explosionDamage = 3;
         flags = flags.or(F_BA_WEAPON).or(F_BURST_FIRE).or(F_BALLISTIC).or(F_NO_FIRES).or(F_DIRECT_FIRE);
         rulesRefs = "255, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setClanAdvancement(3066, 3069, 3072, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CJF)
-                .setProductionFactions(F_CJF);
+                .setPrototypeFactions(Faction.CJF)
+                .setProductionFactions(Faction.CJF);
     }
 }

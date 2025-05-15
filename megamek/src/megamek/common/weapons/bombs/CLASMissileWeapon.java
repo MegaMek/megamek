@@ -60,11 +60,11 @@ public class CLASMissileWeapon extends ThunderBoltWeapon {
         capital = false;
         this.missileArmor = 30;
         rulesRefs = "358, TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setTechRating(TechRating.D)
+        .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
         .setISAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
         .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }

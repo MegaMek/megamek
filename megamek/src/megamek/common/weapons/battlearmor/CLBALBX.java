@@ -57,13 +57,13 @@ public class CLBALBX extends Weapon {
         // TODO: implement F_NO_COUNT_AMMO
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_BALLISTIC).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "207, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        techAdvancement.setTechBase(TechBase.CLAN)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setClanAdvancement(3075, 3085)
                 .setClanApproximate(false, false)
-                .setPrototypeFactions(F_CNC)
-                .setProductionFactions(F_CNC)
+                .setPrototypeFactions(Faction.CNC)
+                .setProductionFactions(Faction.CNC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

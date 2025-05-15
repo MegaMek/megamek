@@ -43,16 +43,16 @@ public class NPPCWeaponMedium extends NPPCWeapon {
         extAV = 9;
         maxRange = RANGE_EXT;
         rulesRefs = "333, TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_D, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.D, TechRating.X, TechRating.E, TechRating.E)
                 .setISAdvancement(2350, 2356, DATE_NONE, 2950, 3052)
                 .setISApproximate(true, true, false, true, false)
                 .setClanAdvancement(2350, 2356, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_DC);
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.DC);
     }
 }

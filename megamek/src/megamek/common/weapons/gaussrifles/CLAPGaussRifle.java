@@ -47,14 +47,14 @@ public class CLAPGaussRifle extends GaussWeapon {
         this.atClass = CLASS_POINT_DEFENSE;
         explosionDamage = 3;
         rulesRefs = "218, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setClanAdvancement(3065, 3069, 3072, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CJF)
-                .setProductionFactions(F_CJF);
+                .setPrototypeFactions(Faction.CJF)
+                .setProductionFactions(Faction.CJF);
     }
 }

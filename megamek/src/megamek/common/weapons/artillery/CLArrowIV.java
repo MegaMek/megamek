@@ -38,12 +38,12 @@ public class CLArrowIV extends ArrowIV {
         tonnage = 12;
         criticals = 12;
         svslots = 6;
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+        techAdvancement.setTechBase(TechBase.CLAN)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.D)
                 .setClanAdvancement(DATE_NONE, 2844, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CHH)
+                .setPrototypeFactions(Faction.CHH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

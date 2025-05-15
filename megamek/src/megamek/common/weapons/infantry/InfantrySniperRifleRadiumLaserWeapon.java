@@ -48,11 +48,11 @@ public class InfantrySniperRifleRadiumLaserWeapon extends InfantryWeapon {
 		ammoCost = 650;
 		shots = 5;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2582, 2583, DATE_NONE, 2607, 3062)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2582, 2583, DATE_NONE, 2607, 3062)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_TC)
-		        .setProductionFactions(F_TC).setReintroductionFactions(F_TC).setTechRating(RATING_E)
-		        .setAvailability(RATING_F, RATING_X, RATING_F, RATING_F);
+		        .setPrototypeFactions(Faction.TC)
+		        .setProductionFactions(Faction.TC).setReintroductionFactions(Faction.TC).setTechRating(TechRating.E)
+		        .setAvailability(TechRating.F, TechRating.X, TechRating.F, TechRating.F);
 
 	}
 }

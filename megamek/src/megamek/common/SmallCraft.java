@@ -52,15 +52,15 @@ public class SmallCraft extends Aero {
     private int escapePodsLaunched = 0;
     private int lifeBoatsLaunched = 0;
 
-    private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_NONE,
+    private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_NONE,
                 2350,
                 2400)
                                                              .setISApproximate(false, true, false)
-                                                             .setProductionFactions(F_TH)
-                                                             .setTechRating(RATING_D)
-                                                             .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+                                                             .setProductionFactions(Faction.TH)
+                                                             .setTechRating(TechRating.D)
+                                                             .setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.D)
                                                              .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_SM_CRAFT_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+    private static final TechAdvancement TA_SM_CRAFT_PRIMITIVE = new TechAdvancement(TechBase.IS)
                                                                        // Per MUL team and per availability codes should exist to around 2781
                                                                        .setISAdvancement(DATE_ES,
                                                                              2200,
@@ -72,12 +72,12 @@ public class SmallCraft extends Aero {
                                                                              false,
                                                                              true,
                                                                              false)
-                                                                       .setProductionFactions(F_TA)
-                                                                       .setTechRating(RATING_D)
-                                                                       .setAvailability(RATING_D,
-                                                                             RATING_X,
-                                                                             RATING_F,
-                                                                             RATING_F)
+                                                                       .setProductionFactions(Faction.TA)
+                                                                       .setTechRating(TechRating.D)
+                                                                       .setAvailability(TechRating.D,
+                                                                             TechRating.X,
+                                                                             TechRating.F,
+                                                                             TechRating.F)
                                                                        .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override

@@ -53,13 +53,13 @@ public class CLImprovedGaussRifle extends GaussWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = 20;
         rulesRefs = "96, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_E, RATING_X, RATING_E)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.X, TechRating.E)
                 .setClanAdvancement(2818, 2821, 2822, 2837, 3080)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CGS)
-                .setProductionFactions(F_CGS)
-                .setReintroductionFactions(F_EI)
+                .setPrototypeFactions(Faction.CGS)
+                .setProductionFactions(Faction.CGS)
+                .setReintroductionFactions(Faction.EI)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

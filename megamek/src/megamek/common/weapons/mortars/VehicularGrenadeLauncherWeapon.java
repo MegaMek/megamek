@@ -56,11 +56,11 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
         cost = 10000;
         rulesRefs = "315, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_D, RATING_E, RATING_F, RATING_E)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.D, TechRating.E, TechRating.F, TechRating.E)
                 .setISAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)

@@ -50,11 +50,11 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
         shots = 180;
         bursts = 6;
         rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN)
+		techAdvancement.setTechBase(TechBase.CLAN)
 		        .setClanAdvancement(3059, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
-		        .setProductionFactions(F_CHH).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CHH)
+		        .setProductionFactions(Faction.CHH).setTechRating(TechRating.D)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D);
 
     }
 }

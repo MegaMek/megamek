@@ -50,17 +50,17 @@ public abstract class BPodWeapon extends AmmoWeapon {
         cost = 2500;
         explosionDamage = 2;
         rulesRefs = "204, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3068, 3068, 3070, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(3065, 3068, 3070, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CWX, F_LC, F_WB, F_FW)
-                .setProductionFactions(F_CWX);
+                .setPrototypeFactions(Faction.CWX, Faction.LC, Faction.WB, Faction.FW)
+                .setProductionFactions(Faction.CWX);
     }
 
     /*

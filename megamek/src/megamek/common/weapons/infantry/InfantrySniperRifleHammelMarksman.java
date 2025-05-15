@@ -47,11 +47,11 @@ public class InfantrySniperRifleHammelMarksman extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #1";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_C,RATING_C,RATING_C,RATING_B)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(TechRating.C,TechRating.C,TechRating.C,TechRating.B)
        .setISAdvancement(DATE_NONE, DATE_NONE,DATE_ES,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_FW);
+       .setProductionFactions(Faction.FW);
    }
 }

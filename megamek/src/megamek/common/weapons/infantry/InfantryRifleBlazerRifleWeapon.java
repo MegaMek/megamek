@@ -46,11 +46,11 @@ public class InfantryRifleBlazerRifleWeapon extends InfantryWeapon {
         ammoWeight = 0.0003;
         shots = 3;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2290, 2350, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2100, 2290, 2350, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2100, 2290, 2350, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setProductionFactions(F_FW)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_D, RATING_C);
+                .setClanApproximate(false, false, false, false, false).setProductionFactions(Faction.FW)
+                .setTechRating(TechRating.D).setAvailability(TechRating.C, TechRating.C, TechRating.D, TechRating.C);
 
     }
 }

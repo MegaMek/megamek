@@ -41,14 +41,14 @@ public class ISUAC20 extends UACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         rulesRefs = "208, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3057, 3060, 3061, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_LC,F_FW);
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.LC,Faction.FW);
     }
 }

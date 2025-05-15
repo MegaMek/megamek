@@ -41,14 +41,14 @@ public class ISImprovedNarcOS extends NarcWeapon {
         flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 250000;
         rulesRefs = "232, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setTechRating(TechRating.E)
+            .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
             .setISAdvancement(3054, 3062, 3070, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false, false, false)
-            .setPrototypeFactions(F_CS)
-            .setProductionFactions(F_CS / F_WB);
+            .setPrototypeFactions(Faction.CS)
+            .setProductionFactions(Faction.CS, Faction.WB);
     }
 }

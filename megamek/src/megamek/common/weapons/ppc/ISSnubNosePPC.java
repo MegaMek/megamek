@@ -54,16 +54,16 @@ public class ISSnubNosePPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         rulesRefs = "234, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_X, RATING_F, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.X, TechRating.F, TechRating.D)
                 .setISAdvancement(2695, 2784, 3068, 2790, 3067)
                 .setISApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_DC, F_FW);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.DC, Faction.FW);
     }
 
     @Override

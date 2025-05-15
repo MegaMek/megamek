@@ -42,16 +42,16 @@ public class NL45Weapon extends NLWeapon {
         this.extAV = 4.5;
         this.maxRange = RANGE_EXT;
         rulesRefs = "333, TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_D, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.D, TechRating.X, TechRating.E, TechRating.E)
                 .setISAdvancement(DATE_ES, 2305, DATE_NONE, 2950, 3051)
                 .setISApproximate(false, true, false, true, false)
                 .setClanAdvancement(DATE_ES, 2305, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setProductionFactions(F_TA)
-                .setReintroductionFactions(F_FS, F_LC);
+                .setProductionFactions(Faction.TA)
+                .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 }

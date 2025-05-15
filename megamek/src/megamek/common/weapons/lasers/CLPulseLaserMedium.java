@@ -46,14 +46,14 @@ public class CLPulseLaserMedium extends PulseLaserWeapon {
         medAV = 7;
         maxRange = RANGE_MED;
         rulesRefs = "226, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_D, RATING_C, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.C, TechRating.C)
                 .setClanAdvancement(2825, 2827, 2831, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CJF,F_CGB)
-                .setProductionFactions(F_CJF);
+                .setPrototypeFactions(Faction.CJF,Faction.CGB)
+                .setProductionFactions(Faction.CJF);
     }
 }

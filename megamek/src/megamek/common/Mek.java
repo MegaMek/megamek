@@ -2903,67 +2903,67 @@ public abstract class Mek extends Entity {
             int weightClass) {
         if ((etype & ETYPE_TRIPOD_MEK) != 0) {
             if (weightClass != EntityWeightClass.WEIGHT_SUPER_HEAVY) {
-                return new TechAdvancement(TECH_BASE_IS)
-                        .setISAdvancement(2585, 2602).setISApproximate(true).setPrototypeFactions(F_TH)
-                        .setProductionFactions(F_TH).setTechRating(RATING_D)
-                        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
+                return new TechAdvancement(TechBase.IS)
+                        .setISAdvancement(2585, 2602).setISApproximate(true).setPrototypeFactions(Faction.TH)
+                        .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+                        .setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.E)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
             } else {
-                return new TechAdvancement(TECH_BASE_IS)
-                        .setISAdvancement(2930, 2940).setISApproximate(true).setPrototypeFactions(F_FW)
-                        .setProductionFactions(F_FW).setTechRating(RATING_D)
-                        .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+                return new TechAdvancement(TechBase.IS)
+                        .setISAdvancement(2930, 2940).setISApproximate(true).setPrototypeFactions(Faction.FW)
+                        .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
+                        .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.F)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
             }
         } else if (primitive && industrial) {
-            return new TechAdvancement(TECH_BASE_IS)
-                    .setISAdvancement(2300, 2350, 2425, 2520).setPrototypeFactions(F_TA)
-                    .setProductionFactions(F_TH).setTechRating(RATING_D)
-                    .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
+            return new TechAdvancement(TechBase.IS)
+                    .setISAdvancement(2300, 2350, 2425, 2520).setPrototypeFactions(Faction.TA)
+                    .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+                    .setAvailability(TechRating.D, TechRating.X, TechRating.F, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (primitive) {
-            return new TechAdvancement(TECH_BASE_IS)
-                    .setISAdvancement(2439, 2443, 2470, 2520).setPrototypeFactions(F_TH)
-                    .setProductionFactions(F_TH).setTechRating(RATING_C)
-                    .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F)
+            return new TechAdvancement(TechBase.IS)
+                    .setISAdvancement(2439, 2443, 2470, 2520).setPrototypeFactions(Faction.TH)
+                    .setProductionFactions(Faction.TH).setTechRating(TechRating.C)
+                    .setAvailability(TechRating.C, TechRating.X, TechRating.F, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (industrial && (EntityWeightClass.WEIGHT_SUPER_HEAVY == weightClass)) {
             // Superheavy industrialmeks don't have a separate entry on the tech advancement
             // table in IO, but the dates for the superheavy tripod are based on the
             // three-man digging machine, which is an industrialmek.
-            return new TechAdvancement(TECH_BASE_IS)
-                    .setAdvancement(2930, 2940).setPrototypeFactions(F_FW)
-                    .setProductionFactions(F_FW).setTechRating(RATING_D)
-                    .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+            return new TechAdvancement(TechBase.IS)
+                    .setAdvancement(2930, 2940).setPrototypeFactions(Faction.FW)
+                    .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
+                    .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (industrial) {
-            return new TechAdvancement(TECH_BASE_ALL)
+            return new TechAdvancement(ITechnology.TechBase.ALL)
                          // Book says 2460 but some of the systems required for non-primitive BMs don't exist until 2463
                          // IMs can't be constructed in 2460-2462 and trying causes bugs
-                    .setAdvancement(2463, 2470, 2500).setPrototypeFactions(F_TH)
-                    .setProductionFactions(F_TH).setTechRating(RATING_C)
-                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+                    .setAdvancement(2463, 2470, 2500).setPrototypeFactions(Faction.TH)
+                    .setProductionFactions(Faction.TH).setTechRating(TechRating.C)
+                    .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.B)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD);
         } else if (EntityWeightClass.WEIGHT_ULTRA_LIGHT == weightClass) {
-            return new TechAdvancement(TECH_BASE_ALL)
-                    .setAdvancement(2500, 2519, 3075).setPrototypeFactions(F_TH, F_FW)
-                    .setProductionFactions(F_FW).setApproximate(true, false, true)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+            return new TechAdvancement(ITechnology.TechBase.ALL)
+                    .setAdvancement(2500, 2519, 3075).setPrototypeFactions(Faction.TH, Faction.FW)
+                    .setProductionFactions(Faction.FW).setApproximate(true, false, true)
+                    .setTechRating(TechRating.D)
+                    .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.E)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (EntityWeightClass.WEIGHT_SUPER_HEAVY == weightClass) {
-            return new TechAdvancement(TECH_BASE_IS)
-                    .setISAdvancement(3077, 3078).setPrototypeFactions(F_WB)
-                    .setProductionFactions(F_WB).setTechRating(RATING_D)
-                    .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
+            return new TechAdvancement(TechBase.IS)
+                    .setISAdvancement(3077, 3078).setPrototypeFactions(Faction.WB)
+                    .setProductionFactions(Faction.WB).setTechRating(TechRating.D)
+                    .setAvailability(TechRating.X, TechRating.F, TechRating.F, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else {
-            return new TechAdvancement(TECH_BASE_ALL)
+            return new TechAdvancement(ITechnology.TechBase.ALL)
                          // Book says 2460 but some of the systems required for non-primitive BMs don't exist until 2463
                          // BMs can't be constructed in 2460-2462 and trying causes bugs
-                    .setAdvancement(2463, 2470, 2500).setPrototypeFactions(F_TH)
-                    .setProductionFactions(F_TH).setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+                    .setAdvancement(2463, 2470, 2500).setPrototypeFactions(Faction.TH)
+                    .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+                    .setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.C)
                     .setStaticTechLevel(SimpleTechLevel.INTRO);
         }
     }
@@ -2974,136 +2974,136 @@ public abstract class Mek extends Entity {
     }
 
     private static final TechAdvancement[] GYRO_TA = {
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, 2505)
-                    .setApproximate(true, false, false).setPrototypeFactions(F_TA)
-                    .setProductionFactions(F_TH).setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(2300, 2350, 2505)
+                    .setApproximate(true, false, false).setPrototypeFactions(Faction.TA)
+                    .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+                    .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                     .setStaticTechLevel(SimpleTechLevel.INTRO), // Standard
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3067, 3072)
-                    .setISApproximate(true, false, false).setPrototypeFactions(F_CS)
-                    .setProductionFactions(F_CS).setTechRating(RATING_E)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            new TechAdvancement(TechBase.IS).setISAdvancement(3055, 3067, 3072)
+                    .setISApproximate(true, false, false).setPrototypeFactions(Faction.CS)
+                    .setProductionFactions(Faction.CS).setTechRating(TechRating.E)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD), // XL
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3068, 3072)
-                    .setISApproximate(true, false, false).setPrototypeFactions(F_FS, F_LC)
-                    .setProductionFactions(F_FS, F_LC).setTechRating(RATING_E)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            new TechAdvancement(TechBase.IS).setISAdvancement(3055, 3068, 3072)
+                    .setISApproximate(true, false, false).setPrototypeFactions(Faction.FS, Faction.LC)
+                    .setProductionFactions(Faction.FS, Faction.LC).setTechRating(TechRating.E)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD), // Compact
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3067, 3072)
-                    .setISApproximate(true, false, false).setPrototypeFactions(F_DC)
-                    .setProductionFactions(F_DC).setTechRating(RATING_E)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            new TechAdvancement(TechBase.IS).setISAdvancement(3055, 3067, 3072)
+                    .setISApproximate(true, false, false).setPrototypeFactions(Faction.DC)
+                    .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD), // Heavy duty
-            new TechAdvancement(TECH_BASE_IS).setAdvancement(DATE_NONE)
-                    .setTechRating(RATING_A)
-                    .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            new TechAdvancement(TechBase.IS).setAdvancement(DATE_NONE)
+                    .setTechRating(TechRating.A)
+                    .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // None (placeholder)
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2905, 2940)
-                    .setISApproximate(true, false).setPrototypeFactions(F_FW)
-                    .setProductionFactions(F_FW).setTechRating(RATING_D)
-                    .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
+            new TechAdvancement(TechBase.IS).setISAdvancement(2905, 2940)
+                    .setISApproximate(true, false).setPrototypeFactions(Faction.FW)
+                    .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
+                    .setAvailability(TechRating.X, TechRating.F, TechRating.F, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy
     };
 
     private static final TechAdvancement[] COCKPIT_TA = {
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
-                    .setApproximate(true, false, false).setTechRating(RATING_D)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(2468, 2470, 2487)
+                    .setApproximate(true, false, false).setTechRating(TechRating.D)
+                    .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+                    .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                     .setStaticTechLevel(SimpleTechLevel.INTRO), // Standard
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3060, 3067, 3080)
+            new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(3060, 3067, 3080)
                     .setISApproximate(true, false, false)
-                    .setClanAdvancement(DATE_NONE, 3080, 3080).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_FS).setProductionFactions(F_FS, F_CJF)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                    .setClanAdvancement(DATE_NONE, 3080, 3080).setTechRating(TechRating.E)
+                    .setPrototypeFactions(Faction.FS).setProductionFactions(Faction.FS, Faction.CJF)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD), // Small
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
+            new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
                     .setISApproximate(true, false, false, true, true)
                     .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setReintroductionFactions(F_FS).setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
+                    .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+                    .setReintroductionFactions(Faction.FS).setTechRating(TechRating.D)
+                    .setAvailability(TechRating.C, TechRating.F, TechRating.E, TechRating.D)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Cockpit command console
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3053, 3080, 3100)
+            new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(3053, 3080, 3100)
                     .setClanAdvancement(3055, 3080, 3100)
-                    .setPrototypeFactions(F_FS, F_LC, F_CSJ).setProductionFactions(F_LC)
-                    .setApproximate(false, true, false).setTechRating(RATING_D)
-                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                    .setPrototypeFactions(Faction.FS, Faction.LC, Faction.CSJ).setProductionFactions(Faction.LC)
+                    .setApproximate(false, true, false).setTechRating(TechRating.D)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // Torso mounted
             // FIXME: Dual is unofficial; these are stats for standard
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
-                    .setApproximate(true, false, false).setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(2468, 2470, 2487)
+                    .setApproximate(true, false, false).setTechRating(TechRating.D)
+                    .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                     .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL), // Dual
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2469, 2470, 2490)
-                    .setApproximate(true, false, false).setTechRating(RATING_C)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setAvailability(RATING_B, RATING_C, RATING_C, RATING_B)
+            new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(2469, 2470, 2490)
+                    .setApproximate(true, false, false).setTechRating(TechRating.C)
+                    .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+                    .setAvailability(TechRating.B, TechRating.C, TechRating.C, TechRating.B)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD), // Industrial
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2430, 2439)
-                    .setApproximate(true, false).setTechRating(RATING_D)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F)
+            new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(2430, 2439)
+                    .setApproximate(true, false).setTechRating(TechRating.D)
+                    .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+                    .setAvailability(TechRating.D, TechRating.X, TechRating.X, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Primitive
-            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, DATE_NONE, 2520)
-                    .setApproximate(true, false, false).setTechRating(RATING_C)
-                    .setPrototypeFactions(F_TA).setProductionFactions(F_TH)
-                    .setAvailability(RATING_C, RATING_X, RATING_X, RATING_F)
+            new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(2300, 2350, DATE_NONE, 2520)
+                    .setApproximate(true, false, false).setTechRating(TechRating.C)
+                    .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)
+                    .setAvailability(TechRating.C, TechRating.X, TechRating.X, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Primitive industrial
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3060, 3076)
-                    .setISApproximate(true, false).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_WB).setProductionFactions(F_WB)
-                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            new TechAdvancement(TechBase.IS).setISAdvancement(3060, 3076)
+                    .setISApproximate(true, false).setTechRating(TechRating.E)
+                    .setPrototypeFactions(Faction.WB).setProductionFactions(Faction.WB)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3130, 3135)
-                    .setISApproximate(true, false).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_RS).setProductionFactions(F_RS)
-                    .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+            new TechAdvancement(TechBase.IS).setISAdvancement(3130, 3135)
+                    .setISApproximate(true, false).setTechRating(TechRating.E)
+                    .setPrototypeFactions(Faction.RS).setProductionFactions(Faction.RS)
+                    .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy tripod
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2590, 2702)
-                    .setISApproximate(true, false).setTechRating(RATING_F)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+            new TechAdvancement(TechBase.IS).setISAdvancement(2590, 2702)
+                    .setISApproximate(true, false).setTechRating(TechRating.F)
+                    .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Tripod
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3074).setClanAdvancement(3083)
-                    .setApproximate(true).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_WB, F_CHH)
-                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+            new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(3074).setClanAdvancement(3083)
+                    .setApproximate(true).setTechRating(TechRating.E)
+                    .setPrototypeFactions(Faction.WB, Faction.CHH)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // Cockpit interface
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3052, DATE_NONE, DATE_NONE, 3055)
-                    .setPrototypeFactions(F_FS, F_LC).setTechRating(RATING_E)
-                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+            new TechAdvancement(TechBase.IS).setISAdvancement(3052, DATE_NONE, DATE_NONE, 3055)
+                    .setPrototypeFactions(Faction.FS, Faction.LC).setTechRating(TechRating.E)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.X)
                     .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // VRRP
-            new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3130, 3135)
-                    .setClanApproximate(true, false).setTechRating(RATING_F)
-                    .setPrototypeFactions(F_CHH).setProductionFactions(F_CHH)
-                    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+            new TechAdvancement(ITechnology.TechBase.CLAN).setClanAdvancement(3130, 3135)
+                    .setClanApproximate(true, false).setTechRating(TechRating.F)
+                    .setPrototypeFactions(Faction.CHH).setProductionFactions(Faction.CHH)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // QuadVee
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2905, 2940)
-                    .setISApproximate(true, false).setTechRating(RATING_D)
-                    .setPrototypeFactions(F_FW).setProductionFactions(F_FW)
-                    .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
+            new TechAdvancement(TechBase.IS).setISAdvancement(2905, 2940)
+                    .setISApproximate(true, false).setTechRating(TechRating.D)
+                    .setPrototypeFactions(Faction.FW).setProductionFactions(Faction.FW)
+                    .setAvailability(TechRating.X, TechRating.F, TechRating.F, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy industrial
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3060, 3076)
-                    .setISApproximate(true, false).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_WB).setProductionFactions(F_WB)
-                    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            new TechAdvancement(TechBase.IS).setISAdvancement(3060, 3076)
+                    .setISApproximate(true, false).setTechRating(TechRating.E)
+                    .setPrototypeFactions(Faction.WB).setProductionFactions(Faction.WB)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy command console
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3060, 3067, 3080)
+            new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(3060, 3067, 3080)
                     .setISApproximate(true, false, false)
-                    .setClanAdvancement(DATE_NONE, 3080, 3080).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_FS).setProductionFactions(F_FS, F_CJF)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                    .setClanAdvancement(DATE_NONE, 3080, 3080).setTechRating(TechRating.E)
+                    .setPrototypeFactions(Faction.FS).setProductionFactions(Faction.FS, Faction.CJF)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Small Command Console
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3130, 3135)
-                    .setISApproximate(true, false).setTechRating(RATING_E)
-                    .setPrototypeFactions(F_RS).setProductionFactions(F_RS)
-                    .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+            new TechAdvancement(TechBase.IS).setISAdvancement(3130, 3135)
+                    .setISApproximate(true, false).setTechRating(TechRating.E)
+                    .setPrototypeFactions(Faction.RS).setProductionFactions(Faction.RS)
+                    .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy tripod
-            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2590, 2702)
-                    .setISApproximate(true, false).setTechRating(RATING_F)
-                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+            new TechAdvancement(TechBase.IS).setISAdvancement(2590, 2702)
+                    .setISApproximate(true, false).setTechRating(TechRating.F)
+                    .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+                    .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Tripod
     };
 
@@ -3111,10 +3111,10 @@ public abstract class Mek extends Entity {
     // cockpit,
     // but the tech progression is different.
     public static TechAdvancement getIndustrialAdvFireConTA() {
-        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2469, 2470, 2491)
-                .setApproximate(true, false, false).setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TH).setTechRating(RATING_D)
-                .setAvailability(RATING_D, RATING_E, RATING_E, RATING_D)
+        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(2469, 2470, 2491)
+                .setApproximate(true, false, false).setPrototypeFactions(Faction.TA)
+                .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+                .setAvailability(TechRating.D, TechRating.E, TechRating.E, TechRating.D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
@@ -3141,22 +3141,22 @@ public abstract class Mek extends Entity {
     }
 
     public static TechAdvancement getFullHeadEjectAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL)
+        return new TechAdvancement(ITechnology.TechBase.ALL)
                 .setISAdvancement(DATE_NONE, 3020, 3023, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
-                .setClanAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE).setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC, F_CWF).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE).setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC, Faction.CWF).setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     public static TechAdvancement getRiscHeatSinkOverrideKitAdvancement() {
-        return new TechAdvancement(ITechnology.TECH_BASE_IS)
+        return new TechAdvancement(ITechnology.TechBase.IS)
             .setAdvancement(3134, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
             .setApproximate(false, false, false, false, false)
-            .setPrototypeFactions(F_RS)
-            .setTechRating(RATING_D)
-            .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+            .setPrototypeFactions(Faction.RS)
+            .setTechRating(TechRating.D)
+            .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
@@ -3185,7 +3185,7 @@ public abstract class Mek extends Entity {
         // FIXME: Clan interface cockpit has higher tech rating
         // if (getCockpitType() == COCKPIT_INTERFACE && isClan()) {
         // techAdvancement.setTechRating(Math.max(techAdvancement.getTechRating(),
-        // RATING_F));
+        // TechRating.F));
         // }
     }
 

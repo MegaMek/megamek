@@ -26,9 +26,9 @@ public class CLRivetGun extends NailRivetGunWeapon {
         name = "Rivet Gun";
         setInternalName("CLRivet Gun");
         addLookupName("CLNailRivetGun");
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability(RATING_X, RATING_C, RATING_C, RATING_X);
+        techAdvancement.setTechRating(TechRating.C);
+        techAdvancement.setAvailability(TechRating.X, TechRating.C, TechRating.C, TechRating.X);
     }
 }

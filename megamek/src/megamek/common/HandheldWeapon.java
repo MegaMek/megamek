@@ -39,12 +39,12 @@ public class HandheldWeapon extends Entity {
         return UnitType.HANDHELD_WEAPON;
     }
 
-    private static final TechAdvancement ADVANCEMENT = new TechAdvancement(TECH_BASE_ALL).setAdvancement(3055, 3083)
+    private static final TechAdvancement ADVANCEMENT = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(3055, 3083)
                                                              .setApproximate(false, true)
-                                                             .setPrototypeFactions(F_FS, F_LC)
-                                                             .setProductionFactions(F_FS, F_LC)
-                                                             .setTechRating(RATING_D)
-                                                             .setAvailability(RATING_E, RATING_E, RATING_F, RATING_E)
+                                                             .setPrototypeFactions(Faction.FS, Faction.LC)
+                                                             .setProductionFactions(Faction.FS, Faction.LC)
+                                                             .setTechRating(TechRating.D)
+                                                             .setAvailability(TechRating.E, TechRating.E, TechRating.F, TechRating.E)
                                                              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     @Override

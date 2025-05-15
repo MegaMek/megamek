@@ -46,10 +46,10 @@ public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
 		shots = 6;
 		bursts = 1;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3052, 3055, 3075, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3052, 3055, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_WB)
-		        .setProductionFactions(F_WB).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		        .setPrototypeFactions(Faction.WB)
+		        .setProductionFactions(Faction.WB).setTechRating(TechRating.E)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D);
 	}
 }

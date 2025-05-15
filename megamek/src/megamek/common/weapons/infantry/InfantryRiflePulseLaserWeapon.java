@@ -47,12 +47,12 @@ public class InfantryRiflePulseLaserWeapon extends InfantryWeapon {
 		shots = 6;
 		bursts = 1;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2678, 2680, 2700, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2678, 2680, 2700, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2678, 2680, 2700, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH).setTechRating(RATING_D)
-		        .setAvailability(RATING_D, RATING_E, RATING_C, RATING_C);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+		        .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+		        .setAvailability(TechRating.D, TechRating.E, TechRating.C, TechRating.C);
 
 	}
 }

@@ -49,11 +49,11 @@ public class InfantrySupportTsunamiHeavyGaussRifleWeapon extends InfantryWeapon 
 		ammoCost = 5;
 		shots = 5;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3053, 3056, 3068, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3053, 3056, 3068, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_DC)
-		        .setProductionFactions(F_DC).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_E);
+		        .setPrototypeFactions(Faction.DC)
+		        .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.E);
 
 	}
 }

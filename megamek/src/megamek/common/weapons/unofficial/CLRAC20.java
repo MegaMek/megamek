@@ -42,14 +42,14 @@ public class CLRAC20 extends RACWeapon {
         cost = 960000;
         rulesRefs = "Unofficial";
         flags = flags.andNot(F_PROTO_WEAPON);
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setClanAdvancement(3073, 3104, 3145, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CSF)
-                .setProductionFactions(F_CSF);
+                .setPrototypeFactions(Faction.CSF)
+                .setProductionFactions(Faction.CSF);
     }
 }

@@ -49,11 +49,11 @@ public class CLImprovedLRM20 extends LRMWeapon {
         ammoType = AmmoType.T_LRM_IMP;
         rulesRefs = "96, IO";
         flags = flags.andNot(F_PROTO_WEAPON);
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
+            .setAvailability(TechRating.X, TechRating.D, TechRating.X, TechRating.X)
             .setClanAdvancement(2815, 2818, 2820, 2831, 3080)
-            .setPrototypeFactions(F_CCY).setProductionFactions(F_CCY)
-            .setReintroductionFactions(F_EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setPrototypeFactions(Faction.CCY).setProductionFactions(Faction.CCY)
+            .setReintroductionFactions(Faction.EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     @Override

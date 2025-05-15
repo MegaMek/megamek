@@ -49,11 +49,11 @@ public class InfantryPistolSMGGHTSpec7aWeapon extends InfantryWeapon {
 		shots = 7;
 		bursts = 1;
 		rulesRefs = "176,HBHK";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(DATE_NONE, DATE_NONE, 2950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(DATE_NONE, DATE_NONE, 2950, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
-				.setPrototypeFactions(F_DC)
-				.setProductionFactions(F_DC).setTechRating(RATING_D)
-				.setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+				.setPrototypeFactions(Faction.DC)
+				.setProductionFactions(Faction.DC).setTechRating(TechRating.D)
+				.setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
 
 	}
 }

@@ -43,14 +43,14 @@ public class ISTHBUAC2 extends UACWeapon {
         this.cost = 150000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.
         rulesRefs = "THB (Unofficial)";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS);
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS);
     }
 }

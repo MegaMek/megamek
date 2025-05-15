@@ -126,7 +126,7 @@ public class CombatVehicleCostCalculator {
             for (int c = 0; c < structCostIdx; c++) {
                 costs[structCostIdx] += costs[c];
             }
-            double techRatingMultiplier = 0.5 + (tank.getStructuralTechRating() * 0.25);
+            double techRatingMultiplier = 0.5 + (tank.getStructuralTechRating().getIndex() * 0.25);
             costs[structCostIdx] *= techRatingMultiplier;
         } else {
             // IS has no variations, no Endo etc., but non-naval superheavies have heavier

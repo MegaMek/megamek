@@ -44,13 +44,13 @@ public class MassDriverHeavy extends MassDriverWeapon {
         this.medAV = 140;
         this.longAV = 140;
         rulesRefs = "323, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
-                .setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
+        techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
+                .setAvailability(TechRating.F, TechRating.X, TechRating.F, TechRating.F)
                 .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2715, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
-                .setPrototypeFactions(F_TH).setReintroductionFactions(F_WB)
+                .setPrototypeFactions(Faction.TH).setReintroductionFactions(Faction.WB)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

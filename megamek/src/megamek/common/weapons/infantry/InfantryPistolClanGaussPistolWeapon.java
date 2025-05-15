@@ -39,10 +39,10 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
         ammoCost = 1;
         shots = 4;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2845, 2850, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSA)
-                .setProductionFactions().setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_C);
+        techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2845, 2850, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSA)
+                .setProductionFactions().setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.C);
 
     }
 }

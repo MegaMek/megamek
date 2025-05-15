@@ -38,9 +38,9 @@ public class InfantryArchaicBladeArchaicSwordWeapon extends InfantryWeapon {
         infantryDamage = 0.04;
         infantryRange = 0;
         rulesRefs = "195, ATOW-C";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false).setTechRating(RATING_A)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_B);
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setTechRating(TechRating.A)
+                .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.B);
 
     }
 }

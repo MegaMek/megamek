@@ -76,77 +76,77 @@ public class Engine implements Serializable, ITechnology {
     // (MagLev from TO:AU&E pg 62)
     // The other engine types are assumed to have a value of 0 in the array
     // if not listed.
-    private static final double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][6];
+    private static final double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][EquipmentType.TechRating.values().length];
     static {
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_B] = 3.0;
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_C] = 2.0;
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_D] = 1.5;
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_E] = 1.3;
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_F] = 1.0;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.B.getIndex()] = 3.0;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.C.getIndex()] = 2.0;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.D.getIndex()] = 1.5;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.E.getIndex()] = 1.3;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.F.getIndex()] = 1.0;
 
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_C] = 1.5;
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_D] = 1.0;
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_E] = 0.75;
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_F] = 0.5;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.C.getIndex()] = 1.5;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.D.getIndex()] = 1.0;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.E.getIndex()] = 0.75;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.F.getIndex()] = 0.5;
 
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_C] = 1.2;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_D] = 1.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_E] = 0.9;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_F] = 0.7;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.C.getIndex()] = 1.2;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.D.getIndex()] = 1.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.E.getIndex()] = 0.9;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.F.getIndex()] = 0.7;
 
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_C] = 1.75;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_D] = 1.5;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_E] = 1.4;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_F] = 1.3;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.C.getIndex()] = 1.75;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.D.getIndex()] = 1.5;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.E.getIndex()] = 1.4;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.F.getIndex()] = 1.3;
 
-        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_C] = 0.0;
-        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_D] = 0.0;
-        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_E] = 0.0;
-        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_F] = 0.0;
+        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.C.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.D.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.E.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.F.getIndex()] = 0.0;
 
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_C] = 0.8;
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_D] = 0.7;
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_E] = 0.6;
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_F] = 0.5;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.C.getIndex()] = 0.8;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.D.getIndex()] = 0.7;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.E.getIndex()] = 0.6;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.F.getIndex()] = 0.5;
 
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_A] = 4.0;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_B] = 3.5;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_C] = 3.0;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_D] = 2.8;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_E] = 2.6;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_F] = 2.5;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.A.getIndex()] = 4.0;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.B.getIndex()] = 3.5;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.C.getIndex()] = 3.0;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.D.getIndex()] = 2.8;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.E.getIndex()] = 2.6;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.F.getIndex()] = 2.5;
 
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_C] = 1.5;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_D] = 1.2;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_E] = 1.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_F] = 0.8;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.C.getIndex()] = 1.5;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.D.getIndex()] = 1.2;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.E.getIndex()] = 1.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.F.getIndex()] = 0.8;
 
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_C] = 5.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_D] = 4.5;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_E] = 4.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_F] = 3.5;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.C.getIndex()] = 5.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.D.getIndex()] = 4.5;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.E.getIndex()] = 4.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.F.getIndex()] = 3.5;
 
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_B] = 1.4;
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_C] = 1.0;
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_D] = 0.8;
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_E] = 0.7;
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_F] = 0.6;
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.B.getIndex()] = 1.4;
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.C.getIndex()] = 1.0;
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.D.getIndex()] = 0.8;
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.E.getIndex()] = 0.7;
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.F.getIndex()] = 0.6;
     }
 
     public boolean engineValid;
@@ -344,13 +344,13 @@ public class Engine implements Serializable, ITechnology {
                 mp = Math.max(0, mp - 2);
             }
             double movementFactor = 4 + mp * mp;
-            double engineWeightMult = SV_ENGINE_RATINGS[engineType][entity.getEngineTechRating()];
+            double engineWeightMult = SV_ENGINE_RATINGS[engineType][entity.getEngineTechRating().getIndex()];
             double weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
             // Fusion engines have a minimum weight of 0.25t at D+ and 0.5t at C. Fission
             // engines have
             // a minimum of 5t at all tech ratings.
-            if ((engineType == NORMAL_ENGINE) && (entity.getEngineTechRating() >= RATING_D)) {
+            if ((engineType == NORMAL_ENGINE) && (entity.getEngineTechRating().getIndex() >= TechRating.D.getIndex())) {
                 weight = Math.max(weight, 0.25);
             } else if ((engineType == NORMAL_ENGINE) || (engineType == FISSION)) {
                 weight = Math.max(weight, 5);
@@ -776,166 +776,166 @@ public class Engine implements Serializable, ITechnology {
         }
     }
 
-    private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(ITechnology.TechBase.ALL)
             .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
-            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_D)
+            .setTechRating(TechRating.D).setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
 
-    private static final TechAdvancement LARGE_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement LARGE_FUSION_TA = new TechAdvancement(ITechnology.TechBase.ALL)
             .setAdvancement(2630, 3085, 3120).setApproximate(false, true, true)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_LC)
-            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_D)
+            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.LC)
+            .setTechRating(TechRating.D).setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
-    private static final TechAdvancement STANDARD_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement STANDARD_ICE_TA = new TechAdvancement(ITechnology.TechBase.ALL)
             .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
-            .setTechRating(RATING_C).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setTechRating(TechRating.C).setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
 
-    private static final TechAdvancement LARGE_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement LARGE_ICE_TA = new TechAdvancement(ITechnology.TechBase.ALL)
             .setAdvancement(DATE_NONE, 2630, 3120, DATE_NONE, DATE_NONE)
             .setApproximate(false, false, true, false, false)
-            .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_LC).setTechRating(RATING_C)
-            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setPrototypeFactions(Faction.TH)
+            .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
+            .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
-    private static final TechAdvancement LIGHT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
+    private static final TechAdvancement LIGHT_FUSION_TA = new TechAdvancement(TechBase.IS)
             .setISAdvancement(3055, 3062, 3067).setISApproximate(true, false, false)
-            .setPrototypeFactions(F_MERC).setProductionFactions(F_LC).setTechRating(RATING_D)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setPrototypeFactions(Faction.MERC).setProductionFactions(Faction.LC).setTechRating(TechRating.D)
+            .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement LARGE_LIGHT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
+    private static final TechAdvancement LARGE_LIGHT_FUSION_TA = new TechAdvancement(TechBase.IS)
             .setISAdvancement(3064, 3065).setISApproximate(true)
-            .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
-            .setTechRating(RATING_D).setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+            .setPrototypeFactions(Faction.LC).setProductionFactions(Faction.LC)
+            .setTechRating(TechRating.D).setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     // Greekfire requested Errata March 2022 for RS Jihad book.
-    private static final TechAdvancement COMPACT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
+    private static final TechAdvancement COMPACT_FUSION_TA = new TechAdvancement(TechBase.IS)
             .setISAdvancement(3060, 3066, 3072, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, true, false, false)
-            .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setPrototypeFactions(Faction.LC).setProductionFactions(Faction.LC)
+            .setTechRating(TechRating.E)
+            .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement IS_XL_TA = new TechAdvancement(TECH_BASE_IS)
+    private static final TechAdvancement IS_XL_TA = new TechAdvancement(TechBase.IS)
             .setISAdvancement(2556, 2579, 3045, 2865, 3035)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_LC)
-            .setTechRating(RATING_E).setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH).setReintroductionFactions(Faction.LC)
+            .setTechRating(TechRating.E).setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement CLAN_XL_TA = new TechAdvancement(TECH_BASE_CLAN)
+    private static final TechAdvancement CLAN_XL_TA = new TechAdvancement(ITechnology.TechBase.CLAN)
             .setClanAdvancement(2824, 2827, 2829).setClanApproximate(true)
-            .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
-            .setTechRating(RATING_F).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setPrototypeFactions(Faction.CSF).setProductionFactions(Faction.CSF)
+            .setTechRating(TechRating.F).setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement LARGE_IS_XL_TA = new TechAdvancement(TECH_BASE_IS)
+    private static final TechAdvancement LARGE_IS_XL_TA = new TechAdvancement(TechBase.IS)
             .setISAdvancement(2635, 3085, DATE_NONE, 2822, 3054).setISApproximate(true, true)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_LC, F_FS)
-            .setTechRating(RATING_E).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E)
+            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH).setReintroductionFactions(Faction.LC, Faction.FS)
+            .setTechRating(TechRating.E).setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.E)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
-    private static final TechAdvancement LARGE_CLAN_XL_TA = new TechAdvancement(TECH_BASE_CLAN)
+    private static final TechAdvancement LARGE_CLAN_XL_TA = new TechAdvancement(ITechnology.TechBase.CLAN)
             .setClanAdvancement(2850, 3080).setClanApproximate(true, true)
-            .setPrototypeFactions(F_CIH).setProductionFactions(F_CHH)
-            .setTechRating(RATING_F).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E)
+            .setPrototypeFactions(Faction.CIH).setProductionFactions(Faction.CHH)
+            .setTechRating(TechRating.F).setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.E)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     // Greekfire requested Errata March 2022 for RS Jihad book.
-    private static final TechAdvancement IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
+    private static final TechAdvancement IS_XXL_TA = new TechAdvancement(TechBase.IS)
             .setISAdvancement(3055, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(false, true, false, false, false)
-            .setPrototypeFactions(F_FS, F_LC).setProductionFactions(F_LC)
-            .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setPrototypeFactions(Faction.FS, Faction.LC).setProductionFactions(Faction.LC)
+            .setTechRating(TechRating.F).setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
-    private static final TechAdvancement CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
+    private static final TechAdvancement CLAN_XXL_TA = new TechAdvancement(ITechnology.TechBase.CLAN)
             .setClanAdvancement(3030, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, true)
-            .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
-            .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setPrototypeFactions(Faction.CSF).setProductionFactions(Faction.CSF)
+            .setTechRating(TechRating.F).setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
-    private static final TechAdvancement LARGE_IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
+    private static final TechAdvancement LARGE_IS_XXL_TA = new TechAdvancement(TechBase.IS)
             .setISAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(false, true, false, false, false)
-            .setTechRating(RATING_F)
-            .setPrototypeFactions(F_FS).setProductionFactions(F_LC)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+            .setTechRating(TechRating.F)
+            .setPrototypeFactions(Faction.FS).setProductionFactions(Faction.LC)
+            .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
-    private static final TechAdvancement LARGE_CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
+    private static final TechAdvancement LARGE_CLAN_XXL_TA = new TechAdvancement(ITechnology.TechBase.CLAN)
             .setClanAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, true, false, false, false)
-            .setTechRating(RATING_F)
-            .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+            .setTechRating(TechRating.F)
+            .setPrototypeFactions(Faction.CSF).setProductionFactions(Faction.CSF)
+            .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
-    private static final TechAdvancement FISSION_TA = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2470, 2882, 3079).setTechRating(RATING_D)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TC)
-            .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
+    private static final TechAdvancement FISSION_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+            .setAdvancement(2470, 2882, 3079).setTechRating(TechRating.D)
+            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TC)
+            .setAvailability(TechRating.E, TechRating.E, TechRating.D, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement FUEL_CELL_TA = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2300, 2470, 3078).setApproximate(true).setTechRating(RATING_D)
-            .setPrototypeFactions(F_TA).setProductionFactions(F_TH)
-            .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C)
+    private static final TechAdvancement FUEL_CELL_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+            .setAdvancement(2300, 2470, 3078).setApproximate(true).setTechRating(TechRating.D)
+            .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)
+            .setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_STEAM_TA = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
-            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+    private static final TechAdvancement SUPPORT_STEAM_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
+            .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
-            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+    private static final TechAdvancement SUPPORT_ICE_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.B)
+            .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_BATTERY_TA = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement SUPPORT_BATTERY_TA = new TechAdvancement(ITechnology.TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
+            .setTechRating(TechRating.C)
+            .setAvailability(TechRating.A, TechRating.B, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_FUEL_CELL_TA = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
-            .setAvailability(RATING_B, RATING_C, RATING_C, RATING_B)
+    private static final TechAdvancement SUPPORT_FUEL_CELL_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.C)
+            .setAvailability(TechRating.B, TechRating.C, TechRating.C, TechRating.B)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_SOLAR_TA = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement SUPPORT_SOLAR_TA = new TechAdvancement(ITechnology.TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setTechRating(TechRating.C)
+            .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_FISSION_TA = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
-            .setAvailability(RATING_E, RATING_E, RATING_D, RATING_C)
+    private static final TechAdvancement SUPPORT_FISSION_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
+            .setAvailability(TechRating.E, TechRating.E, TechRating.D, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
-            .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+    private static final TechAdvancement SUPPORT_FUSION_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
+            .setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_MAGLEV_TA = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
-            .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+    private static final TechAdvancement SUPPORT_MAGLEV_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
+            .setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_NONE_TA = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
-            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+    private static final TechAdvancement SUPPORT_NONE_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
+            .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_EXTERNAL_TA = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement SUPPORT_EXTERNAL_TA = new TechAdvancement(ITechnology.TechBase.ALL)
             .setAdvancement(DATE_NONE, DATE_NONE, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            .setTechRating(TechRating.B).setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C);
 
     public TechAdvancement getTechAdvancement() {
         switch (engineType) {
@@ -1249,7 +1249,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     @Override
-    public int getTechBase() {
+    public TechBase getTechBase() {
         return getTechAdvancement().getTechBase();
     }
 
@@ -1279,7 +1279,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     @Override
-    public int getIntroductionDate(boolean clan, int faction) {
+    public int getIntroductionDate(boolean clan, Faction faction) {
         return getTechAdvancement().getIntroductionDate(clan, faction);
     }
 
@@ -1299,7 +1299,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     @Override
-    public int getPrototypeDate(boolean clan, int faction) {
+    public int getPrototypeDate(boolean clan, Faction faction) {
         return getTechAdvancement().getPrototypeDate(clan, faction);
     }
 
@@ -1314,7 +1314,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     @Override
-    public int getProductionDate(boolean clan, int faction) {
+    public int getProductionDate(boolean clan, Faction faction) {
         return getTechAdvancement().getProductionDate(clan, faction);
     }
 
@@ -1339,7 +1339,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     @Override
-    public int getExtinctionDate(boolean clan, int faction) {
+    public int getExtinctionDate(boolean clan, Faction faction) {
         return getTechAdvancement().getExtinctionDate(clan, faction);
     }
 
@@ -1354,17 +1354,17 @@ public class Engine implements Serializable, ITechnology {
     }
 
     @Override
-    public int getReintroductionDate(boolean clan, int faction) {
+    public int getReintroductionDate(boolean clan, Faction faction) {
         return getTechAdvancement().getReintroductionDate(clan, faction);
     }
 
     @Override
-    public int getTechRating() {
+    public TechRating getTechRating() {
         return getTechAdvancement().getTechRating();
     }
 
     @Override
-    public int getBaseAvailability(int era) {
+    public TechRating getBaseAvailability(Era era) {
         return getTechAdvancement().getBaseAvailability(era);
     }
 

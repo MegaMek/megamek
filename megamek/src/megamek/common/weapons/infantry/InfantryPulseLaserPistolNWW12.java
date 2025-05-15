@@ -40,11 +40,11 @@ public class InfantryPulseLaserPistolNWW12 extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_C)
-                .setAvailability(new int[]{RATING_X, RATING_X, RATING_X, RATING_C})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_FW);
+                .setProductionFactions(Faction.FW);
     }
 }

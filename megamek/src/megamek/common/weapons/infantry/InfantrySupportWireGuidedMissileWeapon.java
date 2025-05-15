@@ -42,10 +42,10 @@ public class InfantrySupportWireGuidedMissileWeapon extends InfantryWeapon {
 		ammoCost = 2500;
 		shots = 1;
 		rulesRefs = "195, AToW-C";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-		        .setAvailability(RATING_E, RATING_F, RATING_X, RATING_X);
+		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+		        .setAvailability(TechRating.E, TechRating.F, TechRating.X, TechRating.X);
 	}
 }

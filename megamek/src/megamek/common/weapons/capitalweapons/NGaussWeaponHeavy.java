@@ -47,17 +47,17 @@ public class NGaussWeaponHeavy extends NGaussWeapon {
         extAV = 30;
         maxRange = RANGE_EXT;
         rulesRefs = "333, TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_X, RATING_E, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.X, TechRating.E, TechRating.X)
                 .setISAdvancement(2440, 2448, DATE_NONE, 2950, 3052)
                 .setISApproximate(true, true, false, true, false)
                 .setClanAdvancement(2440, 2448, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_DC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.DC);
     }
 }

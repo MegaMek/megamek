@@ -45,17 +45,17 @@ public class ISLRM10OS extends LRMWeapon {
         longAV = 6;
         maxRange = RANGE_LONG;
         rulesRefs = "230, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                 .setISAdvancement(2665, 2676, 3045, 2800, 3030)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2665, 2676, 3045, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FW);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FW);
     }
 }

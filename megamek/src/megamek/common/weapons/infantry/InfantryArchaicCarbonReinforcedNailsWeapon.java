@@ -37,10 +37,10 @@ public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
         infantryDamage = 0.02;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2980, 2990, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_E);
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2980, 2990, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC).setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.E);
 
     }
 }

@@ -45,12 +45,12 @@ public class InfantryPistolGyrojetPistolWeapon extends InfantryWeapon {
         ammoCost = 1;
         shots = 2;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2620, 2625, 2700, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2620, 2625, 2700, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2620, 2625, 2700, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setTechRating(RATING_D)
-                .setAvailability(RATING_D, RATING_D, RATING_C, RATING_B);
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+                .setAvailability(TechRating.D, TechRating.D, TechRating.C, TechRating.B);
 
     }
 }

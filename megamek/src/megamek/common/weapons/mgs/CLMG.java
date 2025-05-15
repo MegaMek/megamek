@@ -44,14 +44,14 @@ public class CLMG extends MGWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_B, RATING_B, RATING_A)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.B, TechRating.B, TechRating.A)
                 .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSF)
-                .setProductionFactions(F_CSF);
+                .setPrototypeFactions(Faction.CSF)
+                .setProductionFactions(Faction.CSF);
     }
 }

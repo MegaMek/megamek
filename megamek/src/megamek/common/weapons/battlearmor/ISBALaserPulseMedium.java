@@ -47,14 +47,14 @@ public class ISBALaserPulseMedium extends PulseLaserWeapon {
         shortAV = 6;
         maxRange = RANGE_SHORT;
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C)
                 .setISAdvancement(3057, 3060, 3062, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC);
+                .setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC);
     }
 }

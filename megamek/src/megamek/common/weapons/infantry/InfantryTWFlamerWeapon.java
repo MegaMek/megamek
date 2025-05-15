@@ -44,13 +44,13 @@ public class InfantryTWFlamerWeapon extends InfantryWeapon {
         crew = 1;
         // This Weapon has been replaced by the Flamer Pistol. Moving to
         // Unofficial.
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
             .setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false, false, false)
             .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, false, false, false, false)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            .setTechRating(TechRating.C)
+            .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
             .setUnofficial(true);
     }
 }

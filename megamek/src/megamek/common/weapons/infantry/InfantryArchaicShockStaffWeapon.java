@@ -37,11 +37,11 @@ public class InfantryArchaicShockStaffWeapon extends InfantryWeapon {
         infantryDamage = 0.21;
         infantryRange = 0;
         rulesRefs = "195, AToW-C";
-        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3074, 3077, 3130, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3074, 3077, 3130, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, true, false, false, false)
                 .setClanAdvancement(3074, 3077, 3130, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
     }
 }

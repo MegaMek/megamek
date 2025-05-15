@@ -55,16 +55,16 @@ public class ISGaussRifle extends GaussWeapon {
         explosionDamage = 20;
         rulesRefs = "219, TM";
         flags = flags.andNot(F_PROTO_WEAPON);
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.D, TechRating.F, TechRating.D, TechRating.C)
                 .setISAdvancement(2587, 2590, 3045, 2865, 3040)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FC, F_FW, F_DC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FC, Faction.FW, Faction.DC);
     }
 
     @Override

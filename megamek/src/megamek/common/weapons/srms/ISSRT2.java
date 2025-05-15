@@ -44,15 +44,15 @@ public class ISSRT2 extends SRTWeapon {
         flags = flags.or(F_NO_FIRES);
         cost = 10000;
         rulesRefs = "230, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                 .setISAdvancement(2665, 2676, 3045, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FW);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FW);
     }
 }

@@ -52,15 +52,15 @@ public class CLGaussRifle extends GaussWeapon {
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
         rulesRefs = "219, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.F, TechRating.D, TechRating.D)
                 .setClanAdvancement(2822, 2828, 2830, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CBR)
-                .setProductionFactions(F_CBR);
+                .setPrototypeFactions(Faction.CBR)
+                .setProductionFactions(Faction.CBR);
     }
 
     /*

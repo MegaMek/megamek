@@ -49,18 +49,18 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_EXT;
         this.atClass = CLASS_AR10;
         rulesRefs = "210, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.D)
                 .setISAdvancement(2540, 2550, 3055, 2950, 3051)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2540, 2550, 3055, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 
     @Override

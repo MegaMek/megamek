@@ -45,10 +45,10 @@ public class CLStreakLRM10IOS extends StreakLRMWeapon {
         longAV = 15;
         maxRange = RANGE_LONG;
         rulesRefs = "327, TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_B)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.B)
+            .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
             .setClanAdvancement(3058, 3081, 3088).setClanApproximate(false, true, false)
-            .setPrototypeFactions(F_CNC).setProductionFactions(F_CNC)
+            .setPrototypeFactions(Faction.CNC).setProductionFactions(Faction.CNC)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

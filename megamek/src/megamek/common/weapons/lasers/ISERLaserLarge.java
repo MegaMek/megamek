@@ -45,15 +45,15 @@ public class ISERLaserLarge extends LaserWeapon {
         longAV = 8;
         maxRange = RANGE_LONG;
         rulesRefs = "226, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
                 .setISAdvancement(2610, 2620, 3045, 2950, 3037)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_DC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.DC);
     }
 }

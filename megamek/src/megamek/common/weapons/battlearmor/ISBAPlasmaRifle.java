@@ -43,15 +43,15 @@ public class ISBAPlasmaRifle extends Weapon {
         cost = 28000;
         flags = flags.or(F_BA_WEAPON).or(F_DIRECT_FIRE).or(F_PLASMA).or(F_ENERGY).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "267, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C)
                 .setISAdvancement(3063, 3065, 3074, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC);
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC);
     }
 
     @Override

@@ -52,14 +52,14 @@ public class ISAMS extends AmmoWeapon {
         cost = 100000;
         atClass = CLASS_AMS;
         rulesRefs = "204, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+        techAdvancement.setTechBase(TechBase.IS)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
                 .setISAdvancement(2613, 2617, 3048, 2835, 3045)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC);
     }
 
     @Override

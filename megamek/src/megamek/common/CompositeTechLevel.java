@@ -13,6 +13,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,13 +29,13 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     private final boolean clan;
     private final boolean mixed;
     private final int introYear;
-    private final int techFaction;
+    private final Faction techFaction;
     private Integer experimental;
     private Integer advanced;
     private Integer standard;
     private List<DateRange> extinct;
-    private int techRating;
-    private final int[] availability;
+    private TechRating techRating;
+    private EnumMap<Era, TechRating> availability;
     private int earliest;
 
     // Provides a set tech level for non-era-based use.
@@ -46,7 +47,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
      * @param mixed     - whether the equipment contains a mix of Clan and IS equipment
      * @param introYear - the year the composite equipment is first available
      */
-    public CompositeTechLevel(TechAdvancement initialTA, boolean clan, boolean mixed, int introYear, int techFaction) {
+    public CompositeTechLevel(TechAdvancement initialTA, boolean clan, boolean mixed, int introYear, Faction techFaction) {
         this.techFaction = techFaction;
         this.clan = clan;
         this.mixed = mixed;
@@ -76,9 +77,9 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         addExtinctionRange(mixed ? initialTA.getExtinctionDate() : initialTA.getExtinctionDate(clan),
               mixed ? initialTA.getReintroductionDate() : initialTA.getReintroductionDate(clan));
         techRating = initialTA.getTechRating();
-        availability = new int[ERA_NUM];
-        for (int era = 0; era < ERA_NUM; era++) {
-            availability[era] = initialTA.getBaseAvailability(era);
+        availability = new EnumMap<>(Era.class);
+        for (Era era : Era.values()) {
+            availability.put(era, initialTA.getBaseAvailability(era));
         }
         staticTechLevel = initialTA.getStaticTechLevel();
     }
@@ -86,7 +87,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     /**
      * @param entity {@link Entity} to check.
      */
-    public CompositeTechLevel(Entity entity, int techFaction) {
+    public CompositeTechLevel(Entity entity, Faction techFaction) {
         this(entity.getConstructionTechAdvancement(),
               entity.isClan(),
               entity.isMixedTech(),
@@ -231,27 +232,29 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         addExtinctionRange(mixed ? tech.getExtinctionDate() : tech.getExtinctionDate(clan, techFaction),
               mixed ? tech.getReintroductionDate() : tech.getReintroductionDate(clan, techFaction));
 
-        techRating = Math.max(techRating, tech.getTechRating());
-        for (int era = 0; era < ERA_NUM; era++) {
-            int av = tech.getBaseAvailability(era);
+        techRating = TechRating.fromIndex(Math.max(techRating.getIndex(), tech.getTechRating().getIndex()));
+
+        for (Era era : Era.values()) {
+            TechRating av = tech.getBaseAvailability(era);
             // Clan mixed tech units cannot use IS tech introduced during SW until 3050.
-            if (clan &&
-                      era == ERA_SW &&
-                      !tech.isClan() &&
-                      (techFaction < F_CLAN) &&
-                      (techFaction != F_CS) &&
-                      ITechnology.getTechEra(tech.getIntroductionDate()) == ERA_SW) {
-                av = RATING_X;
+            if (clan &&  era == Era.SW && !tech.isClan() 
+                && !techFaction.getAffiliation().equals(FactionAffiliation.CLAN)
+                && (techFaction != Faction.CS) 
+                && ITechnology.getTechEra(tech.getIntroductionDate()).equals(Era.SW)) {
+                av = TechRating.X;
             }
             // IS base cannot include Clan tech before 3050; after 3050 av is +1.
             if (!clan && tech.isClan()) {
-                if (era == ERA_SW) {
-                    av = RATING_X;
+                if (era == Era.SW) {
+                    av = TechRating.X;
                 } else {
-                    av = Math.min(av + 1, RATING_X);
+                    int harder = Math.min(av.getIndex() + 1, TechRating.X.getIndex());
+                    av = TechRating.fromIndex(harder);
                 }
             }
-            availability[era] = Math.max(availability[era], av);
+            if (availability.get(era) == null || av.getIndex() > availability.get(era).getIndex()) {
+                availability.put(era, av);
+            }
         }
     }
 
@@ -371,8 +374,8 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     }
 
     @Override
-    public int getTechBase() {
-        return isClan() ? TECH_BASE_CLAN : TECH_BASE_IS;
+    public TechBase getTechBase() {
+        return isClan() ? TechBase.CLAN : TechBase.IS;
     }
 
     @Override
@@ -428,16 +431,16 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     }
 
     @Override
-    public int getTechRating() {
+    public TechRating getTechRating() {
         return techRating;
     }
 
     @Override
-    public int getBaseAvailability(int era) {
-        if ((era < 0) || (era >= availability.length) || (ITechnology.getTechEra(introYear) > era)) {
-            return RATING_X;
+    public TechRating getBaseAvailability(Era era) {
+        if (era == null || (ITechnology.getTechEra(introYear).getIndex() > era.getIndex())) {
+            return TechRating.X;
         }
-        return availability[era];
+        return availability.get(era);
     }
 
     @Override
@@ -446,27 +449,27 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     }
 
     @Override
-    public int getIntroductionDate(boolean clan, int faction) {
+    public int getIntroductionDate(boolean clan, Faction faction) {
         return getIntroductionDate();
     }
 
     @Override
-    public int getPrototypeDate(boolean clan, int faction) {
+    public int getPrototypeDate(boolean clan, Faction faction) {
         return getPrototypeDate();
     }
 
     @Override
-    public int getProductionDate(boolean clan, int faction) {
+    public int getProductionDate(boolean clan, Faction faction) {
         return getProductionDate();
     }
 
     @Override
-    public int getExtinctionDate(boolean clan, int faction) {
+    public int getExtinctionDate(boolean clan, Faction faction) {
         return getExtinctionDate();
     }
 
     @Override
-    public int getReintroductionDate(boolean clan, int faction) {
+    public int getReintroductionDate(boolean clan, Faction faction) {
         return getReintroductionDate();
     }
 }

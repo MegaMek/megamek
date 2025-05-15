@@ -38,14 +38,14 @@ public class CLNarcOS extends NarcWeapon {
         bv = 6;
         cost = 100000;
         rulesRefs = "232, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.D, TechRating.C)
                 .setClanAdvancement(2820, 2828, 2830, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CHH,F_CIH)
-                .setProductionFactions(F_CIH);
+                .setPrototypeFactions(Faction.CHH,Faction.CIH)
+                .setProductionFactions(Faction.CIH);
     }
 }

@@ -48,10 +48,10 @@ public class InfantrySupportLaserUltraHeavyWeapon extends InfantryWeapon {
 		shots = 5;
 		rulesRefs = "273, TM";
 		tonnage = .250;
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3055, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CBR)
-		        .setProductionFactions(F_CSA).setTechRating(RATING_F)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3055, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CBR)
+		        .setProductionFactions(Faction.CSA).setTechRating(TechRating.F)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D);
 
 	}
 }

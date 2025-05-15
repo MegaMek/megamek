@@ -52,10 +52,10 @@ public class ISBAMortarLight extends Weapon {
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
                 .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "263, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(3049, 3057, 3063);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+        techAdvancement.setTechRating(TechRating.B);
+        techAdvancement.setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.C);
     }
 
     @Override

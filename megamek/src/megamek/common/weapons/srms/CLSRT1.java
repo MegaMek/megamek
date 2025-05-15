@@ -51,14 +51,14 @@ public class CLSRT1 extends SRTWeapon {
         		.andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         cost = 10000;
         rulesRefs = "230, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(false)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_X, RATING_C, RATING_C, RATING_C)
+            .setTechRating(TechRating.C)
+            .setAvailability(TechRating.X, TechRating.C, TechRating.C, TechRating.C)
             .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
             .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_CSF)
-            .setProductionFactions(F_CSF);
+            .setPrototypeFactions(Faction.CSF)
+            .setProductionFactions(Faction.CSF);
     }
 }

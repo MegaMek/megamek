@@ -48,15 +48,15 @@ public class CLUAC2 extends UACWeapon {
         maxRange = RANGE_EXT;
         explosionDamage = damage;
         rulesRefs = "208, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.C)
                 .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
-                .setPrototypeFactions(F_CLAN)
-                .setProductionFactions(F_CLAN);
+                .setPrototypeFactions(Faction.CLAN)
+                .setProductionFactions(Faction.CLAN);
     }
 
     @Override

@@ -44,11 +44,11 @@ public class InfantryShotgunAMIKeymaster15 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_D,RATING_D,RATING_D,RATING_D)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(TechRating.D,TechRating.D,TechRating.D,TechRating.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,2317,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_FS);
+       .setProductionFactions(Faction.FS);
    }
 }

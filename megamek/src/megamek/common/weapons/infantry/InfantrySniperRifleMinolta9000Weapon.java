@@ -48,11 +48,11 @@ public class InfantrySniperRifleMinolta9000Weapon extends InfantryWeapon {
 		ammoCost = 5;
 		shots = 10;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3052, 3055, 3100, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3052, 3055, 3100, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_CC)
-		        .setProductionFactions(F_CC).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		        .setPrototypeFactions(Faction.CC)
+		        .setProductionFactions(Faction.CC).setTechRating(TechRating.D)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D);
 
 	}
 }

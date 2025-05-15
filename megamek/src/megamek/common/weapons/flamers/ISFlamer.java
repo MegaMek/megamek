@@ -44,11 +44,11 @@ public class ISFlamer extends FlamerWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "218, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(true)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_A)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.A)
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, 2830, DATE_NONE)

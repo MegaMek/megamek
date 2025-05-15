@@ -47,14 +47,14 @@ public class CLBALaserERMedium extends LaserWeapon {
         maxRange = RANGE_MED;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.D, TechRating.C)
                 .setClanAdvancement(2872, 2875, 2880, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
-                .setPrototypeFactions(F_CJF)
-                .setProductionFactions(F_CJF);
+                .setPrototypeFactions(Faction.CJF)
+                .setProductionFactions(Faction.CJF);
     }
 }

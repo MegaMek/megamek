@@ -41,14 +41,14 @@ public class ISLRT20IOS extends LRTWeapon {
         flags = flags.or(F_ONESHOT);
         cost = 200000;
         rulesRefs = "327, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setISAdvancement(3056, 3081, 3085, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC);
+                .setPrototypeFactions(Faction.DC)
+                .setProductionFactions(Faction.DC);
     }
 }

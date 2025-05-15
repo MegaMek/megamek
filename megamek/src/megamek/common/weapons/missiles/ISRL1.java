@@ -41,15 +41,15 @@ public class ISRL1 extends RLWeapon {
         extremeRange = 18;
         bv = 2;
         rulesRefs = "229, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
                 .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setProductionFactions(F_MH);
+                .setProductionFactions(Faction.MH);
     }
 }

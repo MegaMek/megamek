@@ -45,10 +45,10 @@ public class ISBAMGHeavy extends BAMGWeapon {
         bv = 6;
         cost = 7500;
 		rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3068);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability(RATING_X, RATING_X, RATING_C, RATING_B);
+        techAdvancement.setTechRating(TechRating.C);
+        techAdvancement.setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.B);
     }
 
 }

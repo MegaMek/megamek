@@ -46,12 +46,12 @@ public class ISAC10 extends ACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         rulesRefs = "208, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(true).setTechRating(RATING_C)
-                .setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
+        techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(true).setTechRating(TechRating.C)
+                .setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.D)
                 .setISAdvancement(2443, 2460, 2465, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2443, 2460, 2465, 2850, DATE_NONE)
-                .setClanApproximate(false, false, false, true, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
+                .setClanApproximate(false, false, false, true, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH);
     }
 }

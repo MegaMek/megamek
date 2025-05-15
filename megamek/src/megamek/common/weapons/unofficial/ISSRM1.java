@@ -42,11 +42,11 @@ public class ISSRM1 extends SRMWeapon {
         bv = 15;
         flags = flags.or(F_NO_FIRES);
         rulesRefs = "Unofficial";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.X)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3057, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false);
     }

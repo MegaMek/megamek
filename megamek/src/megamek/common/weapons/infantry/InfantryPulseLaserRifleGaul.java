@@ -40,11 +40,11 @@ public class InfantryPulseLaserRifleGaul extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_D)
-                .setAvailability(new int[]{RATING_X, RATING_D, RATING_D, RATING_D})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.D)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_PER);
+                .setProductionFactions(Faction.PER);
     }
 }

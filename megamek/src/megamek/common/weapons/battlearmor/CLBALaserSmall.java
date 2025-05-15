@@ -47,14 +47,14 @@ public class CLBALaserSmall extends LaserWeapon {
         cost = 11250;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_C, RATING_B, RATING_B)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.C, TechRating.B, TechRating.B)
                 .setClanAdvancement(2865, 2868, 2870, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CWF)
-                .setProductionFactions(F_CWF);
+                .setPrototypeFactions(Faction.CWF)
+                .setProductionFactions(Faction.CWF);
     }
 }

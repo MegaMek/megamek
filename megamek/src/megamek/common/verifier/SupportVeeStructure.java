@@ -14,13 +14,24 @@
  */
 package megamek.common.verifier;
 
+import java.util.EnumMap;
+
 import megamek.common.Entity;
+import megamek.common.ITechnology;
 import megamek.common.MiscType;
 
 public class SupportVeeStructure extends Structure {
 
-    static final double[] SV_TECH_RATING_STRUCTURE_MULTIPLIER = 
-        { 1.60, 1.30, 1.15, 1.00, 0.85, 0.66 };
+    static final EnumMap<ITechnology.TechRating, Double> SV_TECH_RATING_STRUCTURE_MULTIPLIER = new EnumMap<>(ITechnology.TechRating.class);
+
+    static {
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.A, 1.60);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.B, 1.30);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.C, 1.15);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.D, 1.00);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.E, 0.85);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.F, 0.66);
+    }
     
     Entity sv;
     
@@ -30,7 +41,7 @@ public class SupportVeeStructure extends Structure {
     
     public static double getWeightStructure(Entity sv) {
         double baseChassisVal = sv.getBaseChassisValue();
-        double trMult = SV_TECH_RATING_STRUCTURE_MULTIPLIER[sv.getStructuralTechRating()];
+        double trMult = SV_TECH_RATING_STRUCTURE_MULTIPLIER.getOrDefault(sv.getStructuralTechRating(), 1.0);
         double chassisModMult = 1;
         if (sv.hasMisc(MiscType.F_AMPHIBIOUS)) {
             chassisModMult *= 1.75;

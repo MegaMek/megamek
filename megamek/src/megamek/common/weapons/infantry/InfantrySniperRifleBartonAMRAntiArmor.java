@@ -48,11 +48,11 @@ public class InfantrySniperRifleBartonAMRAntiArmor extends InfantryWeapon {
        infantryRange = 7;
        rulesRefs = "Shrapnel #1";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_X,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(TechRating.X,TechRating.E,TechRating.E,TechRating.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_FS);
+       .setProductionFactions(Faction.FS);
    }
 }

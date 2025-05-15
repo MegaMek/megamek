@@ -48,11 +48,11 @@ public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
 		ammoWeight = 0.003;
 		shots = 15;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3054, 3058, 3062, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3054, 3058, 3062, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_CS)
-		        .setProductionFactions(F_CS).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		        .setPrototypeFactions(Faction.CS)
+		        .setProductionFactions(Faction.CS).setTechRating(TechRating.E)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D);
 
 	}
 }

@@ -47,12 +47,12 @@ public class InfantryPistolWhisper4Subsonic extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #3";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_E,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(TechRating.E,TechRating.E,TechRating.E,TechRating.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2100,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_MC);
+       .setProductionFactions(Faction.MC);
 
    }
 }

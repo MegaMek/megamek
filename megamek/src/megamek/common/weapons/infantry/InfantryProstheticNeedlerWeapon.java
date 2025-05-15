@@ -36,11 +36,11 @@ public class InfantryProstheticNeedlerWeapon extends InfantryWeapon {
         infantryRange = 0;
         // Rating and Dates not available below is compiled from various books
         rulesRefs = "84, IO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_E, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.E, TechRating.D, TechRating.D)
                 .setISAdvancement(2510, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2510, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)

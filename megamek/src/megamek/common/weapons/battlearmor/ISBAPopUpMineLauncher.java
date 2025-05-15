@@ -51,15 +51,15 @@ public class ISBAPopUpMineLauncher extends Weapon {
         setModes(modeStrings);
         flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON).or(F_ONESHOT).or(F_BA_INDIVIDUAL);
         rulesRefs = "267, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
     	        .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_F)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.F)
                 .setISAdvancement(DATE_NONE, 3050, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS, F_LC);
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS, Faction.LC);
     }
 
     /*

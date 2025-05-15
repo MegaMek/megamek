@@ -18,6 +18,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import megamek.common.ITechnology;
 
 import static java.util.stream.Collectors.toList;
 
@@ -267,17 +268,17 @@ public class BombType extends AmmoType {
         bomb.bv = 57;
         bomb.cost = 9000;
         bomb.rulesRefs = "357, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+        bomb.techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(3069, DATE_NONE, 3072, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_LC, F_CWX)
-                .setProductionFactions(F_LC);
+                .setPrototypeFactions(Faction.LC, Faction.CWX)
+                .setProductionFactions(Faction.LC);
 
         return bomb;
     }
@@ -300,16 +301,16 @@ public class BombType extends AmmoType {
         bomb.cost = 15000;
         bomb.rulesRefs = "358, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+        bomb.techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setISAdvancement(3071, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3072, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_FS).setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS).setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         return bomb;
@@ -331,11 +332,11 @@ public class BombType extends AmmoType {
         bomb.bv = 75;
         bomb.cost = 20000;
         bomb.rulesRefs = "358, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+        bomb.techAdvancement.setTechBase(TechBase.IS).setIntroLevel(false).setUnofficial(false).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
                 .setISAdvancement(3067, 3073, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC);
+                .setISApproximate(false, false, false, false, false).setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC);
 
         return bomb;
     }
@@ -362,18 +363,18 @@ public class BombType extends AmmoType {
         bomb.bv = 30;
         bomb.cost = 3000;
         bomb.rulesRefs = "358, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+        bomb.techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.E)
                 .setISAdvancement(2595, 2600, DATE_NONE, 2835, 3047)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2595, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC);
 
         return bomb;
     }
@@ -396,18 +397,18 @@ public class BombType extends AmmoType {
         bomb.bv = 34;
         bomb.cost = 2000;
         bomb.rulesRefs = "359, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+        bomb.techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E,RATING_F, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E,TechRating.F, TechRating.E, TechRating.E)
                 .setISAdvancement(2622, 2623, DATE_NONE, 2850, 3046)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2622, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC);
 
         blastRadius.put(BombType.getBombInternalName(BombType.B_ARROW), 1);
 
@@ -429,8 +430,8 @@ public class BombType extends AmmoType {
         bomb.bv = 13;
         bomb.cost = 8000;
         bomb.rulesRefs = "246, TW";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_B).setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+        bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
+                .setTechRating(TechRating.B).setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -457,8 +458,8 @@ public class BombType extends AmmoType {
         bomb.cost = 18000;
         bomb.tonnage = .5;
         bomb.rulesRefs = "166, IO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
+                .setTechRating(TechRating.C).setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -485,8 +486,8 @@ public class BombType extends AmmoType {
         bomb.cost = 35000;
         bomb.tonnage = 1.0;
         bomb.rulesRefs = "165, IO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+        bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
+                .setTechRating(TechRating.C).setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.E)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -512,8 +513,8 @@ public class BombType extends AmmoType {
         bomb.bv = 12;
         bomb.cost = 5000;
         bomb.rulesRefs = "246, TW";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
+                .setTechRating(TechRating.B).setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -537,8 +538,8 @@ public class BombType extends AmmoType {
         bomb.bv = 16;
         bomb.cost = 6000;
         bomb.rulesRefs = "359, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_C).setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+        bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
+                .setTechRating(TechRating.C).setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.C)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -567,16 +568,16 @@ public class BombType extends AmmoType {
         bomb.rulesRefs = "247, TW";
         // Tech Progression adjusted to match future errata. While called Laser-Guided this is aligned
         // with TAG for progression once TAG is common.
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+        bomb.techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
                 .setISAdvancement(DATE_ES, DATE_ES, 2645, 2835, 3035)
                 .setISApproximate(false, false, false, true, false)
                 .setClanAdvancement(DATE_ES, DATE_ES, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setReintroductionFactions(F_FW);
+                .setReintroductionFactions(Faction.FW);
 
         return bomb;
     }
@@ -598,11 +599,11 @@ public class BombType extends AmmoType {
         bomb.bv = 17;
         bomb.cost = 6000;
         bomb.rulesRefs = "359, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+        bomb.techAdvancement.setTechBase(TechBase.IS).setIntroLevel(false).setUnofficial(false).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.D)
                 .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW);
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW);
 
         return bomb;
     }
@@ -624,10 +625,10 @@ public class BombType extends AmmoType {
         bomb.bv = 18;
         bomb.cost = 15000;
         bomb.rulesRefs = "229, TM";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         bomb.techAdvancement.setISAdvancement(3055, 3064, 3067);
-        bomb.techAdvancement.setTechRating(RATING_B);
-        bomb.techAdvancement.setAvailability(RATING_X, RATING_X, RATING_B, RATING_B);
+        bomb.techAdvancement.setTechRating(TechRating.B);
+        bomb.techAdvancement.setAvailability(TechRating.X, TechRating.X, TechRating.B, TechRating.B);
 
         return bomb;
     }
@@ -648,11 +649,11 @@ public class BombType extends AmmoType {
         bomb.bv = 15;
         bomb.cost = 15000;
         bomb.rulesRefs = "73, 195, 217, IO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+        bomb.techAdvancement.setTechBase(TechBase.ALL)
             .setIntroLevel(false)
             .setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_D, RATING_F, RATING_X, RATING_X)
+            .setTechRating(TechRating.B)
+            .setAvailability(TechRating.D, TechRating.F, TechRating.X, TechRating.X)
             .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false, false, false)
             .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
@@ -681,18 +682,18 @@ public class BombType extends AmmoType {
         bomb.bv = 0;
         bomb.cost = 50000;
         bomb.rulesRefs = "238, TM";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+        bomb.techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.D)
                 .setISAdvancement(2600, 2605, 2645, 2835, 3035)
                 .setISApproximate(false, false, false, true, false)
                 .setClanAdvancement(2600, 2605, 2645, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FW);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FW);
 
         return bomb;
     }
@@ -713,12 +714,12 @@ public class BombType extends AmmoType {
         bomb.bv = 112;
         bomb.cost = 12000;
         bomb.rulesRefs = "172, TO:AUE";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_C).setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
+        bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
+                .setTechRating(TechRating.C).setAvailability(TechRating.E, TechRating.E, TechRating.D, TechRating.D)
                 .setISAdvancement(2600, 2623, DATE_NONE, 2850, 3052).setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2600, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH);
 
         blastRadius.put(BombType.getBombInternalName(BombType.B_THUNDER), 1);
 
@@ -742,8 +743,8 @@ public class BombType extends AmmoType {
         bomb.bv = 10;
         bomb.cost = 7000;
         bomb.rulesRefs = "360, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
+                .setTechRating(TechRating.B).setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -766,9 +767,9 @@ public class BombType extends AmmoType {
         bomb.cost = 1000000;
         bomb.flags = bomb.flags.or(F_NUCLEAR).or(AmmoType.F_OTHER_BOMB);
         bomb.capital = true;
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS).setTechRating(RATING_E)
-                .setISAdvancement(2200).setPrototypeFactions(F_TA)
-                .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+        bomb.techAdvancement.setTechBase(TechAdvancement.TechBase.IS).setTechRating(TechRating.E)
+                .setISAdvancement(2200).setPrototypeFactions(Faction.TA)
+                .setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.F)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return bomb;

@@ -41,11 +41,11 @@ public class InfantryLaserPistolAA75L extends InfantryWeapon {
         bursts = 1;
         rulesRefs = "Shrapnel #9";
         techAdvancement
-        .setTechBase(TECH_BASE_IS)
+        .setTechBase(TechBase.IS)
         .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
-        .setTechRating(RATING_C)
-        .setAvailability(new int[]{RATING_C, RATING_C, RATING_C, RATING_C})
+        .setTechRating(TechRating.C)
+        .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
         .setISApproximate(false, false, true, false, false)
-        .setProductionFactions(F_LC);
+        .setProductionFactions(Faction.LC);
     }
 }

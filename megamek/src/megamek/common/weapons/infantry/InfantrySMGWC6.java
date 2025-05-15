@@ -43,11 +43,11 @@ public class InfantrySMGWC6 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #5";
        techAdvancement
-       .setTechBase(TECH_BASE_CLAN)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_D,RATING_E,RATING_E)
+       .setTechBase(TechBase.CLAN)
+       .setTechRating(TechRating.C)
+       .setAvailability(TechRating.X,TechRating.D,TechRating.E,TechRating.E)
        .setClanAdvancement(DATE_NONE, DATE_NONE,2830,DATE_NONE,DATE_NONE)
        .setClanApproximate(false, false, true, false, false)
-       .setProductionFactions(F_CLAN);
+       .setProductionFactions(Faction.CLAN);
    }
 }

@@ -60,15 +60,15 @@ public class ISASMissileWeapon extends ThunderBoltWeapon {
         capital = false;
         this.missileArmor = 30;
         rulesRefs = "358, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setTechRating(TechRating.D)
+        .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
         .setISAdvancement(3071, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
         .setISApproximate(false, true, false, false, false)
-        .setPrototypeFactions(F_FS)
-        .setProductionFactions(F_FS);
+        .setPrototypeFactions(Faction.FS)
+        .setProductionFactions(Faction.FS);
     }
 
 }

@@ -37,11 +37,11 @@ public class InfantryProstheticVibroBladeWeapon extends InfantryWeapon {
 		// Rating and Dates not available below is compiled from Specific
 		// Weapons in IO blended with the rating for the limb itself
         rulesRefs = "84, IO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_E, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.E, TechRating.D, TechRating.D)
                 .setISAdvancement(2398, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2398, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)

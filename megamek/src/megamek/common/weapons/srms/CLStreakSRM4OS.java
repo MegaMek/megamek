@@ -53,14 +53,14 @@ public class CLStreakSRM4OS extends StreakSRMWeapon {
         medAV = 8;
         maxRange = RANGE_MED;
         rulesRefs = "230, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+        .setTechRating(TechRating.F)
+        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
         .setClanAdvancement(2819, 2822, 2830, DATE_NONE, DATE_NONE)
         .setClanApproximate(false, true, false,false, false)
-        .setPrototypeFactions(F_CSA)
-        .setProductionFactions(F_CSA);
+        .setPrototypeFactions(Faction.CSA)
+        .setProductionFactions(Faction.CSA);
     }
 }

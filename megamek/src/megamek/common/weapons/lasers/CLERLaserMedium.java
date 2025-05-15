@@ -44,14 +44,14 @@ public class CLERLaserMedium extends LaserWeapon {
         medAV = 7;
         maxRange = RANGE_MED;
         rulesRefs = "226, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.D, TechRating.C)
                 .setClanAdvancement(2822, 2824, 2830, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CJF)
-                .setProductionFactions(F_CJF);
+                .setPrototypeFactions(Faction.CJF)
+                .setProductionFactions(Faction.CJF);
     }
 }

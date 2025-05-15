@@ -38,11 +38,11 @@ public class InfantryLaserPistolBrightStarL12 extends InfantryWeapon {
         bursts = 1; // Bursts value is now always shown
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         rulesRefs = "Shrapnel #9";
-        techAdvancement.setTechBase(TECH_BASE_CLAN);
+        techAdvancement.setTechBase(TechBase.CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE);
-        techAdvancement.setTechRating(RATING_E); 
-        techAdvancement.setAvailability(new int[]{RATING_X, RATING_E, RATING_E, RATING_E});
+        techAdvancement.setTechRating(TechRating.E); 
+        techAdvancement.setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.E);
         techAdvancement.setClanApproximate(false, false, true, false, false);
-        techAdvancement.setProductionFactions(F_CLAN);
+        techAdvancement.setProductionFactions(Faction.CLAN);
     }
 }

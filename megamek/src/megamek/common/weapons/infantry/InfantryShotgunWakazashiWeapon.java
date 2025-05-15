@@ -47,9 +47,9 @@ public class InfantryShotgunWakazashiWeapon extends InfantryWeapon {
         shots = 10;
         bursts = 3;
         rulesRefs =" 176,HBHK";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2100);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
+        techAdvancement.setTechRating(TechRating.D);
+        techAdvancement.setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C);
     }
 }

@@ -46,15 +46,15 @@ public class ISPulseLaserLarge extends PulseLaserWeapon {
         medAV = 9;
         maxRange = RANGE_MED;
         rulesRefs = "226, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
                 .setISAdvancement(2595, 2609, 3042, 2950, 3037)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_DC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.DC);
     }
 }

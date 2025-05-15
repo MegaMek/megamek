@@ -46,11 +46,11 @@ public class InfantryPistolNakjimaLaserPistolWeapon extends InfantryWeapon {
 		ammoWeight = 0.0003;
 		shots = 30;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2875, 2880, 3000, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2875, 2880, 3000, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
-				.setPrototypeFactions(F_DC)
-				.setProductionFactions(F_DC).setTechRating(RATING_D)
-				.setAvailability(RATING_X, RATING_D, RATING_C, RATING_C);
+				.setPrototypeFactions(Faction.DC)
+				.setProductionFactions(Faction.DC).setTechRating(TechRating.D)
+				.setAvailability(TechRating.X, TechRating.D, TechRating.C, TechRating.C);
 
 	}
 }

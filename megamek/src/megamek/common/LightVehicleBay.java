@@ -82,10 +82,10 @@ public final class LightVehicleBay extends UnitBay {
     }
 
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL)
+        return new TechAdvancement(ITechnology.TechBase.ALL)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                .setTechRating(RATING_A)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.A)
+                .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

@@ -48,11 +48,11 @@ public class InfantryPistolHawkEagleAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.27;
         infantryRange = 0;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3030, 3035, 3050, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3030, 3035, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW).setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_F, RATING_C, RATING_C);
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW).setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.F, TechRating.C, TechRating.C);
 
     }
 }

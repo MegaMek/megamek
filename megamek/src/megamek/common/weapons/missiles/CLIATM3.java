@@ -43,15 +43,15 @@ public class CLIATM3 extends CLIATMWeapon {
         this.medAV = this.shortAV;
         this.maxRange = RANGE_MED;
         rulesRefs = "65, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CCY)
-                .setProductionFactions(F_CCY);
+                .setPrototypeFactions(Faction.CCY)
+                .setProductionFactions(Faction.CCY);
     }
 
     @Override

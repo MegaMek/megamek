@@ -44,16 +44,16 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         // This weapons was actually blended into IO's Enhanced PPC and should be considered non-canon
         // for IS factions
         rulesRefs = "Unofficial";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
                 .setISAdvancement(2740, 2751, DATE_NONE, 2860, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2740, 2751, DATE_NONE, 2831, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH);
     }
 }

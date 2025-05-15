@@ -38,14 +38,14 @@ public class CLMekMortar8 extends MekMortarWeapon {
         tonnage = 5;
         cost = 70000;
         rulesRefs = "324, TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_D, RATING_F, RATING_E, RATING_E)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.E)
                 .setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CBR)
-                .setProductionFactions(F_CBR);
+                .setPrototypeFactions(Faction.CBR)
+                .setProductionFactions(Faction.CBR);
     }
 }

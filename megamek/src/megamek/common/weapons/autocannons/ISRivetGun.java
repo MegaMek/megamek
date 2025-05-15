@@ -26,9 +26,9 @@ public class ISRivetGun extends NailRivetGunWeapon {
         name = "Rivet Gun";
         setInternalName(name);
         addLookupName("ISRivet Gun");
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2310);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability(RATING_C, RATING_C, RATING_C, RATING_X);
+        techAdvancement.setTechRating(TechRating.C);
+        techAdvancement.setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.X);
     }
 }

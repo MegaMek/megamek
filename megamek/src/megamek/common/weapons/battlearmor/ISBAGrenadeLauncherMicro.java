@@ -45,11 +45,11 @@ public class ISBAGrenadeLauncherMicro extends Weapon {
         cost = 1950;
         flags = flags.or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "256, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_X, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.X, TechRating.B, TechRating.B, TechRating.B)
                 .setISAdvancement(DATE_ES, DATE_ES, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_ES, DATE_ES, 3050, DATE_NONE, DATE_NONE);

@@ -47,15 +47,15 @@ public class CLBAMG extends BAMGWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE)
                 .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_D, RATING_B, RATING_B)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.B, TechRating.B)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, 2868, 2870, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setProductionFactions(F_CWF);
+                .setProductionFactions(Faction.CWF);
     }
 }

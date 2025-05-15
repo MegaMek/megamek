@@ -40,10 +40,10 @@ public class InfantryPistolISPulseLaserPistolWeapon extends InfantryWeapon {
 		shots = 15;
 		bursts = 3;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2615, 2620, 2700, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2615, 2620, 2700, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
-				.setPrototypeFactions(F_TH)
-				.setProductionFactions(F_TH).setTechRating(RATING_D)
-				.setAvailability(RATING_B, RATING_F, RATING_C, RATING_C);
+				.setPrototypeFactions(Faction.TH)
+				.setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+				.setAvailability(TechRating.B, TechRating.F, TechRating.C, TechRating.C);
 	}
 }

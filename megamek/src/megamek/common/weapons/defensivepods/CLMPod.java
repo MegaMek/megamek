@@ -26,14 +26,14 @@ public class CLMPod extends MPodWeapon {
         this.setInternalName("CLMPod");
         this.addLookupName("CLM-Pod");
         rulesRefs = "Unofficial";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3060, 3064, 3099, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC);
+                .setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC);
     }
 }

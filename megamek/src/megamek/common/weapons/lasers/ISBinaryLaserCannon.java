@@ -52,11 +52,11 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         flags = flags.andNot(F_PROTO_WEAPON);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         rulesRefs = "319, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+        techAdvancement.setTechBase(TechBase.IS)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.D)
                 .setISAdvancement(2812, DATE_NONE, 3077)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_WB).setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.WB).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

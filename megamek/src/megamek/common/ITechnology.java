@@ -14,7 +14,8 @@
 */
 package megamek.common;
 
-import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Implemented by any class that is subject to tech advancement (entities, equipment, systems, etc.)
@@ -23,101 +24,199 @@ import java.util.List;
  */
 public interface ITechnology {
 
-    int TECH_BASE_ALL  = 0;
-    int TECH_BASE_IS   = 1;
-    int TECH_BASE_CLAN = 2;
+    // --- Tech Base Enum ---
+    enum TechBase {
+        ALL(0),
+        IS(1),
+        CLAN(2);
 
-    int RATING_A = 0;
-    int RATING_B = 1;
-    int RATING_C = 2;
-    int RATING_D = 3;
-    int RATING_E = 4;
-    int RATING_F = 5;
-    int RATING_FSTAR = 6; // Increasing F (Clan equipment for IS or extinct equipment
-    // during SW era has a 50% chance of being X, denoted by F*.
-    int RATING_X = 7;
+        private final int index;
+        private static final Map<Integer, TechBase> INDEX_LOOKUP = new HashMap<>();
+        static {
+            for (TechBase tb : values()) {
+                INDEX_LOOKUP.put(tb.index, tb);
+            }
+        }
+        TechBase(int idx) { this.index = idx; }
+        public int getIndex() { return index; }
+        public static TechBase fromIndex(int idx) {
+            TechBase tb = INDEX_LOOKUP.get(idx);
+            if (tb == null) throw new IllegalArgumentException("Invalid TechBase index: " + idx);
+            return tb;
+        }
+    }
 
-    String[] ratingNames = { "A", "B", "C", "D", "E", "F", "F*", "X" };
+    // --- Rating Enum ---
+    enum TechRating {
+        A(0, "A"),
+        B(1, "B"),
+        C(2, "C"),
+        D(3, "D"),
+        E(4, "E"),
+        F(5, "F"),
+        FSTAR(6, "F*"),
+        X(7, "X");
 
-    int ERA_SL   = 0;
-    int ERA_SW   = 1;
-    int ERA_CLAN = 2;
-    int ERA_DA   = 3;
-    int ERA_NUM  = 4;
+        private final int index;
+        private final String name;
+        private static final Map<Integer, TechRating> INDEX_LOOKUP = new HashMap<>();
+        static {
+            for (TechRating tr : values()) {
+                INDEX_LOOKUP.put(tr.index, tr);
+            }
+        }
+        TechRating(int idx, String name) { this.index = idx; this.name = name; }
+        public int getIndex() { return index; }
+        public String getName() { return name; }
+        public static TechRating fromIndex(int idx) {
+            TechRating tr = INDEX_LOOKUP.get(idx);
+            if (tr == null) throw new IllegalArgumentException("Invalid TechRating index: " + idx);
+            return tr;
+        }
+    }
 
+    enum Era {
+        SL(0),
+        SW(1),
+        CLAN(2),
+        DA(3);
+
+        private final int index;
+        private static final Map<Integer, Era> INDEX_LOOKUP = new HashMap<>();
+        static {
+            for (Era era : values()) {
+                INDEX_LOOKUP.put(era.index, era);
+            }
+        }
+        Era(int idx) { this.index = idx; }
+        public int getIndex() { return index; }
+        public static Era fromIndex(int idx) {
+            Era era = INDEX_LOOKUP.get(idx);
+            if (era == null) throw new IllegalArgumentException("Invalid Era index: " + idx);
+            return era;
+        }
+    }
+
+    // --- Faction Affiliation Enum ---
+    enum FactionAffiliation {
+        NONE(0, "NONE"),
+        IS(1, "IS"),
+        CLAN(2, "CLAN"),
+        MIXED(3, "MIXED");
+
+        private final int index;
+        private final String name;
+        private static final Map<Integer, FactionAffiliation> INDEX_LOOKUP = new HashMap<>();
+        static {
+            for (FactionAffiliation fa : values()) {
+                INDEX_LOOKUP.put(fa.index, fa);
+            }
+        }
+        FactionAffiliation(int idx, String name) { this.index = idx; this.name = name; }
+        public int getIndex() { return index; }
+        public String getName() { return name; }
+    }
+
+    // --- Faction Enum ---
+    enum Faction {
+        NONE(-1, FactionAffiliation.NONE, "None", "None"),
+        IS(0, FactionAffiliation.IS, "IS", "IS"),
+        CC(1, FactionAffiliation.IS, "CC", "CC"),
+        CF(2, FactionAffiliation.IS, "CF","CIR"),
+        CP(3, FactionAffiliation.IS, "CP","CDP"),
+        CS(4, FactionAffiliation.IS, "CS","CS"),
+        DC(5, FactionAffiliation.IS, "DC", "DC"),
+        EI(6, FactionAffiliation.IS, "EI", "CEI"),
+        FC(7, FactionAffiliation.IS, "FC", "FC"),
+        FR(8, FactionAffiliation.IS, "FR", "FRR"),
+        FS(9, FactionAffiliation.IS, "FS", "FS"),
+        FW(10, FactionAffiliation.IS, "FW", "FWL"),
+        LC(11, FactionAffiliation.IS, "LC", "LA"),
+        MC(12, FactionAffiliation.IS, "MC", "MOC"),
+        MH(13, FactionAffiliation.IS, "MH", "MH"),
+        OA(14, FactionAffiliation.IS, "OA", "OA"),
+        TA(15, FactionAffiliation.IS, "TA", "TA"),
+        TC(16, FactionAffiliation.IS, "TC", "TC"),
+        TH(17, FactionAffiliation.IS, "TH", "TH"),
+        RD(18, FactionAffiliation.IS, "RD", "RD"),
+        RS(19, FactionAffiliation.IS, "RS", "ROS"),
+        RA(20, FactionAffiliation.IS, "RA", "RA"),
+        RW(21, FactionAffiliation.IS, "RW", "RWR"),
+        WB(22, FactionAffiliation.IS, "WB", "WOB"),
+        MERC(23, FactionAffiliation.IS, "Merc", "MERC"),
+        PER(24, FactionAffiliation.IS, "Per", "Periphery"),
+        CLAN(25, FactionAffiliation.CLAN, "Clan", "CLAN"),
+        CBR(26, FactionAffiliation.CLAN, "CBR", "CB"),
+        CBS(27, FactionAffiliation.CLAN, "CBS", "CBS"),
+        CCY(28, FactionAffiliation.CLAN, "CCY", "CCO"),
+        CCC(29, FactionAffiliation.CLAN, "CCC", "CCC"),
+        CFM(30, FactionAffiliation.CLAN, "CFM", "CFM"),
+        CGB(31, FactionAffiliation.CLAN, "CGB", "CGB"),
+        CGS(32, FactionAffiliation.CLAN, "CGS", "CGS"),
+        CHH(33, FactionAffiliation.CLAN, "CHH", "CHH"),
+        CIH(34, FactionAffiliation.CLAN, "CIH", "CIH"),
+        CJF(35, FactionAffiliation.CLAN, "CJF", "CJF"),
+        CMN(36, FactionAffiliation.CLAN, "CMN", "CMG"),
+        CNC(37, FactionAffiliation.CLAN, "CNC", "CNC"),
+        CSF(38, FactionAffiliation.CLAN, "CSF", "CDS"),
+        CSJ(39, FactionAffiliation.CLAN, "CSJ", "CSJ"),
+        CSR(40, FactionAffiliation.CLAN, "CSR", "CSR"),
+        CSV(41, FactionAffiliation.CLAN, "CSV", "CSV"),
+        CSA(42, FactionAffiliation.CLAN, "CSA", "CSA"),
+        CWM(43, FactionAffiliation.CLAN, "CWM", "CWI"),
+        CWF(44, FactionAffiliation.CLAN, "CWF", "CW"),
+        CWX(45, FactionAffiliation.CLAN, "CWX", "CWIE"),
+        CWV(46, FactionAffiliation.CLAN, "CWV", "CWOV");
+
+        private final int index;
+        private final FactionAffiliation affiliation;
+        private final String codeMM;
+        private final String codeIO;
+        private static final Map<Integer, Faction> INDEX_LOOKUP = new HashMap<>();
+        private static final Map<String, Faction> IO_ABBR_LOOKUP = new HashMap<>();
+        private static final Map<String, Faction> MM_ABBR_LOOKUP = new HashMap<>();
+    
+        static {
+            for (Faction f : values()) {
+                INDEX_LOOKUP.put(f.index, f);
+                MM_ABBR_LOOKUP.put(f.codeMM, f);
+                IO_ABBR_LOOKUP.put(f.codeIO, f);
+            }
+        }
+        Faction(int idx, FactionAffiliation affiliation, String codeMM, String codeIO) {
+            this.index = idx;
+            this.affiliation = affiliation;
+            this.codeMM = codeMM;
+            this.codeIO = codeIO;
+        }
+        public int getIndex() { return index; }
+        public FactionAffiliation getAffiliation() { return affiliation; }
+        public String getCode() { return codeMM; }
+        public String getCodeMM() { return codeMM; }
+        public String getCodeIO() { return codeIO; }
+        public static Faction fromIndex(int idx) {
+            Faction f = INDEX_LOOKUP.get(idx);
+            if (f == null) throw new IllegalArgumentException("Invalid Faction index: " + idx);
+            return f;
+        }
+        public static Faction fromMMAbbr(String abbr) {
+            // These abbreviations may have sub-faction dot codes; strip them.
+            String baseAbbr = abbr.split("\\.")[0];
+            return MM_ABBR_LOOKUP.getOrDefault(baseAbbr, NONE);
+        }
+        public static Faction fromIOAbbr(String abbr) {
+            return IO_ABBR_LOOKUP.getOrDefault(abbr, NONE);
+        }
+    }
+    
+    // --- Constants ---
     int DATE_NONE = -1;
     int DATE_PS = 1950;
     int DATE_ES = 2100;
 
-    // codes for recording which factions had access to technology at various points
-    int F_NONE = -1; // Indicates that factions should be ignored when calculating tech level.
-    int F_IS = 0;
-    int F_CC = 1;
-    int F_CF = 2;
-    int F_CP = 3;
-    int F_CS = 4;
-    int F_DC = 5;
-    int F_EI = 6;
-    int F_FC = 7;
-    int F_FR = 8;
-    int F_FS = 9;
-    int F_FW = 10;
-    int F_LC = 11;
-    int F_MC = 12;
-    int F_MH = 13;
-    int F_OA = 14;
-    int F_TA = 15;
-    int F_TC = 16;
-    int F_TH = 17;
-    int F_RD = 18;
-    int F_RS = 19;
-    int F_RA = 20;
-    int F_RW = 21;
-    int F_WB = 22;
-    int F_MERC = 23;
-    int F_PER = 24;
-    int F_CLAN = 25;
-    int F_CBR = 26;
-    int F_CBS = 27;
-    int F_CCY = 28;
-    int F_CCC = 29;
-    int F_CFM = 30;
-    int F_CGB = 31;
-    int F_CGS = 32;
-    int F_CHH = 33;
-    int F_CIH = 34;
-    int F_CJF = 35;
-    int F_CMN = 36;
-    int F_CNC = 37;
-    int F_CSF = 38;
-    int F_CSJ = 39;
-    int F_CSR = 40;
-    int F_CSV = 41;
-    int F_CSA = 42;
-    int F_CWM = 43;
-    int F_CWF = 44;
-    int F_CWX = 45;
-    int F_CWV = 46;
-
-    // display codes using values from IOps
-    String[] IO_FACTION_CODES = {
-            "IS", "CC", "CF", "CP", "CS", "DC", "EI", "FC", "FR", "FS", "FW", "LC", "MC",
-            "MH", "OA", "TA", "TC", "TH", "RD", "RS", "RA", "RW", "WB", "Merc", "Per",
-            "Clan", "CBR", "CBS", "CCY", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMN",
-            "CNC", "CSF", "CSJ", "CSR", "CSV", "CSA", "CWM", "CWF", "CWX", "CWV"
-    };
-
-    // faction lookup names for MHQ
-    String[] MM_FACTION_CODES = {
-            "IS", "CC", "CIR", "CDP", "CS", "DC", "CEI", "FC", "FRR", "FS", "FWL", "LA", "MOC",
-            "MH", "OA", "TA", "TC", "TH", "RD", "ROS", "RA", "RWR", "WOB", "MERC", "Periphery",
-            "CLAN", "CB", "CBS", "CCO", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMG",
-            "CNC", "CDS", "CSJ", "CSR", "CSV", "CSA", "CWI", "CW", "CWIE", "CWOV",
-    };
-
     boolean isClan();
     boolean isMixedTech();
-    int getTechBase();
+    TechBase getTechBase();
 
     int getIntroductionDate();
     int getPrototypeDate();
@@ -126,42 +225,42 @@ public interface ITechnology {
     int getExtinctionDate();
     int getReintroductionDate();
 
-    int getTechRating();
-    int getBaseAvailability(int era);
+    TechRating getTechRating();
+    TechRating getBaseAvailability(Era era);
 
     default int getIntroductionDate(boolean clan) {
         return getIntroductionDate();
     }
-    int getIntroductionDate(boolean clan, int faction);
+    int getIntroductionDate(boolean clan, Faction faction);
     default int getPrototypeDate(boolean clan) {
         return getPrototypeDate();
     }
-    int getPrototypeDate(boolean clan, int faction);
+    int getPrototypeDate(boolean clan, Faction faction);
     default int getProductionDate(boolean clan) {
         return getProductionDate();
     }
-    int getProductionDate(boolean clan, int faction);
+    int getProductionDate(boolean clan, Faction faction);
     default int getCommonDate(boolean clan) {
         return getCommonDate();
     }
-    int getExtinctionDate(boolean clan, int faction);
+    int getExtinctionDate(boolean clan, Faction faction);
     default int getExtinctionDate(boolean clan) {
         return getExtinctionDate();
     }
-    int getReintroductionDate(boolean clan, int faction);
+    int getReintroductionDate(boolean clan, Faction faction);
     default int getReintroductionDate(boolean clan) {
         return getReintroductionDate();
     }
 
-    static int getTechEra(int year) {
+    static Era getTechEra(int year) {
         if (year < 2780) {
-            return ERA_SL;
+            return Era.SL;
         } else if (year < 3050) {
-            return ERA_SW;
+            return Era.SW;
         } else if (year < 3130) {
-            return ERA_CLAN;
+            return Era.CLAN;
         } else {
-            return ERA_DA;
+            return Era.DA;
         }
     }
 
@@ -181,10 +280,10 @@ public interface ITechnology {
     }
 
     default SimpleTechLevel getSimpleLevel(int year, boolean clan) {
-        return getSimpleLevel(year, clan, F_NONE);
+        return getSimpleLevel(year, clan, Faction.NONE);
     }
 
-    default SimpleTechLevel getSimpleLevel(int year, boolean clan, int faction) {
+    default SimpleTechLevel getSimpleLevel(int year, boolean clan, Faction faction) {
         if (isUnofficial()) {
             return SimpleTechLevel.UNOFFICIAL;
         } else if (year >= getCommonDate(clan) && getCommonDate(clan) != DATE_NONE) {
@@ -265,9 +364,9 @@ public interface ITechnology {
                 || year < getReintroductionDate(clan));
     }
 
-    default boolean isExtinct(int year, boolean clan, int faction) {
+    default boolean isExtinct(int year, boolean clan, Faction faction) {
         // Tech that is lost but later recovered in the IS is not lost to ComStar.
-        if ((F_CS == faction) && (getReintroductionDate(false) != DATE_NONE)) {
+        if ((Faction.CS == faction) && (getReintroductionDate(false) != DATE_NONE)) {
             return false;
         }
         return getExtinctionDate(clan) != DATE_NONE
@@ -293,7 +392,7 @@ public interface ITechnology {
                 && (ignoreExtinction || !isExtinct(year));
     }
 
-    default boolean isAvailableIn(int year, boolean clan, int faction) {
+    default boolean isAvailableIn(int year, boolean clan, Faction faction) {
         return year >= getIntroductionDate(clan, faction)
                 && getIntroductionDate(clan, faction) != DATE_NONE  && !isExtinct(year, clan, faction);
     }
@@ -311,7 +410,7 @@ public interface ITechnology {
                 return getSimpleLevel(year).ordinal() <= simpleRulesLevel.ordinal();
             }
         } else {
-            if (getTechBase() != TECH_BASE_ALL
+            if (getTechBase() != TechBase.ALL
                     && clanBase != isClan()) {
                 return false;
             }
@@ -324,25 +423,28 @@ public interface ITechnology {
 
     /**
      * Adjusts availability for certain combinations of era and IS/Clan use
-     * @param era - one of the four tech eras
+     * @param era - one of the tech eras
      * @param clanUse - whether the faction trying to obtain the tech is IS or Clan
      * @return - the adjusted availability code
      */
-    default int calcEraAvailability(int era, boolean clanUse) {
+    default TechRating calcEraAvailability(Era era, boolean clanUse) {
         if (clanUse) {
             if (!isClan()
-                    && era < ERA_CLAN
+                    && era.getIndex() < Era.CLAN.getIndex()
                     && getPrototypeDate(false) >= 2780) {
-                return ITechnology.RATING_X;
+                return TechRating.X;
             } else {
                 return getBaseAvailability(era);
             }
         } else {
             if (isClan()) {
-                if (era < ERA_CLAN) {
-                    return ITechnology.RATING_X;
+                if (era.getIndex() < Era.CLAN.getIndex()) {
+                    return TechRating.X;
                 } else {
-                    return Math.min(ITechnology.RATING_X, getBaseAvailability(era) + 1);
+                    // For Clan items in IS eras, availability is one step harder, but not above X
+                    TechRating base = getBaseAvailability(era);
+                    int harder = Math.min(TechRating.X.getIndex(), base.getIndex() + 1);
+                    return TechRating.fromIndex(harder);
                 }
             } else {
                 return getBaseAvailability(era);
@@ -350,61 +452,63 @@ public interface ITechnology {
         }
     }
 
-    default int calcYearAvailability(int year, boolean clanUse) {
-        return calcYearAvailability(year, clanUse, -1);
+    default TechRating calcYearAvailability(int year, boolean clanUse) {
+        return calcYearAvailability(year, clanUse, Faction.NONE);
     }
 
-    default int calcYearAvailability(int year, boolean clanUse, int faction) {
-        if (!clanUse && !isClan() && (faction != F_CS) && (getTechEra(year) == ERA_SW)
-                && (getBaseAvailability(ERA_SW) >= RATING_E)
-                && (getExtinctionDate(false) != DATE_NONE)
-                && (getExtinctionDate(false) <= year)
-                && ((getReintroductionDate(false) == DATE_NONE)
-                        || (getReintroductionDate() > year))) {
-            return Math.min(getBaseAvailability(ERA_SW) + 1, RATING_X);
+    default TechRating calcYearAvailability(int year, boolean clanUse, Faction faction) {
+        Era era = getTechEra(year);
+        if (!clanUse && !isClan() && (faction != Faction.CS) && (era == Era.SW)
+            && getBaseAvailability(Era.SW).getIndex() >= TechRating.E.getIndex()
+            && getExtinctionDate(false) != DATE_NONE
+            && getExtinctionDate(false) <= year
+            && (getReintroductionDate(false) == DATE_NONE || getReintroductionDate(false) > year)) {
+            int harder = Math.min(getBaseAvailability(Era.SW).getIndex() + 1, TechRating.X.getIndex());
+            return TechRating.fromIndex(harder);
         }
-        return calcEraAvailability(getTechEra(year), clanUse);
+        return calcEraAvailability(era, clanUse);
     }
 
     /**
      * Adjusts base availability code for IS/Clan and IS extinction
      *
-     * @param era - one of the ERA_* constants from EquipmentType
+     * @param era - one of the Era enums
      * @param clanUse - whether this should be calculated for a Clan faction rather than IS
      * @return - The availability code for the faction in the era. The code for an IS faction
      *           during the SW era may be two values indicating availability before and after
      *           the extinction date.
      */
-    default String getEraAvailabilityName(int era, boolean clanUse) {
-        if (!clanUse && !isClan() && era == ERA_SW
-                && getBaseAvailability(ERA_SW) >= RATING_E
-                && getBaseAvailability(ERA_SW) < RATING_X
-                && getExtinctionDate(false) != DATE_NONE
-                && getTechEra(getExtinctionDate(false)) == ERA_SW) {
-            return getRatingName(getBaseAvailability(ERA_SW))
-                    + "(" + getRatingName(getBaseAvailability(ERA_SW) + 1) + ")";
+    default String getEraAvailabilityName(Era era, boolean clanUse) {
+        if (!clanUse && !isClan() && era == Era.SW
+            && getBaseAvailability(Era.SW).getIndex() >= TechRating.E.getIndex()
+            && getBaseAvailability(Era.SW).getIndex() < TechRating.X.getIndex()
+            && getExtinctionDate(false) != DATE_NONE
+            && getTechEra(getExtinctionDate(false)) == Era.SW) {
+            TechRating base = getBaseAvailability(Era.SW);
+            int harderIdx = Math.min(base.getIndex() + 1, TechRating.X.getIndex());
+            return base.getName() + "(" + TechRating.fromIndex(harderIdx).getName() + ")";
         }
-        return getRatingName(calcEraAvailability(era, clanUse));
+        return calcEraAvailability(era, clanUse).getName();
     }
 
     default String getTechRatingName() {
         return getRatingName(getTechRating());
     }
 
-    default String getEraAvailabilityName(int era) {
+    default String getEraAvailabilityName(Era era) {
         return getEraAvailabilityName(era, isClan());
     }
 
     default String getFullRatingName(boolean clanUse) {
         String rating = getRatingName(getTechRating());
         rating += "/";
-        rating += getEraAvailabilityName(ERA_SL, clanUse);
+        rating += getEraAvailabilityName(Era.SL, clanUse);
         rating += "-";
-        rating += getEraAvailabilityName(ERA_SW, clanUse);
+        rating += getEraAvailabilityName(Era.SW, clanUse);
         rating += "-";
-        rating += getEraAvailabilityName(ERA_CLAN, clanUse);
+        rating += getEraAvailabilityName(Era.CLAN, clanUse);
         rating += "-";
-        rating += getEraAvailabilityName(ERA_DA, clanUse);
+        rating += getEraAvailabilityName(Era.DA, clanUse);
         return rating;
     }
 
@@ -412,19 +516,16 @@ public interface ITechnology {
         return getFullRatingName(isClan());
     }
 
-    default int calcEraAvailability(int era) {
+    default TechRating calcEraAvailability(Era era) {
         return calcEraAvailability(era, isClan());
     }
 
-    default int calcYearAvailability(int year) {
+    default TechRating calcYearAvailability(int year) {
         return calcYearAvailability(year, isClan());
     }
 
-    static String getRatingName(int rating) {
-        if ((rating < 0) || (rating >= ratingNames.length)) {
-            return "U";
-        }
-        return ratingNames[rating];
+    static String getRatingName(TechRating rating) {
+        return rating.getName();
     }
 
     static String getDateRange(int startIncl, int endNonIncl) {
@@ -441,15 +542,12 @@ public interface ITechnology {
         return sb.toString();
     }
 
-    static int getCodeFromIOAbbr(String abbr) {
-        // Returns the F_* code used at the top of this file,
-        // as they are the indices of the IO Faction Codes
-        return List.of(IO_FACTION_CODES).indexOf(abbr);
+    static Faction getFactionFromIOAbbr(String abbr) {
+        return Faction.fromIOAbbr(abbr);
     }
 
-    static int getCodeFromMMAbbr(String abbr) {
-        // These abbreviations may have sub-faction dot codes; strip them.
-        return List.of(MM_FACTION_CODES).indexOf((String) abbr.split("\\.")[0]);
+    static Faction getFactionFromMMAbbr(String abbr) {
+        return Faction.fromMMAbbr(abbr);
     }
 
     default String getExperimentalRange(boolean clan) {
@@ -477,4 +575,12 @@ public interface ITechnology {
     default String getExtinctionRange() {
         return getDateRange(getExtinctionDate(), getReintroductionDate());
     }
+
+    // default int getCodeFromMMAbbr(String abbr) {
+    //     return getFactionFromMMAbbr(abbr).getIndex();
+    // }
+    // default int getCodeFromIOAbbr(String abbr) {
+    //     return getFactionFromIOAbbr(abbr).getIndex();
+    // }
+    
 }

@@ -43,16 +43,16 @@ public class AMSBayWeapon extends AmmoBayWeapon {
 		flags = flags.or(F_AUTO_TARGET).or(F_AMSBAY).or(F_AERO_WEAPON);
 		setModes(new String[] { "On", "Off" });
 		setInstantModeSwitch(false);
-		techAdvancement.setTechBase(TECH_BASE_ALL)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+		techAdvancement.setTechBase(TechBase.ALL)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
                 .setISAdvancement(2613, 2617, 3048, 2835, 3045)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH,F_CSA)
-                .setProductionFactions(F_TH,F_CSA)
-                .setReintroductionFactions(F_CC)
+                .setPrototypeFactions(Faction.TH,Faction.CSA)
+                .setProductionFactions(Faction.TH,Faction.CSA)
+                .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
     

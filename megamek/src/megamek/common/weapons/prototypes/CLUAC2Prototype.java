@@ -47,15 +47,15 @@ public class CLUAC2Prototype extends CLPrototypeUACWeapon {
         explosionDamage = damage;
         flags = flags.or(F_PROTOTYPE);
         rulesRefs = "97, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.C)
                 .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2827, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
-                .setPrototypeFactions(F_CSF)
-                .setProductionFactions(F_CGS)
+                .setPrototypeFactions(Faction.CSF)
+                .setProductionFactions(Faction.CGS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

@@ -54,12 +54,12 @@ public class ISMekTaser extends AmmoWeapon {
         flags = flags.or(F_MEK_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)
                 .or(F_TASER).or(F_TANK_WEAPON);
         rulesRefs = "346, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        techAdvancement.setTechBase(TechBase.IS)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setISAdvancement(3065, 3084)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

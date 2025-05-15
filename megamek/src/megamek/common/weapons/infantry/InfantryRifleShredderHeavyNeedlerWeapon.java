@@ -47,11 +47,11 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
 		ammoCost = 3;
 		shots = 10;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3051, 3054, 3067, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3051, 3054, 3067, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_LC, F_FS)
-		        .setProductionFactions(F_LC, F_FS).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+		        .setPrototypeFactions(Faction.LC, Faction.FS)
+		        .setProductionFactions(Faction.LC, Faction.FS).setTechRating(TechRating.D)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.C);
 
 	}
 }

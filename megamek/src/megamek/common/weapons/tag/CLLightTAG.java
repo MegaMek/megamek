@@ -40,14 +40,14 @@ public class CLLightTAG extends TAGWeapon {
         cost = 40000;
         flags = flags.or(F_AERO_WEAPON).or(F_PROTO_WEAPON).andNot(F_BA_WEAPON);
         rulesRefs = "238, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.D)
                 .setClanAdvancement(3051, 3054, 3059, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CWF)
-                .setProductionFactions(F_CWF);
+                .setPrototypeFactions(Faction.CWF)
+                .setProductionFactions(Faction.CWF);
     }
 }

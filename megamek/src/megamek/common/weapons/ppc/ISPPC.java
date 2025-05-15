@@ -49,16 +49,16 @@ public class ISPPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         rulesRefs = "234, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(true)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                 .setISAdvancement(2440, 2460, 2500, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2440, 2460, 2500, 2825, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH);
     }
 }

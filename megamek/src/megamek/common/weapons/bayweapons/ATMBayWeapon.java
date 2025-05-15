@@ -47,10 +47,10 @@ public class ATMBayWeapon extends AmmoBayWeapon {
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_ATM;
         // Using same TA as ATM weapon
-        techAdvancement.setTechBase(TECH_BASE_CLAN) .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D).setClanAdvancement(3052, 3053, 3054)
-                .setClanApproximate(true, true, true).setPrototypeFactions(F_CCY)
-                .setProductionFactions(F_CCY).setStaticTechLevel(SimpleTechLevel.STANDARD);
+        techAdvancement.setTechBase(TechBase.CLAN) .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D).setClanAdvancement(3052, 3053, 3054)
+                .setClanApproximate(true, true, true).setPrototypeFactions(Faction.CCY)
+                .setProductionFactions(Faction.CCY).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
     
     @Override

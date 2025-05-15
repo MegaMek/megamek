@@ -44,11 +44,11 @@ public class InfantryShotgunHastariIII extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_E,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(TechRating.E,TechRating.E,TechRating.E,TechRating.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2920,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_MH);
+       .setProductionFactions(Faction.MH);
    }
 }

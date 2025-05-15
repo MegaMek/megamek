@@ -53,17 +53,17 @@ public class ISSRM6OS extends SRMWeapon {
         shortAV = 8;
         maxRange = RANGE_SHORT;
         rulesRefs = "230, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_C, RATING_C, RATING_D, RATING_C)
+            .setTechRating(TechRating.C)
+            .setAvailability(TechRating.C, TechRating.C, TechRating.D, TechRating.C)
             //From TM pg 230 - "curious concept that did not so much go extinct in the 
             //Succession Wars as fall into general disuse"
             .setISAdvancement(2665, 2676, 3045, DATE_NONE, 3030)
             .setISApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH)
-            .setReintroductionFactions(F_FW);
+            .setPrototypeFactions(Faction.TH)
+            .setProductionFactions(Faction.TH)
+            .setReintroductionFactions(Faction.FW);
     }
 }

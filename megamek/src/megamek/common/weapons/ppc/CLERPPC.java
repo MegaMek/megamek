@@ -45,14 +45,14 @@ public class CLERPPC extends PPCWeapon {
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
         rulesRefs = "233, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.F, TechRating.D, TechRating.C)
                 .setClanAdvancement(2823, 2826, 2828, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSR)
-                .setProductionFactions(F_CSR);
+                .setPrototypeFactions(Faction.CSR)
+                .setProductionFactions(Faction.CSR);
     }
 }

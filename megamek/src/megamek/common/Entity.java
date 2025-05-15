@@ -82,6 +82,7 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.ITechnology.TechBase;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
@@ -179,8 +180,6 @@ public abstract class Entity extends TurnOrdered
     public static final int DMG_HEAVY = 3;
     public static final int DMG_CRIPPLED = 4;
 
-    public static final int USE_STRUCTURAL_RATING = -1;
-
     protected transient Game game;
     protected transient IGame iGame;
 
@@ -217,21 +216,21 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Used by support vehicles to define the structural tech rating (TM pg 117). The values should come from
-     * EquipmentType.RATING_A-X.
+     * EquipmentType.TechRating.A-X.
      */
-    protected int structuralTechRating = EquipmentType.RATING_A;
+    protected TechRating structuralTechRating = EquipmentType.TechRating.A;
 
     /**
      * Used by support vehicles to define tech rating of armor. Default value indicates that structural tech rating
      * should be used, as in most cases the armor and structural tech ratings match.
      */
-    protected int armorTechRating = USE_STRUCTURAL_RATING;
+    protected TechRating armorTechRating = null;
 
     /**
      * Used by support vehicles to define tech rating of armor. Default value indicates that structural tech rating
      * should be used, as in most cases the engine and structural tech ratings match.
      */
-    protected int engineTechRating = USE_STRUCTURAL_RATING;
+    protected TechRating engineTechRating = null;
 
     /**
      * Used by omni support vehicles to track the weight of optional fire control systems.
@@ -1152,12 +1151,12 @@ public abstract class Entity extends TurnOrdered
      * Sets initial TechAdvancement without equipment based on construction options.
      */
     protected void initTechAdvancement() {
-        compositeTechLevel = new CompositeTechLevel(this, F_NONE);
+        compositeTechLevel = new CompositeTechLevel(this, Faction.NONE);
         addSystemTechAdvancement(compositeTechLevel);
     }
 
-    public CompositeTechLevel factionTechLevel(int techFaction) {
-        if (techFaction == F_NONE) {
+    public CompositeTechLevel factionTechLevel(Faction techFaction) {
+        if (techFaction == Faction.NONE) {
             return compositeTechLevel;
         }
         CompositeTechLevel retVal = new CompositeTechLevel(this, techFaction);
@@ -1191,7 +1190,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getIntroductionDate(boolean clan, int faction) {
+    public int getIntroductionDate(boolean clan, Faction faction) {
         return year;
     }
 
@@ -1208,7 +1207,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getPrototypeDate(boolean clan, int faction) {
+    public int getPrototypeDate(boolean clan, Faction faction) {
         return compositeTechLevel.getPrototypeDate(clan, faction);
     }
 
@@ -1218,7 +1217,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getProductionDate(boolean clan, int faction) {
+    public int getProductionDate(boolean clan, Faction faction) {
         return compositeTechLevel.getProductionDate(clan, faction);
     }
 
@@ -1233,7 +1232,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getExtinctionDate(boolean clan, int faction) {
+    public int getExtinctionDate(boolean clan, Faction faction) {
         return compositeTechLevel.getExtinctionDate(clan, faction);
     }
 
@@ -1243,12 +1242,12 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getReintroductionDate(boolean clan, int faction) {
+    public int getReintroductionDate(boolean clan, Faction faction) {
         return compositeTechLevel.getReintroductionDate(clan, faction);
     }
 
     @Override
-    public int getTechRating() {
+    public TechRating getTechRating() {
         return compositeTechLevel.getTechRating();
     }
 
@@ -1287,7 +1286,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getBaseAvailability(int era) {
+    public TechRating getBaseAvailability(Era era) {
         return compositeTechLevel.getBaseAvailability(era);
     }
 
@@ -1314,44 +1313,44 @@ public abstract class Entity extends TurnOrdered
         }
     }
 
-    protected static final TechAdvancement TA_OMNI = new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE,
+    protected static final TechAdvancement TA_OMNI = new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(DATE_NONE,
                 DATE_NONE,
                 3052)
                                                            .setClanAdvancement(2854, 2856, 2864)
                                                            .setClanApproximate(true)
-                                                           .setPrototypeFactions(F_CCY, F_CSF)
-                                                           .setProductionFactions(F_CCY, F_DC)
-                                                           .setTechRating(RATING_E)
-                                                           .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+                                                           .setPrototypeFactions(Faction.CCY, Faction.CSF)
+                                                           .setProductionFactions(Faction.CCY, Faction.DC)
+                                                           .setTechRating(TechRating.E)
+                                                           .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.D)
                                                            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // This is not in the rules anywhere, but is implied by the existence of the
     // Badger and Bandit
     // tanks used by Wolf's Dragoons and sold to the merc market as early as 3008.
-    private static final TechAdvancement TA_OMNIVEHICLE = new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3008,
+    private static final TechAdvancement TA_OMNIVEHICLE = new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(3008,
                 DATE_NONE,
                 3052)
                                                                 .setISApproximate(true)
                                                                 .setClanAdvancement(2854, 2856, 2864)
                                                                 .setClanApproximate(true)
-                                                                .setPrototypeFactions(F_CCY, F_CSF, F_MERC)
-                                                                .setProductionFactions(F_CCY, F_DC)
-                                                                .setTechRating(RATING_E)
-                                                                .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+                                                                .setPrototypeFactions(Faction.CCY, Faction.CSF, Faction.MERC)
+                                                                .setProductionFactions(Faction.CCY, Faction.DC)
+                                                                .setTechRating(TechRating.E)
+                                                                .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.D)
                                                                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    protected static final TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(TECH_BASE_ALL).setAdvancement(
+    protected static final TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(
                 DATE_PS,
                 3080,
                 DATE_NONE)
                                                                       .setApproximate(false, true, false)
-                                                                      .setTechRating(RATING_A)
-                                                                      .setAvailability(RATING_E,
-                                                                            RATING_D,
-                                                                            RATING_E,
-                                                                            RATING_E)
+                                                                      .setTechRating(TechRating.A)
+                                                                      .setAvailability(TechRating.E,
+                                                                            TechRating.D,
+                                                                            TechRating.E,
+                                                                            TechRating.E)
                                                                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    protected static final TechAdvancement TA_MIXED_TECH = new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE,
+    protected static final TechAdvancement TA_MIXED_TECH = new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(DATE_NONE,
                 3050,
                 3082,
                 DATE_NONE,
@@ -1362,15 +1361,15 @@ public abstract class Entity extends TurnOrdered
                                                                        DATE_NONE,
                                                                        DATE_NONE)
                                                                  .setApproximate(false, true, true, false, false)
-                                                                 .setPrototypeFactions(F_CLAN, F_DC, F_FS, F_LC)
-                                                                 .setTechRating(RATING_A)
-                                                                 .setAvailability(RATING_X,
-                                                                       RATING_X,
-                                                                       RATING_E,
-                                                                       RATING_D)
+                                                                 .setPrototypeFactions(Faction.CLAN, Faction.DC, Faction.FS, Faction.LC)
+                                                                 .setTechRating(TechRating.A)
+                                                                 .setAvailability(TechRating.X,
+                                                                       TechRating.X,
+                                                                       TechRating.E,
+                                                                       TechRating.D)
                                                                  .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TECH_BASE_ALL).setISAdvancement(
+    protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(
                 3061,
                 3082,
                 DATE_NONE,
@@ -1391,13 +1390,13 @@ public abstract class Entity extends TurnOrdered
                                                                               false,
                                                                               false,
                                                                               false)
-                                                                        .setPrototypeFactions(F_CSF, F_FW)
-                                                                        .setProductionFactions(F_CJF, F_FW)
-                                                                        .setTechRating(RATING_E)
-                                                                        .setAvailability(RATING_X,
-                                                                              RATING_X,
-                                                                              RATING_F,
-                                                                              RATING_E)
+                                                                        .setPrototypeFactions(Faction.CSF, Faction.FW)
+                                                                        .setProductionFactions(Faction.CJF, Faction.FW)
+                                                                        .setTechRating(TechRating.E)
+                                                                        .setAvailability(TechRating.X,
+                                                                              TechRating.X,
+                                                                              TechRating.F,
+                                                                              TechRating.E)
                                                                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     public static TechAdvancement getOmniAdvancement() {
@@ -1517,8 +1516,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getTechBase() {
-        return isClan() ? TECH_BASE_CLAN : TECH_BASE_IS;
+    public TechBase getTechBase() {
+        return isClan() ? TechBase.CLAN : TechBase.IS;
     }
 
     @Override
@@ -14415,12 +14414,16 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
-    public int getStructuralTechRating() {
+    public TechRating getStructuralTechRating() {
         return structuralTechRating;
     }
 
-    public void setStructuralTechRating(int structuralTechRating) {
+    public void setStructuralTechRating(TechRating structuralTechRating) {
         this.structuralTechRating = structuralTechRating;
+    }
+
+    public void setStructuralTechRating(int structuralTechRating) {
+        this.structuralTechRating = TechRating.fromIndex(structuralTechRating);
     }
 
     /**
@@ -14437,26 +14440,34 @@ public abstract class Entity extends TurnOrdered
         return 0;
     }
 
-    public int getArmorTechRating() {
-        if (armorTechRating == USE_STRUCTURAL_RATING) {
+    public TechRating getArmorTechRating() {
+        if (armorTechRating == null) {
             return structuralTechRating;
         }
         return armorTechRating;
     }
 
-    public void setArmorTechRating(int armorTechRating) {
+    public void setArmorTechRating(TechRating armorTechRating) {
         this.armorTechRating = armorTechRating;
     }
 
-    public int getEngineTechRating() {
-        if (engineTechRating == USE_STRUCTURAL_RATING) {
+    public void setArmorTechRating(int armorTechRating) {
+        this.armorTechRating = TechRating.fromIndex(armorTechRating);
+    }
+
+    public TechRating getEngineTechRating() {
+        if (engineTechRating == null) {
             return structuralTechRating;
         }
         return engineTechRating;
     }
 
-    public void setEngineTechRating(int engineTechRating) {
+    public void setEngineTechRating(TechRating engineTechRating) {
         this.engineTechRating = engineTechRating;
+    }
+
+    public void setEngineTechRating(int engineTechRating) {
+        this.engineTechRating = TechRating.fromIndex(engineTechRating);
     }
 
     /**

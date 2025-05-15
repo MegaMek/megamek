@@ -49,15 +49,15 @@ public class CLPulseLaserMicro extends PulseLaserWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "226, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C)
                 .setClanAdvancement(3059, 3060, 3061, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSJ)
-                .setProductionFactions(F_CSJ);
+                .setPrototypeFactions(Faction.CSJ)
+                .setProductionFactions(Faction.CSJ);
     }
 
     @Override

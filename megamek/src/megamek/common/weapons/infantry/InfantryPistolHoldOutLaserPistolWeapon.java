@@ -46,12 +46,12 @@ public class InfantryPistolHoldOutLaserPistolWeapon extends InfantryWeapon {
 		ammoWeight = 0.00002;
 		shots = 6;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2318, 2320, 2350, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2318, 2320, 2350, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setClanAdvancement(2318, 2320, 2350, DATE_NONE, DATE_NONE)
-				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
-				.setProductionFactions(F_LC).setTechRating(RATING_D)
-				.setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
+				.setProductionFactions(Faction.LC).setTechRating(TechRating.D)
+				.setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B);
 
 	}
 }

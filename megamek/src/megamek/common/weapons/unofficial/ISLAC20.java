@@ -41,14 +41,14 @@ public class ISLAC20 extends LACWeapon {
         cost = 325000;
         explosionDamage = damage;
         rulesRefs = "Unofficial";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_C)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.C)
                 .setISAdvancement(3062, 3068, 3070, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS);
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS);
     }
 }

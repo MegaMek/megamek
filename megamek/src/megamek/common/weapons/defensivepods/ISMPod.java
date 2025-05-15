@@ -27,14 +27,14 @@ public class ISMPod extends MPodWeapon {
         addLookupName("ISM-Pod");
 
         rulesRefs = "330, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3060, 3064, 3099, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC);
+                .setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC);
     }
 }

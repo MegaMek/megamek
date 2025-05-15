@@ -42,14 +42,14 @@ public class CLFlamer extends FlamerWeapon {
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "218, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_C, RATING_A, RATING_A)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.C, TechRating.A, TechRating.A)
                 .setClanAdvancement(2820, 2827, 2828, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CFM)
-                .setProductionFactions(F_CFM);
+                .setPrototypeFactions(Faction.CFM)
+                .setProductionFactions(Faction.CFM);
     }
 }

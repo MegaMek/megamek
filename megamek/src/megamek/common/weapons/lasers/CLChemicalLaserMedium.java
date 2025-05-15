@@ -47,12 +47,12 @@ public class CLChemicalLaserMedium extends CLChemicalLaserWeapon {
         maxRange = RANGE_SHORT;
         rulesRefs = "320, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+        techAdvancement.setTechBase(TechBase.CLAN)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
                 .setClanAdvancement(DATE_NONE, 3059, 3083, DATE_NONE, DATE_NONE)
-                .setPrototypeFactions(F_CHH)
-                .setProductionFactions(F_CHH)
+                .setPrototypeFactions(Faction.CHH)
+                .setProductionFactions(Faction.CHH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

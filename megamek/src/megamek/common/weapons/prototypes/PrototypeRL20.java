@@ -43,11 +43,11 @@ public class PrototypeRL20 extends PrototypeRLWeapon {
         maxRange = RANGE_MED;
         flags = flags.or(F_PROTOTYPE);
         rulesRefs = "217, IO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_D, RATING_F, RATING_X, RATING_X)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.D, TechRating.F, TechRating.X, TechRating.X)
                 .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)

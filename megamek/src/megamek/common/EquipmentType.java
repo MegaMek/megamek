@@ -48,6 +48,7 @@ import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
+import megamek.common.YamlEncDec;
 
 /**
  * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
@@ -258,7 +259,7 @@ public class EquipmentType implements ITechnology {
     public Map<Integer, Integer> getTechLevels() {
         Map<Integer, Integer> techLevel = new HashMap<Integer, Integer>();
         if (isUnofficial()) {
-            if (techAdvancement.getTechBase() == TECH_BASE_CLAN) {
+            if (techAdvancement.getTechBase() == ITechnology.TechBase.CLAN) {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
             } else {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_IS_UNOFFICIAL);
@@ -282,7 +283,7 @@ public class EquipmentType implements ITechnology {
             techLevel.put(techAdvancement.getProductionDate(false), TechConstants.T_IS_ADVANCED);
         }
 
-        if (techAdvancement.getTechBase() == TECH_BASE_ALL && techAdvancement.getCommonDate() > 0) {
+        if (techAdvancement.getTechBase() == ITechnology.TechBase.ALL && techAdvancement.getCommonDate() > 0) {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_TW_ALL);
         } else if (techAdvancement.getCommonDate(true) > 0) {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_CLAN_TW);
@@ -903,21 +904,21 @@ public class EquipmentType implements ITechnology {
      * MiscType that does not have its own TechAdvancement.
      */
 
-    protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL).setAdvancement(
+    protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(
                 2430,
                 2439,
                 2505)
                                                                          .setApproximate(true, false, false)
                                                                          .setIntroLevel(true)
-                                                                         .setTechRating(RATING_D)
-                                                                         .setAvailability(RATING_C,
-                                                                               RATING_C,
-                                                                               RATING_C,
-                                                                               RATING_C)
+                                                                         .setTechRating(TechRating.D)
+                                                                         .setAvailability(TechRating.C,
+                                                                               TechRating.C,
+                                                                               TechRating.C,
+                                                                               TechRating.C)
                                                                          .setStaticTechLevel(SimpleTechLevel.INTRO);
-    protected static final TechAdvancement TA_NONE = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_NONE)
-                                                           .setTechRating(RATING_A)
-                                                           .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+    protected static final TechAdvancement TA_NONE = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_NONE)
+                                                           .setTechRating(TechRating.A)
+                                                           .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                                                            .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     public static TechAdvancement getStructureTechAdvancement(int at, boolean clan) {
@@ -1003,22 +1004,22 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getTechRating() {
+    public TechRating getTechRating() {
         return techAdvancement.getTechRating();
     }
 
     @Override
     public boolean isClan() {
-        return techAdvancement.getTechBase() == TECH_BASE_CLAN;
+        return techAdvancement.getTechBase() == ITechnology.TechBase.CLAN;
     }
 
     @Override
     public boolean isMixedTech() {
-        return techAdvancement.getTechBase() == TECH_BASE_ALL;
+        return techAdvancement.getTechBase() == ITechnology.TechBase.ALL;
     }
 
     @Override
-    public int getTechBase() {
+    public TechBase getTechBase() {
         return techAdvancement.getTechBase();
     }
 
@@ -1042,7 +1043,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getIntroductionDate(boolean clan, int faction) {
+    public int getIntroductionDate(boolean clan, Faction faction) {
         return techAdvancement.getIntroductionDate(clan, faction);
     }
 
@@ -1057,7 +1058,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getExtinctionDate(boolean clan, int faction) {
+    public int getExtinctionDate(boolean clan, Faction faction) {
         return techAdvancement.getExtinctionDate(clan, faction);
     }
 
@@ -1072,7 +1073,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getReintroductionDate(boolean clan, int faction) {
+    public int getReintroductionDate(boolean clan, Faction faction) {
         return techAdvancement.getReintroductionDate(clan, faction);
     }
 
@@ -1140,135 +1141,12 @@ public class EquipmentType implements ITechnology {
         }
     }
 
-        private static String sanitizeFileName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            return null;
-        }
-        String sanitized = name;
-        sanitized = sanitized.replaceAll("[\\<>:\"/\\\\|?*\\p{Cntrl}]", "");
-        sanitized = sanitized.replaceAll("[. ]+$", "");
-        sanitized = sanitized.replaceAll("^_|_$", "");
-        if (sanitized.isEmpty()) {
-            return null;
-        }
-        return sanitized;
-    }
 
-    public static void writeEquipmentYamlDatabase(String targetFolder) {
-        try {
-            logger.info("Exporting YAML files to " + targetFolder);
-            HashMap <String, Boolean> seen = new HashMap<>();
-            
-            org.yaml.snakeyaml.DumperOptions options = new org.yaml.snakeyaml.DumperOptions();
-            options.setDefaultFlowStyle(org.yaml.snakeyaml.DumperOptions.FlowStyle.BLOCK);
-            options.setPrettyFlow(true); // Ensures pretty printing for block collections
-            Yaml yaml = new Yaml(options);
-            // Write everything except ammo types that come from mutations
-            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes.hasMoreElements(); ) {
-                EquipmentType equipmentType = equipmentTypes.nextElement();
-                if (equipmentType instanceof AmmoType ammo) {
-                    if (ammo.base != null) {
-                        continue;
-                    }
-                }
-                writeEquipmentYamlEntry(equipmentType, targetFolder, yaml, seen);
-            }
-            // Now write the ammo types that comes from mutations
-            for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes.hasMoreElements(); ) {
-                EquipmentType equipmentType = equipmentTypes.nextElement();
-                if (equipmentType instanceof AmmoType ammo) {
-                    if (ammo.base == null) {
-                        continue;
-                    }
-                } else {
-                    continue;
-                }
-                writeEquipmentYamlEntry(equipmentType, targetFolder, yaml, seen);
-            }
-        } catch (Exception e) {
-            System.out.println("Error writing YAML database: " + e.getMessage());
-            logger.error("", e);
-        }
-    }
-
-    private static void writeEquipmentYamlEntry(EquipmentType equipmentType, String targetFolder, Yaml yamlProcessor, HashMap <String, Boolean> seen)
-            throws Exception {
-        String typeFolder;
-        String seenKey = null;
-        if (equipmentType instanceof AmmoType) {
-            typeFolder = "ammo";
-        } else if (equipmentType instanceof WeaponType) {
-            typeFolder = "weapon";
-        } else if (equipmentType instanceof MiscType) {
-            typeFolder = "misc";
-        } else {
-            throw new Exception("Failed YAML export for unknown equipment type: " + equipmentType.getName());
-        }
-        
-        File parentDir = new File(targetFolder + File.separator + typeFolder);
-        if (!parentDir.exists()) {
-            if (!parentDir.mkdirs()) {
-                throw new Exception("Could not create directory: " + parentDir.getAbsolutePath());
-            }
-        }
-        String fileName = null;
-        String content = null;
-        boolean appendMode = false;
-        System.out.println("- "+equipmentType.getName());
-        if (equipmentType instanceof AmmoType ammo) {
-            if (ammo.base != null) {
-                fileName = ammo.base.getShortName();
-            } else {
-                fileName = ammo.getShortName();
-            }
-            content = ammo.getYamlData(yamlProcessor);
-        } else
-        if (equipmentType instanceof WeaponType weapon) {
-            fileName =  weapon.getShortName();
-            content = weapon.getYamlData(yamlProcessor);
-        } else 
-        if (equipmentType instanceof MiscType misc) {
-            fileName =  misc.getShortName();
-            content = misc.getYamlData(yamlProcessor);
-        }
-        //TODO: BombType, SmallWeaponAmmoType, ArmorType
-        fileName = sanitizeFileName(fileName);
-        if (fileName == null) {
-            throw new Exception("Filename could not be determined for equipment type: " + equipmentType.getName() + ". Skipping YAML export for this item.");
-        }
-        if (content == null) {
-            throw new Exception("Content for YAML export is null for: " + fileName + ". Skipping.");
-        }
-        seenKey = typeFolder+"_"+fileName;
-        if (equipmentType instanceof AmmoType ammo) {
-            if (ammo.base != null) {
-                if (!seen.containsKey(seenKey)) {
-                    throw new Exception("Not found seen key "+seenKey+ " for ammo mutation "+ammo.getName());
-                };
-            }
-        }
-        final String fullPath = parentDir.getAbsolutePath() + File.separator + fileName + ".yaml";
-        appendMode = seen.containsKey(seenKey);
-        final File f = new File(fullPath);
-        final BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f, appendMode));
-        if (appendMode) {
-            bufferedWriter.write("---\n");
-        } else {
-            bufferedWriter.write("version: 1.0\n"); // We might need it in the future...
-        }
-        bufferedWriter.write(content);
-        bufferedWriter.flush();
-        bufferedWriter.close();
-        seen.put(seenKey, true);
-    }
-    
-    public String getYamlData(Yaml yamlProcessor) {
+    protected Map<String, Object> getYamlData() {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("id", this.internalName);
         data.put("name", this.name);
-        if (this.shortName != null && !this.shortName.isEmpty()) {
-            data.put("shortName", this.shortName);
-        }
+        YamlEncDec.addPropIfNotEmpty(data, "shortName", shortName);
         if (this.namesVector != null && !this.namesVector.isEmpty()) {
             List<String> aliases = new ArrayList<>();
             for (String aliasName : this.namesVector) {
@@ -1282,7 +1160,29 @@ public class EquipmentType implements ITechnology {
                 data.put("aliases", aliases);
             }
         }
-        return yamlProcessor.dump(data);
+        YamlEncDec.addPropIfNotEmpty(data, "sortingName", sortingName);
+        if (tonnage > 0) {
+            data.put("tonnage", tonnage);
+        } else if (tonnage == EquipmentType.TONNAGE_VARIABLE) {
+            data.put("tonnage", "variable");
+        }
+        if (criticals > 0) {
+            data.put("criticals", criticals);
+        } else if (tonnage == EquipmentType.CRITICALS_VARIABLE) {
+            data.put("criticals", "variable");
+        }
+        if (cost > 0) {
+            data.put("cost", cost);
+        } else if (tonnage == EquipmentType.COST_VARIABLE) {
+            data.put("cost", "variable");
+        }
+        if (bv > 0) {
+            data.put("bv", bv);
+        } else if (tonnage == EquipmentType.BV_VARIABLE) {
+            data.put("bv", "variable");
+        }
+        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
+        return data;
     }
 
     public static void writeEquipmentExtendedDatabase(File f) {
@@ -1840,7 +1740,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getPrototypeDate(boolean clan, int faction) {
+    public int getPrototypeDate(boolean clan, Faction faction) {
         return techAdvancement.getPrototypeDate(clan, faction);
     }
 
@@ -1850,7 +1750,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getProductionDate(boolean clan, int faction) {
+    public int getProductionDate(boolean clan, Faction faction) {
         return techAdvancement.getProductionDate(clan, faction);
     }
 
@@ -1860,7 +1760,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getBaseAvailability(int era) {
+    public TechRating getBaseAvailability(Era era) {
         return techAdvancement.getBaseAvailability(era);
     }
 

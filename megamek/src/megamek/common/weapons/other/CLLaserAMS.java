@@ -56,13 +56,13 @@ public class CLLaserAMS extends LaserWeapon {
         cost = 225000;
         rulesRefs = "322, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        techAdvancement.setTechBase(TechBase.CLAN)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setClanAdvancement(DATE_NONE, 3048, 3079, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_CWF)
-                .setProductionFactions(F_CWF)
+                .setPrototypeFactions(Faction.CWF)
+                .setProductionFactions(Faction.CWF)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

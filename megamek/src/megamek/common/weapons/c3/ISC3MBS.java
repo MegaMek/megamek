@@ -49,15 +49,15 @@ public class ISC3MBS extends TAGWeapon {
         extremeRange = 18;
         rulesRefs = "298, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setISAdvancement(3073, 3100, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

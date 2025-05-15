@@ -53,11 +53,11 @@ public class CLLAAMissileWeapon extends ThunderBoltWeapon {
         this.capital = false;
         this.missileArmor = 6;
         rulesRefs = "359, TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+        .setTechRating(TechRating.E)
+        .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.D)
         .setClanAdvancement(DATE_NONE, DATE_NONE, 3074, DATE_NONE, DATE_NONE)
         .setClanApproximate(false, false, false, false, false);
     }

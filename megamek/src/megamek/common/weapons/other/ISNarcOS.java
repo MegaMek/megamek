@@ -39,17 +39,17 @@ public class ISNarcOS extends NarcWeapon {
         cost = 100000;
         rulesRefs = "232, TM";
         techAdvancement
-                .setTechBase(TECH_BASE_ALL)
+                .setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
                 .setISAdvancement(2665, 26767, 3045, 2795, 3035)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2665, 26767, 3045, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 }

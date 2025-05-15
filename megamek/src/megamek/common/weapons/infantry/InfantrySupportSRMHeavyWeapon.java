@@ -49,12 +49,12 @@ public class InfantrySupportSRMHeavyWeapon extends InfantryWeapon {
 		shots = 1;
 		tonnage = .020;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2366, 2370, 2400, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2366, 2370, 2400, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2366, 2370, 2400, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH).setTechRating(RATING_C)
-		        .setAvailability(RATING_C, RATING_C, RATING_D, RATING_C);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+		        .setProductionFactions(Faction.TH).setTechRating(TechRating.C)
+		        .setAvailability(TechRating.C, TechRating.C, TechRating.D, TechRating.C);
 
 	}
 }

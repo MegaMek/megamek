@@ -1014,24 +1014,24 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     private static final TechAdvancement[] TA_LAM = {
-          new TechAdvancement(TECH_BASE_IS).setISAdvancement(2683, 2688, DATE_NONE, 3085)
+          new TechAdvancement(TechBase.IS).setISAdvancement(2683, 2688, DATE_NONE, 3085)
                 .setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_D,
-                      RATING_E,
-                      RATING_F,
-                      RATING_F).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // standard
-          new TechAdvancement(TECH_BASE_IS).setISAdvancement(2680, 2684, DATE_NONE, 2781)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.D,
+                      TechRating.E,
+                      TechRating.F,
+                      TechRating.F).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // standard
+          new TechAdvancement(TechBase.IS).setISAdvancement(2680, 2684, DATE_NONE, 2781)
                 .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2801)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E,
-                      RATING_F,
-                      RATING_X,
-                      RATING_X).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E,
+                      TechRating.F,
+                      TechRating.X,
+                      TechRating.X).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
     };
 
     @Override

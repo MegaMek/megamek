@@ -40,11 +40,11 @@ public class InfantryRifleMGFlechetteNeedlerWeapon extends InfantryWeapon {
 		ammoCost = 4;
  		shots = 8;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2320, 2325, 2350, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2320, 2325, 2350, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2320, 2325, 2350, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_LC).setTechRating(RATING_D)
-		        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
+		        .setProductionFactions(Faction.LC).setTechRating(TechRating.D)
+		        .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.B);
 	}
 }

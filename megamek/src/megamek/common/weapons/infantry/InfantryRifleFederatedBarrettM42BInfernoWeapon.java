@@ -47,10 +47,10 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
         shots = 50;
         bursts = 5;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3060, 3064, 3095, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3060, 3064, 3095, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS).setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS).setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
     }
 }

@@ -48,9 +48,9 @@ public class InfantryRifleStrikerCarbineRifleWeapon extends InfantryWeapon {
         bursts = 2;
         damage = 1;
         rulesRefs =" HBHL, 147";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
-		        .setISApproximate(false, false, false, false, false).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false).setTechRating(TechRating.D)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D);
 
     }
 }

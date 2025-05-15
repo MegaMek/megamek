@@ -54,15 +54,15 @@ public class ISAAAMissileWeapon extends ThunderBoltWeapon {
         this.missileArmor = 20;
         cost = 9000;
         this.rulesRefs = "357, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setTechRating(TechRating.E)
+        .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
         .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
+        .setPrototypeFactions(Faction.LC)
+        .setProductionFactions(Faction.LC);
 
     }
 }

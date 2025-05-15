@@ -40,14 +40,14 @@ public class CLTAG extends TAGWeapon {
         cost = 50000;
         rulesRefs = "238, TM";
         flags = flags.or(F_AERO_WEAPON).or(F_PROTO_WEAPON).andNot(F_BA_WEAPON);
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.D, TechRating.C)
                 .setClanAdvancement(2828, 2830, 2834, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CHH)
-                .setProductionFactions(F_CHH);
+                .setPrototypeFactions(Faction.CHH)
+                .setProductionFactions(Faction.CHH);
     }
 }

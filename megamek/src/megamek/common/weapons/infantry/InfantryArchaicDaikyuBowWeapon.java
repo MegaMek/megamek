@@ -44,11 +44,11 @@ public class InfantryArchaicDaikyuBowWeapon extends InfantryWeapon {
         infantryDamage = 0.01;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
-                .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);
+                .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.A)
+                .setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.C);
 
     }
 }

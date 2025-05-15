@@ -47,11 +47,11 @@ public class InfantryPistolHoldoutPistolWeapon extends InfantryWeapon {
 		ammoCost = 1;
 		shots = 2;
 		rulesRefs = " 273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)
 				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_D)
-				.setAvailability(RATING_A, RATING_A, RATING_B, RATING_B);
+				.setClanApproximate(false, false, false, false, false).setTechRating(TechRating.D)
+				.setAvailability(TechRating.A, TechRating.A, TechRating.B, TechRating.B);
 
 	}
 }

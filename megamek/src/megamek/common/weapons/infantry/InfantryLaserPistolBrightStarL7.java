@@ -38,11 +38,11 @@ public class InfantryLaserPistolBrightStarL7 extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         rulesRefs = "Shrapnel #9";
         techAdvancement
-        .setTechBase(TECH_BASE_IS)
+        .setTechBase(TechBase.IS)
         .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
-        .setTechRating(RATING_E) // Assuming E-E-E-E simplifies to E
-        .setAvailability(new int[]{RATING_E, RATING_E, RATING_E, RATING_E})
+        .setTechRating(TechRating.E) // Assuming E-E-E-E simplifies to E
+        .setAvailability(TechRating.E, TechRating.E, TechRating.E, TechRating.E)
         .setISApproximate(false, false, true, false, false)
-        .setProductionFactions(F_TH);
+        .setProductionFactions(Faction.TH);
     }
 }

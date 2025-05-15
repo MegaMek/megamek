@@ -48,12 +48,12 @@ public class InfantrySupportSemiPortablePPCWeapon extends InfantryWeapon {
 		shots = 25;
 		tonnage = .040;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2430, 2436, 2450, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2430, 2436, 2450, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2430, 2436, 2450, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
-		        .setProductionFactions(F_DC).setTechRating(RATING_E)
-		        .setAvailability(RATING_D, RATING_E, RATING_D, RATING_C);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.DC)
+		        .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
+		        .setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.C);
 
 	}
 }

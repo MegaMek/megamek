@@ -46,11 +46,11 @@ public class ISMG extends MGWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(true)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.A, TechRating.A, TechRating.B, TechRating.A)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, 2826, DATE_NONE)

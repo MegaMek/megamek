@@ -47,14 +47,14 @@ public class ISERFlamer extends FlamerWeapon {
         maxRange = RANGE_SHORT;
         rulesRefs = "312, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(DATE_NONE, 3070, 3081, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
-                .setProductionFactions(F_FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

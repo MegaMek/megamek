@@ -44,16 +44,16 @@ public class CLBAMGHeavy extends BAMGWeapon {
         bv = 6;
         cost = 7500;
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.B)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3068, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(3055, 3059, 3068, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSJ)
-                .setProductionFactions(F_CSJ);
+                .setPrototypeFactions(Faction.CSJ)
+                .setProductionFactions(Faction.CSJ);
     }
 }

@@ -21,6 +21,7 @@ package megamek.common.equipment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,12 +163,12 @@ public class ArmorType extends MiscType {
             EquipmentType.addType(at);
             allTypes.add(at);
         }
-        if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_IS)
-                || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
+        if ((at.techAdvancement.getTechBase() == TechAdvancement.TechBase.IS)
+                || (at.techAdvancement.getTechBase() == TechAdvancement.TechBase.ALL)) {
             armorTypeLookupIS.put(at.armorType, at);
         }
-        if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_CLAN)
-                || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
+        if ((at.techAdvancement.getTechBase() == TechAdvancement.TechBase.CLAN)
+                || (at.techAdvancement.getTechBase() == TechAdvancement.TechBase.ALL)) {
             armorTypeLookupClan.put(at.armorType, at);
         }
     }
@@ -190,7 +191,7 @@ public class ArmorType extends MiscType {
     private double weightPerPoint = 0.0;
     private double[] pptDropship = {};
     private double[] pptCapital = {};
-    private double[] weightPerPointSV = {};
+    private EnumMap<ITechnology.TechRating, Double> weightPerPointSV = new EnumMap<>(ITechnology.TechRating.class);
     private int bar = 10;
 
     private ArmorType() {
@@ -251,9 +252,9 @@ public class ArmorType extends MiscType {
     public int getSupportVeeSlots(Entity entity) {
         // Support vehicle armor takes slots like CV ferro-fibrous at BAR 10/TL E/F
         if (getArmorType() == T_ARMOR_SV_BAR_10) {
-            if (entity.getArmorTechRating() == ITechnology.RATING_E) {
+            if (entity.getArmorTechRating() == ITechnology.TechRating.E) {
                 return ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).svslots;
-            } else if (entity.getArmorTechRating() == ITechnology.RATING_F) {
+            } else if (entity.getArmorTechRating() == ITechnology.TechRating.F) {
                 return ArmorType.of(T_ARMOR_FERRO_FIBROUS, true).svslots;
             }
         }
@@ -313,12 +314,8 @@ public class ArmorType extends MiscType {
      *         the armor does not
      *         exist at that tech level (or it is not SV BAR armor).
      */
-    public double getSVWeightPerPoint(int techRating) {
-        if ((techRating >= 0) && (techRating < weightPerPointSV.length)) {
-            return weightPerPointSV[techRating];
-        } else {
-            return 0.0;
-        }
+    public double getSVWeightPerPoint(TechRating techRating) {
+        return weightPerPointSV.getOrDefault(techRating, 0.0);
     }
 
     public int getBAR() {
@@ -343,11 +340,11 @@ public class ArmorType extends MiscType {
         armor.criticals = 0;
         armor.cost = 10000.0;
 
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL)
                 .setAdvancement(2460, 2470, 2470)
                 .setApproximate(true, false, false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.B)
                 .setStaticTechLevel(SimpleTechLevel.INTRO);
 
         armor.armorType = T_ARMOR_STANDARD;
@@ -372,10 +369,10 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         armor.bv = 0;
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C).setISAdvancement(2557, 2571, 3055, 2810, 3040)
-                .setISApproximate(false, false, false, true, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setReintroductionFactions(F_DC);
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.D, TechRating.F, TechRating.D, TechRating.C).setISAdvancement(2557, 2571, 3055, 2810, 3040)
+                .setISApproximate(false, false, false, true, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.DC);
 
         armor.armorType = T_ARMOR_FERRO_FIBROUS;
         armor.pptMultiplier = 1.12;
@@ -399,11 +396,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         armor.bv = 0;
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+        armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.D, TechRating.C)
                 .setClanAdvancement(2820, 2825, 2830, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_CSR)
-                .setProductionFactions(F_CSR);
+                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.CSR)
+                .setProductionFactions(Faction.CSR);
 
         armor.armorType = T_ARMOR_FERRO_FIBROUS;
         armor.pptMultiplier = 1.2;
@@ -426,11 +423,11 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_LIGHT_FERRO).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3055, 3067, 3070, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW);
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW);
 
         armor.armorType = T_ARMOR_LIGHT_FERRO;
         armor.pptMultiplier = 1.06;
@@ -452,11 +449,11 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 2;
         armor.flags = armor.flags.or(F_HEAVY_FERRO).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3056, 3069, 3070, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_LC);
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.LC);
 
         armor.armorType = T_ARMOR_HEAVY_FERRO;
         armor.pptMultiplier = 1.24;
@@ -479,11 +476,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_FERRO_FIBROUS_PROTO).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_VTOL_EQUIPMENT);
         armor.rulesRefs = "72, IO";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.F, TechRating.X, TechRating.X)
                 .setISAdvancement(2557, DATE_NONE, DATE_NONE, 2571, 3034)
-                .setISApproximate(true, false, false, true, true).setPrototypeFactions(F_TH)
-                .setReintroductionFactions(F_LC, F_DC);
+                .setISApproximate(true, false, false, true, true).setPrototypeFactions(Faction.TH)
+                .setReintroductionFactions(Faction.LC, Faction.DC);
 
         armor.armorType = T_ARMOR_FERRO_FIBROUS_PROTO;
         armor.pptMultiplier = 1.12;
@@ -502,10 +499,10 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C).setISAdvancement(2557, 2571, 3055, 2810, 3040)
-                .setISApproximate(false, false, false, true, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setReintroductionFactions(F_DC);
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.D, TechRating.F, TechRating.D, TechRating.C).setISAdvancement(2557, 2571, 3055, 2810, 3040)
+                .setISApproximate(false, false, false, true, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.DC);
 
         armor.armorType = T_ARMOR_ALUM;
         armor.pptMultiplier = 1.12;
@@ -525,11 +522,11 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+        armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.D, TechRating.C)
                 .setClanAdvancement(2820, 2825, 2830, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_CSR)
-                .setProductionFactions(F_CSR);
+                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.CSR)
+                .setProductionFactions(Faction.CSR);
 
         armor.armorType = T_ARMOR_ALUM;
         armor.pptMultiplier = 1.2;
@@ -549,11 +546,11 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_LIGHT_FERRO).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3055, 3067, 3070, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW);
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW);
 
         armor.armorType = T_ARMOR_LIGHT_ALUM;
         armor.pptMultiplier = 1.06;
@@ -573,11 +570,11 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 2;
         armor.flags = armor.flags.or(F_HEAVY_FERRO).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3056, 3069, 3070, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_LC);
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.LC);
 
         armor.armorType = T_ARMOR_HEAVY_ALUM;
         armor.pptMultiplier = 1.24;
@@ -598,11 +595,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_FERRO_FIBROUS_PROTO).or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "72, IO";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.F, TechRating.X, TechRating.X)
                 .setISAdvancement(2557, DATE_NONE, DATE_NONE, 2571, 3034)
-                .setISApproximate(true, false, false, true, true).setPrototypeFactions(F_TH)
-                .setReintroductionFactions(F_LC, F_DC);
+                .setISApproximate(true, false, false, true, true).setPrototypeFactions(Faction.TH)
+                .setReintroductionFactions(Faction.LC, Faction.DC);
 
         armor.armorType = EquipmentType.T_ARMOR_FERRO_ALUM_PROTO;
         armor.pptMultiplier = 1.12;
@@ -623,11 +620,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_COMMERCIAL_ARMOR).or(F_MEK_EQUIPMENT);
         armor.omniFixedOnly = true;
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_B)
-                .setAvailability(RATING_B, RATING_B, RATING_A, RATING_A)
+        armor.techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.B)
+                .setAvailability(TechRating.B, TechRating.B, TechRating.A, TechRating.A)
                 .setAdvancement(2290, 2300, 2310)
-                .setApproximate(true, true, false).setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TA);
+                .setApproximate(true, true, false).setPrototypeFactions(Faction.TA)
+                .setProductionFactions(Faction.TA);
 
         armor.armorType = T_ARMOR_COMMERCIAL;
         armor.pptMultiplier = 1.5;
@@ -649,11 +646,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_INDUSTRIAL_ARMOR).or(F_MEK_EQUIPMENT);
         armor.omniFixedOnly = true;
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
+        armor.techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.C)
+                .setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B)
                 .setAdvancement(2430, 2439, 2439)
-                .setApproximate(true, true, true).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
+                .setApproximate(true, true, true).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH);
 
         armor.armorType = T_ARMOR_INDUSTRIAL;
         armor.pptMultiplier = 0.67;
@@ -671,11 +668,11 @@ public class ArmorType extends MiscType {
         armor.industrial = true;
         armor.flags = armor.flags.or(F_HEAVY_INDUSTRIAL_ARMOR).or(F_MEK_EQUIPMENT);
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+        armor.techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.D)
+                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.B)
                 .setAdvancement(2460, 2470, 2470)
-                .setApproximate(false, true, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
+                .setApproximate(false, true, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH);
 
         armor.armorType = T_ARMOR_HEAVY_INDUSTRIAL;
 
@@ -691,13 +688,13 @@ public class ArmorType extends MiscType {
         armor.industrial = true;
         armor.flags = armor.flags.or(F_PRIMITIVE_ARMOR).or(F_MEK_EQUIPMENT);
         armor.rulesRefs = "125, IO";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.C)
+                .setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B)
                 .setISAdvancement(DATE_ES, 2290, 2315, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, true, false, false)
                 .setClanAdvancement(DATE_ES, 2290, 2315, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, true, true, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
+                .setClanApproximate(false, true, true, false, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH);
 
         armor.armorType = T_ARMOR_PRIMITIVE;
         armor.pptMultiplier = 0.67;
@@ -716,11 +713,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_PRIMITIVE_ARMOR).or(F_FIGHTER_EQUIPMENT);
         armor.omniFixedOnly = true;
         armor.rulesRefs = "125, IO";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.C)
+                .setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B)
                 .setISAdvancement(DATE_ES, 2300, 2315).setISApproximate(false, true, true)
                 .setClanApproximate(false, true, true, false, false)
-                .setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setProductionFactions(Faction.TH).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_PRIMITIVE_FIGHTER;
         armor.pptMultiplier = 0.67;
@@ -747,11 +744,11 @@ public class ArmorType extends MiscType {
         armor.bv = 0;
         armor.rulesRefs = "94, TO: AU&E";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setISAdvancement(3063, 3081, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, true, false, false, false).setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setISApproximate(false, true, false, false, false).setPrototypeFactions(Faction.DC)
+                .setProductionFactions(Faction.DC).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_REACTIVE;
 
@@ -776,11 +773,11 @@ public class ArmorType extends MiscType {
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         armor.rulesRefs = "94, TO: AU&E";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setClanAdvancement(3065, 3081, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, true, false, false, false).setPrototypeFactions(F_CGB)
-                .setProductionFactions(F_CGB).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setClanApproximate(false, true, false, false, false).setPrototypeFactions(Faction.CGB)
+                .setProductionFactions(Faction.CGB).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_REACTIVE;
 
@@ -805,11 +802,11 @@ public class ArmorType extends MiscType {
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         armor.rulesRefs = "93, TO: AU&E";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setISAdvancement(3058, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, true, false, false, false).setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setISApproximate(false, true, false, false, false).setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_REFLECTIVE;
 
@@ -834,11 +831,11 @@ public class ArmorType extends MiscType {
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         armor.rulesRefs = "93, TO: AU&E";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setClanAdvancement(3061, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, true, false, false, false).setPrototypeFactions(F_CJF)
-                .setProductionFactions(F_CJF).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setClanApproximate(false, true, false, false, false).setPrototypeFactions(Faction.CJF)
+                .setProductionFactions(Faction.CJF).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_REFLECTIVE;
 
@@ -857,13 +854,13 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_HARDENED_ARMOR).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT);
         armor.rulesRefs = "93, TO: AU&E";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        armor.techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setISAdvancement(3047, 3081, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(3061, 3081, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, true, false, false, false).setPrototypeFactions(F_FS, F_LC, F_CGB)
-                .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setClanApproximate(false, true, false, false, false).setPrototypeFactions(Faction.FS, Faction.LC, Faction.CGB)
+                .setProductionFactions(Faction.LC).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_HARDENED;
         armor.pptMultiplier = 0.5;
@@ -887,12 +884,12 @@ public class ArmorType extends MiscType {
         armor.setInstantModeSwitch(false);
         armor.bv = 0;
         armor.rulesRefs = "206, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3051, 3063, 3072, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC);
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC);
 
         armor.armorType = T_ARMOR_STEALTH;
 
@@ -918,11 +915,11 @@ public class ArmorType extends MiscType {
         armor.setInstantModeSwitch(false);
         armor.rulesRefs = "94, TO: AU&E";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setISAdvancement(DATE_NONE, 3067, 3084, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, true, false, false).setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC).setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setISApproximate(false, false, true, false, false).setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC).setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_STEALTH_VEHICLE;
 
@@ -944,11 +941,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_FERRO_LAMELLOR).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         armor.rulesRefs = "92, TO: AU&E";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setClanAdvancement(3070, 3109, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_CSR)
-                .setProductionFactions(F_CSR).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setClanApproximate(false, false, false, false, false).setPrototypeFactions(Faction.CSR)
+                .setProductionFactions(Faction.CSR).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_FERRO_LAMELLOR;
         armor.pptMultiplier = 0.875;
@@ -968,13 +965,13 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_HEAT_DISSIPATING).or(F_MEK_EQUIPMENT);
         armor.rulesRefs = "87, IO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+        armor.techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.E)
                 .setISAdvancement(3115, 3123, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(3115, 3126, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_HEAT_DISSIPATING;
@@ -994,11 +991,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_IMPACT_RESISTANT).or(F_MEK_EQUIPMENT);
         armor.rulesRefs = "87, IO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.E)
                 .setISAdvancement(3090, 3103, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_IMPACT_RESISTANT;
@@ -1022,11 +1019,11 @@ public class ArmorType extends MiscType {
                 .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         armor.rulesRefs = "86, IO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.E)
                 .setISAdvancement(3100, 3114, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.DC)
+                .setProductionFactions(Faction.DC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_ANTI_PENETRATIVE_ABLATION;
@@ -1051,11 +1048,11 @@ public class ArmorType extends MiscType {
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         armor.rulesRefs = "87, IO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.E)
                 .setISAdvancement(3120, 3131, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.DC)
+                .setProductionFactions(Faction.DC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BALLISTIC_REINFORCED;
@@ -1075,10 +1072,10 @@ public class ArmorType extends MiscType {
                 .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.cost = 10000.0;
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
+                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.B)
                 .setISAdvancement(2460, 2470, 2470).setISApproximate(true, false, false)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_AEROSPACE;
@@ -1097,8 +1094,8 @@ public class ArmorType extends MiscType {
                 .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.cost = 10000.0;
         armor.rulesRefs = "205, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+        armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.D)
+                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.B)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2470)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
@@ -1120,11 +1117,11 @@ public class ArmorType extends MiscType {
                 .or(F_SS_EQUIPMENT);
         armor.cost = 50000.0;
         armor.rulesRefs = "152, SO";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_X, RATING_E, RATING_D)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(2500, 2520, DATE_NONE, 2950, 3052)
                 .setISApproximate(true, true, false, false, false)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH).setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_FERRO_IMP;
@@ -1142,10 +1139,10 @@ public class ArmorType extends MiscType {
                 .or(F_SS_EQUIPMENT);
         armor.cost = 50000.0;
         armor.rulesRefs = "152, SO";
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_X, RATING_E, RATING_D)
+        armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.X, TechRating.E, TechRating.D)
                 .setClanAdvancement(2500, 2520).setClanApproximate(false, true)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_FERRO_IMP;
@@ -1164,11 +1161,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_FERRO_CARBIDE).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
                 .or(F_SS_EQUIPMENT);
         armor.rulesRefs = "152, SO";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_X, RATING_E, RATING_D)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(2550, 2570, DATE_NONE, 2950, 3055).setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setReintroductionFactions(F_DC, F_LC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.DC, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_FERRO_CARBIDE;
@@ -1186,11 +1183,11 @@ public class ArmorType extends MiscType {
                 .or(F_SS_EQUIPMENT);
         armor.cost = 75000.0;
         armor.rulesRefs = "152, SO";
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_X, RATING_E, RATING_D)
+        armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.X, TechRating.E, TechRating.D)
                 .setClanAdvancement(2550, 2570, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_FERRO_CARBIDE;
@@ -1208,12 +1205,12 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.cost = 100000.0;
         armor.rulesRefs = "152, SO";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
                 .setISAdvancement(2600, 2615, DATE_NONE, 2950, 3055).setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2600, 2615, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_FW, F_LC)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.FS, Faction.FW, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE;
@@ -1230,11 +1227,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.cost = 100000.0;
         armor.rulesRefs = "152, SO";
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+        armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
                 .setClanAdvancement(2600, 2615, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE;
@@ -1254,10 +1251,10 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_PRIMITIVE_ARMOR).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
                 .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.rulesRefs = "125, IO";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
+        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.C)
+                .setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B)
                 .setISAdvancement(DATE_ES, 2300, 2315).setISApproximate(false, true, true)
-                .setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setProductionFactions(Faction.TH).setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_PRIMITIVE_AERO;
         armor.pptDropship = new double[] { 10.56, 9.24, 7.92, 6.6, 5.28, 3.96 };
@@ -1299,10 +1296,10 @@ public class ArmorType extends MiscType {
         String[] modes = { "not charging", "charging" };
         armor.setModes(modes);
         armor.rulesRefs = "64, IO";
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+        armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.X)
                 .setClanAdvancement(3071, DATE_NONE, DATE_NONE, 3085, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CFM)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CFM)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         armor.armorType = T_ARMOR_EDP;
@@ -1321,11 +1318,11 @@ public class ArmorType extends MiscType {
         armor.criticals = 0;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2680, DATE_NONE, 3054, DATE_NONE, 3050)
+        armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2680, DATE_NONE, 3054, DATE_NONE, 3050)
                 .setISApproximate(true, false, true, false, false)
-                .setPrototypeFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC, F_DC).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D)
+                .setPrototypeFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC, Faction.DC).setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.F, TechRating.E, TechRating.D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_BA_STANDARD;
@@ -1344,10 +1341,10 @@ public class ArmorType extends MiscType {
         armor.criticals = 0;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        armor.techAdvancement.setTechBase(TechBase.CLAN)
                 .setClanAdvancement(DATE_NONE, 2868, 3054).setClanApproximate(true, true, false)
-                .setProductionFactions(F_CWF).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D)
+                .setProductionFactions(Faction.CWF).setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.F, TechRating.E, TechRating.D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_BA_STANDARD;
@@ -1365,11 +1362,11 @@ public class ArmorType extends MiscType {
         armor.cost = 10000.0;
         armor.criticals = 4;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
-        armor.techAdvancement.setTechBase(TECH_BASE_IS)
+        armor.techAdvancement.setTechBase(TechBase.IS)
                 .setISAdvancement(3050, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH, F_FS, F_LC, F_DC)
-                .setProductionFactions(F_TH, F_FS, F_LC, F_DC).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D)
+                .setISApproximate(false, false, false, false, false).setPrototypeFactions(Faction.TH, Faction.FS, Faction.LC, Faction.DC)
+                .setProductionFactions(Faction.TH, Faction.FS, Faction.LC, Faction.DC).setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.F, TechRating.E, TechRating.D)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         armor.armorType = T_ARMOR_BA_STANDARD_PROTOTYPE;
@@ -1388,9 +1385,9 @@ public class ArmorType extends MiscType {
         armor.criticals = 5;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(DATE_NONE, 3057, 3060)
-                .setProductionFactions(F_FW).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+        armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(DATE_NONE, 3057, 3060)
+                .setProductionFactions(Faction.FW).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
 
         armor.armorType = T_ARMOR_BA_STANDARD_ADVANCED;
         armor.weightPerPoint = 0.040;
@@ -1408,10 +1405,10 @@ public class ArmorType extends MiscType {
         armor.criticals = 5;
         armor.flags = armor.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "253, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3052, 3058, 3065)
-                .setClanApproximate(true, false, false).setPrototypeFactions(F_CFM)
-                .setProductionFactions(F_CFM).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+        armor.techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3052, 3058, 3065)
+                .setClanApproximate(true, false, false).setPrototypeFactions(Faction.CFM)
+                .setProductionFactions(Faction.CFM).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
 
         armor.armorType = T_ARMOR_BA_FIRE_RESIST;
         armor.weightPerPoint = 0.030;
@@ -1430,10 +1427,10 @@ public class ArmorType extends MiscType {
         armor.criticals = 4;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3050, 3052, 3054, 3055, DATE_NONE)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS, F_LC).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X);
+        armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3050, 3052, 3054, 3055, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS, Faction.LC).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.X);
 
         armor.armorType = T_ARMOR_BA_STEALTH_PROTOTYPE;
         armor.weightPerPoint = 0.100;
@@ -1451,10 +1448,10 @@ public class ArmorType extends MiscType {
         armor.criticals = 3;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2700, 2710, 3054, 2770, 3052)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setReintroductionFactions(F_DC).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D);
+        armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2700, 2710, 3054, 2770, 3052)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.DC).setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.F, TechRating.E, TechRating.D);
 
         armor.armorType = T_ARMOR_BA_STEALTH_BASIC;
         armor.weightPerPoint = 0.055;
@@ -1472,9 +1469,9 @@ public class ArmorType extends MiscType {
         armor.criticals = 3;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setClanAdvancement(DATE_NONE, DATE_NONE, 3054).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D);
+        armor.techAdvancement.setTechBase(TechBase.CLAN)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3054).setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.F, TechRating.E, TechRating.D);
 
         armor.armorType = T_ARMOR_BA_STEALTH_BASIC;
         armor.weightPerPoint = 0.030;
@@ -1493,10 +1490,10 @@ public class ArmorType extends MiscType {
         armor.criticals = 4;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2710, 2720, 3055, 2770, 3053)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setReintroductionFactions(F_DC).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D);
+        armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2710, 2720, 3055, 2770, 3053)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.DC).setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.X, TechRating.E, TechRating.D);
 
         armor.armorType = T_ARMOR_BA_STEALTH;
         armor.weightPerPoint = 0.060;
@@ -1515,10 +1512,10 @@ public class ArmorType extends MiscType {
         armor.criticals = 4;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setClanAdvancement(DATE_NONE, DATE_NONE, 3055).setPrototypeFactions(F_TH)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D);
+        armor.techAdvancement.setTechBase(TechBase.CLAN)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3055).setPrototypeFactions(Faction.TH)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.X, TechRating.E, TechRating.D);
 
         armor.armorType = T_ARMOR_BA_STEALTH;
         armor.weightPerPoint = 0.035;
@@ -1537,10 +1534,10 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
 
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3057, 3059)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FW, F_WB)
-                .setProductionFactions(F_FW, F_WB).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+        armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3055, 3057, 3059)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FW, Faction.WB)
+                .setProductionFactions(Faction.FW, Faction.WB).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
 
         armor.armorType = T_ARMOR_BA_STEALTH_IMP;
         armor.weightPerPoint = 0.060;
@@ -1559,10 +1556,10 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "252, TM";
 
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        armor.techAdvancement.setTechBase(TechBase.CLAN)
                 .setClanAdvancement(DATE_NONE, 3058, 3059)
-                .setProductionFactions(F_CSR).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+                .setProductionFactions(Faction.CSR).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
 
         armor.armorType = T_ARMOR_BA_STEALTH_IMP;
         armor.weightPerPoint = 0.035;
@@ -1580,10 +1577,10 @@ public class ArmorType extends MiscType {
         armor.criticals = 7;
         armor.flags = armor.flags.or(F_STEALTH).or(F_VISUAL_CAMO).or(F_BA_EQUIPMENT);
         armor.rulesRefs = "253, TM";
-        armor.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3061, 3065, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_CS, F_WB)
-                .setProductionFactions(F_WB).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+        armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3058, 3061, 3065, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CS, Faction.WB)
+                .setProductionFactions(Faction.WB).setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
 
         armor.armorType = T_ARMOR_BA_MIMETIC;
         armor.weightPerPoint = 0.050;
@@ -1603,11 +1600,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REACTIVE);
         armor.rulesRefs = "93, TO: AU&E";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_IS)
+        armor.techAdvancement.setTechBase(TechBase.IS)
                 .setISAdvancement(3075, 3110, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
-                .setProductionFactions(F_RS).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setProductionFactions(Faction.RS).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REACTIVE;
@@ -1628,10 +1625,10 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REACTIVE);
         armor.rulesRefs = "94, TO: AU&E";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        armor.techAdvancement.setTechBase(TechBase.CLAN)
                 .setClanAdvancement(3075, 3110, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, true, false, false, false).setPrototypeFactions(F_CSF)
-                .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setClanApproximate(false, true, false, false, false).setPrototypeFactions(Faction.CSF)
+                .setTechRating(TechRating.F).setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REACTIVE;
@@ -1652,11 +1649,11 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REFLECTIVE);
         armor.rulesRefs = "93, TO: AU&E";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_IS)
+        armor.techAdvancement.setTechBase(TechBase.IS)
                 .setISAdvancement(3074, 3110, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
-                .setProductionFactions(F_DC).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setProductionFactions(Faction.DC).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REFLECTIVE;
@@ -1677,12 +1674,12 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REFLECTIVE);
         armor.rulesRefs = "93, TO: AU&E";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        armor.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        armor.techAdvancement.setTechBase(TechBase.CLAN)
                 .setClanAdvancement(3074, 3110, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_CSF)
-                .setProductionFactions(F_CNC).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setPrototypeFactions(Faction.CSF)
+                .setProductionFactions(Faction.CNC).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REFLECTIVE;
@@ -1699,15 +1696,19 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 2";
         armor.cost = 50.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setTechRating(TechRating.A).setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
         armor.bar = 2;
 
         armor.armorType = T_ARMOR_SV_BAR_2;
-        armor.weightPerPointSV = new double[] { 0.040, 0.025, 0.016, 0.013, 0.012, 0.011 };
-
+        armor.weightPerPointSV.put(ITechnology.TechRating.A, 0.040);
+        armor.weightPerPointSV.put(ITechnology.TechRating.B, 0.025);
+        armor.weightPerPointSV.put(ITechnology.TechRating.C, 0.016);
+        armor.weightPerPointSV.put(ITechnology.TechRating.D, 0.013);
+        armor.weightPerPointSV.put(ITechnology.TechRating.E, 0.012);
+        armor.weightPerPointSV.put(ITechnology.TechRating.F, 0.011);
         return armor;
     }
 
@@ -1719,14 +1720,19 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 3";
         armor.cost = 100.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setTechRating(TechRating.A).setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
         armor.bar = 3;
 
         armor.armorType = T_ARMOR_SV_BAR_3;
-        armor.weightPerPointSV = new double[] { 0.060, 0.038, 0.024, 0.019, 0.017, 0.016 };
+        armor.weightPerPointSV.put(ITechnology.TechRating.A, 0.060);
+        armor.weightPerPointSV.put(ITechnology.TechRating.B, 0.038);
+        armor.weightPerPointSV.put(ITechnology.TechRating.C, 0.024);
+        armor.weightPerPointSV.put(ITechnology.TechRating.D, 0.019);
+        armor.weightPerPointSV.put(ITechnology.TechRating.E, 0.017);
+        armor.weightPerPointSV.put(ITechnology.TechRating.F, 0.016);
 
         return armor;
     }
@@ -1739,14 +1745,19 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 4";
         armor.cost = 150.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_A, RATING_A)
+        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setTechRating(TechRating.B).setAvailability(TechRating.B, TechRating.B, TechRating.A, TechRating.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
         armor.bar = 4;
 
         armor.armorType = T_ARMOR_SV_BAR_4;
-        armor.weightPerPointSV = new double[] { 0.080, 0.050, 0.032, 0.026, 0.023, 0.021 };
+        armor.weightPerPointSV.put(ITechnology.TechRating.A, 0.080);
+        armor.weightPerPointSV.put(ITechnology.TechRating.B, 0.050);
+        armor.weightPerPointSV.put(ITechnology.TechRating.C, 0.032);
+        armor.weightPerPointSV.put(ITechnology.TechRating.D, 0.026);
+        armor.weightPerPointSV.put(ITechnology.TechRating.E, 0.023);
+        armor.weightPerPointSV.put(ITechnology.TechRating.F, 0.021);
 
         return armor;
     }
@@ -1759,14 +1770,19 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 5";
         armor.cost = 200.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_B, RATING_A)
+        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                .setTechRating(TechRating.B).setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
         armor.bar = 5;
 
         armor.armorType = T_ARMOR_SV_BAR_5;
-        armor.weightPerPointSV = new double[] { 0.100, 0.063, 0.040, 0.032, 0.028, 0.026 };
+        armor.weightPerPointSV.put(ITechnology.TechRating.A, 0.100);
+        armor.weightPerPointSV.put(ITechnology.TechRating.B, 0.063);
+        armor.weightPerPointSV.put(ITechnology.TechRating.C, 0.040);
+        armor.weightPerPointSV.put(ITechnology.TechRating.D, 0.032);
+        armor.weightPerPointSV.put(ITechnology.TechRating.E, 0.028);
+        armor.weightPerPointSV.put(ITechnology.TechRating.F, 0.026);
 
         return armor;
     }
@@ -1779,14 +1795,19 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 6";
         armor.cost = 250.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_B, RATING_B, RATING_A)
+        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                .setTechRating(TechRating.C).setAvailability(TechRating.C, TechRating.B, TechRating.B, TechRating.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
         armor.bar = 6;
 
         armor.armorType = T_ARMOR_SV_BAR_6;
-        armor.weightPerPointSV = new double[] { 0.130, 0.75, 0.048, 0.038, 0.034, 0.032 };
+        armor.weightPerPointSV.put(ITechnology.TechRating.A, 0.130);
+        armor.weightPerPointSV.put(ITechnology.TechRating.B, 0.075);
+        armor.weightPerPointSV.put(ITechnology.TechRating.C, 0.048);
+        armor.weightPerPointSV.put(ITechnology.TechRating.D, 0.038);
+        armor.weightPerPointSV.put(ITechnology.TechRating.E, 0.034);
+        armor.weightPerPointSV.put(ITechnology.TechRating.F, 0.032);
 
         return armor;
     }
@@ -1799,18 +1820,23 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 7";
         armor.cost = 300.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL)
                 .setAdvancement(2250, 2300, 2305)
                 .setApproximate(true, true, false)
-                .setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TA).setTechRating(RATING_C)
-                .setAvailability(RATING_C, RATING_B, RATING_B, RATING_B)
+                .setPrototypeFactions(Faction.TA)
+                .setProductionFactions(Faction.TA).setTechRating(TechRating.C)
+                .setAvailability(TechRating.C, TechRating.B, TechRating.B, TechRating.B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
         armor.bar = 7;
 
         armor.armorType = T_ARMOR_SV_BAR_7;
-        armor.weightPerPointSV = new double[] { 0.180, 0.088, 0.056, 0.045, 0.040, 0.037 };
+        armor.weightPerPointSV.put(ITechnology.TechRating.A, 0.180);
+        armor.weightPerPointSV.put(ITechnology.TechRating.B, 0.088);
+        armor.weightPerPointSV.put(ITechnology.TechRating.C, 0.056);
+        armor.weightPerPointSV.put(ITechnology.TechRating.D, 0.045);
+        armor.weightPerPointSV.put(ITechnology.TechRating.E, 0.040);
+        armor.weightPerPointSV.put(ITechnology.TechRating.F, 0.037);
 
         return armor;
     }
@@ -1823,18 +1849,23 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 8";
         armor.cost = 400.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL)
                 .setAdvancement(2420, 2430, 2435)
             .setApproximate(true,false,false)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_C, RATING_B, RATING_B)
+                .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.C, TechRating.C, TechRating.B, TechRating.B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
         armor.bar = 8;
 
         armor.armorType = T_ARMOR_SV_BAR_8;
-        armor.weightPerPointSV = new double[] { 0.230, 0.120, 0.064, 0.051, 0.045, 0.042 };
+        armor.weightPerPointSV.put(ITechnology.TechRating.A, 0.230);
+        armor.weightPerPointSV.put(ITechnology.TechRating.B, 0.120);
+        armor.weightPerPointSV.put(ITechnology.TechRating.C, 0.064);
+        armor.weightPerPointSV.put(ITechnology.TechRating.D, 0.051);
+        armor.weightPerPointSV.put(ITechnology.TechRating.E, 0.045);
+        armor.weightPerPointSV.put(ITechnology.TechRating.F, 0.042);
 
         return armor;
     }
@@ -1847,19 +1878,23 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 9";
         armor.cost = 500.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL)
                 .setAdvancement(2420, 2430, 2435)
                 .setApproximate(true,false,false)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+                .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
         armor.bar = 9;
 
         armor.armorType = T_ARMOR_SV_BAR_9;
-        armor.weightPerPointSV = new double[] { 0.0, 0.180, 0.100, 0.057, 0.051, 0.047 };
-
+        armor.weightPerPointSV.put(ITechnology.TechRating.A, 0.0);
+        armor.weightPerPointSV.put(ITechnology.TechRating.B, 0.180);
+        armor.weightPerPointSV.put(ITechnology.TechRating.C, 0.100);
+        armor.weightPerPointSV.put(ITechnology.TechRating.D, 0.057);
+        armor.weightPerPointSV.put(ITechnology.TechRating.E, 0.051);
+        armor.weightPerPointSV.put(ITechnology.TechRating.F, 0.047);
         return armor;
     }
 
@@ -1871,17 +1906,22 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 10";
         armor.cost = 625.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+        armor.techAdvancement = new TechAdvancement(TechBase.ALL)
                 .setAdvancement(2420, 2430, 2435)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setApproximate(true, false, false).setTechRating(RATING_D)
-                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+                .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+                .setApproximate(true, false, false).setTechRating(TechRating.D)
+                .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
         armor.bar = 10;
 
         armor.armorType = T_ARMOR_SV_BAR_10;
-        armor.weightPerPointSV = new double[] { 0.0, 0.250, 0.150, 0.063, 0.056, 0.052 };
+        armor.weightPerPointSV.put(TechRating.A, 0.0);
+        armor.weightPerPointSV.put(TechRating.B, 0.250);
+        armor.weightPerPointSV.put(TechRating.C, 0.150);
+        armor.weightPerPointSV.put(TechRating.D, 0.063);
+        armor.weightPerPointSV.put(TechRating.E, 0.056);
+        armor.weightPerPointSV.put(TechRating.F, 0.052);
 
         return armor;
     }
@@ -1895,9 +1935,9 @@ public class ArmorType extends MiscType {
         armor.cost = 0.0;
         armor.flags = armor.flags.or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL)
                 .setAdvancement(ITechnology.DATE_PS, 3075, 3080).setApproximate(false, false, true)
-                .setTechRating(RATING_A).setAvailability(RATING_E, RATING_D, RATING_E, RATING_E)
+                .setTechRating(TechRating.A).setAvailability(TechRating.E, TechRating.D, TechRating.E, TechRating.E)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_PATCHWORK;

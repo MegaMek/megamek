@@ -49,15 +49,15 @@ public class ISReengineeredLaserLarge extends ReengineeredLaserWeapon {
         maxRange = RANGE_MED;
         rulesRefs = "89, IO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.D)
                 .setISAdvancement(3120, 3130,DATE_NONE,DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

@@ -48,14 +48,14 @@ public class ISHeavyMG extends MGWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.X, TechRating.C, TechRating.C, TechRating.B)
                 .setISAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TC)
-                .setProductionFactions(F_TC);
+                .setPrototypeFactions(Faction.TC)
+                .setProductionFactions(Faction.TC);
     }
 }

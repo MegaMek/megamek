@@ -48,12 +48,12 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
 		shots = 150;
 		tonnage = 1.800;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2465, 2470, 2500, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2465, 2470, 2500, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2465, 2470, 2500, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH).setTechRating(RATING_E)
-		        .setAvailability(RATING_C, RATING_D, RATING_C, RATING_D);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+		        .setProductionFactions(Faction.TH).setTechRating(TechRating.E)
+		        .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.D);
 
 	}
 }

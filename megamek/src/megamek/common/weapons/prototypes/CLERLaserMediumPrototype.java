@@ -48,14 +48,14 @@ public class CLERLaserMediumPrototype extends LaserWeapon {
         maxRange = RANGE_MED;
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         rulesRefs = "97, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.X, TechRating.X)
                 .setClanAdvancement(2819, DATE_NONE, DATE_NONE, 2824, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
-                .setPrototypeFactions(F_CSJ)
+                .setPrototypeFactions(Faction.CSJ)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

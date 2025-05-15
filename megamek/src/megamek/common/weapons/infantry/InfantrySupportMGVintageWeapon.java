@@ -41,10 +41,10 @@ public class InfantrySupportMGVintageWeapon extends InfantryWeapon {
 		shots = 90;
 		bursts = 9;
 		rulesRefs = "195, AToW-C";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-		        .setAvailability(RATING_D, RATING_E, RATING_E, RATING_F);
+		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+		        .setAvailability(TechRating.D, TechRating.E, TechRating.E, TechRating.F);
 	}
 }

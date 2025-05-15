@@ -46,12 +46,12 @@ public class InfantryRifleGyroslugCarbineWeapon extends InfantryWeapon {
 		ammoCost = 5;
 		shots = 20;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2570, 2580, 2650, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2570, 2580, 2650, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2570, 2580, 2650, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CC)
-		        .setProductionFactions(F_CC).setTechRating(RATING_D)
-		        .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CC)
+		        .setProductionFactions(Faction.CC).setTechRating(TechRating.D)
+		        .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C);
 
 	}
 }

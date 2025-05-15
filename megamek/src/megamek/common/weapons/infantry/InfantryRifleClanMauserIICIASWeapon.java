@@ -47,10 +47,10 @@ public class InfantryRifleClanMauserIICIASWeapon extends InfantryWeapon {
         ammoWeight = 0.0003;
         shots = 6;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3013, 3015, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
-                .setProductionFactions(F_CHH).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
+        techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3013, 3015, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CHH)
+                .setProductionFactions(Faction.CHH).setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.D);
 
     }
 }

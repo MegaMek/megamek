@@ -47,12 +47,12 @@ public class InfantrySupportSemiPortableLaserWeapon extends InfantryWeapon {
 		shots = 21;
 		tonnage = .040;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2395, 2400, 2450, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2395, 2400, 2450, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2395, 2400, 2450, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH).setTechRating(RATING_D)
-		        .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+		        .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+		        .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C);
 
 	}
 }

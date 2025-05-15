@@ -13,6 +13,9 @@
  */
 package megamek.common;
 
+import megamek.common.ITechnology.Faction;
+import megamek.common.ITechnology.TechRating;
+
 /**
  * Determines whether a piece of technology (a part, construction option, or entire unit) meets
  * certain constraints such as intro year, tech base, or tech level. Provides methods to define
@@ -46,7 +49,7 @@ public interface ITechManager {
      * @return One of the F_* faction constants defined in {@link ITechnology}. If &lt; 0, faction
      *         variations will be ignored.
      */
-    int getTechFaction();
+    Faction getTechFaction();
     
     /**
      * @return True if the tech should have a Clan tech base, or false for Inner Sphere/Periphery
@@ -83,11 +86,11 @@ public interface ITechManager {
         // Unofficial tech has the option to ignore year availability
         if ((getTechLevel() == SimpleTechLevel.UNOFFICIAL)
                 && unofficialNoYear()) {
-            return useMixedTech() || (tech.getTechBase() == ITechnology.TECH_BASE_ALL)
+            return useMixedTech() || (tech.getTechBase() == ITechnology.TechBase.ALL)
                     || (useClanTechBase() == tech.isClan());
         }
 
-        int faction = getTechFaction();
+        Faction faction = getTechFaction();
         boolean clanTech = useClanTechBase();
         
         int isIntroDate = tech.getIntroductionDate(false);
@@ -97,25 +100,25 @@ public interface ITechManager {
         boolean extinctIS = tech.isExtinct(getTechIntroYear(), false);
         boolean extinctClan = tech.isExtinct(getTechIntroYear(), true);
         // A little bit of hard-coded universe detail
-        if ((faction == ITechnology.F_CS)
+        if ((faction == Faction.CS)
                 && extinctIS && (isIntroDate != ITechnology.DATE_NONE)
-                && (tech.getBaseAvailability(ITechnology.getTechEra(getTechIntroYear())) < ITechnology.RATING_X)
+                && (tech.getBaseAvailability(ITechnology.getTechEra(getTechIntroYear())).getIndex() < TechRating.X.getIndex())
                 && isIntroDate <= getTechIntroYear()) {
             // ComStar has access to Star League tech that is otherwise extinct in the Inner Sphere as if TH,
             // unless it has an availability of X (which is SLDF Royal equipment).
             extinctIS = false;
-            faction = ITechnology.F_TH;
+            faction = Faction.TH;
         } else if (useClanTechBase() && !introducedClan
-                && tech.isAvailableIn(2787, false, ITechnology.F_TH)
+                && tech.isAvailableIn(2787, false, Faction.TH)
                 && !extinctClan && (tech.getExtinctionDate(false) > getGameYear())
                 && (tech.getExtinctionDate(false) != ITechnology.DATE_NONE)) {
             // Transitional period: Clans can treat IS tech as Clan if it was available to TH and
             // has an extinction date that it hasn't reached yet (using specific Clan date if given).
-            faction = ITechnology.F_TH;
+            faction = Faction.TH;
             clanTech = false;
         }
         if (useMixedTech()) {
-            if ((!introducedIS && !introducedClan) 
+            if ((!introducedIS && !introducedClan)
                     || (!showExtinct()
                             && (tech.isExtinct(getTechIntroYear())))) {
                 return false;
@@ -125,7 +128,7 @@ public interface ITechManager {
                         || tech.getSimpleLevel(getGameYear(), false, faction).compareTo(getTechLevel()) <= 0;
             }
         } else {
-            if (tech.getTechBase() != ITechnology.TECH_BASE_ALL
+            if (tech.getTechBase() != ITechnology.TechBase.ALL
                     && clanTech != tech.isClan()) {
                 return false;
             } else if (clanTech && (!introducedClan || (!showExtinct() && extinctClan))) {

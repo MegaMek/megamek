@@ -50,12 +50,12 @@ public class InfantrySupportTAGWeapon extends InfantryWeapon {
         cost = 40000;
         tonnage = .020;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2598, 2610, DATE_NONE, 2770, 3051)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2598, 2610, DATE_NONE, 2770, 3051)
                 .setISApproximate(true, true, false, false, false)
                 .setClanAdvancement(2598, 2610, DATE_NONE, DATE_NONE, 3051)
-                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setReintroductionFactions(F_DC).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_X, RATING_E, RATING_E);
+                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.DC).setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.X, TechRating.E, TechRating.E);
     }
 
     @Override

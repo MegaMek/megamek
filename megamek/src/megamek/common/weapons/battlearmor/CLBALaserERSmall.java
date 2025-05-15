@@ -46,14 +46,14 @@ public class CLBALaserERSmall extends LaserWeapon {
         shortAV = 5;
         maxRange = RANGE_SHORT;
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.D, TechRating.C)
                 .setClanAdvancement(2872, 2875, 2880, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
-                .setPrototypeFactions(F_CJF)
-                .setProductionFactions(F_CJF);
+                .setPrototypeFactions(Faction.CJF)
+                .setProductionFactions(Faction.CJF);
     }
 }

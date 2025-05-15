@@ -48,11 +48,11 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
 		shots = 9;
 		bursts = 3;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3060, 3075, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3058, 3060, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_LC).setTechRating(RATING_C)
-		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B);
+		        .setPrototypeFactions(Faction.LC)
+		        .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.B);
 
 	}
 }

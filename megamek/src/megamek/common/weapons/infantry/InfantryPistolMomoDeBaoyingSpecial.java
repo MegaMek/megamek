@@ -41,11 +41,11 @@ public class InfantryPistolMomoDeBaoyingSpecial extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #3";
        techAdvancement
-               .setTechBase(TECH_BASE_IS)
-               .setTechRating(RATING_D)
-               .setAvailability(RATING_X, RATING_E, RATING_E, RATING_F)
+               .setTechBase(TechBase.IS)
+               .setTechRating(TechRating.D)
+               .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.F)
                .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                .setISApproximate(false, false, true, false, false)
-               .setProductionFactions(F_CC);
+               .setProductionFactions(Faction.CC);
    }
 }

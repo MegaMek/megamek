@@ -49,11 +49,11 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
         rulesRefs = "218, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(true)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.A, TechRating.A, TechRating.B, TechRating.A)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)

@@ -39,14 +39,14 @@ public class CLLRT10IOS extends LRTWeapon {
         flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 80000;
         rulesRefs = "327, TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setClanAdvancement(3058, 3081, 3085, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_CNC)
-                .setProductionFactions(F_CNC);
+                .setPrototypeFactions(Faction.CNC)
+                .setProductionFactions(Faction.CNC);
     }
 }

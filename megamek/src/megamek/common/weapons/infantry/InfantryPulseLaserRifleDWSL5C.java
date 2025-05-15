@@ -40,11 +40,11 @@ public class InfantryPulseLaserRifleDWSL5C extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_C) // Assuming X-C-C-C simplifies to C
-                .setAvailability(new int[]{RATING_X, RATING_C, RATING_C, RATING_C})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.C) // Assuming X-C-C-C simplifies to C
+                .setAvailability(TechRating.X, TechRating.C, TechRating.C, TechRating.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_LC);
+                .setProductionFactions(Faction.LC);
     }
 }

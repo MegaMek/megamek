@@ -50,11 +50,11 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
 		shots = 200;
 		bursts = 8;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2255, 2300, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2100, 2255, 2300, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(2100, 2255, 2300, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setProductionFactions(F_TA)
-		        .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);
+		        .setClanApproximate(false, false, false, false, false).setProductionFactions(Faction.TA)
+		        .setTechRating(TechRating.C).setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.C);
 
 	}
 }

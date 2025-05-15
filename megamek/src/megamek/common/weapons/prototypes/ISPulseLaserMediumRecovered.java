@@ -67,14 +67,14 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
         bv = 48;
         cost = 240000;
         rulesRefs = "103, IO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
             .setIntroLevel(false)
             .setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
+            .setTechRating(TechRating.E)
+            .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.X)
             .setISAdvancement(3031, DATE_NONE, DATE_NONE, 3037, DATE_NONE)
             .setISApproximate(false, false, false, true, false)
-            .setPrototypeFactions(F_FS,F_DC)
+            .setPrototypeFactions(Faction.FS,Faction.DC)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

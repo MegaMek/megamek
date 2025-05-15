@@ -46,14 +46,14 @@ public class CLLightMG extends MGWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_AC;
         rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.C, TechRating.C, TechRating.B)
                 .setClanAdvancement(3055, 3060, 3070, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSJ)
-                .setProductionFactions(F_CSJ);
+                .setPrototypeFactions(Faction.CSJ)
+                .setProductionFactions(Faction.CSJ);
     }
 }

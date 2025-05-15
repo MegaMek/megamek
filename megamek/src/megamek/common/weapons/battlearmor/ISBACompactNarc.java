@@ -42,16 +42,16 @@ public class ISBACompactNarc extends NarcWeapon {
         criticals = 1;
         cost = 15000;
         rulesRefs = "263, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.D)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3060, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2870, 2875, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSV)
-                .setProductionFactions(F_CSV);
+                .setPrototypeFactions(Faction.CSV)
+                .setProductionFactions(Faction.CSV);
     }
 }

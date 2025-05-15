@@ -48,8 +48,8 @@ public class ISBASupportPPC extends PPCWeapon {
         bv = 14;
         cost = 14000;
         rulesRefs = "267, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS)
-                .setISAdvancement(3046, 3053, 3056).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.IS)
+                .setISAdvancement(3046, 3053, 3056).setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.F, TechRating.D, TechRating.C);
     }
 }

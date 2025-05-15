@@ -51,14 +51,14 @@ public class ISBAMRM5OS extends MRMWeapon {
         criticals = 4;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_B)
+        .setTechRating(TechRating.E)
+        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.B)
         .setISAdvancement(3058, 3060, 3067, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_DC)
-        .setProductionFactions(F_DC);
+        .setPrototypeFactions(Faction.DC)
+        .setProductionFactions(Faction.DC);
     }
 }

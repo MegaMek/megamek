@@ -110,10 +110,10 @@ public class DropshuttleBay extends UnitBay {
     }
 
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(TECH_BASE_IS).setISAdvancement(2110, 2120, DATE_NONE, 2500)
-                .setISApproximate(true, false).setTechRating(RATING_C)
-                .setProductionFactions(F_TA).setProductionFactions(F_TA)
-                .setAvailability(RATING_C, RATING_X, RATING_X, RATING_X)
+        return new TechAdvancement(TechBase.IS).setISAdvancement(2110, 2120, DATE_NONE, 2500)
+                .setISApproximate(true, false).setTechRating(TechRating.C)
+                .setProductionFactions(Faction.TA).setProductionFactions(Faction.TA)
+                .setAvailability(TechRating.C, TechRating.X, TechRating.X, TechRating.X)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

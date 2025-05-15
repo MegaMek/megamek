@@ -43,16 +43,16 @@ public class PrototypeArrowIV extends ArtilleryWeapon {
         cost = 1800000;
         this.flags = flags.or(F_MISSILE).or(F_PROTOTYPE).or(F_ARTILLERY);
         rulesRefs = "284, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.X, TechRating.X, TechRating.X)
                 .setISAdvancement(2593, DATE_NONE, DATE_NONE, 2613, 3044)
                 .setISApproximate(false, false, false, true, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

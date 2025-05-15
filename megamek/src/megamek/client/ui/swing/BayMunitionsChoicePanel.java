@@ -47,6 +47,7 @@ import megamek.logging.MMLogger;
 
 import static megamek.common.AmmoType.F_BATTLEARMOR;
 import static megamek.common.AmmoType.F_PROTOMEK;
+import static megamek.common.AmmoType.TechBase;
 
 /**
  * @author Neoancient
@@ -150,7 +151,7 @@ public class BayMunitionsChoicePanel extends JPanel {
         private final WeaponMounted bay;
         private final int at;
         private final int rackSize;
-        private final int techBase;
+        private final TechBase techBase;
         private final List<AmmoMounted> ammoMounts;
 
         private final List<JSpinner> spinners;
@@ -171,7 +172,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             // set the bay's tech base to that of any weapon in the bay
             // an assumption is made here that bays don't mix clan-only and IS-only tech
             // base
-            this.techBase = weaponType.map(EquipmentType::getTechBase).orElse(WeaponType.TECH_BASE_ALL);
+            this.techBase = weaponType.map(EquipmentType::getTechBase).orElse(WeaponType.TechBase.ALL);
 
             munitions = AmmoType.getMunitionsFor(at).stream()
                 .filter(this::includeMunition)
@@ -236,12 +237,12 @@ public class BayMunitionsChoicePanel extends JPanel {
                     || (ammoType.getAmmoType() != at)
                     || (ammoType.getRackSize() != rackSize)
                     || ((ammoType.getTechBase() != techBase)
-                            && (ammoType.getTechBase() != AmmoType.TECH_BASE_ALL)
-                            && (techBase != AmmoType.TECH_BASE_ALL))
+                            && (ammoType.getTechBase() != AmmoType.TechBase.ALL)
+                            && (techBase != AmmoType.TechBase.ALL))
                     || !ammoType.isLegal(game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR),
                             SimpleTechLevel.getGameTechLevel(game),
-                            techBase == AmmoType.TECH_BASE_CLAN,
-                            techBase == AmmoType.TECH_BASE_ALL,
+                            techBase == AmmoType.TechBase.CLAN,
+                            techBase == AmmoType.TechBase.ALL,
                             game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                 return false;
             }

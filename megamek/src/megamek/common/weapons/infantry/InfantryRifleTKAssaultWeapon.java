@@ -48,11 +48,11 @@ public class InfantryRifleTKAssaultWeapon extends InfantryWeapon {
 		shots = 20;
 		bursts = 2;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2865, 2870, 2925, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2865, 2870, 2925, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_LC).setTechRating(RATING_C)
-		        .setAvailability(RATING_X, RATING_C, RATING_A, RATING_B);
+		        .setPrototypeFactions(Faction.LC)
+		        .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
+		        .setAvailability(TechRating.X, TechRating.C, TechRating.A, TechRating.B);
 
 	}
 }

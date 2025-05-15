@@ -44,12 +44,12 @@ public class InfantryArchaicVibroKatanaWeapon extends InfantryWeapon {
         infantryDamage = 0.32;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2440, 2450, DATE_NONE, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2440, 2450, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2440, 2450, DATE_NONE, 2850, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_E, RATING_D, RATING_C);
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.DC)
+                .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.E, TechRating.D, TechRating.C);
 
     }
 }

@@ -47,12 +47,12 @@ public class InfantryRifleZeusHeavyWeapon extends InfantryWeapon {
 		ammoCost = 3;
 		shots = 5;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2740, 2745, 2750, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2740, 2745, 2750, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2740, 2745, 2750, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_FS)
-		        .setProductionFactions(F_FS).setTechRating(RATING_C)
-		        .setAvailability(RATING_C, RATING_B, RATING_B, RATING_B);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FS)
+		        .setProductionFactions(Faction.FS).setTechRating(TechRating.C)
+		        .setAvailability(TechRating.C, TechRating.B, TechRating.B, TechRating.B);
 
 	}
 }

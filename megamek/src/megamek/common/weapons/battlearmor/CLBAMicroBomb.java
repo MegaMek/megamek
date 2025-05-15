@@ -48,15 +48,15 @@ public class CLBAMicroBomb extends Weapon {
         criticals = 2;
         cost = 30000;
         rulesRefs = "253, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CCC)
-                .setProductionFactions(F_CCC);
+                .setPrototypeFactions(Faction.CCC)
+                .setProductionFactions(Faction.CCC);
     }
 
     @Override

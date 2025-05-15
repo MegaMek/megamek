@@ -39,14 +39,14 @@ public class ISStreakSRM6 extends StreakSRMWeapon {
         this.shortAV = 12;
         this.maxRange = RANGE_SHORT;
         rulesRefs = "230, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC);
+                .setPrototypeFactions(Faction.DC)
+                .setProductionFactions(Faction.DC);
     }
 }

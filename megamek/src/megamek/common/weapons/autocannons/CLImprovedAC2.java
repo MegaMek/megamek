@@ -50,11 +50,11 @@ public class CLImprovedAC2 extends ACWeapon {
         explosionDamage = damage;
         ammoType = AmmoType.T_AC_IMP;
         rulesRefs = "96, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_C, RATING_X, RATING_X)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.C, TechRating.X, TechRating.X)
                 .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
                 .setClanApproximate(false, true, false, false, false)
-                .setProductionFactions(F_CLAN).setReintroductionFactions(F_EI)
+                .setProductionFactions(Faction.CLAN).setReintroductionFactions(Faction.EI)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

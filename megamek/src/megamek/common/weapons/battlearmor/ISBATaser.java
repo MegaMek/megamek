@@ -50,15 +50,15 @@ public class ISBATaser extends AmmoWeapon {
                 .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "346, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setISAdvancement(3067, 3084, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_WB)
-                .setProductionFactions(F_WB)
+                .setPrototypeFactions(Faction.WB)
+                .setProductionFactions(Faction.WB)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

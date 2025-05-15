@@ -56,15 +56,15 @@ public class ISBALaserVSPSmall extends VariableSpeedPulseLaserWeapon {
                 .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         // Tech Progression Missing in IO. Confirmed with Herb uses the same as the Mek Weapon.
         rulesRefs = "321, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3070, 3072, 3080, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FW,F_WB)
-                .setProductionFactions(F_FW,F_WB);
+                .setPrototypeFactions(Faction.FW,Faction.WB)
+                .setProductionFactions(Faction.FW,Faction.WB);
     }
 
     @Override

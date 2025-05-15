@@ -55,17 +55,17 @@ public class CLBAMortarHeavy extends Weapon {
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).or(F_MORTARTYPE_INDIRECT)
                 .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "263, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.C)
                 .setISAdvancement(3054, 3057, 3063, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_LC);
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.LC);
     }
 
     @Override

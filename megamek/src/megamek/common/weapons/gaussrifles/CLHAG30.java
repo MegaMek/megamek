@@ -47,15 +47,15 @@ public class CLHAG30 extends HAGWeapon {
         rulesRefs = "219, TM";
         flags = flags.andNot(F_PROTO_WEAPON);
         //Jan 22 - Errata issued by CGL (Greekfire) for HAGs        
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.D)
                 .setClanAdvancement(DATE_NONE, 3062, 3068, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_CHH)
-                .setProductionFactions(F_CHH)
+                .setPrototypeFactions(Faction.CHH)
+                .setProductionFactions(Faction.CHH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     
     }

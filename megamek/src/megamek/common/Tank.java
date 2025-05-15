@@ -270,15 +270,15 @@ public class Tank extends Entity {
         motivePenalty = p;
     }
 
-    private static final TechAdvancement TA_COMBAT_VEHICLE = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_NONE,
+    private static final TechAdvancement TA_COMBAT_VEHICLE = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_NONE,
                 2470,
                 2490)
-                                                                   .setProductionFactions(F_TH)
-                                                                   .setTechRating(RATING_D)
-                                                                   .setAvailability(RATING_C,
-                                                                         RATING_C,
-                                                                         RATING_C,
-                                                                         RATING_B)
+                                                                   .setProductionFactions(Faction.TH)
+                                                                   .setTechRating(TechRating.D)
+                                                                   .setAvailability(TechRating.C,
+                                                                         TechRating.C,
+                                                                         TechRating.C,
+                                                                         TechRating.B)
                                                                    .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     @Override
@@ -288,10 +288,10 @@ public class Tank extends Entity {
 
     // Advanced turrets
     public static TechAdvancement getDualTurretTA() {
-        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_NONE, 3080)
+        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_NONE, 3080)
                      .setApproximate(false, false, true)
-                     .setTechRating(RATING_B)
-                     .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
+                     .setTechRating(TechRating.B)
+                     .setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.E)
                      .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

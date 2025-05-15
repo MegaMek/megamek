@@ -19,7 +19,6 @@
 package megamek.common.alphaStrike.conversion;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.ITechnology.TECH_BASE_CLAN;
 import static megamek.common.MiscType.F_EMERGENCY_COOLANT_SYSTEM;
 import static megamek.common.MiscType.F_RADICAL_HEATSINK;
 import static megamek.common.alphaStrike.AlphaStrikeElement.EXTREME_RANGE;
@@ -851,7 +850,7 @@ public class ASDamageConverter {
     protected static BattleForceSUA getArtilleryType(WeaponType weaponType) {
         switch (weaponType.getAmmoType()) {
             case AmmoType.T_ARROW_IV:
-                return (weaponType.getTechBase() == TECH_BASE_CLAN) ? ARTAC : ARTAIS;
+                return (weaponType.getTechBase() == ITechnology.TechBase.CLAN) ? ARTAC : ARTAIS;
             case AmmoType.T_LONG_TOM:
                 return ARTLT;
             case AmmoType.T_SNIPER:

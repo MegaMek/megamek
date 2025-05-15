@@ -44,14 +44,14 @@ public class CLLB10XAC extends LBXACWeapon {
         this.medAV = this.shortAV;
         this.maxRange = RANGE_MED;
         rulesRefs = "207, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_D, RATING_C, RATING_B)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.C, TechRating.B)
                 .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
-                .setProductionFactions(F_CLAN)
-                .setReintroductionFactions(F_CLAN);
+                .setProductionFactions(Faction.CLAN)
+                .setReintroductionFactions(Faction.CLAN);
     }
 
     @Override

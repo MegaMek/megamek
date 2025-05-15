@@ -54,11 +54,11 @@ public class CLAMS extends AmmoWeapon {
 		cost = 100000;
 		atClass = CLASS_AMS;
 		rulesRefs = "204, TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-				.setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+		techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
+				.setAvailability(TechRating.X, TechRating.F, TechRating.D, TechRating.C)
 				.setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
-				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSA)
-				.setProductionFactions(F_CSA).setStaticTechLevel(SimpleTechLevel.STANDARD);
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSA)
+				.setProductionFactions(Faction.CSA).setStaticTechLevel(SimpleTechLevel.STANDARD);
 	}
 
 	@Override

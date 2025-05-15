@@ -81,10 +81,10 @@ public final class MekBay extends UnitBay {
     }
 
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL)
+        return new TechAdvancement(ITechnology.TechBase.ALL)
                 .setAdvancement(2445, 2470, 2500)
-                .setApproximate(true, false, false).setTechRating(RATING_C)
-                .setAvailability(RATING_D, RATING_C, RATING_C, RATING_C)
+                .setApproximate(true, false, false).setTechRating(TechRating.C)
+                .setAvailability(TechRating.D, TechRating.C, TechRating.C, TechRating.C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

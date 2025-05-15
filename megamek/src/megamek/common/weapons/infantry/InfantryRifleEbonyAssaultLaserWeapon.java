@@ -46,11 +46,11 @@ public class InfantryRifleEbonyAssaultLaserWeapon extends InfantryWeapon {
 		ammoWeight = 0.0003;
 		shots = 3;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3056, 3063, DATE_NONE, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3056, 3063, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_MC)
-		        .setProductionFactions(F_MC).setTechRating(RATING_F)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		        .setPrototypeFactions(Faction.MC)
+		        .setProductionFactions(Faction.MC).setTechRating(TechRating.F)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D);
 
 	}
 }

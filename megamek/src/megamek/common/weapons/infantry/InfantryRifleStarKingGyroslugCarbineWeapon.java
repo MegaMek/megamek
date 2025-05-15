@@ -47,11 +47,11 @@ public class InfantryRifleStarKingGyroslugCarbineWeapon extends InfantryWeapon {
 		ammoCost = 15;
 		shots = 20;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2775, 2789, 2825, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2775, 2789, 2825, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_LC).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_C, RATING_D, RATING_C);
+		        .setPrototypeFactions(Faction.LC)
+		        .setProductionFactions(Faction.LC).setTechRating(TechRating.D)
+		        .setAvailability(TechRating.X, TechRating.C, TechRating.D, TechRating.C);
 
 	}
 }

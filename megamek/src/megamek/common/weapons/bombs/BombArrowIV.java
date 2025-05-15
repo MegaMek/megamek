@@ -42,17 +42,17 @@ public class BombArrowIV extends ArtilleryWeapon {
         this.cost = 0;
         flags = flags.or(F_BOMB_WEAPON);
         rulesRefs = "359, TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.E)
                 .setISAdvancement(2622, 2623, DATE_NONE, 2850, 3047)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2622, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC);
     }
 }

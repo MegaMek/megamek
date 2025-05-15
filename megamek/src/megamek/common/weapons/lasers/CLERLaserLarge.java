@@ -46,14 +46,14 @@ public class CLERLaserLarge extends LaserWeapon {
         extAV = 10;
         maxRange = RANGE_EXT;
         rulesRefs = "226, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.F, TechRating.D, TechRating.C)
                 .setClanAdvancement(2820, 2825, 2830, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CNC)
-                .setProductionFactions(F_CNC);
+                .setPrototypeFactions(Faction.CNC)
+                .setProductionFactions(Faction.CNC);
     }
 }

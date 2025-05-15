@@ -44,10 +44,10 @@ public class CLFireExtinguisher extends Weapon {
         criticals = 0;
         flags = flags.or(F_SOLO_ATTACK).or(F_NO_FIRES);
 
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability(RATING_X, RATING_B, RATING_B, RATING_X);
+        techAdvancement.setTechRating(TechRating.B);
+        techAdvancement.setAvailability(TechRating.X, TechRating.B, TechRating.B, TechRating.X);
     }
 
     /*

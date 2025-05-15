@@ -178,25 +178,25 @@ public class Jumpship extends Aero {
     public static final int COLLAR_STANDARD = 0;
     public static final int COLLAR_NO_BOOM = 1;
 
-    protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_NONE,
+    protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_NONE,
                 2300)
                                                                .setISApproximate(false, true)
-                                                               .setProductionFactions(F_TA)
-                                                               .setTechRating(RATING_D)
-                                                               .setAvailability(RATING_D, RATING_E, RATING_D, RATING_F)
+                                                               .setProductionFactions(Faction.TA)
+                                                               .setTechRating(TechRating.D)
+                                                               .setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.F)
                                                                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    protected static final TechAdvancement TA_JUMPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS).setISAdvancement(
+    protected static final TechAdvancement TA_JUMPSHIP_PRIMITIVE = new TechAdvancement(TechBase.IS).setISAdvancement(
                 2100,
                 2200,
                 DATE_NONE,
                 2500)
                                                                          .setISApproximate(true, true, false, false)
-                                                                         .setProductionFactions(F_TA)
-                                                                         .setTechRating(RATING_D)
-                                                                         .setAvailability(RATING_D,
-                                                                               RATING_X,
-                                                                               RATING_X,
-                                                                               RATING_X)
+                                                                         .setProductionFactions(Faction.TA)
+                                                                         .setTechRating(TechRating.D)
+                                                                         .setAvailability(TechRating.D,
+                                                                               TechRating.X,
+                                                                               TechRating.X,
+                                                                               TechRating.X)
                                                                          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
@@ -208,14 +208,14 @@ public class Jumpship extends Aero {
      * Tech advancement data for lithium fusion batteries
      */
     public static TechAdvancement getLFBatteryTA() {
-        return new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2520, 2529, DATE_NONE, 2819, 3043)
+        return new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(2520, 2529, DATE_NONE, 2819, 3043)
                      .setISApproximate(true, false, false, false, false)
-                     .setPrototypeFactions(F_TH)
-                     .setProductionFactions(F_TH)
-                     .setReintroductionFactions(F_FS)
+                     .setPrototypeFactions(Faction.TH)
+                     .setProductionFactions(Faction.TH)
+                     .setReintroductionFactions(Faction.FS)
                      .setClanAdvancement(2520, 2529)
-                     .setTechRating(RATING_E)
-                     .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                     .setTechRating(TechRating.E)
+                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.E)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
@@ -223,11 +223,11 @@ public class Jumpship extends Aero {
      * Tech advancement data for the jump sail
      */
     public static TechAdvancement getJumpSailTA() {
-        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2200, 2300, 2325)
-                     .setPrototypeFactions(F_TA)
-                     .setProductionFactions(F_TA)
-                     .setTechRating(RATING_D)
-                     .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
+        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(2200, 2300, 2325)
+                     .setPrototypeFactions(Faction.TA)
+                     .setProductionFactions(Faction.TA)
+                     .setTechRating(TechRating.D)
+                     .setAvailability(TechRating.E, TechRating.E, TechRating.D, TechRating.D)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

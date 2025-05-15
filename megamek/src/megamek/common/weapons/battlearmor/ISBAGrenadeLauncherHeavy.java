@@ -53,10 +53,10 @@ public class ISBAGrenadeLauncherHeavy extends Weapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
                 .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
 		rulesRefs = "256, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability(RATING_X, RATING_D, RATING_D, RATING_C);
+        techAdvancement.setTechRating(TechRating.C);
+        techAdvancement.setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.C);
     }
 
 }

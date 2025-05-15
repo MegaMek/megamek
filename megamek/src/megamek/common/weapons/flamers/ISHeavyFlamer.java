@@ -53,15 +53,15 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
                 .or(WeaponType.F_TANK_WEAPON);
         rulesRefs = "312, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC)
+                .setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

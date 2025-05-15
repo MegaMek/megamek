@@ -48,10 +48,10 @@ public class InfantrySupportClanERLaserWeapon extends InfantryWeapon {
 		shots = 10;
 		tonnage = .100;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2824, 2825, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
-		        .setProductionFactions(F_CHH).setTechRating(RATING_F)
-		        .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C);
+		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2824, 2825, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CHH)
+		        .setProductionFactions(Faction.CHH).setTechRating(TechRating.F)
+		        .setAvailability(TechRating.X, TechRating.E, TechRating.D, TechRating.C);
 
 	}
 }

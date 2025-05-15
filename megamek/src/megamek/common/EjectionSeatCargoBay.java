@@ -68,9 +68,9 @@ public final class EjectionSeatCargoBay extends StandardSeatCargoBay {
     }
 
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+        return new TechAdvancement(ITechnology.TechBase.ALL)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE);
     }
 }

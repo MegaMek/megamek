@@ -40,11 +40,11 @@ public class InfantryLaserPistolXingShanER extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_E) // Assuming X-X-E-E simplifies to E
-                .setAvailability(new int[]{RATING_X, RATING_X, RATING_E, RATING_E})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.E) // Assuming X-X-E-E simplifies to E
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_CC);
+                .setProductionFactions(Faction.CC);
     }
 }

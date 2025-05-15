@@ -52,16 +52,16 @@ public class CLBAGrenadeLauncherHeavy extends Weapon {
         cost = 4500;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "256, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_C)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2880, 2900, 3050, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSF)
-                .setProductionFactions(F_CSF);
+                .setPrototypeFactions(Faction.CSF)
+                .setProductionFactions(Faction.CSF);
     }
 }

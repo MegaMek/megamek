@@ -44,11 +44,11 @@ public class InfantryShotgunWranglemanTriBarrel extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_ALL)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_X,RATING_C,RATING_F)
+       .setTechBase(TechBase.ALL)
+       .setTechRating(TechRating.C)
+       .setAvailability(TechRating.X,TechRating.X,TechRating.C,TechRating.F)
        .setISAdvancement(DATE_NONE, DATE_NONE,3050,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_OA);
+       .setProductionFactions(Faction.OA);
    }
 }

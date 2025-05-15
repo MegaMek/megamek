@@ -45,12 +45,12 @@ public class InfantryArchaicISVibroSwordWeapon extends InfantryWeapon {
         infantryDamage = 0.32;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2435, 2440, 2500, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2435, 2440, 2500, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2435, 2440, 2500, 2850, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setTechRating(RATING_E)
-                .setAvailability(RATING_D, RATING_D, RATING_C, RATING_C);
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH).setTechRating(TechRating.E)
+                .setAvailability(TechRating.D, TechRating.D, TechRating.C, TechRating.C);
 
     }
 }

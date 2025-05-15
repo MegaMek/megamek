@@ -49,17 +49,17 @@ public class ISLaserSmall extends LaserWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "227, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(true)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
                 .setISAdvancement(2290, 2300, 2310, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(2290, 2300, 2310, 2850, DATE_NONE)
                 .setClanApproximate(false, true, false, true, false)
-                .setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TA);
+                .setPrototypeFactions(Faction.TA)
+                .setProductionFactions(Faction.TA);
     }
 
     @Override

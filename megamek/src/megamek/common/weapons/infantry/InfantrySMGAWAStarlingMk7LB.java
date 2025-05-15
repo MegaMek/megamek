@@ -46,11 +46,11 @@ public class InfantrySMGAWAStarlingMk7LB extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #5";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_X,RATING_C,RATING_C,RATING_C)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(TechRating.X,TechRating.C,TechRating.C,TechRating.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_FS);
+       .setProductionFactions(Faction.FS);
    }
 }

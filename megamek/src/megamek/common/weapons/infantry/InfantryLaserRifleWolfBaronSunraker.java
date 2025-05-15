@@ -40,11 +40,11 @@ public class InfantryLaserRifleWolfBaronSunraker extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_C) // Assuming C-C-C-C is just C
-                .setAvailability(new int[]{RATING_C, RATING_C, RATING_C, RATING_C})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.C) // Assuming C-C-C-C is just C
+                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_FW);
+                .setProductionFactions(Faction.FW);
     }
 }

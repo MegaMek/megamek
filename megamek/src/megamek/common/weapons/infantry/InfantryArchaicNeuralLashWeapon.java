@@ -44,12 +44,12 @@ public class InfantryArchaicNeuralLashWeapon extends InfantryWeapon {
         infantryDamage = 0.09;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2300, 2320, 2500, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2300, 2320, 2500, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, true, false, false, false)
                 .setClanAdvancement(2300, 2320, 2500, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC).setTechRating(RATING_D)
-                .setAvailability(RATING_E, RATING_E, RATING_D, RATING_E);
+                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.DC)
+                .setProductionFactions(Faction.DC).setTechRating(TechRating.D)
+                .setAvailability(TechRating.E, TechRating.E, TechRating.D, TechRating.E);
 
     }
 }

@@ -33,6 +33,8 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
+import megamek.common.TechAdvancement.AdvancementPhase;
+import megamek.common.ITechnology;
 
 /**
  * Taharqa's attempt at creating an Aerospace entity
@@ -248,27 +250,30 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return UnitType.AERO;
     }
 
-    protected static final TechAdvancement TA_ASF = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_NONE,
+    protected static final TechAdvancement TA_ASF = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_NONE,
                 2470,
                 2490)
-                                                          .setProductionFactions(F_TH)
-                                                          .setTechRating(RATING_D)
-                                                          .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+                                                          .setProductionFactions(Faction.TH)
+                                                          .setTechRating(TechRating.D)
+                                                          .setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.C)
                                                           .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+    protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(ITechnology.TechBase.IS)
                                                                     // Per MUL team and per availability codes should exist to around 2781
-                                                                    .setISAdvancement(DATE_ES,
-                                                                          2200,
-                                                                          DATE_NONE,
-                                                                          2781,
-                                                                          DATE_NONE)
-                                                                    .setISApproximate(false, true, false, true, false)
-                                                                    .setProductionFactions(F_TA)
-                                                                    .setTechRating(RATING_D)
-                                                                    .setAvailability(RATING_D,
-                                                                          RATING_X,
-                                                                          RATING_F,
-                                                                          RATING_F)
+                                                                    .setISAdvancement(Map.of(
+                                                                        AdvancementPhase.PROTOTYPE, DATE_ES,
+                                                                        AdvancementPhase.PRODUCTION, 2200,
+                                                                        AdvancementPhase.EXTINCT, 2781
+                                                                    ))
+                                                                    .setISApproximate(Map.of(
+                                                                        AdvancementPhase.PRODUCTION, true,
+                                                                        AdvancementPhase.EXTINCT, true
+                                                                    ))
+                                                                    .setProductionFactions(Faction.TA)
+                                                                    .setTechRating(TechRating.D)
+                                                                    .setAvailability(TechRating.D,
+                                                                          TechRating.X,
+                                                                          TechRating.F,
+                                                                          TechRating.F)
                                                                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
@@ -281,37 +286,77 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     protected static final TechAdvancement[] COCKPIT_TA = {
-          new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2491)
-                .setApproximate(true, false, false)
-                .setPrototypeFactions(F_TH)
-                .setPrototypeFactions(F_TH)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C).setStaticTechLevel(SimpleTechLevel.STANDARD),
+          new TechAdvancement(ITechnology.TechBase.ALL)
+                .setISAdvancement(Map.of(
+                    AdvancementPhase.PROTOTYPE, 2460,
+                    AdvancementPhase.PRODUCTION, 2470,
+                    AdvancementPhase.COMMON, 2491
+                ))
+                .setApproximate(Map.of(
+                    AdvancementPhase.PROTOTYPE, true
+                ))
+                .setPrototypeFactions(Faction.TH)
+                .setPrototypeFactions(Faction.TH)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Standard
-          new TechAdvancement(TECH_BASE_IS).setISAdvancement(3065, 3070, 3080)
-                .setClanAdvancement(DATE_NONE, DATE_NONE, 3080)
-                .setISApproximate(true, false, false)
-                .setPrototypeFactions(F_WB)
-                .setPrototypeFactions(F_WB, F_CSR)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D).setStaticTechLevel(SimpleTechLevel.STANDARD),
+          new TechAdvancement(ITechnology.TechBase.IS)
+                .setISAdvancement(Map.of(
+                    AdvancementPhase.PROTOTYPE, 3065,
+                    AdvancementPhase.PRODUCTION, 3070,
+                    AdvancementPhase.COMMON, 3080
+                ))
+                .setClanAdvancement(Map.of(
+                    AdvancementPhase.COMMON,3080
+                ))
+                .setISApproximate(Map.of(
+                    AdvancementPhase.PROTOTYPE, true
+                ))
+                .setPrototypeFactions(Faction.WB)
+                .setPrototypeFactions(Faction.WB, Faction.CSR)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Small
-          new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
-                .setISApproximate(true, false, false, true, true)
-                .setClanAdvancement(2625, 2631)
-                .setClanApproximate(true, false)
-                .setClanApproximate(true, false)
-                .setPrototypeFactions(F_TH)
-                .setPrototypeFactions(F_TH)
-                .setReintroductionFactions(F_FS)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D).setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          new TechAdvancement(ITechnology.TechBase.ALL)
+                .setISAdvancement(Map.of(
+                    AdvancementPhase.PROTOTYPE, 2625,
+                    AdvancementPhase.PRODUCTION, 2631,
+                    AdvancementPhase.EXTINCT, 2850,
+                    AdvancementPhase.REINTRODUCED, 3030
+                ))
+                .setISApproximate(Map.of(
+                    AdvancementPhase.PROTOTYPE, true,
+                    AdvancementPhase.EXTINCT, true,
+                    AdvancementPhase.REINTRODUCED, true
+                ))
+                .setClanAdvancement(Map.of(
+                    AdvancementPhase.PROTOTYPE, 2625,
+                    AdvancementPhase.PRODUCTION, 2631
+                ))
+                .setClanApproximate(Map.of(
+                    AdvancementPhase.PROTOTYPE, true
+                ))
+                .setPrototypeFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.C, TechRating.F, TechRating.E, TechRating.D)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           // Cockpit command console
-          new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, 2300, DATE_NONE, 2520)
-                .setISApproximate(false, true, false, false)
-                .setPrototypeFactions(F_TA)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F).setStaticTechLevel(SimpleTechLevel.STANDARD),
+          new TechAdvancement(ITechnology.TechBase.ALL)
+                .setAdvancement(Map.of(
+                    AdvancementPhase.PROTOTYPE, DATE_ES,
+                    AdvancementPhase.PRODUCTION, 2300,
+                    AdvancementPhase.EXTINCT, 2520
+                ))
+                .setISApproximate(Map.of(
+                    AdvancementPhase.PRODUCTION, true
+                ))
+                .setPrototypeFactions(Faction.TA)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.D, TechRating.X, TechRating.X, TechRating.F)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Primitive
     };
 

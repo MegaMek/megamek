@@ -56,15 +56,15 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
         medAV = 9;
         maxRange = RANGE_MED;
         rulesRefs = "71, IO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.F, TechRating.X, TechRating.X, TechRating.X)
                 .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)
                 .setISApproximate(false, false, false, true, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

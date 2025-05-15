@@ -31,11 +31,12 @@ public class SwarmAttack extends InfantryAttack {
         super();
         this.name = "Swarm Mek";
         this.setInternalName(Infantry.SWARM_MEK);
-        techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(2456, 2460, 2500)
+        techAdvancement.setTechBase(TechBase.ALL).setAdvancement(2456, 2460, 2500)
             .setStaticTechLevel(SimpleTechLevel.STANDARD)
-            .setApproximate(true, false, false).setTechBase(RATING_D)
-            .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
-            .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D);
+            .setApproximate(true, false, false)
+            .setTechRating(TechRating.D)
+            .setPrototypeFactions(Faction.LC).setProductionFactions(Faction.LC)
+            .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D);
     }
 
     /*

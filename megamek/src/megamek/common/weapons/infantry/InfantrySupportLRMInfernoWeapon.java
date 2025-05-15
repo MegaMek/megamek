@@ -51,11 +51,11 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
         infantryDamage = 0.19;
         infantryRange = 3;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3057, 3065, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3055, 3057, 3065, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FW, F_CC)
-                .setProductionFactions(F_FW).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+                .setPrototypeFactions(Faction.FW, Faction.CC)
+                .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D);
 
     }
 

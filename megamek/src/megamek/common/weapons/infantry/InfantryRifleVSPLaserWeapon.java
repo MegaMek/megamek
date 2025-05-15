@@ -40,10 +40,10 @@ public class InfantryRifleVSPLaserWeapon extends InfantryWeapon {
 		shots = 6;
 		bursts = 1;
 		rulesRefs = "195, AToW-C";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3075, 3077, 3085, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3075, 3077, 3085, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
-		        .setPrototypeFactions(F_FS)
-		        .setProductionFactions(F_FS).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		        .setPrototypeFactions(Faction.FS)
+		        .setProductionFactions(Faction.FS).setTechRating(TechRating.E)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D);
 	}
 }

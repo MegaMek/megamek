@@ -40,11 +40,11 @@ public class InfantryLaserPistolAWAWilibyMk4LaserPistol extends InfantryWeapon {
         // ammoCost is not applicable (NA)
         bursts = 1;
         rulesRefs = "Shrapnel #9";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(TechAdvancement.DATE_NONE, TechAdvancement.DATE_NONE, TechAdvancement.DATE_ES, TechAdvancement.DATE_NONE, TechAdvancement.DATE_NONE);
-        techAdvancement.setTechRating(TechAdvancement.RATING_C);
-        techAdvancement.setAvailability(new int[]{TechAdvancement.RATING_C, TechAdvancement.RATING_C, TechAdvancement.RATING_C, TechAdvancement.RATING_C});
+        techAdvancement.setTechBase(TechBase.IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE);
+        techAdvancement.setTechRating(TechRating.C);
+        techAdvancement.setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C);
         techAdvancement.setISApproximate(false, false, true, false, false);
-        techAdvancement.setProductionFactions(TechAdvancement.F_FS);
+        techAdvancement.setProductionFactions(Faction.FS);
     }
 }

@@ -47,9 +47,9 @@ public class ISBALightTAG extends TAGWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
                 .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "270, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(3046, 3053, 3057);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+        techAdvancement.setTechRating(TechRating.E);
+        techAdvancement.setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
     }
 }

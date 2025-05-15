@@ -133,12 +133,12 @@ public final class BattleArmorBay extends Bay implements InfantryTransporter {
     }
 
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL)
+        return new TechAdvancement(ITechnology.TechBase.ALL)
                 .setClanAdvancement(2867, 2868, 2870,DATE_NONE,DATE_NONE )
                 .setClanApproximate(true, false, false, false, false)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050,DATE_NONE,DATE_NONE)
-                .setPrototypeFactions(F_CWF).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+                .setPrototypeFactions(Faction.CWF).setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

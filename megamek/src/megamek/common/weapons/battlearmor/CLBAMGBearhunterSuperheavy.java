@@ -45,14 +45,14 @@ public class CLBAMGBearhunterSuperheavy extends Weapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_NO_FIRES).or(F_BALLISTIC)
                 .or(F_BA_WEAPON).or(F_BURST_FIRE);
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+                .setTechRating(TechRating.D)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.D)
                 .setClanAdvancement(3060, 3062, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CHH)
-                .setProductionFactions(F_CHH);
+                .setPrototypeFactions(Faction.CHH)
+                .setProductionFactions(Faction.CHH);
     }
 }

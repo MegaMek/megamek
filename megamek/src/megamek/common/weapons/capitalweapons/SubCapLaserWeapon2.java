@@ -44,17 +44,17 @@ public class SubCapLaserWeapon2 extends SubCapLaserWeapon {
         this.maxRange = RANGE_MED;
         rulesRefs = "343, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.D)
                 .setISAdvancement(DATE_NONE, 3068, 3073, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(DATE_NONE, 3090, 3091, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_WB)
-                .setProductionFactions(F_WB)
+                .setPrototypeFactions(Faction.WB)
+                .setProductionFactions(Faction.WB)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

@@ -41,11 +41,11 @@ public class InfantrySniperRifleWilimtonRS17Stripped extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #1";
        techAdvancement
-               .setTechBase(TECH_BASE_IS)
-               .setTechRating(RATING_E)
-               .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+               .setTechBase(TechBase.IS)
+               .setTechRating(TechRating.E)
+               .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
                .setISAdvancement(DATE_NONE, DATE_NONE, 3080, DATE_NONE, DATE_NONE)
                .setISApproximate(false, false, true, false, false)
-               .setProductionFactions(F_WB);
+               .setProductionFactions(Faction.WB);
    }
 }

@@ -55,15 +55,15 @@ public class CLATM3 extends ATMWeapon {
         medAV = 4;
         maxRange = RANGE_MED;
         rulesRefs = "229, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
                 .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, true, false, false)
-                .setPrototypeFactions(F_CCY)
-                .setProductionFactions(F_CCY);
+                .setPrototypeFactions(Faction.CCY)
+                .setProductionFactions(Faction.CCY);
     }
 
     @Override

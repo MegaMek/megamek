@@ -419,10 +419,10 @@ public class Bay implements Transporter, ITechnology {
 
     // Use cargo/infantry for default tech advancement
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL)
+        return new TechAdvancement(ITechnology.TechBase.ALL)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                .setTechRating(RATING_A)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setTechRating(TechRating.A)
+                .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
@@ -431,14 +431,14 @@ public class Bay implements Transporter, ITechnology {
      * @return Tech advancement for advanced robotic transport system.
      */
     public static TechAdvancement artsTechAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL)
+        return new TechAdvancement(ITechnology.TechBase.ALL)
                 .setAdvancement(2600, 2609, DATE_NONE, 2804, 3068)
                 .setApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_WB)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.WB)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.D, TechRating.E, TechRating.E, TechRating.E)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
@@ -457,7 +457,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     @Override
-    public int getTechBase() {
+    public TechBase getTechBase() {
         return getTechAdvancement().getTechBase();
     }
 
@@ -492,37 +492,37 @@ public class Bay implements Transporter, ITechnology {
     }
 
     @Override
-    public int getTechRating() {
+    public TechRating getTechRating() {
         return getTechAdvancement().getTechRating();
     }
 
     @Override
-    public int getBaseAvailability(int era) {
+    public TechRating getBaseAvailability(Era era) {
         return getTechAdvancement().getBaseAvailability(era);
     }
 
     @Override
-    public int getIntroductionDate(boolean clan, int faction) {
+    public int getIntroductionDate(boolean clan, Faction faction) {
         return getTechAdvancement().getIntroductionDate(clan, faction);
     }
 
     @Override
-    public int getPrototypeDate(boolean clan, int faction) {
+    public int getPrototypeDate(boolean clan, Faction faction) {
         return getTechAdvancement().getPrototypeDate(clan, faction);
     }
 
     @Override
-    public int getProductionDate(boolean clan, int faction) {
+    public int getProductionDate(boolean clan, Faction faction) {
         return getTechAdvancement().getProductionDate(clan, faction);
     }
 
     @Override
-    public int getExtinctionDate(boolean clan, int faction) {
+    public int getExtinctionDate(boolean clan, Faction faction) {
         return getTechAdvancement().getExtinctionDate(clan, faction);
     }
 
     @Override
-    public int getReintroductionDate(boolean clan, int faction) {
+    public int getReintroductionDate(boolean clan, Faction faction) {
         return getTechAdvancement().getReintroductionDate(clan, faction);
     }
 

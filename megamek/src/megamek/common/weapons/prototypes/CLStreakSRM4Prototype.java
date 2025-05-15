@@ -54,14 +54,14 @@ public class CLStreakSRM4Prototype extends CLPrototypeStreakSRMWeapon {
         maxRange = RANGE_SHORT;
         rulesRefs = "97, IO";
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.X, TechRating.X)
                 .setClanAdvancement(2819, DATE_NONE, DATE_NONE, 2826, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
-                .setPrototypeFactions(F_CSA);
+                .setPrototypeFactions(Faction.CSA);
     }
 
     @Override

@@ -45,11 +45,11 @@ public class InfantryArchaicImprovisedClubWeapon extends InfantryWeapon {
         infantryDamage = 0.02;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+                .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.A)
+                .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A);
 
     }
 }

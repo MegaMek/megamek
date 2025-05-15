@@ -45,13 +45,13 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
         maxRange = RANGE_MED;
         rulesRefs = "97, IO";
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.D, TechRating.X, TechRating.X)
                 .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2826, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
-                .setPrototypeFactions(F_CHH)
+                .setPrototypeFactions(Faction.CHH)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

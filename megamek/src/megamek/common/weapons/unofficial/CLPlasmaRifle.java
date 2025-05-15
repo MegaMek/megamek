@@ -44,15 +44,15 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         cost = 300000;
         // Gonna use the same tech info as the Cannon
         rulesRefs = "Unofficial";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setClanAdvancement(3068, 3069, 3070, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSF)
-                .setProductionFactions(F_CSF);
+                .setPrototypeFactions(Faction.CSF)
+                .setProductionFactions(Faction.CSF);
     }
 
     @Override

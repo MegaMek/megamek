@@ -41,7 +41,7 @@ public interface ITechnologyDelegator extends ITechnology {
     }
 
     @Override
-    default int getTechBase() {
+    default TechBase getTechBase() {
         return getTechSource().getTechBase();
     }
 
@@ -76,37 +76,37 @@ public interface ITechnologyDelegator extends ITechnology {
     }
 
     @Override
-    default int getTechRating() {
+    default TechRating getTechRating() {
         return getTechSource().getTechRating();
     }
 
     @Override
-    default int getBaseAvailability(int era) {
+    default TechRating getBaseAvailability(Era era) {
         return getTechSource().getBaseAvailability(era);
     }
 
     @Override
-    default int getIntroductionDate(boolean clan, int faction) {
+    default int getIntroductionDate(boolean clan, Faction faction) {
         return getTechSource().getIntroductionDate(clan, faction);
     }
 
     @Override
-    default int getPrototypeDate(boolean clan, int faction) {
+    default int getPrototypeDate(boolean clan, Faction faction) {
         return getTechSource().getPrototypeDate(clan, faction);
     }
 
     @Override
-    default int getProductionDate(boolean clan, int faction) {
+    default int getProductionDate(boolean clan, Faction faction) {
         return getTechSource().getProductionDate(clan, faction);
     }
 
     @Override
-    default int getExtinctionDate(boolean clan, int faction) {
+    default int getExtinctionDate(boolean clan, Faction faction) {
         return getTechSource().getExtinctionDate(clan, faction);
     }
 
     @Override
-    default int getReintroductionDate(boolean clan, int faction) {
+    default int getReintroductionDate(boolean clan, Faction faction) {
         return getTechSource().getReintroductionDate(clan, faction);
     }
 

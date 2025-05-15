@@ -46,14 +46,14 @@ public class ISLightMG extends MGWeapon {
         shortAV = 1;
         maxRange = RANGE_SHORT;
         rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.B)
                 .setISAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC);
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC);
     }
 }

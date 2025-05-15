@@ -48,16 +48,16 @@ public class CLBARecoillessRifleLight extends Weapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 1000;
         rulesRefs = "268, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
                 .setISAdvancement(3052, 3054, 3056, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3062, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS, F_LC);
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS, Faction.LC);
     }
 }

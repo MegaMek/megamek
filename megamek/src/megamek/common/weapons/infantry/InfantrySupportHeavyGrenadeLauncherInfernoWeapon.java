@@ -51,11 +51,11 @@ public class InfantrySupportHeavyGrenadeLauncherInfernoWeapon extends InfantryWe
 		bursts = 4;
 		tonnage = .018;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3049, 3050, 3057, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3049, 3050, 3057, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
-				.setPrototypeFactions(F_FS, F_LC)
-				.setProductionFactions(F_FS, F_LC).setTechRating(RATING_C)
-				.setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+				.setPrototypeFactions(Faction.FS, Faction.LC)
+				.setProductionFactions(Faction.FS, Faction.LC).setTechRating(TechRating.C)
+				.setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
 
 	}
 }

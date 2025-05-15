@@ -44,10 +44,10 @@ public class InfantryArchaicVibroAxeWeapon extends InfantryWeapon {
         infantryDamage = 0.42;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2435, 2445, 2600, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC).setTechRating(RATING_E)
-                .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2435, 2445, 2600, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC).setTechRating(TechRating.E)
+                .setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.C);
 
     }
 }

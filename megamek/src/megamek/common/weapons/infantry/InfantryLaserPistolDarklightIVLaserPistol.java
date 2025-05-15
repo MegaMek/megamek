@@ -39,11 +39,11 @@ public class InfantryLaserPistolDarklightIVLaserPistol extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         rulesRefs = "Shrapnel #9";
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_E)
-                .setAvailability(new int[]{RATING_X, RATING_E, RATING_E, RATING_D})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.D)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_DC);
+                .setProductionFactions(Faction.DC);
     }
 }

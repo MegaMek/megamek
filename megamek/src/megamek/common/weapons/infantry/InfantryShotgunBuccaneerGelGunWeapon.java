@@ -47,11 +47,11 @@ public class InfantryShotgunBuccaneerGelGunWeapon extends InfantryWeapon {
 		ammoCost = 20;
 		shots = 15;
     	rulesRefs = "269, ATOW";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3030, 3035, 3057, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3030, 3035, 3057, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_FW)
-		        .setProductionFactions(F_FW).setTechRating(RATING_C)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+		        .setPrototypeFactions(Faction.FW)
+		        .setProductionFactions(Faction.FW).setTechRating(TechRating.C)
+		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
 
 	}
 }

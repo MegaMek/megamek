@@ -54,14 +54,14 @@ public class ISLaserAMSTHB extends LaserWeapon {
         cost = 300000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.
         rulesRefs = "322, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3059, 3079, 3145, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS);
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS);
     }
 
     @Override

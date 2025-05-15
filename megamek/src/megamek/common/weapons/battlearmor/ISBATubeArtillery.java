@@ -45,15 +45,15 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         damage = DAMAGE_BY_CLUSTERTABLE;
         atClass = CLASS_ARTILLERY;
         infDamageClass = WEAPON_CLUSTER_MISSILE;
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                 .setISAdvancement(3070, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CS)
-                .setProductionFactions(F_CS);
+                .setPrototypeFactions(Faction.CS)
+                .setProductionFactions(Faction.CS);
     }
 
     @Override

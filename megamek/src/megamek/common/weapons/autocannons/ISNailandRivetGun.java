@@ -35,17 +35,17 @@ public class ISNailandRivetGun extends NailRivetGunWeapon {
         addLookupName("CLNailRivetGun");
         addLookupName("Nail Gun");
         rulesRefs = "246, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setTechRating(TechRating.C)
+                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                 .setISAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, true, false, false, false)
                 .setClanAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW);
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW);
     }
 }
 

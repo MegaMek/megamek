@@ -47,15 +47,15 @@ public class ISC3M extends TAGWeapon {
         longRange = 15;
         extremeRange = 18;
         rulesRefs = "209, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                 .setISAdvancement(3039, 3050, 3065, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC)
+                .setPrototypeFactions(Faction.DC)
+                .setProductionFactions(Faction.DC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

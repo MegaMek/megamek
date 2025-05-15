@@ -48,11 +48,11 @@ public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
 		shots = 40;
 		bursts = 4;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2890, 2895, 2950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2890, 2895, 2950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_DC)
-		        .setProductionFactions(F_DC).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_C, RATING_D, RATING_D);
+		        .setPrototypeFactions(Faction.DC)
+		        .setProductionFactions(Faction.DC).setTechRating(TechRating.D)
+		        .setAvailability(TechRating.X, TechRating.C, TechRating.D, TechRating.D);
 
 	}
 }

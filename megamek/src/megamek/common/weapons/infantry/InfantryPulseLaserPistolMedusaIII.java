@@ -39,11 +39,11 @@ public class InfantryPulseLaserPistolMedusaIII extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_D) // Assuming X-D-D-C simplifies to D
-                .setAvailability(new int[]{RATING_X, RATING_D, RATING_D, RATING_C})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.D) // Assuming X-D-D-C simplifies to D
+                .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_MC);
+                .setProductionFactions(Faction.MC);
     }
 }

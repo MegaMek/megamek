@@ -631,6 +631,7 @@ public final class Player extends TurnOrdered {
             return 0;
         }
         boolean useCommandInit = game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
+        // entities are owned by this player, active, and not individual pilots
         ArrayList<Entity> entities =
               game.getInGameObjects()
                     .stream()
@@ -645,11 +646,8 @@ public final class Player extends TurnOrdered {
                                         !(entity instanceof MekWarrior)
                     ).collect(Collectors.toCollection(ArrayList::new));
         int commandb = 0;
-        // entities should only contain units we are concerned with this turn.
         for (Entity entity : entities) {
             int bonus = getIndividualCommandBonus(entity, useCommandInit);
-            //Once we've gotten the status of the command console (if any), reset the flag that tracks
-            //the previous turn's action.
             if (bonus > commandb) {
                 commandb = bonus;
             }
@@ -666,7 +664,7 @@ public final class Player extends TurnOrdered {
      */
     public int getIndividualCommandBonus(Entity entity, boolean useCommandInit) {
         int bonus = 0;
-        // Only consider this during normal rounds when unit is deployed, or about to deploy this round.
+        // Only consider this during normal rounds when unit is deployed on board, or about to deploy this round.
         if ((entity.isDeployed() && !entity.isOffBoard()) ||
                (entity.getDeployRound() == (game.getCurrentRound() + 1))) {
             if (useCommandInit) {

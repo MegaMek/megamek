@@ -639,11 +639,7 @@ public final class Player extends TurnOrdered {
                     .map(Entity.class::cast)
                     .filter(entity ->
                                   (null != entity.getOwner()) &&
-                                        entity.getOwner().equals(this) &&
-                                        !entity.isDestroyed() &&
-                                        entity.getCrew().isActive() &&
-                                        !entity.isCaptured() &&
-                                        !(entity instanceof MekWarrior)
+                                        entity.getOwner().equals(this)
                     ).collect(Collectors.toCollection(ArrayList::new));
         int commandb = 0;
         for (Entity entity : entities) {
@@ -665,8 +661,13 @@ public final class Player extends TurnOrdered {
     public int getIndividualCommandBonus(Entity entity, boolean useCommandInit) {
         int bonus = 0;
         // Only consider this during normal rounds when unit is deployed on board, or about to deploy this round.
-        if ((entity.isDeployed() && !entity.isOffBoard()) ||
-               (entity.getDeployRound() == (game.getCurrentRound() + 1))) {
+        if (!entity.isDestroyed() &&
+                  entity.getCrew().isActive() &&
+                  !entity.isCaptured() &&
+                  !(entity instanceof MekWarrior) &&
+                  (entity.isDeployed() && !entity.isOffBoard()) ||
+                  (entity.getDeployRound() == (game.getCurrentRound() + 1))
+        ) {
             if (useCommandInit) {
                 bonus = entity.getCrew().getCommandBonus();
             }

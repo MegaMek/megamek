@@ -1397,9 +1397,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int selected = m_chAmmo.getSelectedIndex();
         if ((selected == -1) || (vAmmo == null) || (selected >= vAmmo.size())) {
             return Optional.empty();
-        } else {
-            return Optional.of(vAmmo.get(selected));
         }
+
+        return Optional.of(vAmmo.get(selected));
     }
 
     /**
@@ -2089,11 +2089,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             List<AmmoMounted> fullAmmoList = new ArrayList<>(entity.getAmmo());
             if (entity.getTowedBy() != Entity.NONE) {
                 Entity ahead = entity.getGame().getEntity(entity.getTowedBy());
-                fullAmmoList.addAll(ahead.getAmmo());
+                if (ahead != null) {
+                    fullAmmoList.addAll(ahead.getAmmo());
+                }
             }
             if (entity.getTowing() != Entity.NONE) {
                 Entity behind = entity.getGame().getEntity(entity.getTowing());
-                fullAmmoList.addAll(behind.getAmmo());
+                if (behind != null) {
+                    fullAmmoList.addAll(behind.getAmmo());
+                }
             }
             int newSelectedIndex = -1;
             int i = 0;
@@ -2119,6 +2123,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
                     vAmmo.add(ammo);
                     m_chAmmo.addItem(formatAmmo(ammo));
+
                     if ((mounted.getLinked() != null) && mounted.getLinked().equals(ammo)) {
                         newSelectedIndex = i;
                         // Prevent later overriding.
@@ -2130,6 +2135,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     i++;
                 }
             }
+
             if ((newSelectedIndex != -1) && (newSelectedIndex < m_chAmmo.getItemCount())) {
                 m_chAmmo.setSelectedIndex(newSelectedIndex);
             }
@@ -2689,12 +2695,19 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (n == -1) {
                 return;
             }
+            // This initialize the vAmmo if it is null
+            if (vAmmo == null) {
+                displaySelected();
+            }
 
             // We can update display values without changing the selected unit's ammo;
             // this allows displaying selected unit's ammo-based ranges without owning it
             WeaponMounted mWeap = ((WeaponListModel) weaponList.getModel()).getWeaponAt(n);
-            WeaponMounted oldWeap = mWeap;
+
             AmmoMounted oldAmmo = mWeap.getLinkedAmmo();
+            if (vAmmo == null) {
+                vAmmo = new ArrayList<>();
+            }
             AmmoMounted mAmmo = vAmmo.get(m_chAmmo.getSelectedIndex());
 
             weaponList.setSelectedIndex(n);
@@ -2759,9 +2772,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // ammo.
             updateRangeDisplayForAmmo(mAmmo);
             if (entity.isAirborne() || entity.usesWeaponBays()) {
-                WeaponType wtype = (WeaponType) mWeap.getType();
+                WeaponType wtype = mWeap.getType();
                 if (isBay) {
-                    compileWeaponBay(oldWeap, mAmmo, wtype.isCapital());
+                    compileWeaponBay(mWeap, mAmmo, wtype.isCapital());
                 } else {
                     // otherwise I need to replace range display with
                     // standard ranges and attack values

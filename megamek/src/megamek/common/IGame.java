@@ -715,6 +715,13 @@ public interface IGame {
     }
 
     /**
+     * @return True when this game has at least one ground board.
+     */
+    default boolean hasGroundBoard() {
+        return getBoards().values().stream().anyMatch(Board::isGround);
+    }
+
+    /**
      * Returns true when both given boards are connected at least through a common high altitude map.
      * When two boards are connected, a fighter unit can reach one from the other, traversing
      * atmospheric and/or high atmospheric maps. Also returns true if the boards are one and the same.

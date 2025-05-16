@@ -10085,18 +10085,25 @@ public abstract class Entity extends TurnOrdered
         }
         for (WeaponMounted mounted : getWeaponList()) {
             WeaponType weaponType = mounted.getType();
-            if ((weaponType != null) && (weaponType.hasFlag(WeaponType.F_ARTILLERY))) {
+            if (weaponType == null) {
+                LOGGER.error("Weapon without weapontype!");
+                continue;
+            }
+            if (weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
                 return true;
             }
-            // Bearings-only capital missiles fire during the targeting phase
-            if ((weaponType instanceof CapitalMissileBayWeapon) || (weaponType instanceof AR10BayWeapon)) {
-                if (mounted.isInBearingsOnlyMode()) {
-                    return true;
-                }
+
+            // Bearings-only capital missiles fire during the targeting phase, SO:AA p.88 (it actually says Indirect
+            // Artillery Attack Phase but this would be the arty damage phase and the targeting phase seems more
+            // appropriate)
+            if (((weaponType instanceof CapitalMissileBayWeapon) || (weaponType instanceof AR10BayWeapon))
+                  && mounted.isInBearingsOnlyMode()) {
+                return true;
             }
 
-            // Surface-to-surface capital missiles count as artillery
-            if (getAltitude() == 0 && weaponType instanceof CapitalMissileWeapon) {
+            // Capital O2S, A2S, A2O, S2O and S2S attacks are made based on the artillery rules and can only be made
+            // against hexes and therefore require a ground map; SO:AA p.91
+            if ((weaponType.isCapital() || weaponType.isSubCapital()) && (game != null) && game.hasGroundBoard()) {
                 return true;
             }
         }

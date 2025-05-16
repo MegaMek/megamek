@@ -1754,9 +1754,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Phase Reasons
 
-        // Only bearings-only capital missiles and indirect fire artillery can be fired
-        // in the targeting phase
-        if (game.getPhase().isTargeting() && (isArtilleryFLAK || !(isArtilleryIndirect || isBearingsOnlyMissile))) {
+        // Only bearings-only capital missiles and indirect fire artillery or equivalent (Cap and Subcap atmospheric
+        // fire) can be fired in the targeting phase
+        if (game.getPhase().isTargeting() && (isArtilleryFLAK
+              || !(isArtilleryIndirect || isBearingsOnlyMissile || wtype.isCapital() || wtype.isSubCapital()))) {
             return Messages.getString("WeaponAttackAction.NotValidForTargPhase");
         }
         // Only TAG can be fired in the offboard phase

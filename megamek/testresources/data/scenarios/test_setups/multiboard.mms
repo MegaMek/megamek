@@ -199,16 +199,26 @@ factions:
 #      facing: 3
 #      altitude: 1
 
-  - fullname: Skulker Wheeled Scout Tank C
-    at: [ 23, 18 ]
-    board: 5
-    facing: 0
+#  - fullname: Skulker Wheeled Scout Tank C
+#    at: [ 23, 18 ]
+#    board: 5
+#    facing: 0
 
 #
   - fullname: Union (3055)
     at: [ 25, 13 ]
     board: 8
     facing: 4
+
+  - fullname: Fox Corvette (3057)
+    at: [ 10, 12 ]
+    board: 8
+    facing: 5
+
+  - fullname: Fox Corvette (3057)
+    at: [ 10, 12 ]
+    board: 6
+    facing: 5
 #    altitude: 0
 
 #  - fullname: Mobile Long Tom Artillery LT-MOB-25

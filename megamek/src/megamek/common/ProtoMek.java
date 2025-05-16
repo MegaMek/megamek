@@ -310,10 +310,10 @@ public class ProtoMek extends Entity {
                                                                      .setPrototypeFactions(Faction.CSJ)
                                                                      .setProductionFactions(Faction.CSJ)
                                                                      .setTechRating(TechRating.F)
-                                                                     .setAvailability(TechRating.X,
-                                                                           TechRating.X,
-                                                                           TechRating.E,
-                                                                           TechRating.D)
+                                                                     .setAvailability(AvailabilityValue.X,
+                                                                           AvailabilityValue.X,
+                                                                           AvailabilityValue.E,
+                                                                           AvailabilityValue.D)
                                                                      .setStaticTechLevel(SimpleTechLevel.STANDARD);
     public static final TechAdvancement TA_QUAD = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3083,
@@ -349,10 +349,10 @@ public class ProtoMek extends Entity {
                                                                      .setISApproximate(true)
                                                                      .setPrototypeFactions(Faction.WB)
                                                                      .setTechRating(TechRating.E)
-                                                                     .setAvailability(TechRating.X,
-                                                                           TechRating.X,
-                                                                           TechRating.F,
-                                                                           TechRating.X)
+                                                                     .setAvailability(AvailabilityValue.X,
+                                                                           AvailabilityValue.X,
+                                                                           AvailabilityValue.F,
+                                                                           AvailabilityValue.X)
                                                                      .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     @Override

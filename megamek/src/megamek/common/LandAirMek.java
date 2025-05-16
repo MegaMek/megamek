@@ -1019,19 +1019,19 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.D,
-                      TechRating.E,
-                      TechRating.F,
-                      TechRating.F).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // standard
+                .setAvailability(AvailabilityValue.D,
+                      AvailabilityValue.E,
+                      AvailabilityValue.F,
+                      AvailabilityValue.F).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // standard
           new TechAdvancement(TechBase.IS).setISAdvancement(2680, 2684, DATE_NONE, 2781)
                 .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2801)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E,
-                      TechRating.F,
-                      TechRating.X,
-                      TechRating.X).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
+                .setAvailability(AvailabilityValue.E,
+                      AvailabilityValue.F,
+                      AvailabilityValue.X,
+                      AvailabilityValue.X).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
     };
 
     @Override

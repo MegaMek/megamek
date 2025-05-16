@@ -350,7 +350,7 @@ public class Engine implements Serializable, ITechnology {
             // Fusion engines have a minimum weight of 0.25t at D+ and 0.5t at C. Fission
             // engines have
             // a minimum of 5t at all tech ratings.
-            if ((engineType == NORMAL_ENGINE) && (entity.getEngineTechRating().isBetterOrEqualThan(TechRating.D)) {
+            if ((engineType == NORMAL_ENGINE) && (entity.getEngineTechRating().isBetterOrEqualThan(TechRating.D))) {
                 weight = Math.max(weight, 0.25);
             } else if ((engineType == NORMAL_ENGINE) || (engineType == FISSION)) {
                 weight = Math.max(weight, 5);
@@ -1364,7 +1364,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     @Override
-    public TechRating getBaseAvailability(Era era) {
+    public AvailabilityValue getBaseAvailability(Era era) {
         return getTechAdvancement().getBaseAvailability(era);
     }
 

@@ -275,10 +275,10 @@ public class Tank extends Entity {
                 2490)
                                                                    .setProductionFactions(Faction.TH)
                                                                    .setTechRating(TechRating.D)
-                                                                   .setAvailability(TechRating.C,
-                                                                         TechRating.C,
-                                                                         TechRating.C,
-                                                                         TechRating.B)
+                                                                   .setAvailability(AvailabilityValue.C,
+                                                                         AvailabilityValue.C,
+                                                                         AvailabilityValue.C,
+                                                                         AvailabilityValue.B)
                                                                    .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     @Override

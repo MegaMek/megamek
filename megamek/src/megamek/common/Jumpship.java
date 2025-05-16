@@ -193,10 +193,10 @@ public class Jumpship extends Aero {
                                                                          .setISApproximate(true, true, false, false)
                                                                          .setProductionFactions(Faction.TA)
                                                                          .setTechRating(TechRating.D)
-                                                                         .setAvailability(TechRating.D,
-                                                                               TechRating.X,
-                                                                               TechRating.X,
-                                                                               TechRating.X)
+                                                                         .setAvailability(AvailabilityValue.D,
+                                                                               AvailabilityValue.X,
+                                                                               AvailabilityValue.X,
+                                                                               AvailabilityValue.X)
                                                                          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override

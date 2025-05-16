@@ -74,10 +74,10 @@ public class SmallCraft extends Aero {
                                                                              false)
                                                                        .setProductionFactions(Faction.TA)
                                                                        .setTechRating(TechRating.D)
-                                                                       .setAvailability(TechRating.D,
-                                                                             TechRating.X,
-                                                                             TechRating.F,
-                                                                             TechRating.F)
+                                                                       .setAvailability(AvailabilityValue.D,
+                                                                             AvailabilityValue.X,
+                                                                             AvailabilityValue.F,
+                                                                             AvailabilityValue.F)
                                                                        .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override

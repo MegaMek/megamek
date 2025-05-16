@@ -1344,10 +1344,10 @@ public abstract class Entity extends TurnOrdered
                 DATE_NONE)
                                                                       .setApproximate(false, true, false)
                                                                       .setTechRating(TechRating.A)
-                                                                      .setAvailability(TechRating.E,
-                                                                            TechRating.D,
-                                                                            TechRating.E,
-                                                                            TechRating.E)
+                                                                      .setAvailability(AvailabilityValue.E,
+                                                                            AvailabilityValue.D,
+                                                                            AvailabilityValue.E,
+                                                                            AvailabilityValue.E)
                                                                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     protected static final TechAdvancement TA_MIXED_TECH = new TechAdvancement(TechBase.ALL).setISAdvancement(DATE_NONE,
@@ -1363,10 +1363,10 @@ public abstract class Entity extends TurnOrdered
                                                                  .setApproximate(false, true, true, false, false)
                                                                  .setPrototypeFactions(Faction.CLAN, Faction.DC, Faction.FS, Faction.LC)
                                                                  .setTechRating(TechRating.A)
-                                                                 .setAvailability(TechRating.X,
-                                                                       TechRating.X,
-                                                                       TechRating.E,
-                                                                       TechRating.D)
+                                                                 .setAvailability(AvailabilityValue.X,
+                                                                       AvailabilityValue.X,
+                                                                       AvailabilityValue.E,
+                                                                       AvailabilityValue.D)
                                                                  .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TechBase.ALL).setISAdvancement(
@@ -1393,10 +1393,10 @@ public abstract class Entity extends TurnOrdered
                                                                         .setPrototypeFactions(Faction.CSF, Faction.FW)
                                                                         .setProductionFactions(Faction.CJF, Faction.FW)
                                                                         .setTechRating(TechRating.E)
-                                                                        .setAvailability(TechRating.X,
-                                                                              TechRating.X,
-                                                                              TechRating.F,
-                                                                              TechRating.E)
+                                                                        .setAvailability(AvailabilityValue.X,
+                                                                              AvailabilityValue.X,
+                                                                              AvailabilityValue.F,
+                                                                              AvailabilityValue.E)
                                                                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     public static TechAdvancement getOmniAdvancement() {

@@ -911,10 +911,10 @@ public class EquipmentType implements ITechnology {
                                                                          .setApproximate(true, false, false)
                                                                          .setIntroLevel(true)
                                                                          .setTechRating(TechRating.D)
-                                                                         .setAvailability(TechRating.C,
-                                                                               TechRating.C,
-                                                                               TechRating.C,
-                                                                               TechRating.C)
+                                                                         .setAvailability(AvailabilityValue.C,
+                                                                               AvailabilityValue.C,
+                                                                               AvailabilityValue.C,
+                                                                               AvailabilityValue.C)
                                                                          .setStaticTechLevel(SimpleTechLevel.INTRO);
     protected static final TechAdvancement TA_NONE = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE)
                                                            .setTechRating(TechRating.A)

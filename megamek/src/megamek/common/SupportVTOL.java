@@ -62,12 +62,12 @@ public class SupportVTOL extends VTOL {
         return hasMisc(MiscType.F_ARMORED_CHASSIS);
     }
     
-    private static final TechAdvancement TA_VTOL = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_VTOL = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_ES, DATE_ES)
             .setTechRating(TechRating.C).setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement TA_VTOL_LARGE = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_VTOL_LARGE = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_ES, DATE_ES)
             .setTechRating(TechRating.C).setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);

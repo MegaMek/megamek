@@ -40,13 +40,13 @@ public class SpaceStation extends Jumpship {
         setSail(false);
     }
 
-    private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_ES, DATE_ES)
             .setTechRating(TechRating.D)
             .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
-    private static final TechAdvancement TA_SPACE_STATION_KF_ADAPTER = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_SPACE_STATION_KF_ADAPTER = new TechAdvancement(TechBase.ALL)
             .setISAdvancement(2350, 2375, DATE_NONE, 2850, 3048).setClanAdvancement(2350, 2375)
             .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
             // The adapter itself is tech rating C, but this is the base for a station with an adapter.
@@ -54,7 +54,7 @@ public class SpaceStation extends Jumpship {
             .setAvailability(TechRating.D, TechRating.F, TechRating.D, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
-    private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TechBase.ALL)
             .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
             .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
             .setReintroductionFactions(Faction.RS).setTechRating(TechRating.D)

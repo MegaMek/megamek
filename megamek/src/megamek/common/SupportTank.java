@@ -64,55 +64,55 @@ public class SupportTank extends Tank {
         return hasMisc(MiscType.F_ARMORED_CHASSIS);
     }
     
-    private static final TechAdvancement TA_HOVER = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_HOVER = new TechAdvancement(TechBase.ALL)
             .setTechRating(TechRating.C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
             .setAvailability(TechRating.A, TechRating.B, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_HOVER_LARGE = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_HOVER_LARGE = new TechAdvancement(TechBase.ALL)
             .setTechRating(TechRating.C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
             .setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_NAVAL = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_NAVAL = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
             .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_NAVAL_LARGE = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_NAVAL_LARGE = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
             .setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    private static final TechAdvancement TA_TRACKED = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_TRACKED = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.B)
             .setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_TRACKED_LARGE = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_TRACKED_LARGE = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.B)
             .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_WHEELED_SMALL = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_WHEELED_SMALL = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
             .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_WHEELED_MEDIUM = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_WHEELED_MEDIUM = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
             .setAvailability(TechRating.A, TechRating.B, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_WHEELED_LARGE = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_WHEELED_LARGE = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
             .setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_WIGE = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_WIGE = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
             .setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_WIGE_LARGE = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_WIGE_LARGE = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
             .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_RAIL = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_RAIL = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
             .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    private static final TechAdvancement TA_RAIL_LARGE = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_RAIL_LARGE = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
             .setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);

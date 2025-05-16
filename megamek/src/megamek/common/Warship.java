@@ -55,7 +55,7 @@ public class Warship extends Jumpship {
         return asewAffectedTurns;
     }
 
-    private static final TechAdvancement TA_WARSHIP = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_WARSHIP = new TechAdvancement(TechBase.ALL)
             .setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050)
             .setClanAdvancement(2295, 2305).setApproximate(true, false, false, false, false)
             .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)

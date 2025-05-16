@@ -106,7 +106,7 @@ public final class ProtoMekBay extends UnitBay {
     }
 
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(ITechnology.TechBase.CLAN).setClanAdvancement(3060, 3066, 3070)
+        return new TechAdvancement(TechBase.CLAN).setClanAdvancement(3060, 3066, 3070)
                 .setClanApproximate(true, false, false).setTechRating(TechRating.C)
                 .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);

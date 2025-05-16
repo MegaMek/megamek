@@ -1313,7 +1313,7 @@ public abstract class Entity extends TurnOrdered
         }
     }
 
-    protected static final TechAdvancement TA_OMNI = new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(DATE_NONE,
+    protected static final TechAdvancement TA_OMNI = new TechAdvancement(TechBase.ALL).setISAdvancement(DATE_NONE,
                 DATE_NONE,
                 3052)
                                                            .setClanAdvancement(2854, 2856, 2864)
@@ -1326,7 +1326,7 @@ public abstract class Entity extends TurnOrdered
     // This is not in the rules anywhere, but is implied by the existence of the
     // Badger and Bandit
     // tanks used by Wolf's Dragoons and sold to the merc market as early as 3008.
-    private static final TechAdvancement TA_OMNIVEHICLE = new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(3008,
+    private static final TechAdvancement TA_OMNIVEHICLE = new TechAdvancement(TechBase.ALL).setISAdvancement(3008,
                 DATE_NONE,
                 3052)
                                                                 .setISApproximate(true)
@@ -1338,7 +1338,7 @@ public abstract class Entity extends TurnOrdered
                                                                 .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.D)
                                                                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    protected static final TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(
+    protected static final TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(TechBase.ALL).setAdvancement(
                 DATE_PS,
                 3080,
                 DATE_NONE)
@@ -1350,7 +1350,7 @@ public abstract class Entity extends TurnOrdered
                                                                             TechRating.E)
                                                                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    protected static final TechAdvancement TA_MIXED_TECH = new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(DATE_NONE,
+    protected static final TechAdvancement TA_MIXED_TECH = new TechAdvancement(TechBase.ALL).setISAdvancement(DATE_NONE,
                 3050,
                 3082,
                 DATE_NONE,
@@ -1369,7 +1369,7 @@ public abstract class Entity extends TurnOrdered
                                                                        TechRating.D)
                                                                  .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(
+    protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TechBase.ALL).setISAdvancement(
                 3061,
                 3082,
                 DATE_NONE,

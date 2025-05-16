@@ -202,7 +202,7 @@ public class Infantry extends Entity {
      * @return The Tech Advancement data for the movement mode.
      */
     public static TechAdvancement getMotiveTechAdvancement(EntityMovementMode movementMode) {
-        TechAdvancement techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+        TechAdvancement techAdvancement = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                                                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         switch (movementMode) {
             case INF_MOTORIZED:
@@ -268,47 +268,47 @@ public class Infantry extends Entity {
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+        return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                      .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     public static TechAdvancement getCombatEngineerTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+        return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                      .setTechRating(TechRating.C)
                      .setAvailability(TechRating.A, TechRating.B, TechRating.A, TechRating.A)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getMarineTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+        return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                      .setTechRating(TechRating.C)
                      .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getMountainTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+        return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                      .setTechRating(TechRating.B)
                      .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getParatrooperTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+        return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                      .setTechRating(TechRating.B)
                      .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getParamedicTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+        return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                      .setTechRating(TechRating.B)
                      .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getTAGTroopsTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(2585, 2600, DATE_NONE, 2535, 3037)
+        return new TechAdvancement(TechBase.ALL).setISAdvancement(2585, 2600, DATE_NONE, 2535, 3037)
                      .setClanAdvancement(2585, 2600)
                      .setApproximate(true, false, false, false, false)
                      .setTechRating(TechRating.E)

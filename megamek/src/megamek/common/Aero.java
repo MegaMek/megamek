@@ -250,14 +250,14 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return UnitType.AERO;
     }
 
-    protected static final TechAdvancement TA_ASF = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_NONE,
+    protected static final TechAdvancement TA_ASF = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE,
                 2470,
                 2490)
                                                           .setProductionFactions(Faction.TH)
                                                           .setTechRating(TechRating.D)
                                                           .setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.C)
                                                           .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(ITechnology.TechBase.IS)
+    protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TechBase.IS)
                                                                     // Per MUL team and per availability codes should exist to around 2781
                                                                     .setISAdvancement(Map.of(
                                                                         AdvancementPhase.PROTOTYPE, DATE_ES,
@@ -286,7 +286,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     protected static final TechAdvancement[] COCKPIT_TA = {
-          new TechAdvancement(ITechnology.TechBase.ALL)
+          new TechAdvancement(TechBase.ALL)
                 .setISAdvancement(Map.of(
                     AdvancementPhase.PROTOTYPE, 2460,
                     AdvancementPhase.PRODUCTION, 2470,
@@ -301,7 +301,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Standard
-          new TechAdvancement(ITechnology.TechBase.IS)
+          new TechAdvancement(TechBase.IS)
                 .setISAdvancement(Map.of(
                     AdvancementPhase.PROTOTYPE, 3065,
                     AdvancementPhase.PRODUCTION, 3070,
@@ -344,7 +344,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 .setAvailability(TechRating.C, TechRating.F, TechRating.E, TechRating.D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           // Cockpit command console
-          new TechAdvancement(ITechnology.TechBase.ALL)
+          new TechAdvancement(TechBase.ALL)
                 .setAdvancement(Map.of(
                     AdvancementPhase.PROTOTYPE, DATE_ES,
                     AdvancementPhase.PRODUCTION, 2300,

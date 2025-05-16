@@ -192,7 +192,7 @@ public class NavalRepairFacility extends UnitBay {
     }
 
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+        return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
                 .setTechRating(TechRating.C)
                 .setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);

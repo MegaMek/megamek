@@ -39,7 +39,7 @@ public class HandheldWeapon extends Entity {
         return UnitType.HANDHELD_WEAPON;
     }
 
-    private static final TechAdvancement ADVANCEMENT = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(3055, 3083)
+    private static final TechAdvancement ADVANCEMENT = new TechAdvancement(TechBase.ALL).setAdvancement(3055, 3083)
                                                              .setApproximate(false, true)
                                                              .setPrototypeFactions(Faction.FS, Faction.LC)
                                                              .setProductionFactions(Faction.FS, Faction.LC)

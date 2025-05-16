@@ -178,7 +178,7 @@ public class Jumpship extends Aero {
     public static final int COLLAR_STANDARD = 0;
     public static final int COLLAR_NO_BOOM = 1;
 
-    protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_NONE,
+    protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE,
                 2300)
                                                                .setISApproximate(false, true)
                                                                .setProductionFactions(Faction.TA)
@@ -208,7 +208,7 @@ public class Jumpship extends Aero {
      * Tech advancement data for lithium fusion batteries
      */
     public static TechAdvancement getLFBatteryTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(2520, 2529, DATE_NONE, 2819, 3043)
+        return new TechAdvancement(TechBase.ALL).setISAdvancement(2520, 2529, DATE_NONE, 2819, 3043)
                      .setISApproximate(true, false, false, false, false)
                      .setPrototypeFactions(Faction.TH)
                      .setProductionFactions(Faction.TH)
@@ -223,7 +223,7 @@ public class Jumpship extends Aero {
      * Tech advancement data for the jump sail
      */
     public static TechAdvancement getJumpSailTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(2200, 2300, 2325)
+        return new TechAdvancement(TechBase.ALL).setAdvancement(2200, 2300, 2325)
                      .setPrototypeFactions(Faction.TA)
                      .setProductionFactions(Faction.TA)
                      .setTechRating(TechRating.D)

@@ -904,7 +904,7 @@ public class EquipmentType implements ITechnology {
      * MiscType that does not have its own TechAdvancement.
      */
 
-    protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(
+    protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TechBase.ALL).setAdvancement(
                 2430,
                 2439,
                 2505)
@@ -916,7 +916,7 @@ public class EquipmentType implements ITechnology {
                                                                                TechRating.C,
                                                                                TechRating.C)
                                                                          .setStaticTechLevel(SimpleTechLevel.INTRO);
-    protected static final TechAdvancement TA_NONE = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_NONE)
+    protected static final TechAdvancement TA_NONE = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE)
                                                            .setTechRating(TechRating.A)
                                                            .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                                                            .setStaticTechLevel(SimpleTechLevel.INTRO);

@@ -133,7 +133,7 @@ public final class BattleArmorBay extends Bay implements InfantryTransporter {
     }
 
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(ITechnology.TechBase.ALL)
+        return new TechAdvancement(TechBase.ALL)
                 .setClanAdvancement(2867, 2868, 2870,DATE_NONE,DATE_NONE )
                 .setClanApproximate(true, false, false, false, false)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050,DATE_NONE,DATE_NONE)

@@ -302,7 +302,7 @@ public class ProtoMek extends Entity {
         };
     }
 
-    public static final TechAdvancement TA_STANDARD_PROTOMEK = new TechAdvancement(ITechnology.TechBase.CLAN).setClanAdvancement(
+    public static final TechAdvancement TA_STANDARD_PROTOMEK = new TechAdvancement(TechBase.CLAN).setClanAdvancement(
                 3055,
                 3059,
                 3060)
@@ -315,7 +315,7 @@ public class ProtoMek extends Entity {
                                                                            TechRating.E,
                                                                            TechRating.D)
                                                                      .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    public static final TechAdvancement TA_QUAD = new TechAdvancement(ITechnology.TechBase.CLAN).setClanAdvancement(3075,
+    public static final TechAdvancement TA_QUAD = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3083,
                 3100)
                                                         .setClanApproximate(false, true, false)
@@ -324,7 +324,7 @@ public class ProtoMek extends Entity {
                                                         .setTechRating(TechRating.F)
                                                         .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
                                                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    public static final TechAdvancement TA_ULTRA = new TechAdvancement(ITechnology.TechBase.CLAN).setClanAdvancement(3075,
+    public static final TechAdvancement TA_ULTRA = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3083,
                 3100)
                                                          .setClanApproximate(false, true, false)
@@ -333,7 +333,7 @@ public class ProtoMek extends Entity {
                                                          .setTechRating(TechRating.F)
                                                          .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
                                                          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    public static final TechAdvancement TA_GLIDER = new TechAdvancement(ITechnology.TechBase.CLAN).setClanAdvancement(3075,
+    public static final TechAdvancement TA_GLIDER = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3084,
                 3100)
                                                           .setClanApproximate(false, true, false)

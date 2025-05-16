@@ -71,6 +71,9 @@ public interface ITechnology {
         TechRating(int idx, String name) { this.index = idx; this.name = name; }
         public int getIndex() { return index; }
         public String getName() { return name; }
+        public boolean isBetterThan(TechRating other) {
+            return this.index > other.index;
+        }
         public static TechRating fromIndex(int idx) {
             TechRating tr = INDEX_LOOKUP.get(idx);
             if (tr == null) throw new IllegalArgumentException("Invalid TechRating index: " + idx);
@@ -584,11 +587,19 @@ public interface ITechnology {
         return getDateRange(getExtinctionDate(), getReintroductionDate());
     }
 
-    // default int getCodeFromMMAbbr(String abbr) {
-    //     return getFactionFromMMAbbr(abbr).getIndex();
-    // }
-    // default int getCodeFromIOAbbr(String abbr) {
-    //     return getFactionFromIOAbbr(abbr).getIndex();
-    // }
+    /**
+     * @deprecated Use getFactionFromMMAbbr instead.
+     */
+    @Deprecated
+    default int getCodeFromMMAbbr(String abbr) {
+        return getFactionFromMMAbbr(abbr).getIndex();
+    }
+    /**
+     * @deprecated Use getFactionFromIOAbbr instead.
+     */
+    @Deprecated
+    default int getCodeFromIOAbbr(String abbr) {
+        return getFactionFromIOAbbr(abbr).getIndex();
+    }
     
 }

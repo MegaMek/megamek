@@ -70,7 +70,7 @@ public class SuperHeavyTank extends Tank {
     }
 
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    private static final TechAdvancement TA_SUPERHEAVY_TANK = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_SUPERHEAVY_TANK = new TechAdvancement(TechBase.ALL)
             .setAdvancement(2470, DATE_NONE, 3075)
             .setApproximate(true, false, true).setPrototypeFactions(Faction.LC)
             .setTechRating(TechRating.C)

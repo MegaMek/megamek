@@ -52,7 +52,7 @@ public class SmallCraft extends Aero {
     private int escapePodsLaunched = 0;
     private int lifeBoatsLaunched = 0;
 
-    private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_NONE,
+    private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE,
                 2350,
                 2400)
                                                              .setISApproximate(false, true, false)

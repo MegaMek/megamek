@@ -696,7 +696,7 @@ public class VTOL extends Tank implements IBomber {
     }
 
     public static TechAdvancement getChinTurretTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL)
+        return new TechAdvancement(TechBase.ALL)
                 .setAdvancement(DATE_PS, 3079, 3080).setApproximate(false, true, false)
                 .setTechRating(TechRating.B).setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);

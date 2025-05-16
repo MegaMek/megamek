@@ -38,6 +38,7 @@ import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
+import megamek.common.ITechnology.TechBase;
 import megamek.logging.MMLogger;
 
 /**
@@ -487,34 +488,34 @@ public class TestSupportVehicle extends TestEntity {
      * proposal to the rules committee for E.
      */
     public static final TechAdvancement[] TECH_LEVEL_TA = {
-            new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(ITechnology.TechRating.A)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.A)
                     .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
                     .setAvailability(ITechnology.TechRating.A, ITechnology.TechRating.A, ITechnology.TechRating.A,
                             ITechnology.TechRating.A),
 
-            new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(ITechnology.TechRating.B)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.B)
                     .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
                     .setAvailability(ITechnology.TechRating.B, ITechnology.TechRating.B, ITechnology.TechRating.B,
                             ITechnology.TechRating.A),
 
-            new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(ITechnology.TechRating.C)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.C)
                     .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
                     .setPrototypeFactions(ITechnology.Faction.TA).setProductionFactions(ITechnology.Faction.TA)
                     .setAvailability(ITechnology.TechRating.C, ITechnology.TechRating.B, ITechnology.TechRating.B,
                             ITechnology.TechRating.B),
 
-            new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(ITechnology.TechRating.D)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.D)
                     .setAdvancement(2420, 2430, 2435).setApproximate(true, true, false)
                     .setPrototypeFactions(ITechnology.Faction.TH).setProductionFactions(ITechnology.Faction.TH)
                     .setAvailability(ITechnology.TechRating.C, ITechnology.TechRating.C, ITechnology.TechRating.C,
                             ITechnology.TechRating.B),
 
-            new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(ITechnology.TechRating.E)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.E)
                     .setISAdvancement(2557, 2571, 3055).setClanAdvancement(2557, 2571, 2815)
                     .setAvailability(ITechnology.TechRating.D, ITechnology.TechRating.F, ITechnology.TechRating.D,
                             ITechnology.TechRating.C),
 
-            new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(ITechnology.TechRating.F)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.F)
                     .setISAdvancement(ITechnology.DATE_NONE, ITechnology.DATE_NONE, 3065)
                     .setISApproximate(false, false, true)
                     .setClanAdvancement(2820, 2825, 2830).setClanApproximate(true, true, false)

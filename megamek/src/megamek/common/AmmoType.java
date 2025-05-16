@@ -1421,7 +1421,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Airburst",
               1,
               Munitions.M_AIRBURST,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.B, TechRating.D, TechRating.C, TechRating.D)
@@ -1435,7 +1435,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Anti-personnel",
               1,
               Munitions.M_ANTI_PERSONNEL,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
@@ -1452,7 +1452,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Flare",
               1,
               Munitions.M_FLARE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
@@ -1467,7 +1467,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Semi-Guided",
               1,
               Munitions.M_SEMIGUIDED,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
@@ -1481,7 +1481,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke",
               1,
               Munitions.M_SMOKE_WARHEAD,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
@@ -1501,7 +1501,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Airburst",
               1,
               Munitions.M_AIRBURST,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.B, TechRating.D, TechRating.C, TechRating.D)
@@ -1515,7 +1515,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Anti-personnel",
               1,
               Munitions.M_ANTI_PERSONNEL,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
@@ -1531,7 +1531,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Flare",
               1,
               Munitions.M_FLARE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
@@ -1545,7 +1545,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Semi-Guided",
               1,
               Munitions.M_SEMIGUIDED,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
@@ -1557,7 +1557,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke",
               1,
               Munitions.M_SMOKE_WARHEAD,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
@@ -1653,7 +1653,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Acid",
               2,
               Munitions.M_AX_HEAD,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
@@ -1674,7 +1674,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Heat-Seeking",
               2,
               Munitions.M_HEAT_SEEKING,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.E, TechRating.E, TechRating.E, TechRating.F)
@@ -1688,7 +1688,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Inferno",
               1,
               Munitions.M_INFERNO,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
@@ -1702,7 +1702,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke",
               1,
               Munitions.M_SMOKE_WARHEAD,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
@@ -1716,7 +1716,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Tandem-Charge",
               2,
               Munitions.M_TANDEM_CHARGE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.E)
@@ -1735,7 +1735,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Anti-TSM",
               1,
               Munitions.M_ANTI_TSM,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
@@ -1749,7 +1749,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Artemis-capable",
               1,
               Munitions.M_ARTEMIS_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -1763,7 +1763,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Dead-Fire",
               1,
               Munitions.M_DEAD_FIRE,
-              new TechAdvancement(ITechnology.TechBase.IS).setTechRating(TechRating.C)
+              new TechAdvancement(TechBase.IS).setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
                     .setISAdvancement(3052)
                     .setPrototypeFactions(Faction.DC)
@@ -1773,7 +1773,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Fragmentation",
               1,
               Munitions.M_FRAGMENTATION,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
@@ -1787,7 +1787,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Listen-Kill",
               1,
               Munitions.M_LISTEN_KILL,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.X)
@@ -1802,7 +1802,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Mine Clearance",
               1,
               Munitions.M_MINE_CLEARANCE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
@@ -1816,7 +1816,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Narc-capable",
               1,
               Munitions.M_NARC_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -1841,7 +1841,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Acid",
               2,
               Munitions.M_AX_HEAD,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
@@ -1862,7 +1862,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Heat-Seeking",
               2,
               Munitions.M_HEAT_SEEKING,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.E, TechRating.E, TechRating.E, TechRating.F)
@@ -1876,7 +1876,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Inferno",
               1,
               Munitions.M_INFERNO,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
@@ -1889,7 +1889,7 @@ public class AmmoType extends EquipmentType {
 
         munitions.add(new MunitionMutator("(Clan) Smoke", 1, Munitions.M_SMOKE_WARHEAD,
 
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
@@ -1902,7 +1902,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Tandem-Charge",
               2,
               Munitions.M_TANDEM_CHARGE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -1918,7 +1918,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Anti-TSM",
               1,
               Munitions.M_ANTI_TSM,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
@@ -1932,7 +1932,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Artemis-capable",
               1,
               Munitions.M_ARTEMIS_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -1947,7 +1947,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Artemis V-capable",
               1,
               Munitions.M_ARTEMIS_V_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.F)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
@@ -1961,7 +1961,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Dead-Fire",
               1,
               Munitions.M_DEAD_FIRE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setTechRating(TechRating.C)
+              new TechAdvancement(TechBase.CLAN).setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
                     .setClanAdvancement(3052)
                     .setPrototypeFactions(Faction.DC)
@@ -1971,7 +1971,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Fragmentation",
               1,
               Munitions.M_FRAGMENTATION,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
@@ -1985,7 +1985,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Listen-Kill",
               1,
               Munitions.M_LISTEN_KILL,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.X)
@@ -2000,7 +2000,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Mine Clearance",
               1,
               Munitions.M_MINE_CLEARANCE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
@@ -2014,7 +2014,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Narc-capable",
               1,
               Munitions.M_NARC_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -2037,7 +2037,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Torpedo",
               1,
               Munitions.M_TORPEDO,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -2049,7 +2049,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Multi-Purpose",
               1,
               Munitions.M_MULTI_PURPOSE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.F)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2068,7 +2068,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Torpedo",
               1,
               Munitions.M_TORPEDO,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -2086,7 +2086,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Multi-Purpose",
               1,
               Munitions.M_MULTI_PURPOSE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.F)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2100,7 +2100,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Torpedo",
               1,
               Munitions.M_TORPEDO,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -2120,7 +2120,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Follow The Leader",
               2,
               Munitions.M_FOLLOW_THE_LEADER,
-              new TechAdvancement(ITechnology.TechBase.IS).setTechRating(TechRating.E)
+              new TechAdvancement(TechBase.IS).setTechRating(TechRating.E)
                     .setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.F)
                     .setISAdvancement(2750, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
                     .setISApproximate(true, false, false, true, false)
@@ -2132,7 +2132,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Heat-Seeking",
               2,
               Munitions.M_HEAT_SEEKING,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.E, TechRating.E, TechRating.E, TechRating.F)
@@ -2158,7 +2158,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Semi-guided",
               1,
               Munitions.M_SEMIGUIDED,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
@@ -2172,7 +2172,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke",
               1,
               Munitions.M_SMOKE_WARHEAD,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
@@ -2191,7 +2191,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Swarm",
               1,
               Munitions.M_SWARM,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.X, TechRating.D, TechRating.D)
@@ -2205,7 +2205,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Swarm-I",
               1,
               Munitions.M_SWARM_I,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.X, TechRating.D, TechRating.D)
@@ -2219,7 +2219,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Thunder",
               1,
               Munitions.M_THUNDER,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.D)
@@ -2234,7 +2234,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Thunder-Active",
               2,
               Munitions.M_THUNDER_ACTIVE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2248,7 +2248,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Thunder-Augmented",
               2,
               Munitions.M_THUNDER_AUGMENTED,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2262,7 +2262,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Thunder-Vibrabomb",
               2,
               Munitions.M_THUNDER_VIBRABOMB,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2276,7 +2276,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Thunder-Inferno",
               2,
               Munitions.M_THUNDER_INFERNO,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2290,7 +2290,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Anti-TSM",
               1,
               Munitions.M_ANTI_TSM,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
@@ -2304,7 +2304,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Artemis-capable",
               1,
               Munitions.M_ARTEMIS_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -2318,7 +2318,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Dead-Fire",
               1,
               Munitions.M_DEAD_FIRE,
-              new TechAdvancement(ITechnology.TechBase.IS).setTechRating(TechRating.C)
+              new TechAdvancement(TechBase.IS).setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
                     .setISAdvancement(3052)
                     .setPrototypeFactions(Faction.DC)
@@ -2328,7 +2328,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Fragmentation",
               1,
               Munitions.M_FRAGMENTATION,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
@@ -2343,7 +2343,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Listen-Kill",
               1,
               Munitions.M_LISTEN_KILL,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.X)
@@ -2358,7 +2358,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Mine Clearance",
               1,
               Munitions.M_MINE_CLEARANCE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
@@ -2371,7 +2371,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Narc-capable",
               1,
               Munitions.M_NARC_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -2392,7 +2392,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Follow The Leader",
               2,
               Munitions.M_FOLLOW_THE_LEADER,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.F, TechRating.X, TechRating.E, TechRating.X)
@@ -2406,7 +2406,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Heat-Seeking",
               2,
               Munitions.M_HEAT_SEEKING,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.E, TechRating.E, TechRating.E, TechRating.F)
@@ -2422,7 +2422,7 @@ public class AmmoType extends EquipmentType {
         /*
          * munitions.add(new MunitionMutator("(Clan) Incendiary", 2,
          * Munitions.M_INCENDIARY_LRM,
-         * new TechAdvancement(ITechnology.TechBase.CLAN) .setIntroLevel(false)
+         * new TechAdvancement(TechBase.CLAN) .setIntroLevel(false)
          * .setUnofficial(false) .setTechRating(TechRating.C) .setAvailability(TechRating.E,
          * TechRating.E, TechRating.E, TechRating.E) .setClanAdvancement(2341, 2342, 2352,
          * DATE_NONE, DATE_NONE) .setClanApproximate(false, false, false, false, false)
@@ -2432,7 +2432,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Semi-guided",
               1,
               Munitions.M_SEMIGUIDED,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
@@ -2446,7 +2446,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Smoke",
               1,
               Munitions.M_SMOKE_WARHEAD,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
@@ -2460,7 +2460,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Swarm",
               1,
               Munitions.M_SWARM,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.X, TechRating.D, TechRating.D)
@@ -2474,7 +2474,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Swarm-I",
               1,
               Munitions.M_SWARM_I,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.X, TechRating.D, TechRating.D)
@@ -2488,7 +2488,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Thunder",
               1,
               Munitions.M_THUNDER,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
@@ -2503,7 +2503,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Thunder-Active",
               2,
               Munitions.M_THUNDER_ACTIVE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2517,7 +2517,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Thunder-Augmented",
               2,
               Munitions.M_THUNDER_AUGMENTED,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2531,7 +2531,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Thunder-Vibrabomb",
               2,
               Munitions.M_THUNDER_VIBRABOMB,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2545,7 +2545,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Thunder-Inferno",
               2,
               Munitions.M_THUNDER_INFERNO,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2559,7 +2559,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Anti-TSM",
               1,
               Munitions.M_ANTI_TSM,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
@@ -2573,7 +2573,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Artemis-capable",
               1,
               Munitions.M_ARTEMIS_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -2588,7 +2588,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Artemis V-capable",
               1,
               Munitions.M_ARTEMIS_V_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.F)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
@@ -2602,7 +2602,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Dead-Fire",
               1,
               Munitions.M_DEAD_FIRE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2615,7 +2615,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Fragmentation",
               1,
               Munitions.M_FRAGMENTATION,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
@@ -2629,7 +2629,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Listen-Kill",
               1,
               Munitions.M_LISTEN_KILL,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.X)
@@ -2644,7 +2644,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Mine Clearance",
               1,
               Munitions.M_MINE_CLEARANCE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
@@ -2657,7 +2657,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Multi-Purpose",
               1,
               Munitions.M_MULTI_PURPOSE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.F)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2670,7 +2670,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Narc-capable",
               1,
               Munitions.M_NARC_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -2691,7 +2691,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Armor-Piercing",
               2,
               Munitions.M_ARMOR_PIERCING,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2705,7 +2705,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Caseless",
               1,
               Munitions.M_CASELESS,
-              new TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false)
+              new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
@@ -2721,7 +2721,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Flak",
               1,
               Munitions.M_FLAK,
-              new TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false)
+              new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.F, TechRating.E)
@@ -2734,7 +2734,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Flechette",
               1,
               Munitions.M_FLECHETTE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2748,7 +2748,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Precision",
               2,
               Munitions.M_PRECISION,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2762,7 +2762,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Tracer",
               1,
               Munitions.M_TRACER,
-              new TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false)
+              new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.D, TechRating.E, TechRating.F, TechRating.E)
@@ -2781,7 +2781,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Armor-Piercing",
               2,
               Munitions.M_ARMOR_PIERCING,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2795,7 +2795,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Caseless",
               1,
               Munitions.M_CASELESS,
-              new TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false)
+              new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
@@ -2811,7 +2811,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Flak",
               1,
               Munitions.M_FLAK,
-              new TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false)
+              new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.F, TechRating.E)
@@ -2824,7 +2824,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Flechette",
               1,
               Munitions.M_FLECHETTE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2838,7 +2838,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Precision",
               2,
               Munitions.M_PRECISION,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -2850,7 +2850,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Tracer",
               1,
               Munitions.M_TRACER,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.D, TechRating.E, TechRating.F, TechRating.E)
@@ -2870,7 +2870,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Armor-Piercing",
               2,
               Munitions.M_ARMOR_PIERCING,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.F)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.E)
@@ -2884,7 +2884,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Caseless",
               1,
               Munitions.M_CASELESS,
-              new TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false)
+              new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
@@ -2900,7 +2900,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Flak",
               1,
               Munitions.M_FLAK,
-              new TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false)
+              new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.F, TechRating.E)
@@ -2914,7 +2914,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Flechette",
               1,
               Munitions.M_FLECHETTE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.F)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.E)
@@ -2927,7 +2927,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Precision",
               2,
               Munitions.M_PRECISION,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.F)
                     .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
@@ -2941,7 +2941,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Tracer",
               1,
               Munitions.M_TRACER,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.F)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
@@ -2960,7 +2960,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Air-Defense Arrow (ADA) Missiles",
               1,
               Munitions.M_ADA,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
                     .setPrototypeFactions(Faction.CC)
@@ -2974,7 +2974,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Cluster",
               1,
               Munitions.M_CLUSTER,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
@@ -2989,7 +2989,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Homing",
               1,
               Munitions.M_HOMING,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
@@ -3004,7 +3004,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Illumination",
               1,
               Munitions.M_FLARE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
@@ -3019,7 +3019,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Inferno-IV",
               1,
               Munitions.M_INFERNO_IV,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
@@ -3033,7 +3033,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Laser Inhibiting",
               1,
               Munitions.M_LASER_INHIB,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
@@ -3047,7 +3047,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke",
               1,
               Munitions.M_SMOKE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
@@ -3061,7 +3061,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Thunder (FASCAM)",
               1,
               Munitions.M_FASCAM,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.D)
@@ -3087,7 +3087,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Thunder Vibrabomb-IV",
               1,
               Munitions.M_VIBRABOMB_IV,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -3101,7 +3101,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Davy Crockett-M",
               5,
               Munitions.M_DAVY_CROCKETT_M,
-              new TechAdvancement(ITechnology.TechBase.IS).setTechRating(TechRating.D)
+              new TechAdvancement(TechBase.IS).setTechRating(TechRating.D)
                     .setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.F)
                     .setISAdvancement(2412, DATE_NONE, DATE_NONE, 2830, 3044)
                     .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
@@ -3110,7 +3110,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Fuel-Air",
               1,
               Munitions.M_FAE,
-              new TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false)
+              new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.E)
@@ -3131,7 +3131,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Air-Defense Arrow (ADA) Missiles",
               1,
               Munitions.M_ADA,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
@@ -3145,7 +3145,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Cluster",
               1,
               Munitions.M_CLUSTER,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
@@ -3160,7 +3160,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Homing",
               1,
               Munitions.M_HOMING,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
@@ -3175,7 +3175,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Illumination",
               1,
               Munitions.M_FLARE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
@@ -3190,7 +3190,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Inferno-IV",
               1,
               Munitions.M_INFERNO_IV,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
@@ -3204,7 +3204,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Laser Inhibiting",
               1,
               Munitions.M_LASER_INHIB,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
@@ -3218,7 +3218,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke",
               1,
               Munitions.M_SMOKE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
@@ -3232,7 +3232,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Thunder (FASCAM)",
               1,
               Munitions.M_FASCAM,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.D)
@@ -3258,7 +3258,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Thunder Vibrabomb-IV",
               1,
               Munitions.M_VIBRABOMB_IV,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(true)
                     .setTechRating(TechRating.D)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
@@ -3279,7 +3279,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Chaff",
               1,
               Munitions.M_CHAFF,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.D, TechRating.E, TechRating.E, TechRating.E)
@@ -3293,7 +3293,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Incendiary",
               1,
               Munitions.M_INCENDIARY,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
@@ -3307,7 +3307,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke",
               1,
               Munitions.M_SMOKE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
@@ -3325,7 +3325,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Chaff",
               1,
               Munitions.M_CHAFF,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.E)
@@ -3337,7 +3337,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Incendiary",
               1,
               Munitions.M_INCENDIARY,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
@@ -3349,7 +3349,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke",
               1,
               Munitions.M_SMOKE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.B)
                     .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
@@ -3365,7 +3365,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Cluster",
               1,
               Munitions.M_CLUSTER,
-              new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(TechRating.E)
+              new TechAdvancement(TechBase.ALL).setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
                     .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -3374,7 +3374,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Copperhead",
               1,
               Munitions.M_HOMING,
-              new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(TechRating.E)
+              new TechAdvancement(TechBase.ALL).setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
                     .setISAdvancement(2640, 2645, DATE_NONE, 2800, 3051)
                     .setPrototypeFactions(Faction.TH)
@@ -3385,7 +3385,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("FASCAM",
               1,
               Munitions.M_FASCAM,
-              new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(TechRating.C)
+              new TechAdvancement(TechBase.ALL).setTechRating(TechRating.C)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.D)
                     .setISAdvancement(2621, 2844, DATE_NONE, 2770, 3051)
                     .setPrototypeFactions(Faction.TH)
@@ -3396,7 +3396,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Flechette",
               1,
               Munitions.M_FLECHETTE,
-              new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(TechRating.C)
+              new TechAdvancement(TechBase.ALL).setTechRating(TechRating.C)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.D)
                     .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -3405,7 +3405,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Illumination",
               1,
               Munitions.M_FLARE,
-              new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(TechRating.C)
+              new TechAdvancement(TechBase.ALL).setTechRating(TechRating.C)
                     .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
                     .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -3414,7 +3414,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke",
               1,
               Munitions.M_SMOKE,
-              new TechAdvancement(ITechnology.TechBase.ALL).setTechRating(TechRating.B)
+              new TechAdvancement(TechBase.ALL).setTechRating(TechRating.B)
                     .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                     .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -3423,7 +3423,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Fuel-Air",
               1,
               Munitions.M_FAE,
-              new TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false)
+              new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.E)
@@ -3440,7 +3440,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Davy Crockett-M",
               5,
               Munitions.M_DAVY_CROCKETT_M,
-              new TechAdvancement(ITechnology.TechBase.IS).setTechRating(TechRating.D)
+              new TechAdvancement(TechBase.IS).setTechRating(TechRating.D)
                     .setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.F)
                     .setISAdvancement(2412, DATE_NONE, DATE_NONE, 2830, 3044)
                     .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
@@ -3454,7 +3454,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Fuel-Air",
               1,
               Munitions.M_FAE,
-              new TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false)
+              new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.E)
@@ -3472,7 +3472,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke",
               1,
               Munitions.M_SMOKE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
@@ -3488,7 +3488,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Artemis-capable",
               1,
               Munitions.M_ARTEMIS_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -3509,7 +3509,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Artemis V-capable",
               1,
               Munitions.M_ARTEMIS_V_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.F)
                     .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
@@ -3522,7 +3522,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Artemis-capable",
               1,
               Munitions.M_ARTEMIS_CAPABLE,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
@@ -3548,7 +3548,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Coolant",
               1,
               Munitions.M_COOLANT,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
@@ -3564,7 +3564,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Coolant",
               1,
               Munitions.M_COOLANT,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
@@ -3581,7 +3581,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Coolant",
               1,
               Munitions.M_COOLANT,
-              new TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false)
+              new TechAdvancement(TechBase.IS).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
@@ -3597,7 +3597,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Coolant",
               1,
               Munitions.M_COOLANT,
-              new TechAdvancement(ITechnology.TechBase.CLAN).setIntroLevel(false)
+              new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                     .setUnofficial(false)
                     .setTechRating(TechRating.C)
                     .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)

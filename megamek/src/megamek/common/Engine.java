@@ -776,23 +776,23 @@ public class Engine implements Serializable, ITechnology {
         }
     }
 
-    private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
             .setTechRating(TechRating.D).setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
 
-    private static final TechAdvancement LARGE_FUSION_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement LARGE_FUSION_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(2630, 3085, 3120).setApproximate(false, true, true)
             .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.LC)
             .setTechRating(TechRating.D).setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
-    private static final TechAdvancement STANDARD_ICE_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement STANDARD_ICE_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
             .setTechRating(TechRating.C).setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
 
-    private static final TechAdvancement LARGE_ICE_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement LARGE_ICE_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_NONE, 2630, 3120, DATE_NONE, DATE_NONE)
             .setApproximate(false, false, true, false, false)
             .setPrototypeFactions(Faction.TH)
@@ -826,7 +826,7 @@ public class Engine implements Serializable, ITechnology {
             .setTechRating(TechRating.E).setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement CLAN_XL_TA = new TechAdvancement(ITechnology.TechBase.CLAN)
+    private static final TechAdvancement CLAN_XL_TA = new TechAdvancement(TechBase.CLAN)
             .setClanAdvancement(2824, 2827, 2829).setClanApproximate(true)
             .setPrototypeFactions(Faction.CSF).setProductionFactions(Faction.CSF)
             .setTechRating(TechRating.F).setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.D)
@@ -838,7 +838,7 @@ public class Engine implements Serializable, ITechnology {
             .setTechRating(TechRating.E).setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.E)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
-    private static final TechAdvancement LARGE_CLAN_XL_TA = new TechAdvancement(ITechnology.TechBase.CLAN)
+    private static final TechAdvancement LARGE_CLAN_XL_TA = new TechAdvancement(TechBase.CLAN)
             .setClanAdvancement(2850, 3080).setClanApproximate(true, true)
             .setPrototypeFactions(Faction.CIH).setProductionFactions(Faction.CHH)
             .setTechRating(TechRating.F).setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.E)
@@ -851,7 +851,7 @@ public class Engine implements Serializable, ITechnology {
             .setTechRating(TechRating.F).setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
-    private static final TechAdvancement CLAN_XXL_TA = new TechAdvancement(ITechnology.TechBase.CLAN)
+    private static final TechAdvancement CLAN_XXL_TA = new TechAdvancement(TechBase.CLAN)
             .setClanAdvancement(3030, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, true)
             .setPrototypeFactions(Faction.CSF).setProductionFactions(Faction.CSF)
@@ -866,7 +866,7 @@ public class Engine implements Serializable, ITechnology {
             .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
-    private static final TechAdvancement LARGE_CLAN_XXL_TA = new TechAdvancement(ITechnology.TechBase.CLAN)
+    private static final TechAdvancement LARGE_CLAN_XXL_TA = new TechAdvancement(TechBase.CLAN)
             .setClanAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, true, false, false, false)
             .setTechRating(TechRating.F)
@@ -874,66 +874,66 @@ public class Engine implements Serializable, ITechnology {
             .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
-    private static final TechAdvancement FISSION_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement FISSION_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(2470, 2882, 3079).setTechRating(TechRating.D)
             .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TC)
             .setAvailability(TechRating.E, TechRating.E, TechRating.D, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement FUEL_CELL_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement FUEL_CELL_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(2300, 2470, 3078).setApproximate(true).setTechRating(TechRating.D)
             .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)
             .setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_STEAM_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement SUPPORT_STEAM_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
             .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_ICE_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement SUPPORT_ICE_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.B)
             .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_BATTERY_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement SUPPORT_BATTERY_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(TechRating.C)
             .setAvailability(TechRating.A, TechRating.B, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_FUEL_CELL_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement SUPPORT_FUEL_CELL_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.C)
             .setAvailability(TechRating.B, TechRating.C, TechRating.C, TechRating.B)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_SOLAR_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement SUPPORT_SOLAR_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(TechRating.C)
             .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_FISSION_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement SUPPORT_FISSION_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
             .setAvailability(TechRating.E, TechRating.E, TechRating.D, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_FUSION_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement SUPPORT_FUSION_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
             .setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_MAGLEV_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement SUPPORT_MAGLEV_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
             .setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_NONE_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement SUPPORT_NONE_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
             .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    private static final TechAdvancement SUPPORT_EXTERNAL_TA = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement SUPPORT_EXTERNAL_TA = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_NONE, DATE_NONE, DATE_PS)
             .setTechRating(TechRating.B).setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C);
 

@@ -419,7 +419,7 @@ public class Bay implements Transporter, ITechnology {
 
     // Use cargo/infantry for default tech advancement
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(ITechnology.TechBase.ALL)
+        return new TechAdvancement(TechBase.ALL)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                 .setTechRating(TechRating.A)
                 .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
@@ -431,7 +431,7 @@ public class Bay implements Transporter, ITechnology {
      * @return Tech advancement for advanced robotic transport system.
      */
     public static TechAdvancement artsTechAdvancement() {
-        return new TechAdvancement(ITechnology.TechBase.ALL)
+        return new TechAdvancement(TechBase.ALL)
                 .setAdvancement(2600, 2609, DATE_NONE, 2804, 3068)
                 .setApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

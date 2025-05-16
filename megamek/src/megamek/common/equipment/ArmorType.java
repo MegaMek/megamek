@@ -340,7 +340,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 0;
         armor.cost = 10000.0;
 
-        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL)
+        armor.techAdvancement = new TechAdvancement(TechBase.ALL)
                 .setAdvancement(2460, 2470, 2470)
                 .setApproximate(true, false, false)
                 .setTechRating(TechRating.D)
@@ -1696,7 +1696,7 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 2";
         armor.cost = 50.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+        armor.techAdvancement = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                 .setTechRating(TechRating.A).setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
@@ -1720,7 +1720,7 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 3";
         armor.cost = 100.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+        armor.techAdvancement = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                 .setTechRating(TechRating.A).setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
@@ -1745,7 +1745,7 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 4";
         armor.cost = 150.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+        armor.techAdvancement = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                 .setTechRating(TechRating.B).setAvailability(TechRating.B, TechRating.B, TechRating.A, TechRating.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
@@ -1770,7 +1770,7 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 5";
         armor.cost = 200.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+        armor.techAdvancement = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
                 .setTechRating(TechRating.B).setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
@@ -1795,7 +1795,7 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 6";
         armor.cost = 250.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+        armor.techAdvancement = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
                 .setTechRating(TechRating.C).setAvailability(TechRating.C, TechRating.B, TechRating.B, TechRating.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         armor.rulesRefs = "134, TM";
@@ -1820,7 +1820,7 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 7";
         armor.cost = 300.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL)
+        armor.techAdvancement = new TechAdvancement(TechBase.ALL)
                 .setAdvancement(2250, 2300, 2305)
                 .setApproximate(true, true, false)
                 .setPrototypeFactions(Faction.TA)
@@ -1849,7 +1849,7 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 8";
         armor.cost = 400.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL)
+        armor.techAdvancement = new TechAdvancement(TechBase.ALL)
                 .setAdvancement(2420, 2430, 2435)
             .setApproximate(true,false,false)
                 .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
@@ -1878,7 +1878,7 @@ public class ArmorType extends MiscType {
         armor.shortName = "BAR 9";
         armor.cost = 500.0;
         armor.flags = armor.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_SUPPORT_VEE_BAR_ARMOR);
-        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL)
+        armor.techAdvancement = new TechAdvancement(TechBase.ALL)
                 .setAdvancement(2420, 2430, 2435)
                 .setApproximate(true,false,false)
                 .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
@@ -1935,7 +1935,7 @@ public class ArmorType extends MiscType {
         armor.cost = 0.0;
         armor.flags = armor.flags.or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        armor.techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL)
+        armor.techAdvancement = new TechAdvancement(TechBase.ALL)
                 .setAdvancement(ITechnology.DATE_PS, 3075, 3080).setApproximate(false, false, true)
                 .setTechRating(TechRating.A).setAvailability(TechRating.E, TechRating.D, TechRating.E, TechRating.E)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);

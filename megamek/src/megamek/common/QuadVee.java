@@ -130,7 +130,7 @@ public class QuadVee extends QuadMek {
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-    return new TechAdvancement(ITechnology.TechBase.CLAN)
+    return new TechAdvancement(TechBase.CLAN)
             .setTechRating(TechRating.F)
             .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.F)
             .setClanAdvancement(3130, 3135, DATE_NONE, DATE_NONE, DATE_NONE)

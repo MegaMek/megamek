@@ -252,7 +252,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
                     av = TechRating.fromIndex(harder);
                 }
             }
-            if (availability.get(era) == null || av.getIndex() > availability.get(era).getIndex()) {
+            if (availability.get(era) == null || av.isBetterThan(availability.get(era))) {
                 availability.put(era, av);
             }
         }

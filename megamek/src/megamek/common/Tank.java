@@ -270,7 +270,7 @@ public class Tank extends Entity {
         motivePenalty = p;
     }
 
-    private static final TechAdvancement TA_COMBAT_VEHICLE = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_NONE,
+    private static final TechAdvancement TA_COMBAT_VEHICLE = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE,
                 2470,
                 2490)
                                                                    .setProductionFactions(Faction.TH)
@@ -288,7 +288,7 @@ public class Tank extends Entity {
 
     // Advanced turrets
     public static TechAdvancement getDualTurretTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(DATE_PS, DATE_NONE, 3080)
+        return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_NONE, 3080)
                      .setApproximate(false, false, true)
                      .setTechRating(TechRating.B)
                      .setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.E)

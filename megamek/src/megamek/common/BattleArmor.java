@@ -19,6 +19,7 @@ import java.util.Vector;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.cost.BattleArmorCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
@@ -366,30 +367,30 @@ public class BattleArmor extends Infantry {
     }
 
     protected static final TechAdvancement[] TA_BATTLEARMOR = {
-            new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
+            new TechAdvancement(TechBase.ALL).setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
                     .setClanAdvancement(2710, DATE_NONE, 3058).setPrototypeFactions(Faction.TH)
                     .setReintroductionFactions(Faction.CS).setTechRating(TechRating.D)
                     .setAvailability(TechRating.F, TechRating.X, TechRating.E, TechRating.D)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD), // PA(L)
-            new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(DATE_NONE, 3050, 3050)
+            new TechAdvancement(TechBase.ALL).setISAdvancement(DATE_NONE, 3050, 3050)
                     .setClanAdvancement(2865, 2870, 2900).setPrototypeFactions(Faction.CWF)
                     .setProductionFactions(Faction.CIH, Faction.FS, Faction.LC).setClanApproximate(true, false, false)
                     .setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.D)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD), // light
-            new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(2864, 3052, 3052)
+            new TechAdvancement(TechBase.ALL).setISAdvancement(2864, 3052, 3052)
                     .setClanAdvancement(2840, 2868, 2875)
                     .setClanApproximate(true, false, false).setPrototypeFactions(Faction.CGS)
                     .setProductionFactions(Faction.CWF, Faction.FS, Faction.LC, Faction.CS).setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.D)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD), // medium
-            new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(DATE_NONE, 3050, 3058)
+            new TechAdvancement(TechBase.ALL).setISAdvancement(DATE_NONE, 3050, 3058)
                     .setClanAdvancement(2867, 2875, 3058)
                     .setClanApproximate(true, false, false).setPrototypeFactions(Faction.CWF)
                     .setProductionFactions(Faction.CHH, Faction.FS, Faction.LC).setTechRating(TechRating.E)
                     .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.D)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD), // heavy
-            new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(DATE_NONE, 3058, 3060)
+            new TechAdvancement(TechBase.ALL).setISAdvancement(DATE_NONE, 3058, 3060)
                     .setClanAdvancement(2870, 2877, 3060)
                     .setClanApproximate(true, false, false).setPrototypeFactions(Faction.CNC)
                     .setProductionFactions(Faction.CGB, Faction.DC).setTechRating(TechRating.E)
@@ -398,8 +399,10 @@ public class BattleArmor extends Infantry {
     };
 
     public static TechAdvancement exoskeletonTechAdvancement() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(2100, DATE_NONE, 2200)
-                .setApproximate(true, false, true).setTechRating(TechRating.C)
+        return new TechAdvancement(TechBase.ALL)
+                .setAdvancement(2100, DATE_NONE, 2200)
+                .setApproximate(AdvancementPhase.PROTOTYPE, AdvancementPhase.COMMON)
+                .setTechRating(TechRating.C)
                 .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }

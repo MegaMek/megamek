@@ -397,9 +397,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
             // Individual entities are used here if we're using Individual Initiative
             if (initiativeCandidate instanceof Entity entity) {
                 if (entity.getGame() != null) {
-                    final Team team = entity.getGame().getTeamForPlayer(entity.getOwner());
-                    if (team != null) {
-                        bonus = team.getTotalInitBonus(false) + entity.getCrew().getInitBonus();
+                    boolean useCommandInit = entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
+                    final Player player = entity.getOwner();
+                    if (player != null) {
+                        bonus = player.getIndividualCommandBonus(entity, useCommandInit) + entity.getCrew().getInitBonus();
                         if (entity.hasAbility(ATOW_COMBAT_SENSE)) {
                             initiativeAptitudeSPA = ATOW_COMBAT_SENSE;
                         } else if (entity.hasAbility(ATOW_COMBAT_PARALYSIS)) {

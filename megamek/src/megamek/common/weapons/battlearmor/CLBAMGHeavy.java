@@ -48,7 +48,7 @@ public class CLBAMGHeavy extends BAMGWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.B)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3068, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(3055, 3059, 3068, DATE_NONE, DATE_NONE)

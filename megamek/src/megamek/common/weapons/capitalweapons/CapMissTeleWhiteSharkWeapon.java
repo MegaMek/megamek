@@ -54,7 +54,7 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3053, 3056, 3060, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CS, Faction.DC)

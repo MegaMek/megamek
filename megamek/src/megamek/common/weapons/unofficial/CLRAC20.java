@@ -46,7 +46,7 @@ public class CLRAC20 extends RACWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(true)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(3073, 3104, 3145, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CSF)

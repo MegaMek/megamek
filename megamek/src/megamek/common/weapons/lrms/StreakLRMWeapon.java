@@ -39,7 +39,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
         clearModes();
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3057, 3079, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
                 .setPrototypeFactions(Faction.CCY).setProductionFactions(Faction.CJF)

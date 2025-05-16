@@ -44,6 +44,6 @@ public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.DC)
 		        .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E);
 	}
 }

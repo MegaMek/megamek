@@ -43,7 +43,7 @@ public class CLLRT20IOS extends LRTWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.B)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(3058, 3081, 3085, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
                 .setPrototypeFactions(Faction.CNC)

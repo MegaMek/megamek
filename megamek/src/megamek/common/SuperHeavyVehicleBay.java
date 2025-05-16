@@ -85,7 +85,7 @@ public final class SuperHeavyVehicleBay extends UnitBay {
         return new TechAdvancement(TechBase.ALL)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                 .setTechRating(TechRating.A)
-                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

@@ -53,7 +53,7 @@ public class ISLaserSmall extends LaserWeapon {
                 .setIntroLevel(true)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(2290, 2300, 2310, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(2290, 2300, 2310, 2850, DATE_NONE)

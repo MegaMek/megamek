@@ -56,7 +56,7 @@ public class ISMekTaser extends AmmoWeapon {
         rulesRefs = "346, TO";
         techAdvancement.setTechBase(TechBase.IS)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3065, 3084)
                 .setPrototypeFactions(Faction.FS)
                 .setProductionFactions(Faction.FS)

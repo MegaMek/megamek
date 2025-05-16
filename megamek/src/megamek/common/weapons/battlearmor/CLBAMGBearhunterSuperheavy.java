@@ -49,7 +49,7 @@ public class CLBAMGBearhunterSuperheavy extends Weapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
                 .setClanAdvancement(3060, 3062, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CHH)

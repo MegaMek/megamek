@@ -52,7 +52,7 @@ public class ISMRM30 extends MRMWeapon {
     	.setIntroLevel(false)
     	.setUnofficial(false)
         .setTechRating(TechRating.C)
-        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
         .setISAdvancement(3052, 3058, 3063, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false,false, false)
         .setPrototypeFactions(Faction.DC)

@@ -39,7 +39,7 @@ public class ISNailandRivetGun extends NailRivetGunWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setISAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, true, false, false, false)
                 .setClanAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)

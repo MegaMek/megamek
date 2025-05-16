@@ -56,7 +56,7 @@ public class CLRAC2 extends RACWeapon {
         flags = flags.andNot(F_PROTO_WEAPON);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
-                .setTechRating(TechRating.F).setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setTechRating(TechRating.F).setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(3073, DATE_NONE, 3104, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CSF).setProductionFactions(Faction.CSF)

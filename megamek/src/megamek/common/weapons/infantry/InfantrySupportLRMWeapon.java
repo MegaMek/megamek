@@ -53,7 +53,7 @@ public class InfantrySupportLRMWeapon extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3055, 3057, 3065, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FW, Faction.CC)
                 .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
     }
 
     @Override

@@ -37,7 +37,7 @@ public class ISArrowIV extends ArrowIV {
         svslots = 7;
         techAdvancement.setTechBase(TechBase.IS)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2593, 2600, DATE_NONE, 2830, 3044)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

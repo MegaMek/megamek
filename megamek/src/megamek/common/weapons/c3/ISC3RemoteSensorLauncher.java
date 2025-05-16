@@ -58,7 +58,7 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         rulesRefs = "297, TO";
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3072, 3093).setPrototypeFactions(Faction.DC)
                 .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

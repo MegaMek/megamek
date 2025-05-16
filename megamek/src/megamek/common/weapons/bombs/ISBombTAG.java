@@ -46,7 +46,7 @@ public class ISBombTAG extends TAGWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2600, 2605, 2645, 2835, 3035)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

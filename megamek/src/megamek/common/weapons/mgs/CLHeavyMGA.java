@@ -63,7 +63,7 @@ public class CLHeavyMGA extends AmmoWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3069, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
     }

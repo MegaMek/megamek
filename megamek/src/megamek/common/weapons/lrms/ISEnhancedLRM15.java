@@ -57,7 +57,7 @@ public class ISEnhancedLRM15 extends EnhancedLRMWeapon {
         rulesRefs = "326, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS        
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
-            .setAvailability(TechRating.C, TechRating.F, TechRating.E, TechRating.D)
+            .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
             .setISAdvancement(3058, DATE_NONE, 3082).setPrototypeFactions(Faction.FS)
             .setProductionFactions(Faction.FS).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }

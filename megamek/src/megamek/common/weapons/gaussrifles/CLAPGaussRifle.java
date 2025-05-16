@@ -51,7 +51,7 @@ public class CLAPGaussRifle extends GaussWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(3065, 3069, 3072, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CJF)

@@ -59,7 +59,7 @@ public class ISMML5 extends MMLWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setProductionFactions(Faction.MERC, Faction.WB)

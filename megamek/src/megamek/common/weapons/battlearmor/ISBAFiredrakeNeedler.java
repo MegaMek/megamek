@@ -48,7 +48,7 @@ public class ISBAFiredrakeNeedler extends Weapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.B)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
                 .setISAdvancement(3058, 3060, 3068, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.LC)

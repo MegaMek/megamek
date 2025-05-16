@@ -54,7 +54,7 @@ public abstract class BPodWeapon extends AmmoWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3068, 3068, 3070, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(3065, 3068, 3070, DATE_NONE, DATE_NONE)

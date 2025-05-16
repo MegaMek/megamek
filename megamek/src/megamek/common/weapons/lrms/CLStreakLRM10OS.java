@@ -60,7 +60,7 @@ public class CLStreakLRM10OS extends StreakLRMWeapon {
         //But LRM Tech Base and Avail Ratings.
         rulesRefs = "327, TO";
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
-            .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
             .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)
             .setPrototypeFactions(Faction.CCY).setProductionFactions(Faction.CJF)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);

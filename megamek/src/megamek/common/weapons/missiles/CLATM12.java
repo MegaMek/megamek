@@ -59,7 +59,7 @@ public class CLATM12 extends ATMWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, true, false, false)
                 .setPrototypeFactions(Faction.CCY)

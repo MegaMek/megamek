@@ -52,7 +52,7 @@ public class CLLB2XACPrototype extends CLLBXACPrototypeWeapon {
         techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.X, TechRating.X)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
                 .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2826, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
                 .setPrototypeFactions(Faction.CGS)

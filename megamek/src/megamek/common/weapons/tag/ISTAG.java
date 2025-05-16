@@ -43,7 +43,7 @@ public class ISTAG extends TAGWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2593, 2600, 3045, 2835, 3044)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

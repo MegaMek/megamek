@@ -54,7 +54,7 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
 		        .setClanAdvancement(3059, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CHH)
 		        .setProductionFactions(Faction.CHH).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
     }
 }

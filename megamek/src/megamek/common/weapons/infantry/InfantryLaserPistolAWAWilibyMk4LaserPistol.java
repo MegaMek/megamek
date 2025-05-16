@@ -43,7 +43,7 @@ public class InfantryLaserPistolAWAWilibyMk4LaserPistol extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE);
         techAdvancement.setTechRating(TechRating.C);
-        techAdvancement.setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C);
+        techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
         techAdvancement.setISApproximate(false, false, true, false, false);
         techAdvancement.setProductionFactions(Faction.FS);
     }

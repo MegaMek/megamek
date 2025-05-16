@@ -50,7 +50,7 @@ public class CLStreakSRM6 extends StreakSRMWeapon {
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(TechRating.F)
-            .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.D)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
             .setClanAdvancement(2819, 2822, 2830, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, true, false,false, false)
             .setPrototypeFactions(Faction.CSA)

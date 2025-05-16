@@ -90,7 +90,7 @@ public class SupportTank extends Tank {
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_WHEELED_SMALL = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
-            .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
+            .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_WHEELED_MEDIUM = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
@@ -110,7 +110,7 @@ public class SupportTank extends Tank {
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_RAIL = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
-            .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+            .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     private static final TechAdvancement TA_RAIL_LARGE = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)

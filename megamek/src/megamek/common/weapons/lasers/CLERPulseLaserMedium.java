@@ -50,7 +50,7 @@ public class CLERPulseLaserMedium extends PulseLaserWeapon {
         rulesRefs = "320, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
-                .setTechRating(TechRating.F).setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setTechRating(TechRating.F).setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(DATE_NONE, 3057, 3082, DATE_NONE, DATE_NONE)
                 .setPrototypeFactions(Faction.CWF)
                 .setProductionFactions(Faction.CWF).setStaticTechLevel(SimpleTechLevel.STANDARD);

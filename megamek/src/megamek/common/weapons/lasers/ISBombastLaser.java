@@ -60,7 +60,7 @@ public class ISBombastLaser extends LaserWeapon {
         rulesRefs = "319, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3064, 3085).setPrototypeFactions(Faction.LC)
                 .setProductionFactions(Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);

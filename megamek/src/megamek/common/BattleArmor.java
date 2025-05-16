@@ -382,7 +382,7 @@ public class BattleArmor extends Infantry {
                     .setClanAdvancement(2840, 2868, 2875)
                     .setClanApproximate(true, false, false).setPrototypeFactions(Faction.CGS)
                     .setProductionFactions(Faction.CWF, Faction.FS, Faction.LC, Faction.CS).setTechRating(TechRating.E)
-                    .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.D)
+                    .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD), // medium
             new TechAdvancement(TechBase.ALL).setISAdvancement(DATE_NONE, 3050, 3058)
                     .setClanAdvancement(2867, 2875, 3058)
@@ -403,7 +403,7 @@ public class BattleArmor extends Infantry {
                 .setAdvancement(2100, DATE_NONE, 2200)
                 .setApproximate(AdvancementPhase.PROTOTYPE, AdvancementPhase.COMMON)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

@@ -44,6 +44,6 @@ public class InfantryRifleVSPLaserWeapon extends InfantryWeapon {
 		        .setISApproximate(false, false, false, false, false)
 		        .setPrototypeFactions(Faction.FS)
 		        .setProductionFactions(Faction.FS).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 	}
 }

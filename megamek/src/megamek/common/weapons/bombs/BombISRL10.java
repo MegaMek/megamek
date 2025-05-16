@@ -55,7 +55,7 @@ public class BombISRL10 extends MissileWeapon {
             .setIntroLevel(false)
             .setUnofficial(false)
             .setTechRating(TechRating.B)
-            .setAvailability(TechRating.X, TechRating.X, TechRating.B, TechRating.B)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
             .setISAdvancement(3060, 3064, 3067, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false, false, false)
             .setPrototypeFactions(Faction.MH)

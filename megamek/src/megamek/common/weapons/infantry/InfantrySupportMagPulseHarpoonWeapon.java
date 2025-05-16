@@ -54,6 +54,6 @@ public class InfantrySupportMagPulseHarpoonWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.FW)
 		        .setProductionFactions(Faction.FW).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E);
 	}
 }

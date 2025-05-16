@@ -53,7 +53,7 @@ public class InfantrySupportGrenadeLauncherHeavyAutoWeapon extends InfantryWeapo
 		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2896, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
 				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSF, Faction.CHH)
 				.setProductionFactions(Faction.CSF).setTechRating(TechRating.D)
-				.setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D);
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

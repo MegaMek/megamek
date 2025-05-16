@@ -47,7 +47,7 @@ public class ISLB10XAC extends LBXACWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2590, 2595, 3040, 2840, 3035)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

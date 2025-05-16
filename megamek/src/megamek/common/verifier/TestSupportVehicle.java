@@ -685,7 +685,7 @@ public class TestSupportVehicle extends TestEntity {
     @Override
     public String printWeightEngine() {
         return StringUtil.makeLength(String.format("Engine: %s (%s)",
-                engine.getEngineName(), ITechnology.getRatingName(getEntity().getEngineTechRating())),
+                engine.getEngineName(), getEntity().getEngineTechRating().getName()),
                 getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightEngine(), usesKgStandard()) + "\n";
     }
@@ -1069,7 +1069,7 @@ public class TestSupportVehicle extends TestEntity {
                     buff.append("BAR ")
                             .append(bar)
                             .append(" exceeds maximum for armor tech rating ")
-                            .append(ITechnology.getRatingName(supportVee.getArmorTechRating()))
+                            .append(supportVee.getArmorTechRating().getName())
                             .append(".\n");
                     correct = false;
                 }

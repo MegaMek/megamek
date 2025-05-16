@@ -53,7 +53,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3053, 3055, 3057, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.DC)

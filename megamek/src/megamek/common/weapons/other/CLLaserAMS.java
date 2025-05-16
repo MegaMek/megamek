@@ -58,7 +58,7 @@ public class CLLaserAMS extends LaserWeapon {
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(DATE_NONE, 3048, 3079, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
                 .setPrototypeFactions(Faction.CWF)

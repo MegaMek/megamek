@@ -52,7 +52,7 @@ public class CLBARecoillessRifleHeavy extends Weapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(3052, 3054, 3056, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3062, DATE_NONE, DATE_NONE)

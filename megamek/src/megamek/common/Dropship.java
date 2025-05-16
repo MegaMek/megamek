@@ -130,7 +130,7 @@ public class Dropship extends SmallCraft {
     public static TechAdvancement getCollarTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(2458, 2470, 2500)
                 .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH).setTechRating(TechRating.C)
-                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

@@ -51,7 +51,7 @@ public class CLImprovedHeavyLaserSmall extends LaserWeapon {
         rulesRefs = "321, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(DATE_NONE, 3069, 3085, DATE_NONE, DATE_NONE)
                 .setPrototypeFactions(Faction.CGS)
                 .setProductionFactions(Faction.RD)

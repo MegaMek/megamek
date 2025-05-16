@@ -55,7 +55,7 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FW, Faction.CC)
                 .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
     }
 

@@ -48,7 +48,7 @@ public class CLImprovedLaserLarge extends LaserWeapon {
         this.maxRange = RANGE_MED;
         rulesRefs = "95, IO";
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.X, TechRating.X)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
                 .setClanAdvancement(2812, 2815, 2818, 2830, 3080)
                 .setClanApproximate(true, true, false, false, false)
                 .setPrototypeFactions(Faction.CNC).setProductionFactions(Faction.CNC)

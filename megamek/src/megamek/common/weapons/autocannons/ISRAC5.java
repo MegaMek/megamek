@@ -47,7 +47,7 @@ public class ISRAC5 extends RACWeapon {
         techAdvancement.setTechBase(TechBase.IS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3060, 3062, 3071, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FS)

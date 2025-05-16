@@ -46,7 +46,7 @@ public class CLBombTAG extends TAGWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2600, 2605, 2645, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

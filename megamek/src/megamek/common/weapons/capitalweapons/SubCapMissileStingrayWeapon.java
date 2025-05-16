@@ -54,7 +54,7 @@ public class SubCapMissileStingrayWeapon extends SubCapMissileWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, 3060, 3072, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(DATE_NONE, 3070, 3072, DATE_NONE, DATE_NONE)

@@ -45,7 +45,7 @@ public class ISNarcPrototype extends NarcWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.F, TechRating.X, TechRating.X, TechRating.X)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(2580, DATE_NONE, DATE_NONE, 2587, DATE_NONE)
                 .setISApproximate(false, false, false, true, false)
                 .setPrototypeFactions(Faction.TH)

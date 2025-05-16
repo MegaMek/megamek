@@ -42,6 +42,6 @@ public class InfantryArchaicShockStaffWeapon extends InfantryWeapon {
                 .setClanAdvancement(3074, 3077, 3130, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.CC)
                 .setProductionFactions(Faction.CC).setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E);
     }
 }

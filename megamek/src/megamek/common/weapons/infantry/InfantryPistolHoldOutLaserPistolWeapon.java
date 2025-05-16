@@ -51,7 +51,7 @@ public class InfantryPistolHoldOutLaserPistolWeapon extends InfantryWeapon {
 				.setClanAdvancement(2318, 2320, 2350, DATE_NONE, DATE_NONE)
 				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
 				.setProductionFactions(Faction.LC).setTechRating(TechRating.D)
-				.setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B);
+				.setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

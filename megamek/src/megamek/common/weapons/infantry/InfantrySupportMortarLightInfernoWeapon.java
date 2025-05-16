@@ -56,7 +56,7 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.B)
-		        .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 

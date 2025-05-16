@@ -36,6 +36,6 @@ public class AntiMekGear extends MiscType {
                 .setApproximate(true, false, false)
                 .setTechRating(TechRating.D)
                 .setPrototypeFactions(Faction.LC).setProductionFactions(Faction.LC)
-                .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D);
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D);
     }
 }

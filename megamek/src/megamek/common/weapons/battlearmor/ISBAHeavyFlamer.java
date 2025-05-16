@@ -48,7 +48,7 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
         rulesRefs = "312, TO";
         techAdvancement.setTechBase(TechAdvancement.TechBase.ALL)
 			.setTechRating(TechRating.C)
-			.setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+			.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
 			.setISAdvancement(3070, 3073, 3075, DATE_NONE, DATE_NONE)
 			.setISApproximate(true, false, false, false, false)
 			.setClanAdvancement(DATE_NONE, 3073, 3075, DATE_NONE, DATE_NONE)

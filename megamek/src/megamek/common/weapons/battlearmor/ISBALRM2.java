@@ -53,7 +53,7 @@ public class ISBALRM2 extends LRMWeapon {
     	.setIntroLevel(false)
     	.setUnofficial(false)
         .setTechRating(TechRating.E)
-        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
         .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false, false, false)
         .setPrototypeFactions(Faction.FS)

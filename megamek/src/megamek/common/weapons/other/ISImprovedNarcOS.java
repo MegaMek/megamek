@@ -45,7 +45,7 @@ public class ISImprovedNarcOS extends NarcWeapon {
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(TechRating.E)
-            .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
             .setISAdvancement(3054, 3062, 3070, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false, false, false)
             .setPrototypeFactions(Faction.CS)

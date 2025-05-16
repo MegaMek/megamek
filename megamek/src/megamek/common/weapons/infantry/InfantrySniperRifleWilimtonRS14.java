@@ -43,7 +43,7 @@ public class InfantrySniperRifleWilimtonRS14 extends InfantryWeapon {
        techAdvancement
                .setTechBase(TechBase.IS)
                .setTechRating(TechRating.E)
-               .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.D)
+               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                .setISAdvancement(DATE_NONE, DATE_NONE, 2795, DATE_NONE, DATE_NONE)
                .setISApproximate(false, false, true, false, false)
                .setProductionFactions(Faction.CS);

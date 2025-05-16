@@ -50,7 +50,7 @@ public class ISPulseLaserLarge extends PulseLaserWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2595, 2609, 3042, 2950, 3037)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

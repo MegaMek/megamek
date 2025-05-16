@@ -30,7 +30,7 @@ public class CLMPod extends MPodWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(true)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3060, 3064, 3099, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.LC)

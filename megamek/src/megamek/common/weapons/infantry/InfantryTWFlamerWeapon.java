@@ -50,7 +50,7 @@ public class InfantryTWFlamerWeapon extends InfantryWeapon {
             .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, false, false, false, false)
             .setTechRating(TechRating.C)
-            .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
+            .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
             .setUnofficial(true);
     }
 }

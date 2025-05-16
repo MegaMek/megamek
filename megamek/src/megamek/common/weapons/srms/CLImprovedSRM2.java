@@ -45,7 +45,7 @@ public class CLImprovedSRM2 extends SRMWeapon {
         rulesRefs = "96, IO";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.X, TechRating.X)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
                 .setClanAdvancement(2815, 2817, 2819, 2828, 3080)
                 .setClanApproximate(true, false, false, true, false)
                 .setPrototypeFactions(Faction.CCC).setProductionFactions(Faction.CCC)

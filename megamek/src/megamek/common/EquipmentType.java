@@ -918,7 +918,7 @@ public class EquipmentType implements ITechnology {
                                                                          .setStaticTechLevel(SimpleTechLevel.INTRO);
     protected static final TechAdvancement TA_NONE = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE)
                                                            .setTechRating(TechRating.A)
-                                                           .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
+                                                           .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                                                            .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     public static TechAdvancement getStructureTechAdvancement(int at, boolean clan) {
@@ -1760,7 +1760,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public TechRating getBaseAvailability(Era era) {
+    public AvailabilityValue getBaseAvailability(Era era) {
         return techAdvancement.getBaseAvailability(era);
     }
 

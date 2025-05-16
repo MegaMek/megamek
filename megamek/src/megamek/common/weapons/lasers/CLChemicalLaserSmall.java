@@ -51,7 +51,7 @@ public class CLChemicalLaserSmall extends CLChemicalLaserWeapon {
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3059, 3083, DATE_NONE, DATE_NONE)
                 .setPrototypeFactions(Faction.CHH)
                 .setProductionFactions(Faction.CHH)

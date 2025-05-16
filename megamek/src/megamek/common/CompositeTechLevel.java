@@ -436,9 +436,9 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     }
 
     @Override
-    public TechRating getBaseAvailability(Era era) {
+    public AvailabilityValue getBaseAvailability(Era era) {
         if (era == null || (ITechnology.getTechEra(introYear).getIndex() > era.getIndex())) {
-            return TechRating.X;
+            return AvailabilityValue.X;
         }
         return availability.get(era);
     }

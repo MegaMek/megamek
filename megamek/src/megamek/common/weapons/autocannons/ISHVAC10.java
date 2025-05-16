@@ -50,7 +50,7 @@ public class ISHVAC10 extends HVACWeapon {
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3059, 3079)
                 .setPrototypeFactions(Faction.CC).setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);

@@ -207,19 +207,19 @@ public class Infantry extends Entity {
         switch (movementMode) {
             case INF_MOTORIZED:
                 techAdvancement.setTechRating(TechRating.B)
-                      .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
+                      .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case INF_JUMP:
                 techAdvancement.setAdvancement(DATE_ES, DATE_ES, DATE_ES)
                       .setTechRating(TechRating.D)
-                      .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
+                      .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case INF_UMU:
                 techAdvancement.setAdvancement(DATE_PS, DATE_PS)
                       .setTechRating(TechRating.B)
-                      .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
+                      .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case WHEELED:
@@ -246,20 +246,20 @@ public class Infantry extends Entity {
             case SUBMARINE:
                 techAdvancement.setAdvancement(DATE_PS, DATE_PS)
                       .setTechRating(TechRating.C)
-                      .setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.D)
+                      .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case NONE:
                 // Beast-mounted
                 techAdvancement.setAdvancement(DATE_PS, DATE_PS)
                       .setTechRating(TechRating.A)
-                      .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
+                      .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case INF_LEG:
             default:
                 techAdvancement.setTechRating(TechRating.A)
-                      .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
+                      .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
         }
@@ -282,28 +282,28 @@ public class Infantry extends Entity {
     public static TechAdvancement getMarineTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                      .setTechRating(TechRating.C)
-                     .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
+                     .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getMountainTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                      .setTechRating(TechRating.B)
-                     .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
+                     .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getParatrooperTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                      .setTechRating(TechRating.B)
-                     .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
+                     .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getParamedicTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                      .setTechRating(TechRating.B)
-                     .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+                     .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

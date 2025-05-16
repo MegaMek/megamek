@@ -54,7 +54,7 @@ public class InfantrySupportHeavyPulseLaserWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2610, 2615, 2675, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
 		        .setProductionFactions(Faction.TH).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.D);
+		        .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D);
 
 	}
 }

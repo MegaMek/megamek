@@ -51,7 +51,7 @@ public class InfantrySupportLaserUltraHeavyWeapon extends InfantryWeapon {
 		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3055, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CBR)
 		        .setProductionFactions(Faction.CSA).setTechRating(TechRating.F)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

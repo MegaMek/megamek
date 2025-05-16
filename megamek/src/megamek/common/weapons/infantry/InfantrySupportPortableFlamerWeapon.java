@@ -53,7 +53,7 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
 		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setTechRating(TechRating.C)
-		        .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A);
+		        .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
 
 	}
 }

@@ -51,7 +51,7 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.FS)

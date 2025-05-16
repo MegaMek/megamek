@@ -107,7 +107,7 @@ public final class SmallCraftBay extends AbstractSmallCraftASFBay {
         return new TechAdvancement(TechBase.ALL)
                 .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

@@ -43,7 +43,7 @@ public class InfantrySniperRifleWilimtonRS17Stripped extends InfantryWeapon {
        techAdvancement
                .setTechBase(TechBase.IS)
                .setTechRating(TechRating.E)
-               .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
+               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                .setISAdvancement(DATE_NONE, DATE_NONE, 3080, DATE_NONE, DATE_NONE)
                .setISApproximate(false, false, true, false, false)
                .setProductionFactions(Faction.WB);

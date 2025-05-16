@@ -50,7 +50,7 @@ public class InfantrySniperStalkerWeapon extends InfantryWeapon {
         rulesRefs =" HBHL, 147";
 		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
     }
 }

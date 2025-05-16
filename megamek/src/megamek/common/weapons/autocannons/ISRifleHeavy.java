@@ -52,7 +52,7 @@ public class ISRifleHeavy extends RifleWeapon {
         rulesRefs = "338, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.B)
-                .setAvailability(TechRating.C, TechRating.F, TechRating.X, TechRating.D)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.D)
                 .setISAdvancement(DATE_PS, DATE_PS, 3084, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);

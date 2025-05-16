@@ -57,7 +57,7 @@ public class CLLAAMissileWeapon extends ThunderBoltWeapon {
     	.setIntroLevel(false)
     	.setUnofficial(false)
         .setTechRating(TechRating.E)
-        .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.D)
+        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
         .setClanAdvancement(DATE_NONE, DATE_NONE, 3074, DATE_NONE, DATE_NONE)
         .setClanApproximate(false, false, false, false, false);
     }

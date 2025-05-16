@@ -47,7 +47,7 @@ public class PrototypeRL15 extends PrototypeRLWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.B)
-                .setAvailability(TechRating.D, TechRating.F, TechRating.X, TechRating.X)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)

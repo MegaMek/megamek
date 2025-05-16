@@ -56,7 +56,7 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
                 .setPrototypeFactions(Faction.CJF)

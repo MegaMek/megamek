@@ -50,7 +50,7 @@ public class SubCapCannonWeaponLight extends SubCapCannonWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, 3068, 3073, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(DATE_NONE, 3090, 3091, DATE_NONE, DATE_NONE)

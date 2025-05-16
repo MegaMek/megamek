@@ -57,7 +57,7 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setPrototypeFactions(Faction.LC)

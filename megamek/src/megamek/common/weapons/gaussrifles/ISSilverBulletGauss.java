@@ -67,7 +67,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         rulesRefs = "314, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3051, DATE_NONE, 3080,DATE_NONE, DATE_NONE)
                 .setPrototypeFactions(Faction.FS, Faction.LC)
                 .setProductionFactions(Faction.FC)

@@ -52,7 +52,7 @@ public class InfantrySniperRifleMinolta9000Weapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.CC)
 		        .setProductionFactions(Faction.CC).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 
 	}
 }

@@ -46,7 +46,7 @@ public class ISExtendedLRM5 extends ExtendedLRMWeapon {
         techAdvancement
                 .setTechBase(TechBase.IS)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(DATE_NONE, 3054, 3080, DATE_NONE, DATE_NONE)
                 .setPrototypeFactions(Faction.FS, Faction.LC)
                 .setProductionFactions(Faction.LC)

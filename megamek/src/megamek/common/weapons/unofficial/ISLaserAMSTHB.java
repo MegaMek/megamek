@@ -57,7 +57,7 @@ public class ISLaserAMSTHB extends LaserWeapon {
         techAdvancement.setTechBase(TechBase.IS)
                 .setUnofficial(true)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3059, 3079, 3145, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setPrototypeFactions(Faction.FS)

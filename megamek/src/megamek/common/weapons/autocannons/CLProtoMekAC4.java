@@ -48,7 +48,7 @@ public class CLProtoMekAC4 extends ProtoMekACWeapon {
         rulesRefs = "286, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
-                .setTechRating(TechRating.F).setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setTechRating(TechRating.F).setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3070, 3073, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
                 .setPrototypeFactions(Faction.CBS).setProductionFactions(Faction.CBS)

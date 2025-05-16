@@ -56,7 +56,7 @@ public class ISVariableSpeedPulseLaserLarge extends VariableSpeedPulseLaserWeapo
         rulesRefs = "321, TO";
         //Nov 22 - CGL requested we move to Standard for Simple Tech Level
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3070, 3072, 3080).setPrototypeFactions(Faction.FW,Faction.WB)
                 .setProductionFactions(Faction.FW,Faction.WB).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }

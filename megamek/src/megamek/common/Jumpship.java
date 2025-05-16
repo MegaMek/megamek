@@ -215,7 +215,7 @@ public class Jumpship extends Aero {
                      .setReintroductionFactions(Faction.FS)
                      .setClanAdvancement(2520, 2529)
                      .setTechRating(TechRating.E)
-                     .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.E)
+                     .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
@@ -227,7 +227,7 @@ public class Jumpship extends Aero {
                      .setPrototypeFactions(Faction.TA)
                      .setProductionFactions(Faction.TA)
                      .setTechRating(TechRating.D)
-                     .setAvailability(TechRating.E, TechRating.E, TechRating.D, TechRating.D)
+                     .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

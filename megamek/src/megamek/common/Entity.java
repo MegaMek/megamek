@@ -1286,7 +1286,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public TechRating getBaseAvailability(Era era) {
+    public AvailabilityValue getBaseAvailability(Era era) {
         return compositeTechLevel.getBaseAvailability(era);
     }
 

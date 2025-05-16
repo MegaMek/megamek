@@ -41,7 +41,7 @@ public class InfantryLaserPistolBR25 extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE);
         techAdvancement.setTechRating(TechRating.D);
-        techAdvancement.setAvailability(TechRating.D, TechRating.D, TechRating.D, TechRating.C);
+        techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C);
         techAdvancement.setISApproximate(false, false, true, false, false);
         techAdvancement.setProductionFactions(Faction.TC);
     }

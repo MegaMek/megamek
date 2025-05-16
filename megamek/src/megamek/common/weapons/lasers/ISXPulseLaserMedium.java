@@ -56,7 +56,7 @@ public class ISXPulseLaserMedium extends PulseLaserWeapon {
         flags = flags.andNot(F_PROTO_WEAPON);
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
-            .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
             .setISAdvancement(DATE_NONE, 3047, 3078, DATE_NONE, DATE_NONE).setPrototypeFactions(Faction.LC,Faction.FS)
             .setProductionFactions(Faction.LC)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);

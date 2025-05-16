@@ -116,6 +116,9 @@ public interface ITechnology {
         public boolean isBetterThan(TechRating other) {
             return this.index > other.index;
         }
+        public boolean isBetterOrEqualThan(TechRating other) {
+            return this.index >= other.index;
+        }
         public static TechRating fromIndex(int idx) {
             TechRating tr = INDEX_LOOKUP.get(idx);
             if (tr == null) throw new IllegalArgumentException("Invalid TechRating index: " + idx);
@@ -512,7 +515,7 @@ public interface ITechnology {
     default AvailabilityValue calcYearAvailability(int year, boolean clanUse, Faction faction) {
         Era era = getTechEra(year);
         if (!clanUse && !isClan() && (faction != Faction.CS) && (era == Era.SW)
-            && getBaseAvailability(Era.SW).getIndex() >= AvailabilityValue.E.getIndex()
+            && getBaseAvailability(Era.SW).isBetterOrEqualThan(AvailabilityValue.E)
             && getExtinctionDate(false) != DATE_NONE
             && getExtinctionDate(false) <= year
             && (getReintroductionDate(false) == DATE_NONE || getReintroductionDate(false) > year)) {
@@ -532,10 +535,10 @@ public interface ITechnology {
      *           the extinction date.
      */
     default String getEraAvailabilityName(Era era, boolean clanUse) {
-        if (!clanUse && !isClan() && era == Era.SW
-            && getBaseAvailability(Era.SW).getIndex() >= AvailabilityValue.E.getIndex()
-            && getBaseAvailability(Era.SW).getIndex() < AvailabilityValue.X.getIndex()
-            && getExtinctionDate(false) != DATE_NONE
+        if (!clanUse && !isClan() && (era == Era.SW)
+            && getBaseAvailability(Era.SW).isBetterOrEqualThan(AvailabilityValue.E)
+            && !getBaseAvailability(Era.SW).equals(AvailabilityValue.X)
+            && (getExtinctionDate(false) != DATE_NONE)
             && getTechEra(getExtinctionDate(false)) == Era.SW) {
             AvailabilityValue base = getBaseAvailability(Era.SW);
             int harderIdx = Math.min(base.getIndex() + 1, AvailabilityValue.X.getIndex());
@@ -577,6 +580,12 @@ public interface ITechnology {
         return calcYearAvailability(year, isClan());
     }
 
+    /**
+     * @deprecated Use {@link TechRating#getName()} instead.
+     * @param rating
+     * @return
+     */
+    @Deprecated
     static String getRatingName(TechRating rating) {
         return rating.getName();
     }

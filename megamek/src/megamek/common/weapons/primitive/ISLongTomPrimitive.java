@@ -46,7 +46,7 @@ public class ISLongTomPrimitive extends ArtilleryWeapon {
         flags = flags.or(F_PROTOTYPE);
         techAdvancement.setTechBase(TechBase.IS)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.F, TechRating.X, TechRating.X, TechRating.X)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(2445, DATE_NONE, DATE_NONE, 2500, DATE_NONE)
                 .setISApproximate(false, false, false, true, false)
                 .setPrototypeFactions(Faction.TH)

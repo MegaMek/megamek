@@ -44,7 +44,7 @@ public class ISLRT20 extends LRTWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setISAdvancement(2370, 2380, 2400, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

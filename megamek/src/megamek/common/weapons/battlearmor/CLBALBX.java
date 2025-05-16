@@ -59,7 +59,7 @@ public class CLBALBX extends Weapon {
         rulesRefs = "207, TM";
         techAdvancement.setTechBase(TechBase.CLAN)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(3075, 3085)
                 .setClanApproximate(false, false)
                 .setPrototypeFactions(Faction.CNC)

@@ -46,6 +46,6 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.LC)
 		        .setProductionFactions(Faction.LC).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E);
 	}
 }

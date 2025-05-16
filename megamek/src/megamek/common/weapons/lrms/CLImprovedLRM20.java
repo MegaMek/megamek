@@ -50,7 +50,7 @@ public class CLImprovedLRM20 extends LRMWeapon {
         rulesRefs = "96, IO";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
-            .setAvailability(TechRating.X, TechRating.D, TechRating.X, TechRating.X)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
             .setClanAdvancement(2815, 2818, 2820, 2831, 3080)
             .setPrototypeFactions(Faction.CCY).setProductionFactions(Faction.CCY)
             .setReintroductionFactions(Faction.EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);

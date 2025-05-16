@@ -57,7 +57,7 @@ public class ISImpHGaussRifle extends GaussWeapon {
         rulesRefs = "313, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3065, DATE_NONE, 3081, DATE_NONE, DATE_NONE)
                 .setPrototypeFactions(Faction.LC).setProductionFactions(Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);

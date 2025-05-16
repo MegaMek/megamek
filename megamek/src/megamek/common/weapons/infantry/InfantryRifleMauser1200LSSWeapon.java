@@ -50,6 +50,6 @@ public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.WB)
 		        .setProductionFactions(Faction.WB).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 	}
 }

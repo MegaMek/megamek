@@ -52,7 +52,7 @@ public class InfantrySMGWeapon extends InfantryWeapon {
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A);
+		        .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
 
 	}
 }

@@ -50,7 +50,7 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2490, 2500, 2590, DATE_NONE, 3056)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
 		        .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.FS, Faction.LC).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.D);
+		        .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

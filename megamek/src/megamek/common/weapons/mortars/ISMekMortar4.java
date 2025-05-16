@@ -42,7 +42,7 @@ public class ISMekMortar4 extends MekMortarWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.B)
-                .setAvailability(TechRating.D, TechRating.F, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(2526, 2531, 3052, 2819, 3043)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)

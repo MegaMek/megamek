@@ -58,7 +58,7 @@ public class CLStreakSRM4Prototype extends CLPrototypeStreakSRMWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.X, TechRating.X)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
                 .setClanAdvancement(2819, DATE_NONE, DATE_NONE, 2826, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
                 .setPrototypeFactions(Faction.CSA);

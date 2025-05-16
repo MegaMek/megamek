@@ -45,7 +45,7 @@ public class AMSBayWeapon extends AmmoBayWeapon {
 		setInstantModeSwitch(false);
 		techAdvancement.setTechBase(TechBase.ALL)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2613, 2617, 3048, 2835, 3045)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)

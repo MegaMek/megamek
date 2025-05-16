@@ -255,7 +255,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 2490)
                                                           .setProductionFactions(Faction.TH)
                                                           .setTechRating(TechRating.D)
-                                                          .setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.C)
+                                                          .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
                                                           .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TechBase.IS)
                                                                     // Per MUL team and per availability codes should exist to around 2781
@@ -269,10 +269,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                                                                         AdvancementPhase.EXTINCT)
                                                                     .setProductionFactions(Faction.TA)
                                                                     .setTechRating(TechRating.D)
-                                                                    .setAvailability(TechRating.D,
-                                                                          TechRating.X,
-                                                                          TechRating.F,
-                                                                          TechRating.F)
+                                                                    .setAvailability(AvailabilityValue.D,
+                                                                          AvailabilityValue.X,
+                                                                          AvailabilityValue.F,
+                                                                          AvailabilityValue.F)
                                                                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
@@ -295,7 +295,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Standard
           new TechAdvancement(TechBase.IS)
@@ -311,7 +311,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 .setPrototypeFactions(Faction.WB)
                 .setProductionFactions(Faction.WB, Faction.CSR)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Small
           new TechAdvancement(TechBase.ALL)
@@ -333,7 +333,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 .setProductionFactions(Faction.TH)
                 .setReintroductionFactions(Faction.FS)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.C, TechRating.F, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           // Cockpit command console
           new TechAdvancement(TechBase.ALL)
@@ -345,7 +345,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 .setISApproximate(AdvancementPhase.PRODUCTION)
                 .setPrototypeFactions(Faction.TA)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.D, TechRating.X, TechRating.X, TechRating.F)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Primitive
     };

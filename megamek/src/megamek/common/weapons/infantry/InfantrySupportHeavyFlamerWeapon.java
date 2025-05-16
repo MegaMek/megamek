@@ -52,7 +52,7 @@ public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B);
+		        .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

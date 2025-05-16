@@ -50,7 +50,7 @@ public class InfantryPistolMandrakeGaussPistolWeapon extends InfantryWeapon {
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(Faction.CC)
 				.setProductionFactions(Faction.CC).setTechRating(TechRating.E)
-				.setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D);
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 
 	}
 }

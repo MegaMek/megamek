@@ -49,7 +49,7 @@ public class ISLRM20 extends LRMWeapon {
                 .setIntroLevel(true)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setISAdvancement(2295, 2300, 2400, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2295, 2300, 2400, 2830, DATE_NONE)

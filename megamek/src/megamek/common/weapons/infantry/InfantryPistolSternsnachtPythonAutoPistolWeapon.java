@@ -50,7 +50,7 @@ public class InfantryPistolSternsnachtPythonAutoPistolWeapon extends InfantryWea
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(Faction.LC)
 				.setProductionFactions(Faction.FS, Faction.LC).setTechRating(TechRating.C)
-				.setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.B);
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B);
 
 	}
 }

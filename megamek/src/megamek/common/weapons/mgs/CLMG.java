@@ -48,7 +48,7 @@ public class CLMG extends MGWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.X, TechRating.B, TechRating.B, TechRating.A)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.A)
                 .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CSF)

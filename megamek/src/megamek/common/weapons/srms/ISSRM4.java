@@ -51,7 +51,7 @@ public class ISSRM4 extends SRMWeapon {
         	.setIntroLevel(true)
         	.setUnofficial(false)
             .setTechRating(TechRating.C)
-            .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+            .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
             .setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setClanAdvancement(2365, 2370, 2400, 2836, DATE_NONE)

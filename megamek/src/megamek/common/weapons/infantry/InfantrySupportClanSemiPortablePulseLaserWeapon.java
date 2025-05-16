@@ -52,7 +52,7 @@ public class InfantrySupportClanSemiPortablePulseLaserWeapon extends InfantryWea
 		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3056, 3059, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSJ)
 		        .setProductionFactions(Faction.CSJ).setTechRating(TechRating.F)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

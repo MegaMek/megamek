@@ -49,7 +49,7 @@ public class ISERLaserLarge extends LaserWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2610, 2620, 3045, 2950, 3037)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

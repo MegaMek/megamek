@@ -42,7 +42,7 @@ public class InfantryLaserRifleSyrtisFirebolt12Repaired extends InfantryWeapon {
         techAdvancement
                 .setTechBase(TechBase.IS)
                 .setTechRating(TechRating.D) // Assuming X-X-E-D simplifies to D
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3053, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setProductionFactions(Faction.FS);

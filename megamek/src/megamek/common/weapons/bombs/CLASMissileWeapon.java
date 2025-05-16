@@ -64,7 +64,7 @@ public class CLASMissileWeapon extends ThunderBoltWeapon {
     	.setIntroLevel(false)
     	.setUnofficial(false)
         .setTechRating(TechRating.D)
-        .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E)
+        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
         .setISAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
         .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }

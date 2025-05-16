@@ -45,7 +45,7 @@ public class ISRL4 extends RLWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(true)
                 .setTechRating(TechRating.B)
-                .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)

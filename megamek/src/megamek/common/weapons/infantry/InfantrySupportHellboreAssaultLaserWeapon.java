@@ -52,7 +52,7 @@ public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.CS)
 		        .setProductionFactions(Faction.CS).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 
 	}
 }

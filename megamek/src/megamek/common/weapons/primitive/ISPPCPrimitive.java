@@ -61,7 +61,7 @@ public class ISPPCPrimitive extends PPCWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.F, TechRating.X, TechRating.X, TechRating.X)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(2439, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.TA)

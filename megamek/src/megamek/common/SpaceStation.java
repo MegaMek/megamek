@@ -58,7 +58,7 @@ public class SpaceStation extends Jumpship {
             .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
             .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
             .setReintroductionFactions(Faction.RS).setTechRating(TechRating.D)
-            .setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.F)
+            .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override

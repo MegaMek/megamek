@@ -64,7 +64,7 @@ public class ISASEWMissileWeapon extends ThunderBoltWeapon {
     	.setIntroLevel(false)
     	.setUnofficial(false)
         .setTechRating(TechRating.E)
-        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
+        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
         .setISAdvancement(3067, 3073, DATE_NONE, DATE_NONE, DATE_NONE)
         .setISApproximate(false, false, false, false, false)
         .setPrototypeFactions(Faction.LC)

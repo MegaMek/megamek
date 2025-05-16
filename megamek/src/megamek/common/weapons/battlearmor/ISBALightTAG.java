@@ -50,6 +50,6 @@ public class ISBALightTAG extends TAGWeapon {
         techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(3046, 3053, 3057);
         techAdvancement.setTechRating(TechRating.E);
-        techAdvancement.setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.E);
+        techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E);
     }
 }

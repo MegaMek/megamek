@@ -54,7 +54,7 @@ public class ISAMS extends AmmoWeapon {
         rulesRefs = "204, TM";
         techAdvancement.setTechBase(TechBase.IS)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2613, 2617, 3048, 2835, 3045)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

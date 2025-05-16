@@ -322,7 +322,7 @@ public class ProtoMek extends Entity {
                                                         .setPrototypeFactions(Faction.CLAN)
                                                         .setProductionFactions(Faction.CCC)
                                                         .setTechRating(TechRating.F)
-                                                        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                                                        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                                                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     public static final TechAdvancement TA_ULTRA = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3083,
@@ -331,7 +331,7 @@ public class ProtoMek extends Entity {
                                                          .setPrototypeFactions(Faction.CLAN)
                                                          .setProductionFactions(Faction.CCY)
                                                          .setTechRating(TechRating.F)
-                                                         .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.D)
+                                                         .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                                                          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     public static final TechAdvancement TA_GLIDER = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3084,
@@ -340,7 +340,7 @@ public class ProtoMek extends Entity {
                                                           .setPrototypeFactions(Faction.CLAN)
                                                           .setProductionFactions(Faction.CSR)
                                                           .setTechRating(TechRating.F)
-                                                          .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.E)
+                                                          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                                                           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     public static final TechAdvancement TA_INTERFACE_COCKPIT = new TechAdvancement(TechBase.IS).setISAdvancement(3071,
                 DATE_NONE,

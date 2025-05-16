@@ -59,7 +59,7 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2498, 2510, 2590, DATE_NONE, 3056)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
 		        .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.FW).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.D);
+		        .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

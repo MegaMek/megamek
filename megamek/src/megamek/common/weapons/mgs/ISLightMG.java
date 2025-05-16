@@ -50,7 +50,7 @@ public class ISLightMG extends MGWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.B)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.B)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
                 .setISAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)

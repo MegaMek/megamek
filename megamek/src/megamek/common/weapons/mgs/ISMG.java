@@ -50,7 +50,7 @@ public class ISMG extends MGWeapon {
                 .setIntroLevel(true)
                 .setUnofficial(false)
                 .setTechRating(TechRating.B)
-                .setAvailability(TechRating.A, TechRating.A, TechRating.B, TechRating.A)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, 2826, DATE_NONE)

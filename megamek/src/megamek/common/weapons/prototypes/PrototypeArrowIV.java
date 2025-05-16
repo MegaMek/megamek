@@ -47,7 +47,7 @@ public class PrototypeArrowIV extends ArtilleryWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.F, TechRating.X, TechRating.X, TechRating.X)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(2593, DATE_NONE, DATE_NONE, 2613, 3044)
                 .setISApproximate(false, false, false, true, false)
                 .setPrototypeFactions(Faction.TH)

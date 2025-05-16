@@ -422,7 +422,7 @@ public class Bay implements Transporter, ITechnology {
         return new TechAdvancement(TechBase.ALL)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                 .setTechRating(TechRating.A)
-                .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.A)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
@@ -438,7 +438,7 @@ public class Bay implements Transporter, ITechnology {
                 .setProductionFactions(Faction.TH)
                 .setReintroductionFactions(Faction.WB)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.D, TechRating.E, TechRating.E, TechRating.E)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
@@ -497,7 +497,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     @Override
-    public TechRating getBaseAvailability(Era era) {
+    public AvailabilityValue getBaseAvailability(Era era) {
         return getTechAdvancement().getBaseAvailability(era);
     }
 

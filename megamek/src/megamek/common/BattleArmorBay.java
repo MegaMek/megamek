@@ -138,7 +138,7 @@ public final class BattleArmorBay extends Bay implements InfantryTransporter {
                 .setClanApproximate(true, false, false, false, false)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050,DATE_NONE,DATE_NONE)
                 .setPrototypeFactions(Faction.CWF).setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.B)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

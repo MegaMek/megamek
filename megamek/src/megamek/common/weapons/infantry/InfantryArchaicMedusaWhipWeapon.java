@@ -47,7 +47,7 @@ public class InfantryArchaicMedusaWhipWeapon extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2820, 2825, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.CWM)
                 .setProductionFactions(Faction.CWM).setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.E);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E);
 
     }
 }

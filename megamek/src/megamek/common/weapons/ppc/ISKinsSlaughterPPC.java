@@ -48,7 +48,7 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(true)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2740, 2751, DATE_NONE, 2860, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2740, 2751, DATE_NONE, 2831, DATE_NONE)

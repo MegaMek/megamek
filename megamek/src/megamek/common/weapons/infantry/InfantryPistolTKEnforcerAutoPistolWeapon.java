@@ -52,7 +52,7 @@ public class InfantryPistolTKEnforcerAutoPistolWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.LC)
 		        .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.B, TechRating.B);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

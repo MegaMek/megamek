@@ -59,7 +59,7 @@ public class ISLaserAMS extends LaserWeapon {
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, 3059, 3079, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setPrototypeFactions(Faction.FS)

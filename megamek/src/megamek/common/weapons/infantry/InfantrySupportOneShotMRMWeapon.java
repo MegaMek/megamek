@@ -52,6 +52,6 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
 		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.DC)
 		        .setProductionFactions(Faction.DC).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 	}
 }

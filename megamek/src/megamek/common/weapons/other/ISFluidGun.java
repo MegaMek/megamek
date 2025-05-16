@@ -43,7 +43,7 @@ public class ISFluidGun extends FluidGunWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.B)
-                .setAvailability(TechRating.B, TechRating.B, TechRating.B, TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false);
     }

@@ -46,7 +46,7 @@ public class LongTom extends ArtilleryWeapon {
         cost = 450000;
         rulesRefs = "284, TO";
         techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.B)
-            .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+            .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
             .setAdvancement(2445, 2500, DATE_NONE, DATE_NONE, DATE_NONE)
             .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);

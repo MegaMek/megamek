@@ -51,7 +51,7 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2645, 2647, 2650, 2845, 3035)
                 .setISApproximate(false, false, true,false, false)
                 .setClanAdvancement(2645, 2647, 2650, 2845, DATE_NONE)

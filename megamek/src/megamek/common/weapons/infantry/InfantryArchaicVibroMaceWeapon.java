@@ -49,7 +49,7 @@ public class InfantryArchaicVibroMaceWeapon extends InfantryWeapon {
                 .setClanAdvancement(3000, 3050, 3100, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.CF)
                 .setProductionFactions(Faction.CF).setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.E);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E);
 
     }
 }

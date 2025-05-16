@@ -47,7 +47,7 @@ public class Thumper extends ArtilleryWeapon {
         cost = 187500;
         rulesRefs = "284, TO";
         techAdvancement.setTechBase(TechBase.ALL)
-            .setTechRating(TechRating.B).setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.C)
+            .setTechRating(TechRating.B).setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
             .setAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
             .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);

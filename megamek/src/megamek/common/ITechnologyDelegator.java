@@ -81,7 +81,7 @@ public interface ITechnologyDelegator extends ITechnology {
     }
 
     @Override
-    default TechRating getBaseAvailability(Era era) {
+    default AvailabilityValue getBaseAvailability(Era era) {
         return getTechSource().getBaseAvailability(era);
     }
 

@@ -51,6 +51,6 @@ public class ISBAMGLight extends BAMGWeapon {
         techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3068);
         techAdvancement.setTechRating(TechRating.C);
-        techAdvancement.setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.B);
+        techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B);
     }
 }

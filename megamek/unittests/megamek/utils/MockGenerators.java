@@ -199,7 +199,7 @@ public class MockGenerators {
 		when(mockPlayer.getConstantInitBonus()).thenReturn(0);
 		when(mockPlayer.getTurnInitBonus()).thenReturn(0);
 		when(mockPlayer.getInitCompensationBonus()).thenReturn(0);
-		when(mockPlayer.getCommandBonus()).thenReturn(0);
+		when(mockPlayer.getOverallCommandBonus()).thenReturn(0);
 		return mockPlayer;
 	}
 }

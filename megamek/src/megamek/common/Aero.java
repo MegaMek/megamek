@@ -259,14 +259,15 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                                                           .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TechBase.IS)
                                                                     // Per MUL team and per availability codes should exist to around 2781
-                                                                    .setAdvancement(Map.of(
+                                                                    .setISAdvancement(Map.of(
                                                                         AdvancementPhase.PROTOTYPE, DATE_ES,
                                                                         AdvancementPhase.PRODUCTION, 2200,
                                                                         AdvancementPhase.EXTINCT, 2781
                                                                     ))
-                                                                    .setApproximate(
+                                                                    .setISApproximate(
                                                                         AdvancementPhase.PRODUCTION, 
                                                                         AdvancementPhase.EXTINCT)
+                                                                    .setPrototypeFactions(Faction.TA)
                                                                     .setProductionFactions(Faction.TA)
                                                                     .setTechRating(TechRating.D)
                                                                     .setAvailability(AvailabilityValue.D,
@@ -286,7 +287,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     protected static final TechAdvancement[] COCKPIT_TA = {
           new TechAdvancement(TechBase.ALL)
-                .setISAdvancement(Map.of(
+                .setAdvancement(Map.of(
                     AdvancementPhase.PROTOTYPE, 2460,
                     AdvancementPhase.PRODUCTION, 2470,
                     AdvancementPhase.COMMON, 2491
@@ -326,9 +327,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     AdvancementPhase.PROTOTYPE, 2625,
                     AdvancementPhase.PRODUCTION, 2631
                 ))
-                .setClanApproximate(Map.of(
-                    AdvancementPhase.PROTOTYPE, true
-                ))
+                .setClanApproximate(AdvancementPhase.PROTOTYPE)
                 .setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH)
                 .setReintroductionFactions(Faction.FS)
@@ -344,6 +343,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 ))
                 .setISApproximate(AdvancementPhase.PRODUCTION)
                 .setPrototypeFactions(Faction.TA)
+                .setProductionFactions(Faction.TA)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),

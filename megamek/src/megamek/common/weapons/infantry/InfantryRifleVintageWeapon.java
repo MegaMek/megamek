@@ -45,6 +45,6 @@ public class InfantryRifleVintageWeapon extends InfantryWeapon {
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.E);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.E);
 	}
 }

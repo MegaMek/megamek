@@ -41,7 +41,7 @@ public class InfantryLaserPistolBrightStarL7 extends InfantryWeapon {
         .setTechBase(TechBase.IS)
         .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
         .setTechRating(TechRating.E) // Assuming E-E-E-E simplifies to E
-        .setAvailability(TechRating.E, TechRating.E, TechRating.E, TechRating.E)
+        .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
         .setISApproximate(false, false, true, false, false)
         .setProductionFactions(Faction.TH);
     }

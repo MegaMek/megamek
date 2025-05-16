@@ -54,7 +54,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_CWS);
         rulesRefs = "85, IO";
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
-                .setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.X)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X)
                 .setISAdvancement(2762, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
                 .setISApproximate(true, false, false, true, false)
                 .setPrototypeFactions(Faction.TH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);

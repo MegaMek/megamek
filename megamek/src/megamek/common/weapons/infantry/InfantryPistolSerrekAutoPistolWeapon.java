@@ -51,7 +51,7 @@ public class InfantryPistolSerrekAutoPistolWeapon extends InfantryWeapon {
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(Faction.FS)
 				.setProductionFactions(Faction.FS).setTechRating(TechRating.C)
-				.setAvailability(TechRating.X, TechRating.C, TechRating.B, TechRating.B);
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

@@ -52,7 +52,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.LC)
 		        .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.X, TechRating.E, TechRating.C, TechRating.C);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

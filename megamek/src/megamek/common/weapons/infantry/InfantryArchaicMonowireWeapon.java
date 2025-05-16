@@ -48,7 +48,7 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2100, 2100, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.F, TechRating.E, TechRating.F);
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.F);
 
     }
 }

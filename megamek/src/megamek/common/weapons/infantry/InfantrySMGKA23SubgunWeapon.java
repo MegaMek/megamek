@@ -52,7 +52,7 @@ public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.DC)
 		        .setProductionFactions(Faction.DC).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.X, TechRating.C, TechRating.D, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

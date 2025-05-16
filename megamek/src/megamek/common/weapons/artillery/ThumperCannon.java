@@ -55,7 +55,7 @@ public class ThumperCannon extends ArtilleryCannonWeapon {
         rulesRefs = "285, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
-                .setTechRating(TechRating.B).setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.D)
+                .setTechRating(TechRating.B).setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3012, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(3032, 3079, DATE_NONE, DATE_NONE, DATE_NONE)

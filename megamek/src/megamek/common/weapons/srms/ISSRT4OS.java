@@ -48,7 +48,7 @@ public class ISSRT4OS extends SRTWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.C, TechRating.C, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C)
                 //From TM pg 230 - "curious concept that did not so much go extinct in the 
                 //Succession Wars as fall into general disuse"
                 .setISAdvancement(2665, 2676, 3045, DATE_NONE, 3030)

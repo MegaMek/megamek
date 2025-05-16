@@ -60,7 +60,7 @@ public class Warship extends Jumpship {
             .setClanAdvancement(2295, 2305).setApproximate(true, false, false, false, false)
             .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)
             .setReintroductionFactions(Faction.FS, Faction.LC, Faction.DC).setTechRating(TechRating.E)
-            .setAvailability(TechRating.D, TechRating.E, TechRating.E, TechRating.F)
+            .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override

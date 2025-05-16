@@ -53,7 +53,7 @@ public class InfantrySupportGrandMaulerGaussCannonWeapon extends InfantryWeapon 
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.FS)
 		        .setProductionFactions(Faction.FS).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.E);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.E);
 
 	}
 }

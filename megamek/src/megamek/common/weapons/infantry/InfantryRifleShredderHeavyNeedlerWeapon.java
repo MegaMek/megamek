@@ -51,7 +51,7 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.LC, Faction.FS)
 		        .setProductionFactions(Faction.LC, Faction.FS).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.C);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

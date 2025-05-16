@@ -55,7 +55,7 @@ public class CLSRT4 extends SRTWeapon {
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(TechRating.C)
-            .setAvailability(TechRating.X, TechRating.C, TechRating.C, TechRating.C)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
             .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
             .setClanApproximate(true, false, false,false, false)
             .setPrototypeFactions(Faction.CSF)

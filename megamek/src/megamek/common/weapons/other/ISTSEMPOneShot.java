@@ -34,7 +34,7 @@ public class ISTSEMPOneShot extends TSEMPWeapon {
 		techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false).setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
                 .setISAdvancement(3095, 3100, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.RS)

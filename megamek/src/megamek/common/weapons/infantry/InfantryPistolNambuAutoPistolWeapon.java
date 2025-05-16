@@ -52,7 +52,7 @@ public class InfantryPistolNambuAutoPistolWeapon extends InfantryWeapon {
 				.setClanAdvancement(2535, 2540, 2600, DATE_NONE, DATE_NONE)
 				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.DC)
 				.setProductionFactions(Faction.DC).setTechRating(TechRating.C)
-				.setAvailability(TechRating.B, TechRating.C, TechRating.C, TechRating.C);
+				.setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

@@ -53,7 +53,7 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2655, 2660, 2663, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
 		        .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.C, TechRating.B, TechRating.C, TechRating.D);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.D);
 
 	}
 }

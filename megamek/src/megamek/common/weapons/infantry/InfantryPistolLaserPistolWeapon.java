@@ -49,7 +49,7 @@ public class InfantryPistolLaserPistolWeapon extends InfantryWeapon {
 				.setISApproximate(false, false, false, false, false)
 				.setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
 				.setClanApproximate(false, false, false, false, false).setTechRating(TechRating.D)
-				.setAvailability(TechRating.B, TechRating.A, TechRating.A, TechRating.B);
+				.setAvailability(AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B);
 
 	}
 }

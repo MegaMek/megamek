@@ -47,7 +47,7 @@ public class ISUAC5 extends UACWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.D, TechRating.F, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2635, 2640, 3040, 2915, 3035)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

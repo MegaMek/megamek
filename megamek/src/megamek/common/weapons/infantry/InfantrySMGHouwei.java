@@ -48,7 +48,7 @@ public class InfantrySMGHouwei extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.D)
-       .setAvailability(TechRating.D,TechRating.D,TechRating.D,TechRating.D)
+       .setAvailability(AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,DATE_ES,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.CC);

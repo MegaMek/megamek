@@ -50,7 +50,7 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CFM)
                 .setProductionFactions(Faction.CFM).setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.C, TechRating.C, TechRating.C);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
 
     }
 }

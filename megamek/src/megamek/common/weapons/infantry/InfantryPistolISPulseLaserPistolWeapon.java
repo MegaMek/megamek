@@ -44,6 +44,6 @@ public class InfantryPistolISPulseLaserPistolWeapon extends InfantryWeapon {
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(Faction.TH)
 				.setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-				.setAvailability(TechRating.B, TechRating.F, TechRating.C, TechRating.C);
+				.setAvailability(AvailabilityValue.B, AvailabilityValue.F, AvailabilityValue.C, AvailabilityValue.C);
 	}
 }

@@ -53,7 +53,7 @@ public class InfantrySupportGrenadeLauncherCompactWeapon extends InfantryWeapon 
 				.setISApproximate(false, false, false, false, false)
 				.setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
 				.setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
-				.setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B);
+				.setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

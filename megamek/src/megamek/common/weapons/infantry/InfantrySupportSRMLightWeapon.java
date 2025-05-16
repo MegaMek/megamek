@@ -54,7 +54,7 @@ public class InfantrySupportSRMLightWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
 		        .setProductionFactions(Faction.TH).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.C, TechRating.C, TechRating.D, TechRating.C);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

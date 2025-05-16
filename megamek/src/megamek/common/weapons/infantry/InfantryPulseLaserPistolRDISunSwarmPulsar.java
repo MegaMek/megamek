@@ -42,7 +42,7 @@ public class InfantryPulseLaserPistolRDISunSwarmPulsar extends InfantryWeapon {
         techAdvancement
                 .setTechBase(TechBase.IS)
                 .setTechRating(TechRating.C) // Assuming X-X-X-C simplifies to C
-                .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setProductionFactions(Faction.FW);

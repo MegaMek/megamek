@@ -48,7 +48,7 @@ public class InfantryArchaicDaikyuBowWeapon extends InfantryWeapon {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.A)
-                .setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.C);
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C);
 
     }
 }

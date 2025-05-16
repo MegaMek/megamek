@@ -74,7 +74,7 @@ public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.D)
-                .setAvailability(TechRating.D, TechRating.D, TechRating.C, TechRating.B);
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B);
 
     }
 }

@@ -41,7 +41,7 @@ public class InfantryArchaicBladeZweihanderSwordWeapon extends InfantryWeapon {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.A)
-                .setAvailability(TechRating.A, TechRating.A, TechRating.A, TechRating.B);
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B);
 
     }
 }

@@ -56,7 +56,7 @@ public class ISBAGrenadeLauncherHeavy extends Weapon {
         techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
         techAdvancement.setTechRating(TechRating.C);
-        techAdvancement.setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.C);
+        techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C);
     }
 
 }

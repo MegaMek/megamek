@@ -52,7 +52,7 @@ public class InfantryPistolSternsnachtPistolWeapon extends InfantryWeapon {
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(Faction.LC)
 				.setProductionFactions(Faction.LC).setTechRating(TechRating.C)
-				.setAvailability(TechRating.X, TechRating.E, TechRating.D, TechRating.C);
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

@@ -29,6 +29,6 @@ public class ISRivetGun extends NailRivetGunWeapon {
         techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2310);
         techAdvancement.setTechRating(TechRating.C);
-        techAdvancement.setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.X);
+        techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.X);
     }
 }

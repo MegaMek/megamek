@@ -41,7 +41,7 @@ public class ISLRM4OS extends LRMWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(true)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.E, TechRating.X)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3057, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false);
     }

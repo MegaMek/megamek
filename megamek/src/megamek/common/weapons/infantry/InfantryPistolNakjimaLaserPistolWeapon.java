@@ -50,7 +50,7 @@ public class InfantryPistolNakjimaLaserPistolWeapon extends InfantryWeapon {
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(Faction.DC)
 				.setProductionFactions(Faction.DC).setTechRating(TechRating.D)
-				.setAvailability(TechRating.X, TechRating.D, TechRating.C, TechRating.C);
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

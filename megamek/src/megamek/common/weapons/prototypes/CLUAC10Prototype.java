@@ -48,7 +48,7 @@ public class CLUAC10Prototype extends CLPrototypeUACWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2825, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
                 .setPrototypeFactions(Faction.CSF)

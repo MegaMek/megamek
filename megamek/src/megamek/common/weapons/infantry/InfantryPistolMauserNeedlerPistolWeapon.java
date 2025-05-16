@@ -53,7 +53,7 @@ public class InfantryPistolMauserNeedlerPistolWeapon extends InfantryWeapon {
 				.setClanAdvancement(2350, 2360, 2400, DATE_NONE, DATE_NONE)
 				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
 				.setProductionFactions(Faction.LC).setTechRating(TechRating.D)
-				.setAvailability(TechRating.B, TechRating.B, TechRating.C, TechRating.C);
+				.setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

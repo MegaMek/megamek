@@ -46,7 +46,7 @@ public class InfantryShotgunDPS305 extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.C,TechRating.C,TechRating.C,TechRating.C)
+       .setAvailability(AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2271,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.FW);

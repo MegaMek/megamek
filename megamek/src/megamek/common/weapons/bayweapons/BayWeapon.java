@@ -37,7 +37,7 @@ public abstract class BayWeapon extends Weapon {
         // for common.
         techAdvancement = new TechAdvancement(TechBase.ALL)
                 .setAdvancement(DATE_ES, 2200, 2400).setProductionFactions(Faction.TA)
-                .setTechRating(TechRating.D).setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.C)
+                .setTechRating(TechRating.D).setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

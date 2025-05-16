@@ -224,23 +224,23 @@ public class Infantry extends Entity {
                 break;
             case WHEELED:
                 techAdvancement.setTechRating(TechRating.A)
-                      .setAvailability(TechRating.A, TechRating.B, TechRating.A, TechRating.A)
+                      .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case TRACKED:
                 techAdvancement.setTechRating(TechRating.B)
-                      .setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B)
+                      .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case HOVER:
                 techAdvancement.setTechRating(TechRating.C)
-                      .setAvailability(TechRating.A, TechRating.B, TechRating.A, TechRating.B)
+                      .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.B)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case VTOL:
                 techAdvancement.setAdvancement(DATE_ES, DATE_ES)
                       .setTechRating(TechRating.C)
-                      .setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.C)
+                      .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case SUBMARINE:
@@ -275,7 +275,7 @@ public class Infantry extends Entity {
     public static TechAdvancement getCombatEngineerTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                      .setTechRating(TechRating.C)
-                     .setAvailability(TechRating.A, TechRating.B, TechRating.A, TechRating.A)
+                     .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
@@ -315,7 +315,7 @@ public class Infantry extends Entity {
                      .setPrototypeFactions(Faction.TH)
                      .setProductionFactions(Faction.TH)
                      .setReintroductionFactions(Faction.FS)
-                     .setAvailability(TechRating.F, TechRating.X, TechRating.E, TechRating.E)
+                     .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                      .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

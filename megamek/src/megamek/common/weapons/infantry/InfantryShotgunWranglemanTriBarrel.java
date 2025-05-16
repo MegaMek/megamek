@@ -46,7 +46,7 @@ public class InfantryShotgunWranglemanTriBarrel extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.ALL)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.X,TechRating.X,TechRating.C,TechRating.F)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.X,AvailabilityValue.C,AvailabilityValue.F)
        .setISAdvancement(DATE_NONE, DATE_NONE,3050,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.OA);

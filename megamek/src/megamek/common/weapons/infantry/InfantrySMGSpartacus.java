@@ -45,7 +45,7 @@ public class InfantrySMGSpartacus extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.D)
-       .setAvailability(TechRating.X,TechRating.X,TechRating.X,TechRating.D)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.X,AvailabilityValue.X,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,2920,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.MH);

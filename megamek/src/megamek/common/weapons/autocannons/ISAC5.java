@@ -49,7 +49,7 @@ public class ISAC5 extends ACWeapon {
         explosionDamage = damage;
         rulesRefs = "208, TM";
         techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(true).setTechRating(TechRating.C)
-                .setAvailability(TechRating.C, TechRating.C, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2240, 2250, 2255, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2240, 2250, 2255, 2850, DATE_NONE)

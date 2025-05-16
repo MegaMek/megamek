@@ -51,7 +51,7 @@ public class NGaussWeaponHeavy extends NGaussWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.X, TechRating.E, TechRating.X)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X)
                 .setISAdvancement(2440, 2448, DATE_NONE, 2950, 3052)
                 .setISApproximate(true, true, false, true, false)
                 .setClanAdvancement(2440, 2448, DATE_NONE, DATE_NONE, DATE_NONE)

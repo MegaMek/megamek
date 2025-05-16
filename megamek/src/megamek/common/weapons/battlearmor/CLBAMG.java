@@ -51,7 +51,7 @@ public class CLBAMG extends BAMGWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.B, TechRating.B)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, 2868, 2870, DATE_NONE, DATE_NONE)

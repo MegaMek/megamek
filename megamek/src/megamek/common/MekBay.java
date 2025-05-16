@@ -84,7 +84,7 @@ public final class MekBay extends UnitBay {
         return new TechAdvancement(TechBase.ALL)
                 .setAdvancement(2445, 2470, 2500)
                 .setApproximate(true, false, false).setTechRating(TechRating.C)
-                .setAvailability(TechRating.D, TechRating.C, TechRating.C, TechRating.C)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

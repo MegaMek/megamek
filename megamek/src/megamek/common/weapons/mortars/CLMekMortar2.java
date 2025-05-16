@@ -42,7 +42,7 @@ public class CLMekMortar2 extends MekMortarWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.B)
-                .setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.E)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CBR)

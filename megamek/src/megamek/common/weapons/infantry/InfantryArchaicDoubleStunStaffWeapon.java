@@ -48,7 +48,7 @@ public class InfantryArchaicDoubleStunStaffWeapon extends InfantryWeapon {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
-                .setAvailability(TechRating.A, TechRating.C, TechRating.A, TechRating.C);
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.C, AvailabilityValue.A, AvailabilityValue.C);
 
     }
 }

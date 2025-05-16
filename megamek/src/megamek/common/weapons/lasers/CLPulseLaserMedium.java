@@ -50,7 +50,7 @@ public class CLPulseLaserMedium extends PulseLaserWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.C, TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
                 .setClanAdvancement(2825, 2827, 2831, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CJF,Faction.CGB)

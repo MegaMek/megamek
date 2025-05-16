@@ -49,7 +49,7 @@ public class InfantryPistolSerrek7994SF extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.X,TechRating.D,TechRating.C,TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.D,AvailabilityValue.C,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.FS);

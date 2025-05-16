@@ -52,7 +52,7 @@ public class InfantryRiflePulseLaserWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2678, 2680, 2700, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
 		        .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.D, TechRating.E, TechRating.C, TechRating.C);
+		        .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

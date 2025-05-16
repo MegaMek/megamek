@@ -51,7 +51,7 @@ public class InfantrySupportClanSemiPortableERLaserWeapon extends InfantryWeapon
 		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3056, 3060, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSJ)
 		        .setProductionFactions(Faction.CSJ).setTechRating(TechRating.F)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.D);
 
 	}
 }

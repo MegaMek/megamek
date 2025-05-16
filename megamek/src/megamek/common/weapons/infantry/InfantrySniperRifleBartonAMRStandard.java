@@ -49,7 +49,7 @@ public class InfantrySniperRifleBartonAMRStandard extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.D)
-       .setAvailability(TechRating.X,TechRating.D,TechRating.D,TechRating.D)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.FS);

@@ -53,7 +53,7 @@ public class CLFussilade extends CLIATMWeapon {
         rulesRefs = "65, IO";
         techAdvancement.setTechBase(TechBase.CLAN)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.X)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)
                 .setClanAdvancement(3072, DATE_NONE, DATE_NONE, 3075, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CCY)

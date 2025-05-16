@@ -56,7 +56,7 @@ public class ISAC2 extends ACWeapon {
         techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(true)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2290, 2300, 2305, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2290, 2300, 2305, 2850, DATE_NONE)

@@ -60,7 +60,7 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.D, TechRating.E, TechRating.F, TechRating.E)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)

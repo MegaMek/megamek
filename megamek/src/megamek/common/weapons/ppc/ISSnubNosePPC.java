@@ -58,7 +58,7 @@ public class ISSnubNosePPC extends PPCWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.F, TechRating.X, TechRating.F, TechRating.D)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
                 .setISAdvancement(2695, 2784, 3068, 2790, 3067)
                 .setISApproximate(false, true, false, false, false)
                 .setPrototypeFactions(Faction.TH)

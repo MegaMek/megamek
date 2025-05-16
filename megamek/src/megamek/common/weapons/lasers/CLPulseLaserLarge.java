@@ -51,7 +51,7 @@ public class CLPulseLaserLarge extends PulseLaserWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.C, TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
                 .setClanAdvancement(2820, 2824, 2831, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CCY)

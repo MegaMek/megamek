@@ -49,7 +49,7 @@ public class InfantryArchaicVibroKatanaWeapon extends InfantryWeapon {
                 .setClanAdvancement(2440, 2450, DATE_NONE, 2850, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.DC)
                 .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
-                .setAvailability(TechRating.E, TechRating.E, TechRating.D, TechRating.C);
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C);
 
     }
 }

@@ -50,7 +50,7 @@ public class InfantryRifleMaxellPL10LaserWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.LC)
 		        .setProductionFactions(Faction.LC).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.C);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

@@ -40,7 +40,7 @@ public class CLArrowIV extends ArrowIV {
         svslots = 6;
         techAdvancement.setTechBase(TechBase.CLAN)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(DATE_NONE, 2844, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CHH)

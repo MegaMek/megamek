@@ -46,7 +46,7 @@ public class CLFlamer extends FlamerWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.X, TechRating.C, TechRating.A, TechRating.A)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.A, AvailabilityValue.A)
                 .setClanAdvancement(2820, 2827, 2828, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CFM)

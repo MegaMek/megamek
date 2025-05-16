@@ -49,7 +49,7 @@ public class InfantrySniperRiflePraetorianS3 extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.X,TechRating.C,TechRating.B,TechRating.B)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.C,AvailabilityValue.B,AvailabilityValue.B)
        .setISAdvancement(DATE_NONE, DATE_NONE,2920,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.MH);

@@ -51,7 +51,7 @@ public class InfantryShotgunAvengerCCWWeapon extends InfantryWeapon {
 		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3019, 3020, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSV)
 		        .setProductionFactions(Faction.CSV).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.X, TechRating.E, TechRating.C, TechRating.D);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.C, AvailabilityValue.D);
 
 	}
 }

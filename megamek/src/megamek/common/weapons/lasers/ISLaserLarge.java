@@ -49,7 +49,7 @@ public class ISLaserLarge extends LaserWeapon {
                 .setIntroLevel(true)
                 .setUnofficial(false)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.B, TechRating.D, TechRating.C, TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
                 .setISAdvancement(2306, 2316, 2320, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2306, 2316, 2320, 2850, DATE_NONE)

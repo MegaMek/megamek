@@ -53,7 +53,7 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2465, 2470, 2500, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
 		        .setProductionFactions(Faction.TH).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.D);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.D);
 
 	}
 }

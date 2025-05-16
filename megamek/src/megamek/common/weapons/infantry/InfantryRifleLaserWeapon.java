@@ -44,6 +44,6 @@ public class InfantryRifleLaserWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2100, 2230, 2300, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false)
                 .setProductionFactions(Faction.TA)
-		        .setTechRating(TechRating.D).setAvailability(TechRating.C, TechRating.B, TechRating.B, TechRating.B);
+		        .setTechRating(TechRating.D).setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
 	}
 }

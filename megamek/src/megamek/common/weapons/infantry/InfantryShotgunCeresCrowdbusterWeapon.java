@@ -49,7 +49,7 @@ public class InfantryShotgunCeresCrowdbusterWeapon extends InfantryWeapon {
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(Faction.CC)
 				.setProductionFactions(Faction.CC).setTechRating(TechRating.D)
-				.setAvailability(TechRating.X, TechRating.F, TechRating.D, TechRating.C);
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

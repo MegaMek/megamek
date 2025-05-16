@@ -48,6 +48,6 @@ public class ISBAMG extends BAMGWeapon {
         techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, 1950, 3050);
         techAdvancement.setTechRating(TechRating.C);
-        techAdvancement.setAvailability(TechRating.X, TechRating.D, TechRating.B, TechRating.B);
+        techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.B);
     }
 }

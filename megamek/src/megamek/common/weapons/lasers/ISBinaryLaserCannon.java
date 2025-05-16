@@ -54,7 +54,7 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         rulesRefs = "319, TO";
         techAdvancement.setTechBase(TechBase.IS)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2812, DATE_NONE, 3077)
                 .setPrototypeFactions(Faction.FW)
                 .setProductionFactions(Faction.WB).setStaticTechLevel(SimpleTechLevel.STANDARD);

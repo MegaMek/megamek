@@ -43,7 +43,7 @@ public class InfantryPistolAAGemini extends InfantryWeapon {
         techAdvancement
                 .setTechBase(TechBase.IS)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.C,TechRating.C,TechRating.C,TechRating.C)
+                .setAvailability(AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE,2100,DATE_NONE,DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setProductionFactions(Faction.FS);

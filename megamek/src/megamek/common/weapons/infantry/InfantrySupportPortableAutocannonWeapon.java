@@ -54,7 +54,7 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(2100, 2255, 2300, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false).setProductionFactions(Faction.TA)
-		        .setTechRating(TechRating.C).setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.C);
+		        .setTechRating(TechRating.C).setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

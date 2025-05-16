@@ -42,7 +42,7 @@ public class InfantryLaserPistolKelvin000Lancer3MM extends InfantryWeapon {
         techAdvancement
                 .setTechBase(TechBase.IS)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.D, TechRating.C, TechRating.C, TechRating.C)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setProductionFactions(Faction.FS);

@@ -45,7 +45,7 @@ public class InfantrySMGWC6 extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.CLAN)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.X,TechRating.D,TechRating.E,TechRating.E)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.D,AvailabilityValue.E,AvailabilityValue.E)
        .setClanAdvancement(DATE_NONE, DATE_NONE,2830,DATE_NONE,DATE_NONE)
        .setClanApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.CLAN);

@@ -53,7 +53,7 @@ public class InfantrySupportSemiPortablePPCWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2430, 2436, 2450, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.DC)
 		        .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.C);
+		        .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

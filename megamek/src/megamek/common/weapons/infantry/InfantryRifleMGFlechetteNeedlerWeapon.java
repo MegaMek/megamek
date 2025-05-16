@@ -45,6 +45,6 @@ public class InfantryRifleMGFlechetteNeedlerWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2320, 2325, 2350, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
 		        .setProductionFactions(Faction.LC).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.B);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B);
 	}
 }

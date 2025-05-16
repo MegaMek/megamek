@@ -48,7 +48,7 @@ public class InfantrySMGBoudicca4 extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.D,TechRating.D,TechRating.D,TechRating.C)
+       .setAvailability(AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2530,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.MC);

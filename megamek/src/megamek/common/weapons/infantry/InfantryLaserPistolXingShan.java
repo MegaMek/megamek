@@ -41,7 +41,7 @@ public class InfantryLaserPistolXingShan extends InfantryWeapon {
         techAdvancement
                 .setTechBase(TechBase.IS)
                 .setTechRating(TechRating.E) // Assuming E-E-E-D simplifies to E
-                .setAvailability(TechRating.E, TechRating.E, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setProductionFactions(Faction.CC);

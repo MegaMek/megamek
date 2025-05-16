@@ -49,7 +49,7 @@ public class InfantrySniperRifleLRS53SniperRifle extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.X,TechRating.E,TechRating.D,TechRating.D)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.E,AvailabilityValue.D,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.MC);

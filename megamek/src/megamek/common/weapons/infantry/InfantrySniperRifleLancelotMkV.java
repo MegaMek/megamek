@@ -49,7 +49,7 @@ public class InfantrySniperRifleLancelotMkV extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.C,TechRating.C,TechRating.C,TechRating.C)
+       .setAvailability(AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,DATE_ES,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.FS);

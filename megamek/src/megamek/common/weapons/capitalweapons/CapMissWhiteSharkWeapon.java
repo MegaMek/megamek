@@ -51,7 +51,7 @@ public class CapMissWhiteSharkWeapon extends CapitalMissileWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.C, TechRating.E, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2200, 2305, 3055, 2950, 3051)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2200, 2305, 3055, DATE_NONE, DATE_NONE)

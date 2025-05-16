@@ -47,7 +47,7 @@ public class CLImprovedAC10 extends ACWeapon {
         ammoType = AmmoType.T_AC_IMP;
         rulesRefs = "96, IO";
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.D)
-            .setAvailability(TechRating.X, TechRating.C, TechRating.X, TechRating.X)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.X, AvailabilityValue.X)
             .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
             .setClanApproximate(false, true, false, false, false)
             .setProductionFactions(Faction.CLAN).setReintroductionFactions(Faction.EI)

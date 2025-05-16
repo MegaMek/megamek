@@ -54,7 +54,7 @@ public class CLImprovedGaussRifle extends GaussWeapon {
         explosionDamage = 20;
         rulesRefs = "96, IO";
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.E, TechRating.X, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E)
                 .setClanAdvancement(2818, 2821, 2822, 2837, 3080)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CGS)

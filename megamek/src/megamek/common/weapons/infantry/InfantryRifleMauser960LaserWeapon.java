@@ -51,6 +51,6 @@ public class InfantryRifleMauser960LaserWeapon extends InfantryWeapon {
                 .setClanAdvancement(2698, 2700, 2710, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH).setTechRating(TechRating.E)
-                .setAvailability(TechRating.C, TechRating.F, TechRating.D, TechRating.E);
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.E);
     }
 }

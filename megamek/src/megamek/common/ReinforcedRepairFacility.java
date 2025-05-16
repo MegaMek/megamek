@@ -84,7 +84,7 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
         return new TechAdvancement(TechBase.IS).setAdvancement(2750, DATE_NONE, DATE_NONE, 2766, 3065)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH).setReintroductionFactions(Faction.WB).setTechRating(TechRating.C)
-                .setAvailability(TechRating.F, TechRating.X, TechRating.F, TechRating.F)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

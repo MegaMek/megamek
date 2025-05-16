@@ -59,7 +59,7 @@ public class ISGaussRifle extends GaussWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.D, TechRating.F, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2587, 2590, 3045, 2865, 3040)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)

@@ -46,7 +46,7 @@ public class MassDriverLight extends MassDriverWeapon {
         this.maxRange = RANGE_LONG;
         rulesRefs = "323, TO";
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
-                .setAvailability(TechRating.F, TechRating.X, TechRating.F, TechRating.F)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2715, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)

@@ -55,7 +55,7 @@ public class ISBAMRM1OS extends MRMWeapon {
     	.setIntroLevel(false)
     	.setUnofficial(false)
         .setTechRating(TechRating.E)
-        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.B)
+        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B)
         .setISAdvancement(3058, 3060, 3067, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false, false, false)
         .setPrototypeFactions(Faction.DC)

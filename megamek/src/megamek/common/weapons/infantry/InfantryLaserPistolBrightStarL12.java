@@ -41,7 +41,7 @@ public class InfantryLaserPistolBrightStarL12 extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE);
         techAdvancement.setTechRating(TechRating.E); 
-        techAdvancement.setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.E);
+        techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E);
         techAdvancement.setClanApproximate(false, false, true, false, false);
         techAdvancement.setProductionFactions(Faction.CLAN);
     }

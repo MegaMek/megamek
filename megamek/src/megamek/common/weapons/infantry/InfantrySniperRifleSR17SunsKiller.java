@@ -49,7 +49,7 @@ public class InfantrySniperRifleSR17SunsKiller extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.C,TechRating.C,TechRating.C,TechRating.C)
+       .setAvailability(AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2335,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, false, false, false)
        .setProductionFactions(Faction.TC);

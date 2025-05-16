@@ -50,7 +50,7 @@ public class InfantryPistolGyrojetPistolWeapon extends InfantryWeapon {
                 .setClanAdvancement(2620, 2625, 2700, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-                .setAvailability(TechRating.D, TechRating.D, TechRating.C, TechRating.B);
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B);
 
     }
 }

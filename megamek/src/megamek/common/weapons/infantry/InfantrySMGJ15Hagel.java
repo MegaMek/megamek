@@ -45,7 +45,7 @@ public class InfantrySMGJ15Hagel extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.D)
-       .setAvailability(TechRating.X,TechRating.X,TechRating.D,TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.X,AvailabilityValue.D,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,3050,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.WB);

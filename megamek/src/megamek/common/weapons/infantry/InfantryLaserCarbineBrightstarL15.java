@@ -42,7 +42,7 @@ public class InfantryLaserCarbineBrightstarL15 extends InfantryWeapon {
         techAdvancement
                 .setTechBase(TechBase.CLAN)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
                 .setProductionFactions(Faction.CLAN);

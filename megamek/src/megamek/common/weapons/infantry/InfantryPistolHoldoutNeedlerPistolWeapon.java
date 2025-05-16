@@ -51,7 +51,7 @@ public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
 				.setClanAdvancement(2510, 2515, 2570, DATE_NONE, DATE_NONE)
 				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
 				.setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-				.setAvailability(TechRating.C, TechRating.B, TechRating.B, TechRating.A);
+				.setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.A);
 
 	}
 }

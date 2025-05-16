@@ -49,7 +49,7 @@ public class InfantryArchaicNeuralLashWeapon extends InfantryWeapon {
                 .setClanAdvancement(2300, 2320, 2500, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.DC)
                 .setProductionFactions(Faction.DC).setTechRating(TechRating.D)
-                .setAvailability(TechRating.E, TechRating.E, TechRating.D, TechRating.E);
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.E);
 
     }
 }

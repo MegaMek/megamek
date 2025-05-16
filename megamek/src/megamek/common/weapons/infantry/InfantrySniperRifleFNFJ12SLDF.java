@@ -49,7 +49,7 @@ public class InfantrySniperRifleFNFJ12SLDF extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.E)
-       .setAvailability(TechRating.E,TechRating.E,TechRating.E,TechRating.E)
+       .setAvailability(AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2765,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.TH);

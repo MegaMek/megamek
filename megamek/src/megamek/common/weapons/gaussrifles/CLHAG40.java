@@ -51,7 +51,7 @@ public class CLHAG40 extends HAGWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(DATE_NONE, 3062, 3068, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
                 .setPrototypeFactions(Faction.CHH)

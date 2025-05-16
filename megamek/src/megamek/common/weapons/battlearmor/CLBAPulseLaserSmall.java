@@ -54,7 +54,7 @@ public class CLBAPulseLaserSmall extends PulseLaserWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.E, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(2870, 2872, 2880, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
                 .setPrototypeFactions(Faction.CHH)

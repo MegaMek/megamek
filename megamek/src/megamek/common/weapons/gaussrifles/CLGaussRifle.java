@@ -56,7 +56,7 @@ public class CLGaussRifle extends GaussWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.F, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2822, 2828, 2830, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CBR)

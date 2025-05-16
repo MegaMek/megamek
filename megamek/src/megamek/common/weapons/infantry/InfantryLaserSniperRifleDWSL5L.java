@@ -42,7 +42,7 @@ public class InfantryLaserSniperRifleDWSL5L extends InfantryWeapon {
         techAdvancement
                 .setTechBase(TechBase.IS)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.X, TechRating.C, TechRating.C, TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setProductionFactions(Faction.LC);

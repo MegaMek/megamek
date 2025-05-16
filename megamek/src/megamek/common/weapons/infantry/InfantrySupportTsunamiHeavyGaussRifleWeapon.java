@@ -53,7 +53,7 @@ public class InfantrySupportTsunamiHeavyGaussRifleWeapon extends InfantryWeapon 
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.DC)
 		        .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.E);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.E);
 
 	}
 }

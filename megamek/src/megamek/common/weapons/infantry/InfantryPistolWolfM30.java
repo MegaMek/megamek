@@ -49,7 +49,7 @@ public class InfantryPistolWolfM30 extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.C,TechRating.B,TechRating.B,TechRating.B)
+       .setAvailability(AvailabilityValue.C,AvailabilityValue.B,AvailabilityValue.B,AvailabilityValue.B)
        .setISAdvancement(DATE_NONE, DATE_NONE,2100,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.FW);

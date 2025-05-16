@@ -291,7 +291,7 @@ public class Tank extends Entity {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_NONE, 3080)
                      .setApproximate(false, false, true)
                      .setTechRating(TechRating.B)
-                     .setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.E)
+                     .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
                      .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

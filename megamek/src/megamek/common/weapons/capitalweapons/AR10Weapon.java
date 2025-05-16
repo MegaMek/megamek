@@ -53,7 +53,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.D, TechRating.F, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2540, 2550, 3055, 2950, 3051)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2540, 2550, 3055, DATE_NONE, DATE_NONE)

@@ -56,7 +56,7 @@ public class ISBAMortarHeavy extends Weapon {
         techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(3049, 3057, 3063);
         techAdvancement.setTechRating(TechRating.B);
-        techAdvancement.setAvailability(TechRating.X, TechRating.X, TechRating.C, TechRating.C);
+        techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C);
     }
 
     @Override

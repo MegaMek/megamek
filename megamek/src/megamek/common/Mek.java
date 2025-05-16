@@ -2906,26 +2906,26 @@ public abstract class Mek extends Entity {
                 return new TechAdvancement(TechBase.IS)
                         .setISAdvancement(2585, 2602).setISApproximate(true).setPrototypeFactions(Faction.TH)
                         .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-                        .setAvailability(TechRating.F, TechRating.F, TechRating.F, TechRating.E)
+                        .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
             } else {
                 return new TechAdvancement(TechBase.IS)
                         .setISAdvancement(2930, 2940).setISApproximate(true).setPrototypeFactions(Faction.FW)
                         .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
-                        .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.F)
+                        .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
             }
         } else if (primitive && industrial) {
             return new TechAdvancement(TechBase.IS)
                     .setISAdvancement(2300, 2350, 2425, 2520).setPrototypeFactions(Faction.TA)
                     .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-                    .setAvailability(TechRating.D, TechRating.X, TechRating.F, TechRating.F)
+                    .setAvailability(AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (primitive) {
             return new TechAdvancement(TechBase.IS)
                     .setISAdvancement(2439, 2443, 2470, 2520).setPrototypeFactions(Faction.TH)
                     .setProductionFactions(Faction.TH).setTechRating(TechRating.C)
-                    .setAvailability(TechRating.C, TechRating.X, TechRating.F, TechRating.F)
+                    .setAvailability(AvailabilityValue.C, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (industrial && (EntityWeightClass.WEIGHT_SUPER_HEAVY == weightClass)) {
             // Superheavy industrialmeks don't have a separate entry on the tech advancement
@@ -2934,7 +2934,7 @@ public abstract class Mek extends Entity {
             return new TechAdvancement(TechBase.IS)
                     .setAdvancement(2930, 2940).setPrototypeFactions(Faction.FW)
                     .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
-                    .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.F)
+                    .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (industrial) {
             return new TechAdvancement(TechBase.ALL)
@@ -2942,7 +2942,7 @@ public abstract class Mek extends Entity {
                          // IMs can't be constructed in 2460-2462 and trying causes bugs
                     .setAdvancement(2463, 2470, 2500).setPrototypeFactions(Faction.TH)
                     .setProductionFactions(Faction.TH).setTechRating(TechRating.C)
-                    .setAvailability(TechRating.C, TechRating.C, TechRating.C, TechRating.B)
+                    .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD);
         } else if (EntityWeightClass.WEIGHT_ULTRA_LIGHT == weightClass) {
             return new TechAdvancement(TechBase.ALL)
@@ -2955,7 +2955,7 @@ public abstract class Mek extends Entity {
             return new TechAdvancement(TechBase.IS)
                     .setISAdvancement(3077, 3078).setPrototypeFactions(Faction.WB)
                     .setProductionFactions(Faction.WB).setTechRating(TechRating.D)
-                    .setAvailability(TechRating.X, TechRating.F, TechRating.F, TechRating.F)
+                    .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else {
             return new TechAdvancement(TechBase.ALL)
@@ -2963,7 +2963,7 @@ public abstract class Mek extends Entity {
                          // BMs can't be constructed in 2460-2462 and trying causes bugs
                     .setAdvancement(2463, 2470, 2500).setPrototypeFactions(Faction.TH)
                     .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-                    .setAvailability(TechRating.C, TechRating.E, TechRating.D, TechRating.C)
+                    .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
                     .setStaticTechLevel(SimpleTechLevel.INTRO);
         }
     }
@@ -3001,7 +3001,7 @@ public abstract class Mek extends Entity {
             new TechAdvancement(TechBase.IS).setISAdvancement(2905, 2940)
                     .setISApproximate(true, false).setPrototypeFactions(Faction.FW)
                     .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
-                    .setAvailability(TechRating.X, TechRating.F, TechRating.F, TechRating.F)
+                    .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy
     };
 
@@ -3038,7 +3038,7 @@ public abstract class Mek extends Entity {
             new TechAdvancement(TechBase.ALL).setAdvancement(2469, 2470, 2490)
                     .setApproximate(true, false, false).setTechRating(TechRating.C)
                     .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
-                    .setAvailability(TechRating.B, TechRating.C, TechRating.C, TechRating.B)
+                    .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD), // Industrial
             new TechAdvancement(TechBase.ALL).setAdvancement(2430, 2439)
                     .setApproximate(true, false).setTechRating(TechRating.D)
@@ -3048,7 +3048,7 @@ public abstract class Mek extends Entity {
             new TechAdvancement(TechBase.ALL).setAdvancement(2300, 2350, DATE_NONE, 2520)
                     .setApproximate(true, false, false).setTechRating(TechRating.C)
                     .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)
-                    .setAvailability(TechRating.C, TechRating.X, TechRating.X, TechRating.F)
+                    .setAvailability(AvailabilityValue.C, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Primitive industrial
             new TechAdvancement(TechBase.IS).setISAdvancement(3060, 3076)
                     .setISApproximate(true, false).setTechRating(TechRating.E)
@@ -3058,12 +3058,12 @@ public abstract class Mek extends Entity {
             new TechAdvancement(TechBase.IS).setISAdvancement(3130, 3135)
                     .setISApproximate(true, false).setTechRating(TechRating.E)
                     .setPrototypeFactions(Faction.RS).setProductionFactions(Faction.RS)
-                    .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.F)
+                    .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy tripod
             new TechAdvancement(TechBase.IS).setISAdvancement(2590, 2702)
                     .setISApproximate(true, false).setTechRating(TechRating.F)
                     .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
-                    .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.F)
+                    .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Tripod
             new TechAdvancement(TechBase.ALL).setISAdvancement(3074).setClanAdvancement(3083)
                     .setApproximate(true).setTechRating(TechRating.E)
@@ -3072,17 +3072,17 @@ public abstract class Mek extends Entity {
                     .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // Cockpit interface
             new TechAdvancement(TechBase.IS).setISAdvancement(3052, DATE_NONE, DATE_NONE, 3055)
                     .setPrototypeFactions(Faction.FS, Faction.LC).setTechRating(TechRating.E)
-                    .setAvailability(TechRating.X, TechRating.X, TechRating.F, TechRating.X)
+                    .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)
                     .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // VRRP
             new TechAdvancement(TechBase.CLAN).setClanAdvancement(3130, 3135)
                     .setClanApproximate(true, false).setTechRating(TechRating.F)
                     .setPrototypeFactions(Faction.CHH).setProductionFactions(Faction.CHH)
-                    .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.F)
+                    .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // QuadVee
             new TechAdvancement(TechBase.IS).setISAdvancement(2905, 2940)
                     .setISApproximate(true, false).setTechRating(TechRating.D)
                     .setPrototypeFactions(Faction.FW).setProductionFactions(Faction.FW)
-                    .setAvailability(TechRating.X, TechRating.F, TechRating.F, TechRating.F)
+                    .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy industrial
             new TechAdvancement(TechBase.IS).setISAdvancement(3060, 3076)
                     .setISApproximate(true, false).setTechRating(TechRating.E)
@@ -3098,12 +3098,12 @@ public abstract class Mek extends Entity {
             new TechAdvancement(TechBase.IS).setISAdvancement(3130, 3135)
                     .setISApproximate(true, false).setTechRating(TechRating.E)
                     .setPrototypeFactions(Faction.RS).setProductionFactions(Faction.RS)
-                    .setAvailability(TechRating.X, TechRating.F, TechRating.X, TechRating.F)
+                    .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Superheavy tripod
             new TechAdvancement(TechBase.IS).setISAdvancement(2590, 2702)
                     .setISApproximate(true, false).setTechRating(TechRating.F)
                     .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
-                    .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.F)
+                    .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Tripod
     };
 
@@ -3114,7 +3114,7 @@ public abstract class Mek extends Entity {
         return new TechAdvancement(TechBase.ALL).setAdvancement(2469, 2470, 2491)
                 .setApproximate(true, false, false).setPrototypeFactions(Faction.TA)
                 .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-                .setAvailability(TechRating.D, TechRating.E, TechRating.E, TechRating.D)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
@@ -3156,7 +3156,7 @@ public abstract class Mek extends Entity {
             .setApproximate(false, false, false, false, false)
             .setPrototypeFactions(Faction.RS)
             .setTechRating(TechRating.D)
-            .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.F)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

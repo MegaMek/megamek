@@ -50,7 +50,7 @@ public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
 		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2490, 2495, 2550, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
 		        .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.C, TechRating.B, TechRating.C, TechRating.B);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B);
 
     }
 }

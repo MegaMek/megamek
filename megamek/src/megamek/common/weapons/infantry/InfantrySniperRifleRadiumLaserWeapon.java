@@ -52,7 +52,7 @@ public class InfantrySniperRifleRadiumLaserWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.TC)
 		        .setProductionFactions(Faction.TC).setReintroductionFactions(Faction.TC).setTechRating(TechRating.E)
-		        .setAvailability(TechRating.F, TechRating.X, TechRating.F, TechRating.F);
+		        .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F);
 
 	}
 }

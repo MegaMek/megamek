@@ -52,7 +52,7 @@ public class InfantryRifleZeusHeavyWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2740, 2745, 2750, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FS)
 		        .setProductionFactions(Faction.FS).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.C, TechRating.B, TechRating.B, TechRating.B);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

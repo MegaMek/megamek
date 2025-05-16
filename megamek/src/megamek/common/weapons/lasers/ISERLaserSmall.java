@@ -50,7 +50,7 @@ public class ISERLaserSmall extends LaserWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(3052, 3058, 3062, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setPrototypeFactions(Faction.FW, Faction.WB)

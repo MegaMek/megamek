@@ -51,7 +51,7 @@ public class InfantryRifleGyroslugCarbineWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2570, 2580, 2650, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CC)
 		        .setProductionFactions(Faction.CC).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

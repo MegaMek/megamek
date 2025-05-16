@@ -369,13 +369,13 @@ public class Dropship extends SmallCraft {
     protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
             .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-            .setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.D)
+            .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(TechBase.IS)
             .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
             .setISApproximate(false, true, false, false)
             .setProductionFactions(Faction.TA).setTechRating(TechRating.D)
-            .setAvailability(TechRating.D, TechRating.X, TechRating.X, TechRating.X)
+            .setAvailability(AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override

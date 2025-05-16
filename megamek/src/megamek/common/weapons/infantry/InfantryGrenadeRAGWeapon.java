@@ -50,7 +50,7 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
                 .setClanAdvancement(3062, 3065, 3085, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FS)
                 .setProductionFactions(Faction.FS).setTechRating(TechRating.C)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
 
     }
 }

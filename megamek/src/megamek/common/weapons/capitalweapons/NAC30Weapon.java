@@ -45,7 +45,7 @@ public class NAC30Weapon extends NavalACWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.E, TechRating.X, TechRating.E, TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2950, 3051)
                 .setISApproximate(false, true, false, true, false)
                 .setClanAdvancement(DATE_ES, 2200, DATE_NONE, DATE_NONE, DATE_NONE)

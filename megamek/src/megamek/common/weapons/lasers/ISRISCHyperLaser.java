@@ -59,7 +59,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
         this.flags = flags.or(F_LASER).or(F_DIRECT_FIRE).or(F_HYPER);
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.X, TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
                 .setISAdvancement(3134, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(Faction.RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);

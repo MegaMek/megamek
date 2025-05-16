@@ -53,7 +53,7 @@ public class InfantryPistolSMGGHTSpec7aWeapon extends InfantryWeapon {
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(Faction.DC)
 				.setProductionFactions(Faction.DC).setTechRating(TechRating.D)
-				.setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

@@ -40,7 +40,7 @@ public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2980, 2990, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CC)
                 .setProductionFactions(Faction.CC).setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.E);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.E);
 
     }
 }

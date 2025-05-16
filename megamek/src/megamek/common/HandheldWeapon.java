@@ -44,7 +44,7 @@ public class HandheldWeapon extends Entity {
                                                              .setPrototypeFactions(Faction.FS, Faction.LC)
                                                              .setProductionFactions(Faction.FS, Faction.LC)
                                                              .setTechRating(TechRating.D)
-                                                             .setAvailability(TechRating.E, TechRating.E, TechRating.F, TechRating.E)
+                                                             .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E)
                                                              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     @Override

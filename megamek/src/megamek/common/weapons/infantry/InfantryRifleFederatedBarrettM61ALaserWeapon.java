@@ -49,7 +49,7 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FS)
                 .setProductionFactions(Faction.FS).setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
 
     }
 }

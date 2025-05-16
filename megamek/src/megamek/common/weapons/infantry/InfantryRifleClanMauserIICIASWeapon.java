@@ -50,7 +50,7 @@ public class InfantryRifleClanMauserIICIASWeapon extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3013, 3015, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CHH)
                 .setProductionFactions(Faction.CHH).setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.F, TechRating.E, TechRating.D);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D);
 
     }
 }

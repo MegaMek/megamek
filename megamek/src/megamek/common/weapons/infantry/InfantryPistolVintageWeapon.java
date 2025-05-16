@@ -44,6 +44,6 @@ public class InfantryPistolVintageWeapon extends InfantryWeapon {
                 .setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
                 .setTechRating(TechRating.C)
-		        .setAvailability(TechRating.C, TechRating.D, TechRating.D, TechRating.E);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.E);
     }
 }

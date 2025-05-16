@@ -50,7 +50,7 @@ public class InfantryPistolSunbeamNovaLaserPistolWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.FW)
 		        .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

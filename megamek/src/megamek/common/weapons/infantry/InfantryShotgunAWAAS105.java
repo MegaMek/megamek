@@ -46,7 +46,7 @@ public class InfantryShotgunAWAAS105 extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.D)
-       .setAvailability(TechRating.D,TechRating.D,TechRating.C,TechRating.C)
+       .setAvailability(AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.C,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2317,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.FS);

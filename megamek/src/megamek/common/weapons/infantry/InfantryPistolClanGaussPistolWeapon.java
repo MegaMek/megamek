@@ -42,7 +42,7 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2845, 2850, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSA)
                 .setProductionFactions().setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.C);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C);
 
     }
 }

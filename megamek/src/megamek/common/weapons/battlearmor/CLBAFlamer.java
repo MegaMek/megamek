@@ -51,7 +51,7 @@ public class CLBAFlamer extends BAFlamerWeapon {
         techAdvancement.setIntroLevel(false);
         techAdvancement.setPrototypeFactions(Faction.CWF).setProductionFactions(Faction.CWF);
         techAdvancement.setTechRating(TechRating.C);
-        techAdvancement.setAvailability(TechRating.X, TechRating.D, TechRating.B, TechRating.B);
+        techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.B);
     }
 
     @Override

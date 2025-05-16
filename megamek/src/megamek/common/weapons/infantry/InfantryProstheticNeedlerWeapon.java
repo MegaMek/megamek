@@ -40,7 +40,7 @@ public class InfantryProstheticNeedlerWeapon extends InfantryWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.E)
-                .setAvailability(TechRating.F, TechRating.E, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2510, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2510, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)

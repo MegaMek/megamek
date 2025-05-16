@@ -52,7 +52,7 @@ public class InfantryPistolHawkEagleAutoPistolWeapon extends InfantryWeapon {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FW)
                 .setProductionFactions(Faction.FW).setTechRating(TechRating.C)
-                .setAvailability(TechRating.X, TechRating.F, TechRating.C, TechRating.C);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.C, AvailabilityValue.C);
 
     }
 }

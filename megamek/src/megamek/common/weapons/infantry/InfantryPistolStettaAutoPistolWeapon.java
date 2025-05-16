@@ -51,7 +51,7 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
 		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3005, 3010, 3050, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
 		        .setProductionFactions(Faction.LC).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.X, TechRating.F, TechRating.C, TechRating.B);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.C, AvailabilityValue.B);
 
     }
 }

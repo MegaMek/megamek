@@ -48,7 +48,7 @@ public class InfantryArchaicNeuralWhipWeapon extends InfantryWeapon {
                 .setISApproximate(true, true, false, false, false).setClanAdvancement(2315, 2325, 2500, 2786, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.DC)
                 .setProductionFactions(Faction.DC).setTechRating(TechRating.D)
-                .setAvailability(TechRating.F, TechRating.F, TechRating.E, TechRating.F);
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.F);
 
     }
 }

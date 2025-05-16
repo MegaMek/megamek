@@ -51,7 +51,7 @@ public class InfantryShotgunBuccaneerGelGunWeapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.FW)
 		        .setProductionFactions(Faction.FW).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

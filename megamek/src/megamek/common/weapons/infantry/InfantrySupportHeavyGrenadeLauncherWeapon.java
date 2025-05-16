@@ -53,7 +53,7 @@ public class InfantrySupportHeavyGrenadeLauncherWeapon extends InfantryWeapon {
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(Faction.FS, Faction.LC)
 				.setProductionFactions(Faction.FS, Faction.LC).setTechRating(TechRating.C)
-				.setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

@@ -50,7 +50,7 @@ public class CLBALaserERSmall extends LaserWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.E, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(2872, 2875, 2880, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
                 .setPrototypeFactions(Faction.CJF)

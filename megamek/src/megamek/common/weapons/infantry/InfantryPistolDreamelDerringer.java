@@ -43,7 +43,7 @@ public class InfantryPistolDreamelDerringer extends InfantryWeapon {
        techAdvancement
                .setTechBase(TechBase.IS)
                .setTechRating(TechRating.C)
-               .setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B)
+               .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
                .setISAdvancement(DATE_NONE, DATE_NONE, 2100, DATE_NONE, DATE_NONE)
                .setISApproximate(false, false, true, false, false)
                .setProductionFactions(Faction.FW);

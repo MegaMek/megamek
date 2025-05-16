@@ -51,7 +51,7 @@ public class InfantryRifleMarxXXLaserWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2685, 2670, 2690, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
 		        .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.D);
+		        .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

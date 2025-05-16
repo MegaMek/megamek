@@ -49,7 +49,7 @@ public class InfantryPistolSturmEagleMK4P extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.X,TechRating.B,TechRating.B,TechRating.B)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.B,AvailabilityValue.B,AvailabilityValue.B)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.LC);

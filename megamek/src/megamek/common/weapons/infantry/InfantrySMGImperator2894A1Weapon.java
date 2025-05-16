@@ -52,7 +52,7 @@ public class InfantrySMGImperator2894A1Weapon extends InfantryWeapon {
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(Faction.FW)
 		        .setProductionFactions(Faction.FW).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.X, TechRating.C, TechRating.B, TechRating.C);
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.C);
 
 	}
 }

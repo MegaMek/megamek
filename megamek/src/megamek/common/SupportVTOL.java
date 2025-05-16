@@ -64,12 +64,12 @@ public class SupportVTOL extends VTOL {
     
     private static final TechAdvancement TA_VTOL = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_ES, DATE_ES)
-            .setTechRating(TechRating.C).setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.D)
+            .setTechRating(TechRating.C).setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement TA_VTOL_LARGE = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_ES, DATE_ES)
-            .setTechRating(TechRating.C).setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C)
+            .setTechRating(TechRating.C).setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override

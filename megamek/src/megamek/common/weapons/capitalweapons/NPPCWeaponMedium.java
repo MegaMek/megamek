@@ -47,7 +47,7 @@ public class NPPCWeaponMedium extends NPPCWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.D, TechRating.X, TechRating.E, TechRating.E)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(2350, 2356, DATE_NONE, 2950, 3052)
                 .setISApproximate(true, true, false, true, false)
                 .setClanAdvancement(2350, 2356, DATE_NONE, DATE_NONE, DATE_NONE)

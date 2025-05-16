@@ -50,7 +50,7 @@ public class InfantrySniperRifleBartonAMRAntiArmor extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.D)
-       .setAvailability(TechRating.X,TechRating.E,TechRating.E,TechRating.E)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.FS);

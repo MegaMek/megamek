@@ -47,6 +47,6 @@ public class InfantryRifleMagnaLaserWeapon extends InfantryWeapon {
                 .setPrototypeFactions(Faction.DC)
 		        .setProductionFactions(Faction.DC)
                 .setTechRating(TechRating.D)
-		        .setAvailability(TechRating.C, TechRating.C, TechRating.D, TechRating.D);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D);
 	}
 }

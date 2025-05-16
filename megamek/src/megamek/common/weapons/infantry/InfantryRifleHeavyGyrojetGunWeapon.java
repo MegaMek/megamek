@@ -52,7 +52,7 @@ public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
 		        .setClanAdvancement(2585, 2590, 2600, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
 		        .setProductionFactions(Faction.LC).setTechRating(TechRating.D)
-		        .setAvailability(TechRating.C, TechRating.D, TechRating.C, TechRating.C);
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

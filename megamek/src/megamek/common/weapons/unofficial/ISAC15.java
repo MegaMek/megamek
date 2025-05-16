@@ -52,7 +52,7 @@ public class ISAC15 extends ACWeapon {
         techAdvancement.setTechBase(TechBase.ALL)
                 .setUnofficial(true)
                 .setTechRating(TechRating.C)
-                .setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.D)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2488, 2500, 2502, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2488, 2500, 2502, 2850, DATE_NONE)

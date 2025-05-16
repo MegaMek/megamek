@@ -1321,7 +1321,7 @@ public abstract class Entity extends TurnOrdered
                                                            .setPrototypeFactions(Faction.CCY, Faction.CSF)
                                                            .setProductionFactions(Faction.CCY, Faction.DC)
                                                            .setTechRating(TechRating.E)
-                                                           .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.D)
+                                                           .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
                                                            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // This is not in the rules anywhere, but is implied by the existence of the
     // Badger and Bandit
@@ -1335,7 +1335,7 @@ public abstract class Entity extends TurnOrdered
                                                                 .setPrototypeFactions(Faction.CCY, Faction.CSF, Faction.MERC)
                                                                 .setProductionFactions(Faction.CCY, Faction.DC)
                                                                 .setTechRating(TechRating.E)
-                                                                .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.D)
+                                                                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
                                                                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     protected static final TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(TechBase.ALL).setAdvancement(

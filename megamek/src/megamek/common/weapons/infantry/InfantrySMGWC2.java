@@ -45,7 +45,7 @@ public class InfantrySMGWC2 extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.D,TechRating.D,TechRating.D,TechRating.D)
+       .setAvailability(AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,2100,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.TA);

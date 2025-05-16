@@ -46,6 +46,6 @@ public class InfantrySupportWireGuidedMissileWeapon extends InfantryWeapon {
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
-		        .setAvailability(TechRating.E, TechRating.F, TechRating.X, TechRating.X);
+		        .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X);
 	}
 }

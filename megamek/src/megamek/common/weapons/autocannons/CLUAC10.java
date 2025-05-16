@@ -46,7 +46,7 @@ public class CLUAC10 extends UACWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
                 .setPrototypeFactions(Faction.CLAN)

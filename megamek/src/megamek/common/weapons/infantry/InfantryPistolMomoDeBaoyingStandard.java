@@ -43,7 +43,7 @@ public class InfantryPistolMomoDeBaoyingStandard extends InfantryWeapon {
        techAdvancement
                .setTechBase(TechBase.IS)
                .setTechRating(TechRating.D)
-               .setAvailability(TechRating.X, TechRating.E, TechRating.E, TechRating.F)
+               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F)
                .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                .setISApproximate(false, false, true, false, false)
                .setProductionFactions(Faction.CC);

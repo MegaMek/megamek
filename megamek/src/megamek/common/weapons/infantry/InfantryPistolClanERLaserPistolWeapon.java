@@ -42,6 +42,6 @@ public class InfantryPistolClanERLaserPistolWeapon extends InfantryWeapon {
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2833, 2835, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CFM)
                 .setProductionFactions(Faction.CFM).setTechRating(TechRating.F)
-                .setAvailability(TechRating.X, TechRating.D, TechRating.C, TechRating.C);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
     }
 }

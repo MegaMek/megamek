@@ -50,7 +50,7 @@ public class InfantryRifleBlazerRifleWeapon extends InfantryWeapon {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2100, 2290, 2350, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setProductionFactions(Faction.FW)
-                .setTechRating(TechRating.D).setAvailability(TechRating.C, TechRating.C, TechRating.D, TechRating.C);
+                .setTechRating(TechRating.D).setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C);
 
     }
 }

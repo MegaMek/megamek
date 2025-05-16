@@ -46,7 +46,7 @@ public class NL45Weapon extends NLWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(TechRating.D)
-                .setAvailability(TechRating.D, TechRating.X, TechRating.E, TechRating.E)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(DATE_ES, 2305, DATE_NONE, 2950, 3051)
                 .setISApproximate(false, true, false, true, false)
                 .setClanAdvancement(DATE_ES, 2305, DATE_NONE, DATE_NONE, DATE_NONE)

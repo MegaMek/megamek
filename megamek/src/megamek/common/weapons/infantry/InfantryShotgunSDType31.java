@@ -46,7 +46,7 @@ public class InfantryShotgunSDType31 extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.D)
-       .setAvailability(TechRating.E,TechRating.E,TechRating.E,TechRating.E)
+       .setAvailability(AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2366,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.CC);

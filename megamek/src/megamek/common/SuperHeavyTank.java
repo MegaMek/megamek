@@ -74,7 +74,7 @@ public class SuperHeavyTank extends Tank {
             .setAdvancement(2470, DATE_NONE, 3075)
             .setApproximate(true, false, true).setPrototypeFactions(Faction.LC)
             .setTechRating(TechRating.C)
-            .setAvailability(TechRating.E, TechRating.F, TechRating.F, TechRating.E)
+            .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override

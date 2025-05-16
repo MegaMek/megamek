@@ -46,7 +46,7 @@ public class CLBASupportPPC extends PPCWeapon {
         cost = 14000;
         rulesRefs = "267, TM";
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.D)
-                .setAvailability(TechRating.X, TechRating.F, TechRating.D, TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2950, DATE_NONE, DATE_NONE);
     }
 }

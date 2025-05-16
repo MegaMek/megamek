@@ -51,6 +51,6 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FS)
                 .setProductionFactions(Faction.FS).setTechRating(TechRating.C)
-                .setAvailability(TechRating.X, TechRating.X, TechRating.D, TechRating.C);
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
     }
 }

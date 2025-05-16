@@ -50,7 +50,7 @@ public class InfantryPistolSonicStunnerWeapon extends InfantryWeapon {
 				.setClanAdvancement(2365, 2375, 2400, DATE_NONE, DATE_NONE)
 				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
 				.setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-				.setAvailability(TechRating.B, TechRating.C, TechRating.B, TechRating.B);
+				.setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

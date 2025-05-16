@@ -46,7 +46,7 @@ public class InfantryShotgunSGM3 extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.E,TechRating.X,TechRating.X,TechRating.X)
+       .setAvailability(AvailabilityValue.E,AvailabilityValue.X,AvailabilityValue.X,AvailabilityValue.X)
        .setISAdvancement(DATE_NONE, DATE_NONE,2100,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.TA);

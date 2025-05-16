@@ -46,7 +46,7 @@ public class InfantryShotgunDaystarIC extends InfantryWeapon {
        techAdvancement
        .setTechBase(TechBase.IS)
        .setTechRating(TechRating.C)
-       .setAvailability(TechRating.B,TechRating.B,TechRating.A,TechRating.A)
+       .setAvailability(AvailabilityValue.B,AvailabilityValue.B,AvailabilityValue.A,AvailabilityValue.A)
        .setISAdvancement(DATE_NONE, DATE_NONE,2335,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
        .setProductionFactions(Faction.TC);

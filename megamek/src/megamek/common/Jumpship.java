@@ -183,7 +183,7 @@ public class Jumpship extends Aero {
                                                                .setISApproximate(false, true)
                                                                .setProductionFactions(Faction.TA)
                                                                .setTechRating(TechRating.D)
-                                                               .setAvailability(TechRating.D, TechRating.E, TechRating.D, TechRating.F)
+                                                               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.F)
                                                                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     protected static final TechAdvancement TA_JUMPSHIP_PRIMITIVE = new TechAdvancement(TechBase.IS).setISAdvancement(
                 2100,

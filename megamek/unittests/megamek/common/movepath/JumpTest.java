@@ -32,16 +32,17 @@
  */
 package megamek.common.movepath;
 
-import megamek.common.*;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import megamek.common.BattleArmor;
+import megamek.common.BipedMek;
+import megamek.common.EntityMovementMode;
+import megamek.common.GameBoardTestCase;
+import megamek.common.MovePath;
+import megamek.common.SupportTank;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for MovePath executing JUMP the Jump movement type.
@@ -205,7 +206,7 @@ end""");
             assertFalse(movePath.isMoveLegal(),
                   "A BA cannot jump into a building lower floors comming from a connected side and not on LOS");
 
-            assertMovePathElevations(movePath, -1, 0, 2, 4, 4, 3);
+            assertMovePathElevations(movePath, 0, 0, 2, 4, 4, 3);
         }
 
         @Test
@@ -221,7 +222,7 @@ end""");
 
             assertFalse(movePath.isMoveLegal(), "A BA can jump into a building lower floors coming from an exit side" +
                                                      " and if the LOS is unblocked");
-            assertMovePathElevations(movePath, -1, 0, 2, 4, 3);
+            assertMovePathElevations(movePath, 0, 0, 2, 4, 3);
         }
 
         @Test
@@ -239,7 +240,7 @@ end""");
             assertFalse(movePath.isMoveLegal(), "A BA cant jump into a building lower floors coming from a side " +
                                                       "which is covered by another building of same height");
 
-            assertMovePathElevations(movePath, -1, 0, 2, 4, 3, 2);
+            assertMovePathElevations(movePath, 0, 0, 2, 4, 3, 2);
         }
 
         @Test
@@ -254,13 +255,12 @@ end""");
                   MovePath.MoveStepType.FORWARDS,
                   MovePath.MoveStepType.FORWARDS,
                   MovePath.MoveStepType.DOWN
-                  // try to land in the middle of the building comming through the roof
             );
 
             assertFalse(movePath.isMoveLegal(),
-                  "A BA cannot jump into a building lower floors comming from a connected side");
+                  "A BA cannot jump into a building lower floors coming from a connected side");
 
-            assertMovePathElevations(movePath, -1, 0, 2, 4, 4, 4, 3);
+            assertMovePathElevations(movePath, 0, 0, 2, 4, 4, 4, 3);
         }
 
         @Test
@@ -278,7 +278,7 @@ end""");
 
             assertTrue(movePath.isMoveLegal(),
                   "This is a sanity check, this jump should work");
-            assertMovePathElevations(movePath, -1, 0, 2, 4, 4, 4);
+            assertMovePathElevations(movePath, 0, 0, 2, 4, 4, 4);
         }
 
         @Test
@@ -297,7 +297,7 @@ end""");
             );
             assertFalse(movePath.isMoveLegal(),
                   "A BA cannot jump into a building lower floors comming from an exit side");
-            assertMovePathElevations(movePath, -1, 0, 2, 4, 3, 2, 1, 0);
+            assertMovePathElevations(movePath, 0, 0, 2, 4, 3, 2, 1, 0);
         }
 
         @Test
@@ -314,7 +314,7 @@ end""");
             );
 
             assertFalse(movePath.isMoveLegal(), "A Mek cannot jump into a building lower floors");
-            assertMovePathElevations(movePath, -1, 0, 2, 4, 4, 4, 3);
+            assertMovePathElevations(movePath, 0, 0, 2, 4, 4, 4, 3);
         }
     }
 

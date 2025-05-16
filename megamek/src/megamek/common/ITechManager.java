@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.common.ITechnology.AvailabilityValue;
 import megamek.common.ITechnology.Faction;
 import megamek.common.ITechnology.TechRating;
 
@@ -102,7 +103,7 @@ public interface ITechManager {
         // A little bit of hard-coded universe detail
         if ((faction == Faction.CS)
                 && extinctIS && (isIntroDate != ITechnology.DATE_NONE)
-                && (tech.getBaseAvailability(ITechnology.getTechEra(getTechIntroYear())).getIndex() < TechRating.X.getIndex())
+                && (tech.getBaseAvailability(ITechnology.getTechEra(getTechIntroYear())).getIndex() < AvailabilityValue.X.getIndex())
                 && isIntroDate <= getTechIntroYear()) {
             // ComStar has access to Star League tech that is otherwise extinct in the Inner Sphere as if TH,
             // unless it has an availability of X (which is SLDF Royal equipment).

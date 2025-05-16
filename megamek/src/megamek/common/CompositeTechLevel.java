@@ -35,7 +35,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     private Integer standard;
     private List<DateRange> extinct;
     private TechRating techRating;
-    private EnumMap<Era, TechRating> availability;
+    private EnumMap<Era, AvailabilityValue> availability;
     private int earliest;
 
     // Provides a set tech level for non-era-based use.
@@ -235,21 +235,21 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         techRating = TechRating.fromIndex(Math.max(techRating.getIndex(), tech.getTechRating().getIndex()));
 
         for (Era era : Era.values()) {
-            TechRating av = tech.getBaseAvailability(era);
+            AvailabilityValue av = tech.getBaseAvailability(era);
             // Clan mixed tech units cannot use IS tech introduced during SW until 3050.
             if (clan &&  era == Era.SW && !tech.isClan() 
                 && !techFaction.getAffiliation().equals(FactionAffiliation.CLAN)
                 && (techFaction != Faction.CS) 
                 && ITechnology.getTechEra(tech.getIntroductionDate()).equals(Era.SW)) {
-                av = TechRating.X;
+                av = AvailabilityValue.X;
             }
             // IS base cannot include Clan tech before 3050; after 3050 av is +1.
             if (!clan && tech.isClan()) {
                 if (era == Era.SW) {
-                    av = TechRating.X;
+                    av = AvailabilityValue.X;
                 } else {
-                    int harder = Math.min(av.getIndex() + 1, TechRating.X.getIndex());
-                    av = TechRating.fromIndex(harder);
+                    int harder = Math.min(av.getIndex() + 1, AvailabilityValue.X.getIndex());
+                    av = AvailabilityValue.fromIndex(harder);
                 }
             }
             if (availability.get(era) == null || av.isBetterThan(availability.get(era))) {

@@ -47,7 +47,49 @@ public interface ITechnology {
         }
     }
 
-    // --- Rating Enum ---
+    // --- Availability Enum ---
+    enum AvailabilityValue {
+        A(0, "A"),
+        B(1, "B"),
+        C(2, "C"),
+        D(3, "D"),
+        E(4, "E"),
+        F(5, "F"),
+        X(7, "X");
+
+        private final int index;
+        private final String name;
+        private static final Map<Integer, AvailabilityValue> INDEX_LOOKUP = new HashMap<>();
+        private static final Map<String, AvailabilityValue> NAME_LOOKUP = new HashMap<>();
+        static {
+            for (AvailabilityValue tr : values()) {
+                INDEX_LOOKUP.put(tr.index, tr);
+                NAME_LOOKUP.put(tr.name, tr);
+            }
+        }
+        AvailabilityValue(int idx, String name) { this.index = idx; this.name = name; }
+        public int getIndex() { return index; }
+        public String getName() { return name; }
+        public boolean isBetterThan(AvailabilityValue other) {
+            return this.index > other.index;
+        }
+        public boolean isBetterOrEqualThan(AvailabilityValue other) {
+            return this.index >= other.index;
+        }
+        public static AvailabilityValue fromIndex(int idx) {
+            AvailabilityValue tr = INDEX_LOOKUP.get(idx);
+            if (tr == null) throw new IllegalArgumentException("Invalid AvailabilityValue index: " + idx);
+            return tr;
+        }
+        public static AvailabilityValue fromName(String name) {
+            AvailabilityValue tr = NAME_LOOKUP.get(name);
+            if (tr == null) throw new IllegalArgumentException("Invalid AvailabilityValue name: " + name);
+            return tr;
+        }
+    }
+
+
+    // --- Tech Rating Enum ---
     enum TechRating {
         A(0, "A"),
         B(1, "B"),
@@ -237,7 +279,7 @@ public interface ITechnology {
     int getReintroductionDate();
 
     TechRating getTechRating();
-    TechRating getBaseAvailability(Era era);
+    AvailabilityValue getBaseAvailability(Era era);
 
     default int getIntroductionDate(boolean clan) {
         return getIntroductionDate();
@@ -438,24 +480,24 @@ public interface ITechnology {
      * @param clanUse - whether the faction trying to obtain the tech is IS or Clan
      * @return - the adjusted availability code
      */
-    default TechRating calcEraAvailability(Era era, boolean clanUse) {
+    default AvailabilityValue calcEraAvailability(Era era, boolean clanUse) {
         if (clanUse) {
             if (!isClan()
                     && era.getIndex() < Era.CLAN.getIndex()
                     && getPrototypeDate(false) >= 2780) {
-                return TechRating.X;
+                return AvailabilityValue.X;
             } else {
                 return getBaseAvailability(era);
             }
         } else {
             if (isClan()) {
                 if (era.getIndex() < Era.CLAN.getIndex()) {
-                    return TechRating.X;
+                    return AvailabilityValue.X;
                 } else {
                     // For Clan items in IS eras, availability is one step harder, but not above X
-                    TechRating base = getBaseAvailability(era);
-                    int harder = Math.min(TechRating.X.getIndex(), base.getIndex() + 1);
-                    return TechRating.fromIndex(harder);
+                    AvailabilityValue base = getBaseAvailability(era);
+                    int harder = Math.min(AvailabilityValue.X.getIndex(), base.getIndex() + 1);
+                    return AvailabilityValue.fromIndex(harder);
                 }
             } else {
                 return getBaseAvailability(era);
@@ -463,19 +505,19 @@ public interface ITechnology {
         }
     }
 
-    default TechRating calcYearAvailability(int year, boolean clanUse) {
+    default AvailabilityValue calcYearAvailability(int year, boolean clanUse) {
         return calcYearAvailability(year, clanUse, Faction.NONE);
     }
 
-    default TechRating calcYearAvailability(int year, boolean clanUse, Faction faction) {
+    default AvailabilityValue calcYearAvailability(int year, boolean clanUse, Faction faction) {
         Era era = getTechEra(year);
         if (!clanUse && !isClan() && (faction != Faction.CS) && (era == Era.SW)
-            && getBaseAvailability(Era.SW).getIndex() >= TechRating.E.getIndex()
+            && getBaseAvailability(Era.SW).getIndex() >= AvailabilityValue.E.getIndex()
             && getExtinctionDate(false) != DATE_NONE
             && getExtinctionDate(false) <= year
             && (getReintroductionDate(false) == DATE_NONE || getReintroductionDate(false) > year)) {
-            int harder = Math.min(getBaseAvailability(Era.SW).getIndex() + 1, TechRating.X.getIndex());
-            return TechRating.fromIndex(harder);
+            int harder = Math.min(getBaseAvailability(Era.SW).getIndex() + 1, AvailabilityValue.X.getIndex());
+            return AvailabilityValue.fromIndex(harder);
         }
         return calcEraAvailability(era, clanUse);
     }
@@ -491,13 +533,13 @@ public interface ITechnology {
      */
     default String getEraAvailabilityName(Era era, boolean clanUse) {
         if (!clanUse && !isClan() && era == Era.SW
-            && getBaseAvailability(Era.SW).getIndex() >= TechRating.E.getIndex()
-            && getBaseAvailability(Era.SW).getIndex() < TechRating.X.getIndex()
+            && getBaseAvailability(Era.SW).getIndex() >= AvailabilityValue.E.getIndex()
+            && getBaseAvailability(Era.SW).getIndex() < AvailabilityValue.X.getIndex()
             && getExtinctionDate(false) != DATE_NONE
             && getTechEra(getExtinctionDate(false)) == Era.SW) {
-            TechRating base = getBaseAvailability(Era.SW);
-            int harderIdx = Math.min(base.getIndex() + 1, TechRating.X.getIndex());
-            return base.getName() + "(" + TechRating.fromIndex(harderIdx).getName() + ")";
+            AvailabilityValue base = getBaseAvailability(Era.SW);
+            int harderIdx = Math.min(base.getIndex() + 1, AvailabilityValue.X.getIndex());
+            return base.getName() + "(" + AvailabilityValue.fromIndex(harderIdx).getName() + ")";
         }
         return calcEraAvailability(era, clanUse).getName();
     }
@@ -527,11 +569,11 @@ public interface ITechnology {
         return getFullRatingName(isClan());
     }
 
-    default TechRating calcEraAvailability(Era era) {
+    default AvailabilityValue calcEraAvailability(Era era) {
         return calcEraAvailability(era, isClan());
     }
 
-    default TechRating calcYearAvailability(int year) {
+    default AvailabilityValue calcYearAvailability(int year) {
         return calcYearAvailability(year, isClan());
     }
 

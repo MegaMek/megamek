@@ -83,7 +83,7 @@ public class TechAdvancement implements ITechnology {
     private Set<Faction> reintroductionFactions = EnumSet.noneOf(Faction.class);
     private SimpleTechLevel staticTechLevel = SimpleTechLevel.STANDARD;
     private TechRating techRating = TechRating.C;
-    private EnumMap<Era, TechRating> availability = new EnumMap<>(Era.class);
+    private EnumMap<Era, AvailabilityValue> availability = new EnumMap<>(Era.class);
 
     public TechAdvancement() {
         for (AdvancementPhase phase : AdvancementPhase.values()) {
@@ -936,26 +936,26 @@ public class TechAdvancement implements ITechnology {
         return techRating;
     }
 
-    public TechAdvancement setAvailability(TechRating... av) {
+    public TechAdvancement setAvailability(AvailabilityValue... av) {
         int i = 0;
         for (Era era : Era.values()) {
             if (i < av.length) {
                 availability.put(era, av[i]);
             } else {
-                availability.put(era, TechRating.X);
+                availability.put(era, AvailabilityValue.X);
             }
             i++;
         }
         return this;
     }
 
-    public TechAdvancement setAvailability(Era era, TechRating av) {
+    public TechAdvancement setAvailability(Era era, AvailabilityValue av) {
         availability.put(era, av);
         return this;
     }
 
     @Override
-    public TechRating getBaseAvailability(Era era) {
+    public AvailabilityValue getBaseAvailability(Era era) {
         return availability.get(era);
     }
 

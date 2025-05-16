@@ -264,10 +264,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                                                                         AdvancementPhase.PRODUCTION, 2200,
                                                                         AdvancementPhase.EXTINCT, 2781
                                                                     ))
-                                                                    .setISApproximate(Map.of(
-                                                                        AdvancementPhase.PRODUCTION, true,
-                                                                        AdvancementPhase.EXTINCT, true
-                                                                    ))
+                                                                    .setISApproximate(
+                                                                        AdvancementPhase.PRODUCTION, 
+                                                                        AdvancementPhase.EXTINCT)
                                                                     .setProductionFactions(Faction.TA)
                                                                     .setTechRating(TechRating.D)
                                                                     .setAvailability(TechRating.D,
@@ -292,9 +291,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     AdvancementPhase.PRODUCTION, 2470,
                     AdvancementPhase.COMMON, 2491
                 ))
-                .setApproximate(Map.of(
-                    AdvancementPhase.PROTOTYPE, true
-                ))
+                .setApproximate(AdvancementPhase.PROTOTYPE)
                 .setPrototypeFactions(Faction.TH)
                 .setPrototypeFactions(Faction.TH)
                 .setTechRating(TechRating.C)
@@ -310,9 +307,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 .setClanAdvancement(Map.of(
                     AdvancementPhase.COMMON,3080
                 ))
-                .setISApproximate(Map.of(
-                    AdvancementPhase.PROTOTYPE, true
-                ))
+                .setISApproximate(AdvancementPhase.PROTOTYPE)
                 .setPrototypeFactions(Faction.WB)
                 .setPrototypeFactions(Faction.WB, Faction.CSR)
                 .setTechRating(TechRating.E)
@@ -326,11 +321,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     AdvancementPhase.EXTINCT, 2850,
                     AdvancementPhase.REINTRODUCED, 3030
                 ))
-                .setISApproximate(Map.of(
-                    AdvancementPhase.PROTOTYPE, true,
-                    AdvancementPhase.EXTINCT, true,
-                    AdvancementPhase.REINTRODUCED, true
-                ))
+                .setISApproximate(AdvancementPhase.PROTOTYPE, AdvancementPhase.EXTINCT, AdvancementPhase.REINTRODUCED)
                 .setClanAdvancement(Map.of(
                     AdvancementPhase.PROTOTYPE, 2625,
                     AdvancementPhase.PRODUCTION, 2631
@@ -350,9 +341,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     AdvancementPhase.PRODUCTION, 2300,
                     AdvancementPhase.EXTINCT, 2520
                 ))
-                .setISApproximate(Map.of(
-                    AdvancementPhase.PRODUCTION, true
-                ))
+                .setISApproximate(AdvancementPhase.PRODUCTION)
                 .setPrototypeFactions(Faction.TA)
                 .setTechRating(TechRating.C)
                 .setAvailability(TechRating.D, TechRating.X, TechRating.X, TechRating.F)

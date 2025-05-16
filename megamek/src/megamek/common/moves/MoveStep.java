@@ -2875,6 +2875,10 @@ public class MoveStep implements Serializable {
             throw ex;
         }
 
+        if ((type == MoveStepType.CLIMB_MODE_ON) || (type == MoveStepType.CLIMB_MODE_OFF)) {
+            return true;
+        }
+
         // Assault dropping units cannot move
         if ((entity.isAssaultDropInProgress() || entity.isDropping()) &&
                   !((entity instanceof LandAirMek) &&
@@ -2937,9 +2941,15 @@ public class MoveStep implements Serializable {
         }
 
         final int srcAlt = srcEl + srcHex.getLevel();
-        final int destAlt = elevation + destHex.getLevel();
 
         Building bld = game.getBoard().getBuildingAt(dest);
+
+        final int destAlt;
+        if (bld != null && getEntity().getElevation() == 0 && climbMode) {
+            destAlt = destHex.floor();
+        }  else {
+            destAlt = elevation + destHex.getLevel();
+        }
 
         if (bld != null) {
             // ProtoMeks that are jumping can't change the level inside a building,

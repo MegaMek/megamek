@@ -2195,7 +2195,11 @@ public abstract class Entity extends TurnOrdered
                     BasementType nextBasement = BasementType.getType(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
                     int collapsedBasement = next.terrainLevel(Terrains.BLDG_BASE_COLLAPSED);
                     if (climb || isJumpingNow) {
-                        retVal = bldnex + next.getLevel();
+                        if ((bldnex + next.getLevel()) > this.getMaxElevationChange() && next.containsTerrain(Terrains.BUILDING) && climb) {
+                            retVal = next.getLevel();
+                        } else {
+                            retVal = bldnex + next.getLevel();
+                        }
                         // If the basement is collapsed, there is no level 0
                     } else if ((assumedElevation == 0) && !nextBasement.isUnknownOrNone() && (collapsedBasement > 0)) {
                         retVal -= nextBasement.getDepth();

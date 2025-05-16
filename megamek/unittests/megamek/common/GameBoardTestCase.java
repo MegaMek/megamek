@@ -37,10 +37,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.Vector;
+import java.util.function.Function;
 
+import megamek.common.annotations.Nullable;
+import megamek.common.moves.MovePath;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
@@ -159,20 +165,23 @@ public abstract class GameBoardTestCase {
     private static <T extends Entity> T initializeUnit(
           T unit,
           Game game,
-          EntityMovementMode movementMode,
+          @Nullable EntityMovementMode movementMode,
           int startingElevation
     ) {
-        if (movementMode != null) {
-            unit.setMovementMode(movementMode);
+        if (unit.getId() == Entity.NONE) {
+            if (movementMode != null) {
+                unit.setMovementMode(movementMode);
+            }
+            if (unit instanceof Infantry) {
+                unit.setWeight(5.0);
+            } else {
+                unit.setWeight(50.0);
+            }
+            unit.setOriginalWalkMP(8);
+            unit.setOriginalJumpMP(8);
+            unit.setId(5);
         }
-        if (unit instanceof Infantry) {
-            unit.setWeight(5.0);
-        } else {
-            unit.setWeight(50.0);
-        }
-        unit.setOriginalWalkMP(8);
-        unit.setOriginalJumpMP(8);
-        unit.setId(5);
+
         game.addEntity(unit);
         unit.setPosition(new Coords(0, 0));
         unit.setFacing(3);
@@ -181,10 +190,82 @@ public abstract class GameBoardTestCase {
             unit.setElevation(startingElevation);
         } else {
             int elevationModifier = EntityMovementMode.WIGE.equals(movementMode) ? 1 : 0;
-            unit.setElevation(game.getBoard().getHex(unit.getPosition()).ceiling() + elevationModifier);
+            int ceiling = game.getBoard().getHex(unit.getPosition()).ceiling();
+            int floor = game.getBoard().getHex(unit.getPosition()).floor();
+            unit.setElevation(ceiling - floor + elevationModifier);
         }
 
         return unit;
+    }
+
+    protected List<MovePath> getMovePathFuzzerFor(Entity entity, int maxSteps, Function<MovePath, Boolean> function) {
+        // Initialize the starting path for this entity
+        MovePath initialPath = new MovePath(getGame(), initializeUnit(entity, getGame(), null, Integer.MAX_VALUE));
+        List<MovePath> paths = new LinkedList<>();
+        // Queue for BFS
+        Queue<MovePath> queue = new LinkedList<>();
+        queue.offer(initialPath);
+        try {
+            while (!queue.isEmpty()) {
+                MovePath currentPath = queue.poll();
+
+                // Check if this path satisfies our condition
+                if (function.apply(currentPath)) {
+                    paths.add(currentPath.clone());
+                }
+
+                // Don't exceed maximum path length
+                if (currentPath.getStepVector().size() >= maxSteps) {
+                    continue;
+                }
+
+                // Try all possible move types
+                for (MovePath.MoveStepType moveStepType : MovePath.MoveStepType.values()) {
+                    // Skip irrelevant or invalid movement types for this entity
+                    if (!isValidStepType(currentPath, moveStepType)) {
+                        continue;
+                    }
+
+                    // Create a new path by adding this step
+                    MovePath newPath = currentPath.clone();
+                    newPath.addStep(moveStepType);
+
+                    // Only add legal moves to the queue
+                    if (newPath.isMoveLegal()) {
+                        var steps = newPath.getStepVector();
+                        for (int i = 0; i < steps.size(); i++) {
+                            System.out.println("Step " + steps.get(i) + " - " + i + ": " + new StepLog(steps.get(i)));
+                        }
+                        queue.offer(newPath);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // If there's an exception during callable execution, return best path so far
+        }
+
+        return paths;
+    }
+
+    /**
+     * Checks if a move step type is valid for the current path and entity
+     * @param path The current path
+     * @param stepType The step type to check
+     * @return true if valid, false otherwise
+     */
+    private boolean isValidStepType(MovePath path, MovePath.MoveStepType stepType) {
+        Entity entity = path.getEntity();
+
+        // Filter out irrelevant move types based on entity type and capabilities
+        return switch (stepType) {
+            case START_JUMP -> entity.getOriginalJumpMP() > 0;
+            case SWIM -> entity.hasUMU();
+            case HOVER -> Set.of(EntityMovementMode.HOVER, EntityMovementMode.WIGE, EntityMovementMode.VTOL).contains(entity.getMovementMode());
+            case DFA -> entity instanceof Mek;
+            case CHARGE -> entity instanceof Mek || entity instanceof Tank;
+            case LAY_MINE, CHAFF, CLEAR_MINEFIELD, BRACE, SELF_DESTRUCT -> false;
+            default -> true;
+        };
     }
 
     /**
@@ -195,10 +276,20 @@ public abstract class GameBoardTestCase {
      * @param steps the steps to be added to the MovePath
      * @return the MovePath
      */
-    protected MovePath getMovePathFor(Entity entity, int startingElevation, EntityMovementMode movementMode,
+    protected MovePath getMovePathFor(Entity entity, int startingElevation, @Nullable EntityMovementMode movementMode,
           MovePath.MoveStepType ... steps) {
         return getMovePath(new MovePath(getGame(), initializeUnit(entity, getGame(), movementMode, startingElevation)),
               steps);
+    }
+
+    /**
+     * Generates the MovePath for the test
+     * @param entity the entity
+     * @param steps the steps to be added to the MovePath
+     * @return the MovePath
+     */
+    protected MovePath getMovePathFor(Entity entity, MovePath.MoveStepType ... steps) {
+        return getMovePathFor(entity, Integer.MAX_VALUE, null, steps);
     }
 
     /**
@@ -208,7 +299,8 @@ public abstract class GameBoardTestCase {
      * @param steps the steps to be added to the MovePath
      * @return the MovePath
      */
-    protected MovePath getMovePathFor(Entity entity, EntityMovementMode movementMode, MovePath.MoveStepType ... steps) {
+    protected MovePath getMovePathFor(Entity entity, @Nullable EntityMovementMode movementMode,
+          MovePath.MoveStepType ... steps) {
         return getMovePathFor(entity, Integer.MAX_VALUE, movementMode, steps);
     }
 

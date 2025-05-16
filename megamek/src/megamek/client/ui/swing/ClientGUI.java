@@ -1635,6 +1635,7 @@ public class ClientGUI extends AbstractClientGUI
         if (getMiniMapDialog() != null) {
             getMiniMapDialog().setVisible(visible);
             conditionalRequestFocus(visible);
+            getMiniMapDialog().setAlwaysOnTop(visible);
         }
     }
 
@@ -1642,6 +1643,7 @@ public class ClientGUI extends AbstractClientGUI
         if (getMiniReportDisplayDialog() != null) {
             setMiniReportLocation(visible);
             conditionalRequestFocus(visible);
+            getMiniReportDisplayDialog().setAlwaysOnTop(false);
         }
     }
 
@@ -1722,6 +1724,7 @@ public class ClientGUI extends AbstractClientGUI
 
         if (getUnitDisplayDialog() != null) {
             setUnitDisplayLocation(visible);
+            getUnitDisplayDialog().setAlwaysOnTop(visible);
         }
     }
 

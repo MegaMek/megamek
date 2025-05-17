@@ -20,16 +20,16 @@
  */
 package megamek.client.ui.swing.util;
 
+import static java.awt.event.KeyEvent.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.swing.KeyStroke;
-
-import static java.awt.event.KeyEvent.*;
 
 /**
  * This enum is a collection of commands that can be bound to a particular key.
+ *
  * @author arlith
  */
 public enum KeyCommandBind {
@@ -42,6 +42,10 @@ public enum KeyCommandBind {
     TOGGLE_CHAT("toggleChat", VK_ENTER),
     // Activates chat box and adds the command character (/)
     TOGGLE_CHAT_CMD("toggleChatCmd", VK_SLASH),
+    // Move one hex forward
+    MOVE_STEPFORWARD("moveStepForward", VK_W, SHIFT_DOWN_MASK),
+    // Move one hex backward (back up)
+    MOVE_STEPBACKWARD("moveStepBackward", VK_S, SHIFT_DOWN_MASK),
     // Change facing one hexside to the left
     TURN_LEFT("turnLeft", VK_A, SHIFT_DOWN_MASK),
     // Change facing one hexside to the right
@@ -64,6 +68,9 @@ public enum KeyCommandBind {
     PREV_TARGET_NOALLIES("prevTargetNoAllies", VK_LEFT, CTRL_DOWN_MASK),
     NEXT_TARGET_VALID_NO_ALLIES("nextTargetValidNoAllies", VK_RIGHT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     PREV_TARGET_VALID_NO_ALLIES("prevTargetValidNoAllies", VK_LEFT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    PHYS_PUNCH("physPunch", VK_P),
+    PHYS_KICK("physKick", VK_K),
+    PHYS_PUSH("physPush", VK_P, SHIFT_DOWN_MASK),
     // Changes unit display to view acting unit and sets current viewed unit as target
     VIEW_ACTING_UNIT("viewActingUnit", VK_V),
     // Remove the last move step or the last added weapon fire
@@ -87,6 +94,9 @@ public enum KeyCommandBind {
     UD_EXTRAS("udExtras", VK_F6),
     /** Toggles between Jumping and Walk/Run, also acts as a reset when a unit cannot jump */
     TOGGLE_MOVEMODE("toggleJump", VK_J),
+    MOVE_BACKUP("moveBackUp", VK_B),
+    MOVE_GOPRONE("moveGoProne", VK_P),
+    MOVE_GETUP("moveGetUp", VK_U),
     TOGGLE_CONVERSIONMODE("toggleConversion", VK_M),
     PREV_MODE("prevMode", VK_KP_DOWN),
     NEXT_MODE("nextMode", VK_KP_UP),
@@ -137,16 +147,15 @@ public enum KeyCommandBind {
     public int modifiersDefault;
 
     /**
-     * Defines if an action is exclusive, which means that only one
-     * CommandAction will be performed for each key press. The CommandAction
-     * that is performed will be the first one encountered. Exclusive binds can't share their key
-     * with other binds.
+     * Defines if an action is exclusive, which means that only one CommandAction will be performed for each key press.
+     * The CommandAction that is performed will be the first one encountered. Exclusive binds can't share their key with
+     * other binds.
      */
     public boolean isExclusive = false;
 
     /**
-     * For a repeatable bind, when the key is pressed the action will be added to a
-     * timer and repeated until the key is released.
+     * For a repeatable bind, when the key is pressed the action will be added to a timer and repeated until the key is
+     * released.
      */
     public boolean isRepeatable;
 
@@ -194,15 +203,15 @@ public enum KeyCommandBind {
     }
 
     /**
-     * Returns a list of binds using the given keycode and modifier. Only lists those
-     * that are not used by the CommonMenuBar!
+     * Returns a list of binds using the given keycode and modifier. Only lists those that are not used by the
+     * CommonMenuBar!
      */
     public static List<KeyCommandBind> getBindByKey(int keycode, int modifiers) {
         return Stream.of(values())
-                .filter(bind -> !bind.isMenuBar)
-                .filter(bind -> bind.key == keycode)
-                .filter(bind -> bind.modifiers == modifiers)
-                .collect(Collectors.toList());
+                     .filter(bind -> !bind.isMenuBar)
+                     .filter(bind -> bind.key == keycode)
+                     .filter(bind -> bind.modifiers == modifiers)
+                     .collect(Collectors.toList());
     }
 
     /** Returns the bind identified by the given cmd or null if there is no such bind. */
@@ -215,7 +224,7 @@ public enum KeyCommandBind {
         return KeyStroke.getKeyStroke(bind.key, bind.modifiers);
     }
 
-    /** returns formatted mod + key for display*/
+    /** returns formatted mod + key for display */
     public static String getDesc(KeyCommandBind k) {
         String mod = getModifiersExText(k.modifiers);
         String key = getKeyText(k.key);

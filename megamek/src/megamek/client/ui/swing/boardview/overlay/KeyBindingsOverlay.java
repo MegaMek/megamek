@@ -1,17 +1,23 @@
 /*
-* MegaMek - Copyright (C) 2020 - The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.client.ui.swing.boardview.overlay;
+
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -19,69 +25,62 @@ import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.common.preference.PreferenceChangeEvent;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
- * An overlay for the Boardview that displays a selection of keybinds
- * for the current game situation
+ * An overlay for the Boardview that displays a selection of keybinds for the current game situation
  *
  * @author SJuliez
  */
 public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
 
     /** The keybinds to be shown during the firing phases (incl. physical etc.) */
-    private static final List<KeyCommandBind> BINDS_FIRE = Arrays.asList(
-            KeyCommandBind.NEXT_WEAPON,
-            KeyCommandBind.PREV_WEAPON,
-            KeyCommandBind.UNDO_LAST_STEP,
-            KeyCommandBind.NEXT_TARGET,
-            KeyCommandBind.NEXT_TARGET_VALID,
-            KeyCommandBind.NEXT_TARGET_NOALLIES,
-            KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES,
-            KeyCommandBind.DONE_NO_ACTION
-    );
+    private static final List<KeyCommandBind> BINDS_FIRE = Arrays.asList(KeyCommandBind.NEXT_WEAPON,
+          KeyCommandBind.PREV_WEAPON,
+          KeyCommandBind.UNDO_LAST_STEP,
+          KeyCommandBind.NEXT_TARGET,
+          KeyCommandBind.NEXT_TARGET_VALID,
+          KeyCommandBind.NEXT_TARGET_NOALLIES,
+          KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES,
+          KeyCommandBind.PHYS_PUNCH,
+          KeyCommandBind.PHYS_KICK,
+          KeyCommandBind.PHYS_PUSH,
+          KeyCommandBind.DONE_NO_ACTION);
 
     /** The keybinds to be shown during the movement phase */
-    private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(
-            KeyCommandBind.TOGGLE_MOVEMODE,
-            KeyCommandBind.UNDO_LAST_STEP,
-            KeyCommandBind.TOGGLE_CONVERSIONMODE,
-            KeyCommandBind.DONE_NO_ACTION
-    );
+    private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(KeyCommandBind.MOVE_STEPFORWARD,
+          KeyCommandBind.MOVE_STEPBACKWARD,
+          KeyCommandBind.TURN_LEFT,
+          KeyCommandBind.TURN_RIGHT,
+          KeyCommandBind.TOGGLE_MOVEMODE,
+          KeyCommandBind.MOVE_BACKUP,
+          KeyCommandBind.MOVE_GOPRONE,
+          KeyCommandBind.MOVE_GETUP,
+          KeyCommandBind.UNDO_LAST_STEP,
+          KeyCommandBind.TOGGLE_CONVERSIONMODE,
+          KeyCommandBind.DONE_NO_ACTION);
 
     /** The keybinds to be shown in all phases during the local player's turn */
-    private static final List<KeyCommandBind> BINDS_MY_TURN = Arrays.asList(
-            KeyCommandBind.CANCEL,
-            KeyCommandBind.DONE,
-            KeyCommandBind.NEXT_UNIT,
-            KeyCommandBind.PREV_UNIT,
-            KeyCommandBind.CENTER_ON_SELECTED
-    );
+    private static final List<KeyCommandBind> BINDS_MY_TURN = Arrays.asList(KeyCommandBind.CANCEL,
+          KeyCommandBind.DONE,
+          KeyCommandBind.NEXT_UNIT,
+          KeyCommandBind.PREV_UNIT,
+          KeyCommandBind.CENTER_ON_SELECTED);
 
     /** The keybinds to be shown in all phases during any player's turn */
-    private static final List<KeyCommandBind> BINDS_ANY_TURN = Arrays.asList(
-            KeyCommandBind.TOGGLE_CHAT,
-            KeyCommandBind.DRAW_LABELS,
-            KeyCommandBind.HEX_COORDS
-    );
+    private static final List<KeyCommandBind> BINDS_ANY_TURN = Arrays.asList(KeyCommandBind.TOGGLE_CHAT,
+          KeyCommandBind.DRAW_LABELS,
+          KeyCommandBind.HEX_COORDS);
 
     /** The keybinds to be shown in the Board Editor */
-    private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = Arrays.asList(
-            KeyCommandBind.HEX_COORDS
-    );
+    private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = Arrays.asList(KeyCommandBind.HEX_COORDS);
 
-    private static final List<String> ADDTL_BINDS = Arrays.asList(
-            Messages.getString("KeyBindingsDisplay.fixedBinds").split("\n"));
+    private static final List<String> ADDTL_BINDS = Arrays.asList(Messages.getString("KeyBindingsDisplay.fixedBinds")
+                                                                        .split("\n"));
 
-    private static final List<String> ADDTL_BINDS_BOARD_EDITOR = Arrays.asList(
-            Messages.getString("KeyBindingsDisplay.fixedBindsBoardEd").split("\n"));
+    private static final List<String> ADDTL_BINDS_BOARD_EDITOR = Arrays.asList(Messages.getString(
+          "KeyBindingsDisplay.fixedBindsBoardEd").split("\n"));
 
     /**
-     * An overlay for the Boardview that displays a selection of keybinds
-     * for the current game situation.
+     * An overlay for the Boardview that displays a selection of keybinds for the current game situation.
      */
     public KeyBindingsOverlay(BoardView boardView) {
         super(boardView, new Font("SansSerif", Font.PLAIN, 13));
@@ -133,7 +132,7 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
     /** Converts a list of KeyCommandBinds to a list of formatted strings. */
     private List<String> convertToStrings(List<KeyCommandBind> kcbs) {
         List<String> result = new ArrayList<>();
-        for (KeyCommandBind kcb: kcbs) {
+        for (KeyCommandBind kcb : kcbs) {
             String label = Messages.getString("KeyBinds.cmdNames." + kcb.cmd);
             String d = KeyCommandBind.getDesc(kcb);
             result.add(label + ": " + d);

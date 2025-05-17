@@ -295,7 +295,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void moveGetUp() {
         buttons.get(MoveCommand.MOVE_GET_UP).doClick();
     }
-
+  
     private void moveStepForward() {
         cmd.addStep(MoveStepType.FORWARDS);
         updateMove();
@@ -305,7 +305,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cmd.addStep(MoveStepType.BACKWARDS);
         updateMove();
     }
-
+  
     private void performToggleConversionMode() {
         final Entity currentlySelectedEntity = ce();
 

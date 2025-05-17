@@ -1798,8 +1798,7 @@ public abstract class Entity extends TurnOrdered
         if ((turn > -1) && isActive) {
             isActive = !deployed && shouldDeploy(turn);
         } else {
-            // Account for fliers leaving the map at the end of this round
-            isActive = isActive && (deployed || ((position != null) && (deployRound > 0)));
+            isActive = isActive && deployed;
         }
 
         return isActive;
@@ -9709,9 +9708,6 @@ public abstract class Entity extends TurnOrdered
         if (phase.isDeployment() == isDeployed()) {
             if (!isDeployed() && phase.isSetArtilleryAutohitHexes() && isEligibleForArtyAutoHitHexes()) {
                 LOGGER.debug("Artillery Units Present and Advanced PreDesignate option enabled");
-            } else if (position != null) {
-                // Aerospace flying off the map at the end of this round
-                return true;
             } else {
                 return false;
             }

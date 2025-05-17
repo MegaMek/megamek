@@ -38,7 +38,7 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
-import megamek.common.MoveStep;
+import megamek.common.moves.MoveStep;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;

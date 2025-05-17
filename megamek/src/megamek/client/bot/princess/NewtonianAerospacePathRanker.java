@@ -24,6 +24,7 @@ import java.util.List;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 
 public class NewtonianAerospacePathRanker extends BasicPathRanker {
@@ -72,7 +73,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
      */
     @Override
     double calculateMyDamagePotential(MovePath path, Entity enemy,
-            int distance, Game game) {
+                                      int distance, Game game) {
         Entity me = path.getEntity();
 
         int maxRange = getOwner().getMaxWeaponRange(me, enemy.isAirborne());

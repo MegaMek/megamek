@@ -18,14 +18,13 @@
 */
 package megamek.client.bot.princess;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 import megamek.common.Targetable;
 
 public interface IPathRanker {

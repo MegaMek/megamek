@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import megamek.common.*;
+import megamek.common.moves.MovePath;
 import megamek.common.options.GameOptions;
 import megamek.common.options.PilotOptions;
 

@@ -19,7 +19,7 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

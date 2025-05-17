@@ -1,34 +1,44 @@
 /*
- * MegaMek -
  * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
- * more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common;
+package megamek.common.moves;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-import java.util.concurrent.Callable;
+import java.util.*;
 
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.*;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
@@ -420,7 +430,7 @@ public class MoveStep implements Serializable {
      * @param prev              {@link MoveStep} Previous step.
      * @param cachedEntityState {@link CachedEntityState} the Cached Entity State
      */
-    private void compileMove(final Game game, final Entity entity, MoveStep prev, CachedEntityState cachedEntityState) {
+    void compileMove(final Game game, final Entity entity, MoveStep prev, CachedEntityState cachedEntityState) {
 
         Hex destHex = game.getBoard().getHex(getPosition());
 
@@ -653,7 +663,6 @@ public class MoveStep implements Serializable {
                 nWigeDescent = 0;
             }
         }
-
     }
 
     /**
@@ -664,340 +673,14 @@ public class MoveStep implements Serializable {
      * @param prev   the previous step in the path.
      */
     protected void compile(final Game game, final Entity entity, MoveStep prev, CachedEntityState cachedEntityState) {
-        final boolean isInfantry = entity instanceof Infantry;
-        boolean isFieldArtillery = (entity instanceof Infantry) && ((Infantry) entity).hasActiveFieldArtillery();
+        // setup the current move step using the state of the previous step
         copy(game, prev);
 
         // Is this the first step?
-        if (prev == null) {
-            prev = new MoveStep(null, MoveStepType.FORWARDS);
-            prev.setFromEntity(entity, game);
-            prev.isCarefulPath = isCareful();
-            prev.isJumpingPath = isJumping();
-            setFirstStep(prev.mpUsed == 0); // Bug 1519330 - it's not a first step when continuing after a fall
-        } else if (prev.isFirstStep()
-                         // Some step types don't remove first step status
-                         &&
-                         ((prev.getType() == MoveStepType.CLIMB_MODE_ON) ||
-                                (prev.getType() == MoveStepType.CLIMB_MODE_OFF))) {
-            setFirstStep(true);
-        }
-        switch (getType()) {
-            case UNLOAD:
-            case DISCONNECT:
-                // Infantry in immobilized transporters get a special "unload stranded" game turn. So do trailers on
-                // an immobilized tractor
-                hasEverUnloaded = true;
-                setMp(0);
-                break;
-            case LOAD:
-            case TOW, DROP_CARGO:
-                setMp(1);
-                break;
-            case TURN_LEFT:
-            case TURN_RIGHT:
-                // Check for pavement movement.
-                if (!entity.isAirborne() && Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(), this)) {
-                    setPavementStep(true);
-                } else {
-                    setPavementStep(false);
-                    setOnlyPavementOrRoad(false);
-                }
+        prev = firstStepEval(game, entity, prev);
 
-                // Infantry can turn for free, except for field artillery
-                setMp((isJumping() || isHasJustStood() || (isInfantry && !isFieldArtillery)) ? 0 : 1);
-                setNStraight(0);
-                if (entity.isAirborne() && (entity.isAero())) {
-                    setMp(asfTurnCost(game, getType(), entity));
-                    setNTurns(getNTurns() + 1);
-
-                    if (useAeroAtmosphere(game, entity)) {
-                        setFreeTurn(false);
-                    }
-                }
-
-                // tripods with all their legs only pay for their first facing change
-                if ((getEntity() instanceof TripodMek) &&
-                          (((Mek) getEntity()).countBadLegs() < 1) &&
-                          ((prev.type == MoveStepType.TURN_LEFT) || (prev.type == MoveStepType.TURN_RIGHT))) {
-                    setMp(0);
-                }
-                if (entity.isDropping()) {
-                    setMp(0);
-                }
-                adjustFacing(getType());
-                break;
-            case BACKWARDS:
-                moveInDir((getFacing() + 3) % 6);
-                setThisStepBackwards(true);
-                if (!entity.hasQuirk(OptionsConstants.QUIRK_POS_POWER_REVERSE)) {
-                    setRunProhibited(true);
-                }
-                compileMove(game, entity, prev, cachedEntityState);
-                break;
-            case FORWARDS:
-            case DFA:
-            case SWIM:
-                // step forwards or backwards
-                moveInDir(getFacing());
-                setThisStepBackwards(false);
-                compileMove(game, entity, prev, cachedEntityState);
-                break;
-            case CHARGE:
-                if (!(entity.isAirborne()) || !game.useVectorMove()) {
-                    moveInDir(getFacing());
-                    setThisStepBackwards(false);
-                    compileMove(game, entity, prev, cachedEntityState);
-                }
-                break;
-            case LATERAL_LEFT_BACKWARDS:
-            case LATERAL_RIGHT_BACKWARDS:
-                moveInDir((MovePath.getAdjustedFacing(getFacing(), MovePath.turnForLateralShift(getType())) + 3) % 6);
-                setThisStepBackwards(true);
-                if (!entity.hasQuirk(OptionsConstants.QUIRK_POS_POWER_REVERSE)) {
-                    setRunProhibited(true);
-                }
-                compileMove(game, entity, prev, cachedEntityState);
-                if (entity.isAirborne()) {
-                    setMp(0);
-                } else if (entity.isUsingManAce() & (entity instanceof QuadMek)) {
-                    setMp(getMp());
-                } else if (isJumping() && isUsingMekJumpBooster) {
-                    setMp(1);
-                } else {
-                    setMp(getMp() + 1); // +1 for side step
-                }
-                break;
-            case LATERAL_LEFT:
-            case LATERAL_RIGHT:
-                moveInDir(MovePath.getAdjustedFacing(getFacing(), MovePath.turnForLateralShift(getType())));
-                setThisStepBackwards(false);
-                compileMove(game, entity, prev, cachedEntityState);
-                if (entity.isAirborne()) {
-                    setMp(0);
-                } else if (entity.isUsingManAce() & (entity instanceof QuadMek)) {
-                    setMp(getMp());
-                } else if (isJumping() && isUsingMekJumpBooster) {
-                    setMp(1);
-                } else {
-                    setMp(getMp() + 1); // +1 for side step
-                }
-                break;
-            case GET_UP:
-                // meks with 1 MP are allowed to get up
-                setMp(cachedEntityState.getRunMP() == 1 ? 1 : 2);
-                setHasJustStood(true);
-                break;
-            case CAREFUL_STAND:
-                if (cachedEntityState.getWalkMP() <= 2) {
-                    entity.setCarefulStand(false);
-                    setMp(cachedEntityState.getRunMP() == 1 ? 1 : 2);
-                } else {
-                    setMp(cachedEntityState.getWalkMP());
-                }
-                setHasJustStood(true);
-                break;
-            case GO_PRONE:
-                if (!entity.isHullDown()) {
-                    setMp(1);
-                }
-                break;
-            case START_JUMP:
-                entity.setIsJumpingNow(true);
-                break;
-            case UP:
-                if (entity.isAirborne()) {
-                    setAltitude(altitude + 1);
-                    setMp(2);
-                } else {
-                    if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                        // If on the ground, pay liftoff cost. If airborne, pay 1 MP to increase
-                        // elevation
-                        // (LAMs and glider ProtoMeks only)
-                        if (getClearance() == 0) {
-                            setMp((entity instanceof ProtoMek) ? 4 : 5);
-                        } else {
-                            setMp(1);
-                        }
-                    } else {
-                        if (entity instanceof ProtoMek) {
-                            setMp(isJumping() ? 0 : 2);
-                        } else {
-                            setMp(isJumping() ? 0 : 1);
-                        }
-                    }
-                    setElevation(elevation + 1);
-                }
-                break;
-            case DOWN:
-                if (entity.isAirborne()) {
-                    setAltitude(altitude - 1);
-                    // it costs nothing (and may increase velocity)
-                    setMp(0);
-                    setNDown(getNDown() + 1);
-                } else {
-                    setElevation(elevation - 1);
-                    if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                        setMp(0);
-                    } else {
-                        if (entity instanceof ProtoMek) {
-                            setMp(isJumping() ? 0 : 2);
-                        } else {
-                            setMp(isJumping() ? 0 : 1);
-                        }
-                    }
-                }
-                break;
-            case HULL_DOWN:
-                if (isProne() && (entity instanceof Mek)) {
-                    int mpUsed = 1;
-                    if (entity instanceof BipedMek) {
-                        for (int location = Mek.LOC_RLEG; location <= Mek.LOC_LLEG; location++) {
-                            if (entity.isLocationBad(location)) {
-                                mpUsed += 99;
-                                break;
-                            }
-                            mpUsed += ((Mek) entity).countLegActuatorCrits(location);
-                            if (((Mek) entity).legHasHipCrit(location)) {
-                                mpUsed += 1;
-                            }
-                        }
-                        setHasJustStood(true);
-                    } else {
-                        for (int location = Mek.LOC_RARM; location <= Mek.LOC_LLEG; location++) {
-                            if (entity.isLocationBad(location)) {
-                                mpUsed += 99;
-                                break;
-                            }
-                            mpUsed += ((QuadMek) entity).countLegActuatorCrits(location);
-                            if (((QuadMek) entity).legHasHipCrit(location)) {
-                                mpUsed += 1;
-                            }
-                        }
-                    }
-                    setMp(mpUsed);
-                } else {
-                    setMp(2);
-                }
-                break;
-            case CLIMB_MODE_ON:
-                setClimbMode(true);
-                break;
-            case CLIMB_MODE_OFF:
-                setClimbMode(false);
-                break;
-            case SHAKE_OFF_SWARMERS:
-                // Counts as flank move, but you can only use cruise MP
-                setMp(cachedEntityState.getRunMP() - cachedEntityState.getWalkMP());
-                break;
-            case LAND:
-            case VLAND:
-                setMp(0);
-                setAltitude(0);
-                break;
-            case ACCN:
-                setVelocityN(getVelocityN() + 1);
-                setMp(1);
-                break;
-            case DECN:
-                setVelocityN(getVelocityN() - 1);
-                setMp(1);
-                break;
-            case ACC:
-                setVelocity(getVelocity() + 1);
-                setVelocityLeft(getVelocityLeft() + 1);
-                setMp(1);
-                break;
-            case DEC:
-                setVelocity(getVelocity() - 1);
-                setVelocityLeft(getVelocityLeft() - 1);
-                setMp(1);
-                break;
-            case EVADE:
-                setEvading(true);
-                if (entity.isAirborne()) {
-                    setMp(2);
-                }
-                break;
-            case SHUTDOWN:
-                setShuttingDown(true);
-                // Do something here...
-                break;
-            case STARTUP:
-                setStartingUp(true);
-                // Do something here...
-                break;
-            case SELF_DESTRUCT:
-                setSelfDestructing(true);
-                // Do something here...
-                break;
-            case ROLL:
-                isRolled = !prev.isRolled;
-                // doesn't cost anything if previous was a yaw
-                if (prev.getType() != MoveStepType.YAW) {
-                    setMp(1);
-                    setNRolls(getNRolls() + 1);
-                } else {
-                    setMp(0);
-                }
-                break;
-            case LAUNCH:
-            case DROP:
-                hasEverUnloaded = true;
-                setMp(0);
-                break;
-            case THRUST:
-                setVectors(Compute.changeVectors(getVectors(), getFacing()));
-                setMp(1);
-                break;
-            case YAW:
-                setNRolls(getNRolls() + 1);
-                reverseFacing();
-                setMp(2);
-                break;
-            case HOVER:
-                if (entity.isAero()) {
-                    setMp(2);
-                } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                    if (entity instanceof LandAirMek && entity.getAltitude() > 0) {
-                        setMp(10);
-                        setElevation(altitude * 10);
-                        setAltitude(0);
-                    } else {
-                        setMp(entity instanceof ProtoMek ? 4 : 5);
-                    }
-                }
-                break;
-            case MANEUVER:
-                int cost = ManeuverType.getCost(getManeuverType(), getVelocity());
-                if (entity.isUsingManAce()) {
-                    cost = Math.max(cost - 1, 0);
-                }
-                setMp(cost);
-                break;
-            case LOOP:
-                setVelocityLeft(getVelocityLeft() - 4);
-                setMp(0);
-                break;
-            case CONVERT_MODE:
-                if (entity instanceof QuadVee) {
-                    setMp(((QuadVee) entity).conversionCost());
-                } else {
-                    setMp(0);
-                }
-                movementMode = entity.nextConversionMode(prev.getMovementMode());
-                break;
-            case BOOTLEGGER:
-                reverseFacing();
-                setMp(2);
-                break;
-            case BRACE:
-                setMp(entity.getBraceMPCost());
-                break;
-            case CHAFF:
-            default:
-                setMp(0);
-        }
+        PhasePass phasePass = PhasePassSelector.getPhasePass(getType());
+        phasePass.execute(this, game, entity, prev, cachedEntityState);
 
         if (noCost) {
             setMp(0);
@@ -1031,6 +714,26 @@ public class MoveStep implements Serializable {
 
         // set moveType, illegal, trouble flags
         compileIllegal(game, entity, prev, cachedEntityState);
+    }
+
+    private MoveStep firstStepEval(Game game, Entity entity, MoveStep prev) {
+        if (prev == null) {
+            prev = initializePrevStepForFirstStep(game, entity);
+        } else if (prev.isFirstStep() && (
+              (prev.getType() == MoveStepType.CLIMB_MODE_ON) || (prev.getType() == MoveStepType.CLIMB_MODE_OFF))) {
+            setFirstStep(true);
+        }
+        return prev;
+    }
+
+    private MoveStep initializePrevStepForFirstStep(Game game, Entity entity) {
+        MoveStep prev;
+        prev = new MoveStep(null, MoveStepType.FORWARDS);
+        prev.setFromEntity(entity, game);
+        prev.isCarefulPath = isCareful();
+        prev.isJumpingPath = isJumping();
+        setFirstStep(prev.mpUsed == 0); // Bug 1519330 - it's not a first step when continuing after a fall
+        return prev;
     }
 
     /**
@@ -1346,6 +1049,10 @@ public class MoveStep implements Serializable {
         return isRolled;
     }
 
+    void setRolled(boolean roll) {
+        isRolled = roll;
+    }
+
     public boolean isVTOLBombingStep() {
         return targetType == Targetable.TYPE_HEX_AERO_BOMB;
     }
@@ -1381,6 +1088,10 @@ public class MoveStep implements Serializable {
             moveType = EntityMovementType.MOVE_ILLEGAL;
         }
         return moveType;
+    }
+
+    void setMovementMode(EntityMovementMode movementMode) {
+        this.movementMode = movementMode;
     }
 
     public EntityMovementMode getMovementMode() {
@@ -1484,7 +1195,7 @@ public class MoveStep implements Serializable {
             boolean stepMatch = this.equals(step);
 
             if (lastStep) {
-                lastStep &= step.getMovementType(true) == EntityMovementType.MOVE_ILLEGAL;
+                lastStep = step.getMovementType(true) == EntityMovementType.MOVE_ILLEGAL;
             }
 
             // If there is a legal step after us, we're not the end
@@ -1618,6 +1329,18 @@ public class MoveStep implements Serializable {
         }
     }
 
+    /**
+     * This function is POSSIBLY A HACK!
+     * DO NOT CALL THIS FUNCTION! I need to find out why this value is being set directly through a couple
+     * off functions in the MoveStep compilation process. It should use the {@link MoveStep#setUnloaded} but I don't
+     * know why it does this instead.
+     * @param b sets hasEverUnloaded to this value
+     */
+    @Deprecated(since="0.50.07", forRemoval = true)
+    protected void setHasEverUnloaded(boolean b) {
+        hasEverUnloaded = b;
+    }
+
     protected void setUsingMASC(boolean b) {
         isUsingMASC = b;
     }
@@ -1690,8 +1413,8 @@ public class MoveStep implements Serializable {
         this.isRunProhibited = isRunProhibited;
     }
 
-    boolean isRunProhibited() {
-        return isRunProhibited;
+    boolean isRunAllowed() {
+        return !isRunProhibited;
     }
 
     protected void setStackingViolation(boolean isStackingViolation) {
@@ -1712,8 +1435,8 @@ public class MoveStep implements Serializable {
      * in MovePath.addStep.
      *
      * @param game   The current {@link Game}
-     * @param entity
-     * @param prev
+     * @param entity The {@link Entity} taking this step.
+     * @param prev   The {@link MoveStep} previous step in the path.
      */
     private void compileIllegal(final Game game, final Entity entity, final MoveStep prev,
                                 CachedEntityState cachedEntityState) {
@@ -1771,12 +1494,13 @@ public class MoveStep implements Serializable {
             }
 
             // If airborne and some other non-Aero unit then everything is illegal, except
-            // turns and AirMek
+            // turns and conversion to AirMek
             if (!entity.isAero()) {
                 switch (type) {
                     case TURN_LEFT:
                     case TURN_RIGHT:
                         movementType = EntityMovementType.MOVE_WALK;
+                        // TODO: check if this line needed a break; or if MOVE_NONE is correct
                     case CONVERT_MODE:
                         movementType = EntityMovementType.MOVE_NONE;
                     default:
@@ -2300,7 +2024,7 @@ public class MoveStep implements Serializable {
                 // previous round in order to move faster than a walk
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
-            } else if (getMpUsed() <= runMPMax && !isRunProhibited()) {
+            } else if (getMpUsed() <= runMPMax && isRunAllowed()) {
                 // RUN - If we got this far, entity is moving farther than a walk
                 // but within run and running is legal
 
@@ -2323,7 +2047,7 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
-            } else if ((getMpUsed() <= sprintMPMax) && !isRunProhibited() && !isEvading() && canUseSprint(game)) {
+            } else if ((getMpUsed() <= sprintMPMax) && isRunAllowed() && !isEvading() && canUseSprint(game)) {
                 // SPRINT - If we got this far, entity is moving farther than a run
                 // but within sprint and sprinting must be legal and the option enabled
 
@@ -3491,7 +3215,7 @@ public class MoveStep implements Serializable {
         if ((movementType == EntityMovementType.MOVE_JUMP) &&
                   (destAlt >
                          (entity.getElevation() +
-                                entity.game.getBoard().getHex(entity.getPosition()).getLevel() +
+                                game.getBoard().getHex(entity.getPosition()).getLevel() +
                                 getAvailableJumpMP(entity) +
                                 (type == MoveStepType.DFA ? 1 : 0)))) {
             return false;
@@ -3940,7 +3664,7 @@ public class MoveStep implements Serializable {
         }
 
         // different rules if flying on the ground map
-        if (en.game.getBoard().onGround() && (getElevation() > 0)) {
+        if (en.getGame().getBoard().onGround() && (getElevation() > 0)) {
             if (en instanceof Dropship) {
                 thresh = vel * 8;
             } else if (en instanceof SmallCraft) {

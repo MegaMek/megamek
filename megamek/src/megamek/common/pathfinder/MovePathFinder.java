@@ -14,8 +14,10 @@
 package megamek.common.pathfinder;
 
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
+import megamek.common.moves.MoveStep;
 import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
 
 import java.util.*;

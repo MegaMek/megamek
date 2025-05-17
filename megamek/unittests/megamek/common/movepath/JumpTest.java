@@ -33,6 +33,8 @@
 package megamek.common.movepath;
 
 import megamek.common.*;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

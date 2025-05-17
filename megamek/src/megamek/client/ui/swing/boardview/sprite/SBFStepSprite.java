@@ -30,7 +30,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.MiscType;
-import megamek.common.MoveStep;
+import megamek.common.moves.MoveStep;
 import megamek.common.ToHitData;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFMoveStep;

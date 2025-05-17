@@ -38,7 +38,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Game;
 import megamek.common.ManeuverType;
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 
 /**
  * A (somewhat primitive) dialog that asks a question and lets the player select

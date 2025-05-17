@@ -35,7 +35,7 @@ package megamek.client.bot.princess;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Mek;
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 import megamek.common.annotations.Nullable;
 
 /**

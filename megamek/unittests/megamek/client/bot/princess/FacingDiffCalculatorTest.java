@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 import megamek.common.BipedMek;
 import megamek.common.Coords;
 import megamek.common.Mek;
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 import org.junit.jupiter.api.Test;
 
 /**

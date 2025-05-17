@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import megamek.common.Coords;
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 
 /**
  * This class handles state information for Princess' path ranking algorithms, as the path ranker and its

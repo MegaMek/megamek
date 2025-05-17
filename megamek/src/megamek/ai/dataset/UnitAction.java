@@ -30,7 +30,6 @@ package megamek.ai.dataset;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,10 +38,9 @@ import megamek.client.ui.SharedUtility;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IAero;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.UnitRole;
-import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;
 
 /**

@@ -30,8 +30,8 @@ import megamek.client.bot.princess.FireControl;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Hex;
-import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.Terrains;
 import megamek.logging.MMLogger;
 

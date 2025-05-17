@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import megamek.common.equipment.MiscMounted;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 
 /**

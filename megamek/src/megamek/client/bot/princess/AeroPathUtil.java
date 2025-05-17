@@ -30,8 +30,8 @@ import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.IAero;
-import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.UnitType;
 import megamek.logging.MMLogger;
 

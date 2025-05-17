@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 
 /**

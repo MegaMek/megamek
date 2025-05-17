@@ -39,6 +39,8 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
 
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,7 +50,7 @@ import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
-import megamek.common.MovePath.Key;
+import megamek.common.moves.MovePath.Key;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;

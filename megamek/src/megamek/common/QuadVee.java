@@ -280,7 +280,7 @@ public class QuadVee extends QuadMek {
     }
 
     /**
-     * QuadVees cannot benefit from MASC in vehicle mode
+     * QuadVees cannot benefit from MASC or SuperCharger in vehicle mode
      */
     @Override
     public MPBoosters getArmedMPBoosters() {
@@ -289,11 +289,7 @@ public class QuadVee extends QuadMek {
             return  mpBoosters;
         }
 
-        return switch (mpBoosters) {
-            case MASC_AND_SUPERCHARGER -> MPBoosters.SUPERCHARGER_ONLY;
-            case MASC_ONLY -> MPBoosters.NONE;
-            default -> mpBoosters;
-        };
+        return  MPBoosters.NONE;
     }
 
     /**
@@ -423,7 +419,7 @@ public class QuadVee extends QuadMek {
     @Override
     public int height() {
         if (getConversionMode() == CONV_MODE_VEHICLE) {
-            return 0;
+            return 1;
         }
         return super.height();
     }

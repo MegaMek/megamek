@@ -3250,14 +3250,17 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         this.enginesLostRound = enginesLostRound;
     }
 
+    @Override
     public boolean isFlyingOff() {
         return flyingOff != OffBoardDirection.NONE;
     }
 
+    @Override
     public void setFlyingOff(OffBoardDirection direction) {
         this.flyingOff = direction;
     }
 
+    @Override
     public OffBoardDirection getFlyingOffDirection() {
         return this.flyingOff;
     }

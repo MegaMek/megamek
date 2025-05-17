@@ -164,7 +164,7 @@ public class TechAdvancement implements ITechnology {
      * Indicate whether the years for prototype, production, common, extinction, and reintroduction
      * for IS factions should be considered approximate.
      *
-     * @param prog A map of tech progression years.
+     * @param approx A map of tech progression years.
      * @return a reference to this object
      */
     
@@ -250,7 +250,7 @@ public class TechAdvancement implements ITechnology {
      * Indicate whether the years for prototype, production, common, extinction, and reintroduction
      * for Clan factions should be considered approximate.
      *
-     * @param prog A map of tech progression years.
+     * @param approx A map of tech progression years.
      * @return a reference to this object
      */
     

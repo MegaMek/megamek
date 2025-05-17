@@ -3081,8 +3081,8 @@ public class AmmoType extends EquipmentType {
          * munitions.add(new MunitionMutator("Thunder-Active-IV", 1,
          * Munitions.M_ACTIVE_IV, new
          * TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false).setUnofficial(false).
-         * setTechRating(TechRating.D) .setAvailability(TechRating.X, TechRating.X, TechRating.E,
-         * TechRating.E) .setISAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
+         * setTechRating(TechRating.D) .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E,
+         * AvailabilityValue.E) .setISAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
          * .setApproximate(false, false, false, false, false).setPrototypeFactions(Faction.CC)
          * .setProductionFactions(Faction.CCC), "356, TO"));
          */
@@ -3252,8 +3252,8 @@ public class AmmoType extends EquipmentType {
          * munitions.add(new MunitionMutator("Thunder-Active-IV", 1,
          * Munitions.M_ACTIVE_IV, new
          * TechAdvancement(ITechnology.TechBase.IS).setIntroLevel(false).setUnofficial(false).
-         * setTechRating(TechRating.D) .setAvailability(TechRating.X, TechRating.X, TechRating.E,
-         * TechRating.E) .setISAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
+         * setTechRating(TechRating.D) .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E,
+         * AvailabilityValue.E) .setISAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
          * .setApproximate(false, false, false, false, false).setPrototypeFactions(Faction.CC)
          * .setProductionFactions(Faction.CCC), "356, TO"));
          */
@@ -4006,8 +4006,8 @@ public class AmmoType extends EquipmentType {
      * ammo.techAdvancement.setTechBase(TechBase.CLAN);
      * ammo.techAdvancement.setClanAdvancement(3032, 3072, DATE_NONE);
      * ammo.techAdvancement.setTechRating(TechRating.B);
-     * ammo.techAdvancement.setAvailability(TechRating.X, TechRating.F,
-     * TechRating.E, TechRating.D }); return ammo; }
+     * ammo.techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.F,
+     * AvailabilityValue.E, AvailabilityValue.D }); return ammo; }
      */
 
     private static AmmoType createISSniperCannonAmmo() {
@@ -4062,8 +4062,8 @@ public class AmmoType extends EquipmentType {
      * ammo.techAdvancement.setTechBase(TechBase.CLAN);
      * ammo.techAdvancement.setClanAdvancement(3032, 3072, DATE_NONE);
      * ammo.techAdvancement.setTechRating(TechRating.B);
-     * ammo.techAdvancement.setAvailability(TechRating.X, TechRating.F,
-     * TechRating.E, TechRating.D }); return ammo; }
+     * ammo.techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.F,
+     * AvailabilityValue.E, AvailabilityValue.D }); return ammo; }
      */
 
     private static AmmoType createISThumperCannonAmmo() {
@@ -4118,8 +4118,8 @@ public class AmmoType extends EquipmentType {
      * ammo.techAdvancement.setTechBase(TechBase.CLAN);
      * ammo.techAdvancement.setClanAdvancement(3032, 3072, DATE_NONE);
      * ammo.techAdvancement.setTechRating(TechRating.B);
-     * ammo.techAdvancement.setAvailability(TechRating.X, TechRating.F,
-     * TechRating.E, TechRating.D }); return ammo; }
+     * ammo.techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.F,
+     * AvailabilityValue.E, AvailabilityValue.D }); return ammo; }
      */
 
     private static AmmoType createBATubeArtyAmmo() {

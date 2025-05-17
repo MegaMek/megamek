@@ -2250,7 +2250,7 @@ public class MiscType extends EquipmentType {
         // No information about this is provided so we fill in essentially "blank" data
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL)
-              .setTechRating(TechRating.X)
+              .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(DATE_ES)
               .setISApproximate(true);

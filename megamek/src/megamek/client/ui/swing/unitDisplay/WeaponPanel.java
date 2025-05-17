@@ -2083,7 +2083,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
 
         } else {
-            m_chAmmo.setEnabled(true);
+
             vAmmo = new ArrayList<>();
             // Ammo sharing between adjacent trailers
             List<AmmoMounted> fullAmmoList = new ArrayList<>(entity.getAmmo());
@@ -2122,7 +2122,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         && (atype.getRackSize() == wtype.getRackSize())) {
 
                     vAmmo.add(ammo);
-                    m_chAmmo.addItem(formatAmmo(ammo));
+
 
                     if ((mounted.getLinked() != null) && mounted.getLinked().equals(ammo)) {
                         newSelectedIndex = i;
@@ -2134,6 +2134,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     }
                     i++;
                 }
+            }
+            m_chAmmo.setEnabled(true);
+            for (var ammo : vAmmo) {
+                m_chAmmo.addItem(formatAmmo(ammo));
             }
 
             if ((newSelectedIndex != -1) && (newSelectedIndex < m_chAmmo.getItemCount())) {
@@ -2705,9 +2709,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             WeaponMounted mWeap = ((WeaponListModel) weaponList.getModel()).getWeaponAt(n);
 
             AmmoMounted oldAmmo = mWeap.getLinkedAmmo();
-            if (vAmmo == null) {
-                vAmmo = new ArrayList<>();
-            }
             AmmoMounted mAmmo = vAmmo.get(m_chAmmo.getSelectedIndex());
 
             weaponList.setSelectedIndex(n);

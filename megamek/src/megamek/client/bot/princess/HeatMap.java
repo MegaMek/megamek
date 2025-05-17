@@ -32,8 +32,8 @@ import megamek.common.EjectedCrew;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.GunEmplacement;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 
 /**
  * Tracks activity of units on the map. Board positions that are frequently occupied by units get

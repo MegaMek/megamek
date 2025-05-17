@@ -3,9 +3,9 @@ package megamek.common.pathfinder;
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Game;
 import megamek.common.IAero;
-import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
 
 import java.util.ArrayList;

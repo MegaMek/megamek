@@ -27,6 +27,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Vector;
 
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.junit.jupiter.api.Test;
 

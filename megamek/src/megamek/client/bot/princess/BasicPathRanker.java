@@ -25,6 +25,8 @@ import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.util.HazardousLiquidPoolUtil;
@@ -133,7 +135,7 @@ public class BasicPathRanker extends PathRanker {
      * range
      */
     EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange,
-            boolean useLOSRange) {
+                                                  boolean useLOSRange) {
         // some preliminary calculations
         final double damageDiscount = 0.25;
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();

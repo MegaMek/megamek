@@ -23,9 +23,10 @@ import megamek.client.bot.BotLogger;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import org.apache.logging.log4j.Level;
@@ -33,7 +34,6 @@ import org.apache.logging.log4j.Level;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.text.NumberFormat;
 import java.util.*;
 
 import static megamek.client.ui.SharedUtility.predictLeapDamage;
@@ -68,8 +68,8 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     protected abstract RankedPath rankPath(MovePath path, Game game, int maxRange,
-            double fallTolerance, List<Entity> enemies,
-            Coords friendsCoords);
+                                           double fallTolerance, List<Entity> enemies,
+                                           Coords friendsCoords);
 
     @Override
     public TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,

@@ -113,7 +113,7 @@ public class ComputeArc {
             }
         }
 
-        if (CrossBoardAttackHelper.isOrbitToSurface(attacker, target, game)) {
+        if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
             // For this attack, the ground row hex enclosing the ground map target must be in arc; replace position
             Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target.getBoardId()));
             targetPositions.clear();

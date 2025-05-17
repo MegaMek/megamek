@@ -389,16 +389,16 @@ public class LosEffects {
 
     /**
      * Returns a LosEffects object representing the LOS effects of intervening terrain between the attacker and target.
-     * Checks to see if the attacker and target are at an angle where the LOS line will pass between two hexes.
+     * Checks to see if the attacker and target are at an angle where the LOS line will pass between two hexes. This
+     * method also checks if positions must be replaced by effective positions for cross-board attacks and for multi-hex
+     * units (landed DS). If
      *
-     * @param game
-     * @param attacker
-     * @param target
+     * @param attacker the attacker, which may be null. If it is, the view is blocked.
+     * @param target   the target, which may be null. If it is, the view is blocked.
      *
-     * @return
+     * @return The resulting effects of line of sight
      */
-    public static LosEffects calculateLOS(final Game game, final @Nullable Entity attacker,
-          final @Nullable Targetable target) {
+    public static LosEffects calculateLOS(Game game, @Nullable Entity attacker, @Nullable Targetable target) {
         return calculateLOS(game, attacker, target, false);
     }
 
@@ -474,6 +474,14 @@ public class LosEffects {
             }
         } else if (Compute.isGroundToAir(attacker, target)) {
             // G2A attacks are against the flight path on the attacker's board
+            boardId = attacker.getBoardId();
+        } else if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
+            // The effective position of the target is the ground map position on the ground hex row of the high
+            // altitude map that the attacker is firing from; this position is very relevant as the atmospheric row
+            // hexes influence the range and attack modifiers
+            targetPositions.clear();
+            int atmosphericBoardId = BoardHelper.enclosingBoardId(game, target.getBoardLocation());
+            targetPositions.add(BoardHelper.positionOnEnclosingBoard(game, atmosphericBoardId));
             boardId = attacker.getBoardId();
         }
 

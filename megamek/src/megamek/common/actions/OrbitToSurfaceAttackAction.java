@@ -19,17 +19,14 @@
 package megamek.common.actions;
 
 import megamek.common.Compute;
-import megamek.common.EquipmentType;
 import megamek.common.Game;
 import megamek.common.WeaponType;
 
 public class OrbitToSurfaceAttackAction extends ArtilleryAttackAction {
 
-    public OrbitToSurfaceAttackAction(int entityId, int targetType, int targetId,
-          int weaponId, Game game) {
+    public OrbitToSurfaceAttackAction(int entityId, int targetType, int targetId, int weaponId, Game game) {
         super(entityId, targetType, targetId, weaponId, game);
-        EquipmentType eType = getEntity(game).getEquipment(weaponId).getType();
-        WeaponType wType = (WeaponType) eType;
+        WeaponType wType = (WeaponType) getEntity(game).getEquipment(weaponId).getType();
         if (wType.hasFlag(WeaponType.F_DIRECT_FIRE) && wType.hasFlag(WeaponType.F_ENERGY)) {
             turnsTilHit = 0;
         } else if (wType.hasFlag(WeaponType.F_DIRECT_FIRE) && wType.hasFlag(WeaponType.F_BALLISTIC)) {

@@ -83,7 +83,7 @@ public final class CrossBoardAttackHelper {
             return true;
         }
 
-        return isOrbitToSurface(attacker, target, game) ||
+        return isOrbitToSurface(game, attacker, target) ||
                      isCrossBoardArtyAttack(attacker, target, game) ||
                      isSurfaceToOrbit(attacker, target, game) ||
                      isAirborneToSurface(attacker, target, game);
@@ -119,19 +119,19 @@ public final class CrossBoardAttackHelper {
      * the attack may still be impossible because of ammo, arc, distance etc. but when false, the attack cannot work as
      * an O2S attack.
      *
+     * @param game     The game
      * @param attacker The attacking unit for the O2S attack
      * @param target   The target
-     * @param game     The game
      *
      * @return True when an attack must be handled as an O2S attack
      */
-    public static boolean isOrbitToSurface(Entity attacker, Targetable target, Game game) {
-        return (attacker != null) &&
-                     (target != null) &&
-                     BoardHelper.isTrueSpaceHex(game, game.getBoard(attacker), attacker.getPosition()) &&
-                     game.isOnGroundMap(target) &&
-                     game.onConnectedBoards(attacker, target) &&
-                     target instanceof HexTarget;
+    public static boolean isOrbitToSurface(Game game, Entity attacker, Targetable target) {
+        return (attacker != null)
+              && (target != null)
+              && BoardHelper.isTrueSpaceHex(game, game.getBoard(attacker), attacker.getPosition())
+              && game.isOnGroundMap(target)
+              && game.onConnectedBoards(attacker, target)
+              && target instanceof HexTarget;
     }
 
     /**

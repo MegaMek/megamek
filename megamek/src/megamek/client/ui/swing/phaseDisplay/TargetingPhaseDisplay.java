@@ -611,7 +611,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         WeaponAttackAction waa = new WeaponAttackAction(currentEntity, target.getTargetType(),
                 target.getId(), weaponNum);
         int distance = Compute.effectiveDistance(game, waa.getEntity(game), waa.getTarget(game));
-        if (CrossBoardAttackHelper.isOrbitToSurface(ce(), target, game)) {
+        if (CrossBoardAttackHelper.isOrbitToSurface(game, ce(), target)) {
             waa = new OrbitToSurfaceAttackAction(ce().getId(), target.getTargetType(),
                   target.getId(), weaponNum, game);
         } else if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))

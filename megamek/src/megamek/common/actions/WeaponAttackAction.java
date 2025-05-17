@@ -1317,6 +1317,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit = new ToHitData();
         }
 
+        if (!game.onConnectedBoards(ae, target)) {
+            return Messages.getString("WeaponAttackAction.UnconnectedBoards");
+        }
+
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
             // Some weapons only target valid entities
@@ -2278,6 +2282,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
             } else if (weapon.isInBearingsOnlyMode()) {
                 // We don't really need to do anything here. This just prevents these weapons
                 // from passing the next test erroneously.
+            } else if ((wtype.isCapital() || wtype.isSubCapital())
+                  && (ttype == Targetable.TYPE_HEX_ARTILLERY)
+                  && CrossBoardAttackHelper.isOrbitToSurface(game, ae, target)) {
+                // O2S attacks behave (correctly) as artillery attacks against hex targets, SO:AA p.91
             } else if (wtype instanceof CapitalMissileWeapon && Compute.isGroundToGround(ae, target)) {
                 // Grounded units firing capital missiles at ground targets must do so as artillery
                 if (ttype != Targetable.TYPE_HEX_ARTILLERY) {

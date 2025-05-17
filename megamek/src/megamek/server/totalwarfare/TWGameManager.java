@@ -5690,7 +5690,7 @@ public class TWGameManager extends AbstractGameManager {
             entity.setDeployed(false);
             entity.setDeployRound(1 + game.getRoundCount() + returnable);
             entity.setPosition(null);
-            /* entity.setDone(true); */
+            entity.setDone(true);
             if (entity.isAero()) {
                 // If we're flying off because we're OOC, when we come back we
                 // should no longer be OOC

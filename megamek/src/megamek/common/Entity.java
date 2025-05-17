@@ -9709,6 +9709,9 @@ public abstract class Entity extends TurnOrdered
         if (phase.isDeployment() == isDeployed()) {
             if (!isDeployed() && phase.isSetArtilleryAutohitHexes() && isEligibleForArtyAutoHitHexes()) {
                 LOGGER.debug("Artillery Units Present and Advanced PreDesignate option enabled");
+            } else if (position != null) {
+                // Aerospace flying off the map at the end of this round
+                return true;
             } else {
                 return false;
             }

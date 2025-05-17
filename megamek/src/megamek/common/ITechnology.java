@@ -55,6 +55,7 @@ public interface ITechnology {
         D(3, "D"),
         E(4, "E"),
         F(5, "F"),
+        FSTAR(6, "F*"),
         X(7, "X");
 
         private final int index;
@@ -96,9 +97,7 @@ public interface ITechnology {
         C(2, "C"),
         D(3, "D"),
         E(4, "E"),
-        F(5, "F"),
-        FSTAR(6, "F*"),
-        X(7, "X");
+        F(5, "F");
 
         private final int index;
         private final String name;

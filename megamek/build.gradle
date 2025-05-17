@@ -365,6 +365,15 @@ tasks.register('extendedEquipmentList', JavaExec) {
     args = ['-eqedb', "${projectDir}/extended-equipment.txt"]
 }
 
+tasks.register('yamlEquipment', JavaExec) {
+    dependsOn jar
+    description = 'Generate YAML Equipment Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-eqyamldb', "${projectDir}/yaml/"]
+}
+
 tasks.register('weaponsList', JavaExec) {
     dependsOn jar
     description = 'Generate Weapons Database'

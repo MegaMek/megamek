@@ -1798,7 +1798,8 @@ public abstract class Entity extends TurnOrdered
         if ((turn > -1) && isActive) {
             isActive = !deployed && shouldDeploy(turn);
         } else {
-            isActive = isActive && deployed;
+            // Account for fliers leaving the map at the end of this round
+            isActive = isActive && (deployed || ((position != null) && (deployRound > 0)));
         }
 
         return isActive;

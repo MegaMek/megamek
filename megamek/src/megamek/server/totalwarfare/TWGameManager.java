@@ -1102,6 +1102,20 @@ public class TWGameManager extends AbstractGameManager {
 
             entity.setCarefulStand(false);
 
+            if (phase.isEnd()) {
+                // Handle Aerospace units that flew off the board this round but lingered through the
+                // various phases for full attack opportunities.
+                // TODO: use off-board state with flown-off aerospace units
+                if (entity instanceof Aero aero) {
+                    // When we process RETURN movements, we initially set position to null but then revert it
+                    // back to the current location so that the firing phases can happen.
+                    if (!aero.isDeployed() && (aero.getPosition() != null) && (aero.getDeployRound() > 0)) {
+                        // Actually set the position to null here, after all firing and heat phases have been processed
+                        aero.setPosition(null);
+                    }
+                }
+            }
+
             // this flag is relevant only within the context of a single phase, but not
             // between phases
             entity.setTurnInterrupted(false);
@@ -5676,7 +5690,7 @@ public class TWGameManager extends AbstractGameManager {
             entity.setDeployed(false);
             entity.setDeployRound(1 + game.getRoundCount() + returnable);
             entity.setPosition(null);
-            entity.setDone(true);
+            /* entity.setDone(true); */
             if (entity.isAero()) {
                 // If we're flying off because we're OOC, when we come back we
                 // should no longer be OOC

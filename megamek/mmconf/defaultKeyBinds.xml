@@ -148,16 +148,16 @@
     </KeyBind>
 
     <KeyBind>
-         <command>nextTargetNoAllies</command> <!-- Ctrl-Right -->
+         <command>nextTargetNoAllies</command> <!-- Alt-Right -->
         <keyCode>39</keyCode>
-        <modifier>128</modifier>
+        <modifier>512</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-         <command>prevTargetNoAllies</command> <!-- Ctrl-Left -->
+         <command>prevTargetNoAllies</command> <!-- Alt-Left -->
         <keyCode>37</keyCode>
-        <modifier>128</modifier>
+        <modifier>512</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -172,6 +172,27 @@
          <command>prevTargetValidNoAllies</command> <!-- Ctrl+Shift-Left -->
         <keyCode>37</keyCode>
         <modifier>192</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>physPunch</command> <!-- P -->
+        <keyCode>80</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>physKick</command> <!-- K -->
+        <keyCode>75</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>physPush</command> <!-- Shift-P -->
+        <keyCode>80</keyCode>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 

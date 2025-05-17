@@ -480,7 +480,10 @@ public class AmmoType extends EquipmentType {
         if (flag instanceof AmmoTypeFlag) {
             return super.hasFlag(flag);
         } else {
-            LOGGER.warn("Incorrect flag check: make sure to test only AmmoTypeFlags on an AmmoType.", new Throwable("Invalid AmmoType"));
+            LOGGER.warn("Incorrect flag check: tested {} instead of AmmoTypeFlag",
+                  flag.getClass().getSimpleName(),
+                  new Throwable("Incorrect flag tested " + flag.getClass().getSimpleName() + " instead of " +
+                                      "AmmoTypeFlag"));
             return false;
         }
     }

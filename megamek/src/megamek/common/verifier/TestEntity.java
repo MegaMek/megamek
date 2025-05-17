@@ -1181,8 +1181,8 @@ public abstract class TestEntity implements TestEntityOption {
                     : nextE.findMinimumRulesLevel(getEntity().isClan()).ordinal();
             boolean illegal = eqRulesLevel > eRulesLevel;
             if (!getEntity().isMixedTech()) {
-                illegal |= getEntity().isClan() && nextE.getTechBase() == ITechnology.TECH_BASE_IS;
-                illegal |= !getEntity().isClan() && nextE.getTechBase() == ITechnology.TECH_BASE_CLAN;
+                illegal |= getEntity().isClan() && nextE.getTechBase() == ITechnology.TechBase.IS;
+                illegal |= !getEntity().isClan() && nextE.getTechBase() == ITechnology.TechBase.CLAN;
             }
             int eqTechLevel = TechConstants.convertFromSimplelevel(eqRulesLevel, nextE.isClan());
             if (nextE instanceof AmmoType) {
@@ -1235,8 +1235,8 @@ public abstract class TestEntity implements TestEntityOption {
                     : cockpit.findMinimumRulesLevel(getEntity().isClan()).ordinal();
             boolean illegal = eqRulesLevel > eRulesLevel;
             if (!getEntity().isMixedTech()) {
-                illegal |= getEntity().isClan() && cockpit.getTechBase() == ITechnology.TECH_BASE_IS;
-                illegal |= !getEntity().isClan() && cockpit.getTechBase() == ITechnology.TECH_BASE_CLAN;
+                illegal |= getEntity().isClan() && cockpit.getTechBase() == ITechnology.TechBase.IS;
+                illegal |= !getEntity().isClan() && cockpit.getTechBase() == ITechnology.TechBase.CLAN;
             }
             if (illegal) {
                 buff.append("Cockpit is illegal at unit's tech level (");
@@ -1261,8 +1261,8 @@ public abstract class TestEntity implements TestEntityOption {
                         : gyro.findMinimumRulesLevel(getEntity().isClan()).ordinal();
                 boolean illegal = eqRulesLevel > eRulesLevel;
                 if (!getEntity().isMixedTech()) {
-                    illegal |= getEntity().isClan() && gyro.getTechBase() == ITechnology.TECH_BASE_IS;
-                    illegal |= !getEntity().isClan() && gyro.getTechBase() == ITechnology.TECH_BASE_CLAN;
+                    illegal |= getEntity().isClan() && gyro.getTechBase() == ITechnology.TechBase.IS;
+                    illegal |= !getEntity().isClan() && gyro.getTechBase() == ITechnology.TechBase.CLAN;
                 }
                 if (illegal) {
                     buff.append("Gyro is illegal at unit's tech level (");
@@ -1288,8 +1288,8 @@ public abstract class TestEntity implements TestEntityOption {
                     : engine.findMinimumRulesLevel(getEntity().isClan()).ordinal();
             boolean illegal = eqRulesLevel > eRulesLevel;
             if (!getEntity().isMixedTech()) {
-                illegal |= getEntity().isClan() && engine.getTechBase() == ITechnology.TECH_BASE_IS;
-                illegal |= !getEntity().isClan() && engine.getTechBase() == ITechnology.TECH_BASE_CLAN;
+                illegal |= getEntity().isClan() && engine.getTechBase() == ITechnology.TechBase.IS;
+                illegal |= !getEntity().isClan() && engine.getTechBase() == ITechnology.TechBase.CLAN;
             }
             if (illegal) {
                 buff.append("Engine is illegal at unit's tech level (");
@@ -1347,8 +1347,8 @@ public abstract class TestEntity implements TestEntityOption {
                     : at.findMinimumRulesLevel(getEntity().isClan()).ordinal();
             boolean illegal = eqRulesLevel > eRulesLevel;
             if (!getEntity().isMixedTech()) {
-                illegal |= getEntity().isClan() && at.getTechBase() == ITechnology.TECH_BASE_IS;
-                illegal |= !getEntity().isClan() && at.getTechBase() == ITechnology.TECH_BASE_CLAN;
+                illegal |= getEntity().isClan() && at.getTechBase() == ITechnology.TechBase.IS;
+                illegal |= !getEntity().isClan() && at.getTechBase() == ITechnology.TechBase.CLAN;
             }
             if (illegal) {
                 buff.append("Armor is illegal at unit's tech level (");

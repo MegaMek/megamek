@@ -7585,9 +7585,9 @@ public class Compute {
             double tonnage = entity.getWeaponList().stream().filter(m -> !m.getType().hasFlag(WeaponType.F_AMS))
                     .mapToDouble(Mounted::getTonnage).sum();
             if (advFireCon) {
-                if (entity.getStructuralTechRating() == ITechnology.RATING_F) {
+                if (entity.getStructuralTechRating().equals(ITechnology.TechRating.F)) {
                     return (int) Math.ceil(tonnage / 6.0);
-                } else if (entity.getStructuralTechRating() == ITechnology.RATING_E) {
+                } else if (entity.getStructuralTechRating().equals(ITechnology.TechRating.E)) {
                     return (int) Math.ceil(tonnage / 5.0);
                 }
                 return (int) Math.ceil(tonnage / 4.0);

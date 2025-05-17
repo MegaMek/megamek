@@ -54,13 +54,13 @@ class TestSupportVehicleTest {
         SupportTank st = new SupportTank();
         st.setArmorType(EquipmentType.T_ARMOR_SV_BAR_10);
         // Rating E should return CV slots for IS FF
-        st.setArmorTechRating(ITechnology.RATING_E);
+        st.setArmorTechRating(ITechnology.TechRating.E);
         assertEquals(
             2,
             ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).getSupportVeeSlots(st));
 
         // Rating F should return CV slots for Clan FF
-        st.setArmorTechRating(ITechnology.RATING_F);
+        st.setArmorTechRating(ITechnology.TechRating.F);
         assertEquals(
             1,
             ArmorType.of(T_ARMOR_FERRO_FIBROUS, true).getSupportVeeSlots(st));

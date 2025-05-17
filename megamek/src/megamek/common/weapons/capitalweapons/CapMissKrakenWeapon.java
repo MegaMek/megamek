@@ -46,14 +46,14 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
         this.missileArmor = 100;
         this.maxRange = RANGE_EXT;
         rulesRefs = "Unofficial";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3053, 3057, 3060, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CS,F_DC)
-                .setProductionFactions(F_DC);
+                .setPrototypeFactions(Faction.CS,Faction.DC)
+                .setProductionFactions(Faction.DC);
     }
 }

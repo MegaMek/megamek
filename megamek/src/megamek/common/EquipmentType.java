@@ -39,6 +39,8 @@ import java.io.FileWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.yaml.snakeyaml.Yaml;
+
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.weapons.autocannons.HVACWeapon;
@@ -46,6 +48,7 @@ import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
+import megamek.common.YamlEncDec;
 
 /**
  * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
@@ -146,7 +149,7 @@ public class EquipmentType implements ITechnology {
      */
     protected String sortingName;
 
-    private Vector<String> namesVector = new Vector<String>();
+    protected Vector<String> namesVector = new Vector<String>();
 
     protected double tonnage = 0;
     protected int criticals = 0;
@@ -256,7 +259,7 @@ public class EquipmentType implements ITechnology {
     public Map<Integer, Integer> getTechLevels() {
         Map<Integer, Integer> techLevel = new HashMap<Integer, Integer>();
         if (isUnofficial()) {
-            if (techAdvancement.getTechBase() == TECH_BASE_CLAN) {
+            if (techAdvancement.getTechBase() == ITechnology.TechBase.CLAN) {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
             } else {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_IS_UNOFFICIAL);
@@ -280,7 +283,7 @@ public class EquipmentType implements ITechnology {
             techLevel.put(techAdvancement.getProductionDate(false), TechConstants.T_IS_ADVANCED);
         }
 
-        if (techAdvancement.getTechBase() == TECH_BASE_ALL && techAdvancement.getCommonDate() > 0) {
+        if (techAdvancement.getTechBase() == ITechnology.TechBase.ALL && techAdvancement.getCommonDate() > 0) {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_TW_ALL);
         } else if (techAdvancement.getCommonDate(true) > 0) {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_CLAN_TW);
@@ -901,21 +904,21 @@ public class EquipmentType implements ITechnology {
      * MiscType that does not have its own TechAdvancement.
      */
 
-    protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL).setAdvancement(
+    protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TechBase.ALL).setAdvancement(
                 2430,
                 2439,
                 2505)
                                                                          .setApproximate(true, false, false)
                                                                          .setIntroLevel(true)
-                                                                         .setTechRating(RATING_D)
-                                                                         .setAvailability(RATING_C,
-                                                                               RATING_C,
-                                                                               RATING_C,
-                                                                               RATING_C)
+                                                                         .setTechRating(TechRating.D)
+                                                                         .setAvailability(AvailabilityValue.C,
+                                                                               AvailabilityValue.C,
+                                                                               AvailabilityValue.C,
+                                                                               AvailabilityValue.C)
                                                                          .setStaticTechLevel(SimpleTechLevel.INTRO);
-    protected static final TechAdvancement TA_NONE = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_NONE)
-                                                           .setTechRating(RATING_A)
-                                                           .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+    protected static final TechAdvancement TA_NONE = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE)
+                                                           .setTechRating(TechRating.A)
+                                                           .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                                                            .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     public static TechAdvancement getStructureTechAdvancement(int at, boolean clan) {
@@ -1001,22 +1004,22 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getTechRating() {
+    public TechRating getTechRating() {
         return techAdvancement.getTechRating();
     }
 
     @Override
     public boolean isClan() {
-        return techAdvancement.getTechBase() == TECH_BASE_CLAN;
+        return techAdvancement.getTechBase() == ITechnology.TechBase.CLAN;
     }
 
     @Override
     public boolean isMixedTech() {
-        return techAdvancement.getTechBase() == TECH_BASE_ALL;
+        return techAdvancement.getTechBase() == ITechnology.TechBase.ALL;
     }
 
     @Override
-    public int getTechBase() {
+    public TechBase getTechBase() {
         return techAdvancement.getTechBase();
     }
 
@@ -1040,7 +1043,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getIntroductionDate(boolean clan, int faction) {
+    public int getIntroductionDate(boolean clan, Faction faction) {
         return techAdvancement.getIntroductionDate(clan, faction);
     }
 
@@ -1055,7 +1058,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getExtinctionDate(boolean clan, int faction) {
+    public int getExtinctionDate(boolean clan, Faction faction) {
         return techAdvancement.getExtinctionDate(clan, faction);
     }
 
@@ -1070,7 +1073,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getReintroductionDate(boolean clan, int faction) {
+    public int getReintroductionDate(boolean clan, Faction faction) {
         return techAdvancement.getReintroductionDate(clan, faction);
     }
 
@@ -1136,6 +1139,50 @@ public class EquipmentType implements ITechnology {
         } catch (Exception e) {
             logger.error("", e);
         }
+    }
+
+
+    protected Map<String, Object> getYamlData() {
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("id", this.internalName);
+        data.put("name", this.name);
+        YamlEncDec.addPropIfNotEmpty(data, "shortName", shortName);
+        if (this.namesVector != null && !this.namesVector.isEmpty()) {
+            List<String> aliases = new ArrayList<>();
+            for (String aliasName : this.namesVector) {
+                if (aliasName == null) continue;
+                if (aliasName.equals(this.internalName)) continue;
+                if (aliasName.equals(this.name)) continue;
+                if (aliasName.equals(this.shortName)) continue;
+                aliases.add(aliasName);
+            }
+            if (!aliases.isEmpty()) {
+                data.put("aliases", aliases);
+            }
+        }
+        YamlEncDec.addPropIfNotEmpty(data, "sortingName", sortingName);
+        if (tonnage > 0) {
+            data.put("tonnage", tonnage);
+        } else if (tonnage == EquipmentType.TONNAGE_VARIABLE) {
+            data.put("tonnage", "variable");
+        }
+        if (criticals > 0) {
+            data.put("criticals", criticals);
+        } else if (tonnage == EquipmentType.CRITICALS_VARIABLE) {
+            data.put("criticals", "variable");
+        }
+        if (cost > 0) {
+            data.put("cost", cost);
+        } else if (tonnage == EquipmentType.COST_VARIABLE) {
+            data.put("cost", "variable");
+        }
+        if (bv > 0) {
+            data.put("bv", bv);
+        } else if (tonnage == EquipmentType.BV_VARIABLE) {
+            data.put("bv", "variable");
+        }
+        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
+        return data;
     }
 
     public static void writeEquipmentExtendedDatabase(File f) {
@@ -1693,7 +1740,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getPrototypeDate(boolean clan, int faction) {
+    public int getPrototypeDate(boolean clan, Faction faction) {
         return techAdvancement.getPrototypeDate(clan, faction);
     }
 
@@ -1703,7 +1750,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getProductionDate(boolean clan, int faction) {
+    public int getProductionDate(boolean clan, Faction faction) {
         return techAdvancement.getProductionDate(clan, faction);
     }
 
@@ -1713,7 +1760,7 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
-    public int getBaseAvailability(int era) {
+    public AvailabilityValue getBaseAvailability(Era era) {
         return techAdvancement.getBaseAvailability(era);
     }
 

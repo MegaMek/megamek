@@ -65,7 +65,7 @@ public abstract class RACWeapon extends UACWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted<?> disregard) {
-        if (techAdvancement.getTechBase() == TECH_BASE_IS) {
+        if (techAdvancement.getTechBase() == TechBase.IS) {
             if (rackSize == 2) {
                 return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.8 : 0;
             } else {

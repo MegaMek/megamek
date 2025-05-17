@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
+import megamek.common.ITechnology.TechBase;
 import megamek.logging.MMLogger;
 
 /**
@@ -460,19 +461,19 @@ public class MtfFile implements IMekLoader {
                 // the unit.
                 boolean clan;
 
-                int heatSinkBase = ITechnology.TECH_BASE_ALL;
+                TechBase heatSinkBase = TechBase.ALL;
 
                 if (heatSinks.contains(TECH_BASE_CLAN)) {
-                    heatSinkBase = ITechnology.TECH_BASE_CLAN;
+                    heatSinkBase = TechBase.CLAN;
                 } else if (heatSinks.contains(TECH_BASE_IS)) {
-                    heatSinkBase = ITechnology.TECH_BASE_IS;
+                    heatSinkBase = TechBase.IS;
                 }
 
                 switch (heatSinkBase) {
-                    case ITechnology.TECH_BASE_IS:
+                    case IS:
                         clan = false;
                         break;
-                    case ITechnology.TECH_BASE_CLAN:
+                    case CLAN:
                         clan = true;
                         break;
                     default:

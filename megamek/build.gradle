@@ -64,6 +64,8 @@ dependencies {
 
     implementation 'com.ibm.icu:icu4j:77.1'
 
+    implementation 'org.snakeyaml:snakeyaml-engine:2.9'
+
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.1'
@@ -361,6 +363,15 @@ tasks.register('extendedEquipmentList', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
     args = ['-eqedb', "${projectDir}/extended-equipment.txt"]
+}
+
+tasks.register('yamlEquipment', JavaExec) {
+    dependsOn jar
+    description = 'Generate YAML Equipment Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-eqyamldb', "${projectDir}/yaml/"]
 }
 
 tasks.register('weaponsList', JavaExec) {

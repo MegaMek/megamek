@@ -44,11 +44,11 @@ public class InfantryShotgunDaystarVC extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_B,RATING_A,RATING_A)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.B,AvailabilityValue.A,AvailabilityValue.A)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_TC);
+       .setProductionFactions(Faction.TC);
    }
 }

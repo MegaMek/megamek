@@ -42,15 +42,15 @@ public class CLSRM4IOS extends SRMWeapon {
         maxRange = RANGE_SHORT;
         rulesRefs = "327, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3058, 3081, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_CNC)
-                .setProductionFactions(F_CNC)
+                .setPrototypeFactions(Faction.CNC)
+                .setProductionFactions(Faction.CNC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

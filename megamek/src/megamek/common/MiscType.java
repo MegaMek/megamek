@@ -26,6 +26,8 @@ import megamek.common.weapons.ppc.ISLightPPC;
 import megamek.common.weapons.ppc.ISPPC;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
 import megamek.logging.MMLogger;
+import megamek.common.ITechnology;
+
 
 /**
  * @author Ben
@@ -1933,15 +1935,15 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_STANDARD;
         misc.bv = 0;
         misc.rulesRefs = "225, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2464, 2471, 2500, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2464, 2471, 2500, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setStaticTechLevel(SimpleTechLevel.INTRO);
         return misc;
     }
@@ -1963,15 +1965,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "225, TM";
         // Jan 22 - Errata issued by CGL (Greekfire) for IJJs
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(3067, 3068, 3069, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(3060, 3068, 3069, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CWX)
-              .setProductionFactions(F_CWX, F_CWF, F_LC)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+              .setPrototypeFactions(Faction.CWX)
+              .setProductionFactions(Faction.CWX, Faction.CWF, Faction.LC)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
         return misc;
     }
 
@@ -1990,13 +1992,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "17,XTRO:SW1";
         // Not included in IO Progression data based on original source.
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3020, DATE_NONE, DATE_NONE, 3069)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_F, RATING_F, RATING_X)
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -2013,15 +2015,15 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_JUMP_JET).or(F_MEK_EQUIPMENT);
         misc.subType |= S_PROTOTYPE;
         misc.bv = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2464, DATE_NONE, DATE_NONE, 2471, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
               .setClanAdvancement(2464, DATE_NONE, DATE_NONE, 2471, DATE_NONE)
               .setClanApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -2040,13 +2042,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "348, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(2650, 3083, DATE_NONE, 2840, 3083)
               .setApproximate(false, true, false, false, true)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_CHH)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_E, RATING_X, RATING_F, RATING_E)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.CHH)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -2064,13 +2066,13 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_STANDARD;
         misc.bv = 0;
         misc.rulesRefs = "225, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3055, 3060, 3060)
               .setClanApproximate(true, false, false)
-              .setPrototypeFactions(F_CSJ)
-              .setProductionFactions(F_CSJ)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C)
+              .setPrototypeFactions(Faction.CSJ)
+              .setProductionFactions(Faction.CSJ)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -2090,13 +2092,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "65, IO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3071, DATE_NONE, 3079, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_CSR)
-              .setProductionFactions(F_CSR)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+              .setPrototypeFactions(Faction.CSR)
+              .setProductionFactions(Faction.CSR)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -2113,13 +2115,13 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_STANDARD;
         misc.bv = 0;
         misc.rulesRefs = "101, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3065, 3075, 3084)
               .setClanApproximate(true, true, false)
-              .setPrototypeFactions(F_CBS)
-              .setProductionFactions(F_CBS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setPrototypeFactions(Faction.CBS)
+              .setProductionFactions(Faction.CBS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -2135,13 +2137,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_MASC).or(F_PROTOMEK_EQUIPMENT);
         misc.rulesRefs = "232, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3066, 3068, 3075, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CBS, F_CIH)
-              .setProductionFactions(F_CBS, F_CIH)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setPrototypeFactions(Faction.CBS, Faction.CIH)
+              .setProductionFactions(Faction.CBS, Faction.CIH)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -2167,14 +2169,14 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
         misc.rulesRefs = "225, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(2730, 2740, 3040, 2795, 3035)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_CC)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.CC)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D);
         return misc;
     }
 
@@ -2194,13 +2196,13 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
 
         misc.rulesRefs = "225, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(2820, 2827, 2835, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CIH)
-              .setProductionFactions(F_CIH)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
+              .setPrototypeFactions(Faction.CIH)
+              .setProductionFactions(Faction.CIH)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D);
         return misc;
     }
 
@@ -2220,13 +2222,13 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.rulesRefs = "292, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(DATE_NONE, 3060, 3083, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS, F_LC)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS, Faction.LC)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -2246,10 +2248,10 @@ public class MiscType extends EquipmentType {
         // Arcade Ops: UrbanFest
         misc.rulesRefs = "16, UF";
         // No information about this is provided so we fill in essentially "blank" data
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(DATE_ES)
               .setISApproximate(true);
 
@@ -2272,12 +2274,12 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "292, TO";
         misc.omniFixedOnly = true;
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3067, 3085, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_MERC)
+              .setPrototypeFactions(Faction.MERC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         return misc;
@@ -2299,15 +2301,15 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.rulesRefs = "292, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(3067, 3085, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_CJF)
-              .setProductionFactions(F_CJF)
+              .setPrototypeFactions(Faction.CJF)
+              .setProductionFactions(Faction.CJF)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         return misc;
@@ -2324,15 +2326,15 @@ public class MiscType extends EquipmentType {
 
         misc.rulesRefs = "292, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(3067, 3085, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_CBS)
-              .setProductionFactions(F_CSR)
+              .setPrototypeFactions(Faction.CBS)
+              .setProductionFactions(Faction.CSR)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         return misc;
@@ -2351,15 +2353,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "292, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(DATE_NONE, 3066, 3084, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
               .setClanAdvancement(DATE_NONE, 3061, 3084, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_CGS)
-              .setProductionFactions(F_LC, F_CWX)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setPrototypeFactions(Faction.CGS)
+              .setProductionFactions(Faction.LC, Faction.CWX)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         return misc;
@@ -2378,15 +2380,15 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.rulesRefs = "350, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(DATE_NONE, DATE_ES, 3078, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
               .setClanAdvancement(DATE_NONE, DATE_ES, 3078, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_CHH, F_FS)
-              .setProductionFactions(F_FS)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+              .setPrototypeFactions(Faction.CHH, Faction.FS)
+              .setProductionFactions(Faction.FS)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -2412,9 +2414,9 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.rulesRefs = "345, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, DATE_ES, 3078, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
               .setClanAdvancement(DATE_NONE, DATE_ES, 3078, DATE_NONE, DATE_NONE)
@@ -2437,15 +2439,15 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TRACKS).or(F_MEK_EQUIPMENT);
 
         misc.rulesRefs = "249, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_E, RATING_E, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2430, 2440, 2500, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2430, 2440, 2500, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC);
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC);
 
         return misc;
     }
@@ -2466,13 +2468,13 @@ public class MiscType extends EquipmentType {
         misc.subType = S_QUADVEE_WHEELS;
         misc.omniFixedOnly = true;
         misc.rulesRefs = "133, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setClanAdvancement(3130, 3135, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true)
-              .setPrototypeFactions(F_CHH)
-              .setProductionFactions(F_CHH);
+              .setPrototypeFactions(Faction.CHH)
+              .setProductionFactions(Faction.CHH);
         return misc;
     }
 
@@ -2502,11 +2504,11 @@ public class MiscType extends EquipmentType {
                            .or(F_PROTOMEK_EQUIPMENT);
         misc.criticals = 0;
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setIntroLevel(true);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
         return misc;
     }
 
@@ -2532,15 +2534,15 @@ public class MiscType extends EquipmentType {
         misc.baseDamageCapacity = 10;
         misc.rulesRefs = "93, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3072, 3096, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setClanAdvancement(3074, 3096, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_CS, F_CWX)
-              .setProductionFactions(F_RS)
+              .setPrototypeFactions(Faction.CS, Faction.CWX)
+              .setProductionFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -2558,14 +2560,14 @@ public class MiscType extends EquipmentType {
         misc.cost = 1000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_ES, 2300, 2305, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, 2300, 2305, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setProductionFactions(F_TA);
+              .setProductionFactions(Faction.TA);
         return misc;
     }
 
@@ -2579,15 +2581,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 1500;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_E, RATING_D, RATING_B, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2390, 2400, 2410, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2390, 2400, 2410, 2820, DATE_NONE)
               .setClanApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
 
         return misc;
     }
@@ -2604,15 +2606,15 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_B, RATING_C, RATING_B, RATING_A)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.A)
               .setISAdvancement(2300, 2305, 2310, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2300, 2305, 2310, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TA)
-              .setProductionFactions(F_TA);
+              .setPrototypeFactions(Faction.TA)
+              .setProductionFactions(Faction.TA);
         return misc;
     }
 
@@ -2627,15 +2629,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 1400;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_D, RATING_C, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(2390, 2300, 2305, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2390, 2300, 2305, 2825, DATE_NONE)
               .setClanApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -2651,15 +2653,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 1600;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2305, 2310, 2315, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2305, 2310, 2315, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TA)
-              .setProductionFactions(F_TA);
+              .setPrototypeFactions(Faction.TA)
+              .setProductionFactions(Faction.TA);
         return misc;
     }
 
@@ -2674,13 +2676,13 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
 
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2810, 2820, 2822, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC);
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC);
         return misc;
     }
 
@@ -2694,9 +2696,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 25;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
@@ -2714,9 +2716,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 100;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
@@ -2734,9 +2736,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 15;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
@@ -2756,15 +2758,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 7500;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2340, 2350, 2351, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2340, 2350, 2351, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC);
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC);
 
         return misc;
     }
@@ -2781,9 +2783,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 200;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, DATE_ES, 2100, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, 2100, DATE_NONE, DATE_NONE)
@@ -2803,15 +2805,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 10000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_ES, 2300, 2302, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, 2300, 2302, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC);
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC);
         return misc;
     }
 
@@ -2827,15 +2829,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 15000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2315, 2325, 2330, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2315, 2325, 2330, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TC)
-              .setProductionFactions(F_TC);
+              .setPrototypeFactions(Faction.TC)
+              .setProductionFactions(Faction.TC);
         return misc;
     }
 
@@ -2849,9 +2851,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 150;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_ES, DATE_ES, 2200, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, 2200, DATE_NONE, DATE_NONE)
@@ -2869,9 +2871,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 225;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_D, RATING_C, RATING_B, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, DATE_ES, 2230, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, 2230, 2825, DATE_NONE)
@@ -2890,15 +2892,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 100;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(2350, 2355, 2358, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2350, 2355, 2358, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
 
         return misc;
     }
@@ -2913,15 +2915,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 20000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2690, 2790, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2690, 2790, 2820, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_DC);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.DC);
         return misc;
     }
 
@@ -2936,15 +2938,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 500;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2680, 2800, 3065, 2850, 3050)
               .setISApproximate(true, false, false, true, false)
               .setClanAdvancement(2480, 2800, 3065, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_CS);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.CS);
         return misc;
     }
 
@@ -2958,15 +2960,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 200;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2440, 2460, 2461, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
               .setClanAdvancement(2440, 2460, 2461, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -2981,13 +2983,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 5800;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3045, 3047, 3052, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC);
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC);
         return misc;
     }
 
@@ -3001,13 +3003,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 1800;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3044, 3045, 3051, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC);
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC);
         return misc;
     }
 
@@ -3021,13 +3023,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 920;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(3062, 3065, 3066, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS);
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS);
         return misc;
     }
 
@@ -3040,9 +3042,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 50;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
@@ -3060,9 +3062,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 70;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
@@ -3080,9 +3082,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 5000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_ES, DATE_ES)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_ES, DATE_ES)
@@ -3101,9 +3103,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 7000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_D, RATING_E, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, 2200, DATE_ES)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, 2200, DATE_ES)
@@ -3121,13 +3123,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 450;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3045, 3050, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CC)
-              .setProductionFactions(F_CC);
+              .setPrototypeFactions(Faction.CC)
+              .setProductionFactions(Faction.CC);
         return misc;
     }
 
@@ -3141,13 +3143,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 5560;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_E, RATING_E, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.C)
               .setClanAdvancement(2850, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CHH)
-              .setProductionFactions(F_CLAN)
+              .setPrototypeFactions(Faction.CHH)
+              .setProductionFactions(Faction.CLAN)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -3163,13 +3165,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 4280;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_F, RATING_D, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.E)
               .setISAdvancement(2825, 2830, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CS)
-              .setProductionFactions(F_CS);
+              .setPrototypeFactions(Faction.CS)
+              .setProductionFactions(Faction.CS);
         return misc;
     }
 
@@ -3183,13 +3185,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 360;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2620, 2625, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC);
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC);
         return misc;
     }
 
@@ -3203,13 +3205,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 750;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_F)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.F)
               .setISAdvancement(2325, 2330, DATE_NONE, 3035, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS);
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS);
         return misc;
     }
 
@@ -3225,13 +3227,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 1040;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_D, RATING_B, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.E)
               .setISAdvancement(3025, 3030, DATE_NONE, 3070, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_FS, F_LC)
-              .setProductionFactions(F_FS, F_LC);
+              .setPrototypeFactions(Faction.FS, Faction.LC)
+              .setProductionFactions(Faction.FS, Faction.LC);
         return misc;
     }
 
@@ -3247,13 +3249,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 2080;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(3065, 3067, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS);
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS);
         return misc;
     }
 
@@ -3267,13 +3269,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 360;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(3035, 3040, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_FR)
-              .setProductionFactions(F_FR);
+              .setPrototypeFactions(Faction.FR)
+              .setProductionFactions(Faction.FR);
         return misc;
     }
 
@@ -3287,13 +3289,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 950;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.D)
               .setISAdvancement(2280, 2290, DATE_NONE, 3050, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_FW)
-              .setProductionFactions(F_FW);
+              .setPrototypeFactions(Faction.FW)
+              .setProductionFactions(Faction.FW);
         return misc;
     }
 
@@ -3309,13 +3311,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 360;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_E, RATING_B, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(3030, 3035, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_FW)
-              .setProductionFactions(F_FW);
+              .setPrototypeFactions(Faction.FW)
+              .setProductionFactions(Faction.FW);
         return misc;
     }
 
@@ -3329,13 +3331,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 650;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.E)
               .setISAdvancement(2420, 2425, DATE_NONE, 3067, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC);
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC);
         return misc;
     }
 
@@ -3349,13 +3351,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 730;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_D, RATING_B, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.E)
               .setISAdvancement(3058, 3060, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC);
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC);
         return misc;
     }
 
@@ -3369,13 +3371,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 400;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2600, 2610, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_MC)
-              .setProductionFactions(F_MC);
+              .setPrototypeFactions(Faction.MC)
+              .setProductionFactions(Faction.MC);
         return misc;
     }
 
@@ -3389,13 +3391,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 1580;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_F, RATING_B, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(3045, 3049, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CC)
-              .setProductionFactions(F_MH);
+              .setPrototypeFactions(Faction.CC)
+              .setProductionFactions(Faction.MH);
         return misc;
     }
 
@@ -3411,15 +3413,15 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "195, AToW-C";
         // Kit never really goes extinct but should be very rare.
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_C, RATING_E, RATING_F, RATING_F)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2570, 2575, 2580, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2570, 2575, 2580, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -3433,13 +3435,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 370;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(3045, 3047, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TC)
-              .setProductionFactions(F_TC, F_CP);
+              .setPrototypeFactions(Faction.TC)
+              .setProductionFactions(Faction.TC, Faction.CP);
         return misc;
     }
 
@@ -3453,13 +3455,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 4300;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_D, RATING_F)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.F)
               .setISAdvancement(3053, 3055, DATE_NONE, 3081, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_WB)
-              .setProductionFactions(F_WB);
+              .setPrototypeFactions(Faction.WB)
+              .setProductionFactions(Faction.WB);
         return misc;
     }
 
@@ -3473,9 +3475,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 330;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
@@ -3494,9 +3496,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 500;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "195, ATOW-C";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_C, RATING_D, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.E)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -3515,9 +3517,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 750;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "195, ATOW-C";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_C, RATING_E, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -3537,13 +3539,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2785, 2800, DATE_NONE, 2845, 3045)
               .setISApproximate(true, true, false, true, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC);
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC);
 
         return misc;
     }
@@ -3559,15 +3561,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 7000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -3582,15 +3584,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 7000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -3605,15 +3607,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 7000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -3630,15 +3632,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 21000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -3653,15 +3655,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 21000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -3676,15 +3678,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 21000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -3701,15 +3703,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 28000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2465, 2475, 2510, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2465, 2475, 2510, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -3726,13 +3728,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "283, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3071, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_FW)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.FW)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -3750,13 +3752,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "283, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3057, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_CHH)
-              .setProductionFactions(F_CHH)
+              .setPrototypeFactions(Faction.CHH)
+              .setProductionFactions(Faction.CHH)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -3775,15 +3777,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 5.175;
         misc.rulesRefs = "289, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3071, 3084, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_WB)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.WB)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -3802,17 +3804,17 @@ public class MiscType extends EquipmentType {
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "289, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3050, 3110, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setClanAdvancement(DATE_NONE, 3090, 3110, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_LC, F_CJF)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.LC, Faction.CJF)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -3830,15 +3832,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 11;
         misc.rulesRefs = "289, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3057, DATE_NONE, 3079, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS)
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -3855,13 +3857,13 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_HATCHET;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "220, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(3015, 3022, 3025, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_LC, F_FS)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.LC, Faction.FS)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.INTRO);
         return misc;
     }
@@ -3880,15 +3882,15 @@ public class MiscType extends EquipmentType {
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "290, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3064, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -3907,15 +3909,15 @@ public class MiscType extends EquipmentType {
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "290, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3061, 3079, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -3935,15 +3937,15 @@ public class MiscType extends EquipmentType {
         String[] modes = { "retracted", "extended" };
         misc.setModes(modes);
         misc.rulesRefs = "236, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_F, RATING_D, RATING_D, RATING_D)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2400, 2420, 3075, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -3968,15 +3970,15 @@ public class MiscType extends EquipmentType {
         misc.baseDamageCapacity = 11;
         misc.rulesRefs = "290, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3067, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4001,15 +4003,15 @@ public class MiscType extends EquipmentType {
         misc.baseDamageCapacity = 18;
         misc.rulesRefs = "290, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3067, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4034,15 +4036,15 @@ public class MiscType extends EquipmentType {
         misc.baseDamageCapacity = 25;
         misc.rulesRefs = "290, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3067, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4058,15 +4060,15 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_SPIKES).or(F_MEK_EQUIPMENT);
         misc.bv = 4;
         misc.rulesRefs = "290, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3051, 3082, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4082,13 +4084,13 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_SWORD;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "237, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(3050, 3058, 3060)
               .setISApproximate(true, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC)
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -4106,15 +4108,15 @@ public class MiscType extends EquipmentType {
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "290, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3072, 3087, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_CJF)
-              .setProductionFactions(F_CJF)
+              .setPrototypeFactions(Faction.CJF)
+              .setProductionFactions(Faction.CJF)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4136,15 +4138,15 @@ public class MiscType extends EquipmentType {
         misc.setModes(modes);
         misc.rulesRefs = "292, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3065, 3091, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC)
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4165,15 +4167,15 @@ public class MiscType extends EquipmentType {
         String[] modes = { "Inactive", "Active" };
         misc.setModes(modes);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3065, 3091, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC)
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4196,15 +4198,15 @@ public class MiscType extends EquipmentType {
         misc.setModes(modes);
         misc.rulesRefs = "292, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3065, 3091, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC)
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4221,10 +4223,10 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_TREE_CLUB | S_CLUB;
         misc.bv = 0;
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.X);
         return misc;
     }
 
@@ -4238,10 +4240,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CLUB).or(F_MEK_EQUIPMENT);
         misc.subType |= S_CLUB;
         misc.bv = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.X);
         return misc;
     }
 
@@ -4255,10 +4257,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CLUB);
         misc.subType |= S_CLUB;
         misc.bv = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.X);
         return misc;
     }
 
@@ -4283,15 +4285,15 @@ public class MiscType extends EquipmentType {
                            .or(F_HEAVY_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "209, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3039, 3050, 3065, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC)
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -4317,15 +4319,15 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT)
                            .or(F_HEAVY_EQUIPMENT);
         misc.bv = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X)
               .setISAdvancement(3052, DATE_NONE, 3058, 3085, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CS)
-              .setProductionFactions(F_CS)
+              .setPrototypeFactions(Faction.CS)
+              .setProductionFactions(Faction.CS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -4349,15 +4351,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "298, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3073, 3100, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS)
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4385,15 +4387,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "298, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3071, 3099, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC)
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4421,13 +4423,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "297, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3073, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC)
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4453,13 +4455,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "297, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3063, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_WB)
-              .setProductionFactions(F_RS)
+              .setPrototypeFactions(Faction.WB)
+              .setProductionFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4484,16 +4486,16 @@ public class MiscType extends EquipmentType {
         misc.cost = 50000;
         misc.bv = 0;
         misc.rulesRefs = "210, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_C, RATING_F, RATING_D, RATING_C)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2452, 2476, 3045, 2840, 3036)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_DC);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.DC);
         return misc;
     }
 
@@ -4517,15 +4519,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 150000;
         misc.bv = 0;
         misc.rulesRefs = "71, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2452, DATE_NONE, DATE_NONE, 2476, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -4548,15 +4550,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 50000;
         misc.bv = 0;
         misc.rulesRefs = "210, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2824, 2825, 2828, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CCY)
-              .setProductionFactions(F_CCY);
+              .setPrototypeFactions(Faction.CCY)
+              .setProductionFactions(Faction.CCY);
         return misc;
     }
 
@@ -4574,15 +4576,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "299, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3064, 3082, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_FW)
-              .setProductionFactions(F_RS)
+              .setPrototypeFactions(Faction.FW)
+              .setProductionFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -4601,15 +4603,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "299, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(DATE_NONE, 3062, 3082, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_CCY)
-              .setProductionFactions(F_CWF)
+              .setPrototypeFactions(Faction.CCY)
+              .setProductionFactions(Faction.CWF)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -4639,17 +4641,17 @@ public class MiscType extends EquipmentType {
                            .or(F_HEAVY_EQUIPMENT);
         misc.bv = 1;
         misc.rulesRefs = "204, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3055, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2845, 2850, 3055, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, true, false, false, false)
-              .setPrototypeFactions(F_CGB)
-              .setProductionFactions(F_CGB);
+              .setPrototypeFactions(Faction.CGB)
+              .setProductionFactions(Faction.CGB);
         return misc;
     }
 
@@ -4668,18 +4670,18 @@ public class MiscType extends EquipmentType {
                            .or(F_HEAVY_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "300, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
               .setISApproximate(true, false, false, true, true)
               .setClanAdvancement(2625, 2631, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_FS)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.FS)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4700,15 +4702,15 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MASS).or(F_MEK_EQUIPMENT);
         misc.rulesRefs = "325, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3048, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setClanAdvancement(3062, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_FS, F_CGS)
-              .setProductionFactions(F_FS)
+              .setPrototypeFactions(Faction.FS, Faction.CGS)
+              .setProductionFactions(Faction.FS)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4727,15 +4729,15 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT).or(F_BATTLEMEK_NIU).or(F_BA_EQUIPMENT);
 
         misc.rulesRefs = "68, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(3052, 3055, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_WB);
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.WB);
         return misc;
     }
 
@@ -4768,11 +4770,11 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT)
                            .or(F_TANK_EQUIPMENT);
         misc.rulesRefs = "117, TO:AUE";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -4800,11 +4802,11 @@ public class MiscType extends EquipmentType {
                            .or(F_FIGHTER_EQUIPMENT)
                            .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.rulesRefs = "118, TO:AUE";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -4832,15 +4834,15 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT)
                            .or(F_REMOTE_DRONE_COMMAND_CONSOLE);
         misc.rulesRefs = "90, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setISAdvancement(3125, 3140, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_RS)
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -4867,9 +4869,9 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.subType = S_STANDARD;
         misc.omniFixedOnly = true;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
               .setAdvancement(DATE_ES, DATE_ES)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
@@ -4898,9 +4900,9 @@ public class MiscType extends EquipmentType {
                            .or(F_SC_EQUIPMENT);
         misc.subType = S_IMPROVED;
         misc.omniFixedOnly = true;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
               .setAdvancement(DATE_ES, DATE_ES)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
@@ -4922,12 +4924,12 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.subType = S_STANDARD;
         misc.rulesRefs = "141, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2755, DATE_ES, DATE_NONE, 2780, 3077)
               .setClanAdvancement(2755, DATE_ES)
-              .setReintroductionFactions(F_WB)
+              .setReintroductionFactions(Faction.WB)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -4948,12 +4950,12 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.subType = S_IMPROVED;
         misc.rulesRefs = "141, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2755, DATE_ES, DATE_NONE, 2780, 3077)
               .setClanAdvancement(2755, DATE_ES)
-              .setReintroductionFactions(F_WB)
+              .setReintroductionFactions(Faction.WB)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -4974,12 +4976,12 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.subType = S_ELITE;
         misc.rulesRefs = "141, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2755, DATE_ES, DATE_NONE, 2780, 3077)
               .setClanAdvancement(2755, DATE_ES)
-              .setReintroductionFactions(F_WB)
+              .setReintroductionFactions(Faction.WB)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -5000,12 +5002,12 @@ public class MiscType extends EquipmentType {
                            .or(F_SS_EQUIPMENT);
         misc.subType = S_STANDARD;
         misc.rulesRefs = "142, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_E, RATING_X, RATING_X, RATING_X)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2695, DATE_NONE, DATE_NONE, 2780)
               .setClanAdvancement(2695)
-              .setPrototypeFactions(F_TH)
+              .setPrototypeFactions(Faction.TH)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -5026,12 +5028,12 @@ public class MiscType extends EquipmentType {
                            .or(F_SS_EQUIPMENT);
         misc.subType = S_IMPROVED;
         misc.rulesRefs = "142, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_E, RATING_X, RATING_X, RATING_X)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2695, DATE_NONE, DATE_NONE, 2780)
               .setClanAdvancement(2695)
-              .setPrototypeFactions(F_TH)
+              .setPrototypeFactions(Faction.TH)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -5052,12 +5054,12 @@ public class MiscType extends EquipmentType {
                            .or(F_SS_EQUIPMENT);
         misc.subType = S_STANDARD;
         misc.rulesRefs = "143, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)
               .setISAdvancement(3064, DATE_NONE, DATE_NONE, 3078, 3082)
-              .setPrototypeFactions(F_WB)
-              .setReintroductionFactions(F_RS)
+              .setPrototypeFactions(Faction.WB)
+              .setReintroductionFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -5078,12 +5080,12 @@ public class MiscType extends EquipmentType {
                            .or(F_SS_EQUIPMENT);
         misc.subType = S_IMPROVED;
         misc.rulesRefs = "143, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)
               .setISAdvancement(3064, DATE_NONE, DATE_NONE, 3078, 3082)
-              .setPrototypeFactions(F_WB)
-              .setReintroductionFactions(F_RS)
+              .setPrototypeFactions(Faction.WB)
+              .setReintroductionFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -5100,16 +5102,16 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_ATAC).or(F_VARIABLE_SIZE).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.rulesRefs = "145, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2700, DATE_NONE, DATE_NONE, 2780, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2705, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH);
+              .setPrototypeFactions(Faction.TH);
 
         return misc;
     }
@@ -5125,15 +5127,15 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_DTAC).or(F_VARIABLE_SIZE).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.rulesRefs = "146, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(3072, DATE_NONE, DATE_NONE, 3078, 3082)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_WB)
-              .setReintroductionFactions(F_RS);
+              .setPrototypeFactions(Faction.WB)
+              .setReintroductionFactions(Faction.RS);
 
         return misc;
     }
@@ -5152,16 +5154,16 @@ public class MiscType extends EquipmentType {
                            .or(F_WS_EQUIPMENT)
                            .or(F_SS_EQUIPMENT);
         misc.rulesRefs = "147, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_F, RATING_X, RATING_X)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2695, DATE_NONE, DATE_NONE, 2780, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2695, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH);
+              .setPrototypeFactions(Faction.TH);
 
         return misc;
     }
@@ -5176,16 +5178,16 @@ public class MiscType extends EquipmentType {
         misc.cost = 800000000;
         misc.flags = misc.flags.or(F_SDS_JAMMER).or(F_WS_EQUIPMENT);
         misc.rulesRefs = "148, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2776, DATE_NONE, DATE_NONE, 2780, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2776, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH);
+              .setPrototypeFactions(Faction.TH);
 
         return misc;
     }
@@ -5202,12 +5204,12 @@ public class MiscType extends EquipmentType {
         misc.cost = 10000;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_COMBAT_VEHICLE_ESCAPE_POD);
         misc.rulesRefs = "309, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3038, 3079)
-              .setPrototypeFactions(F_FS, F_LC)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.FS, Faction.LC)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -5228,17 +5230,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.rulesRefs = "213, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_D, RATING_E, RATING_F, RATING_E)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(2430, 2445, 2490, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2430, 2445, 2490, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -5256,11 +5258,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.rulesRefs = "213, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -5286,11 +5288,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.rulesRefs = "216, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -5310,11 +5312,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_LIFEBOAT);
         misc.subType = S_MARITIME_LIFEBOAT;
         misc.rulesRefs = "227, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -5337,11 +5339,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_LIFEBOAT);
         misc.subType = S_ATMOSPHERIC_LIFEBOAT;
         misc.rulesRefs = "227, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -5374,16 +5376,16 @@ public class MiscType extends EquipmentType {
                            .or(F_HEAVY_EQUIPMENT);
         misc.bv = 10;
         misc.rulesRefs = "204, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2560, 2576, 3048, 2835, 3045)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_CC);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.CC);
         return misc;
     }
 
@@ -5411,16 +5413,16 @@ public class MiscType extends EquipmentType {
                            .or(F_PROTOTYPE);
         misc.bv = 10;
         misc.rulesRefs = "71, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2560, DATE_NONE, DATE_NONE, 2576, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_CC);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.CC);
         return misc;
     }
 
@@ -5450,15 +5452,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 25;
         misc.rulesRefs = "278, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3058, 3082, 3094, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_CS)
-              .setProductionFactions(F_RS)
+              .setPrototypeFactions(Faction.CS)
+              .setProductionFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -5489,15 +5491,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 25;
         // Since its Tactical Handbook Using TO Values
         misc.rulesRefs = "Unofficial";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(DATE_NONE, 3058, 3082, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_CS)
-              .setProductionFactions(F_RS)
+              .setPrototypeFactions(Faction.CS)
+              .setProductionFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL);
         return misc;
     }
@@ -5525,15 +5527,15 @@ public class MiscType extends EquipmentType {
                            .or(F_HEAVY_EQUIPMENT);
         misc.bv = 12;
         misc.rulesRefs = "204, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2830, 2832, 2835, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CGS)
-              .setProductionFactions(F_CGS);
+              .setPrototypeFactions(Faction.CGS)
+              .setProductionFactions(Faction.CGS);
 
         return misc;
     }
@@ -5564,15 +5566,15 @@ public class MiscType extends EquipmentType {
                            .or(F_HEAVY_EQUIPMENT);
         misc.bv = 7;
         misc.rulesRefs = "204, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(2890, 2900, 2905, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CSJ)
-              .setProductionFactions(F_CSJ);
+              .setPrototypeFactions(Faction.CSJ)
+              .setProductionFactions(Faction.CSJ);
         return misc;
     }
 
@@ -5602,16 +5604,16 @@ public class MiscType extends EquipmentType {
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "213, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2595, 2597, 3050, 2845, 3045)
               .setISApproximate(false, false, false, false, true)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_CC);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.CC);
         return misc;
     }
 
@@ -5641,14 +5643,14 @@ public class MiscType extends EquipmentType {
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "71, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2597, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_TH);
+              .setPrototypeFactions(Faction.TH);
         return misc;
     }
 
@@ -5678,15 +5680,15 @@ public class MiscType extends EquipmentType {
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "213, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2830, 2832, 2835, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CSJ)
-              .setProductionFactions(F_CSJ);
+              .setPrototypeFactions(Faction.CSJ)
+              .setProductionFactions(Faction.CSJ);
         return misc;
     }
 
@@ -5723,17 +5725,17 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "279, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3057, 3080, 3085, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setClanAdvancement(3058, 3080, 3085, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_DC, F_CNC)
-              .setProductionFactions(F_DC)
+              .setPrototypeFactions(Faction.DC, Faction.CNC)
+              .setProductionFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -5765,15 +5767,15 @@ public class MiscType extends EquipmentType {
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "Unofficial";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3057, 3080, 3085, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setClanAdvancement(3058, 3080, 3085, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_DC, F_CNC)
-              .setProductionFactions(F_DC)
+              .setPrototypeFactions(Faction.DC, Faction.CNC)
+              .setProductionFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL);
         return misc;
     }
@@ -5800,15 +5802,15 @@ public class MiscType extends EquipmentType {
                            .andNot(F_SS_EQUIPMENT);
         misc.bv = 39;
         misc.rulesRefs = "310, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_F, RATING_E, RATING_F)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.F)
               .setISAdvancement(3020, 3025, DATE_NONE, 3046, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CC)
-              .setProductionFactions(F_CC)
+              .setPrototypeFactions(Faction.CC)
+              .setProductionFactions(Faction.CC)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -5844,13 +5846,13 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "278, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3059, DATE_NONE, 3080, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_CSJ)
-              .setProductionFactions(F_CSF)
+              .setPrototypeFactions(Faction.CSJ)
+              .setProductionFactions(Faction.CSF)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -5883,14 +5885,14 @@ public class MiscType extends EquipmentType {
         misc.setModes(new String[] { "ECM", "Off" });
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "66, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)
               .setClanAdvancement(3065, DATE_NONE, DATE_NONE, 3085, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CCY)
+              .setPrototypeFactions(Faction.CCY)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -5913,11 +5915,11 @@ public class MiscType extends EquipmentType {
                            .or(F_SC_EQUIPMENT)
                            .or(F_RECON_CAMERA);
         misc.rulesRefs = "337, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -5946,17 +5948,17 @@ public class MiscType extends EquipmentType {
         misc.cost = 51000;
         misc.industrial = true;
         misc.rulesRefs = "375, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_E, RATING_D, RATING_D, RATING_D)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2586, 2590, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2586, 2590, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -5983,15 +5985,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 60000;
         misc.industrial = true;
         misc.rulesRefs = "73, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2586, DATE_NONE, DATE_NONE, 2590, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -6016,11 +6018,11 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "340, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -6049,11 +6051,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.criticals = 1;
         misc.rulesRefs = "339, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -6083,15 +6085,15 @@ public class MiscType extends EquipmentType {
                            .or(F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "338, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3045, 3055, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, true, false, false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS);
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS);
         return misc;
     }
 
@@ -6116,11 +6118,11 @@ public class MiscType extends EquipmentType {
                            .or(F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "339, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -6145,11 +6147,11 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.industrial = true;
         misc.rulesRefs = "217, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_C, RATING_C, RATING_C)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6171,11 +6173,11 @@ public class MiscType extends EquipmentType {
                            .or(MiscType.F_FIGHTER_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.rulesRefs = "217, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(DATE_ES, 2300, 2300, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setClanAdvancement(DATE_ES, 2300, 2300, DATE_NONE, DATE_NONE)
@@ -6208,16 +6210,16 @@ public class MiscType extends EquipmentType {
                            .or(F_SS_EQUIPMENT)
                            .or(F_HEAVY_EQUIPMENT);
         misc.rulesRefs = "206, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2592, 2598, 3045, 2855, 3035)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_FW);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.FW);
         return misc;
     }
 
@@ -6245,16 +6247,16 @@ public class MiscType extends EquipmentType {
                            .or(F_HEAVY_EQUIPMENT)
                            .or(F_PROTOTYPE);
         misc.rulesRefs = "217, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2592, DATE_NONE, DATE_NONE, 2612, 3035)
               .setISApproximate(true, false, false, true, true)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_FW)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.FW)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -6282,15 +6284,15 @@ public class MiscType extends EquipmentType {
                            .or(F_SS_EQUIPMENT)
                            .or(F_HEAVY_EQUIPMENT);
         misc.rulesRefs = "206, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2816, 2818, 2830, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CSA)
-              .setProductionFactions(F_CSA);
+              .setPrototypeFactions(Faction.CSA)
+              .setProductionFactions(Faction.CSA);
         return misc;
     }
 
@@ -6319,13 +6321,13 @@ public class MiscType extends EquipmentType {
                            .or(F_HEAVY_EQUIPMENT);
         misc.rulesRefs = "283, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(DATE_NONE, 3061, 3085, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_CGS)
-              .setProductionFactions(F_CSF, F_RD)
+              .setPrototypeFactions(Faction.CGS)
+              .setProductionFactions(Faction.CSF, Faction.RD)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -6353,15 +6355,15 @@ public class MiscType extends EquipmentType {
                            .or(F_SS_EQUIPMENT)
                            .or(F_HEAVY_EQUIPMENT);
         misc.rulesRefs = "330, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3065, 3071, 3097, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC);
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC);
         return misc;
     }
 
@@ -6395,15 +6397,15 @@ public class MiscType extends EquipmentType {
         String[] modes = { "Normal", "Aimed shot" };
         misc.setModes(modes);
         misc.rulesRefs = "238, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3052, 3061, 3067, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, true, false, false)
-              .setPrototypeFactions(F_FS, F_LC)
-              .setProductionFactions(F_FS)
+              .setPrototypeFactions(Faction.FS, Faction.LC)
+              .setProductionFactions(Faction.FS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -6429,15 +6431,15 @@ public class MiscType extends EquipmentType {
         String[] modes = { "Normal", "Aimed shot" };
         misc.setModes(modes);
         misc.rulesRefs = "238, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_E, RATING_D, RATING_D)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(2850, 2860, 2863, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CMN)
-              .setProductionFactions(F_CMN)
+              .setPrototypeFactions(Faction.CMN)
+              .setProductionFactions(Faction.CMN)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -6459,17 +6461,17 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT).or(F_SPRAYER);
         misc.industrial = true;
         misc.rulesRefs = "248, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2305, 2315, 2320, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2305, 2315, 2320, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TA)
-              .setProductionFactions(F_FS);
+              .setPrototypeFactions(Faction.TA)
+              .setProductionFactions(Faction.FS);
         return misc;
     }
 
@@ -6486,11 +6488,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_SPRAYER);
         misc.industrial = true;
         misc.rulesRefs = "248, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6510,13 +6512,13 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HEAT_SINK);
         misc.bv = 0;
         misc.rulesRefs = "221, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setStaticTechLevel(SimpleTechLevel.INTRO);
         return misc;
     }
@@ -6538,13 +6540,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 3000;
         misc.rulesRefs = "316, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3058, 3079)
               .setISApproximate(false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -6562,13 +6564,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "316, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3058, 3079)
               .setISApproximate(false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -6586,12 +6588,12 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
         misc.bv = 0;
         misc.rulesRefs = "71, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(2559, DATE_NONE, DATE_NONE, 2567, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_TH)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+              .setPrototypeFactions(Faction.TH)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -6608,12 +6610,12 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
         misc.bv = 0;
         misc.rulesRefs = "71, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3022, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
-              .setPrototypeFactions(F_FS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
+              .setPrototypeFactions(Faction.FS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -6630,12 +6632,12 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK);
         misc.bv = 0;
         misc.rulesRefs = "221, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2559, 2567, 3045, 2865, 3040)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
+              .setPrototypeFactions(Faction.TH)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -6652,13 +6654,13 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK);
         misc.bv = 0;
         misc.rulesRefs = "221, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, true, false, false, false)
-              .setPrototypeFactions(F_CCY)
-              .setProductionFactions(F_CCY)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+              .setPrototypeFactions(Faction.CCY)
+              .setProductionFactions(Faction.CCY)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -6674,13 +6676,13 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK).or(F_LASER_HEAT_SINK).or(F_MEK_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "316, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3040, 3051, 3060, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CJF)
-              .setProductionFactions(F_CJF)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+              .setPrototypeFactions(Faction.CJF)
+              .setProductionFactions(Faction.CJF)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
         return misc;
     }
 
@@ -6700,13 +6702,13 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(true);
         misc.rulesRefs = "89, IO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3095, 3122, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -6732,11 +6734,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 8;
         misc.industrial = true;
         misc.rulesRefs = "241, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6760,11 +6762,11 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "242, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6788,11 +6790,11 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "242, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6816,11 +6818,11 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "242, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6839,11 +6841,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BULLDOZER).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_TRENCH_CAPABLE);
         misc.industrial = true;
         misc.rulesRefs = "241, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6869,11 +6871,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 7;
         misc.industrial = true;
         misc.rulesRefs = "241, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6899,11 +6901,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 5;
         misc.industrial = true;
         misc.rulesRefs = "243, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6929,11 +6931,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 9;
         misc.industrial = true;
         misc.rulesRefs = "243, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6957,11 +6959,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 67;// From the Ask the Writer Forum
         // Assuming this is a variant of the Dual Saw
         misc.rulesRefs = "243, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6980,11 +6982,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_MEK_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "243, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7003,11 +7005,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_MEK_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "243, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7026,11 +7028,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_MEK_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "243, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7049,11 +7051,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_MEK_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "243, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7077,11 +7079,11 @@ public class MiscType extends EquipmentType {
                            .andNot(F_WS_EQUIPMENT)
                            .andNot(F_SS_EQUIPMENT);
         misc.rulesRefs = "248, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7107,11 +7109,11 @@ public class MiscType extends EquipmentType {
                            .andNot(F_WS_EQUIPMENT)
                            .andNot(F_SS_EQUIPMENT);
         misc.rulesRefs = "248, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7139,11 +7141,11 @@ public class MiscType extends EquipmentType {
                            .andNot(F_WS_EQUIPMENT)
                            .andNot(F_SS_EQUIPMENT);
         misc.rulesRefs = "248, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7171,11 +7173,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 5;
         misc.industrial = true;
         misc.rulesRefs = "244, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7203,11 +7205,11 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT)
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.rulesRefs = "244, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7229,11 +7231,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.rulesRefs = "245, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7258,11 +7260,11 @@ public class MiscType extends EquipmentType {
         misc.cost = 7500;
         misc.criticals = 1;
         misc.rulesRefs = "245, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
@@ -7284,17 +7286,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 6;
         misc.industrial = true;
         misc.rulesRefs = "246, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TA)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TA)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -7313,12 +7315,12 @@ public class MiscType extends EquipmentType {
                            .or(F_SC_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "247, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
               // IO:AE, page 36, 3rd printing
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7344,11 +7346,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 6;
         misc.industrial = true;
         misc.rulesRefs = "247, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7369,11 +7371,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_SALVAGE_ARM).or(F_MEK_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "248, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2400, 2415, 2420, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2400, 2415, 2420, DATE_NONE, DATE_NONE)
@@ -7398,11 +7400,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 5;
         misc.industrial = true;
         misc.rulesRefs = "248, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2312, 2320, 2323, DATE_NONE, DATE_NONE)
               .setISApproximate(true, true, false, false, false)
               .setClanAdvancement(2312, 2320, 2323, DATE_NONE, DATE_NONE)
@@ -7427,11 +7429,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 8;
         misc.industrial = true;
         misc.rulesRefs = "249, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7458,11 +7460,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_STORAGE_BATTERY).or(F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "306, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_E, RATING_D, RATING_D)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_ES, 2131, 2135, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, 2131, 2135, DATE_NONE, DATE_NONE)
@@ -7481,11 +7483,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_LIGHT_SAIL).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "323, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_E, RATING_D, RATING_D)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_ES, 2131, 2135, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, 2131, 2135, DATE_NONE, DATE_NONE)
@@ -7509,16 +7511,16 @@ public class MiscType extends EquipmentType {
                            .or(F_SS_EQUIPMENT)
                            .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.rulesRefs = "332, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2200, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setClanAdvancement(DATE_ES, 2200, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setProductionFactions(F_TA);
+              .setProductionFactions(Faction.TA);
 
         return misc;
     }
@@ -7537,16 +7539,16 @@ public class MiscType extends EquipmentType {
                            .or(F_WS_EQUIPMENT)
                            .or(F_SS_EQUIPMENT);
         misc.rulesRefs = "332, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2200, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setClanAdvancement(DATE_ES, 2200, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setProductionFactions(F_TA);
+              .setProductionFactions(Faction.TA);
         return misc;
     }
 
@@ -7569,11 +7571,11 @@ public class MiscType extends EquipmentType {
                            .or(F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "332, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3065)
-              .setPrototypeFactions(F_DC)
+              .setPrototypeFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -7587,11 +7589,11 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLNavalTugAdaptor");
         misc.flags = misc.flags.or(F_NAVAL_TUG_ADAPTOR).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT);
         misc.rulesRefs = "334, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setApproximate(false, false, false, false, false)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
@@ -7608,16 +7610,16 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("PCMT");
         misc.flags = misc.flags.and(F_SS_EQUIPMENT);
         misc.rulesRefs = "337, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_ES, 2200, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setClanAdvancement(DATE_ES, 2200, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, true, false, false, false)
-              .setProductionFactions(F_TA);
+              .setProductionFactions(Faction.TA);
         return misc;
     }
 
@@ -7633,11 +7635,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_LF_STORAGE_BATTERY).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "323, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2520, 2529, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2520, 2529, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7664,17 +7666,17 @@ public class MiscType extends EquipmentType {
                            .or(MiscType.F_TANK_EQUIPMENT)
                            .or(F_HEAVY_EQUIPMENT);
         misc.rulesRefs = "322, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_E, RATING_F, RATING_F)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F)
               // Book doesn't give a reintro date, but there are several units starting 3073 with an
               // inexplicable insulator.
               // Best we can tell this is an oversight.
               .setAdvancement(2575, DATE_NONE, DATE_NONE, 2820, 3073)
               .setApproximate(false, false, false, false, true)
-              .setPrototypeFactions(F_TH)
+              .setPrototypeFactions(Faction.TH)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -7693,10 +7695,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MINE).or(F_BA_EQUIPMENT);
         misc.bv = 4;
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_E, RATING_E, RATING_D, RATING_X });
+        misc.techAdvancement.setTechRating(TechRating.C);
+        misc.techAdvancement.setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.X);
         return misc;
     }
 
@@ -7717,11 +7719,11 @@ public class MiscType extends EquipmentType {
                            .or(F_SC_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
         misc.rulesRefs = "325, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7749,11 +7751,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 200; // because it includes 2 mines. 100 for each mine,
         // because it deals a max potential damage of 100
         misc.rulesRefs = "325, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
@@ -7772,11 +7774,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MINESWEEPER).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 30;
         misc.rulesRefs = "326, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7805,14 +7807,14 @@ public class MiscType extends EquipmentType {
                            .or(F_SUPPORT_TANK_EQUIPMENT)
                            .or(F_FIGHTER_EQUIPMENT);
         misc.rulesRefs = "296, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(3053, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_FS, F_LC)
+              .setPrototypeFactions(Faction.FS, Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -7837,14 +7839,14 @@ public class MiscType extends EquipmentType {
                            .or(F_WS_EQUIPMENT)
                            .or(F_SS_EQUIPMENT);
         misc.rulesRefs = "297, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_D, RATING_F, RATING_D, RATING_D)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
-              .setProductionFactions(F_WB)
+              .setProductionFactions(Faction.WB)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -7888,10 +7890,10 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         misc.tankslots = 1;
         misc.rulesRefs = "239, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
         return misc;
     }
 
@@ -7914,10 +7916,10 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         misc.tankslots = 1;
         misc.rulesRefs = "239, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
         return misc;
     }
 
@@ -7942,10 +7944,10 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         misc.tankslots = 1;
         misc.rulesRefs = "239, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
         return misc;
     }
 
@@ -7968,15 +7970,15 @@ public class MiscType extends EquipmentType {
                            .or(F_DS_EQUIPMENT);
         misc.bv = 19;
         misc.rulesRefs = "299, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3069, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -8000,15 +8002,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 600000;
         misc.rulesRefs = "300, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_X, RATING_X, RATING_F)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setISAdvancement(2630, DATE_NONE, DATE_NONE, 2790, 3099)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setReintroductionFactions(F_FS)
+              .setPrototypeFactions(Faction.TH)
+              .setReintroductionFactions(Faction.FS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -8073,11 +8075,11 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(false);
         misc.industrial = true;
         misc.rulesRefs = "212, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -8097,11 +8099,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CCM).or(F_MEK_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "301, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_E, RATING_F, RATING_E, RATING_F)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.F)
               .setISAdvancement(2700, 2710, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2700, 2710, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -8133,10 +8135,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.rulesRefs = "217, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -8161,12 +8163,12 @@ public class MiscType extends EquipmentType {
         misc.explosive = true;
         misc.industrial = true;
         misc.rulesRefs = "244, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setAdvancement(DATE_NONE, 2300, 2300)
               .setISApproximate(false, true, false)
-              .setProductionFactions(F_TA);
+              .setProductionFactions(Faction.TA);
         return misc;
     }
 
@@ -8179,10 +8181,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_EXTERNAL_STORES_HARDPOINT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "216, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_E, RATING_D, RATING_X });
+        misc.techAdvancement.setTechRating(TechRating.B);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.X);
         return misc;
     }
 
@@ -8202,17 +8204,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "288, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3067, 3115, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setClanAdvancement(3059, 3115, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_CSF, F_LC)
-              .setProductionFactions(F_CSF)
+              .setPrototypeFactions(Faction.CSF, Faction.LC)
+              .setProductionFactions(Faction.CSF)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -8235,15 +8237,15 @@ public class MiscType extends EquipmentType {
         misc.setModes(modes);
         misc.rulesRefs = "88, IO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setClanAdvancement(3120, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CSF)
-              .setProductionFactions(F_CSF)
+              .setPrototypeFactions(Faction.CSF)
+              .setProductionFactions(Faction.CSF)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -8267,15 +8269,15 @@ public class MiscType extends EquipmentType {
         misc.setModes(modes);
         misc.rulesRefs = "88, IO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setClanAdvancement(3137, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CSF)
-              .setProductionFactions(F_CSF)
+              .setPrototypeFactions(Faction.CSF)
+              .setProductionFactions(Faction.CSF)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -8297,17 +8299,17 @@ public class MiscType extends EquipmentType {
                            .or(F_HEAVY_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "330, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2540, 3059, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2540, 3059, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_FS, F_LC);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.FS, Faction.LC);
         return misc;
     }
 
@@ -8332,9 +8334,9 @@ public class MiscType extends EquipmentType {
                            .or(F_MASH);
         misc.industrial = true;
         misc.rulesRefs = "228, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setAdvancement(DATE_PS, DATE_PS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
@@ -8358,16 +8360,16 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 1400000;
         misc.rulesRefs = "336, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_E, RATING_X, RATING_X, RATING_F)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setISAdvancement(2615, 2630, DATE_NONE, 2790, 3110)
               .setISApproximate(true, false, false, false, true)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_CS)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.CS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -8387,11 +8389,11 @@ public class MiscType extends EquipmentType {
                            .or(F_MEK_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "233, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -8422,11 +8424,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 500;
         misc.rulesRefs = "237, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -8454,11 +8456,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 2000;
         misc.rulesRefs = "237, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -8484,17 +8486,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 1000;
         misc.rulesRefs = "348, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_D, RATING_E, RATING_B, RATING_B)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2348, 2351, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2348, 2351, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -8515,17 +8517,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 3000;
         misc.rulesRefs = "348, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_E, RATING_E, RATING_C, RATING_C)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2348, 2353, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2348, 2353, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -8546,17 +8548,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 5000;
         misc.rulesRefs = "348, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_D, RATING_E, RATING_C, RATING_C)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2348, 2355, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2348, 2355, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -8577,17 +8579,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 0;
         misc.rulesRefs = "348, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(2348, 2353, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2348, 2353, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -8609,12 +8611,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 2000000;
         misc.rulesRefs = "349, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_F)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F)
               .setISAdvancement(3070, 3085)
-              .setPrototypeFactions(F_WB)
-              .setProductionFactions(F_RS)
+              .setPrototypeFactions(Faction.WB)
+              .setProductionFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -8631,11 +8633,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MAST_MOUNT).or(F_VTOL_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "162, TO:AUE";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -8665,15 +8667,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 1;
         misc.rulesRefs = "66, IO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3070, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_CFM)
-              .setProductionFactions(F_CSF)
+              .setPrototypeFactions(Faction.CFM)
+              .setProductionFactions(Faction.CSF)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -8692,9 +8694,9 @@ public class MiscType extends EquipmentType {
         misc.subType = S_PROTOMEK_WEAPON;
         misc.rulesRefs = "149, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(3067, DATE_NONE, 3077, DATE_NONE, DATE_NONE)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
@@ -8717,15 +8719,15 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.subType = S_PROTO_QMS;
         misc.rulesRefs = "61, IO:AE";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3066, 3072, 3085, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CCC)
-              .setProductionFactions(F_CHH)
+              .setPrototypeFactions(Faction.CCC)
+              .setProductionFactions(Faction.CHH)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -8751,17 +8753,17 @@ public class MiscType extends EquipmentType {
                            .or(F_HEAVY_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "330, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2645, 2655, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2645, 2655, DATE_PS, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -8788,17 +8790,17 @@ public class MiscType extends EquipmentType {
                            .or(F_SPLITABLE);
         misc.bv = 0;
         misc.rulesRefs = "330, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2740, 2751, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2740, 2751, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -8821,14 +8823,14 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "92, IO";
         misc.omniFixedOnly = true;
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setISAdvancement(3136, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_RS)
+              .setPrototypeFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -8861,14 +8863,14 @@ public class MiscType extends EquipmentType {
         misc.explosive = true;
         misc.rulesRefs = "93, IO";
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setISAdvancement(3137, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_RS)
+              .setPrototypeFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
         // FIXME: implement game rules, only BV and construction rules
@@ -8893,13 +8895,13 @@ public class MiscType extends EquipmentType {
         // TODO: add game rules, BV rules are implemented
         misc.rulesRefs = "94, IO";
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setISAdvancement(3133, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setPrototypeFactions(F_RS)
+              .setPrototypeFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -8922,13 +8924,13 @@ public class MiscType extends EquipmentType {
         // TODO: game rules
         misc.rulesRefs = "94, IO";
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setISAdvancement(3136, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setPrototypeFactions(F_RS)
+              .setPrototypeFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -8951,13 +8953,13 @@ public class MiscType extends EquipmentType {
         // TODO: game rules
         misc.rulesRefs = "94, IO";
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setISAdvancement(3137, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setPrototypeFactions(F_RS)
+              .setPrototypeFactions(Faction.RS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -9003,13 +9005,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "337, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3060, 3081, DATE_NONE, DATE_NONE)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3101, DATE_NONE, DATE_NONE)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC)
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -9035,16 +9037,16 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "224, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2480, 2487, 3040, 2850, 3035)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_DC);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.DC);
         return misc;
     }
 
@@ -9065,15 +9067,15 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "71, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2471, DATE_NONE, DATE_NONE, 2487, 3035)
               .setISApproximate(true, false, false, true, true)
-              .setPrototypeFactions(F_TH)
-              .setReintroductionFactions(F_DC);
+              .setPrototypeFactions(Faction.TH)
+              .setReintroductionFactions(Faction.DC);
         return misc;
     }
 
@@ -9094,15 +9096,15 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "224, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_E, RATING_D, RATING_D)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(2825, 2827, 2830, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CIH)
-              .setProductionFactions(F_CIH);
+              .setPrototypeFactions(Faction.CIH)
+              .setProductionFactions(Faction.CIH);
         return misc;
     }
 
@@ -9121,12 +9123,12 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.rulesRefs = "342, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3061, 3082, DATE_NONE, DATE_NONE)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS)
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -9147,13 +9149,13 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "342, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(DATE_NONE, 3067, 3085, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -9174,12 +9176,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "342, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(DATE_NONE, 3073, 3085, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_CWX)
+              .setPrototypeFactions(Faction.CWX)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -9201,15 +9203,15 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.rulesRefs = "342, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3057, 3084, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
               .setClanAdvancement(DATE_NONE, 3065, 3084, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_CS, F_CGB)
-              .setProductionFactions(F_CGB)
+              .setPrototypeFactions(Faction.CS, Faction.CGB)
+              .setProductionFactions(Faction.CGB)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -9229,12 +9231,12 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         misc.flags = misc.flags.or(F_INDUSTRIAL_STRUCTURE);
         misc.rulesRefs = "224, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-              .setPrototypeFactions(F_TA)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TA)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -9271,17 +9273,17 @@ public class MiscType extends EquipmentType {
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "279, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3070, 3108, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(3070, 3109, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_MERC)
-              .setProductionFactions(F_RD)
+              .setPrototypeFactions(Faction.MERC)
+              .setProductionFactions(Faction.RD)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -9303,15 +9305,15 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "240, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3028, 3050, 3055, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_FS, F_CC)
-              .setProductionFactions(F_CC);
+              .setPrototypeFactions(Faction.FS, Faction.CC)
+              .setProductionFactions(Faction.CC);
 
         return misc;
     }
@@ -9335,15 +9337,15 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.rulesRefs = "240, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3035, 3045, 3055, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_FS)
-              .setProductionFactions(F_FS);
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS);
         return misc;
     }
 
@@ -9361,12 +9363,12 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "103, IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
+        misc.techAdvancement.setTechBase(TechBase.IS)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(3028, DATE_NONE, DATE_NONE, 3050)
               .setISApproximate(true, false, false, false)
-              .setPrototypeFactions(F_CC)
+              .setPrototypeFactions(Faction.CC)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -9385,13 +9387,13 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "216, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(2300, 2350, 2495)
               .setApproximate(true, false, false)
-              .setPrototypeFactions(F_TA)
-              .setProductionFactions(F_TH)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+              .setPrototypeFactions(Faction.TA)
+              .setProductionFactions(Faction.TH)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
         return misc;
     }
 
@@ -9420,18 +9422,18 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "302, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2470, 2472, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2470, 2472, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.TH);
         return misc;
     }
 
@@ -9450,18 +9452,18 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "302, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2470, 2472, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2470, 2472, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.TH);
         return misc;
     }
 
@@ -9480,18 +9482,18 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "302, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2470, 2474, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2470, 2474, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.TH);
         return misc;
     }
 
@@ -9510,18 +9512,18 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "303, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2470, 2471, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2470, 2471, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.TH);
         return misc;
     }
 
@@ -9541,16 +9543,16 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "303, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(DATE_NONE, 2475, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_NONE, 2475, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setProductionFactions(F_TH);
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -9570,10 +9572,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "122, TM";
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_C });
+        misc.techAdvancement.setTechRating(TechRating.C);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
         return misc;
     }
 
@@ -9596,10 +9598,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "122, TM";
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_E, RATING_D, RATING_D });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D);
         return misc;
     }
 
@@ -9618,10 +9620,10 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "122, TM";
         misc.tankslots = 0;
         misc.industrial = true;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
         return misc;
     }
 
@@ -9640,10 +9642,10 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "122, TM";
         misc.tankslots = 0;
         misc.industrial = true;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
         return misc;
     }
 
@@ -9664,18 +9666,18 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "303, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2470, 2471, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2470, 2471, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.TH);
         return misc;
     }
 
@@ -9693,10 +9695,10 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "122, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(RATING_B, RATING_D, RATING_C, RATING_C);
+        misc.techAdvancement.setTechRating(TechRating.C);
+        misc.techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
         return misc;
     }
 
@@ -9713,10 +9715,10 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "243, TO";
         misc.tankslots = 0;
         misc.industrial = true;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(DATE_NONE, DATE_NONE, DATE_PS)
-              .setTechRating(RATING_B)
-              .setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_C });
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
         return misc;
     }
 
@@ -9735,10 +9737,10 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "122, TM";
         misc.tankslots = 0;
         misc.industrial = true;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_C });
+        misc.techAdvancement.setTechRating(TechRating.B);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
         return misc;
     }
 
@@ -9757,10 +9759,10 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "122, TM";
         misc.tankslots = 0;
         misc.industrial = true;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_D, RATING_D, RATING_D });
+        misc.techAdvancement.setTechRating(TechRating.B);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D);
         return misc;
     }
 
@@ -9782,10 +9784,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "122, TM";
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_C, RATING_B, RATING_B });
+        misc.techAdvancement.setTechRating(TechRating.B);
+        misc.techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B);
         return misc;
     }
 
@@ -9803,14 +9805,14 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "122, TM";
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3052)
               .setClanAdvancement(2854, 2856, 2864)
               .setClanApproximate(true)
-              .setPrototypeFactions(F_CCY, F_CSF)
-              .setProductionFactions(F_CCY, F_DC)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+              .setPrototypeFactions(Faction.CCY, Faction.CSF)
+              .setProductionFactions(Faction.CCY, Faction.DC)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -9829,10 +9831,10 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.rulesRefs = "122, TM";
         // Setting this Pre-Spaceflight
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_C, RATING_B, RATING_X });
+        misc.techAdvancement.setTechRating(TechRating.B);
+        misc.techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.X);
         return misc;
     }
 
@@ -9852,10 +9854,10 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "122, TM";
         // TODO: implement game rules
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_E, RATING_D, RATING_D });
+        misc.techAdvancement.setTechRating(TechRating.B);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D);
         return misc;
     }
 
@@ -9871,10 +9873,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "122, TM";
         misc.tankslots = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_C, RATING_B, RATING_B });
+        misc.techAdvancement.setTechRating(TechRating.C);
+        misc.techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B);
         return misc;
     }
 
@@ -9893,10 +9895,10 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.industrial = true;
         misc.rulesRefs = "122, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_C });
+        misc.techAdvancement.setTechRating(TechRating.B);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
         return misc;
     }
 
@@ -9917,10 +9919,10 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "122, TM";
         misc.tankslots = 0;
         misc.industrial = true;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
         return misc;
     }
 
@@ -9937,10 +9939,10 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         misc.rulesRefs = "101, TM";
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
         return misc;
     }
 
@@ -9962,10 +9964,10 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         misc.rulesRefs = "122, TM";
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
         return misc;
     }
 
@@ -9980,10 +9982,10 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.rulesRefs = "122, TM";
         // Setting this Pre-Spaceflight
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_E, RATING_D, RATING_D });
+        misc.techAdvancement.setTechRating(TechRating.D);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D);
         return misc;
     }
 
@@ -9999,10 +10001,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "122, TM";
         misc.tankslots = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_C });
+        misc.techAdvancement.setTechRating(TechRating.C);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
         return misc;
     }
 
@@ -10030,9 +10032,9 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "347, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_F, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setAdvancement(2450, 3082, DATE_NONE, DATE_NONE, DATE_NONE)
               .setApproximate(false, true, false, false, false)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
@@ -10053,12 +10055,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "347, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_F, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setAdvancement(2450, 3082, DATE_NONE, DATE_NONE, DATE_NONE)
               .setApproximate(false, true, false, false, false)
-              .setPrototypeFactions(F_FS, F_LC)
+              .setPrototypeFactions(Faction.FS, Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         return misc;
@@ -10078,9 +10080,9 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "347, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setAdvancement(2320, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
               .setApproximate(false, true, false, false, false)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
@@ -10112,9 +10114,9 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "348, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.D)
               .setAdvancement(DATE_PS, DATE_NONE, 3079, DATE_NONE, DATE_NONE)
               .setApproximate(false, false, true, false, false)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -10134,11 +10136,11 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "234, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -10165,17 +10167,17 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "252, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_F, RATING_E, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2898, 2900, 3050, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CSJ)
-              .setProductionFactions(F_CSJ);
+              .setPrototypeFactions(Faction.CSJ)
+              .setProductionFactions(Faction.CSJ);
         return misc;
     }
 
@@ -10197,15 +10199,15 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "279, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3063, DATE_NONE, 3089, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC)
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         return misc;
@@ -10229,15 +10231,15 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "279, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3059, DATE_NONE, 3089, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_CNC)
-              .setProductionFactions(F_CNC)
+              .setPrototypeFactions(Faction.CNC)
+              .setProductionFactions(Faction.CNC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -10259,15 +10261,15 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.rulesRefs = "253, TM";
         misc.bv = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_F, RATING_F, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(2790, 2800, 3058, DATE_NONE, DATE_NONE)
               .setISApproximate(true, true, false, false, false)
-              .setPrototypeFactions(F_CS)
-              .setProductionFactions(F_CS);
+              .setPrototypeFactions(Faction.CS)
+              .setProductionFactions(Faction.CS);
         return misc;
     }
 
@@ -10286,11 +10288,11 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "254, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
@@ -10320,16 +10322,16 @@ public class MiscType extends EquipmentType {
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "254, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(2718, 2720, 3060, 2766, 3057)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setReintroductionFactions(F_FW, F_WB);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.FW, Faction.WB);
         return misc;
     }
 
@@ -10355,15 +10357,15 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "254, TM";
         misc.rulesRefs = "254, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(2718, 2720, 3060, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -10384,17 +10386,17 @@ public class MiscType extends EquipmentType {
                            .andNot(F_TANK_EQUIPMENT)
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.rulesRefs = "254, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2712, 2715, 2720, DATE_NONE, DATE_NONE)
               .setISApproximate(true, true, false, false, false)
               .setClanAdvancement(2712, 2715, 2720, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, true, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -10413,17 +10415,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 500;
         misc.rulesRefs = "255, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2740, 2744, 3053, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2740, 2744, 3053, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -10444,17 +10446,17 @@ public class MiscType extends EquipmentType {
                            .andNot(F_TANK_EQUIPMENT)
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.rulesRefs = "256, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2879, 2880, 3050, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_CBS)
-              .setProductionFactions(F_CBS);
+              .setPrototypeFactions(Faction.CBS)
+              .setProductionFactions(Faction.CBS);
         return misc;
     }
 
@@ -10470,11 +10472,11 @@ public class MiscType extends EquipmentType {
         misc.cost = 35000;
         misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT).andNot(F_MEK_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
         misc.rulesRefs = "257, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3051, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false);
         return misc;
@@ -10492,15 +10494,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 200000;
         misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT).andNot(F_MEK_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
         misc.rulesRefs = "257, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(2887, 2890, 3051, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, true, false, false, false)
-              .setPrototypeFactions(F_CBS)
-              .setProductionFactions(F_CBS);
+              .setPrototypeFactions(Faction.CBS)
+              .setProductionFactions(Faction.CBS);
         return misc;
     }
 
@@ -10518,11 +10520,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 750;
         misc.rulesRefs = "258, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_E, RATING_E, RATING_F, RATING_F)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
@@ -10546,11 +10548,11 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "266, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_B, RATING_B, RATING_C, RATING_B)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -10572,11 +10574,11 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "268, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -10603,17 +10605,17 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "268, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_E, RATING_D, RATING_D, RATING_D)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2700, 3050, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2700, 3050, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_FS);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.FS);
         return misc;
     }
 
@@ -10634,10 +10636,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 500;
         misc.rulesRefs = "269, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+        misc.techAdvancement.setTechRating(TechRating.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
         return misc;
     }
 
@@ -10655,10 +10657,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 750;
         misc.rulesRefs = "258, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_E, RATING_E, RATING_F, RATING_F });
+        misc.techAdvancement.setTechRating(TechRating.C);
+        misc.techAdvancement.setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F);
         return misc;
     }
 
@@ -10678,17 +10680,17 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "269, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3011, 3015, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2890, 2895, 3015, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CSR)
-              .setProductionFactions(F_CSR, F_TC);
+              .setPrototypeFactions(Faction.CSR)
+              .setProductionFactions(Faction.CSR, Faction.TC);
         return misc;
     }
 
@@ -10709,11 +10711,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 2500;
         misc.rulesRefs = "259, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
@@ -10736,16 +10738,16 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 5000;
         misc.rulesRefs = "259, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_ES, 2110, 2120, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, true, false, false)
               .setClanAdvancement(DATE_ES, 2110, 2120, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, true, true, false, false)
-              .setProductionFactions(F_TA);
+              .setProductionFactions(Faction.TA);
         return misc;
     }
 
@@ -10764,17 +10766,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 10000;
         misc.rulesRefs = "259, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2865, 2868, 3050, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CWF)
-              .setProductionFactions(F_CWF);
+              .setPrototypeFactions(Faction.CWF)
+              .setProductionFactions(Faction.CWF);
         return misc;
     }
 
@@ -10793,17 +10795,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 25000;
         misc.rulesRefs = "259, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2865, 2868, 3050, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CWF)
-              .setProductionFactions(F_CWF);
+              .setPrototypeFactions(Faction.CWF)
+              .setProductionFactions(Faction.CWF);
         return misc;
     }
 
@@ -10822,16 +10824,16 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_CARGOLIFTER).or(F_BA_MANIPULATOR).or(F_VARIABLE_SIZE);
         misc.bv = 0;
         misc.rulesRefs = "259, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(DATE_ES, 2110, 2120, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, true, false, false)
               .setClanAdvancement(DATE_ES, 2110, 2120, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, true, true, false, false)
-              .setProductionFactions(F_TA);
+              .setProductionFactions(Faction.TA);
         return misc;
     }
 
@@ -10848,16 +10850,16 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 2500;
         misc.rulesRefs = "259, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setProductionFactions(F_TA);
+              .setProductionFactions(Faction.TA);
         return misc;
     }
 
@@ -10874,17 +10876,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 50000;
         misc.rulesRefs = "259, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_E, RATING_E, RATING_E, RATING_D)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2410, 2415, 2420, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2410, 2415, 2420, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH);
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH);
         return misc;
     }
 
@@ -10904,17 +10906,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 1.5;
         misc.cost = 12500;
         misc.rulesRefs = "260, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3053, 3055, 3058, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3058, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_FS, F_LC)
-              .setProductionFactions(F_FS, F_LC);
+              .setPrototypeFactions(Faction.FS, Faction.LC)
+              .setProductionFactions(Faction.FS, Faction.LC);
         return misc;
     }
 
@@ -10934,17 +10936,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 1.5;
         misc.cost = 31250;
         misc.rulesRefs = "260, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3053, 3055, 3058, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3058, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_FS, F_LC)
-              .setProductionFactions(F_FS, F_LC);
+              .setPrototypeFactions(Faction.FS, Faction.LC)
+              .setProductionFactions(Faction.FS, Faction.LC);
         return misc;
     }
 
@@ -10965,17 +10967,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 7500;
         misc.rulesRefs = "260, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3063, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_CC)
-              .setProductionFactions(F_CC);
+              .setPrototypeFactions(Faction.CC)
+              .setProductionFactions(Faction.CC);
         return misc;
     }
 
@@ -10994,17 +10996,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 1;
         misc.cost = 15000;
         misc.rulesRefs = "260, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3053, 3054, 3058, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3062, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC);
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC);
         return misc;
     }
 
@@ -11024,17 +11026,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 1;
         misc.cost = 30000;
         misc.rulesRefs = "260, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3053, 3054, 3058, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3062, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC);
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC);
         return misc;
     }
 
@@ -11051,17 +11053,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 10000;
         misc.rulesRefs = "260, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3052, 3058, 3060, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3061, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC);
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC);
         return misc;
     }
 
@@ -11075,9 +11077,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 0;
         misc.flags = misc.flags.or(F_JUMP_JET).or(F_BA_EQUIPMENT);
         misc.rulesRefs = "257, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setAdvancement(DATE_ES, DATE_ES, DATE_ES);
         return misc;
     }
@@ -11092,13 +11094,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 0;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BA_VTOL);
         misc.rulesRefs = "271, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3052, 3060, 3066)
               .setClanApproximate(true, false, false)
-              .setPrototypeFactions(F_CCC)
-              .setProductionFactions(F_CCC);
+              .setPrototypeFactions(Faction.CCC)
+              .setProductionFactions(Faction.CCC);
         return misc;
     }
 
@@ -11112,13 +11114,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 0;
         misc.flags = misc.flags.or(F_UMU).or(F_BA_EQUIPMENT);
         misc.rulesRefs = "270, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setClanAdvancement(2840, 3059, 3065)
               .setClanApproximate(true, false, false)
-              .setPrototypeFactions(F_CGS)
-              .setProductionFactions(F_CGS)
+              .setPrototypeFactions(Faction.CGS)
+              .setProductionFactions(Faction.CGS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -11140,17 +11142,17 @@ public class MiscType extends EquipmentType {
                            .andNot(F_TANK_EQUIPMENT)
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.rulesRefs = "257, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3050, 3051, 3061, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, true, false, false)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3062, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_FS, F_LC)
-              .setProductionFactions(F_MERC)
+              .setPrototypeFactions(Faction.FS, Faction.LC)
+              .setProductionFactions(Faction.MERC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -11176,15 +11178,15 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(true);
         misc.bv = 1;
         misc.rulesRefs = "259, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3057, 3062, 3067, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CC)
-              .setProductionFactions(F_CC);
+              .setPrototypeFactions(Faction.CC)
+              .setProductionFactions(Faction.CC);
         return misc;
     }
 
@@ -11200,17 +11202,17 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MECHANICAL_JUMP_BOOSTER).or(F_BA_EQUIPMENT);
         misc.rulesRefs = "286, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(DATE_NONE, 3070, 3084, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
               .setClanAdvancement(DATE_NONE, 3070, 3084, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_LC)
-              .setProductionFactions(F_LC)
+              .setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -11236,15 +11238,15 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.rulesRefs = "287, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_F)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(DATE_NONE, 3072, 3085, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setPrototypeFactions(F_CIH)
-              .setProductionFactions(F_CIH)
+              .setPrototypeFactions(Faction.CIH)
+              .setProductionFactions(Faction.CIH)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         return misc;
@@ -11260,15 +11262,15 @@ public class MiscType extends EquipmentType {
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_PARTIAL_WING);
         misc.rulesRefs = "266, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3051, 3053, 3059, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_DC)
-              .setProductionFactions(F_DC);
+              .setPrototypeFactions(Faction.DC)
+              .setProductionFactions(Faction.DC);
         return misc;
     }
 
@@ -11287,17 +11289,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 1000;
         misc.rulesRefs = "348, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_E, RATING_B, RATING_B)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3051, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2874, 2875, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CHH)
-              .setProductionFactions(F_CHH);
+              .setPrototypeFactions(Faction.CHH)
+              .setProductionFactions(Faction.CHH);
         return misc;
     }
 
@@ -11316,17 +11318,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 3000;
         misc.rulesRefs = "348, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_E, RATING_C, RATING_C)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3051, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2874, 2875, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CHH)
-              .setProductionFactions(F_CHH);
+              .setPrototypeFactions(Faction.CHH)
+              .setProductionFactions(Faction.CHH);
         return misc;
     }
 
@@ -11345,17 +11347,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 1000;
         misc.rulesRefs = "348, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3054, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2878, 2880, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CHH)
-              .setProductionFactions(F_CHH);
+              .setPrototypeFactions(Faction.CHH)
+              .setProductionFactions(Faction.CHH);
         return misc;
     }
 
@@ -11375,17 +11377,17 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = COST_VARIABLE;
         misc.rulesRefs = "348, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_E, RATING_B, RATING_B)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3053, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2874, 2876, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CHH)
-              .setProductionFactions(F_CHH);
+              .setPrototypeFactions(Faction.CHH)
+              .setProductionFactions(Faction.CHH);
         return misc;
     }
 
@@ -11405,16 +11407,16 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_AP_MOUNT);
         misc.bv = 0;
         misc.rulesRefs = "271, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_A)
-              .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_ES, DATE_ES, 3050, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_ES, 2868, 2870, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)
-              .setProductionFactions(F_CWF);
+              .setProductionFactions(Faction.CWF);
 
         return misc;
     }
@@ -11438,17 +11440,17 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.rulesRefs = "287, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3073, 3080, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, true, false, false)
               .setClanAdvancement(DATE_NONE, 3072, 3080, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, true, false, false)
-              .setPrototypeFactions(F_CHH)
-              .setProductionFactions(F_CHH)
+              .setPrototypeFactions(Faction.CHH)
+              .setProductionFactions(Faction.CHH)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -11471,15 +11473,15 @@ public class MiscType extends EquipmentType {
                            .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
         misc.rulesRefs = "260, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3057, 3062, 3068, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(F_CC)
-              .setProductionFactions(F_CC);
+              .setPrototypeFactions(Faction.CC)
+              .setProductionFactions(Faction.CC);
         return misc;
     }
 
@@ -11502,10 +11504,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 0;
         misc.rulesRefs = "262, TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(DATE_NONE, DATE_NONE, 2720)
-              .setTechRating(RATING_C)
-              .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
         return misc;
     }
 
@@ -11533,10 +11535,10 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         // Assuming this is a BA Carried Charge, So dates set for Nighthawk use.
 
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
+        misc.techAdvancement.setTechBase(TechBase.IS);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2720, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_D, RATING_D, RATING_X });
+        misc.techAdvancement.setTechRating(TechRating.D);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.X);
         return misc;
     }
 
@@ -11555,10 +11557,10 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         // Since this is BA Equipment I'm setting the date for Nighthawk use.
 
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
+        misc.techAdvancement.setTechBase(TechBase.IS);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2720, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_D, RATING_D, RATING_X });
+        misc.techAdvancement.setTechRating(TechRating.D);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.X);
         return misc;
     }
 
@@ -11578,10 +11580,10 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         // Going to assume this is something with building Bridges
         // Also the equipment used by infantry bridge builders.
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2720, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_D, RATING_D, RATING_X });
+        misc.techAdvancement.setTechRating(TechRating.D);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.X);
         return misc;
     }
 
@@ -11598,11 +11600,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 15;
         // Left over from older Infantry rules.
 
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
+        misc.techAdvancement.setTechBase(TechBase.IS);
         misc.techAdvancement.setUnofficial(true);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2100, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_D, RATING_D, RATING_X });
+        misc.techAdvancement.setTechRating(TechRating.D);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.X);
         return misc;
     }
 
@@ -11622,11 +11624,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         // Since this is BA Equipment I'm setting the date for Nighthawk use.
 
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
+        misc.techAdvancement.setTechBase(TechBase.IS);
         misc.techAdvancement.setUnofficial(true);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2720, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_D, RATING_D, RATING_X });
+        misc.techAdvancement.setTechRating(TechRating.D);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.X);
         return misc;
     }
 
@@ -11642,13 +11644,13 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "110, IO";
         // IO, p.220/221 (LAMs can be constructed in all later eras so Bomb Bays must
         // not go extinct)
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2680, 2684)
               .setClanAdvancement(DATE_NONE, 2684)
-              .setPrototypeFactions(F_TH)
-              .setProductionFactions(F_TH)
-              .setTechRating(RATING_D)
-              .setAvailability(RATING_B, RATING_E, RATING_E, RATING_E)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -11665,10 +11667,10 @@ public class MiscType extends EquipmentType {
         // IO p.111
         misc.rulesRefs = "114, IO";
         // IO, p.220/221
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(DATE_ES, DATE_ES)
-              .setTechRating(RATING_B)
-              .setAvailability(RATING_B, RATING_A, RATING_A, RATING_A)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -11686,10 +11688,10 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "?";
 
         // Not yet published
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(2600, DATE_NONE, DATE_NONE, 2781, 3130)
-              .setTechRating(RATING_E)
-              .setAvailability(RATING_F, RATING_X, RATING_X, RATING_F)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }

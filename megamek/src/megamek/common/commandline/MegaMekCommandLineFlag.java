@@ -32,6 +32,7 @@ public enum MegaMekCommandLineFlag {
     // exporters and utilities
     EQDB(Messages.getString("MegaMek.Help.EquipmentDB")),
     EQEDB(Messages.getString("MegaMek.Help.EquipmentExtendedDB")),
+    EQYAMLDB(Messages.getString("MegaMek.Help.EquipmentYamlDB")),
     EQWDB(Messages.getString("MegaMek.Help.EquipmentWeaponDB")),
     EQADB(Messages.getString("MegaMek.Help.EquipmentAmmoDB")),
     EQMDB(Messages.getString("MegaMek.Help.EquipmentMiscDB")),

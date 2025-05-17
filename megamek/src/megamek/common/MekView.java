@@ -43,6 +43,8 @@ import megamek.common.util.DiscordFormat;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.ITechnology;
+
 
 /**
  * A utility class for retrieving unit information in a formatted string.
@@ -944,11 +946,11 @@ public class MekView {
             WeaponType wtype = mounted.getType();
 
             if (entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
+                    && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
                 row[0] += Messages.getString("MekView.IS");
             }
             if (!entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
+                    && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
                 row[0] += Messages.getString("MekView.Clan");
             }
             /*
@@ -994,11 +996,11 @@ public class MekView {
                     row = new String[] { m.getDesc(), "", "", "" };
 
                     if (entity.isClan()
-                            && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
+                            && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
                         row[0] += Messages.getString("MekView.IS");
                     }
                     if (!entity.isClan()
-                            && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
+                            && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
                         row[0] += Messages.getString("MekView.Clan");
                     }
                     if (m.isDestroyed()) {
@@ -1140,11 +1142,11 @@ public class MekView {
 
             String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "" };
             if (entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
+                    && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
                 row[0] += Messages.getString("MekView.IS");
             }
             if (!entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
+                    && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
                 row[0] += Messages.getString("MekView.Clan");
             }
 

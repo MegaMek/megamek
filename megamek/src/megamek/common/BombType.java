@@ -773,4 +773,11 @@ public class BombType extends AmmoType {
 
         return bomb;
     }
+
+    /**
+     * @return True when this bomb type is either a large or small FAE.
+     */
+    public boolean isFaeBomb() {
+        return (bombType == B_FAE_LARGE) || (bombType == B_FAE_SMALL);
+    }
 }

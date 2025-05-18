@@ -37,10 +37,12 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
 
     private static final MMLogger LOGGER = MMLogger.create(CapitalLaserBayWeaponOrbitalBombardmentHandler.class);
 
-    boolean handledAmmoAndReport = false;
+    private boolean isReported = false;
+    private final ArtilleryAttackAction attackAction;
 
     public CapitalLaserBayWeaponOrbitalBombardmentHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
+        attackAction = (ArtilleryAttackAction) w;
     }
 
     @Override
@@ -57,35 +59,24 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
             return false;
         }
 
-        String artyMsg;
-        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase.isTargeting()) {
-            if (!handledAmmoAndReport) {
-                addHeat();
-                // Report the firing itself
-                Report r = new Report(3121).indent().noNL().subject(subjectId);
-                r.add(wtype.getName());
-                r.add(aaa.getTurnsTilHit());
-                reports.addElement(r);
-                Report.addNewline(reports);
-                handledAmmoAndReport = true;
+        // This attack has just been declared; report it once
+        if (!isReported) {
+            reportFiring(reports, attackAction);
+            isReported = true;
+        }
 
-                Player owner = game.getPlayer(aaa.getPlayerId());
-                int landingRound = game.getRoundCount() + aaa.getTurnsTilHit();
-                String message = "Naval Fire Support incoming, landing this round, fired by " + owner.getName();
-                SpecialHexDisplay incomingMarker = SpecialHexDisplay.createIncomingFire(owner, landingRound, message);
-                game.getBoard(target).addSpecialHexDisplay(target.getPosition(), incomingMarker);
-            }
+        if (phase.isTargeting()) {
+            // I have no clue how this is used:
             setAnnouncedEntityFiring(false);
             return true;
         }
 
         Coords origPos = target.getPosition();
         Coords targetPos = target.getPosition();
-        final int playerId = aaa.getPlayerId();
+        final int playerId = attackAction.getPlayerId();
 
         // If at least one valid spotter, then get the benefits thereof.
-        Optional<Entity> bestSpotter = findSpotter(aaa.getSpotterIds(), playerId);
+        Optional<Entity> bestSpotter = findSpotter(attackAction.getSpotterIds(), playerId);
         if (bestSpotter.isPresent()) {
             int modifier = (bestSpotter.get().getCrew().getGunnery() - 4) / 2;
             modifier += isForwardObserver(bestSpotter.get()) ? -1 : 0;
@@ -138,7 +129,7 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
 
         // Do this stuff first, because some weapon's miss report reference the amount of shots fired and stuff.
-        if (!handledAmmoAndReport) {
+        if (!isReported) {
             addHeat();
         }
 
@@ -149,12 +140,12 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
         if (!bMissed) {
             r = new Report(3203).subject(subjectId).add(nweaponsHit).add(targetPos.getBoardNum());
             reports.addElement(r);
-            artyMsg = "Artillery hit here on round " + game.getRoundCount()
-                  + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
+            String artyMsg = "Artillery hit here on round " + game.getRoundCount()
+                  + ", fired by " + game.getPlayer(attackAction.getPlayerId()).getName()
                   + " (this hex is now an auto-hit)";
             board.addSpecialHexDisplay(targetPos,
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
-                        game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg));
+                        game.getRoundCount(), game.getPlayer(attackAction.getPlayerId()), artyMsg));
         } else {
             int moF = toHit.getMoS();
             if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)) {
@@ -168,12 +159,12 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
             }
             // We're only going to display one missed shot hex on the board, at the intended target
             // Any drifted shots will be indicated at their end points
-            artyMsg = "Orbital Bombardment missed here on round "
+            String artyMsg = "Orbital Bombardment missed here on round "
                   + game.getRoundCount() + ", by "
-                  + game.getPlayer(aaa.getPlayerId()).getName();
+                  + game.getPlayer(attackAction.getPlayerId()).getName();
             board.addSpecialHexDisplay(origPos,
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(),
-                        game.getPlayer(aaa.getPlayerId()), artyMsg));
+                        game.getPlayer(attackAction.getPlayerId()), artyMsg));
 
             // Typically, nweaponsHit is exactly 1
             while (nweaponsHit > 0) {
@@ -182,7 +173,7 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
                 if (board.contains(targetPos)) {
                     targets.add(targetPos);
                     // misses and scatters to another hex
-                    reports.addElement(new Report(3202).subject(subjectId).add(targetPos.getBoardNum()));
+                    reports.addElement(new Report(3202).subject(subjectId).add("One").add(targetPos.getBoardNum()));
                 } else {
                     // misses and scatters off-board
                     reports.addElement(new Report(3200).subject(subjectId));
@@ -215,32 +206,14 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
             }
             // Here we're doing damage for each hit with more standard artillery shells
             while (nweaponsHit > 0) {
-//                gameManager.doExplosion(calcAttackValue() * 10,
-//                      calcAttackValue() * 2,
-//                      false,
-//                      targetPos,
-//                      target.getBoardId(),
-//                      false,
-//                      reports,
-//                      null,
-//                      -1,
-//                      false);
                 AreaEffectHelper.DamageFalloff falloff = new AreaEffectHelper.DamageFalloff();
                 falloff.damage = calcAttackValue() * 10;
                 falloff.falloff = calcAttackValue() * 2;
                 falloff.radius = 4;
                 falloff.clusterMunitionsFlag = false;
 
-                gameManager.artilleryDamageArea(targetPos,
-                      targetPos,
-                      null,
-                      ae.getId(),
-                      ae,
-                      falloff,
-                      false,
-                      0,
-                      reports,
-                      false);
+                gameManager.artilleryDamageArea(targetPos, board.getBoardId(), null, ae.getId(), ae, falloff, false,
+                      game.getHexOf(target).getLevel(), reports, false);
                 nweaponsHit--;
             }
         } else {
@@ -267,6 +240,22 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
 
         }
         return false;
+    }
+
+    private void reportFiring(Vector<Report> reports, ArtilleryAttackAction aaa) {
+        addHeat();
+        // Report the firing itself
+        Report r = new Report(3121).indent().noNL().subject(subjectId);
+        r.add(wtype.getName());
+        r.add(aaa.getTurnsTilHit());
+        reports.addElement(r);
+        Report.addNewline(reports);
+
+        Player owner = game.getPlayer(aaa.getPlayerId());
+        int landingRound = game.getRoundCount() + aaa.getTurnsTilHit();
+        String message = "Naval Fire Support incoming, landing this round, fired by " + owner.getName();
+        SpecialHexDisplay incomingMarker = SpecialHexDisplay.createIncomingFire(owner, landingRound, message);
+        game.getBoard(target).addSpecialHexDisplay(target.getPosition(), incomingMarker);
     }
 
     private Optional<Entity> findSpotter(List<Integer> spottersBefore, int playerId) {

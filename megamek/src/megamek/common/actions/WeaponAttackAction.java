@@ -2291,9 +2291,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 // We don't really need to do anything here. This just prevents these weapons
                 // from passing the next test erroneously.
             } else if ((wtype.isCapital() || wtype.isSubCapital())
-                  && (ttype == Targetable.TYPE_HEX_ARTILLERY)
                   && CrossBoardAttackHelper.isOrbitToSurface(game, ae, target)) {
                 // O2S attacks behave (correctly) as artillery attacks against hex targets, SO:AA p.91
+                if (!game.getPhase().isTargeting() || (ttype != Targetable.TYPE_HEX_ARTILLERY)) {
+                    return Messages.getString("WeaponAttackAction.OnlyInTargeting");
+                }
             } else if (wtype instanceof CapitalMissileWeapon && Compute.isGroundToGround(ae, target)) {
                 // Grounded units firing capital missiles at ground targets must do so as artillery
                 if (ttype != Targetable.TYPE_HEX_ARTILLERY) {

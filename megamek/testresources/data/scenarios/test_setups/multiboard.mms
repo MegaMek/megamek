@@ -82,6 +82,9 @@ options:
     - check_victory
     - stratops_ecm
 
+#planetaryconditions:
+#  pressure: very high
+
 factions:
 - name: P1
 #  deploy: W
@@ -108,10 +111,10 @@ factions:
 #    board: 1
 #    # offboard effective distance doesnt work yet
 #
-#  - fullname: Mobile Long Tom Artillery LT-MOB-25
-#    at: [13,10]
-#    board: 1
-#    facing: 2
+  - fullname: Mobile Long Tom Artillery LT-MOB-25
+    at: [5,5]
+    board: 1
+    facing: 2
 
 #  - fullname: Bulldog Medium Tank
 #    at: [ 13,10 ]
@@ -147,9 +150,9 @@ factions:
     facing: 5
 #    status: hidden
 #
-  - fullname: Brave BRV-1Y
-    board: 5
-    at: [ 35, 29 ]
+#  - fullname: Brave BRV-1Y
+#    board: 5
+#    at: [ 35, 29 ]
 #
 #  - fullname: Cheetah IIC
 #    at: [5, 6]
@@ -182,9 +185,9 @@ factions:
 
 #  - fullname: AC/10 Turret (Dual)
 
-  - fullname: Aurora
-    at: [10, 10]
-    board: 6
+#  - fullname: Aurora
+#    at: [10, 10]
+#    board: 6
 #    altitude: 0
 #
 #  - fullname: Zugvogel Omni Support Aircraft B

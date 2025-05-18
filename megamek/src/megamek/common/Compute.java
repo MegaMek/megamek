@@ -1801,7 +1801,13 @@ public class Compute {
         Vector<Coords> targetPos = new Vector<>();
         targetPos.add(target.getPosition());
 
-        if (isAirToAir(game, attacker, target)) {
+        if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
+            // The effective position of the target is the ground map position on the ground hex row of the high
+            // altitude map that the attacker is firing from
+            targetPos.clear();
+            int atmosphericBoardId = BoardHelper.enclosingBoardId(game, target.getBoardLocation());
+            targetPos.add(BoardHelper.positionOnEnclosingBoard(game, atmosphericBoardId));
+        } else if (isAirToAir(game, attacker, target)) {
             // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
             // position of the unit on the ground map with the position of the ground map itself in the atmo map
             if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
@@ -1891,6 +1897,24 @@ public class Compute {
         // Attacking a ground unit while dropping
         if (attacker.isDropping() && target.getAltitude() == 0) {
             distance += (2 * attacker.getAltitude());
+        }
+
+        if (game.isOnSpaceMap(attacker) && !attacker.getPosition().equals(targetPos.get(0))) {
+            // Atmospheric hexes count as extra range
+            Board attackerBoard = game.getBoard(attacker);
+            Coords currentCoords = attacker.getPosition();
+            currentCoords = Coords.nextHex(currentCoords, targetPos.get(0));
+            int safetyCounter = 0;
+            while (!currentCoords.equals(targetPos.get(0)) && (safetyCounter < 1000)) {
+                safetyCounter++; // prevent infinite loops
+                currentCoords = Coords.nextHex(currentCoords, targetPos.get(0));
+                if (BoardHelper.isAtmosphericRow(game, attackerBoard, currentCoords)
+                      || BoardHelper.isGroundRowHex(attackerBoard, currentCoords)) {
+                    distance += BoardHelper.highAltAtmoRowRangeIncrease(game);
+                } else if (BoardHelper.isSpaceAtmosphereInterface(game, attackerBoard, currentCoords)) {
+                    distance += BoardHelper.highAltSpaceAtmoRangeIncrease(game);
+                }
+            }
         }
 
         return distance;

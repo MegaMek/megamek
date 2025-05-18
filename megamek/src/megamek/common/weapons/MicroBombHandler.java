@@ -88,7 +88,7 @@ public class MicroBombHandler extends AmmoWeaponHandler {
         // Not mine clearing if we are shooting an entity
         Infantry ba = (Infantry) ae;
         DamageFalloff falloff = calculateDamageFallOff((AmmoType) ammo.getType(), ba.getShootingStrength(), false);
-        gameManager.artilleryDamageArea(coords, ae.getPosition(),
+        gameManager.artilleryDamageArea(coords,
                 (AmmoType) ammo.getType(), subjectId, ae, falloff, false, 0, vPhaseReport, false);
         return true;
     }

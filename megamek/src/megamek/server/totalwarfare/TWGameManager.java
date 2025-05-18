@@ -28318,7 +28318,7 @@ TargetRoll nTargetRoll,
                     vPhaseReport.addElement(r);
 
                     // Update hex and report any changes
-                    Vector<Report> newReports = tryClearHex(coords, damage * 2, subjectId);
+                    Vector<Report> newReports = tryClearHex(coords, boardId, damage * 2, subjectId);
                     for (Report nr : newReports) {
                         nr.indent(3);
                     }
@@ -28450,7 +28450,6 @@ TargetRoll nTargetRoll,
      * deal area saturation damage to the map, used for artillery
      *
      * @param centre       The hex on which damage is centred
-     * @param attackSource The position the attack came from
      * @param ammo         The ammo type doing the damage
      * @param subjectId    Subject for reports
      * @param killer       Who should be credited with kills
@@ -28460,22 +28459,21 @@ TargetRoll nTargetRoll,
      * @param vPhaseReport The Vector of Reports for the phase report
      * @param asfFlak      Is this flak against ASF?
      */
-    public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId,
+    public Vector<Integer> artilleryDamageArea(Coords centre, AmmoType ammo, int subjectId,
           Entity killer, boolean flak, int altitude, boolean mineClear, Vector<Report> vPhaseReport, boolean asfFlak) {
 
         // Use the standard falloff values
         DamageFalloff damageFalloff = calculateDamageFallOff(ammo, 0, mineClear);
 
-        return artilleryDamageArea(centre,
-              attackSource,
-              ammo,
-              subjectId,
-              killer,
-              damageFalloff,
-              flak,
-              altitude,
-              vPhaseReport,
+        return artilleryDamageArea(centre, ammo, subjectId, killer, damageFalloff, flak, altitude, vPhaseReport,
               asfFlak);
+    }
+
+    public Vector<Integer> artilleryDamageArea(Coords centre, AmmoType ammo, int subjectId,
+          Entity killer, DamageFalloff falloff, boolean flak, int altitude, Vector<Report> vPhaseReport,
+          boolean asfFlak) {
+        //LEGACY replace with board ID version
+        return artilleryDamageArea(centre, 0, ammo, subjectId, killer, falloff, flak, altitude, vPhaseReport, asfFlak);
     }
 
     /**
@@ -28483,7 +28481,6 @@ TargetRoll nTargetRoll,
      * decrease in damage
      *
      * @param centre       The hex on which damage is centred
-     * @param attackSource The position the attack came from
      * @param ammo         The ammo type doing the damage
      * @param subjectId    Subject for reports
      * @param killer       Who should be credited with kills
@@ -28493,7 +28490,7 @@ TargetRoll nTargetRoll,
      * @param vPhaseReport The Vector of Reports for the phase report
      * @param asfFlak      Is this flak against ASF?
      */
-    public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId,
+    public Vector<Integer> artilleryDamageArea(Coords centre, int boardId, AmmoType ammo, int subjectId,
           Entity killer, DamageFalloff falloff, boolean flak, int altitude, Vector<Report> vPhaseReport,
           boolean asfFlak) {
         Vector<Integer> alreadyHit = new Vector<>();
@@ -28513,6 +28510,7 @@ TargetRoll nTargetRoll,
             Coords bCoords = entry.getValue();
             int bLevel = entry.getKey();
             alreadyHit = artilleryDamageHex(bCoords,
+                  boardId,
                   centre,
                   blastShape.get(entry),
                   ammo,

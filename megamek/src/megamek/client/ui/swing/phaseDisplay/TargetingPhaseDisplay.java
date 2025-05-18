@@ -872,9 +872,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     }
 
     private boolean isArtilleryAttack(Mounted<?> weapon) {
-        return (weapon instanceof WeaponMounted && weapon.getType().hasFlag(WeaponType.F_ARTILLERY))
-                     // For other weapons that can make artillery attacks
-                     || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
+        return (weapon instanceof WeaponMounted && weapon.getType().hasFlag(WeaponType.F_ARTILLERY));
     }
 
     /**

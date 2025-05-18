@@ -559,7 +559,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             // Here we're doing damage for each hit with more standard artillery shells
             while (nweaponsHit > 0) {
-                gameManager.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
+                gameManager.artilleryDamageArea(targetPos, atype,
                         subjectId, ae, isFlak, heights.get(0), mineClear, vPhaseReport,
                         asfFlak);
                 nweaponsHit--;
@@ -586,7 +586,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     }
                 }
                 handleArtilleryDriftMarker(origPos, c, aaa,
-                        gameManager.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,
+                        gameManager.artilleryDamageArea(c, atype, subjectId, ae, isFlak,
                                 height, mineClear, vPhaseReport, asfFlak));
             }
 

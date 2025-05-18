@@ -56,6 +56,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     private int facing;
     private int arc;
     private boolean isUnderWater = false;
+    private boolean isCapOrSCap = false;
     private final int[][] ranges = new int[2][5];
 
     public FiringArcSpriteHandler(ClientGUI clientGUI) {
@@ -99,6 +100,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         }
         firingPosition = (movePath != null) ? movePath.getFinalCoords() : entity.getPosition();
         arc = firingEntity.getWeaponArc(weaponId);
+        isCapOrSCap = weapon.getType().isCapital() || weapon.getType().isSubCapital();
 
         renewSprites();
     }
@@ -181,24 +183,53 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         }
 
         // for all available range brackets Min/S/M/L/E ...
-        for (int bracket = 0; bracket < maxrange; bracket++) {
-            fieldFire.add(new HashSet<>());
-            // Don't add any hexes to the min range bracket when the minimum range is 0,
-            // i.e. no minimum range
-            if ((bracket != 0) || (ranges[underWaterIndex()][0] > 0)) {
-                // Add all hexes up to the weapon range to separate lists
-                while (range <= ranges[underWaterIndex()][bracket] + secondaryPositionRangeBonus) {
-                    fieldFire.get(bracket).addAll(firingPosition.allAtDistance(range));
-                    range++;
-                    if (range > 100) {
-                        break; // only to avoid hangs
-                    }
+        if (board.isHighAltitude()) {
+            // This is more computationally expensive as the atmospheric row hexes reduce range per hex
+            // for all available range brackets Min/S/M/L/E ...
+            for (int bracket = 0; bracket < maxrange; bracket++) {
+                fieldFire.add(new HashSet<>());
+                // Add all hexes up to the weapon range for the current range bracket
+                final int currentRange = ranges[underWaterIndex()][bracket];
+                fieldFire.get(bracket).addAll(firingPosition.allAtDistanceOrLess(currentRange));
+                for (int previousBracket = 0; previousBracket < bracket; previousBracket++) {
+                    // All hexes that were found to be a lesser range bracket must no longer be considered
+                    fieldFire.get(bracket).removeAll(fieldFire.get(previousBracket));
+                }
+                fieldFire.get(bracket).remove(firingPosition);
+
+                // Remove hexes that are not on the board or not in the arc
+                fieldFire.get(bracket).removeIf(h -> !board.contains(h));
+                fieldFire.get(bracket).removeIf(h -> !ComputeArc.isInArc(firingPosition, facing, h, arc));
+                fieldFire.get(bracket).removeIf(h -> Compute.effectiveDistance(game, firingEntity,
+                      new HexTarget(h, board.getBoardId(), Targetable.TYPE_HEX_CLEAR)) > currentRange);
+                if (!isCapOrSCap) {
+                    fieldFire.get(bracket).removeIf(h ->
+                          BoardHelper.crossesSpaceAtmosphereInterface(game, board, firingPosition, h));
                 }
             }
+        } else {
+            for (int bracket = 0; bracket < maxrange; bracket++) {
+                fieldFire.add(new HashSet<>());
+                // Don't add any hexes to the min range bracket when the minimum range is 0,
+                // i.e. no minimum range
+                if ((bracket != 0) || (ranges[underWaterIndex()][0] > 0)) {
+                    // Add all hexes up to the weapon range to separate lists
+                    while (range <= ranges[underWaterIndex()][bracket] + secondaryPositionRangeBonus) {
+                        fieldFire.get(bracket).addAll(firingPosition.allAtDistance(range));
+                        range++;
+                        if (range > 100) {
+                            break; // only to avoid hangs
+                        }
+                    }
+                }
 
-            // Remove hexes that are not on the board or not in the arc
-            fieldFire.get(bracket).removeIf(coords -> !board.contains(coords)
-                    || !ComputeArc.isInArc(firingPosition, facing, coords, arc));
+                // Remove hexes that are not on the board or not in the arc
+                fieldFire.get(bracket)
+                      .removeIf(coords -> !board.contains(coords) || !ComputeArc.isInArc(firingPosition,
+                            facing,
+                            coords,
+                            arc));
+            }
         }
 
         // for all available range brackets Min/S/M/L/E ...

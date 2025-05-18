@@ -226,7 +226,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                     gameManager);
         }
 
-        gameManager.artilleryDamageArea(targetPos, ae.getPosition(), ammoType,
+        gameManager.artilleryDamageArea(targetPos, ammoType,
                 subjectId, ae, isFlak, height, mineClear, vPhaseReport,
                 asfFlak);
 

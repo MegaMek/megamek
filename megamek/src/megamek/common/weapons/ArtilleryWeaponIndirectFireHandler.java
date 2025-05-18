@@ -456,7 +456,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
         } else {
             handleArtilleryDriftMarker(targetPos, finalPos, artilleryAttackAction,
-                    gameManager.artilleryDamageArea(finalPos, artilleryAttackAction.getCoords(), atype,
+                    gameManager.artilleryDamageArea(finalPos, target.getBoardId(), atype,
                             subjectId, ae, damageFalloff, isFlak, height, vPhaseReport,
                             asfFlak));
         }

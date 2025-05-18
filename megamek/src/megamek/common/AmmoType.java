@@ -2045,20 +2045,6 @@ public class AmmoType extends EquipmentType {
                     .setStaticTechLevel(SimpleTechLevel.STANDARD),
               "230, TM"));
 
-        munitions.add(new MunitionMutator("(Clan) Multi-Purpose",
-              1,
-              Munitions.M_MULTI_PURPOSE,
-              new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
-                    .setUnofficial(false)
-                    .setTechRating(RATING_F)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-                    .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
-                    .setClanApproximate(true, false, false, false, false)
-                    .setPrototypeFactions(F_CGS)
-                    .setProductionFactions(F_CGS)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD),
-              "229, TW"));
-
         // Walk through both the base types and the mutators, and create munition types.
         AmmoType.createMunitions(baSrmAmmos, munitions);
 
@@ -2082,7 +2068,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for clan BA LRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Multi-Purpose",
+        munitions.add(new MunitionMutator("(Clan) Multi-Purpose",
               1,
               Munitions.M_MULTI_PURPOSE,
               new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
@@ -2652,19 +2638,6 @@ public class AmmoType extends EquipmentType {
                     .setPrototypeFactions(F_FS)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED),
               "370, TO"));
-
-        munitions.add(new MunitionMutator("(Clan) Multi-Purpose",
-              1,
-              Munitions.M_MULTI_PURPOSE,
-              new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
-                    .setUnofficial(true)
-                    .setTechRating(RATING_F)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-                    .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
-                    .setClanApproximate(true, false, false, false, false)
-                    .setPrototypeFactions(F_CGS)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD),
-              "229, TW"));
 
         munitions.add(new MunitionMutator("(Clan) Narc-capable",
               1,

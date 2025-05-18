@@ -171,9 +171,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     int loc = prevWeapon.getLocation();
 
                     // create an array of booleans of locations
-                    boolean[] usedFrontArc = new boolean[ae.locations()];
-                    boolean[] usedRearArc = new boolean[ae.locations()];
-                    for (int i = 0; i < ae.locations(); i++) {
+                    boolean[] usedFrontArc = new boolean[entity.locations()];
+                    boolean[] usedRearArc = new boolean[entity.locations()];
+                    for (int i = 0; i < entity.locations(); i++) {
                         usedFrontArc[i] = false;
                         usedRearArc[i] = false;
                     }

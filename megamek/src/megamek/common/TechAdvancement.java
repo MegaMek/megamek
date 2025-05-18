@@ -72,7 +72,7 @@ public class TechAdvancement implements ITechnology {
     private static final int PRODUCTION_DATE_OFFSET_FOR_OTHER_FACTIONS = 10;
     private static final int REINTRODUCTION_DATE_OFFSET = 10;
 
-    private TechBase techBase = ITechnology.TechBase.ALL;
+    private TechBase techBase = TechBase.ALL;
     private EnumMap<AdvancementPhase, Integer> isAdvancement = new EnumMap<>(AdvancementPhase.class);
     private EnumMap<AdvancementPhase, Integer> clanAdvancement = new EnumMap<>(AdvancementPhase.class);
     private EnumMap<AdvancementPhase, Boolean> isApproximate = new EnumMap<>(AdvancementPhase.class);
@@ -690,8 +690,8 @@ public class TechAdvancement implements ITechnology {
      */
     @Override
     public int getExtinctionDate() {
-        if (getTechBase() != ITechnology.TechBase.ALL) {
-            return getDate(AdvancementPhase.EXTINCT, getTechBase() == ITechnology.TechBase.CLAN);
+        if (getTechBase() != TechBase.ALL) {
+            return getDate(AdvancementPhase.EXTINCT, getTechBase() == TechBase.CLAN);
         }
         if (isAdvancement.get(AdvancementPhase.EXTINCT) == DATE_NONE
                 || clanAdvancement.get(AdvancementPhase.EXTINCT) == DATE_NONE) {
@@ -702,8 +702,8 @@ public class TechAdvancement implements ITechnology {
 
     @Override
     public int getReintroductionDate() {
-        if (getTechBase() != ITechnology.TechBase.ALL) {
-            return getDate(AdvancementPhase.REINTRODUCED, getTechBase() == ITechnology.TechBase.CLAN);
+        if (getTechBase() != TechBase.ALL) {
+            return getDate(AdvancementPhase.REINTRODUCED, getTechBase() == TechBase.CLAN);
         }
         return earliestDate(getDate(AdvancementPhase.REINTRODUCED, false), getDate(AdvancementPhase.REINTRODUCED, true));
     }
@@ -842,7 +842,7 @@ public class TechAdvancement implements ITechnology {
     public String getExtinctionDateName() {
         Integer isDate = isAdvancement.get(AdvancementPhase.EXTINCT);
         Integer clanDate = clanAdvancement.get(AdvancementPhase.EXTINCT);
-        if (techBase == ITechnology.TechBase.ALL) {
+        if (techBase == TechBase.ALL) {
             if (isDate == null || isDate == DATE_NONE) {
                 // If there is no IS date, choose the Clan date
                 return getExtinctionDateName(true);
@@ -855,7 +855,7 @@ public class TechAdvancement implements ITechnology {
                 return formatDate(AdvancementPhase.EXTINCT, useClan, extinctionFactions);
             }
         } else {
-            return getExtinctionDateName(techBase == ITechnology.TechBase.CLAN);
+            return getExtinctionDateName(techBase == TechBase.CLAN);
         }
     }
 
@@ -961,11 +961,11 @@ public class TechAdvancement implements ITechnology {
 
     @Override
     public boolean isClan() {
-        return techBase == ITechnology.TechBase.CLAN;
+        return techBase == TechBase.CLAN;
     }
 
     @Override
     public boolean isMixedTech() {
-        return techBase == ITechnology.TechBase.ALL;
+        return techBase == TechBase.ALL;
     }
 }

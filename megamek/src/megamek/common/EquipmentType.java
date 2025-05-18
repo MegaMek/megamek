@@ -259,7 +259,7 @@ public class EquipmentType implements ITechnology {
     public Map<Integer, Integer> getTechLevels() {
         Map<Integer, Integer> techLevel = new HashMap<Integer, Integer>();
         if (isUnofficial()) {
-            if (techAdvancement.getTechBase() == ITechnology.TechBase.CLAN) {
+            if (techAdvancement.getTechBase() == TechBase.CLAN) {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
             } else {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_IS_UNOFFICIAL);
@@ -283,7 +283,7 @@ public class EquipmentType implements ITechnology {
             techLevel.put(techAdvancement.getProductionDate(false), TechConstants.T_IS_ADVANCED);
         }
 
-        if (techAdvancement.getTechBase() == ITechnology.TechBase.ALL && techAdvancement.getCommonDate() > 0) {
+        if (techAdvancement.getTechBase() == TechBase.ALL && techAdvancement.getCommonDate() > 0) {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_TW_ALL);
         } else if (techAdvancement.getCommonDate(true) > 0) {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_CLAN_TW);
@@ -1010,12 +1010,12 @@ public class EquipmentType implements ITechnology {
 
     @Override
     public boolean isClan() {
-        return techAdvancement.getTechBase() == ITechnology.TechBase.CLAN;
+        return techAdvancement.getTechBase() == TechBase.CLAN;
     }
 
     @Override
     public boolean isMixedTech() {
-        return techAdvancement.getTechBase() == ITechnology.TechBase.ALL;
+        return techAdvancement.getTechBase() == TechBase.ALL;
     }
 
     @Override

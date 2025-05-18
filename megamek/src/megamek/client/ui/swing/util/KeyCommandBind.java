@@ -68,6 +68,9 @@ public enum KeyCommandBind {
     PREV_TARGET_NOALLIES("prevTargetNoAllies", VK_LEFT, CTRL_DOWN_MASK),
     NEXT_TARGET_VALID_NO_ALLIES("nextTargetValidNoAllies", VK_RIGHT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     PREV_TARGET_VALID_NO_ALLIES("prevTargetValidNoAllies", VK_LEFT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    PHYS_PUNCH("physPunch", VK_P),
+    PHYS_KICK("physKick", VK_K),
+    PHYS_PUSH("physPush", VK_P, SHIFT_DOWN_MASK),
     // Changes unit display to view acting unit and sets current viewed unit as target
     VIEW_ACTING_UNIT("viewActingUnit", VK_V),
     // Remove the last move step or the last added weapon fire

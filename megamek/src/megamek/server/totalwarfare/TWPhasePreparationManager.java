@@ -178,6 +178,7 @@ public class TWPhasePreparationManager {
                 gameManager.clearReports();
                 gameManager.resolveHeat();
                 gameManager.resolveWeather();
+                gameManager.addReport(gameManager.handleFlyOffs());
                 gameManager.addReport(gameManager.resolveControlRolls());
                 gameManager.addReport(gameManager.checkForTraitors());
                 // write End Phase header

@@ -40,6 +40,9 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
           KeyCommandBind.NEXT_TARGET_VALID,
           KeyCommandBind.NEXT_TARGET_NOALLIES,
           KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES,
+          KeyCommandBind.PHYS_PUNCH,
+          KeyCommandBind.PHYS_KICK,
+          KeyCommandBind.PHYS_PUSH,
           KeyCommandBind.DONE_NO_ACTION);
 
     /** The keybinds to be shown during the movement phase */

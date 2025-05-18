@@ -5658,38 +5658,37 @@ public class TWGameManager extends AbstractGameManager {
         Entity entity = movePath.getEntity();
         Vector<Report> vReport = new Vector<>();
         Report r;
-        // Unit has fled the battlefield.
-        r = new Report(2005, Report.PUBLIC);
-        if (flewOff) {
-            r = new Report(9370, Report.PUBLIC);
-        }
-        r.addDesc(entity);
 
         OffBoardDirection fleeDirection = calculateEdge(movePath.getFinalCoords());
         String retreatEdge = setRetreatEdge(entity, fleeDirection);
+
+        // Aerospace that fly off to return in a later round must be handled
+        // at the end of the round, but set some state here for simplicity
+        if (entity.isAero() && flewOff) {
+            Aero aero = (Aero) entity;
+
+            // Record direction
+            aero.setFlyingOff(fleeDirection);
+
+            // Currently only Aerospace can fly off and return.
+            if (returnable > -1) {
+                entity.setDeployRound(1 + game.getRoundCount() + returnable);
+            }
+
+            // End activation but don't remove from the map yet.
+            entity.setDone(true);
+            return vReport;
+        }
+
+        // Unit has fled the battlefield.
+        r = new Report(2005, Report.PUBLIC);
+        r.addDesc(entity);
         r.add(retreatEdge);
         addReport(r);
 
+        ServerHelper.clearBloodStalkers(game, entity.getId(), this);
+
         entityUpdate(entity.getId());
-
-        if (returnable > -1) {
-            entity.setDeployed(false);
-            entity.setDeployRound(1 + game.getRoundCount() + returnable);
-            entity.setPosition(null);
-            entity.setDone(true);
-            if (entity.isAero()) {
-                // If we're flying off because we're OOC, when we come back we
-                // should no longer be OOC
-                // If we don't, this causes a major problem as aeros tend to
-                // return, re-deploy then
-                // fly off again instantly.
-                ((IAero) entity).setOutControl(false);
-            }
-
-            return vReport;
-        } else {
-            ServerHelper.clearBloodStalkers(game, entity.getId(), this);
-        }
 
         // Is the unit carrying passengers or trailers?
         final List<Entity> passengers = new ArrayList<>(entity.getLoadedUnits());
@@ -5771,6 +5770,52 @@ public class TWGameManager extends AbstractGameManager {
         game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
         send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
         return vReport;
+    }
+
+    public Vector<Report> handleFlyOffs() {
+        Vector<Report> reports = new Vector<>();
+
+        for (Entity entity : game.inGameTWEntities()) {
+            // Handle Aerospace units that flew off the board this round but lingered through the
+            // various phases for full attack opportunities.
+            // TODO: use off-board state with flown-off aerospace units
+            if (entity instanceof Aero aero) {
+                if (aero.isFlyingOff()) {
+                    reports.add(processFlyingOff(aero));
+                }
+            }
+        }
+
+        return reports;
+    }
+
+    /**
+     * Compile report for Aerospace unit flying off the map at the end of the round,
+     * and finalize the unit's state.
+     * @param aero Unit leaving the map using Thrust MPs
+     * @return Vector of reports
+     */
+    protected Report processFlyingOff(Aero aero) {
+        String retreatEdge = setRetreatEdge(aero, aero.getFlyingOffDirection());
+
+        // Report aeros flying off at the end of the round
+        Report r = new Report(9370, Report.PUBLIC);
+        r.addDesc(aero);
+        r.add(retreatEdge);
+
+        // Set undeployed state
+        aero.setDeployed(false);
+        aero.setPosition(null);
+        aero.setFlyingOff(OffBoardDirection.NONE);
+
+        // If we're flying off because we're OOC, when we come back we
+        // should no longer be OOC
+        // If we don't, this causes a major problem as aeros tend to
+        // return, re-deploy then
+        // fly off again instantly.
+        aero.setOutControl(false);
+
+        return r;
     }
 
     /**
@@ -8840,7 +8885,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (diceRoll.getIntValue() >= toHit.getValue()) {
                     // deal damage to target
-                    int damage = Compute.getAffaDamageFor(entity);
+                    int damage = Compute.getAffaDamageFor(entity, fallElevation);
                     r = new Report(2220);
                     r.subject = affaTarget.getId();
                     r.addDesc(affaTarget);

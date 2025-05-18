@@ -2551,8 +2551,8 @@ public class Compute {
     /**
      * Damage that a mek does with a accidental fall from above.
      */
-    public static int getAffaDamageFor(Entity entity) {
-        return (int) entity.getWeight() / 10;
+    public static int getAffaDamageFor(Entity entity, int fallElevation) {
+        return (fallElevation *  (int) Math.ceil(entity.getWeight() / 10));
     }
 
     /**

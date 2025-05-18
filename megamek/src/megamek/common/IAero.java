@@ -156,6 +156,12 @@ public interface IAero {
 
     double getFuelPointsPerTon();
 
+    boolean isFlyingOff();
+
+    void setFlyingOff(OffBoardDirection obd);
+
+    OffBoardDirection getFlyingOffDirection();
+
     /**
      * @return True when this aero requires fuel to move. Note that the result is
      *         undefined when

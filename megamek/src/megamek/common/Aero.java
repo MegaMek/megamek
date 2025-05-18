@@ -153,6 +153,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     // are we tracking any altitude loss due to air-to-ground assaults
     private int altLoss = 0;
 
+    // track leaving the ground map
+    private OffBoardDirection flyingOff = OffBoardDirection.NONE;
+
     /**
      * Track how much altitude has been lost this turn. This is important for properly making weapon attacks, so
      * WeaponAttackActions knows what the altitude was before the attack happened, since the altitude lose is applied
@@ -1071,6 +1074,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
         // Reset usedInternalBombs
         setUsedInternalBombs(0);
+
+        // Reset flying off dir
+        flyingOff = OffBoardDirection.NONE;
     }
 
     /**
@@ -3239,5 +3245,20 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public void setEnginesLostRound(int enginesLostRound) {
         this.enginesLostRound = enginesLostRound;
+    }
+
+    @Override
+    public boolean isFlyingOff() {
+        return flyingOff != OffBoardDirection.NONE;
+    }
+
+    @Override
+    public void setFlyingOff(OffBoardDirection direction) {
+        this.flyingOff = direction;
+    }
+
+    @Override
+    public OffBoardDirection getFlyingOffDirection() {
+        return this.flyingOff;
     }
 }

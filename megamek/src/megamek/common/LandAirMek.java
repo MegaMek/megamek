@@ -148,6 +148,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     private int currentDamage = 0;
     private final Map<String, Integer> weaponGroups = new HashMap<>();
 
+    // track leaving the ground map
+    private OffBoardDirection flyingOff = OffBoardDirection.NONE;
+
     public LandAirMek(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
         lamType = inLAMType;
@@ -878,6 +881,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
             resetAltLossThisRound();
         }
+
+        // Reset flying off dir
+        flyingOff = OffBoardDirection.NONE;
     }
 
     /**
@@ -2157,5 +2163,20 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public void setEnginesLostRound(int enginesLostRound) {
         this.enginesLostRound = enginesLostRound;
+    }
+
+    @Override
+    public boolean isFlyingOff() {
+        return flyingOff != OffBoardDirection.NONE;
+    }
+
+    @Override
+    public void setFlyingOff(OffBoardDirection direction) {
+        this.flyingOff = direction;
+    }
+
+    @Override
+    public OffBoardDirection getFlyingOffDirection() {
+        return this.flyingOff;
     }
 }

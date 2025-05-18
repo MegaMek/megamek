@@ -289,7 +289,7 @@ public class QuadVee extends QuadMek {
             return  mpBoosters;
         }
 
-        return  MPBoosters.NONE;
+        return MPBoosters.NONE;
     }
 
     /**
@@ -419,7 +419,7 @@ public class QuadVee extends QuadMek {
     @Override
     public int height() {
         if (getConversionMode() == CONV_MODE_VEHICLE) {
-            return 1;
+            return 0;
         }
         return super.height();
     }

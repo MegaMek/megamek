@@ -304,7 +304,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         // elevation
         if ((attackerHeight == targetElevation) && !ae.isHullDown()) {
-            if (target.getHeight() == 0) {
+            if ((target.getHeight()-quadVeeDif(target, game)) == 0) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);

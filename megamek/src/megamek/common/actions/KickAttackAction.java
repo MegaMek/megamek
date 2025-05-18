@@ -280,9 +280,9 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
-        if (attackerElevation < targetHeight) {
+        if (attackerElevation < (targetHeight-quadVeeDif(target, game))) {
             toHit.setHitTable(ToHitData.HIT_KICK);
-        } else if (target.getHeight() > 0) {
+        } else if ((target.getHeight()-quadVeeDif(target, game)) > 0) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else {
             toHit.setHitTable(ToHitData.HIT_NORMAL);

@@ -524,12 +524,14 @@ public class ClubAttackAction extends PhysicalAttackAction {
             }
         }
 
+        //QuadVees are considered -1 level below mechs in physical attacks
+        int quadVeeDif = quadVeeDif(target, game);
         // elevation
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_CLUBS_PUNCH)
                 && (target instanceof Mek)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
             if ((attackerHeight == targetElevation) && !ae.isHullDown()) {
-                if (target.getHeight() == 0) {
+                if (target.getHeight()-quadVeeDif == 0) {
                     toHit.setHitTable(ToHitData.HIT_NORMAL);
                 } else {
                     toHit.setHitTable(ToHitData.HIT_KICK);
@@ -548,7 +550,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                     toHit.addModifier(4, "called shot");
                 }
             } else if (attackerElevation < targetElevation) {
-                if (target.getHeight() == 0) {
+                if (target.getHeight()-quadVeeDif == 0) {
                     if (shield) {
                         toHit.setHitTable(ToHitData.HIT_PUNCH);
                     } else {

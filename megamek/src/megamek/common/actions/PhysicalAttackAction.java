@@ -20,6 +20,8 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
+import static megamek.common.QuadVee.CONV_MODE_VEHICLE;
+
 public class PhysicalAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = -4702357516725749181L;
 
@@ -255,5 +257,14 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if ((ae instanceof Mek) && ((Mek) ae).hasIndustrialTSM()) {
             toHit.addModifier(2, "industrial TSM");
         }
+    }
+    //QuadVees are considered -1 level below mechs in physical attacks
+    protected static int quadVeeDif(Targetable target, Game game) {
+        if (target.isQuadMek()) {
+            if (game.getEntityOrThrow(target.getId()).getConversionMode() == CONV_MODE_VEHICLE) {
+                return -1;
+            }
+        }
+        return 0;
     }
 }

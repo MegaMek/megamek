@@ -14,31 +14,46 @@
 package megamek.common.weapons.bayweapons;
 
 import megamek.common.EquipmentTypeLookup;
+import megamek.common.Game;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.ArtilleryBayWeaponIndirectFireHandler;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.BayWeaponHandler;
+import megamek.common.weapons.CapitalLaserBayWeaponOrbitalBombardmentHandler;
+import megamek.server.totalwarfare.TWGameManager;
+
+import java.io.Serial;
 
 /**
  * @author Jay Lawson
- * @since Sep 25, 2004
  */
 public class CapitalLaserBayWeapon extends BayWeapon {
+    @Serial
     private static final long serialVersionUID = 8756042527483383101L;
 
     public CapitalLaserBayWeapon() {
-        super();
-        // tech levels are a little tricky
-        this.name = "Capital Laser Bay";
-        this.setInternalName(EquipmentTypeLookup.CAPITAL_LASER_BAY);
-        this.heat = 0;
-        this.damage = DAMAGE_VARIABLE;
-        this.shortRange = 12;
-        this.mediumRange = 24;
-        this.longRange = 40;
-        this.extremeRange = 50;
-        this.tonnage = 0.0;
-        this.bv = 0;
-        this.cost = 0;
-        this.flags = flags.or(F_ENERGY);
-        this.atClass = CLASS_CAPITAL_LASER;
-        this.capital = true;
+        name = "Capital Laser Bay";
+        setInternalName(EquipmentTypeLookup.CAPITAL_LASER_BAY);
+        heat = 0;
+        damage = DAMAGE_VARIABLE;
+        shortRange = 12;
+        mediumRange = 24;
+        longRange = 40;
+        extremeRange = 50;
+        flags = flags.or(F_ENERGY);
+        atClass = CLASS_CAPITAL_LASER;
+        capital = true;
+    }
+
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+          TWGameManager manager) {
+        if (waa.isOrbitToSurface(game)) {
+            return new CapitalLaserBayWeaponOrbitalBombardmentHandler(toHit, waa, game, manager);
+        } else {
+            return super.getCorrectHandler(toHit, waa, game, manager);
+        }
     }
     
     @Override

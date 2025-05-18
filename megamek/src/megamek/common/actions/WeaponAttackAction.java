@@ -256,6 +256,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
         return Compute.isGroundToAir(getEntity(game), getTarget(game));
     }
 
+    public boolean isOrbitToSurface(Game game) {
+        return CrossBoardAttackHelper.isOrbitToSurface(game, getEntity(game), getTarget(game));
+    }
+
     /**
      * @deprecated no indicated uses.
      */

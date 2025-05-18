@@ -234,7 +234,31 @@ public class SpecialHexDisplay implements Serializable {
      */
     public static SpecialHexDisplay createArtyAutoHit(Player owner) {
         return new SpecialHexDisplay(Type.ARTILLERY_AUTOHIT, NO_ROUND, owner,
-              "Artilery autohit for player " + owner.getName(), SHD_VISIBLETO_TEAM);
+              "Artillery autohit for player " + owner.getName(), SHD_VISIBLETO_TEAM);
+    }
+
+    /**
+     * Creates an Incoming Artillery marker for the given owner and the given round in which it will land. It has no
+     * round limitation and is visible to team members of the owner.
+     *
+     * @param owner The owner of this artillery attack
+     * @return A SpecialHexDisplay Incoming marker
+     */
+    public static SpecialHexDisplay createIncomingArty(Player owner, int landingGameRound) {
+        String artyMsg = "Artillery bay fire incoming, landing on round %d, fired by %s"
+              .formatted(landingGameRound, owner.getName());
+        return createIncomingFire(owner, landingGameRound, artyMsg);
+    }
+
+    /**
+     * Creates an Incoming Artillery marker for the given owner and the given round in which it will land. It has no
+     * round limitation and is visible to team members of the owner.
+     *
+     * @param owner The owner of this artillery attack
+     * @return A SpecialHexDisplay Incoming marker
+     */
+    public static SpecialHexDisplay createIncomingFire(Player owner, int landingGameRound, String message) {
+        return new SpecialHexDisplay(Type.ARTILLERY_INCOMING, landingGameRound, owner, message, SHD_VISIBLETO_TEAM);
     }
 
     public boolean thisRound(int testRound) {

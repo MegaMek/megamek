@@ -141,15 +141,15 @@ factions:
 #    status:
 #      - shutdown doesnt work well on grounded Aero
 
-#  - fullname: Atlas AS7-D
-#    board: 1
-#    at: [ 26,14 ]
-#    facing: 5
-##    status: hidden
+  - fullname: Atlas AS7-D
+    board: 5
+    at: [ 26,14 ]
+    facing: 5
+#    status: hidden
 #
-#  - fullname: Brave BRV-1Y
-#    board: 5
-#    at: [ 35, 29 ]
+  - fullname: Brave BRV-1Y
+    board: 5
+    at: [ 35, 29 ]
 #
 #  - fullname: Cheetah IIC
 #    at: [5, 6]
@@ -205,15 +205,15 @@ factions:
 #    facing: 0
 
 #
-  - fullname: Union (3055)
-    at: [ 25, 13 ]
-    board: 8
-    facing: 4
-
-  - fullname: Fox Corvette (3057)
-    at: [ 10, 12 ]
-    board: 8
-    facing: 5
+#  - fullname: Union (3055)
+#    at: [ 25, 13 ]
+#    board: 8
+#    facing: 4
+#
+#  - fullname: Fox Corvette (3057)
+#    at: [ 10, 12 ]
+#    board: 8
+#    facing: 5
 
   - fullname: Fox Corvette (3057)
     at: [ 10, 12 ]

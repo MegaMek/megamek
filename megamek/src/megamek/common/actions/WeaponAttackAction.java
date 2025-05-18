@@ -822,6 +822,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
               atype,
               ammo,
               munition,
+              isFlakAttack,
               isArtilleryDirect,
               isArtilleryFLAK,
               isArtilleryIndirect,
@@ -1265,6 +1266,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * Method that tests each attack to see if it's impossible. If so, a reason string will be returned. A null return
      * means we can continue processing the attack
      *
+     * TODO: replace 40-ish parameters with an attack info record of some kind.
+     *
      * @param game                  The current {@link Game}
      * @param ae                    The Entity making this attack
      * @param attackerId            The ID number of the attacking entity
@@ -1280,6 +1283,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param atype                 The AmmoType being used for this attack
      * @param ammo                  The Mounted ammo being used
      * @param munition              Long indicating the munition type flag being used, if applicable
+     * @param isFlakAttack          Whether the attack itself counts as a flak attack
      * @param isArtilleryDirect     flag that indicates whether this is a direct-fire artillery attack
      * @param isArtilleryFLAK       flag that indicates whether or not this is an artillery flak attack against an
      *                              entity
@@ -1300,10 +1304,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
     private static String toHitIsImpossible(Game game, Entity ae, int attackerId, Targetable target, int ttype,
           LosEffects los, ToHitData losMods, ToHitData toHit, int distance, Entity spotter, WeaponType wtype,
           WeaponMounted weapon, int weaponId, AmmoType atype, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition,
-          boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isAttackerInfantry,
-          boolean isBearingsOnlyMissile, boolean isCruiseMissile, boolean exchangeSwarmTarget, boolean isHoming,
-          boolean isInferno, boolean isIndirect, boolean isStrafing, boolean isTAG, boolean targetInBuilding,
-          boolean usesAmmo, boolean underWater, boolean evenIfAlreadyFired) {
+          boolean isFlakAttack, boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect,
+          boolean isAttackerInfantry, boolean isBearingsOnlyMissile, boolean isCruiseMissile,
+          boolean exchangeSwarmTarget, boolean isHoming, boolean isInferno, boolean isIndirect, boolean isStrafing,
+          boolean isTAG, boolean targetInBuilding, boolean usesAmmo, boolean underWater, boolean evenIfAlreadyFired) {
 
         // Block the shot if the attacker is null
         if (ae == null) {
@@ -2304,7 +2308,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     // Artillery Flak targeting Aerospace ignores altitude when computing range
                     if (target.isAirborne() &&
                               ae.getPosition().distance(target.getPosition()) > Board.DEFAULT_BOARD_HEIGHT) {
-                        return Messages.getString("WeaponAttackAction.TooLongForDirectArty");
+                        return Messages.getString("WeaponAttackAction.TooLongForDirectArtyFlak");
                     }
                 }
             }
@@ -2312,7 +2316,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Indirect artillery attacks
             if (isArtilleryIndirect) {
                 // Cannot make Indirect Flak attacks
-                if (isArtilleryFLAK) {
+                if (isFlakAttack || isArtilleryFLAK) {
                     return Messages.getString("WeaponAttackAction.FlakIndirect");
                 }
 

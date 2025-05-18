@@ -388,7 +388,7 @@ public class TeamLoadOutGenerator {
             // Check if tech is available to this specific faction with the current year and tech base.
             boolean eraBasedLegal = aType.isAvailableIn(allowedYear, clan, Faction.fromMMAbbr(faction));
             if (mixedTech) {
-                eraBasedLegal |= aType.isAvailableIn(allowedYear, !clan, Faction.fromIOAbbr(faction));
+                eraBasedLegal |= aType.isAvailableIn(allowedYear, !clan, Faction.fromMMAbbr(faction));
             }
             legal &= eraBasedLegal;
         }

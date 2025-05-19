@@ -2579,6 +2579,15 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Convenience method to determine whether this entity should be treated as a landed aero on a ground map.
+     *
+     * @return True if this is an aero landed on a ground map.
+     */
+    public boolean isAeroLandedOnGroundMap() {
+        return isAero() && !isAirborne() && getGame() != null && getGame().getBoard().onGround();
+    }
+
+    /**
      * Gets the marker used to disambiguate this entity from others with the same name. These are monotonically
      * increasing values, starting from one.
      */

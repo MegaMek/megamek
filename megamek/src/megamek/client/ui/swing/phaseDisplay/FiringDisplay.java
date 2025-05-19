@@ -920,7 +920,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      * clear weapon jam
      */
     private void doClearWeaponJam() {
-        ArrayList<Mounted<?>> weapons = ((Tank) ce()).getJammedWeapons();
+        Entity currentEntity = ce();
+        
+        if (currentEntity == null) {
+            return;
+        }
+
+        ArrayList<Mounted<?>> weapons = ((Tank) currentEntity).getJammedWeapons();
         String[] names = new String[weapons.size()];
         for (int loop = 0; loop < names.length; loop++) {
             names[loop] = weapons.get(loop).getDesc();
@@ -934,7 +940,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             for (int loop = 0; loop < names.length; loop++) {
                 if (input.equals(names[loop])) {
                     RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
-                            ce().getId(), ce().getEquipmentNum(weapons.get(loop)));
+                          currentEntity.getId(), currentEntity.getEquipmentNum(weapons.get(loop)));
                     addAttack(rwma);
                     ready();
                 }

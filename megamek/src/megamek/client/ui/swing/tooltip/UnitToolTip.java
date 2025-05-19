@@ -1062,7 +1062,7 @@ public final class UnitToolTip {
                 // Create the ranges String
                 int[] ranges;
 
-                if (entity.isAero()) {
+                if (entity.isAero() && !entity.isAeroLandedOnGroundMap()) {
                     ranges = wtype.getATRanges();
                 } else {
                     ranges = wtype.getRanges(curWp);

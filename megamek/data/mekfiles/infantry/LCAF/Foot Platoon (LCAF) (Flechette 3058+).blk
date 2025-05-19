@@ -1,0 +1,72 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-26
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Foot Platoon (LCAF)
+</Name>
+
+<Model>
+(Flechette 3058+)
+</Model>
+
+<year>
+3058
+</year>
+
+<originalBuildYear>
+3058
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Troopers Equipment>
+Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+These platoons specialize in digging infantry out of urban centers. The heavy Zeus rifle excels in defeating light cover compared to lighter rifles.  Supporting these, the newly developed Firedrake heavy needler is horrifically effective against conventional infantry and has proven useful against light battle armor as well.
+</capabilities>
+
+<overview>
+After the removal of historically Lyran systems from the unified Federated Commonwealth, many changes took place to restore and reinforce the Lyran nature of military forces posted there.  Infantry armor production was quickly updated with the first production runs seeing little more than a logo change.  Later production would see more visible changes to resemble the older Lyran style while retaining the protection capabilities of the FedCom model.
+</overview>
+
+<notes>
+Intro date based on Firedrake prototype date
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Rifle (Zeus Heavy)
+</Primary>
+
+<Secondary>
+Needler, Support (Firedrake)
+</Secondary>
+

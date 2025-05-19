@@ -1598,23 +1598,16 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns the player that "owns" this entity.
+     * <p>Returns the player that "owns" this entity.</p>
+     * <p>Unfortunately, entities freshly created may not have the game set. Therefore, fall back to the old
+     * version when game == null or the player is no longer in the game</p>
+     * <p>Server and other central classes already used {@link Game#getPlayer(int)}. It is noted that
+     * {@link Entity#owner} property is not reliable and should be avoided except in special
+     * situations like when entities freshly created may not have the game set
+     * </p>
+     * @return The player that owns this entity. Null if the entity is not owned by anyone.
      */
-    public Player getOwner() {
-        // Replaced 24 NOV 2020
-        // Server and other central classes already used
-        // game.getplayer(entity.getownerID())
-        // instead of entity.getowner() and it is noted that getOwner is not reliable.
-        // The entity owner object would have to be replaced whenever a player is
-        // updated
-        // which does not happen. The player ID on the other hand stays the same and the
-        // game
-        // object is not usually replaced. I expect entity.game to be up to date much
-        // more than owner.
-        // Unfortunately, entities freshly created may not have the game set. Therefore,
-        // fall
-        // back to the old version when game == null or the player is no longer in the
-        // game
+    public @Nullable Player getOwner() {
         if ((game != null) && (game.getPlayer(ownerId) != null)) {
             return game.getPlayer(ownerId);
         } else {
@@ -2582,6 +2575,15 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Convenience method to determine whether this entity should be treated as a landed aero on a ground map.
+     *
+     * @return True if this is an aero landed on a ground map.
+     */
+    public boolean isAeroLandedOnGroundMap() {
+        return isAero() && !isAirborne() && getGame() != null && getGame().getBoard().onGround();
+    }
+
+    /**
      * Gets the marker used to disambiguate this entity from others with the same name. These are monotonically
      * increasing values, starting from one.
      */
@@ -2947,10 +2949,8 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Convenience method to drop all cargo.
-     *
-     * @deprecated no indicated uses.
+     * TODO HHW - Psi
      */
-    @Deprecated(since = "0.50.05", forRemoval = true)
     public void dropGroundObjects() {
         carriedObjects.clear();
     }
@@ -2967,9 +2967,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @deprecated no indicated uses.
+     * TODO HHW - Psi
      */
-    @Deprecated(since = "0.50.05", forRemoval = true)
     public void setCarriedObjects(Map<Integer, ICarryable> value) {
         carriedObjects = value;
     }
@@ -4286,7 +4285,7 @@ public abstract class Entity extends TurnOrdered
                   (!mounted.getType().hasFlag(WeaponType.F_AMSBAY)) &&
                   (!(mounted.hasModes() && mounted.curMode().equals("Point Defense"))) &&
                   ((mounted.getLinked() == null) ||
-                         mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT) ||
+                         ((mounted.getLinked().getType() instanceof MiscType) && mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT)) ||
                          (mounted.getLinked().getUsableShotsLeft() > 0))) {
 
             // TAG only in the correct phase...
@@ -7185,7 +7184,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // okay, let's figure out the stuff then
-        roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType), "Base piloting skill");
+        roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType), (this instanceof Infantry) ?
+                                                                                     "Anti-Mek skill":
+                                                                                     "Base piloting skill");
 
         // Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll object and adjust as necessary
         roll = addEntityBonuses(roll);
@@ -7861,7 +7862,8 @@ public abstract class Entity extends TurnOrdered
      *       within a building
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep, Coords curPos, Coords prevPos) {
-        if ((prevPos == null) || (prevPos.equals(curPos) && !(this instanceof ProtoMek))) {
+        if ((prevPos == null) || (prevPos.equals(curPos) && !(this instanceof ProtoMek)) ||
+                  (prevPos.equals(curPos) && !(this instanceof Infantry))) {
             return 0;
         }
         Hex curHex = game.getBoard().getHex(curPos);

@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.concurrent.Callable;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.enums.BuildingType;
@@ -487,6 +488,7 @@ public class MoveStep implements Serializable {
                                       game.getBoard().getHex(entity.getPosition()).getLevel()) - hex.getLevel();
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
             int depth = -hex.depth(true);
+            int ceiling = hex.ceiling();
 
             // Set depth to 0 (surface level) in several cases:
             // 1. Jumping onto ice-covered water hex,
@@ -518,12 +520,13 @@ public class MoveStep implements Serializable {
                 setElevation(Math.max(depth, Math.min(building, maxElevation)));
             } else {
                 int subDepth = Math.max(depth, building);
-                // Put jumping Hover or WiGE at their elevation above the substrate level, or they get implicitly
-                // landed (which affects their movement next turn)
-                if (entity.getMovementMode().isHoverOrWiGE()) {
-                    setElevation(elevation + subDepth);
-                } else {
-                    setElevation(subDepth);
+
+                switch (entity.getMovementMode()) {
+                    // WiGE ends the jump at 1 elevation
+                    case WIGE -> setElevation(ceiling + 1);
+                    // Hover ends the jump above the water
+                    case HOVER -> setElevation(ceiling);
+                    default -> setElevation(subDepth);
                 }
             }
             if (climbMode() && (maxElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
@@ -1950,6 +1953,25 @@ public class MoveStep implements Serializable {
 
             return;
         } // end AERO stuff
+
+        if (isInfantry && isJumping() && stepType == MoveStepType.DOWN) {
+            if (game.getBoard().getHex(curPos).containsTerrain(Terrains.BUILDING)) {
+                Coords startingPosition = entity.getPosition();
+                Coords adjacentCoords = curPos.translated(curPos.direction(startingPosition));
+                Hex adjacentHex = game.getBoard().getHex(adjacentCoords);
+
+                boolean hasLOS = LosEffects.calculateLOS(
+                          game, entity, new FloorTarget(curPos, game.getBoard(), getElevation())
+                ).canSee();
+
+                if (adjacentHex.ceiling() >= getElevation() || !hasLOS) {
+                    return; // can't enter the building from this direction
+                } else {
+                    // we can enter the building, but we need to roll anti-mek skill
+                    danger = true;
+                }
+            }
+        }
 
         if (prev.isDiggingIn) {
             isDiggingIn = true;

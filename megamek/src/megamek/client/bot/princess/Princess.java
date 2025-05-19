@@ -402,8 +402,12 @@ public class Princess extends BotClient {
             final Coords coords = new Coords(MathUtility.parseInt(x) - 1, MathUtility.parseInt(y) - 1);
             getStrategicBuildingTargets().add(coords);
         }
-
         spinUpThreshold = null;
+        if (initialized) {
+            // path rankers need to be reinitialized since the behavior settings changed, this will
+            // propagate any changes the BasicPathRanker needs.
+            initializePathRankers();
+        }
     }
 
     /**
@@ -2338,7 +2342,7 @@ public class Princess extends BotClient {
                   getMaxWeaponRange(entity),
                   fallTolerance,
                   getEnemyEntities(),
-                  getFriendEntities());
+                  getBehaviorSettings().isExclusiveHerding() ? getEntitiesOwned() : getFriendEntities());
 
             final long stop_time = System.currentTimeMillis();
 
@@ -3434,6 +3438,9 @@ public class Princess extends BotClient {
 
                             path.addStep(MoveStepType.UNLOAD, loadedEntity, dismountLocation);
                             return;
+                        } else {
+                            // Still increase the index so the loop finishes!
+                            dismountIndex++;
                         }
                     }
                 } else {

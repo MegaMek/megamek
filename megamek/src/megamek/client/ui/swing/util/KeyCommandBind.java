@@ -102,6 +102,11 @@ public enum KeyCommandBind {
     NEXT_MODE("nextMode", VK_KP_UP),
     PAUSE("pause", VK_P, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     UNPAUSE("unpause", VK_P, CTRL_DOWN_MASK | ALT_DOWN_MASK),
+    REPORT_KEY_NEXT("reportKeyNext", VK_N),
+    REPORT_KEY_PREV("reportKeyPrev", VK_N, SHIFT_DOWN_MASK),
+    REPORT_KEY_SELNEXT("reportKeySelNext", VK_N, CTRL_DOWN_MASK),
+    REPORT_KEY_SELPREV("reportKeySelPrev", VK_N, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    REPORT_KEY_FILTER("reportKeyFilter", VK_F, SHIFT_DOWN_MASK),
 
     // --------- The following binds are used by the CommonMenuBar:
     // Toggles isometric view on/off

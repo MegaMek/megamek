@@ -170,10 +170,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             if (boardsList.size() != columns * rows) {
                 throw new IllegalArgumentException("The number of given boards must give full rows!");
             }
-            List<Boolean> isRotatedList = new ArrayList<>();
-            Collections.fill(isRotatedList, Boolean.FALSE);
-            board = BoardUtilities.combine(mapWidth, mapHeight, columns, rows, boardsList, isRotatedList,
-                    Board.T_GROUND);
+            board = BoardUtilities.combine(mapWidth, mapHeight, columns, rows, boardsList.toArray(new Board[0]), Board.T_GROUND);
         }
         parseBoardProcessors(board, mapNode);
         return board;

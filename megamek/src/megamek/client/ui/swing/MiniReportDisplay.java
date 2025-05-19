@@ -221,19 +221,20 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
 
     private void filterReport(String k) {
         if (filterToggle == 0) {
-            String temp = "";
+            String filterResult = "";
             String[] keywords = k.split(" ");
-            String[] lines = currentClient.phaseReport.split(System.getProperty("line.separator"));
-            for (String line : lines) {
-                for (String words : keywords) {
-                    if (line.toUpperCase().contains(words.toUpperCase())) {
-                        temp += line + System.getProperty("line.separator");
+            String[] htmlLines = currentClient.phaseReport.split(System.getProperty("line.separator"));
+            for (String htmlLine : htmlLines) {
+                for (String word : keywords) {
+                    int strt = Math.abs(htmlLine.indexOf(">")) - 1; //start searching after HTML unit image
+                    if (htmlLine.substring(strt).replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {
+                        filterResult += htmlLine + System.getProperty("line.separator");
                     }
                 }
             }
             int phaseTab = tabs.getTabCount() - 1;
             tabs.removeTabAt(phaseTab);
-            tabs.add(Messages.getString("MiniReportDisplay.Phase"), loadHtmlScrollPane(temp));
+            tabs.add(Messages.getString("MiniReportDisplay.Phase"), loadHtmlScrollPane(filterResult));
             tabs.setSelectedIndex(phaseTab);
             butQuickFilter.setFont(new Font(butQuickFilter.getFont().getName(),
                   Font.BOLD | Font.ITALIC,

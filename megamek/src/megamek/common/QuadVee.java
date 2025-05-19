@@ -280,7 +280,7 @@ public class QuadVee extends QuadMek {
     }
 
     /**
-     * QuadVees cannot benefit from MASC or SuoerChargers in vehicle mode
+     * QuadVees cannot benefit from MASC or SuperChargers in vehicle mode
      */
     @Override
     public MPBoosters getArmedMPBoosters() {

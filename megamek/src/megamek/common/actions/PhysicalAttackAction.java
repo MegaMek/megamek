@@ -259,8 +259,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         }
     }
 
-    //Returns true if QuadVee is in Vehicle mode.  QuadVees in this more treated as having 1 less height in physical
-    //attacks
+    //Returns true if QuadVee is in Vehicle mode.  QuadVees in this mode are treated as having 1 less height in
+    // physical attacks
     static protected boolean isConvertedQuadVee(Targetable target, Game game){
         if(!target.isQuadMek()){
             return false;

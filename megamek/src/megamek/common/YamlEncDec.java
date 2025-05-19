@@ -7,8 +7,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.DumperOptions;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import megamek.logging.MMLogger;
 
@@ -43,10 +43,9 @@ public class YamlEncDec {
             logger.info("Exporting YAML files to " + targetFolder);
             HashMap <String, Boolean> seen = new HashMap<>();
             
-            DumperOptions options = new DumperOptions();
-            options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-            options.setPrettyFlow(true);
-            Yaml yaml = new Yaml(options);
+            YAMLMapper mapper = new YAMLMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
             // Write everything except ammo types that come from mutations
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes.hasMoreElements(); ) {
                 EquipmentType equipmentType = equipmentTypes.nextElement();
@@ -55,7 +54,7 @@ public class YamlEncDec {
                         continue;
                     }
                 }
-                writeEquipmentYamlEntry(equipmentType, targetFolder, yaml, seen);
+                writeEquipmentYamlEntry(equipmentType, targetFolder, mapper, seen);
             }
             // Now write the ammo types that comes from mutations
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes.hasMoreElements(); ) {
@@ -67,7 +66,7 @@ public class YamlEncDec {
                 } else {
                     continue;
                 }
-                writeEquipmentYamlEntry(equipmentType, targetFolder, yaml, seen);
+                writeEquipmentYamlEntry(equipmentType, targetFolder, mapper, seen);
             }
         } catch (Exception e) {
             System.out.println("Error writing YAML database: " + e.getMessage());
@@ -75,7 +74,7 @@ public class YamlEncDec {
         }
     }
 
-    private static void writeEquipmentYamlEntry(EquipmentType equipmentType, String targetFolder, Yaml yamlProcessor, HashMap <String, Boolean> seen)
+    private static void writeEquipmentYamlEntry(EquipmentType equipmentType, String targetFolder, YAMLMapper yamlMapper, HashMap <String, Boolean> seen)
             throws Exception {
         String typeFolder;
         String seenKey = null;
@@ -134,15 +133,14 @@ public class YamlEncDec {
         final String fullPath = parentDir.getAbsolutePath() + File.separator + fileName + ".yaml";
         appendMode = seen.containsKey(seenKey);
         final File f = new File(fullPath);
-        final BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f, appendMode));
-        if (appendMode) {
-            bufferedWriter.write("---\n");
-        } else {
-            bufferedWriter.write("version: \""+VERSION+"\"\n"); // We might need it in the future...
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f, appendMode))) {
+            if (appendMode) {
+                bufferedWriter.write("---\n");
+            } else {
+                bufferedWriter.write("version: \""+VERSION+"\"\n"); // We might need it in the future...
+            }
+            yamlMapper.writeValue(bufferedWriter, content);
         }
-        yamlProcessor.dump(content, bufferedWriter);
-        bufferedWriter.flush();
-        bufferedWriter.close();
         seen.put(seenKey, true);
     }
 }

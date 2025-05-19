@@ -133,8 +133,10 @@ public class YamlEncDec {
         final String fullPath = parentDir.getAbsolutePath() + File.separator + fileName + ".yaml";
         appendMode = seen.containsKey(seenKey);
         final File f = new File(fullPath);
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f, appendMode))) { 
-            content.put("version", YamlEncDec.VERSION);
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f, appendMode))) {
+            if (!appendMode) {
+                bufferedWriter.append("version: \"" + YamlEncDec.VERSION + "\"\n");
+            }
             yamlMapper.writeValue(bufferedWriter, content);
         }
         seen.put(seenKey, true);

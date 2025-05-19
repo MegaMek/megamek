@@ -172,7 +172,7 @@ public class FovHighlightingAndDarkening {
 
             if (dist == 0) {
                 this.boardView1.drawHexBorder(boardGraph, p, selected_color, pad, lw);
-            } else if (dist < max_dist) {
+            } else if (dist <= max_dist) {
                 LosEffects los = getCachedLosEffects(src, c);
                 if (null != this.boardView1.getSelectedEntity()) {
                     if (los == null) {

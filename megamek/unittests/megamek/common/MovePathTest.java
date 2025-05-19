@@ -27,9 +27,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Vector;
 
-import org.junit.jupiter.api.Test;
-
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)

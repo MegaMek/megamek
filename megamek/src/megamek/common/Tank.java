@@ -566,7 +566,9 @@ public class Tank extends Entity {
      *   <li>Its motive damage is greater than or equal to its original walking movement points.</li>
      * </ul>
      *
-     * @return {@code true} if the unit qualifies as having a movement hit according to these criteria; {@code false} otherwise.
+     * @return {@code true} if the unit qualifies as having a movement hit according to these criteria; {@code false}
+     *       otherwise.
+     *
      * @see #applyMovementDamage
      */
     public boolean isMovementHit() {
@@ -1669,6 +1671,7 @@ public class Tank extends Entity {
 
     @Override
     public double getPriceMultiplier() {
+        // TechManual, 1st printing, p285 "Final Unit Cost Formulas Table".
         double priceMultiplier = 1.0;
         if (isOmni()) {
             priceMultiplier *= 1.25;
@@ -1677,32 +1680,32 @@ public class Tank extends Entity {
                   (movementMode.equals(EntityMovementMode.NAVAL) ||
                          movementMode.equals(EntityMovementMode.HYDROFOIL) ||
                          movementMode.equals(EntityMovementMode.SUBMARINE))) {
-            priceMultiplier *= weight / 100000.0;
+            priceMultiplier *= 1 + (weight / 100000.0);
         } else {
             switch (movementMode) {
                 case HOVER:
                 case SUBMARINE:
-                    priceMultiplier *= weight / 50.0;
+                    priceMultiplier *= 1 + (weight / 50.0);
                     break;
                 case HYDROFOIL:
-                    priceMultiplier *= weight / 75.0;
+                    priceMultiplier *= 1 + (weight / 75.0);
                     break;
                 case NAVAL:
                 case WHEELED:
-                    priceMultiplier *= weight / 200.0;
+                    priceMultiplier *= 1 + (weight / 200.0);
                     break;
                 case TRACKED:
-                    priceMultiplier *= weight / 100.0;
+                    priceMultiplier *= 1 + (weight / 100.0);
                     break;
                 case VTOL:
-                    priceMultiplier *= weight / 30.0;
+                    priceMultiplier *= 1 + (weight / 30.0);
                     break;
                 case WIGE:
-                    priceMultiplier *= weight / 25.0;
+                    priceMultiplier *= 1 + (weight / 25.0);
                     break;
                 case RAIL:
                 case MAGLEV:
-                    priceMultiplier *= weight / 250.0;
+                    priceMultiplier *= 1 + (weight / 250.0);
                     break;
                 default:
                     break;
@@ -2615,11 +2618,11 @@ public class Tank extends Entity {
      * Returns this entity's running/flank mp as a string.
      */
     @Override
-    public String getRunMPasString() {
+    public String getRunMPasString(boolean gameState) {
         MPBoosters mpBoosters = getMPBoosters();
         if (!mpBoosters.isNone()) {
             String str = getRunMPwithoutMASC() + "(" + getRunMP() + ")";
-            if (game != null) {
+            if (gameState && game != null) {
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ?

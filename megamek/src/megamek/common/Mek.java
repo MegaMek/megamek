@@ -989,11 +989,11 @@ public abstract class Mek extends Entity {
      * Returns this entity's running/flank mp as a string.
      */
     @Override
-    public String getRunMPasString() {
+    public String getRunMPasString(boolean gameState) {
         MPBoosters mpBoosters = getMPBoosters();
         if (!mpBoosters.isNone()) {
             String str = getRunMPwithoutMASC() + "(" + getRunMP() + ")";
-            if (game != null) {
+            if (gameState && game != null) {
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
@@ -2938,7 +2938,9 @@ public abstract class Mek extends Entity {
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (industrial) {
             return new TechAdvancement(TECH_BASE_ALL)
-                    .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
+                         // Book says 2460 but some of the systems required for non-primitive BMs don't exist until 2463
+                         // IMs can't be constructed in 2460-2462 and trying causes bugs
+                    .setAdvancement(2463, 2470, 2500).setPrototypeFactions(F_TH)
                     .setProductionFactions(F_TH).setTechRating(RATING_C)
                     .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
                     .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -2957,7 +2959,9 @@ public abstract class Mek extends Entity {
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else {
             return new TechAdvancement(TECH_BASE_ALL)
-                    .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
+                         // Book says 2460 but some of the systems required for non-primitive BMs don't exist until 2463
+                         // BMs can't be constructed in 2460-2462 and trying causes bugs
+                    .setAdvancement(2463, 2470, 2500).setPrototypeFactions(F_TH)
                     .setProductionFactions(F_TH).setTechRating(RATING_D)
                     .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
                     .setStaticTechLevel(SimpleTechLevel.INTRO);

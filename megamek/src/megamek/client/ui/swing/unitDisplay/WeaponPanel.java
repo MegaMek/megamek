@@ -24,13 +24,18 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -42,8 +47,8 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.phaseDisplay.FiringDisplay;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.phaseDisplay.FiringDisplay;
 import megamek.client.ui.swing.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
@@ -397,6 +402,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private JTextPane wTargetInfo;
     private Targetable target;
 
+    private JSplitPane splitPane;
     // I need to keep a pointer to the weapon list of the
     // currently selected mek.
     private ArrayList<AmmoMounted> vAmmo;
@@ -461,7 +467,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         createTargetDisplay(panelLower);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelMain, panelLower);
+        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelMain, panelLower);
         splitPane.setOpaque(false);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.add(splitPane);
@@ -1005,6 +1011,20 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         int dy = minTopMargin;
         setContentMargins(dx, dy, dx, dy);
+        revalidate();
+        repaint();
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        // Calculate preferred size based on the main split pane's preferred size
+        Dimension splitPanePrefSize = splitPane.getPreferredSize();
+        Insets insets = getInsets();
+        int height = splitPanePrefSize.height + insets.top + insets.bottom;
+
+        // Consider superclass preferred size as well
+        Dimension superPref = super.getPreferredSize();
+        return new Dimension(Math.max(splitPanePrefSize.width, superPref.width), Math.max(height, superPref.height));
     }
 
     private void setBackGround() {
@@ -1377,9 +1397,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int selected = m_chAmmo.getSelectedIndex();
         if ((selected == -1) || (vAmmo == null) || (selected >= vAmmo.size())) {
             return Optional.empty();
-        } else {
-            return Optional.of(vAmmo.get(selected));
         }
+
+        return Optional.of(vAmmo.get(selected));
     }
 
     /**
@@ -2063,17 +2083,21 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
 
         } else {
-            m_chAmmo.setEnabled(true);
+
             vAmmo = new ArrayList<>();
             // Ammo sharing between adjacent trailers
             List<AmmoMounted> fullAmmoList = new ArrayList<>(entity.getAmmo());
             if (entity.getTowedBy() != Entity.NONE) {
                 Entity ahead = entity.getGame().getEntity(entity.getTowedBy());
-                fullAmmoList.addAll(ahead.getAmmo());
+                if (ahead != null) {
+                    fullAmmoList.addAll(ahead.getAmmo());
+                }
             }
             if (entity.getTowing() != Entity.NONE) {
                 Entity behind = entity.getGame().getEntity(entity.getTowing());
-                fullAmmoList.addAll(behind.getAmmo());
+                if (behind != null) {
+                    fullAmmoList.addAll(behind.getAmmo());
+                }
             }
             int newSelectedIndex = -1;
             int i = 0;
@@ -2098,7 +2122,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         && (atype.getRackSize() == wtype.getRackSize())) {
 
                     vAmmo.add(ammo);
-                    m_chAmmo.addItem(formatAmmo(ammo));
+
+
                     if ((mounted.getLinked() != null) && mounted.getLinked().equals(ammo)) {
                         newSelectedIndex = i;
                         // Prevent later overriding.
@@ -2110,6 +2135,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     i++;
                 }
             }
+            m_chAmmo.setEnabled(true);
+            for (var ammo : vAmmo) {
+                m_chAmmo.addItem(formatAmmo(ammo));
+            }
+
             if ((newSelectedIndex != -1) && (newSelectedIndex < m_chAmmo.getItemCount())) {
                 m_chAmmo.setSelectedIndex(newSelectedIndex);
             }
@@ -2669,11 +2699,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (n == -1) {
                 return;
             }
+            // This initialize the vAmmo if it is null
+            if (vAmmo == null) {
+                displaySelected();
+            }
 
             // We can update display values without changing the selected unit's ammo;
             // this allows displaying selected unit's ammo-based ranges without owning it
             WeaponMounted mWeap = ((WeaponListModel) weaponList.getModel()).getWeaponAt(n);
-            WeaponMounted oldWeap = mWeap;
+
             AmmoMounted oldAmmo = mWeap.getLinkedAmmo();
             AmmoMounted mAmmo = vAmmo.get(m_chAmmo.getSelectedIndex());
 
@@ -2739,9 +2773,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // ammo.
             updateRangeDisplayForAmmo(mAmmo);
             if (entity.isAirborne() || entity.usesWeaponBays()) {
-                WeaponType wtype = (WeaponType) mWeap.getType();
+                WeaponType wtype = mWeap.getType();
                 if (isBay) {
-                    compileWeaponBay(oldWeap, mAmmo, wtype.isCapital());
+                    compileWeaponBay(mWeap, mAmmo, wtype.isCapital());
                 } else {
                     // otherwise I need to replace range display with
                     // standard ranges and attack values
@@ -2776,9 +2810,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (weaponSortOrder == null) {
             return;
         }
+        removeListeners();
 
         entity.setWeaponSortOrder(weaponSortOrder);
         ((WeaponListModel) weaponList.getModel()).sort(weaponSortOrder.getWeaponSortComparator(entity));
+
+        onResize();
+        addListeners();
     }
 
     private void addListeners() {

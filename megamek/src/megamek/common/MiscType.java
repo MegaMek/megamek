@@ -418,7 +418,10 @@ public class MiscType extends EquipmentType {
         if (flag instanceof MiscTypeFlag) {
             return super.hasFlag(flag);
         } else {
-            LOGGER.warn("Incorrect flag check: make sure to test only MiscTypeFlags on a MiscType.", new Throwable("Invalid MiscType"));
+            LOGGER.warn("Incorrect flag check: tested {} instead of MiscTypeFlag",
+                  flag.getClass().getSimpleName(),
+                  new Throwable("Incorrect flag tested " + flag.getClass().getSimpleName() + " instead of " +
+                                      "MiscTypeFlag"));
             return false;
         }
     }
@@ -2245,8 +2248,8 @@ public class MiscType extends EquipmentType {
         // No information about this is provided so we fill in essentially "blank" data
         misc.techAdvancement.setTechBase(TECH_BASE_IS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL)
-              .setTechRating(RATING_X)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_X)
+              .setTechRating(RATING_D)
+              .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
               .setISAdvancement(DATE_ES)
               .setISApproximate(true);
 

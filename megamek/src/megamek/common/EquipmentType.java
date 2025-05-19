@@ -1161,25 +1161,25 @@ public class EquipmentType implements ITechnology {
             }
         }
         YamlEncDec.addPropIfNotEmpty(data, "sortingName", sortingName);
-        if (tonnage > 0) {
+        if (isVariableTonnage()) {
+            data.put("tonnage", YamlEncDec.VARIABLE);
+        } else {
             data.put("tonnage", tonnage);
-        } else if (tonnage == EquipmentType.TONNAGE_VARIABLE) {
-            data.put("tonnage", "variable");
         }
-        if (criticals > 0) {
+        if (isVariableCriticals()) {
+            data.put("criticals", YamlEncDec.VARIABLE);
+        } else {
             data.put("criticals", criticals);
-        } else if (tonnage == EquipmentType.CRITICALS_VARIABLE) {
-            data.put("criticals", "variable");
         }
-        if (cost > 0) {
+        if (isVariableCost()) {
+            data.put("cost", YamlEncDec.VARIABLE);
+        } else {
             data.put("cost", cost);
-        } else if (tonnage == EquipmentType.COST_VARIABLE) {
-            data.put("cost", "variable");
         }
-        if (bv > 0) {
+        if (isVariableBV()) {
+            data.put("bv", YamlEncDec.VARIABLE);
+        } else {
             data.put("bv", bv);
-        } else if (tonnage == EquipmentType.BV_VARIABLE) {
-            data.put("bv", "variable");
         }
         YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
         return data;

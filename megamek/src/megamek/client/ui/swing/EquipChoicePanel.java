@@ -559,6 +559,7 @@ public class EquipChoicePanel extends JPanel {
             AmmoType at = ammoMounted.getType();
             ArrayList<AmmoType> vTypes = new ArrayList<>();
             Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
+
             if (vAllTypes == null) {
                 continue;
             }
@@ -574,7 +575,11 @@ public class EquipChoicePanel extends JPanel {
                               (at.getAmmoType() == AmmoType.T_IATM))) {
                 continue;
             }
-
+            boolean ignoreClanAmmoLimits = gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS);
+            boolean isClan = entity.isClan();
+            boolean isMixedTech = entity.isMixedTech();
+            boolean canUseNonClanAmmo = !isClan || ignoreClanAmmoLimits;
+            boolean unitCanUseClanAmmo = isClan || isMixedTech;
             for (AmmoType atCheck : vAllTypes) {
                 if (entity.hasETypeFlag(Entity.ETYPE_AERO) &&
                           !atCheck.canAeroUse(game.getOptions()
@@ -590,7 +595,9 @@ public class EquipChoicePanel extends JPanel {
                           entity.isMixedTech(),
                           game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT));
                 } else {
-                    bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal();
+                    boolean isClanTech = atCheck.isClan();
+                    boolean canUseThisAmmo = (canUseNonClanAmmo && !isClanTech) || (unitCanUseClanAmmo && isClanTech);
+                    bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal() && canUseThisAmmo;
                 }
 
                 // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo. "Incendiary"
@@ -628,6 +635,16 @@ public class EquipChoicePanel extends JPanel {
                 if ((entity instanceof ProtoMek) &&
                           atCheck.hasFlag(AmmoType.F_MG) &&
                           !atCheck.hasFlag(AmmoType.F_PROTOMEK)) {
+                    continue;
+                }
+
+                if ((atCheck.getAmmoType() == AmmoType.T_LRM) && entity.isBattleArmor() &&
+                          !atCheck.hasFlag(AmmoTypeFlag.F_BATTLEARMOR)) {
+                    continue;
+                }
+
+                if ((atCheck.getAmmoType() == AmmoType.T_SRM) && entity.isBattleArmor() &&
+                          !atCheck.hasFlag(AmmoTypeFlag.F_BATTLEARMOR)) {
                     continue;
                 }
 

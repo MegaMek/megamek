@@ -36,6 +36,7 @@ package megamek.client.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,11 +51,8 @@ import javax.swing.text.Document;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.IClientGUI;
-import megamek.client.ui.swing.IHasBoardView;
-import megamek.client.ui.swing.IHasUnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.Player;
@@ -78,6 +76,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     private JButton butEntitySearchDown;
     private JButton butQuickSearchUp;
     private JButton butQuickSearchDown;
+    private JButton butQuickFilter;
     private JComboBox<String> comboPlayer = new JComboBox<>();
     private JComboBox<String> comboEntity = new JComboBox<>();
     private JComboBox<String> comboQuick = new JComboBox<>();
@@ -85,6 +84,8 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     private Client currentClient;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
+
+    private int filterToggle = 0; // set keyword filter to "off"
 
     private static final int MRD_MAXNAMELENGHT = 60;
 
@@ -114,8 +115,80 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         butEntitySearchDown.addActionListener(this);
         butQuickSearchUp = new JButton(Messages.getString("MiniReportDisplay.ArrowUp"));
         butQuickSearchUp.addActionListener(this);
+        butQuickSearchUp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_PREV), "MiniReportDisplay.ArrowUp");
+        butQuickSearchUp.getActionMap().put("MiniReportDisplay.ArrowUp", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                butQuickSearchUp.doClick();
+            }
+        });
+        butQuickSearchUp.setToolTipText("Find previous Keyword: " +
+                                              KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_PREV));
+
         butQuickSearchDown = new JButton(Messages.getString("MiniReportDisplay.ArrowDown"));
         butQuickSearchDown.addActionListener(this);
+        butQuickSearchDown.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_NEXT), "MiniReportDisplay.ArrowDown");
+        butQuickSearchDown.getActionMap().put("MiniReportDisplay.ArrowDown", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                butQuickSearchDown.doClick();
+            }
+        });
+        butQuickSearchDown.setToolTipText("Find next Keyword: " +
+                                                KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_NEXT));
+
+        butQuickFilter = new JButton(Messages.getString("MiniReportDisplay.KeywordFilter"));
+        butQuickFilter.addActionListener(this);
+        butQuickFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_FILTER), "MiniReportDisplay.KeywordFilter");
+        butQuickFilter.getActionMap().put("MiniReportDisplay.KeywordFilter", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                butQuickFilter.doClick();
+            }
+        });
+        butQuickFilter.setToolTipText("Toggle Keyword Filter: " +
+                                            KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_FILTER));
+
+
+        /* comboQuick.setEditable(true); // TODO Look into making the Keyword ComboBox editable? Requires a focusable
+                                             parent (see below), a way to inhibit keyboard shortcuts while editing
+                                             and a way to save and update the "Report -> Keywords" Client setting.
+           SwingUtilities.getWindowAncestor(this).setFocusableWindowState(true);
+         */
+        comboQuick.addActionListener(this);
+        comboQuick.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_SELNEXT), "MiniReportDisplay.comboQuickNext");
+        comboQuick.getActionMap().put("MiniReportDisplay.comboQuickNext", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                comboQuick.setSelectedIndex((comboQuick.getSelectedIndex() + 1) % comboQuick.getItemCount());
+            }
+        });
+        comboQuick.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_SELPREV), "MiniReportDisplay.comboQuickPrev");
+        comboQuick.getActionMap().put("MiniReportDisplay.comboQuickPrev", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int i = (comboQuick.getSelectedIndex() - 1) % comboQuick.getItemCount();
+                if (i < 0) {
+                    i = comboQuick.getItemCount() - 1;
+                }
+                comboQuick.setSelectedIndex(i);
+            }
+        });
+        comboQuick.setToolTipText("<html>Select next Keyword: " +
+                                        KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_SELNEXT) +
+                                        "<br>" +
+                                        "Select previous Keyword: " +
+                                        KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_SELPREV) +
+                                        "<br>You can add/remove Keywords in View -> Client Settings -> Report</html>");
 
         setLayout(new BorderLayout());
 
@@ -131,6 +204,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         p.add(comboQuick);
         p.add(butQuickSearchUp);
         p.add(butQuickSearchDown);
+        p.add(butQuickFilter);
         p.add(butSwitchLocation);
 
         JScrollPane sp = new JScrollPane(p);
@@ -143,6 +217,38 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         add(panelMain, BorderLayout.CENTER);
 
         doLayout();
+    }
+
+    private void filterReport(String k) {
+        if (filterToggle == 0) {
+            String temp = "";
+            String[] keywords = k.split(" ");
+            String[] lines = currentClient.phaseReport.split(System.getProperty("line.separator"));
+            for (String line : lines) {
+                for (String words : keywords) {
+                    if (line.toUpperCase().contains(words.toUpperCase())) {
+                        temp += line + System.getProperty("line.separator");
+                    }
+                }
+            }
+            int phaseTab = tabs.getTabCount() - 1;
+            tabs.removeTabAt(phaseTab);
+            tabs.add(Messages.getString("MiniReportDisplay.Phase"), loadHtmlScrollPane(temp));
+            tabs.setSelectedIndex(phaseTab);
+            butQuickFilter.setFont(new Font(butQuickFilter.getFont().getName(),
+                  Font.BOLD | Font.ITALIC,
+                  butQuickFilter.getFont().getSize()));
+            filterToggle = 1;
+        } else {
+            int phaseTab = tabs.getTabCount() - 1;
+            tabs.removeTabAt(phaseTab);
+            tabs.add(Messages.getString("MiniReportDisplay.Phase"), loadHtmlScrollPane(currentClient.phaseReport));
+            tabs.setSelectedIndex(phaseTab);
+            butQuickFilter.setFont(new Font(butQuickFilter.getFont().getName(),
+                  Font.PLAIN,
+                  butQuickFilter.getFont().getSize()));
+            filterToggle = 0;
+        }
     }
 
     private void searchTextPane(String searchPattern, Boolean searchDown) {
@@ -300,6 +406,14 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
             searchPattern(comboQuick, true);
         } else if (ae.getSource().equals(butQuickSearchUp)) {
             searchPattern(comboQuick, false);
+        } else if (ae.getSource().equals(butQuickFilter)) {
+            filterReport(comboQuick.getItemAt(comboQuick.getSelectedIndex()));
+        } else if (ae.getSource().equals(comboQuick)) {
+            // reset Report Keyword Filter Toggle
+            filterToggle = 0;
+            butQuickFilter.setFont(new Font(butQuickFilter.getFont().getName(),
+                  Font.PLAIN,
+                  butQuickFilter.getFont().getSize()));
         }
     }
 
@@ -313,6 +427,12 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     }
 
     private JScrollPane loadHtmlScrollPane(String t) {
+        // reset Report Keyword Filter Toggle
+        filterToggle = 0;
+        butQuickFilter.setFont(new Font(butQuickFilter.getFont().getName(),
+              Font.PLAIN,
+              butQuickFilter.getFont().getSize()));
+
         JTextPane ta = new JTextPane();
         Report.setupStylesheet(ta);
         ta.addHyperlinkListener(this);

@@ -5,7 +5,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.weapons.DamageType;
-import megamek.logging.MMLogger;
 import megamek.server.IDamageManager;
 import megamek.server.ServerHelper;
 
@@ -13,19 +12,44 @@ import java.util.List;
 import java.util.Vector;
 
 public class TWDamageManager implements IDamageManager {
-    protected final TWGameManager owner;
-    protected Game game;
+    protected TWGameManager manager = null;
+    protected Game game = null;
+    protected boolean initialized = false;
 
-    public TWDamageManager(TWGameManager owner, Game game) {
-        this.owner = owner;
-        this.game = game;
+    // Remove requirement that
+    public TWDamageManager() {}
+
+    public TWDamageManager(TWGameManager manager) {
+        setManager(manager);
+    }
+
+    public TWDamageManager(TWGameManager manager, Game game) {
+        setManager(manager);
+        setGame(game);
     }
 
     public void setGame(Game game) {
         this.game = game;
+        initialized = (manager != null);
     }
 
+    public void setManager(TWGameManager manager) {
+        this.manager = manager;
+        initialized = (game != null);
+    }
+
+    /**
+     * Unpacks DamageInfo Record into arguments and checks that the Game Manager and Game are initialized
+     * @param damageInfo {@link megamek.common.DamageInfo}  for details
+     * @return Vector of reports detailing damage dealt.
+     */
     public Vector<Report> damageEntity(DamageInfo damageInfo){
+        if (!initialized) {
+            String message = (game == null && manager == null) ? "Game Manager and Game not initialized" :
+                               (manager == null) ? "Game Manager not initialized" : "Game not initialized";
+            throw new RuntimeException(message);
+        }
+
         Vector<Report> vDesc = new Vector<>();
         return damageEntity(
               damageInfo.te(),
@@ -177,7 +201,7 @@ public class TWDamageManager implements IDamageManager {
                                  (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
                                         mek.isCondEjectAmmo()))) {
                     autoEject = true;
-                    vDesc.addAll(owner.ejectEntity(te, true));
+                    vDesc.addAll(manager.ejectEntity(te, true));
                 }
             } else if (te instanceof Aero aero) {
                 if (aero.isAutoEject() &&
@@ -185,7 +209,7 @@ public class TWDamageManager implements IDamageManager {
                                  (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
                                         aero.isCondEjectAmmo()))) {
                     autoEject = true;
-                    vDesc.addAll(owner.ejectEntity(te, true));
+                    vDesc.addAll(manager.ejectEntity(te, true));
                 }
             }
         }
@@ -524,7 +548,7 @@ public class TWDamageManager implements IDamageManager {
                               !mAmmo.isHit() &&
                               !(mAmmo.getType() instanceof BombType)) {
                         // doh. explode it
-                        vDesc.addAll(owner.explodeEquipment(te, mAmmo.getLocation(), mAmmo));
+                        vDesc.addAll(manager.explodeEquipment(te, mAmmo.getLocation(), mAmmo));
                         mAmmo.setHit(true);
                     }
                 }
@@ -564,7 +588,7 @@ public class TWDamageManager implements IDamageManager {
                                   (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
                                          (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
                                                 lam.isCondEjectCTDest()))) {
-                            vDesc.addAll(owner.ejectEntity(te, true, false));
+                            vDesc.addAll(manager.ejectEntity(te, true, false));
                         }
                     } else {
                         // Aeros eject if the SI Destroyed switch is on
@@ -573,19 +597,19 @@ public class TWDamageManager implements IDamageManager {
                                   (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
                                          (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
                                                 aero.isCondEjectSIDest()))) {
-                            vDesc.addAll(owner.ejectEntity(te, true, false));
+                            vDesc.addAll(manager.ejectEntity(te, true, false));
                         }
                     }
-                    vDesc.addAll(owner.destroyEntity(te, "Structural Integrity Collapse"));
+                    vDesc.addAll(manager.destroyEntity(te, "Structural Integrity Collapse"));
                     a.doDisbandDamage();
                     a.setCapArmor(0);
                     if (hit.getAttackerId() != Entity.NONE) {
-                        owner.creditKill(te, game.getEntity(hit.getAttackerId()));
+                        manager.creditKill(te, game.getEntity(hit.getAttackerId()));
                     }
                 }
                 // check for aero crits from natural 12 or threshold; LAMs take damage as meks
                 if (te instanceof Aero) {
-                    owner.checkAeroCrits(vDesc, (Aero) te, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
+                    manager.checkAeroCrits(vDesc, (Aero) te, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
                 }
                 return vDesc;
             }
@@ -728,7 +752,7 @@ public class TWDamageManager implements IDamageManager {
                           (null != passenger) &&
                           !passenger.isDoomed() &&
                           (damageType != DamageType.IGNORE_PASSENGER)) {
-                    damage = owner.damageExternalPassenger(te, hit, damage, vDesc, passenger);
+                    damage = manager.damageExternalPassenger(te, hit, damage, vDesc, passenger);
                 }
 
                 boolean bTorso = (nLoc == Mek.LOC_CT) || (nLoc == Mek.LOC_RT) || (nLoc == Mek.LOC_LT);
@@ -796,7 +820,7 @@ public class TWDamageManager implements IDamageManager {
                     for (Mounted<?> mAmmo : te.getAmmo()) {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed() && !mAmmo.isHit()) {
                             // doh. explode it
-                            vDesc.addAll(owner.explodeEquipment(te, mAmmo.getLocation(), mAmmo));
+                            vDesc.addAll(manager.explodeEquipment(te, mAmmo.getLocation(), mAmmo));
                             mAmmo.setHit(true);
                         }
                     }
@@ -1038,7 +1062,7 @@ public class TWDamageManager implements IDamageManager {
 
                     // telemissiles are destroyed if they lose all armor
                     if ((te instanceof TeleMissile) && (te.getArmor(hit) == damage)) {
-                        vDesc.addAll(owner.destroyEntity(te, "damage", false));
+                        vDesc.addAll(manager.destroyEntity(te, "damage", false));
                     }
 
                 } else {
@@ -1074,7 +1098,7 @@ public class TWDamageManager implements IDamageManager {
                         vDesc.addElement(r);
 
                         if (te.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
-                            vDesc.addAll(owner.destroyEntity(te, "damage", false));
+                            vDesc.addAll(manager.destroyEntity(te, "damage", false));
                         }
                     }
                 }
@@ -1085,13 +1109,13 @@ public class TWDamageManager implements IDamageManager {
                     if (origDamage > te.getBARRating(hit.getLocation())) {
                         if (te.hasArmoredChassis()) {
                             // crit roll with -1 mod
-                            vDesc.addAll(owner.criticalEntity(te,
+                            vDesc.addAll(manager.criticalEntity(te,
                                   hit.getLocation(),
                                   hit.isRear(),
                                   -1 + critBonus,
                                   damage_orig));
                         } else {
-                            vDesc.addAll(owner.criticalEntity(te, hit.getLocation(), hit.isRear(), critBonus, damage_orig));
+                            vDesc.addAll(manager.criticalEntity(te, hit.getLocation(), hit.isRear(), critBonus, damage_orig));
                         }
                     }
                 }
@@ -1228,18 +1252,18 @@ public class TWDamageManager implements IDamageManager {
                                   (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
                                          (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
                                                 a.isCondEjectSIDest()))) {
-                            vDesc.addAll(owner.ejectEntity(te, true, false));
+                            vDesc.addAll(manager.ejectEntity(te, true, false));
                         } else {
-                            vDesc.addAll(owner.destroyEntity(te,
+                            vDesc.addAll(manager.destroyEntity(te,
                                   "Structural Integrity Collapse",
                                   damageType != DamageType.CRASH));
                         }
                         a.setSI(0);
                         if (hit.getAttackerId() != Entity.NONE) {
-                            owner.creditKill(a, game.getEntity(hit.getAttackerId()));
+                            manager.creditKill(a, game.getEntity(hit.getAttackerId()));
                         }
                     }
-                    owner.checkAeroCrits(vDesc, a, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
+                    manager.checkAeroCrits(vDesc, a, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
                     return vDesc;
                 }
 
@@ -1327,7 +1351,7 @@ public class TWDamageManager implements IDamageManager {
                     } else {
                         critIndex = Tank.CRIT_CREW_STUNNED;
                     }
-                    vDesc.addAll(owner.applyCriticalHit(te, Entity.NONE, new CriticalSlot(0, critIndex), true, 0, false));
+                    vDesc.addAll(manager.applyCriticalHit(te, Entity.NONE, new CriticalSlot(0, critIndex), true, 0, false));
                 }
 
                 // is there internal structure in the location hit?
@@ -1388,7 +1412,7 @@ public class TWDamageManager implements IDamageManager {
                             int hits = ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()] -
                                              ((ProtoMek) te).getPilotDamageTaken(hit.getLocation());
                             if (hits > 0) {
-                                vDesc.addAll(owner.damageCrew(te, hits));
+                                vDesc.addAll(manager.damageCrew(te, hits));
                                 ((ProtoMek) te).setPilotDamageTaken(hit.getLocation(),
                                       ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                             }
@@ -1443,7 +1467,7 @@ public class TWDamageManager implements IDamageManager {
                                 } else {
                                     h.addTerrain(new Terrain(Terrains.LEGS, h.terrainLevel(Terrains.LEGS) + 1));
                                 }
-                                owner.sendChangedHex(te.getPosition());
+                                manager.sendChangedHex(te.getPosition());
                             }
                         }
 
@@ -1497,11 +1521,11 @@ public class TWDamageManager implements IDamageManager {
                                         if (transport != null) {
                                             c = transport.getPosition();
                                         }
-                                        owner.getMainPhaseReport().addAll(owner.deliverInfernoMissiles(te, te,
+                                        manager.getMainPhaseReport().addAll(manager.deliverInfernoMissiles(te, te,
                                               infernos));
                                     }
                                     if (c != null) {
-                                        owner.getMainPhaseReport().addAll(owner.deliverInfernoMissiles(te,
+                                        manager.getMainPhaseReport().addAll(manager.deliverInfernoMissiles(te,
                                               new HexTarget(c, Targetable.TYPE_HEX_ARTILLERY),
                                               infernos));
                                     }
@@ -1550,13 +1574,13 @@ public class TWDamageManager implements IDamageManager {
                                   hit.getLocation());
                         }
 
-                        boolean engineExploded = owner.checkEngineExplosion(te, vDesc, te.engineHitsThisPhase);
+                        boolean engineExploded = manager.checkEngineExplosion(te, vDesc, te.engineHitsThisPhase);
 
                         if (!engineExploded) {
                             // Entity destroyed. Ammo explosions are
                             // neither survivable nor salvageable.
                             // Only ammo explosions in the CT are devastating.
-                            vDesc.addAll(owner.destroyEntity(te,
+                            vDesc.addAll(manager.destroyEntity(te,
                                   "damage",
                                   !ammoExplosion,
                                   !((ammoExplosion || areaSatArty) &&
@@ -1577,7 +1601,7 @@ public class TWDamageManager implements IDamageManager {
                                                         .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
                                                         mek.isCondEjectHeadshot()))) {
                                     autoEject = true;
-                                    vDesc.addAll(owner.ejectEntity(te, true, true));
+                                    vDesc.addAll(manager.ejectEntity(te, true, true));
                                 }
                             }
 
@@ -1594,7 +1618,7 @@ public class TWDamageManager implements IDamageManager {
                                         mek.setDoomed(true);
                                     }
                                     autoEject = true;
-                                    vDesc.addAll(owner.ejectEntity(te, true));
+                                    vDesc.addAll(manager.ejectEntity(te, true));
                                 }
                             }
 
@@ -1604,7 +1628,7 @@ public class TWDamageManager implements IDamageManager {
                                 te.getCrew().setDoomed(true);
                             }
                             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
-                                vDesc.addAll(owner.abandonEntity(te));
+                                vDesc.addAll(manager.abandonEntity(te));
                             }
                         }
 
@@ -1665,15 +1689,15 @@ public class TWDamageManager implements IDamageManager {
                 }
             }
             // check for breaching
-            vDesc.addAll(owner.breachCheck(te, hit.getLocation(), null, underWater));
+            vDesc.addAll(manager.breachCheck(te, hit.getLocation(), null, underWater));
 
             // resolve special results
             if ((hit.getEffect() & HitData.EFFECT_VEHICLE_MOVE_DAMAGED) == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
-                vDesc.addAll(owner.vehicleMotiveDamage((Tank) te, hit.getMotiveMod()));
+                vDesc.addAll(manager.vehicleMotiveDamage((Tank) te, hit.getMotiveMod()));
             }
             // Damage from any source can break spikes
             if (te.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
-                vDesc.add(owner.checkBreakSpikes(te, hit.getLocation()));
+                vDesc.add(manager.checkBreakSpikes(te, hit.getLocation()));
             }
 
             // roll all critical hits against this location
@@ -1682,7 +1706,7 @@ public class TWDamageManager implements IDamageManager {
             if ((te.getInternal(hit) != IArmorState.ARMOR_DESTROYED) &&
                       ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
                 for (int i = 0; i < crits; i++) {
-                    vDesc.addAll(owner.criticalEntity(te,
+                    vDesc.addAll(manager.criticalEntity(te,
                           hit.getLocation(),
                           hit.isRear(),
                           hit.glancingMod() + critBonus,
@@ -1705,19 +1729,19 @@ public class TWDamageManager implements IDamageManager {
                         critMod += hit.getSpecCritMod();
                         critMod += hit.glancingMod();
                     }
-                    vDesc.addAll(owner.criticalEntity(te, hit.getLocation(), hit.isRear(), critMod + critBonus, damage_orig));
+                    vDesc.addAll(manager.criticalEntity(te, hit.getLocation(), hit.isRear(), critMod + critBonus, damage_orig));
                 }
                 specCrits = 0;
             }
 
             // resolve Aero crits
             if (te instanceof Aero) {
-                owner.checkAeroCrits(vDesc, (Aero) te, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
+                manager.checkAeroCrits(vDesc, (Aero) te, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
             }
 
             if (isHeadHit && !te.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
                 Report.addNewline(vDesc);
-                vDesc.addAll(owner.damageCrew(te, 1));
+                vDesc.addAll(manager.damageCrew(te, 1));
             }
 
             // If the location has run out of internal structure, finally
@@ -1733,7 +1757,7 @@ public class TWDamageManager implements IDamageManager {
                 if ((te instanceof Mek) && ((hit.getLocation() == Mek.LOC_RT) || (hit.getLocation() == Mek.LOC_LT))) {
 
                     int numEngineHits = te.getEngineHits();
-                    boolean engineExploded = owner.checkEngineExplosion(te, vDesc, numEngineHits);
+                    boolean engineExploded = manager.checkEngineExplosion(te, vDesc, numEngineHits);
 
                     int hitsToDestroy = 3;
                     if ((te instanceof Mek) &&
@@ -1745,9 +1769,9 @@ public class TWDamageManager implements IDamageManager {
 
                     if (!engineExploded && (numEngineHits >= hitsToDestroy)) {
                         // third engine hit
-                        vDesc.addAll(owner.destroyEntity(te, "engine destruction"));
+                        vDesc.addAll(manager.destroyEntity(te, "engine destruction"));
                         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
-                            vDesc.addAll(owner.abandonEntity(te));
+                            vDesc.addAll(manager.abandonEntity(te));
                         }
                         te.setSelfDestructing(false);
                         te.setSelfDestructInitiated(false);
@@ -1760,12 +1784,12 @@ public class TWDamageManager implements IDamageManager {
                         r.addDesc(te);
                         if (te.isAirborneVTOLorWIGE()) {
                             vDesc.add(r);
-                            owner.crashAirMek(te,
+                            manager.crashAirMek(te,
                                   new PilotingRollData(te.getId(), TargetRoll.AUTOMATIC_FAIL, "side torso destroyed"),
                                   vDesc);
                         } else if (te.isAirborne() && te.isAero()) {
                             vDesc.add(r);
-                            vDesc.addAll(owner.processCrash(te, ((IAero) te).getCurrentVelocity(), te.getPosition()));
+                            vDesc.addAll(manager.processCrash(te, ((IAero) te).getCurrentVelocity(), te.getPosition()));
                         }
                     }
                 }
@@ -1817,7 +1841,7 @@ public class TWDamageManager implements IDamageManager {
             r.indent(2);
             vDesc.add(r);
             if (diceRoll.getIntValue() < 7) {
-                vDesc.addAll(owner.damageCrew(te, 1));
+                vDesc.addAll(manager.damageCrew(te, 1));
             }
         }
 
@@ -1838,7 +1862,7 @@ public class TWDamageManager implements IDamageManager {
             vDesc.add(r);
 
             if (diceRoll.getIntValue() >= 8) {
-                vDesc.addAll(owner.damageCrew(te, 1));
+                vDesc.addAll(manager.damageCrew(te, 1));
             }
         }
 
@@ -1872,7 +1896,7 @@ public class TWDamageManager implements IDamageManager {
             r.indent(2);
             vDesc.add(r);
             int[] damages = { (int) Math.floor(damage_orig / 10.0), (int) Math.floor(damage_orig / 20.0) };
-            owner.doExplosion(damages, false, te.getPosition(), true, vDesc, null, 5, te.getId(), false, false);
+            manager.doExplosion(damages, false, te.getPosition(), true, vDesc, null, 5, te.getId(), false, false);
             Report.addNewline(vDesc);
             r = new Report(5410, Report.PUBLIC);
             r.subject = te.getId();

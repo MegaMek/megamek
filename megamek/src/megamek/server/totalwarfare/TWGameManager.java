@@ -124,7 +124,7 @@ public class TWGameManager extends AbstractGameManager {
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
     private Game game = new Game();
-    private TWDamageManager damager;
+    private TWDamageManager damager = null;
 
     private final Vector<Report> mainPhaseReport = new Vector<>();
 
@@ -211,8 +211,27 @@ public class TWGameManager extends AbstractGameManager {
         terrainProcessors.add(new WeatherProcessor(this));
         terrainProcessors.add(new QuicksandProcessor(this));
 
-        // add damage manager
-        damager = new TWDamageManagerNew(this, game);
+        // add damage manager; either the one passed in, or a new one based on options
+        TWDamageManager newDamageManager = (game.getOptions().booleanOption("new_damage_manager")) ?
+                                                       new TWDamageManagerNew() :
+                                                       new TWDamageManager();
+
+        setDamageManager(newDamageManager);
+    }
+
+    public TWGameManager(@Nullable TWDamageManager damageManager) {
+        this();
+        setDamageManager(damageManager);
+    }
+
+    public void setDamageManager(TWDamageManager damageManager) {
+        damageManager.setManager(this);
+        damageManager.setGame(game);
+        damager = damageManager;
+    }
+
+    public TWDamageManager getDamageManager() {
+        return damager;
     }
 
     @Override

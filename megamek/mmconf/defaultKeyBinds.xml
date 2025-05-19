@@ -43,6 +43,13 @@
     </KeyBind>
 
     <KeyBind>
+        <command>deployTurnUnit</command> <!-- Shift-T -->
+        <keyCode>84</keyCode>
+        <modifier>64</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
         <command>moveStepForward</command> <!-- Shift-W -->
         <keyCode>87</keyCode>
         <modifier>64</modifier>

@@ -46,7 +46,7 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
     }
 
     @Override
-    public boolean cares(final GamePhase phase) {
+    public boolean cares(GamePhase phase) {
         return phase.isOffboard() || phase.isTargeting();
     }
 
@@ -61,6 +61,7 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
 
         // This attack has just been declared; report it once
         if (!isReported) {
+            addHeat();
             reportFiring(reports, attackAction);
             isReported = true;
         }
@@ -71,21 +72,22 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
             return true;
         }
 
-        Coords origPos = target.getPosition();
-        Coords targetPos = target.getPosition();
-        final int playerId = attackAction.getPlayerId();
-
         // If at least one valid spotter, then get the benefits thereof.
-        Optional<Entity> bestSpotter = findSpotter(attackAction.getSpotterIds(), playerId);
+        Optional<Entity> bestSpotter = findSpotter(attackAction.getSpotterIds(), attackAction.getPlayerId());
         if (bestSpotter.isPresent()) {
             int modifier = (bestSpotter.get().getCrew().getGunnery() - 4) / 2;
             modifier += isForwardObserver(bestSpotter.get()) ? -1 : 0;
             toHit.addModifier(modifier, "Spotting modifier");
         }
 
+        // do we hit?
+        bMissed = roll.getIntValue() < toHit.getValue();
+        // Set Margin of Success/Failure.
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
+
         // If the shot hit the target hex, then all subsequent fire will hit the hex automatically.
-        if (roll.getIntValue() >= toHit.getValue()) {
-            ae.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
+        if (!bMissed) {
+            ae.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, target.getPosition());
         } else if (bestSpotter.isPresent()) {
             // If the shot missed, but was adjusted by a spotter, future shots are more likely to hit.
             // Note: Because artillery fire is adjusted on a per-unit basis, this can result in
@@ -95,18 +97,19 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
             // appear to be correct.
 
             // only add mods if it's not an automatic success
-            if (ae.aTracker.getModifier(weapon, targetPos) != TargetRoll.AUTOMATIC_SUCCESS) {
+            int currentModifier = ae.aTracker.getModifier(weapon, target.getPosition());
+            if (currentModifier != TargetRoll.AUTOMATIC_SUCCESS) {
                 if (isForwardObserver(bestSpotter.get())) {
                     ae.aTracker.setSpotterHasForwardObs(true);
                 }
-                ae.aTracker.setModifier(ae.aTracker.getModifier(weapon, targetPos) - 1, targetPos);
+                ae.aTracker.setModifier(currentModifier - 1, target.getPosition());
             }
         }
 
         // Report weapon attack and its to-hit value.
-        Report r = new Report(3120).indent().noNL().subject(subjectId).add(wtype.getName());
-        r.add(target.getDisplayName(), true);
-        reports.addElement(r);
+        Report report = new Report(3120).indent().noNL().subject(subjectId).add(wtype.getName());
+        report.add(target.getDisplayName(), true);
+        reports.addElement(report);
 
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             reports.addElement(new Report(3135).subject(subjectId).add(toHit.getDesc()));
@@ -123,29 +126,22 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
         // dice have been rolled, thanks
         reports.addElement(new Report(3155).noNL().subject(subjectId).add(roll));
 
-        // do we hit?
-        bMissed = roll.getIntValue() < toHit.getValue();
-        // Set Margin of Success/Failure.
-        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-
-        // Do this stuff first, because some weapon's miss report reference the amount of shots fired and stuff.
-        if (!isReported) {
-            addHeat();
-        }
-
         // In the case of misses, we'll need to hit multiple hexes
-        List<Coords> targets = new ArrayList<>();
+        List<Coords> actualHits = new ArrayList<>();
         Board board = game.getBoard(target);
 
         if (!bMissed) {
-            r = new Report(3203).subject(subjectId).add(nweaponsHit).add(targetPos.getBoardNum());
-            reports.addElement(r);
+            report = new Report(3203).subject(subjectId).add(nweaponsHit).add(target.getPosition().getBoardNum());
+            reports.addElement(report);
             String artyMsg = "Artillery hit here on round " + game.getRoundCount()
                   + ", fired by " + game.getPlayer(attackAction.getPlayerId()).getName()
                   + " (this hex is now an auto-hit)";
-            board.addSpecialHexDisplay(targetPos,
+            board.addSpecialHexDisplay(target.getPosition(),
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                         game.getRoundCount(), game.getPlayer(attackAction.getPlayerId()), artyMsg));
+            for (int i = 0; i < nweaponsHit; i++) {
+                actualHits.add(target.getPosition());
+            }
         } else {
             int moF = toHit.getMoS();
             if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)) {
@@ -154,7 +150,7 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
                 if ((-moF - 2) < 1) {
                     moF = 0;
                 } else {
-                    moF = moF + 2;
+                    moF += 2;
                 }
             }
             // We're only going to display one missed shot hex on the board, at the intended target
@@ -162,18 +158,18 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
             String artyMsg = "Orbital Bombardment missed here on round "
                   + game.getRoundCount() + ", by "
                   + game.getPlayer(attackAction.getPlayerId()).getName();
-            board.addSpecialHexDisplay(origPos,
+            board.addSpecialHexDisplay(target.getPosition(),
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(),
                         game.getPlayer(attackAction.getPlayerId()), artyMsg));
 
             // Typically, nweaponsHit is exactly 1
             while (nweaponsHit > 0) {
                 // We'll generate a new report and scatter for each weapon fired
-                targetPos = Compute.scatterDirectArty(origPos, moF);
-                if (board.contains(targetPos)) {
-                    targets.add(targetPos);
+                Coords scatteredPosition = Compute.scatterDirectArty(target.getPosition(), moF);
+                if (board.contains(scatteredPosition)) {
+                    actualHits.add(scatteredPosition);
                     // misses and scatters to another hex
-                    reports.addElement(new Report(3202).subject(subjectId).add("One").add(targetPos.getBoardNum()));
+                    reports.addElement(new Report(3202).subject(subjectId).add("One").add(scatteredPosition.getBoardNum()));
                 } else {
                     // misses and scatters off-board
                     reports.addElement(new Report(3200).subject(subjectId));
@@ -182,78 +178,51 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
             }
 
             // If we managed to land everything off the board, stop
-            if (targets.isEmpty()) {
+            if (actualHits.isEmpty()) {
                 return !bMissed;
             }
         }
 
-        if (!bMissed) {
-            // artillery may unintentionally clear minefields, but only if it wasn't
-            // trying to. For a hit on the target, just do this once.
-            if (game.containsMinefield(targetPos)) {
-                Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
-                ArrayList<Minefield> mfRemoved = new ArrayList<>();
-                while (minefields.hasMoreElements()) {
-                    Minefield mf = minefields.nextElement();
-                    if (gameManager.clearMinefield(mf, ae, 10, reports)) {
-                        mfRemoved.add(mf);
-                    }
-                }
-                // we have to do it this way to avoid a concurrent error problem
-                for (Minefield mf : mfRemoved) {
-                    gameManager.removeMinefield(mf);
-                }
-            }
-            // Here we're doing damage for each hit with more standard artillery shells
-            while (nweaponsHit > 0) {
-                AreaEffectHelper.DamageFalloff falloff = new AreaEffectHelper.DamageFalloff();
-                falloff.damage = calcAttackValue() * 10;
-                falloff.falloff = calcAttackValue() * 2;
-                falloff.radius = 4;
-                falloff.clusterMunitionsFlag = false;
+        AreaEffectHelper.DamageFalloff falloff = new AreaEffectHelper.DamageFalloff();
+        falloff.damage = calcAttackValue() * 10;
+        falloff.falloff = calcAttackValue() * 2;
+        falloff.radius = 4;
+        falloff.clusterMunitionsFlag = false;
 
-                gameManager.artilleryDamageArea(targetPos, board.getBoardId(), null, ae.getId(), ae, falloff, false,
-                      game.getHexOf(target).getLevel(), reports, false);
-                nweaponsHit--;
-            }
-        } else {
-            // Now if we missed, resolve a strike on each scatter hex
-            for (Coords coords : targets) {
-                // Accidental mine clearance...
-                if (game.containsMinefield(coords)) {
-                    Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-                    ArrayList<Minefield> mfRemoved = new ArrayList<>();
-                    while (minefields.hasMoreElements()) {
-                        Minefield mf = minefields.nextElement();
-                        if (gameManager.clearMinefield(mf, ae, 10, reports)) {
-                            mfRemoved.add(mf);
-                        }
-                    }
-                    for (Minefield mf : mfRemoved) {
-                        gameManager.removeMinefield(mf);
-                    }
-                }
-                //                handleArtilleryDriftMarker(origPos, c, aaa,
-                //                      gameManager.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,
-                //                            height, mineClear, vPhaseReport, asfFlak));
-            }
-
+        for (Coords actualHit : actualHits) {
+            clearMines(reports, actualHit);
+            gameManager.artilleryDamageArea(actualHit, board.getBoardId(), null,
+                  ae.getId(), ae, falloff, false, board.getHex(actualHit).getLevel(), reports, false);
         }
         return false;
     }
 
+    private void clearMines(Vector<Report> reports, Coords coords) {
+        if (game.containsMinefield(coords)) {
+            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
+            ArrayList<Minefield> mfRemoved = new ArrayList<>();
+            while (minefields.hasMoreElements()) {
+                Minefield mf = minefields.nextElement();
+                if (gameManager.clearMinefield(mf, ae, 10, reports)) {
+                    mfRemoved.add(mf);
+                }
+            }
+            for (Minefield mf : mfRemoved) {
+                gameManager.removeMinefield(mf);
+            }
+        }
+    }
+
     private void reportFiring(Vector<Report> reports, ArtilleryAttackAction aaa) {
-        addHeat();
-        // Report the firing itself
-        Report r = new Report(3121).indent().noNL().subject(subjectId);
-        r.add(wtype.getName());
-        r.add(aaa.getTurnsTilHit());
-        reports.addElement(r);
+        Report report = new Report(3121).indent().noNL().subject(subjectId);
+        report.add(wtype.getName());
+        report.add(aaa.getTurnsTilHit());
+        reports.addElement(report);
         Report.addNewline(reports);
 
         Player owner = game.getPlayer(aaa.getPlayerId());
         int landingRound = game.getRoundCount() + aaa.getTurnsTilHit();
-        String message = "Naval Fire Support incoming, landing this round, fired by " + owner.getName();
+        String message = "Orbital Bombardment incoming, landing this round, fired by " + owner.getName();
         SpecialHexDisplay incomingMarker = SpecialHexDisplay.createIncomingFire(owner, landingRound, message);
         game.getBoard(target).addSpecialHexDisplay(target.getPosition(), incomingMarker);
     }

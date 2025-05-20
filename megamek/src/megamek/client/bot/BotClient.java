@@ -47,6 +47,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;

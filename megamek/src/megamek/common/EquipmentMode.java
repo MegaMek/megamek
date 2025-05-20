@@ -133,6 +133,14 @@ public class EquipmentMode {
         return name.equals(Weapon.MODE_MISSILE_INDIRECT) || name.equals(Weapon.MODE_INDIRECT_HEAT);
     }
 
+    public boolean isArmed() {
+        return name.equalsIgnoreCase("armed");
+    }
+
+    public boolean isOff() {
+        return name.equalsIgnoreCase("off");
+    }
+
     @Override
     public int hashCode() {
         return name.hashCode();

@@ -138,7 +138,8 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                 butQuickSearchDown.doClick();
             }
         });
-        butQuickSearchDown.setToolTipText("Find next Keyword: " +
+        butQuickSearchDown.setToolTipText(Messages.getString("MiniReportDisplay.tooltip.ArrowDown") +
+                                                ": " +
                                                 KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_NEXT));
 
         butQuickFilter = new JButton(Messages.getString("MiniReportDisplay.KeywordFilter"));
@@ -152,7 +153,8 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                 butQuickFilter.doClick();
             }
         });
-        butQuickFilter.setToolTipText("Toggle Keyword Filter: " +
+        butQuickFilter.setToolTipText(Messages.getString("MiniReportDisplay.tooltip.KeywordFilter") +
+                                            ": " +
                                             KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_FILTER));
 
 
@@ -183,12 +185,17 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                 comboQuick.setSelectedIndex(i);
             }
         });
-        comboQuick.setToolTipText("<html>Select next Keyword: " +
+        comboQuick.setToolTipText("<html>" +
+                                        Messages.getString("MiniReportDisplay.tooltip.ComboQuickNext") +
+                                        ": " +
                                         KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_SELNEXT) +
                                         "<br>" +
-                                        "Select previous Keyword: " +
+                                        Messages.getString("MiniReportDisplay.tooltip.ComboQuickPrev") +
+                                        ": " +
                                         KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_SELPREV) +
-                                        "<br>You can add/remove Keywords in View -> Client Settings -> Report</html>");
+                                        "<br>" +
+                                        Messages.getString("MiniReportDisplay.tooltip.ComboQuickInfo") +
+                                        "</html>");
 
         setLayout(new BorderLayout());
 

@@ -528,7 +528,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "283, TO");
     
-    private static final MunitionMutator CLAN_DEAD_FIRE_MUNITION_MUTATOR_UNNOFICIAL = new MunitionMutator(
+    private static final MunitionMutator CLAN_DEAD_FIRE_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
           "(Clan) Dead-Fire",
           1,
           Munitions.M_DEAD_FIRE,
@@ -2006,10 +2006,11 @@ public class AmmoType extends EquipmentType {
     /**
      * Gets a value indicating whether this {@code AmmoType} is compatible with another {@code AmmoType}.
      * <p>
-     * NB: this roughly means the same ammo type and munition type, but not rack size.
-     *
+     * this roughly means the same ammo type and munition type, but not rack size.
+     *</p>
      * @param other The other {@code AmmoType} to determine compatibility with.
      */
+    @SuppressWarnings("unused")
     public boolean isCompatibleWith(AmmoType other) {
         if (other == null) {
             return false;
@@ -2119,7 +2120,7 @@ public class AmmoType extends EquipmentType {
     }
 
     public EnumSet<Munitions> getMunitionType() {
-        return munitionType;
+        return EnumSet.copyOf(munitionType);
     }
 
     public boolean notAllowedByClanRules() {
@@ -2346,9 +2347,10 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> clanProtoAcAmmo = new ArrayList<>();
 
         // Updated, never used.
-        ArrayList<AmmoType> fluidGunAmmos = new ArrayList<>();
-        ArrayList<AmmoType> clanFluidGunAmmos = new ArrayList<>();
-        ArrayList<AmmoType> primLongTomAmmos = new ArrayList<>();
+        // They need to be implemented
+//        ArrayList<AmmoType> fluidGunAmmos = new ArrayList<>();
+//        ArrayList<AmmoType> clanFluidGunAmmos = new ArrayList<>();
+//        ArrayList<AmmoType> primLongTomAmmos = new ArrayList<>();
 
         ArrayList<MunitionMutator> munitions = new ArrayList<>();
 
@@ -2618,7 +2620,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(base);
 
         base = AmmoType.createISPrimitiveLongTomAmmo();
-        primLongTomAmmos.add(base);
+//        primLongTomAmmos.add(base);
         EquipmentType.addType(base);
 
         base = AmmoType.createISLongTomCannonAmmo();
@@ -3074,10 +3076,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISCruiseMissile120Ammo());
 
         base = AmmoType.createISFluidGunAmmo();
-        fluidGunAmmos.add(base);
+//        fluidGunAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createCLFluidGunAmmo();
-        clanFluidGunAmmos.add(base);
+//        clanFluidGunAmmos.add(base);
         EquipmentType.addType(base);
 
         // Rifles
@@ -3116,7 +3118,7 @@ public class AmmoType extends EquipmentType {
         // Forum ruling - last access 2025-05-18 21:52 - https://bg.battletech.com/forums/index.php/topic,63753
         // Archived link https://web.archive.org/web/20250518225141/https://bg.battletech.com/forums/index.php/topic,63753
         // HOWEVER it is errata'd to LRM and SRM, so it is being made available for SRM too
-        // BA missiles: standard SRM/LRM, torpedo SRT/LRT, multi purpose missile Clan LRMs, inferno SRMs
+        // BA missiles: standard SRM/LRM, torpedo SRT/LRT, multipurpose missile Clan LRMs, inferno SRMs
         // The new errata on it can be found on the forum here Multi-purpose missiles - last access 2025-05-18 22:05
         // Link: https://bg.battletech.com/forums/index.php/topic,33530.msg1950733.html#msg1950733
         // Archived Link: https://web.archive.org/web/20250518230820/https://bg.battletech.com/forums/index.php/topic,33530.msg1950733.html#msg1950733
@@ -3191,7 +3193,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(CLAN_ANTI_TSM_MUNITION_MUTATOR_UNOFFICIAL);
         munitions.add(CLAN_ARTEMIS_CAPABLE_MUNITION_MUTATOR_FOR_SRM);
         munitions.add(CLAN_ARTEMIS_V_CAPABLE_MUNITION_MUTATOR);
-        munitions.add(CLAN_DEAD_FIRE_MUNITION_MUTATOR_UNNOFICIAL);
+        munitions.add(CLAN_DEAD_FIRE_MUNITION_MUTATOR_UNOFFICIAL);
         munitions.add(CLAN_FRAGMENTATION_MUNITION_MUTATOR);
         munitions.add(CLAN_LISTEN_KILL_MUNITION_MUTATOR_UNOFFICIAL);
         munitions.add(CLAN_MINE_CLEARANCE_MUNITION_MUTATOR_UNOFFICIAL);
@@ -15817,11 +15819,6 @@ public class AmmoType extends EquipmentType {
     /** @return The battle value for ProtoMek or BA ammo loads. */
     public double getKgPerShotBV(int shots) {
         return ((kgPerShot * shots) / 1000) * bv;
-    }
-
-    @Override
-    public String getShortName() {
-        return shortName.isBlank() ? getName() : shortName;
     }
 
     public String getBaseName() {

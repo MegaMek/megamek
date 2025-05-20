@@ -75,12 +75,12 @@ dependencies {
 application {
     mainClass = 'megamek.MegaMek'
     applicationDefaultJvmArgs = [
-        '-Xmx4096m',
-        '--add-opens',
-        'java.base/java.util=ALL-UNNAMED',
-        '--add-opens',
-        'java.base/java.util.concurrent=ALL-UNNAMED',
-        '-Dsun.awt.disablegrab=true'
+            '-Xmx4096m',
+            '--add-opens',
+            'java.base/java.util=ALL-UNNAMED',
+            '--add-opens',
+            'java.base/java.util.concurrent=ALL-UNNAMED',
+            '-Dsun.awt.disablegrab=true'
     ]
 }
 
@@ -134,18 +134,22 @@ ${jvmOptions}
     }
 }
 
+tasks.register("copyLicenseFiles", Exec) {
+    commandLine "cp", "../LICENSE", "../LICENSE.code", "../LICENSE.assets", "../README.md", "docs"
+}
+
 tasks.register('copyFiles', Copy) {
     description = 'Stages files that are to be copied into the distribution.'
     group = 'build'
 
     dependsOn generateDynamicFiles
+    dependsOn copyLicenseFiles
 
     from projectDir
     include "${data}/**"
     include "${docs}/**"
     include "${mmconf}/**"
     include "SubmitBug.html"
-    include "license.txt"
     include "sentry.properties"
     include "*.ini"
     exclude "**/*.psd"
@@ -250,19 +254,24 @@ distributions {
             from("${buildDir}/launch4j") {
                 include '*.exe'
             }
+
             from(jar) {
                 into "${lib}"
             }
+
             from("${projectDir}/scripts") {
                 include "shell.sh"
                 rename "shell.sh", "MegaMek.sh"
             }
+
             from(jar)
             from fileStagingDir
+
             from(project.sourceSets.main.runtimeClasspath.files
                     .findAll { it.name.endsWith(".jar") }) {
                 into "${lib}"
             }
+            
             duplicatesStrategy = 'exclude'
         }
     }

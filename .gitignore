@@ -106,3 +106,6 @@ equipment.txt
 /megamek/testresources/tmp/*
 !/megamek/testresources/tmp/.keep
 /megamek/resources/extraVersion.properties
+
+/megamek/docs/README.md
+/megamek/docs/LICENSE*

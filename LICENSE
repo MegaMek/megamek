@@ -1,0 +1,89 @@
+# MegaMek Licensing Information
+
+This document provides detailed information about the licensing of the MegaMek project.
+
+## License Overview
+
+MegaMek uses a dual-licensing approach:
+
+1. **GNU General Public License v3.0 (GPLv3)** for all code
+2. **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC-BY-NC-SA-4.0)** for all game data and assets
+
+## Code License Details
+
+All source code in the MegaMek, MegaMekLab, and MekHQ repositories is licensed under GPLv3.
+
+**What this means:**
+
+- You can use, modify, and distribute the code
+- Any modifications or derivative works must also be licensed under GPLv3
+- You must provide source code for any distributed modifications
+- The code has patent protection provisions
+- Full license text: [LICENSE.code](LICENSE.code)
+
+**Applies to:**
+
+- All `.java` files
+- Build scripts and configuration files
+- Any other program code
+
+## Data/Assets License Details
+
+All game data, artwork, and other non-code assets are licensed under CC-BY-NC-4.0.
+
+**What this means:**
+
+- You can share and adapt the materials
+- You must give appropriate credit to the MegaMek project
+- You cannot use the materials for commercial purposes
+- You can license your derivatives under different terms as long as they remain non-commercial
+- Full license text: [LICENSE.assets](LICENSE.assets)
+
+**Applies to:**
+
+- Unit data files
+- Artwork and images
+- Sound files
+- Scenario data
+- Game text and descriptions
+- Any other non-code assets
+
+## Repository Structure
+
+The licenses apply to the following directory structures:
+
+- `/megamek/src/megamek` directories: GPLv3
+- `/megamek/data` directories: CC-BY-NC-4.0
+- `/megamek/docs` directories: CC-BY-NC-4.0
+- `/megamek/i18n` directories: CC-BY-NC-4.0
+- `/megamek/resources` directories: CC-BY-NC-4.0
+
+## Intellectual Property Notices
+
+MegaMek is an unofficial, fan-created digital adaptation and is not affiliated with, endorsed by, or licensed by
+Microsoft Corporation, The Topps Company, Inc., or Catalyst Game Labs.
+
+MechWarrior, BattleMech, 'Mech and AeroTech are registered trademarks of The Topps Company, Inc. All Rights Reserved.
+Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of InMediaRes Productions, LLC.
+
+The BattleTech name for electronic games is a trademark of Microsoft Corporation.
+
+## Historical License Information
+
+Prior to version 0.50.07, MegaMek and MegaMekLab were licensed under GNU General Public License v2.0 or later (GPLv2+).
+MekHQ was already using GPLv3. The transition to the current licensing structure was implemented with the release of
+version 0.50.07.
+
+## Contributing
+
+By contributing to the MegaMek project, you agree that:
+
+- Code contributions will be licensed under GPLv3
+- Data and asset contributions will be licensed under CC-BY-NC-SA-4.0
+
+See our [CONTRIBUTING.md](CONTRIBUTING.md) document for more details about the contribution process.
+
+## Questions
+
+If you have any questions about licensing, please contact the project administrators or post your question in our
+Discord server.

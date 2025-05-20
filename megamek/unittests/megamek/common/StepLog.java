@@ -32,6 +32,7 @@
  */
 package megamek.common;
 
+import megamek.common.moves.MoveStep;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public record StepLog(MoveStep step) {

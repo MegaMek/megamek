@@ -47,6 +47,7 @@ import java.util.function.Function;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import org.junit.jupiter.api.BeforeEach;
 
 /**

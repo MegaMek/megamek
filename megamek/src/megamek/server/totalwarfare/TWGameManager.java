@@ -55,7 +55,8 @@ import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.AmmoType.Munitions;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDAndList;
@@ -71,6 +72,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.internationalization.I18n;
+import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.IBasicOption;
@@ -2329,7 +2331,6 @@ public class TWGameManager extends AbstractGameManager {
         MapSettings mapSettings = game.getMapSettings();
         mapSettings.chooseSurpriseBoards();
         Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-        List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
             // Need to set map type prior to loading to adjust foliage height, etc.
@@ -2349,14 +2350,12 @@ public class TWGameManager extends AbstractGameManager {
                 sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + ".board").getFile());
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
-            rotateBoard.add(isRotated);
         }
         Board newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(),
               mapSettings.getBoardHeight(),
               mapSettings.getMapWidth(),
               mapSettings.getMapHeight(),
               sheetBoards,
-              rotateBoard,
               mapSettings.getMedium());
         if (game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF).intValue() > 0) {
             newBoard.setBridgeCF(game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF).intValue());
@@ -5658,38 +5657,37 @@ public class TWGameManager extends AbstractGameManager {
         Entity entity = movePath.getEntity();
         Vector<Report> vReport = new Vector<>();
         Report r;
-        // Unit has fled the battlefield.
-        r = new Report(2005, Report.PUBLIC);
-        if (flewOff) {
-            r = new Report(9370, Report.PUBLIC);
-        }
-        r.addDesc(entity);
 
         OffBoardDirection fleeDirection = calculateEdge(movePath.getFinalCoords());
         String retreatEdge = setRetreatEdge(entity, fleeDirection);
+
+        // Aerospace that fly off to return in a later round must be handled
+        // at the end of the round, but set some state here for simplicity
+        if (entity.isAero() && flewOff) {
+            Aero aero = (Aero) entity;
+
+            // Record direction
+            aero.setFlyingOff(fleeDirection);
+
+            // Currently only Aerospace can fly off and return.
+            if (returnable > -1) {
+                entity.setDeployRound(1 + game.getRoundCount() + returnable);
+            }
+
+            // End activation but don't remove from the map yet.
+            entity.setDone(true);
+            return vReport;
+        }
+
+        // Unit has fled the battlefield.
+        r = new Report(2005, Report.PUBLIC);
+        r.addDesc(entity);
         r.add(retreatEdge);
         addReport(r);
 
+        ServerHelper.clearBloodStalkers(game, entity.getId(), this);
+
         entityUpdate(entity.getId());
-
-        if (returnable > -1) {
-            entity.setDeployed(false);
-            entity.setDeployRound(1 + game.getRoundCount() + returnable);
-            entity.setPosition(null);
-            entity.setDone(true);
-            if (entity.isAero()) {
-                // If we're flying off because we're OOC, when we come back we
-                // should no longer be OOC
-                // If we don't, this causes a major problem as aeros tend to
-                // return, re-deploy then
-                // fly off again instantly.
-                ((IAero) entity).setOutControl(false);
-            }
-
-            return vReport;
-        } else {
-            ServerHelper.clearBloodStalkers(game, entity.getId(), this);
-        }
 
         // Is the unit carrying passengers or trailers?
         final List<Entity> passengers = new ArrayList<>(entity.getLoadedUnits());
@@ -5771,6 +5769,52 @@ public class TWGameManager extends AbstractGameManager {
         game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
         send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
         return vReport;
+    }
+
+    public Vector<Report> handleFlyOffs() {
+        Vector<Report> reports = new Vector<>();
+
+        for (Entity entity : game.inGameTWEntities()) {
+            // Handle Aerospace units that flew off the board this round but lingered through the
+            // various phases for full attack opportunities.
+            // TODO: use off-board state with flown-off aerospace units
+            if (entity instanceof Aero aero) {
+                if (aero.isFlyingOff()) {
+                    reports.add(processFlyingOff(aero));
+                }
+            }
+        }
+
+        return reports;
+    }
+
+    /**
+     * Compile report for Aerospace unit flying off the map at the end of the round,
+     * and finalize the unit's state.
+     * @param aero Unit leaving the map using Thrust MPs
+     * @return Vector of reports
+     */
+    protected Report processFlyingOff(Aero aero) {
+        String retreatEdge = setRetreatEdge(aero, aero.getFlyingOffDirection());
+
+        // Report aeros flying off at the end of the round
+        Report r = new Report(9370, Report.PUBLIC);
+        r.addDesc(aero);
+        r.add(retreatEdge);
+
+        // Set undeployed state
+        aero.setDeployed(false);
+        aero.setPosition(null);
+        aero.setFlyingOff(OffBoardDirection.NONE);
+
+        // If we're flying off because we're OOC, when we come back we
+        // should no longer be OOC
+        // If we don't, this causes a major problem as aeros tend to
+        // return, re-deploy then
+        // fly off again instantly.
+        aero.setOutControl(false);
+
+        return r;
     }
 
     /**
@@ -8840,7 +8884,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (diceRoll.getIntValue() >= toHit.getValue()) {
                     // deal damage to target
-                    int damage = Compute.getAffaDamageFor(entity);
+                    int damage = Compute.getAffaDamageFor(entity, fallElevation);
                     r = new Report(2220);
                     r.subject = affaTarget.getId();
                     r.addDesc(affaTarget);
@@ -10603,6 +10647,40 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
+    }
+
+    void resolveBoobyTraps() {
+        Vector<Report> vDesc = new Vector<>();
+        Report r;
+        for (Entity e : game.getEntitiesVector()) {
+            if (e.hasBoobyTrap() &&
+                      e.getBoobyTrap().curMode().isArmed() &&
+                      e.isBoobyTrapInitiated()) {
+                int damage = e.getBoobyTrapDamage();
+                r = new Report(11000, Report.PUBLIC);
+                r.subject = e.getId();
+                r.addDesc(e);
+                r.indent(2);
+                r.add(damage);
+                vDesc.add(r);
+                if (e instanceof Mek mek) {
+                    // considers that you will always eject
+                    if (mek.hasEjectSeat()) {
+                        vDesc.addAll(ejectEntity(e, true));
+                    }
+                }
+                e.setSelfDestructedThisTurn(true);
+                e.setBoobyTrapInitiated(false);
+                doBoobyTrapExplosion(damage, e.getPosition(), vDesc, null);
+                Report.addNewline(vDesc);
+                r = new Report(5410, Report.PUBLIC);
+                r.subject = e.getId();
+                r.indent(2);
+                Report.addNewline(vDesc);
+                vDesc.add(r);
+            }
+        }
+        addReport(vDesc);
     }
 
     /*
@@ -20513,11 +20591,19 @@ public class TWGameManager extends AbstractGameManager {
                 r.subject = en.getId();
                 r.indent(2);
                 vDesc.add(r);
-
             }
         }
 
         return didExplode;
+    }
+
+    /**
+     * Extract explosion functionality for generalized explosions in areas.
+     */
+    public void doBoobyTrapExplosion(int engineRating, Coords position, Vector<Report> vDesc,
+          Vector<Integer> vUnits) {
+        int[] myDamages = { engineRating, (engineRating / 2), (engineRating / 4), (engineRating / 8) };
+        doExplosion(myDamages, false, position, false, vDesc, vUnits, 5, -1, true, true);
     }
 
     /**
@@ -27286,6 +27372,17 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         try {
+            if ((m.getType() instanceof MiscType miscType) &&
+                      miscType.isBoobyTrap() &&
+                      mode != 0 &&
+                      e.hasBoobyTrap()) {
+                sendServerChat("There is no turning back now...");
+                e.setBoobyTrapInitiated(true);
+                m.setMode(mode);
+                m.setModeSwitchable(false);
+                entityUpdate(e.getId());
+            }
+
             // Check for BA dumping body mounted missile launchers
             if ((e instanceof BattleArmor) &&
                       (!m.isMissing()) &&
@@ -27324,7 +27421,6 @@ public class TWGameManager extends AbstractGameManager {
                         logger.error(message);
                         sendServerChat(message);
                     }
-
                 }
             }
         } catch (Exception ex) {
@@ -30532,6 +30628,9 @@ public class TWGameManager extends AbstractGameManager {
         }
         if (autoEject) {
             rollTarget.addModifier(1, "automatic ejection");
+        }
+        if (entity.isBoobyTrapInitiated()) {
+            rollTarget.addModifier(4, "Booby trap activated");
         }
         // Per SO p27, Large Craft roll too, to see how many escape pods launch successfully
         if (entity instanceof IAero aeroEntity) {

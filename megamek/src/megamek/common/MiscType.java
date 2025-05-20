@@ -434,6 +434,10 @@ public class MiscType extends EquipmentType {
         return baseDamageCapacity;
     }
 
+    public boolean isBoobyTrap() {
+        return hasFlag(F_BOOBY_TRAP);
+    }
+
     public boolean isShield() {
         return hasFlag(F_CLUB) && hasSubType(S_SHIELD_LARGE | S_SHIELD_MEDIUM | S_SHIELD_SMALL);
     }
@@ -806,19 +810,19 @@ public class MiscType extends EquipmentType {
             return 2 + size * 0.5;
         } else if (hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             // 10% of the weight, plus 0.5 tons for the extra sensors
-            return (entity.getWeight() / 10f) + 0.5f;
+            return (entity.getWeight() / 10) + 0.5;
         } else if (hasFlag(MiscType.F_NAVAL_TUG_ADAPTOR)) {
             return (100 + ((entity.getWeight() * 0.1)));
         } else if (hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
             if (entity instanceof Tank) {
-                return 0.015f;
+                return 0.015;
             } else if (entity instanceof Mek) {
-                return 0.5f;
+                return 0.5;
             }
         } else if (hasFlag(MiscType.F_LIGHT_SAIL)) {
-            return (entity.getWeight() / 10f);
+            return (entity.getWeight() / 10);
         } else if (hasFlag(MiscType.F_LF_STORAGE_BATTERY)) {
-            return (entity.getWeight() / 100f);
+            return (entity.getWeight() / 100);
         } else if (hasFlag(MiscType.F_NAVAL_C3)) {
             return (entity.getWeight() * .01);
         } else if (hasFlag(MiscType.F_SRCS) || hasFlag(F_SASRCS)) {
@@ -2248,8 +2252,8 @@ public class MiscType extends EquipmentType {
         // No information about this is provided so we fill in essentially "blank" data
         misc.techAdvancement.setTechBase(TECH_BASE_IS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL)
-              .setTechRating(RATING_X)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_X)
+              .setTechRating(RATING_D)
+              .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
               .setISAdvancement(DATE_ES)
               .setISApproximate(true);
 
@@ -7836,7 +7840,10 @@ public class MiscType extends EquipmentType {
                            .or(F_JS_EQUIPMENT)
                            .or(F_WS_EQUIPMENT)
                            .or(F_SS_EQUIPMENT);
-        misc.rulesRefs = "297, TO";
+        String[] saModes = { "Off", "Armed" };
+        misc.setModes(saModes);
+        misc.instantModeSwitch = true;
+        misc.rulesRefs = "109, TO:AUE";
         misc.techAdvancement.setTechBase(TECH_BASE_IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7845,7 +7852,7 @@ public class MiscType extends EquipmentType {
               .setISAdvancement(DATE_PS, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setProductionFactions(F_WB)
-              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

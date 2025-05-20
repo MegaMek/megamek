@@ -1123,7 +1123,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         java.util.List<String> availBoards = new ArrayList<>();
         availBoards.add(MapSettings.BOARD_GENERATED);
         availBoards.addAll(mapSettings.getBoardsAvailableVector());
-        refreshBoardTags();
+        refreshBoardTags(); // is this necessary?
         refreshBoardsAvailable(availBoards);
     }
 

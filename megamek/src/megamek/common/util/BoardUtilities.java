@@ -48,10 +48,27 @@ public class BoardUtilities {
      * @param boards a list of the boards to be combined
      * @param isRotated Flag that determines if any of the maps are rotated
      * @param medium Sets the medium the map is in (ie., ground, atmo, space)
+     * @deprecated Use the {{@link #combine(int, int, int, int, Board[], int)}
      */
+    @Deprecated(since="0.50.06", forRemoval = true)
     public static Board combine(int width, int height, int sheetWidth, int sheetHeight,
                                 List<Board> boards, List<Boolean> isRotated, int medium) {
-        return combine(width, height, sheetWidth, sheetHeight, boards.toArray(new Board[0]), isRotated, medium);
+        return combine(width, height, sheetWidth, sheetHeight, boards.toArray(new Board[0]), medium);
+    }
+
+    /**
+     * Combines one or more boards into one huge megaboard!
+     *
+     * @param width the width of each individual board, before the combine
+     * @param height the height of each individual board, before the combine
+     * @param sheetWidth how many sheets wide the combined map is
+     * @param sheetHeight how many sheets tall the combined map is
+     * @param boards an array of the boards to be combined
+     * @param medium Sets the medium the map is in (ie., ground, atmo, space)
+     */
+    public static Board combine(int width, int height, int sheetWidth, int sheetHeight,
+          Board[] boards, int medium) {
+        return combine(width, height, sheetWidth, sheetHeight, boards, medium, 1);
     }
 
     /**
@@ -64,32 +81,83 @@ public class BoardUtilities {
      * @param boards an array of the boards to be combined
      * @param isRotated Flag that determines if any of the maps are rotated
      * @param medium Sets the medium the map is in (ie., ground, atmo, space)
+     * @deprecated Use the {{@link #combine(int, int, int, int, Board[], int)}}
+     */
+    @Deprecated(since="0.50.06", forRemoval = true)
+    public static Board combine(int width, int height, int sheetWidth, int sheetHeight, Board[] boards,
+          List<Boolean> isRotated, int medium) {
+        return combine(width, height, sheetWidth, sheetHeight, boards, medium, 1);
+    }
+
+    private record PaddingArea(int startX, int startY, int columnPadding, int height){};
+
+    /**
+     * Combines one or more boards into one huge megaboard!
+     *
+     * @param width the width of each individual board, before the combine
+     * @param height the height of each individual board, before the combine
+     * @param sheetWidth how many sheets wide the combined map is
+     * @param sheetHeight how many sheets tall the combined map is
+     * @param boards an array of the boards to be combined
+     * @param medium Sets the medium the map is in (ie., ground, atmo, space)
+     * @param columnPaddingWidth Sets the padding width for the combined map
      */
     public static Board combine(int width, int height, int sheetWidth, int sheetHeight,
-                                Board[] boards, List<Boolean> isRotated, int medium) {
+          Board[] boards, int medium, int columnPaddingWidth) {
 
-        int resultWidth = width * sheetWidth;
+        if (width < 1 || height < 1 || sheetWidth < 1 || sheetHeight < 1) {
+            throw new IllegalArgumentException("width, height, sheetWidth and sheetHeight must be >= 1");
+        }
+
+        final boolean widthIsOdd = width % 2 != 0;
+
+        // If width is odd, make sure padding is odd to maintain even starting positions
+        final int columnPadding = widthIsOdd ?
+                                        (columnPaddingWidth % 2 == 0 ? columnPaddingWidth + 1 : columnPaddingWidth) : 0;
+
+        // Calculate the total width with padding between boards
+        int paddingColumns = widthIsOdd ? (sheetWidth - 1) * columnPadding : 0;
+        List<PaddingArea> paddingAreas = new ArrayList<>();
+        int resultWidth = width * sheetWidth + paddingColumns;
+
         int resultHeight = height * sheetHeight;
 
         Hex[] resultData = new Hex[resultWidth * resultHeight];
         boolean roadsAutoExit = true;
+
         // Copy the data from the sub-boards.
         for (int i = 0; i < sheetHeight; i++) {
             for (int j = 0; j < sheetWidth; j++) {
                 Board b = boards[i * sheetWidth + j];
                 if ((b.getWidth() != width) || (b.getHeight() != height)) {
                     throw new IllegalArgumentException(
-                            "board is the wrong size, expected " + width + "x"
-                                    + height + ", got " + b.getWidth() + "x"
-                                    + b.getHeight());
+                          "board is the wrong size, expected " + width + "x"
+                                + height + ", got " + b.getWidth() + "x"
+                                + b.getHeight());
                 }
-                copyBoardInto(resultData, resultWidth, j * width, i * height,
-                        boards[i * sheetWidth + j]);
+
+                // Calculate the x offset including padding
+                int xOffset = j * width;
+                if (widthIsOdd) {
+                    xOffset += j * columnPadding;
+                }
+
+                copyBoardInto(resultData, resultWidth, xOffset, i * height, b);
+
                 // Copy in the other board's options.
-                if (!boards[i * sheetWidth + j].getRoadsAutoExit()) {
+                if (!b.getRoadsAutoExit()) {
                     roadsAutoExit = false;
                 }
+                // Fill the padding area with generated terrain if needed
+                if (widthIsOdd && j < sheetWidth - 1) {
+                    paddingAreas.add(new PaddingArea(xOffset + width, i*height, columnPadding, height));
+                }
             }
+        }
+
+        for (var paddingArea : paddingAreas) {
+            fillPaddingArea(resultData, resultWidth, paddingArea.startX(), paddingArea.startY(),
+                  paddingArea.columnPadding(), paddingArea.height());
         }
 
         Board result = new Board();
@@ -101,6 +169,147 @@ public class BoardUtilities {
         result.setType(medium);
 
         return result;
+    }
+
+    /**
+     * Fills the padding area between boards with generated terrain.
+     *
+     * @param resultData The combined board data array
+     * @param resultWidth The width of the combined board
+     * @param startX The starting X coordinate of the padding area
+     * @param startY The starting Y coordinate of the padding area
+     * @param paddingWidth The width of the padding area
+     * @param height The height of the padding area
+     */
+    private static void fillPaddingArea(Hex[] resultData, int resultWidth, int startX, int startY,
+          int paddingWidth, int height) {
+        // For each row
+        for (int y = 0; y < height; y++) {
+            // Get hexes at both sides of the padding area for this row
+            int leftIndex = (startY + y) * resultWidth + (startX - 1);
+            int rightIndex = (startY + y) * resultWidth + (startX + paddingWidth);
+
+            Hex leftHex = (leftIndex >= 0 && leftIndex < resultData.length) ? resultData[leftIndex] : null;
+            Hex rightHex = (rightIndex >= 0 && rightIndex < resultData.length) ? resultData[rightIndex] : null;
+
+            // Skip if both sides are null (shouldn't happen in normal cases), never any of those should be null, but
+            // whatever.
+            if (leftHex == null && rightHex == null) {
+                continue;
+            }
+
+            // Determine base elevation for interpolation
+            int leftElev = leftHex != null ? leftHex.getLevel() : 0;
+            int rightElev = rightHex != null ? rightHex.getLevel() : 0;
+
+            // Check for water on both sides
+            boolean leftHasWater = leftHex != null && leftHex.containsTerrain(Terrains.WATER);
+            boolean rightHasWater = rightHex != null && rightHex.containsTerrain(Terrains.WATER);
+            int leftWaterDepth = leftHasWater ? leftHex.depth() : 0;
+            int rightWaterDepth = rightHasWater ? rightHex.depth() : 0;
+
+            // Collect terrain types from adjacent boards (excluding buildings and other restricted terrains)
+            Set<Integer> availableTerrains = new HashSet<>();
+            if (leftHex != null) {
+                for (int terrainType : leftHex.getTerrainTypes()) {
+                    // Skip buildings, bridges, fuel tanks, etc.
+                    if (!Terrains.HAZARDS.contains(terrainType)) {
+                        availableTerrains.add(terrainType);
+                    }
+                }
+            }
+            if (rightHex != null) {
+                for (int terrainType : rightHex.getTerrainTypes()) {
+                    // Skip buildings, bridges, fuel tanks, etc.
+                    if (!Terrains.HAZARDS.contains(terrainType)) {
+                        availableTerrains.add(terrainType);
+                    }
+                }
+            }
+
+            // Fill the padding for this row
+            for (int x = 0; x < paddingWidth; x++) {
+                int index = (startY + y) * resultWidth + (startX + x);
+
+                // Create a new hex
+                Hex hex = new Hex();
+
+                // Linear interpolation of elevation
+                double lerpFactor = (double) (x + 1) / (paddingWidth + 1);
+                int elevDiff = rightElev - leftElev;
+                int interpolatedElev = leftElev + (int) Math.round(elevDiff * lerpFactor);
+                hex.setLevel(interpolatedElev);
+
+                // Handle water terrain
+                if (leftHasWater && rightHasWater) {
+                    // Interpolate water depth if both sides have water
+                    int waterDepthDiff = rightWaterDepth - leftWaterDepth;
+                    int interpolatedDepth = leftWaterDepth + (int) Math.round(waterDepthDiff * lerpFactor);
+                    hex.addTerrain(new Terrain(Terrains.WATER, interpolatedDepth));
+                } else if (leftHasWater) {
+                    // Extend water from left side with decreasing depth
+                    int adjustedDepth = Math.max(1, leftWaterDepth - (int) Math.round(leftWaterDepth * lerpFactor));
+                    hex.addTerrain(new Terrain(Terrains.WATER, adjustedDepth));
+                } else if (rightHasWater) {
+                    // Extend water from right side with decreasing depth
+                    int adjustedDepth = Math.max(1, rightWaterDepth - (int) Math.round(rightWaterDepth * (1 - lerpFactor)));
+                    hex.addTerrain(new Terrain(Terrains.WATER, adjustedDepth));
+                } else {
+                    // Add some standard terrain types based on available terrains from adjacent boards
+                    boolean terrainAdded = false;
+
+                    // Try to add a terrain from the available terrains (with 60% chance)
+                    if (!availableTerrains.isEmpty() && Compute.randomInt(100) < 60) {
+                        // Convert set to array and pick a random terrain type
+                        Integer[] terrainArray = availableTerrains.toArray(new Integer[0]);
+                        int randomTerrainType = terrainArray[Compute.randomInt(terrainArray.length)];
+
+                        // For specific terrain types, add them with appropriate levels
+                        switch (randomTerrainType) {
+                            case Terrains.WOODS:
+                                hex.addTerrain(new Terrain(Terrains.WOODS, 1));
+                                hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
+                                terrainAdded = true;
+                                break;
+                            case Terrains.ROUGH:
+                                hex.addTerrain(new Terrain(Terrains.ROUGH, 1));
+                                terrainAdded = true;
+                                break;
+                            case Terrains.SAND:
+                            case Terrains.SNOW:
+                            case Terrains.MUD:
+                            case Terrains.TUNDRA:
+                            case Terrains.SWAMP:
+                            case Terrains.ICE:
+                            case Terrains.PAVEMENT:
+                            case Terrains.FIELDS:
+                                hex.addTerrain(new Terrain(randomTerrainType, 1));
+                                terrainAdded = true;
+                                break;
+                            case Terrains.JUNGLE:
+                                hex.addTerrain(new Terrain(Terrains.JUNGLE, 1));
+                                hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
+                                terrainAdded = true;
+                                break;
+                        }
+                    }
+
+                    // If no terrain was added, consider adding a random basic terrain
+                    if (!terrainAdded) {
+                        if (Compute.randomInt(100) < 20) {
+                            // 20% chance of woods
+                            hex.addTerrain(new Terrain(Terrains.WOODS, 1));
+                            hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
+                        } else if (Compute.randomInt(100) < 15) {
+                            // 15% chance of rough
+                            hex.addTerrain(new Terrain(Terrains.ROUGH, 1));
+                        }
+                    }
+                }
+
+                resultData[index] = hex;
+            }
+        }
     }
 
     /**

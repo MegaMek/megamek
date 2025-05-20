@@ -1529,7 +1529,6 @@ public class BoardEditor extends JPanel
                   1,
                   1,
                   new Board[] { board },
-                  Collections.singletonList(false),
                   MapSettings.MEDIUM_GROUND);
             game.setBoard(board);
             // BoardUtilities.combine does not preserve tags, so add them back

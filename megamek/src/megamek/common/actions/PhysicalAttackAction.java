@@ -20,6 +20,8 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
+import static megamek.common.QuadVee.CONV_MODE_VEHICLE;
+
 public class PhysicalAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = -4702357516725749181L;
 
@@ -255,5 +257,14 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if ((ae instanceof Mek) && ((Mek) ae).hasIndustrialTSM()) {
             toHit.addModifier(2, "industrial TSM");
         }
+    }
+
+    //Returns true if QuadVee is in Vehicle mode.  QuadVees in this mode are treated as having 1 less height in
+    // physical attacks
+    static protected boolean isConvertedQuadVee(Targetable target, Game game){
+        if(!target.isQuadMek()){
+            return false;
+        }
+        return game.getEntityOrThrow(target.getId()).getConversionMode() == CONV_MODE_VEHICLE;
     }
 }

@@ -2703,11 +2703,10 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                     modsMap.put("critBonus", critBonus - 2);
                 }
 
-                if (tmpDamageHold >= 0) {
-                    te.damageThisPhase += tmpDamageHold;
-                } else {
-                    te.damageThisPhase += damage;
-                }
+                // We should only record the applied damage, although original and tmpDamageHold
+                // damage may be needed for other calculations
+                te.damageThisPhase += damage;
+
                 damage = 0;
                 if (!te.isHardenedArmorDamaged(hit)) {
                     r = new Report(6085);

@@ -124,4 +124,49 @@ class TWDamageManagerTest {
         assertEquals(13, mek.getArmor(BipedMek.LOC_CT));
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
+
+    @Test
+    void damageMekBallisticReinforcedArmorNoPSR() throws FileNotFoundException {
+        String unit = "Dervish DV-11DK.mtf";
+        BipedMek mek = (BipedMek) loadEntityFromFile(unit);
+
+        // Validate starting armor (25 points of BRA ~= 50 - (1xhits) points standard against some damage types)
+        assertEquals(25, mek.getArmor(BipedMek.LOC_CT));
+
+        // Deal "39" points of damage (should fill 19 circles)
+        HitData hit = new HitData(BipedMek.LOC_CT);
+        hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(6, mek.getArmor(BipedMek.LOC_CT));
+        assertFalse(gameMan.checkForPSRFromDamage(mek));
+
+        // Show old system incorrectly causing a PSR
+        BipedMek mek2 = (BipedMek) loadEntityFromFile(unit);
+        HitData hit2 = new HitData(BipedMek.LOC_CT);
+        hit2.setGeneralDamageType(HitData.DAMAGE_MISSILE);
+        DamageInfo damageInfo2 = new DamageInfo(mek2, hit2, 39);
+        oldMan.damageEntity(damageInfo2);
+        assertTrue(gameMan.checkForPSRFromDamage(mek2));
+    }
+
+    @Test
+    void damageMekBallisticReinforcedArmorWithPSR() throws FileNotFoundException {
+        String unit = "Dervish DV-11DK.mtf";
+        BipedMek mek = (BipedMek) loadEntityFromFile(unit);
+
+        // Validate starting armor (25 points of BRA ~= 50 - (1xhits) points standard against some damage types)
+        assertEquals(25, mek.getArmor(BipedMek.LOC_CT));
+
+        // Deal "40" points of damage (should fill 20 circles)
+        HitData hit = new HitData(BipedMek.LOC_CT);
+        hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 40);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(5, mek.getArmor(BipedMek.LOC_CT));
+        assertTrue(gameMan.checkForPSRFromDamage(mek));
+    }
+
 }

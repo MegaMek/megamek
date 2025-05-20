@@ -1,0 +1,66 @@
+#Saved from version 0.50.05 on 2025-05-12
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Gun Platoon (LCAF)
+</Name>
+
+<Model>
+(Wheeled SB Gauss 3080+)
+</Model>
+
+<year>
+3080
+</year>
+
+<originalBuildYear>
+3080
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<Troopers Equipment>
+Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISSBGR
+Silver Bullet Gauss Ammo
+</Field Guns Equipment>
+
+<capabilities>
+The 'Silver Bullet' Gauss Rifle exchanges the raw armor penetrating capabilities of the standard model for enhanced capabilities against airborne and vehicle targets.  The normal drawbacks of high cost and manufacturing difficulty are less of an issue for Lyran forces with a robust military-industrial network supporting them.
+</capabilities>
+
+<overview>
+After the removal of historically Lyran systems from the unified Federated Commonwealth, many changes took place to restore and reinforce the Lyran nature of military forces posted there.  Infantry armor production was quickly updated with the first production runs seeing little more than a logo change.  Later production would see more visible changes to resemble the older Lyran style while retaining the protection capabilities of the FedCom model.
+</overview>
+
+<notes>
+Intro date based on Silver Bullet Gauss Rifle common production date
+</notes>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+Rifle (TK Assault)
+</Primary>
+

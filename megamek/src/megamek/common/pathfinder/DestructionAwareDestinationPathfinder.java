@@ -29,7 +29,8 @@ import java.util.TreeSet;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 
 /**
  * Handles the generation of ground-based move paths that contain information

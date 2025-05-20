@@ -30,7 +30,8 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -57,6 +58,7 @@ import megamek.common.force.Force;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
@@ -322,6 +324,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean unjammingRAC = false;
     protected boolean selfDestructing = false;
     protected boolean selfDestructInitiated = false;
+    protected boolean boobyTrapInitiated = false;
     protected boolean selfDestructedThisTurn = false;
 
     /**
@@ -1598,23 +1601,16 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns the player that "owns" this entity.
+     * <p>Returns the player that "owns" this entity.</p>
+     * <p>Unfortunately, entities freshly created may not have the game set. Therefore, fall back to the old
+     * version when game == null or the player is no longer in the game</p>
+     * <p>Server and other central classes already used {@link Game#getPlayer(int)}. It is noted that
+     * {@link Entity#owner} property is not reliable and should be avoided except in special
+     * situations like when entities freshly created may not have the game set
+     * </p>
+     * @return The player that owns this entity. Null if the entity is not owned by anyone.
      */
-    public Player getOwner() {
-        // Replaced 24 NOV 2020
-        // Server and other central classes already used
-        // game.getplayer(entity.getownerID())
-        // instead of entity.getowner() and it is noted that getOwner is not reliable.
-        // The entity owner object would have to be replaced whenever a player is
-        // updated
-        // which does not happen. The player ID on the other hand stays the same and the
-        // game
-        // object is not usually replaced. I expect entity.game to be up to date much
-        // more than owner.
-        // Unfortunately, entities freshly created may not have the game set. Therefore,
-        // fall
-        // back to the old version when game == null or the player is no longer in the
-        // game
+    public @Nullable Player getOwner() {
         if ((game != null) && (game.getPlayer(ownerId) != null)) {
             return game.getPlayer(ownerId);
         } else {
@@ -1913,7 +1909,7 @@ public abstract class Entity extends TurnOrdered
                          (mek.getOriginalMechanicalJumpBoosterMP() > 0) &&
                          (getMechanicalJumpBoosterMP(MPCalculationSetting.PERM_IMMOBILIZED) > 0)) {
             return false;
-        } else {
+        } else if (!(this instanceof Tank)) { // this is already handled in the tank specific override
             return ((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
                          // Need to make sure here that we're ignoring heat because that's not actually "permanent":
                          &&
@@ -1921,6 +1917,8 @@ public abstract class Entity extends TurnOrdered
                                 (getRunMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0) &&
                                 (getJumpMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0));
         }
+
+        return false;
     }
 
     public boolean isCharging() {
@@ -2102,8 +2100,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * A helper function for fiddling with elevation. Takes the current hex, a hex being moved to, returns the elevation
-     * the Entity will be considered to be at w/r/t its new hex.
+     * Calculates the elevation of the entity in the next hex.
+     * @param current The current hex
+     * @param next The next hex
+     * @param assumedElevation The assumed elevation from the previous hex
+     * @param climb Whether the entity is climbing or not
+     * @return The elevation of the entity in the next hex
+     *
+     * @see Entity#setElevation(int)
      */
     public int calcElevation(Hex current, Hex next, int assumedElevation, boolean climb) {
         int retVal = assumedElevation;
@@ -2113,6 +2117,13 @@ public abstract class Entity extends TurnOrdered
         if (isAero()) {
             return retVal;
         }
+
+        // Special case for DFA attacks into water - we want to land on the bottom of the hex
+        if (isMakingDfa() && (assumedElevation == 0) && next.containsTerrain(Terrains.WATER)
+                  && !next.containsTerrain(Terrains.ICE) && !climb) {
+            return next.floor();
+        }
+
         if (getMovementMode() == EntityMovementMode.WIGE) {
             // Airborne WiGEs remain 1 elevation above underlying terrain, unless climb mode is on, then they
             // maintain current absolute elevation as long as it is at least one level above the ground. WiGEs treat
@@ -2154,14 +2165,13 @@ public abstract class Entity extends TurnOrdered
                           next.containsTerrain(Terrains.WATER) &&
                           current.containsTerrain(Terrains.WATER)) ||
                          getMovementMode().isVTOL() ||
-                         (getMovementMode().isQuadSwim() && hasUMU()) ||
-                         (getMovementMode().isBipedSwim() && hasUMU())) {
+                         (getMovementMode().isQuadSwim() && hasUMU()) || (getMovementMode().isBipedSwim() && hasUMU()))
+        {
             retVal += current.getLevel();
             retVal -= next.getLevel();
         } else {
             // if we're a hovercraft, surface ship, WIGE or a "fully amphibious" vehicle, we
-            // go on the water surface
-            // without adjusting elevation
+            // go on the water surface without adjusting elevation
             if ((getMovementMode() != EntityMovementMode.HOVER) &&
                       (getMovementMode() != EntityMovementMode.NAVAL) &&
                       (getMovementMode() != EntityMovementMode.HYDROFOIL) &&
@@ -2172,16 +2182,14 @@ public abstract class Entity extends TurnOrdered
                     prevWaterLevel = current.terrainLevel(Terrains.WATER);
                     if (!(current.containsTerrain(Terrains.ICE)) || (assumedElevation < 0)) {
                         // count water, only if the entity isn't on ice surface
-                        retVal += current.terrainLevel(Terrains.WATER);
+                        retVal += prevWaterLevel;
                     }
                 }
                 if (next.containsTerrain(Terrains.WATER)) {
                     int waterLevel = next.terrainLevel(Terrains.WATER);
                     if (next.containsTerrain(Terrains.ICE)) {
-                        // a Mek can only climb out onto ice in depth 2 or
-                        // shallower water
-                        // Mek on the surface will stay on the surface
-
+                        // a Mek can only climb out onto ice in depth 2 or shallower water
+                        // Mek on the surf ace will stay on the surface
                         if (((waterLevel == 1) && (prevWaterLevel == 1)) ||
                                   ((prevWaterLevel <= 2) && climb) ||
                                   (assumedElevation >= 0)) {
@@ -2570,6 +2578,15 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Convenience method to determine whether this entity should be treated as a landed aero on a ground map.
+     *
+     * @return True if this is an aero landed on a ground map.
+     */
+    public boolean isAeroLandedOnGroundMap() {
+        return isAero() && !isAirborne() && getGame() != null && getGame().getBoard().onGround();
+    }
+
+    /**
      * Gets the marker used to disambiguate this entity from others with the same name. These are monotonically
      * increasing values, starting from one.
      */
@@ -2935,10 +2952,8 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Convenience method to drop all cargo.
-     *
-     * @deprecated no indicated uses.
+     * TODO HHW - Psi
      */
-    @Deprecated(since = "0.50.05", forRemoval = true)
     public void dropGroundObjects() {
         carriedObjects.clear();
     }
@@ -2955,9 +2970,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @deprecated no indicated uses.
+     * TODO HHW - Psi
      */
-    @Deprecated(since = "0.50.05", forRemoval = true)
     public void setCarriedObjects(Map<Integer, ICarryable> value) {
         carriedObjects = value;
     }
@@ -3113,8 +3127,25 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns this entity's running/flank mp as a string.
+     * Includes both the base mp and the potential mp with speed enhancers,
+     * including the current status of such speed enhancers.
+     * @return A string like <code>9(15)</code> if there is no current {@link Game},
+     * or a string like <code>9(15) MASC:0(3+)</code> if there is one.
      */
     public String getRunMPasString() {
+        return getRunMPasString(true);
+    }
+
+    /**
+     * Returns this entity's running/flank mp as a string.
+     * Includes both the base mp and the potential mp with speed enhancers,
+     * optionally including the current status of such speed enhancers.
+     * @param gameState Set this to <code>true</code> to include information about the current state of equipment
+     *                  like MASC.
+     * @return A string like <code>9(15)</code> if <code>gameState</code> is <code>false</code> or there is no
+     * current {@link Game}, or a string like <code>9(15) MASC:0(3+)</code> otherwise.
+     */
+    public String getRunMPasString(boolean gameState) {
         return Integer.toString(getRunMP());
     }
 
@@ -4257,7 +4288,7 @@ public abstract class Entity extends TurnOrdered
                   (!mounted.getType().hasFlag(WeaponType.F_AMSBAY)) &&
                   (!(mounted.hasModes() && mounted.curMode().equals("Point Defense"))) &&
                   ((mounted.getLinked() == null) ||
-                         mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT) ||
+                         ((mounted.getLinked().getType() instanceof MiscType) && mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT)) ||
                          (mounted.getLinked().getUsableShotsLeft() > 0))) {
 
             // TAG only in the correct phase...
@@ -5938,6 +5969,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Checks if the unit has a hierarchic C3 system. (Inverse of {@link #hasNhC3}
+     * @return {@code true} if the unit has a C3 system that is not a C3i, NC3 or Nova CEWS.
+     */
+    public boolean hasHierarchicalC3() {
+        return !hasNhC3();
+    }
+
+    /**
      * Returns true if the unit has a standard C3M/S, a Naval C3 or C3i or a Nova CEWS.
      */
     public boolean hasAnyC3System() {
@@ -7148,7 +7187,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // okay, let's figure out the stuff then
-        roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType), "Base piloting skill");
+        roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType), (this instanceof Infantry) ?
+                                                                                     "Anti-Mek skill":
+                                                                                     "Base piloting skill");
 
         // Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll object and adjust as necessary
         roll = addEntityBonuses(roll);
@@ -7824,7 +7865,8 @@ public abstract class Entity extends TurnOrdered
      *       within a building
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep, Coords curPos, Coords prevPos) {
-        if ((prevPos == null) || (prevPos.equals(curPos) && !(this instanceof ProtoMek))) {
+        if ((prevPos == null) || (prevPos.equals(curPos) && !(this instanceof ProtoMek)) ||
+                  (prevPos.equals(curPos) && !(this instanceof Infantry))) {
             return 0;
         }
         Hex curHex = game.getBoard().getHex(curPos);
@@ -13408,7 +13450,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * @return non-supercharger MASC mounted on this entity
      */
-    public MiscMounted getMASC() {
+    public @Nullable MiscMounted getMASC() {
         for (MiscMounted m : getMisc()) {
             MiscType miscType = m.getType();
             if (miscType.hasFlag(MiscType.F_MASC) &&
@@ -13432,6 +13474,36 @@ public abstract class Entity extends TurnOrdered
             }
         }
         return null;
+    }
+
+    /**
+     * @return an operable Booby Trap if there is one on this unit.
+     */
+    public @Nullable MiscMounted getBoobyTrap() {
+        for (MiscMounted m : getMisc()) {
+            MiscType miscType = m.getType();
+            if (miscType.hasFlag(MiscType.F_BOOBY_TRAP) && m.isReady()) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasBoobyTrap() {
+        return getBoobyTrap() != null;
+    }
+
+    // Mobile Structures need this overriden if ever implemented
+    public int getBoobyTrapDamage() {
+        int damage = 0;
+        if (hasBoobyTrap()) {
+            if (getEngine() != null){
+                damage = getEngine().getRating();
+            } else {
+                damage = (int) getWeight() * getOriginalWalkMP();
+            }
+        }
+        return Math.min(500, damage);
     }
 
     public abstract int getEngineHits();
@@ -13689,12 +13761,20 @@ public abstract class Entity extends TurnOrdered
         this.camouflage = camouflage;
     }
 
+    public boolean isBoobyTrapInitiated() {
+        return boobyTrapInitiated;
+    }
+
+    public void setBoobyTrapInitiated(boolean boobyTrapInitiated) {
+        this.boobyTrapInitiated = boobyTrapInitiated;
+    }
+
     public boolean getSelfDestructing() {
         return selfDestructing;
     }
 
-    public void setSelfDestructing(boolean tf) {
-        selfDestructing = tf;
+    public void setSelfDestructing(boolean selfDestructing) {
+        this.selfDestructing = selfDestructing;
     }
 
     public boolean getSelfDestructInitiated() {
@@ -14061,7 +14141,7 @@ public abstract class Entity extends TurnOrdered
             return "Small Craft";
         } else if ((typeId & ETYPE_TELEMISSILE) == ETYPE_TELEMISSILE) {
             return "Telemissile";
-        } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
+        } else if ((typeId & ETYPE_AEROSPACEFIGHTER) == ETYPE_AEROSPACEFIGHTER) {
             return "Aerospace fighter";
         } else if ((typeId & ETYPE_BATTLEARMOR) == ETYPE_BATTLEARMOR) {
             return "Battlearmor";
@@ -14081,6 +14161,8 @@ public abstract class Entity extends TurnOrdered
             return "Support Tank";
         } else if ((typeId & ETYPE_SUPPORT_VTOL) == ETYPE_SUPPORT_VTOL) {
             return "Support VTOL";
+        } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
+            return "Aerospace Craft";
         } else if ((typeId & ETYPE_VTOL) == ETYPE_VTOL) {
             return "VTOL";
         } else if ((typeId & ETYPE_TANK) == ETYPE_TANK) {

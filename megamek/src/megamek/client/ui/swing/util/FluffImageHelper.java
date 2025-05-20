@@ -157,8 +157,9 @@ public final class FluffImageHelper {
             }
         }
 
-        // Fallback
-        if (recordSheet) {
+        // Fallback for units other than HHWs.
+        // The HHW fallback image is embedded into the RS template.
+        if (recordSheet && !unit.isHandheldWeapon()) {
             fileCandidates.add(new File(fluffDir, "hud.png"));
         }
 

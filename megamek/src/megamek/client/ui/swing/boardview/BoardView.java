@@ -70,7 +70,8 @@ import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -78,6 +79,7 @@ import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
@@ -981,13 +983,11 @@ public final class BoardView extends AbstractBoardView
         if (!(graphics instanceof Graphics2D graphics2D)) {
             return;
         }
-
         if (GUIP.getShowFPS()) {
             paintCompsStartTime = System.nanoTime();
         }
 
         UIUtil.setHighQualityRendering(graphics2D);
-
         Rectangle viewRect = scrollPane.getVisibleRect();
 
         if (!isTileImagesLoaded()) {
@@ -1806,8 +1806,8 @@ public final class BoardView extends AbstractBoardView
             Point hexLocation = getHexLocation(coords);
             Image mineImg = getScaledImage(tileManager.getMinefieldSign(), true);
             graphics2D.drawImage(mineImg,
-                  hexLocation.x + (int) (13 * scale),
-                  hexLocation.y + (int) (13 * scale),
+                  hexLocation.x,
+                  hexLocation.y + (int) (10 * scale),
                   boardPanel);
 
             graphics2D.setColor(Color.black);
@@ -1815,7 +1815,7 @@ public final class BoardView extends AbstractBoardView
             if (numberOfMinefields > 1) {
                 drawCenteredString(Messages.getString("BoardView1.Multiple"),
                       hexLocation.x,
-                      hexLocation.y + (int) (51 * scale),
+                      hexLocation.y + (int) (31 * scale),
                       font_minefield,
                       graphics2D);
             } else if (numberOfMinefields == 1) {
@@ -1825,46 +1825,46 @@ public final class BoardView extends AbstractBoardView
                     case Minefield.TYPE_CONVENTIONAL:
                         drawCenteredString(Messages.getString("BoardView1.Conventional") + minefield.getDensity() + ")",
                               hexLocation.x,
-                              hexLocation.y + (int) (51 * scale),
+                              hexLocation.y + (int) (31 * scale),
                               font_minefield,
                               graphics2D);
                         break;
                     case Minefield.TYPE_INFERNO:
                         drawCenteredString(Messages.getString("BoardView1.Inferno") + minefield.getDensity() + ")",
                               hexLocation.x,
-                              hexLocation.y + (int) (51 * scale),
+                              hexLocation.y + (int) (31 * scale),
                               font_minefield,
                               graphics2D);
                         break;
                     case Minefield.TYPE_ACTIVE:
                         drawCenteredString(Messages.getString("BoardView1.Active") + minefield.getDensity() + ")",
                               hexLocation.x,
-                              hexLocation.y + (int) (51 * scale),
+                              hexLocation.y + (int) (31 * scale),
                               font_minefield,
                               graphics2D);
                         break;
                     case Minefield.TYPE_COMMAND_DETONATED:
                         drawCenteredString(Messages.getString("BoardView1.Command-"),
                               hexLocation.x,
-                              hexLocation.y + (int) (51 * scale),
+                              hexLocation.y + (int) (31 * scale),
                               font_minefield,
                               graphics2D);
-                        drawCenteredString(Messages.getString("BoardView1.detonated" + minefield.getDensity() + ")"),
+                        drawCenteredString(Messages.getString("BoardView1.detonated") + minefield.getDensity() + ")",
                               hexLocation.x,
-                              hexLocation.y + (int) (60 * scale),
+                              hexLocation.y + (int) (40 * scale),
                               font_minefield,
                               graphics2D);
                         break;
                     case Minefield.TYPE_VIBRABOMB:
                         drawCenteredString(Messages.getString("BoardView1.Vibrabomb"),
                               hexLocation.x,
-                              hexLocation.y + (int) (51 * scale),
+                              hexLocation.y + (int) (22 * scale),
                               font_minefield,
                               graphics2D);
                         if (minefield.getPlayerId() == localPlayer.getId()) {
                             drawCenteredString("(" + minefield.getSetting() + ")",
                                   hexLocation.x,
-                                  hexLocation.y + (int) (60 * scale),
+                                  hexLocation.y + (int) (31 * scale),
                                   font_minefield,
                                   graphics2D);
                         }

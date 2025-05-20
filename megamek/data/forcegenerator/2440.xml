@@ -172,7 +172,7 @@
 			</model>
 		</chassis>
 		<chassis name='Archer' unitType='Mek'>
-			<availability>TH:3</availability>
+			<availability>TH!A:6!B:1</availability>
 			<model name='ARC-1A'>
 				<roles>fire_support</roles>
 				<availability>TH:8</availability>
@@ -226,11 +226,23 @@
 			</model>
 		</chassis>
 		<chassis name='Banshee' unitType='Mek'>
-			<availability>TH:3</availability>
+			<availability>TH!A:6</availability>
 			<model name='BNC-1E'>
-				<availability>TH:8,Periphery.Deep:8,Periphery:8</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
+        <chassis name='BattleAxe' unitType='Mek'>
+            <availability>FS!A:8</availability>
+            <model name='BKX-1X'>
+                <availability>FS:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Bellerophon' unitType='Mek'>
+            <availability>TH!A:1,FWL!A:8</availability>
+            <model name='BEL-1X'>
+                <availability>TH:8,FWL:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Black Eagle' unitType='Dropship'>
 			<availability>TH:4</availability>
 			<model name=''>
@@ -395,9 +407,9 @@
 			</model>
 		</chassis>
 		<chassis name='Emperor' unitType='Mek'>
-			<availability>TH:6</availability>
+			<availability>TH!A:4</availability>
 			<model name='EMP-1A'>
-				<availability>TH:8,General:8</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Essex I Destroyer' unitType='Warship'>
@@ -558,6 +570,13 @@
 				<availability>TH:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Helepolis' unitType='Mek'>
+            <availability>TH!A:2</availability>
+            <model name='HEP-1H'>
+                <roles>mixed_artillery</roles>
+                <availability>TH:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Hurricane Conventional Fighter' unitType='Conventional Fighter'>
 			<availability>TH:8,IS:6</availability>
 			<model name=''>
@@ -630,7 +649,7 @@
 			</model>
 		</chassis>
 		<chassis name='Kyudo' unitType='Mek'>
-			<availability>TH:6</availability>
+			<availability>TH!A:8</availability>
 			<model name='KY2-D-01'>
 				<availability>TH:8</availability>
 			</model>
@@ -668,12 +687,12 @@
 			</model>
 		</chassis>
 		<chassis name='Mackie' unitType='Mek'>
-			<availability>TH:8,LA:3</availability>
+			<availability>TH!A:8!B:8,LA:1+:2456</availability>
 			<model name='MSK-5S'>
-				<availability>LA:2,General:2</availability>
+				<availability>TH:5,LA:8</availability>
 			</model>
 			<model name='MSK-6S'>
-				<availability>General:6,FWL:6</availability>
+				<availability>TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Manatee' unitType='Dropship'>
@@ -918,6 +937,15 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Orion' unitType='Mek'>
+            <availability>TH!A:8!B:1</availability>
+            <model name='ON1-C'>
+                <availability>TH:4</availability>
+            </model>
+            <model name='ON1-H'>
+                <availability>TH:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Pressurized Yard' unitType='Space Station'>
 			<availability>TH:4,IS:2,Periphery:1</availability>
 			<model name='Huge (2450)'>

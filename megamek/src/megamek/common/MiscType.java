@@ -418,7 +418,10 @@ public class MiscType extends EquipmentType {
         if (flag instanceof MiscTypeFlag) {
             return super.hasFlag(flag);
         } else {
-            LOGGER.warn("Incorrect flag check: make sure to test only MiscTypeFlags on a MiscType.");
+            LOGGER.warn("Incorrect flag check: tested {} instead of MiscTypeFlag",
+                  flag.getClass().getSimpleName(),
+                  new Throwable("Incorrect flag tested " + flag.getClass().getSimpleName() + " instead of " +
+                                      "MiscTypeFlag"));
             return false;
         }
     }
@@ -429,6 +432,10 @@ public class MiscType extends EquipmentType {
 
     public int getBaseDamageCapacity() {
         return baseDamageCapacity;
+    }
+
+    public boolean isBoobyTrap() {
+        return hasFlag(F_BOOBY_TRAP);
     }
 
     public boolean isShield() {
@@ -803,19 +810,19 @@ public class MiscType extends EquipmentType {
             return 2 + size * 0.5;
         } else if (hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             // 10% of the weight, plus 0.5 tons for the extra sensors
-            return (entity.getWeight() / 10f) + 0.5f;
+            return (entity.getWeight() / 10) + 0.5;
         } else if (hasFlag(MiscType.F_NAVAL_TUG_ADAPTOR)) {
             return (100 + ((entity.getWeight() * 0.1)));
         } else if (hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
             if (entity instanceof Tank) {
-                return 0.015f;
+                return 0.015;
             } else if (entity instanceof Mek) {
-                return 0.5f;
+                return 0.5;
             }
         } else if (hasFlag(MiscType.F_LIGHT_SAIL)) {
-            return (entity.getWeight() / 10f);
+            return (entity.getWeight() / 10);
         } else if (hasFlag(MiscType.F_LF_STORAGE_BATTERY)) {
-            return (entity.getWeight() / 100f);
+            return (entity.getWeight() / 100);
         } else if (hasFlag(MiscType.F_NAVAL_C3)) {
             return (entity.getWeight() * .01);
         } else if (hasFlag(MiscType.F_SRCS) || hasFlag(F_SASRCS)) {
@@ -1513,6 +1520,14 @@ public class MiscType extends EquipmentType {
                          hasFlag(F_NOVA) ||
                          (hasFlag(F_CLUB) && hasSubType(S_SPOT_WELDER))) {
             return 2;
+        } else if (hasFlag(F_CLUB)) {
+            if (hasSubType(S_VIBRO_SMALL)) {
+                return 3;
+            } else if (hasSubType(S_VIBRO_MEDIUM)) {
+                return 5;
+            } else if (hasSubType(S_VIBRO_LARGE)) {
+                return 7;
+            }
         }
         return 0;
     }
@@ -2237,8 +2252,8 @@ public class MiscType extends EquipmentType {
         // No information about this is provided so we fill in essentially "blank" data
         misc.techAdvancement.setTechBase(TECH_BASE_IS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL)
-              .setTechRating(RATING_X)
-              .setAvailability(RATING_X, RATING_X, RATING_X, RATING_X)
+              .setTechRating(RATING_D)
+              .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
               .setISAdvancement(DATE_ES)
               .setISApproximate(true);
 
@@ -4709,9 +4724,9 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Direct Neural Interface Cockpit Modification";
         misc.setInternalName("BABattleMechNIU");
-        misc.tonnage = 0.100;
-        misc.criticals = 2;
-        misc.cost = 500000;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 250000;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT).or(F_BATTLEMEK_NIU).or(F_BA_EQUIPMENT);
 
@@ -7658,7 +7673,11 @@ public class MiscType extends EquipmentType {
               .setUnofficial(false)
               .setTechRating(RATING_E)
               .setAvailability(RATING_X, RATING_E, RATING_F, RATING_F)
-              .setAdvancement(2575, DATE_NONE, DATE_NONE, 2820, DATE_NONE)
+              // Book doesn't give a reintro date, but there are several units starting 3073 with an
+              // inexplicable insulator.
+              // Best we can tell this is an oversight.
+              .setAdvancement(2575, DATE_NONE, DATE_NONE, 2820, 3073)
+              .setApproximate(false, false, false, false, true)
               .setPrototypeFactions(F_TH)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
@@ -7821,7 +7840,10 @@ public class MiscType extends EquipmentType {
                            .or(F_JS_EQUIPMENT)
                            .or(F_WS_EQUIPMENT)
                            .or(F_SS_EQUIPMENT);
-        misc.rulesRefs = "297, TO";
+        String[] saModes = { "Off", "Armed" };
+        misc.setModes(saModes);
+        misc.instantModeSwitch = true;
+        misc.rulesRefs = "109, TO:AUE";
         misc.techAdvancement.setTechBase(TECH_BASE_IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7830,7 +7852,7 @@ public class MiscType extends EquipmentType {
               .setISAdvancement(DATE_PS, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setProductionFactions(F_WB)
-              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

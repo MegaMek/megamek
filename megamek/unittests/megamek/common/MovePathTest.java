@@ -20,6 +20,7 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -27,9 +28,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.Vector;
 
-import org.junit.jupiter.api.Test;
-
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
+import megamek.common.options.GameOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -67,5 +70,29 @@ class MovePathTest {
 
         stepVector.add(null);
         assertEquals(mockStep4, testPath.getLastStep());
+    }
+
+    @Test
+    void testAddStep() {
+        Game mockGame = mock(Game.class);
+        GameOptions mockOptions = mock(GameOptions.class);
+        PlanetaryConditions mockPC = new PlanetaryConditions();
+        mockPC.setGravity(1.0f);
+
+        when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
+        when(mockGame.getOptions()).thenReturn(mockOptions);
+
+        Entity mockMek = mock(BipedMek.class);
+
+        MovePath movePath = new MovePath(mockGame, mockMek);
+        try {
+            for (MovePath.MoveStepType stepType : MovePath.MoveStepType.values()) {
+                MovePath pathToTest = movePath.clone();
+                pathToTest.addStep(stepType);
+            }
+        } catch (Exception e) {
+            fail("Exception thrown while adding step: " + e.getMessage());
+        }
+
     }
 }

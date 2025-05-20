@@ -100,7 +100,7 @@ public final class PilotToolTip {
         row = UIUtil.tag("TR", "", cols);
         rows += row;
         String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=2 BORDER=0", rows);
-        result +=  UIUtil.tag("<DIV", "width=100%", table);
+        result +=  UIUtil.tag("DIV", "width=100%", table);
 
         if (!detailed) {
             result += "<HR STYLE=WIDTH:90% />";
@@ -208,12 +208,15 @@ public final class PilotToolTip {
             if ((!showDefaultPortrait) && crew.getPortrait(i).isDefault()) {
                 continue;
             }
-
+            Image baseImage = crew.getPortrait(i).getBaseImage();
+            if (baseImage == null) {
+                continue;
+            }
             try {
                 // Adjust the portrait size to the GUI scale and number of pilots
                 float imgSize = UIUtil.scaleForGUI(PORTRAIT_BASESIZE);
                 imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
-                Image portrait = crew.getPortrait(i).getBaseImage().getScaledInstance(-1, (int) imgSize,
+                Image portrait = baseImage.getScaledInstance(-1, (int) imgSize,
                         Image.SCALE_SMOOTH);
                 String img = "";
 

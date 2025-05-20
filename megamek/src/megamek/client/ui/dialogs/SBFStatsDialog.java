@@ -65,13 +65,14 @@ import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.strategicBattleSystems.SBFRecordSheetBook;
 import megamek.common.strategicBattleSystems.SBFUnit;
+import megamek.logging.MMLogger;
 
 /**
  * This non-modal dialog shows stats of one or more SBF Formations in the form of a table. It also allows export of the
  * table data (optimized for import into Excel).
  */
 public class SBFStatsDialog extends AbstractDialog {
-
+    private final static MMLogger LOGGER = MMLogger.create(SBFStatsDialog.class);
     private static final String COLUMN_SEPARATOR = "\t";
 
     private final Collection<Force> forceList;
@@ -87,7 +88,6 @@ public class SBFStatsDialog extends AbstractDialog {
     private JComboBox<String> valueFontChooser;
     private final JScrollPane scrollPane = new JScrollPane();
     private final JPanel centerPanel = new JPanel();
-    private SBFStatsTablePanel statsPanel;
 
     /**
      * Creates a non-modal dialog that shows SBF Formation stats for the given forces. In the collection of Forces, each
@@ -162,7 +162,7 @@ public class SBFStatsDialog extends AbstractDialog {
                            .map(f -> new SBFFormationConverter(f, game).convert())
                            .filter(Objects::nonNull)
                            .collect(Collectors.toList());
-        statsPanel = new SBFStatsTablePanel(getFrame(), formations, elementsToggle.isSelected());
+        SBFStatsTablePanel statsPanel = new SBFStatsTablePanel(getFrame(), formations, elementsToggle.isSelected());
         scrollPane.setViewportView(statsPanel.getPanel());
     }
 
@@ -175,7 +175,7 @@ public class SBFStatsDialog extends AbstractDialog {
                 job.setPrintable(recordSheetBook);
                 job.print();
             } catch (PrinterException e) {
-                e.printStackTrace();
+                LOGGER.error("Error printing SBF record sheets", e);
             }
         }
     }
@@ -288,5 +288,10 @@ public class SBFStatsDialog extends AbstractDialog {
             }
         }
         return result.toString();
+    }
+
+    @Override
+    protected void cancelAction() {
+        dispose();
     }
 }

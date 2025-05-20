@@ -831,6 +831,8 @@ public class Board implements Serializable {
                     }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("end")) {
                     break;
+                } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("hex")) {
+                    break;
                 }
             }
         } catch (IOException ex) {

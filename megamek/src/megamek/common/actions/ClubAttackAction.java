@@ -541,6 +541,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
                     toHit.setHitTable(ToHitData.HIT_PUNCH);
                 }
             }
+            if(isConvertedQuadVee(target, game)){
+                toHit.setHitTable(ToHitData.HIT_PUNCH);
+            }
         } else {
             if (attackerElevation == targetElevation) {
                 toHit.setHitTable(aimTable);
@@ -549,7 +552,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 }
             } else if (attackerElevation < targetElevation) {
                 if (target.getHeight() == 0) {
-                    if (shield) {
+                    if (shield || isConvertedQuadVee(target, game)) {
                         toHit.setHitTable(ToHitData.HIT_PUNCH);
                     } else {
                         toHit.setHitTable(ToHitData.HIT_NORMAL);
@@ -561,6 +564,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 toHit.setHitTable(ToHitData.HIT_PUNCH);
             }
         }
+
 
         // factor in target side
         toHit.setSideTable(ComputeSideTable.sideTable(ae, target));

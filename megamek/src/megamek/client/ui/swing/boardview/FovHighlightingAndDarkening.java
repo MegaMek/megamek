@@ -30,7 +30,15 @@ import java.util.Map;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.sprite.StepSprite;
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Compute;
+import megamek.common.ComputeECM;
+import megamek.common.Coords;
+import megamek.common.ECMInfo;
+import megamek.common.Entity;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
+import megamek.common.moves.MoveStep;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;

@@ -1302,7 +1302,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 mek.setCondEjectCTDest(true);
                 mek.setCondEjectHeadshot(true);
             } else {
-                mek.setAutoEject(!entity.hasCase() && !entity.hasCASEII());
+                mek.setAutoEject(!entity.hasCase() && !entity.hasCASEII() && mek.isAutoEject());
             }
         }
 

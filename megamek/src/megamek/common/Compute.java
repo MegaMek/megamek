@@ -17,13 +17,14 @@ package megamek.common;
 
 import java.util.*;
 
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.IlluminationLevel;
@@ -635,8 +636,7 @@ public class Compute {
         }
 
         // airborne aircraft do not require pavement-related checks
-        final boolean isPavementStep = entity.isAirborne() ? false
-                : Compute.canMoveOnPavement(game, src, dest, moveStep);
+        final boolean isPavementStep = !entity.isAirborne() && Compute.canMoveOnPavement(srcHex, destHex, moveStep);
 
         // check for rubble
         if ((movementType != EntityMovementType.MOVE_JUMP)
@@ -5937,22 +5937,18 @@ public class Compute {
     }
 
     /**
-     * Can movement between the two coordinates be on pavement (which includes
-     * roads and bridges)? If so it will override prohibited terrain, it may
-     * change movement costs, and it may lead to skids.
+     * Can movement between the two coordinates be on pavement (which includes roads and bridges)? If so it will
+     * override prohibited terrain, it may change movement costs, and it may lead to skids.
      *
-     * @param game     The current {@link Game}
-     * @param src      the <code>Coords</code> being left.
-     * @param dest     the <code>Coords</code> being entered.
-     * @param moveStep
-     * @return <code>true</code> if movement between <code>src</code> and
-     *         <code>dest</code> can be on pavement; <code>false</code> otherwise.
+     * @param srcHex     the {@link Hex} being left.
+     * @param destHex    the {@link Hex} being entered.
+     * @param moveStep   the {@link MoveStep} being performed.
+     * @return <code>true</code> if movement between <code>srcHex</code> and
+     *         <code>destHex</code> can be on pavement; <code>false</code> otherwise.
      */
-    public static boolean canMoveOnPavement(Game game, Coords src,
-            Coords dest, MoveStep moveStep) {
-        Board board = game.getBoard(moveStep.getBoardId());
-        final Hex srcHex = board.getHex(src);
-        final Hex destHex = board.getHex(dest);
+    public static boolean canMoveOnPavement(final Hex srcHex, final Hex destHex, MoveStep moveStep) {
+        final Coords src = srcHex.getCoords();
+        final Coords dest = destHex.getCoords();
         final int src2destDir = src.direction(dest);
         final int dest2srcDir = (src2destDir + 3) % 6;
         boolean result = false;
@@ -5964,37 +5960,56 @@ public class Compute {
 
         // We may be moving in the same hex.
         if (src.equals(dest)
-                && (srcHex.hasPavement())) {
+                  && (srcHex.hasPavement())) {
             result = true;
         }
         // If the source is a pavement hex, then see if the destination
         // hex is also a pavement hex or has a road or bridge that exits
         // into the source hex and the entity is climbing onto the bridge.
         else if (srcHex.containsTerrain(Terrains.PAVEMENT)
-                && (destHex.containsTerrain(Terrains.PAVEMENT)
-                        || (destHex.containsTerrainExit(Terrains.ROAD,
-                                dest2srcDir)
-                            && destHex.hasPavedRoad())
-                        || (destHex.containsTerrainExit(
-                                Terrains.BRIDGE, dest2srcDir) && moveStep.climbMode()))) {
+                       && (destHex.containsTerrain(Terrains.PAVEMENT)
+                                 || (destHex.containsTerrainExit(Terrains.ROAD,
+              dest2srcDir)
+                                           && destHex.hasPavedRoad())
+                                 || (destHex.containsTerrainExit(
+              Terrains.BRIDGE, dest2srcDir) && moveStep.climbMode()))) {
             result = true;
         }
         // See if the source hex has a road or bridge (and the entity is on the
         // bridge) that exits into the destination hex, and the dest hex has
         // pavement or a corresponding exit to the src hex
         else if (((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) && srcHex.hasPavedRoad())
-            || (srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir)
-                && (moveStep.getElevation() == srcHex
-                        .terrainLevel(Terrains.BRIDGE_ELEV))))
-                && ((destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir) && destHex.hasPavedRoad())
-                        || (destHex.containsTerrainExit(Terrains.BRIDGE,
-                                dest2srcDir) && moveStep.climbMode())
-                        || destHex
-                                .containsTerrain(Terrains.PAVEMENT))) {
+                        || (srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir)
+                                  && (moveStep.getElevation() == srcHex
+                                                                       .terrainLevel(Terrains.BRIDGE_ELEV))))
+                       && ((destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir) && destHex.hasPavedRoad())
+                                 || (destHex.containsTerrainExit(Terrains.BRIDGE,
+              dest2srcDir) && moveStep.climbMode())
+                                 || destHex
+                                          .containsTerrain(Terrains.PAVEMENT))) {
             result = true;
         }
 
         return result;
+    }
+
+    /**
+     * Can movement between the two coordinates be on pavement (which includes
+     * roads and bridges)? If so it will override prohibited terrain, it may
+     * change movement costs, and it may lead to skids.
+     *
+     * @param game     The current {@link Game}
+     * @param src      the <code>Coords</code> being left.
+     * @param dest     the <code>Coords</code> being entered.
+     * @param moveStep the {@link MoveStep} being performed.
+     * @return <code>true</code> if movement between <code>src</code> and
+     *         <code>dest</code> can be on pavement; <code>false</code> otherwise.
+     */
+    public static boolean canMoveOnPavement(Game game, Coords src,
+            Coords dest, MoveStep moveStep) {
+        final Hex srcHex = game.getBoard().getHex(src);
+        final Hex destHex = game.getBoard().getHex(dest);
+        return canMoveOnPavement(srcHex, destHex, moveStep);
     }
 
     /**

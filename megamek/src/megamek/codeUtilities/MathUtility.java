@@ -156,7 +156,8 @@ public class MathUtility {
     /**
      * @param value the long value to clamp
      *
-     * @return The value if it is inside the range given by the limits (inclusive); the min value if value is below that
+     * @return The value if it is inside the range given by the limits 0.0-1.0 (inclusive); the min value if value is
+     * below that
      *       range and the max value if value is above that range.
      *       <ul>
      *         <li>clamp01(1.3) returns 1.0</li>

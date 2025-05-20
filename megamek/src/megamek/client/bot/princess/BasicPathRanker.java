@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
@@ -511,7 +512,8 @@ public class BasicPathRanker extends PathRanker {
      * @param movingUnit The entity being moved
      * @param game The current game state
      * @param path The movement path being evaluated
-     * @param closestPosition The coordinates of the closest enemy, or null to use board center
+     * @param enemyMedianPosition The coordinates of the median position of enemies, or null to use board center
+     * @param closestEnemyPosition The coordinates of the closest enemy, or null to use board center
      * @return A facing modifier value (higher is worse) to be used in path ranking
      */
     protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,

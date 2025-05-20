@@ -16875,101 +16875,115 @@ public class TWGameManager extends AbstractGameManager {
      */
     void checkForPSRFromDamage() {
         for (Entity entity : game.inGameTWEntities()) {
-            if (entity.canFall()) {
-                if (entity.isAirborne()) {
-                    // You can't fall over when you are combat dropping because you are already falling!
-                    continue;
-                }
-                // If this mek has 20+ damage, add another roll to the list. Hull down meks ignore this rule, TO Errata
-                int psrThreshold = 20;
-                if ((((Mek) entity).getCockpitType() == Mek.COCKPIT_DUAL) && entity.getCrew().hasDedicatedPilot()) {
-                    psrThreshold = 30;
-                }
-                if ((entity.damageThisPhase >= psrThreshold) && !entity.isHullDown()) {
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE)) {
-                        PilotingRollData damPRD = new PilotingRollData(entity.getId());
-                        int damMod = entity.damageThisPhase / psrThreshold;
-                        damPRD.addModifier(damMod, (damMod * psrThreshold) + "+ damage");
-                        int weightMod = 0;
-                        if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR)) {
-                            weightMod = switch (entity.getWeightClass()) {
-                                case EntityWeightClass.WEIGHT_LIGHT -> 1;
-                                case EntityWeightClass.WEIGHT_MEDIUM -> 0;
-                                case EntityWeightClass.WEIGHT_HEAVY -> -1;
-                                case EntityWeightClass.WEIGHT_ASSAULT -> -2;
-                                default -> weightMod;
-                            };
-                            if (entity.isSuperHeavy()) {
-                                weightMod = -4;
-                            }
-                            // the weight class PSR modifier is not cumulative
-                            damPRD.addModifier(weightMod, "weight class modifier", false);
-                        }
+            checkForPSRFromDamage(entity);
+        }
+    }
 
-                        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
-                                  (entity.getCrew().getPiloting() > 3)) {
-                            damPRD.addModifier(-1, "easy to pilot");
-                        }
-                        getGame().addPSR(damPRD);
-                    } else {
-                        PilotingRollData damPRD = new PilotingRollData(entity.getId(), 1, psrThreshold + "+ damage");
-                        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
-                                  (entity.getCrew().getPiloting() > 3)) {
-                            damPRD.addModifier(-1, "easy to pilot");
-                        }
-                        getGame().addPSR(damPRD);
-                    }
-                }
+    boolean checkForPSRFromDamage(Entity entity) {
+        boolean rollNeeded = false;
+        if (entity.canFall()) {
+            if (entity.isAirborne()) {
+                // You can't fall over when you are combat dropping because you are already falling!
+                return false;
             }
-            if (entity.isAero() && entity.isAirborne() && !game.getBoard().inSpace()) {
-                // check if aero unit meets conditions for control rolls and add to the list
-                if (entity.damageThisPhase > 0) {
-                    if (!getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL) &&
-                              !getGame().getOptions().booleanOption(OptionsConstants.UNOFF_ADV_ATMOSPHERIC_CONTROL)) {
-                        int damMod = entity.damageThisPhase / 20;
-                        PilotingRollData damPRD = new PilotingRollData(entity.getId(),
-                              damMod,
-                              entity.damageThisPhase + " damage +" + damMod);
-                        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
-                                  (entity.getCrew().getPiloting() > 3)) {
-                            damPRD.addModifier(-1, "easy to pilot");
-                        }
-                        getGame().addControlRoll(damPRD);
-                    } else {
-                        // was the damage threshold in a single location exceeded this round?
-                        if ((((IAero) entity).wasCritThresh())) {
-                            PilotingRollData damThresh = new PilotingRollData(entity.getId(),
-                                  0,
-                                  "damage threshold exceeded");
-                            if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
-                                      (entity.getCrew().getPiloting() > 3)) {
-                                damThresh.addModifier(-1, "easy to pilot");
-                            }
-                            getGame().addControlRoll(damThresh);
-                        }
-                        if (getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL) &&
-                                  entity.damageThisPhase > ((IAero) entity).getHighestThresh()) {
-                            // did the total damage this round exceed the unit's highest threshold?
-                            PilotingRollData damThresh = new PilotingRollData(entity.getId(),
-                                  0,
-                                  "highest damage threshold exceeded");
-                            if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
-                                      (entity.getCrew().getPiloting() > 3)) {
-                                damThresh.addModifier(-1, "easy to pilot");
-                            }
-                            getGame().addControlRoll(damThresh);
-                        }
-                    }
-                }
+            // If this mek has 20+ damage, add another roll to the list. Hull down meks ignore this rule, TO Errata
+            int psrThreshold = 20;
+            if ((((Mek) entity).getCockpitType() == Mek.COCKPIT_DUAL) && entity.getCrew().hasDedicatedPilot()) {
+                psrThreshold = 30;
             }
-            // Airborne AirMeks that take 20+ damage make a control roll instead of a PSR.
-            if ((entity instanceof LandAirMek) && entity.isAirborneVTOLorWIGE() && (entity.damageThisPhase >= 20)) {
-                PilotingRollData damPRD = new PilotingRollData(entity.getId());
-                int damMod = entity.damageThisPhase / 20;
-                damPRD.addModifier(damMod, (damMod * 20) + "+ damage");
-                getGame().addControlRoll(damPRD);
+            if ((entity.damageThisPhase >= psrThreshold) && !entity.isHullDown()) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE)) {
+                    PilotingRollData damPRD = new PilotingRollData(entity.getId());
+                    int damMod = entity.damageThisPhase / psrThreshold;
+                    damPRD.addModifier(damMod, (damMod * psrThreshold) + "+ damage");
+                    int weightMod = 0;
+                    if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR)) {
+                        weightMod = switch (entity.getWeightClass()) {
+                            case EntityWeightClass.WEIGHT_LIGHT -> 1;
+                            case EntityWeightClass.WEIGHT_MEDIUM -> 0;
+                            case EntityWeightClass.WEIGHT_HEAVY -> -1;
+                            case EntityWeightClass.WEIGHT_ASSAULT -> -2;
+                            default -> weightMod;
+                        };
+                        if (entity.isSuperHeavy()) {
+                            weightMod = -4;
+                        }
+                        // the weight class PSR modifier is not cumulative
+                        damPRD.addModifier(weightMod, "weight class modifier", false);
+                    }
+
+                    if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
+                              (entity.getCrew().getPiloting() > 3)) {
+                        damPRD.addModifier(-1, "easy to pilot");
+                    }
+                    rollNeeded = true;
+                    getGame().addPSR(damPRD);
+                } else {
+                    PilotingRollData damPRD = new PilotingRollData(entity.getId(), 1, psrThreshold + "+ damage");
+                    if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
+                              (entity.getCrew().getPiloting() > 3)) {
+                        damPRD.addModifier(-1, "easy to pilot");
+                    }
+                    rollNeeded = true;
+                    getGame().addPSR(damPRD);
+                }
             }
         }
+        if (entity.isAero() && entity.isAirborne() && !game.getBoard().inSpace()) {
+            // check if aero unit meets conditions for control rolls and add to the list
+            if (entity.damageThisPhase > 0) {
+                if (!getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL) &&
+                          !getGame().getOptions().booleanOption(OptionsConstants.UNOFF_ADV_ATMOSPHERIC_CONTROL)) {
+                    int damMod = entity.damageThisPhase / 20;
+                    PilotingRollData damPRD = new PilotingRollData(entity.getId(),
+                          damMod,
+                          entity.damageThisPhase + " damage +" + damMod);
+                    if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
+                              (entity.getCrew().getPiloting() > 3)) {
+                        damPRD.addModifier(-1, "easy to pilot");
+                    }
+                    rollNeeded = true;
+                    getGame().addControlRoll(damPRD);
+                } else {
+                    // was the damage threshold in a single location exceeded this round?
+                    if ((((IAero) entity).wasCritThresh())) {
+                        PilotingRollData damThresh = new PilotingRollData(entity.getId(),
+                              0,
+                              "damage threshold exceeded");
+                        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
+                                  (entity.getCrew().getPiloting() > 3)) {
+                            damThresh.addModifier(-1, "easy to pilot");
+                        }
+                        rollNeeded = true;
+                        getGame().addControlRoll(damThresh);
+                    }
+                    if (getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL) &&
+                              entity.damageThisPhase > ((IAero) entity).getHighestThresh()) {
+                        // did the total damage this round exceed the unit's highest threshold?
+                        PilotingRollData damThresh = new PilotingRollData(entity.getId(),
+                              0,
+                              "highest damage threshold exceeded");
+                        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
+                                  (entity.getCrew().getPiloting() > 3)) {
+                            damThresh.addModifier(-1, "easy to pilot");
+                        }
+                        rollNeeded = true;
+                        getGame().addControlRoll(damThresh);
+                    }
+                }
+            }
+        }
+
+        // Airborne AirMeks that take 20+ damage make a control roll instead of a PSR.
+        if ((entity instanceof LandAirMek) && entity.isAirborneVTOLorWIGE() && (entity.damageThisPhase >= 20)) {
+            PilotingRollData damPRD = new PilotingRollData(entity.getId());
+            int damMod = entity.damageThisPhase / 20;
+            damPRD.addModifier(damMod, (damMod * 20) + "+ damage");
+            rollNeeded = true;
+            getGame().addControlRoll(damPRD);
+        }
+
+        return rollNeeded;
     }
 
     /**

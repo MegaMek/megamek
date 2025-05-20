@@ -1,6 +1,7 @@
 package megamek.server.totalwarfare;
 
 import megamek.common.BattleArmor;
+import megamek.common.BipedMek;
 import megamek.common.DamageInfo;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -81,5 +82,46 @@ class TWDamageManagerTest {
         damageInfo = new DamageInfo(battleArmor2, hit, 5);
         newMan.damageEntity(damageInfo);
         assertEquals(5, battleArmor2.getArmor(BattleArmor.LOC_TROOPER_1));
+    }
+
+    @Test
+    void damageMekHardenedArmorNoPSR() throws FileNotFoundException {
+        String unit = "Hachiwara HCA-6P.mtf";
+        BipedMek mek = (BipedMek) loadEntityFromFile(unit);
+
+        // Validate starting armor (33 points of hardened ~= 66 points standard)
+        assertEquals(33, mek.getArmor(BipedMek.LOC_CT));
+
+        // Deal "39" points of damage (should fill 19 circles and half of 1)
+        HitData hit = new HitData(BipedMek.LOC_CT);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(14, mek.getArmor(BipedMek.LOC_CT));
+        assertFalse(gameMan.checkForPSRFromDamage(mek));
+
+        // Show old system incorrectly causing a PSR
+        BipedMek mek2 = (BipedMek) loadEntityFromFile(unit);
+        HitData hit2 = new HitData(BipedMek.LOC_CT);
+        DamageInfo damageInfo2 = new DamageInfo(mek2, hit2, 39);
+        oldMan.damageEntity(damageInfo2);
+        assertTrue(gameMan.checkForPSRFromDamage(mek2));
+    }
+
+    @Test
+    void damageMekHardenedArmorWithPSR() throws FileNotFoundException {
+        String unit = "Hachiwara HCA-6P.mtf";
+        BipedMek mek = (BipedMek) loadEntityFromFile(unit);
+
+        // Validate starting armor (33 points of hardened ~= 66 points standard)
+        assertEquals(33, mek.getArmor(BipedMek.LOC_CT));
+
+        // Deal "40" points of damage (should fill 20 circles and cause a PSR)
+        HitData hit = new HitData(BipedMek.LOC_CT);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 40);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(13, mek.getArmor(BipedMek.LOC_CT));
+        assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 }

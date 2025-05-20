@@ -2683,6 +2683,8 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                     armorThreshold -= damage;
                     te.setHardenedArmorDamaged(hit, (armorThreshold % 2) > 0);
                     te.setArmor((armorThreshold / 2) + (armorThreshold % 2), hit);
+                    // Halve damage for hardened armor here so PSRs work correctly
+                    damage = damage / 2;
                 } else {
                     te.setArmor(te.getArmor(hit) - damage, hit);
                 }

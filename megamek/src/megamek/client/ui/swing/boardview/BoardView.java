@@ -70,7 +70,8 @@ import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -78,6 +79,7 @@ import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
@@ -981,13 +983,11 @@ public final class BoardView extends AbstractBoardView
         if (!(graphics instanceof Graphics2D graphics2D)) {
             return;
         }
-
         if (GUIP.getShowFPS()) {
             paintCompsStartTime = System.nanoTime();
         }
 
         UIUtil.setHighQualityRendering(graphics2D);
-
         Rectangle viewRect = scrollPane.getVisibleRect();
 
         if (!isTileImagesLoaded()) {

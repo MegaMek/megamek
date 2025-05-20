@@ -23,6 +23,7 @@ import java.util.Map;
 
 import megamek.client.bot.princess.FireControl;
 import megamek.client.bot.princess.MinefieldUtil;
+import megamek.common.moves.MovePath;
 import megamek.common.pathfinder.BoardClusterTracker.MovementType;
 
 /**

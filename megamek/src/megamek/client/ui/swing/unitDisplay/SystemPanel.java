@@ -480,6 +480,26 @@ class SystemPanel extends PicMap
                 if ((m != null) && m.hasModes()) {
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
+                        if ((m.getType() instanceof MiscType miscType) &&
+                                  miscType.isBoobyTrap()) {
+                            // Verify is it is in the correct phase to arm it
+                            // This should be controlled by the equipment itself
+                            // TODO: Refactor so the equipment knows the phase they can be armed/disarmed
+
+                            if ((clientgui.getClient().getGame().getPhase().isFiring() ||
+                                       clientgui.getClient().getGame().getPhase().isPhysical())) {
+                                if (nMode == 1) {
+                                    if (!clientgui.doYesNoDialog(Messages.getString("MekDisplay.BoobyTrapWarningTitle"),
+                                          Messages.getString("MekDisplay.BoobyTrapWarning"))) {
+                                        return;
+                                    }
+                                }
+                            } else {
+                                clientgui.doAlertDialog(Messages.getString("MekDisplay.BoobyTrapMode"),
+                                      Messages.getString("MekDisplay.BoobyTrapMode"));
+                                return;
+                            }
+                        }
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isShield()
@@ -511,6 +531,7 @@ class SystemPanel extends PicMap
                             clientgui.systemMessage(Messages.getString("MekDisplay.CapacitorCharging"));
                             return;
                         }
+
                         m.setMode(nMode);
                         // send the event to the server
                         clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);

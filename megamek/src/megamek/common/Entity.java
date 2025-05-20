@@ -30,7 +30,8 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -57,6 +58,7 @@ import megamek.common.force.Force;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
@@ -322,6 +324,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean unjammingRAC = false;
     protected boolean selfDestructing = false;
     protected boolean selfDestructInitiated = false;
+    protected boolean boobyTrapInitiated = false;
     protected boolean selfDestructedThisTurn = false;
 
     /**
@@ -2572,6 +2575,15 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isAirborneAeroOnGroundMap() {
         return isAero() && isAirborne() && getGame() != null && getGame().getBoard().onGround();
+    }
+
+    /**
+     * Convenience method to determine whether this entity should be treated as a landed aero on a ground map.
+     *
+     * @return True if this is an aero landed on a ground map.
+     */
+    public boolean isAeroLandedOnGroundMap() {
+        return isAero() && !isAirborne() && getGame() != null && getGame().getBoard().onGround();
     }
 
     /**
@@ -13438,7 +13450,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * @return non-supercharger MASC mounted on this entity
      */
-    public MiscMounted getMASC() {
+    public @Nullable MiscMounted getMASC() {
         for (MiscMounted m : getMisc()) {
             MiscType miscType = m.getType();
             if (miscType.hasFlag(MiscType.F_MASC) &&
@@ -13462,6 +13474,36 @@ public abstract class Entity extends TurnOrdered
             }
         }
         return null;
+    }
+
+    /**
+     * @return an operable Booby Trap if there is one on this unit.
+     */
+    public @Nullable MiscMounted getBoobyTrap() {
+        for (MiscMounted m : getMisc()) {
+            MiscType miscType = m.getType();
+            if (miscType.hasFlag(MiscType.F_BOOBY_TRAP) && m.isReady()) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasBoobyTrap() {
+        return getBoobyTrap() != null;
+    }
+
+    // Mobile Structures need this overriden if ever implemented
+    public int getBoobyTrapDamage() {
+        int damage = 0;
+        if (hasBoobyTrap()) {
+            if (getEngine() != null){
+                damage = getEngine().getRating();
+            } else {
+                damage = (int) getWeight() * getOriginalWalkMP();
+            }
+        }
+        return Math.min(500, damage);
     }
 
     public abstract int getEngineHits();
@@ -13719,12 +13761,20 @@ public abstract class Entity extends TurnOrdered
         this.camouflage = camouflage;
     }
 
+    public boolean isBoobyTrapInitiated() {
+        return boobyTrapInitiated;
+    }
+
+    public void setBoobyTrapInitiated(boolean boobyTrapInitiated) {
+        this.boobyTrapInitiated = boobyTrapInitiated;
+    }
+
     public boolean getSelfDestructing() {
         return selfDestructing;
     }
 
-    public void setSelfDestructing(boolean tf) {
-        selfDestructing = tf;
+    public void setSelfDestructing(boolean selfDestructing) {
+        this.selfDestructing = selfDestructing;
     }
 
     public boolean getSelfDestructInitiated() {

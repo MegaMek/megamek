@@ -40,7 +40,8 @@ import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.DisengageAction;
 import megamek.common.actions.EntityAction;
@@ -53,6 +54,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
@@ -2721,7 +2723,6 @@ public class Princess extends BotClient {
             initEnemyHeatMaps();
             initExperimentalFeatures();
 
-
             // Pick up any turrets and add their buildings to the strategic targets list.
             final Enumeration<Building> buildings = getGame().getBoard().getBuildings();
             while (buildings.hasMoreElements()) {
@@ -3800,7 +3801,7 @@ public class Princess extends BotClient {
             if (waypoint.isPresent()) {
                 var wp = waypoint.get();
                 if (wp.distance(entity.getPosition()) <= DISTANCE_TO_WAYPOINT) {
-                    LOGGER.debug(entity.getDisplayName() + " arrived at waypoint " + wp);
+                    LOGGER.debug("{} arrived at waypoint {}", entity.getDisplayName(), wp);
                     getUnitBehaviorTracker().removeHeadWaypoint(entity);
                 }
             }

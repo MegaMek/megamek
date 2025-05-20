@@ -134,6 +134,7 @@ class TWPhaseEndManager {
                 gameManager.resolveOnlyWeaponAttacks();
                 gameManager.assignAMS();
                 gameManager.handleAttacks();
+                gameManager.resolveBoobyTraps();  // booby trap says it resolves "imediately"... could be problematic
                 gameManager.resolveScheduledNukes();
                 gameManager.resolveScheduledOrbitalBombardments();
                 gameManager.applyBuildingDamage();
@@ -162,6 +163,7 @@ class TWPhaseEndManager {
             case PHYSICAL:
                 gameManager.resolveWhatPlayersCanSeeWhatUnits();
                 gameManager.resolvePhysicalAttacks();
+                gameManager.resolveBoobyTraps(); // booby trap says it resolves "imediately"... could be problematic
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.addReport(gameManager.resolvePilotingRolls());

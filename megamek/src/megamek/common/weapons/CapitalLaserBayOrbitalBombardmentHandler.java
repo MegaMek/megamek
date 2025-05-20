@@ -33,14 +33,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
 
-public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHandler {
+public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
 
-    private static final MMLogger LOGGER = MMLogger.create(CapitalLaserBayWeaponOrbitalBombardmentHandler.class);
+    private static final MMLogger LOGGER = MMLogger.create(CapitalLaserBayOrbitalBombardmentHandler.class);
 
     private boolean isReported = false;
     private final ArtilleryAttackAction attackAction;
 
-    public CapitalLaserBayWeaponOrbitalBombardmentHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
+    public CapitalLaserBayOrbitalBombardmentHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         attackAction = (ArtilleryAttackAction) w;
     }
@@ -191,8 +191,17 @@ public class CapitalLaserBayWeaponOrbitalBombardmentHandler extends BayWeaponHan
 
         for (Coords actualHit : actualHits) {
             clearMines(reports, actualHit);
-            gameManager.artilleryDamageArea(actualHit, board.getBoardId(), null,
-                  ae.getId(), ae, falloff, false, board.getHex(actualHit).getLevel(), reports, false);
+
+            Vector<Integer> alreadyHit = new Vector<>();
+            var blastShape = AreaEffectHelper.shapeBlast(null, actualHit, falloff, board.getHex(actualHit).getLevel(),
+                  false, false, false, game, false);
+
+            for (var entry : blastShape.keySet()) {
+                alreadyHit = gameManager.artilleryDamageHex(entry.getValue(), board.getBoardId(), actualHit,
+                      blastShape.get(entry), null, subjectId, ae, null, false, entry.getKey(),
+                      board.getHex(actualHit).getLevel(), reports,
+                      false, alreadyHit, false, falloff);
+            }
         }
         return false;
     }

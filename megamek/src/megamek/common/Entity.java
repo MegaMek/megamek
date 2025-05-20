@@ -2584,7 +2584,7 @@ public abstract class Entity extends TurnOrdered
      * @return True if this is an aero landed on a ground map.
      */
     public boolean isAeroLandedOnGroundMap() {
-        return isAero() && !isAirborne() && getGame() != null && getGame().getBoard().onGround();
+        return isAero() && !isAirborne() && (game != null) && game.isOnGroundMap(this);
     }
 
     /**

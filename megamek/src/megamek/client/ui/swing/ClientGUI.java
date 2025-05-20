@@ -1597,7 +1597,6 @@ public class ClientGUI extends AbstractClientGUI
         if (getMiniMapDialog() != null) {
             getMiniMapDialog().setVisible(visible);
             conditionalRequestFocus(visible);
-            getMiniMapDialog().setAlwaysOnTop(visible);
         }
     }
 

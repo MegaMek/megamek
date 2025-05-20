@@ -17,10 +17,8 @@ import megamek.common.EquipmentTypeLookup;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.ArtilleryBayWeaponIndirectFireHandler;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.BayWeaponHandler;
-import megamek.common.weapons.CapitalLaserBayWeaponOrbitalBombardmentHandler;
+import megamek.common.weapons.CapitalLaserBayOrbitalBombardmentHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.io.Serial;
@@ -50,7 +48,7 @@ public class CapitalLaserBayWeapon extends BayWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
           TWGameManager manager) {
         if (waa.isOrbitToSurface(game)) {
-            return new CapitalLaserBayWeaponOrbitalBombardmentHandler(toHit, waa, game, manager);
+            return new CapitalLaserBayOrbitalBombardmentHandler(toHit, waa, game, manager);
         } else {
             return super.getCorrectHandler(toHit, waa, game, manager);
         }

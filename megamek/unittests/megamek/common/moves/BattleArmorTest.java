@@ -30,13 +30,15 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.common;
+package megamek.common.moves;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.client.ui.SharedUtility;
-import megamek.common.moves.MovePath;
+import megamek.common.BattleArmor;
+import megamek.common.EntityMovementMode;
+import megamek.common.GameBoardTestCase;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -129,7 +131,7 @@ end""");
 
             assertTrue(movePath.isMoveLegal(),
                   "A BA or infantry can only jump from inside a building to outside of it, or from out to in");
-            assertMovePathElevations(movePath, 10, 0, 6, 5);
+            assertMovePathElevations(movePath, 0, 0, 6, 5);
 
             String check = SharedUtility.doPSRCheck(movePath);
             assertFalse(check.isBlank(), "It should require a roll to jump into the building through the window");

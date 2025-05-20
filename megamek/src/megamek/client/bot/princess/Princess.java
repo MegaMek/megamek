@@ -2723,7 +2723,6 @@ public class Princess extends BotClient {
             initEnemyHeatMaps();
             initExperimentalFeatures();
 
-
             // Pick up any turrets and add their buildings to the strategic targets list.
             final Enumeration<Building> buildings = getGame().getBoard().getBuildings();
             while (buildings.hasMoreElements()) {
@@ -3802,7 +3801,7 @@ public class Princess extends BotClient {
             if (waypoint.isPresent()) {
                 var wp = waypoint.get();
                 if (wp.distance(entity.getPosition()) <= DISTANCE_TO_WAYPOINT) {
-                    LOGGER.debug(entity.getDisplayName() + " arrived at waypoint " + wp);
+                    LOGGER.debug("{} arrived at waypoint {}", entity.getDisplayName(), wp);
                     getUnitBehaviorTracker().removeHeadWaypoint(entity);
                 }
             }

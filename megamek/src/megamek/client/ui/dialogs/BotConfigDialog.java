@@ -121,12 +121,14 @@ public class BotConfigDialog extends AbstractButtonDialog
     private final MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString(
           "BotConfigDialog.forcedWithdrawalCheck"));
 
-    private final MMToggleButton iAmAPirateCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.iAmAPirateCheck"));
-    private final MMToggleButton exclusiveHerdingCheck = new TipMMToggleButton(Messages.getString(
-          "BotConfigDialog.exclusiveHerdingCheck"));
-    private final MMToggleButton experimentalCheck = new TipMMToggleButton(Messages.getString(
-          "BotConfigDialog.experimentalCheck"));
-
+    private final MMToggleButton iAmAPirateCheck = 
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.iAmAPirateCheck"));
+    private final MMToggleButton ignoreDamageOutputCheck =
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.ignoreDamageOutput"));
+    private final MMToggleButton exclusiveHerdingCheck = 
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.exclusiveHerdingCheck"));
+    private final MMToggleButton experimentalCheck = 
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.experimentalCheck"));
 
     private final JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private final MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
@@ -407,11 +409,16 @@ public class BotConfigDialog extends AbstractButtonDialog
         iAmAPirateCheck.setToolTipText(Messages.getString("BotConfigDialog.iAmAPirateCheckToolTip"));
         iAmAPirateCheck.addActionListener(this);
         panContent.add(iAmAPirateCheck);
+        
+        ignoreDamageOutputCheck.setToolTipText(Messages.getString("BotConfigDialog.ignoreDamageOutputToolTip"));
+        ignoreDamageOutputCheck.addActionListener(this);
+        panContent.add(ignoreDamageOutputCheck);
 
         experimentalCheck.setToolTipText(Messages.getString("BotConfigDialog.experimentalCheckToolTip"));
         experimentalCheck.addActionListener(this);
 
         if (CLIENT_PREFERENCES.getEnableExperimentalBotFeatures()) {
+            
             panContent.add(experimentalCheck);
         }
 
@@ -536,6 +543,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         experimentalCheck.setSelected(princessBehavior.isExperimental());
         numberOfEnemiesToConsiderFacingSlidebar.setValue(princessBehavior.getNumberOfEnemiesToConsiderFacing());
         allowFacingToleranceSlidebar.setValue(princessBehavior.getAllowFacingTolerance());
+        ignoreDamageOutputCheck.setSelected(princessBehavior.isIgnoreDamageOutput());
     }
 
     private void updateDialogFields() {
@@ -592,6 +600,7 @@ public class BotConfigDialog extends AbstractButtonDialog
                             chosenPreset.isExclusiveHerding() != exclusiveHerdingCheck.isSelected() ||
                             chosenPreset.getNumberOfEnemiesToConsiderFacing() != numberOfEnemiesToConsiderFacingSlidebar.getValue() ||
                             chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
+                            chosenPreset.isIgnoreDamageOutput() != ignoreDamageOutputCheck.isSelected() ||
                             chosenPreset.isExperimental() != experimentalCheck.isSelected());
     }
     /**
@@ -781,6 +790,8 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
         newBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
         newBehavior.setExperimental(experimentalCheck.isSelected());
+        newBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
+
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
     }
@@ -823,6 +834,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
         tempBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
         tempBehavior.setExperimental(experimentalCheck.isSelected());
+        tempBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
 
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {

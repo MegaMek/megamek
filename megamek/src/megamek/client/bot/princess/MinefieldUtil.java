@@ -24,8 +24,8 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.Mek;
 import megamek.common.Minefield;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.annotations.Nullable;
 
 /**

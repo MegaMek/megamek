@@ -324,6 +324,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean unjammingRAC = false;
     protected boolean selfDestructing = false;
     protected boolean selfDestructInitiated = false;
+    protected boolean boobyTrapInitiated = false;
     protected boolean selfDestructedThisTurn = false;
 
     /**
@@ -13449,7 +13450,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * @return non-supercharger MASC mounted on this entity
      */
-    public MiscMounted getMASC() {
+    public @Nullable MiscMounted getMASC() {
         for (MiscMounted m : getMisc()) {
             MiscType miscType = m.getType();
             if (miscType.hasFlag(MiscType.F_MASC) &&
@@ -13473,6 +13474,36 @@ public abstract class Entity extends TurnOrdered
             }
         }
         return null;
+    }
+
+    /**
+     * @return an operable Booby Trap if there is one on this unit.
+     */
+    public @Nullable MiscMounted getBoobyTrap() {
+        for (MiscMounted m : getMisc()) {
+            MiscType miscType = m.getType();
+            if (miscType.hasFlag(MiscType.F_BOOBY_TRAP) && m.isReady()) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasBoobyTrap() {
+        return getBoobyTrap() != null;
+    }
+
+    // Mobile Structures need this overriden if ever implemented
+    public int getBoobyTrapDamage() {
+        int damage = 0;
+        if (hasBoobyTrap()) {
+            if (getEngine() != null){
+                damage = getEngine().getRating();
+            } else {
+                damage = (int) getWeight() * getOriginalWalkMP();
+            }
+        }
+        return Math.min(500, damage);
     }
 
     public abstract int getEngineHits();
@@ -13730,12 +13761,20 @@ public abstract class Entity extends TurnOrdered
         this.camouflage = camouflage;
     }
 
+    public boolean isBoobyTrapInitiated() {
+        return boobyTrapInitiated;
+    }
+
+    public void setBoobyTrapInitiated(boolean boobyTrapInitiated) {
+        this.boobyTrapInitiated = boobyTrapInitiated;
+    }
+
     public boolean getSelfDestructing() {
         return selfDestructing;
     }
 
-    public void setSelfDestructing(boolean tf) {
-        selfDestructing = tf;
+    public void setSelfDestructing(boolean selfDestructing) {
+        this.selfDestructing = selfDestructing;
     }
 
     public boolean getSelfDestructInitiated() {

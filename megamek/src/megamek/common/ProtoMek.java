@@ -32,6 +32,7 @@ import megamek.common.cost.ProtoMekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.preference.PreferenceManager;
@@ -262,7 +263,7 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public String getRunMPasString() {
+    public String getRunMPasString(boolean gameState) {
         if (hasMyomerBooster()) {
             return getRunMP(MPCalculationSetting.NO_MYOMER_BOOSTER) + "(" + getRunMP() + ")";
         } else {

@@ -1,17 +1,36 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.Dimension;
@@ -22,35 +41,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
+import java.io.Serial;
+import javax.swing.*;
 
 import megamek.client.ui.Messages;
 
 /**
  * A simple yes/no confirmation dialog.
  */
-public class ConfirmDialog extends JDialog{
+public class ConfirmDialog extends JDialog {
 
+    @Serial
     private static final long serialVersionUID = -8491332593940944224L;
-    private GridBagLayout gridbag = new GridBagLayout();
-    private GridBagConstraints c = new GridBagConstraints();
+    private final GridBagLayout gridbag = new GridBagLayout();
+    private final GridBagConstraints gridBagConstraints = new GridBagConstraints();
 
-    private boolean useCheckbox;
+    private final boolean useCheckbox;
     private JCheckBox botherCheckbox;
 
-    private JPanel panButtons = new JPanel();
+    private final JPanel panButtons = new JPanel();
     JButton butYes;
     JButton butNo;
     JButton defaultButton;
@@ -125,12 +134,13 @@ public class ConfirmDialog extends JDialog{
         } else {
             defaultButton = butYes;
         }
-
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         finishSetup(p);
     }
 
     private void setupButtons() {
         Action yesAction = new AbstractAction() {
+            @Serial
             private static final long serialVersionUID = -5442315938595454381L;
 
             @Override
@@ -151,6 +161,7 @@ public class ConfirmDialog extends JDialog{
         amap.put(YESACTION, yesAction);
 
         Action noAction = new AbstractAction() {
+            @Serial
             private static final long serialVersionUID = -952830599469731009L;
 
             @Override
@@ -173,22 +184,22 @@ public class ConfirmDialog extends JDialog{
         JTextArea questionLabel = new JTextArea(question);
         questionLabel.setEditable(false);
         questionLabel.setOpaque(false);
-        c.gridheight = 2;
-        c.insets = new Insets(5, 5, 5, 5);
-        gridbag.setConstraints(questionLabel, c);
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.insets = new Insets(5, 5, 5, 5);
+        gridbag.setConstraints(questionLabel, gridBagConstraints);
         add(questionLabel);
     }
 
     private void addInputs() {
         int y = 2;
 
-        c.gridheight = 1;
+        gridBagConstraints.gridheight = 1;
 
         if (useCheckbox) {
             botherCheckbox = new JCheckBox(Messages.getString("ConfirmDialog.dontBother"));
 
-            c.gridy = y++;
-            gridbag.setConstraints(botherCheckbox, c);
+            gridBagConstraints.gridy = y++;
+            gridbag.setConstraints(botherCheckbox, gridBagConstraints);
             add(botherCheckbox);
         }
 
@@ -203,13 +214,13 @@ public class ConfirmDialog extends JDialog{
         buttonGridbag.setConstraints(butNo, bc);
         panButtons.add(butNo);
 
-        c.gridy = y;
+        gridBagConstraints.gridy = y;
 
-        gridbag.setConstraints(panButtons, c);
+        gridbag.setConstraints(panButtons, gridBagConstraints);
         add(panButtons);
     }
 
-    private void finishSetup(JFrame p) {
+    private void finishSetup(JFrame frame) {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -237,9 +248,8 @@ public class ConfirmDialog extends JDialog{
         }
         if (updateSize) {
             setSize(size);
-            size = getSize();
         }
-        setLocationRelativeTo(p);
+        setLocationRelativeTo(frame);
 
         // work out which component will get the focus in the window
         if (useCheckbox) {

@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -33,6 +34,7 @@ import megamek.common.actions.ClearMinefieldAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.actions.UnjamAction;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
@@ -125,6 +127,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
+        if (md.getMpUsed() > 0) {
+            // All auto-hit hexes for this unit (not including preset targets) are cleared
+            // if any MP are expended.
+            entity.aTracker.clearHitHexMods();
+        }
+
         if (md.contains(MovePath.MoveStepType.EJECT)) {
             if (entity.isLargeCraft() && !entity.isCarcass()) {
                 r = new Report(2026);
@@ -2950,18 +2958,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Handle mounting units to small craft/DropShip
             if (step.getType() == MovePath.MoveStepType.MOUNT) {
-                Targetable mountee = step.getTarget(getGame());
-                if (mountee instanceof Entity) {
-                    Entity dropShip = (Entity) mountee;
-                    if (!dropShip.canLoad(entity)) {
+                Targetable targetToMountInto = step.getTarget(getGame());
+                if (targetToMountInto instanceof Entity entityToMountInto ) {
+                    if (!entityToMountInto.canLoad(entity)) {
                         // Something is fishy in Denmark.
                         logger
-                                .error(dropShip.getShortName() + " can not load " + entity.getShortName());
+                                .error(entityToMountInto.getShortName() + " can not load " + entity.getShortName());
                     } else {
                         // Have the indicated unit load this unit.
                         entity.setDone(true);
-                        gameManager.loadUnit(dropShip, entity, entity.getTargetBay());
-                        Bay currentBay = dropShip.getBay(entity);
+                        gameManager.loadUnit(entityToMountInto, entity, entity.getTargetBay());
+                        Bay currentBay = entityToMountInto.getBay(entity);
                         if ((null != currentBay) && (Compute.d6(2) == 2)) {
                             r = new Report(9390);
                             r.subject = entity.getId();
@@ -2971,7 +2978,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             currentBay.destroyDoorNext();
                         }
                         // Stop looking.
-                        gameManager.entityUpdate(dropShip.getId());
+                        curPos = entity.getPosition();
+                        gameManager.entityUpdate(entityToMountInto.getId());
                         return;
                     }
                 }

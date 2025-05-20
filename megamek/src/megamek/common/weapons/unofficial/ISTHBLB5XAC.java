@@ -39,6 +39,10 @@ public class ISTHBLB5XAC extends LBXACWeapon {
         this.extremeRange = 30;
         this.tonnage = 8.0;
         this.criticals = 6;
+        this.shortAV = getBaseAeroDamage();
+        this.medAV = this.shortAV;
+        this.longAV = this.shortAV;
+        this.extAV = this.shortAV;
         this.bv = 85;
         this.cost = 300000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.

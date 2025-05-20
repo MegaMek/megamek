@@ -23,9 +23,10 @@ import megamek.client.bot.BotLogger;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import org.apache.logging.log4j.Level;
@@ -33,7 +34,6 @@ import org.apache.logging.log4j.Level;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.text.NumberFormat;
 import java.util.*;
 
 import static megamek.client.ui.SharedUtility.predictLeapDamage;
@@ -68,8 +68,8 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     protected abstract RankedPath rankPath(MovePath path, Game game, int maxRange,
-            double fallTolerance, List<Entity> enemies,
-            Coords friendsCoords);
+                                           double fallTolerance, List<Entity> enemies,
+                                           Coords friendsCoords);
 
     @Override
     public TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
@@ -282,17 +282,15 @@ public abstract class PathRanker implements IPathRanker {
      */
     @Override
     public Targetable findClosestEnemy(Entity me, Coords position, Game game,
-            boolean includeStrategicTargets) {
+            boolean includeStrategicTargets, int minDistance) {
         int range = Integer.MAX_VALUE;
         Targetable closest = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
         var ignoredTargets = owner.getBehaviorSettings().getIgnoredUnitTargets();
         var priorityTargets = getOwner().getBehaviorSettings().getPriorityUnitTargets();
         for (Entity enemy : enemies) {
-            // Skip airborne aero units as they're further away than they seem and hard to
-            // catch.
-            // Also, skip withdrawing enemy bot units that are not priority targets
-            // skip ignored units
+            // Skip airborne aero units as they're further away than they seem and hard to catch.
+            // Also, skip withdrawing enemy bot units that are not priority targets skip ignored units
             if (enemy.isAirborneAeroOnGroundMap()
                 || (!priorityTargets.contains(enemy.getId()) && getOwner().getHonorUtil().isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal()))
                 || ignoredTargets.contains(enemy.getId())) {
@@ -300,13 +298,13 @@ public abstract class PathRanker implements IPathRanker {
             }
 
             // If a unit has not moved, assume it will move away from me.
-            int unmovedDistMod = 0;
+            int unmovedDistanceModifier = 0;
             if (enemy.isSelectableThisTurn() && !enemy.isImmobile()) {
-                unmovedDistMod = enemy.getWalkMP();
+                unmovedDistanceModifier = enemy.getWalkMP();
             }
 
             int distance = position.distance(enemy.getPosition());
-            if ((distance + unmovedDistMod) < range) {
+            if (((distance + unmovedDistanceModifier) < range) && ((distance + unmovedDistanceModifier) >= minDistance)) {
                 range = distance;
                 closest = enemy;
             }

@@ -358,9 +358,6 @@ public class AmmoType extends EquipmentType {
     private double ammoRatio;
     private String subMunitionName = "";
 
-    // Short name of Ammo or RS Printing
-    protected String shortName = "";
-
     // short name of base ammo type shared by all munitions
     protected String baseName = "";
 
@@ -483,7 +480,10 @@ public class AmmoType extends EquipmentType {
         if (flag instanceof AmmoTypeFlag) {
             return super.hasFlag(flag);
         } else {
-            LOGGER.warn("Incorrect flag check: make sure to test only AmmoTypeFlags on an AmmoType.");
+            LOGGER.warn("Incorrect flag check: tested {} instead of AmmoTypeFlag",
+                  flag.getClass().getSimpleName(),
+                  new Throwable("Incorrect flag tested " + flag.getClass().getSimpleName() + " instead of " +
+                                      "AmmoTypeFlag"));
             return false;
         }
     }
@@ -2045,20 +2045,6 @@ public class AmmoType extends EquipmentType {
                     .setStaticTechLevel(SimpleTechLevel.STANDARD),
               "230, TM"));
 
-        munitions.add(new MunitionMutator("(Clan) Multi-Purpose",
-              1,
-              Munitions.M_MULTI_PURPOSE,
-              new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
-                    .setUnofficial(false)
-                    .setTechRating(RATING_F)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-                    .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
-                    .setClanApproximate(true, false, false, false, false)
-                    .setPrototypeFactions(F_CGS)
-                    .setProductionFactions(F_CGS)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD),
-              "229, TW"));
-
         // Walk through both the base types and the mutators, and create munition types.
         AmmoType.createMunitions(baSrmAmmos, munitions);
 
@@ -2082,7 +2068,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for clan BA LRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Multi-Purpose",
+        munitions.add(new MunitionMutator("(Clan) Multi-Purpose",
               1,
               Munitions.M_MULTI_PURPOSE,
               new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
@@ -2652,19 +2638,6 @@ public class AmmoType extends EquipmentType {
                     .setPrototypeFactions(F_FS)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED),
               "370, TO"));
-
-        munitions.add(new MunitionMutator("(Clan) Multi-Purpose",
-              1,
-              Munitions.M_MULTI_PURPOSE,
-              new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
-                    .setUnofficial(true)
-                    .setTechRating(RATING_F)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-                    .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
-                    .setClanApproximate(true, false, false, false, false)
-                    .setPrototypeFactions(F_CGS)
-                    .setStaticTechLevel(SimpleTechLevel.STANDARD),
-              "229, TW"));
 
         munitions.add(new MunitionMutator("(Clan) Narc-capable",
               1,
@@ -11718,6 +11691,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Barracuda Ammo";
+        ammo.shortName = "B";
         ammo.setInternalName("Ammo Barracuda");
         ammo.addLookupName("Barracuda Ammo");
         ammo.damagePerShot = 2;
@@ -11749,6 +11723,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "White Shark Ammo";
+        ammo.shortName = "WS";
         ammo.setInternalName("Ammo White Shark");
         ammo.addLookupName("WhiteShark Ammo");
         ammo.addLookupName("White Shark Ammo");
@@ -11782,6 +11757,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "Killer Whale Ammo";
         ammo.setInternalName("Ammo Killer Whale");
+        ammo.shortName = "KW";
         ammo.addLookupName("KillerWhale Ammo");
         ammo.damagePerShot = 4;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
@@ -11813,6 +11789,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Barracuda (Tele-Operated) Ammo";
+        ammo.shortName = "B-T";
         ammo.setInternalName("Ammo Barracuda-T");
         ammo.addLookupName("BarracudaT Ammo");
         ammo.shortName = "Barracuda-T";
@@ -11842,6 +11819,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "White Shark (Tele-Operated) Ammo";
+        ammo.shortName = "WS-T";
         ammo.setInternalName("Ammo White Shark-T");
         ammo.addLookupName("WhiteSharkT Ammo");
         ammo.shortName = "White Shark-T";
@@ -11870,6 +11848,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Killer Whale (Tele-Operated) Ammo";
+        ammo.shortName = "KW-T";
         ammo.setInternalName("Ammo Killer Whale-T");
         ammo.addLookupName("KillerWhaleT Ammo");
         ammo.shortName = "Killer Whale-T";
@@ -11898,6 +11877,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Kraken (Tele-Operated) Ammo";
+        ammo.shortName = "KR-T";
         ammo.setInternalName("Ammo KrakenT");
         ammo.addLookupName("KrakenT Ammo");
         ammo.shortName = "Kraken-T";
@@ -11926,6 +11906,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Kraken Ammo";
+        ammo.shortName = "KR";
         ammo.setInternalName("Ammo Kraken");
         ammo.addLookupName("Kraken Ammo");
         ammo.damagePerShot = 10;
@@ -12214,9 +12195,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Barracuda Ammo";
+        ammo.shortName = "B";
         ammo.setInternalName("Ammo AR10 Barracuda");
         ammo.addLookupName("AR10 Barracuda Ammo");
-        ammo.shortName = "Barracuda";
         ammo.damagePerShot = 2;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -12248,9 +12229,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Killer Whale Ammo";
+        ammo.shortName = "KW";
         ammo.setInternalName("Ammo AR10 Killer Whale");
         ammo.addLookupName("AR10 KillerWhale Ammo");
-        ammo.shortName = "Killer Whale";
         ammo.damagePerShot = 4;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -12281,9 +12262,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 White Shark Ammo";
+        ammo.shortName = "WS";
         ammo.setInternalName("Ammo AR10 White Shark");
         ammo.addLookupName("AR10 WhiteShark Ammo");
-        ammo.shortName = "White Shark";
         ammo.damagePerShot = 3;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -12316,9 +12297,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Barracuda (Tele-Operated) Ammo";
+        ammo.shortName = "B-T";
         ammo.setInternalName("Ammo AR10 Barracuda-T");
         ammo.addLookupName("AR10 BarracudaT Ammo");
-        ammo.shortName = "Barracuda-T";
         ammo.damagePerShot = 2;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -12346,9 +12327,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Killer Whale (Tele-Operated) Ammo";
+        ammo.shortName = "KW-T";
         ammo.setInternalName("Ammo AR10 Killer Whale-T");
         ammo.addLookupName("AR10 KillerWhaleT Ammo");
-        ammo.shortName = "Killer Whale-T";
         ammo.damagePerShot = 4;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -12375,9 +12356,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 White Shark (Tele-Operated) Ammo";
+        ammo.shortName = "WS-T";
         ammo.setInternalName("Ammo AR10 White Shark-T");
         ammo.addLookupName("AR10 WhiteSharkT Ammo");
-        ammo.shortName = "White Shark-T";
         ammo.damagePerShot = 3;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -15212,9 +15193,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Peacemaker Ammo";
+        ammo.shortName = "PM-N";
         ammo.setInternalName("Ammo AR10 Peacemaker");
         ammo.addLookupName("AR10 Peacemaker Ammo");
-        ammo.shortName = "Peacemaker";
         ammo.damagePerShot = 1000;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.tonnage = 50.0;
@@ -15241,7 +15222,6 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Peacemaker Ammo");
         ammo.addLookupName("CLPeacemaker Ammo");
         ammo.addLookupName("Ammo Clan Peacemaker");
-        ammo.shortName = "Peacemaker";
         ammo.damagePerShot = 1000;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
         ammo.tonnage = 50.0;
@@ -15264,9 +15244,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "AR10 Santa Anna Ammo";
+        ammo.shortName = "SA-N";
         ammo.setInternalName("Ammo AR10 Santa Anna");
         ammo.addLookupName("AR10 SantaAnna Ammo");
-        ammo.shortName = "Santa Anna";
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.tonnage = 40.0;
@@ -15665,7 +15645,6 @@ public class AmmoType extends EquipmentType {
             // check for cost
             double cost = base.cost;
             double bv = base.bv;
-
             if (((munition.getAmmoType() == T_LONG_TOM) ||
                        (munition.getAmmoType() == T_LONG_TOM_CANNON) ||
                        (munition.getAmmoType() == T_SNIPER) ||
@@ -15884,24 +15863,21 @@ public class AmmoType extends EquipmentType {
                 cost *= 2;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) ||
-                       (munition.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                       (munition.getAmmoType() == AmmoType.T_MML) ||
+            if (((munition.getAmmoType() == AmmoType.T_MML) ||
+                       (munition.getAmmoType() == AmmoType.T_LRM) ||
                        (munition.getAmmoType() == AmmoType.T_SRM) ||
-                       (munition.getAmmoType() == AmmoType.T_SRM_IMP) ||
-                       (munition.getAmmoType() == AmmoType.T_NLRM)) &&
-                      ((munition.getMunitionType().contains(Munitions.M_DEAD_FIRE)))) {
-                cost *= 0.6;
-                // TODO - DEAD-FIRE AMMO needs BV which is not a constant but launcher Ammo.
+                       (munition.getAmmoType() == AmmoType.T_SRM_IMP)) &&
+                      (munition.getMunitionType().contains(Munitions.M_ARTEMIS_V_CAPABLE))) {
+                cost *= 2;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_MML) ||
+                       (munition.getAmmoType() == AmmoType.T_LRM) ||
                        (munition.getAmmoType() == AmmoType.T_SRM) ||
                        (munition.getAmmoType() == AmmoType.T_SRM_IMP)) &&
-                      ((munition.getMunitionType().contains(Munitions.M_TANDEM_CHARGE)) ||
-                             (munition.getMunitionType().contains(Munitions.M_ARTEMIS_V_CAPABLE)))) {
+                      ((munition.getMunitionType().contains(Munitions.M_TANDEM_CHARGE)))) {
                 cost *= 5;
-                bv *= 2;
+                bv *= 2.0;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) ||
@@ -15917,29 +15893,32 @@ public class AmmoType extends EquipmentType {
             }
 
             if (munition.getMunitionType().contains(Munitions.M_DEAD_FIRE)) {
+                cost *= 0.6;
                 if (munition.getAmmoType() == AmmoType.T_MML) {
                     if (base.rackSize == 3) {
-                        bv = base.hasFlag(F_MML_LRM) ? 3 : 4;
+                        bv = 6;
                     } else if (base.rackSize == 5) {
-                        bv = base.hasFlag(F_MML_LRM) ? 4 : 6;
+                        bv = base.hasFlag(F_MML_LRM) ? 9 : 8;
                     } else if (base.rackSize == 7) {
-                        bv = base.hasFlag(F_MML_LRM) ? 6 : 10;
+                        bv = base.hasFlag(F_MML_LRM) ? 12 : 11;
                     } else if (base.rackSize == 9) {
-                        bv = base.hasFlag(F_MML_LRM) ? 8 : 14;
+                        bv = base.hasFlag(F_MML_LRM) ? 17 : 15;
                     }
                 } else {
                     if (base.rackSize == 2) {
-                        bv = 2;
-                    } else if (base.rackSize == 4) {
                         bv = 4;
+                    } else if (base.rackSize == 4) {
+                        bv = 7;
+                    } else if (base.rackSize == 5) {
+                        bv = 9;
                     } else if (base.rackSize == 6) {
-                        bv = 5;
+                        bv = 10;
                     } else if (base.rackSize == 10) {
-                        bv = 16;
+                        bv = 17;
                     } else if (base.rackSize == 15) {
-                        bv = 27;
+                        bv = 26;
                     } else if (base.rackSize == 20) {
-                        bv = 36;
+                        bv = 35;
                     }
                 }
             }

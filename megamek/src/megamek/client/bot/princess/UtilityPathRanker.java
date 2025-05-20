@@ -35,6 +35,7 @@ import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.UnitRole;
 import megamek.common.annotations.Nullable;
+import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;

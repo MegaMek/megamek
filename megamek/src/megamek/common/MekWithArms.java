@@ -18,12 +18,13 @@
  */
 package megamek.common;
 
-import megamek.common.equipment.MiscMounted;
-import megamek.common.options.OptionsConstants;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import megamek.common.equipment.MiscMounted;
+import megamek.common.moves.MoveStep;
+import megamek.common.options.OptionsConstants;
 
 /**
  * This class acts as a superclass to BipedMek and TripodMek to unify code that is shared between them, most of it arm-related as both have
@@ -85,7 +86,7 @@ public abstract class MekWithArms extends Mek {
             MiscType type = m.getType();
             if (((m.getLocation() == Mek.LOC_LARM) || (m.getLocation() == Mek.LOC_RARM))
                 && type.isShield()
-                && m.isInoperable()
+                && !m.isInoperable()
                 && (getInternal(m.getLocation()) > 0)) {
                 for (int slot = 0; slot < getNumberOfCriticals(m.getLocation()); slot++) {
                     CriticalSlot cs = getCritical(m.getLocation(), slot);

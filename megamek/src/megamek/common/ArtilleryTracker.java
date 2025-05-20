@@ -1,22 +1,43 @@
 /*
  * MegaMek
  * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022 - 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -67,6 +88,23 @@ public class ArtilleryTracker implements Serializable {
      */
     public int getSize() {
         return weapons.size();
+    }
+
+    /**
+     * Remove all autohit mods from hexes that were hit previously; used when artillery unit moves.
+     * This _should_ be thread-safe.
+     * Only autohit mods are lost when an artillery unit spends MPs (TO:AR pg. 150)
+     */
+    public void clearHitHexMods() {
+        for (Vector<ArtilleryModifier> modVector : weapons.values()) {
+            List<ArtilleryModifier> elementsToBeRemoved = new ArrayList<>();
+            for (ArtilleryModifier mod : modVector) {
+                if (mod.getModifier() == TargetRoll.AUTOMATIC_SUCCESS) {
+                    elementsToBeRemoved.add(mod);
+                }
+            }
+            modVector.removeAll(elementsToBeRemoved);
+        }
     }
 
     public boolean weaponInList(Mounted<?> mounted) {

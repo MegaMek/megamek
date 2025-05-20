@@ -38,7 +38,7 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
-import megamek.common.MoveStep;
+import megamek.common.moves.MoveStep;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -172,7 +172,7 @@ public class FovHighlightingAndDarkening {
 
             if (dist == 0) {
                 this.boardView1.drawHexBorder(boardGraph, p, selected_color, pad, lw);
-            } else if (dist < max_dist) {
+            } else if (dist <= max_dist) {
                 LosEffects los = getCachedLosEffects(src, c);
                 if (null != this.boardView1.getSelectedEntity()) {
                     if (los == null) {

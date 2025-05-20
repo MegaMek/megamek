@@ -280,12 +280,16 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
-        if (attackerElevation < targetHeight) {
-            toHit.setHitTable(ToHitData.HIT_KICK);
-        } else if (target.getHeight() > 0) {
+        if(isConvertedQuadVee(target, game)){
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else {
-            toHit.setHitTable(ToHitData.HIT_NORMAL);
+            if (attackerElevation < targetHeight) {
+                toHit.setHitTable(ToHitData.HIT_KICK);
+            } else if (target.getHeight() > 0) {
+                toHit.setHitTable(ToHitData.HIT_PUNCH);
+            } else {
+                toHit.setHitTable(ToHitData.HIT_NORMAL);
+            }
         }
 
         // What to do with grounded dropships? Awaiting rules clarification, but

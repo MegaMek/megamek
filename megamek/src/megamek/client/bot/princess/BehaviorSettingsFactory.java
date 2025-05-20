@@ -317,6 +317,9 @@ public class BehaviorSettingsFactory {
             berserkBehavior.setBraveryIndex(9);
             berserkBehavior.setAntiCrowding(0);
             berserkBehavior.setFavorHigherTMM(0);
+            berserkBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
+            berserkBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
+            berserkBehavior.setExclusiveHerding(false);
             return berserkBehavior;
         } catch (Exception e) {
             logger.error(e, "Berserker Behavior Exception");
@@ -357,6 +360,9 @@ public class BehaviorSettingsFactory {
             cowardlyBehavior.setBraveryIndex(2);
             cowardlyBehavior.setAntiCrowding(0);
             cowardlyBehavior.setFavorHigherTMM(0);
+            cowardlyBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
+            cowardlyBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
+            cowardlyBehavior.setExclusiveHerding(false);
             return cowardlyBehavior;
         } catch (Exception e) {
             logger.error(e, "Cowardly Behavior Exception");
@@ -398,6 +404,9 @@ public class BehaviorSettingsFactory {
             escapeBehavior.setBraveryIndex(2);
             escapeBehavior.setAntiCrowding(0);
             escapeBehavior.setFavorHigherTMM(0);
+            escapeBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
+            escapeBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
+            escapeBehavior.setExclusiveHerding(false);
             return escapeBehavior;
         } catch (Exception e) {
             logger.error(e, "Escape Behavior Exception");
@@ -439,6 +448,9 @@ public class BehaviorSettingsFactory {
             ruthlessBehavior.setBraveryIndex(7);
             ruthlessBehavior.setAntiCrowding(10);
             ruthlessBehavior.setFavorHigherTMM(8);
+            ruthlessBehavior.setNumberOfEnemiesToConsiderFacing(2);
+            ruthlessBehavior.setAllowFacingTolerance(0);
+            ruthlessBehavior.setExclusiveHerding(true);
             return ruthlessBehavior;
         } catch (Exception e) {
             logger.error(e, "Ruthless Behavior Exception");
@@ -481,6 +493,9 @@ public class BehaviorSettingsFactory {
             pirateBehavior.setAntiCrowding(5);
             pirateBehavior.setFavorHigherTMM(5);
             pirateBehavior.setIAmAPirate(true);
+            pirateBehavior.setNumberOfEnemiesToConsiderFacing(1);
+            pirateBehavior.setAllowFacingTolerance(2);
+            pirateBehavior.setExclusiveHerding(true);
             return pirateBehavior;
         } catch (Exception e) {
             logger.error(e, "Pirate Behavior Exception");
@@ -518,6 +533,7 @@ public class BehaviorSettingsFactory {
             convoyBehavior.setIgnoreDamageOutput(true);
             convoyBehavior.setForcedWithdrawal(true);
             convoyBehavior.setAutoFlee(true);
+            convoyBehavior.setExclusiveHerding(true);
 
             convoyBehavior.setFallShameIndex(6);
             convoyBehavior.setHyperAggressionIndex(3);
@@ -526,6 +542,8 @@ public class BehaviorSettingsFactory {
             convoyBehavior.setHerdMentalityIndex(5);
             convoyBehavior.setAntiCrowding(5);
             convoyBehavior.setFavorHigherTMM(10);
+            convoyBehavior.setNumberOfEnemiesToConsiderFacing(0);
+            convoyBehavior.setAllowFacingTolerance(2);
 
             return convoyBehavior;
         } catch (Exception e) {
@@ -571,6 +589,9 @@ public class BehaviorSettingsFactory {
             defaultBehavior.setBraveryIndex(5);
             defaultBehavior.setAntiCrowding(0);
             defaultBehavior.setFavorHigherTMM(0);
+            defaultBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
+            defaultBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
+            defaultBehavior.setExclusiveHerding(false);
             return defaultBehavior;
         } catch (Exception e) {
             logger.error(e, "Default Behavior Exception");

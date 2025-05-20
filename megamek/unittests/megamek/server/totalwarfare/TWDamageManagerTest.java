@@ -7,6 +7,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.Game;
 import megamek.common.HitData;
+import megamek.common.IArmorState;
 import megamek.common.MekFileParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -169,4 +170,94 @@ class TWDamageManagerTest {
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 
+    @Test
+    void damageMekImpactResistantArmorNoPSR() throws FileNotFoundException {
+        // Takes 2 damage per 3 full damage dealt
+        String unit = "Storm Raider STM-R4.mtf";
+        BipedMek mek = (BipedMek) loadEntityFromFile(unit);
+
+        // Validate starting armor
+        assertEquals(17, mek.getArmor(BipedMek.LOC_CT));
+
+        // Deal "24" points of damage (should fill 16 circles)
+        HitData hit = new HitData(BipedMek.LOC_CT);
+        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 24);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(1, mek.getArmor(BipedMek.LOC_CT));
+        assertFalse(gameMan.checkForPSRFromDamage(mek));
+
+        // Show old system incorrectly causing a PSR
+        BipedMek mek2 = (BipedMek) loadEntityFromFile(unit);
+        HitData hit2 = new HitData(BipedMek.LOC_CT);
+        hit2.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+        DamageInfo damageInfo2 = new DamageInfo(mek2, hit2, 24);
+        oldMan.damageEntity(damageInfo2);
+        assertTrue(gameMan.checkForPSRFromDamage(mek2));
+    }
+
+    @Test
+    void damageMekImpactResistantArmorWithPSR() throws FileNotFoundException {
+        // Takes 2 damage per 3 full damage dealt
+        String unit = "Storm Raider STM-R4.mtf";
+        BipedMek mek = (BipedMek) loadEntityFromFile(unit);
+        mek.setGame(game);
+
+        // Validate starting armor
+        assertEquals(17, mek.getArmor(BipedMek.LOC_CT));
+
+        // Deal "30" points of damage (should fill 20 circles)
+        HitData hit = new HitData(BipedMek.LOC_CT);
+        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 30);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(IArmorState.ARMOR_DESTROYED, mek.getArmor(BipedMek.LOC_CT));
+        assertTrue(gameMan.checkForPSRFromDamage(mek));
+    }
+
+    @Test
+    void damageMekFerroLamellorArmorNoPSR() throws FileNotFoundException {
+        String unit = "Charger C.mtf";
+        BipedMek mek = (BipedMek) loadEntityFromFile(unit);
+
+        // Validate starting armor
+        assertEquals(40, mek.getArmor(BipedMek.LOC_CT));
+
+        // Deal "24" points of damage (should fill 19? circles)
+        HitData hit = new HitData(BipedMek.LOC_CT);
+        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 24);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(21, mek.getArmor(BipedMek.LOC_CT));
+        assertFalse(gameMan.checkForPSRFromDamage(mek));
+
+        // Show old system incorrectly causing a PSR
+        BipedMek mek2 = (BipedMek) loadEntityFromFile(unit);
+        HitData hit2 = new HitData(BipedMek.LOC_CT);
+        hit2.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+        DamageInfo damageInfo2 = new DamageInfo(mek2, hit2, 24);
+        oldMan.damageEntity(damageInfo2);
+        assertTrue(gameMan.checkForPSRFromDamage(mek2));
+    }
+
+    @Test
+    void damageMekFerroLamellorArmorWithPSR() throws FileNotFoundException {
+        String unit = "Charger C.mtf";
+        BipedMek mek = (BipedMek) loadEntityFromFile(unit);
+
+        // Validate starting armor
+        assertEquals(40, mek.getArmor(BipedMek.LOC_CT));
+
+        // Deal "25" points of damage (should fill 20 circles)
+        HitData hit = new HitData(BipedMek.LOC_CT);
+        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 25);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(20, mek.getArmor(BipedMek.LOC_CT));
+        assertTrue(gameMan.checkForPSRFromDamage(mek));
+    }
 }

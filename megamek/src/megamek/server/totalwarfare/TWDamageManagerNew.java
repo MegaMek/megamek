@@ -2534,9 +2534,9 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 vDesc.addElement(r);
             } else if (impactArmor
                              && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
-                tmpDamageHold = damage;
-                damage -= (int) Math.ceil((double) damage / 3);
-                damage = Math.max(1, damage);
+                // As long as there is even 1 point of armor in this location, reduce _all_ damage
+                // to 2 points for every whole 3 points applied (IntOps pg 88).
+                damage = Math.max(1, (2 * (damage / 3)) + (damage % 3));
                 r = new Report(6089);
                 r.subject = te_n;
                 r.indent(3);

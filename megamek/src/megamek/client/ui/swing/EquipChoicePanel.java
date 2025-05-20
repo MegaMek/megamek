@@ -576,11 +576,13 @@ public class EquipChoicePanel extends JPanel {
                               (at.getAmmoType() == AmmoType.T_IATM))) {
                 continue;
             }
-            boolean ignoreClanAmmoLimits = gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS);
+
+            boolean considerAllAmmoMixedTech = gameOpts.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH);
             boolean isClan = entity.isClan();
-            boolean isMixedTech = entity.isMixedTech();
-            boolean canUseNonClanAmmo = !isClan || ignoreClanAmmoLimits;
-            boolean unitCanUseClanAmmo = isClan || isMixedTech;
+            boolean isIs = !isClan;
+            boolean canUseISAmmo = isIs || considerAllAmmoMixedTech;
+            boolean canUseClanAmmo = isClan || considerAllAmmoMixedTech;
+
             for (AmmoType atCheck : vAllTypes) {
                 if (entity.hasETypeFlag(Entity.ETYPE_AERO) &&
                           !atCheck.canAeroUse(game.getOptions()
@@ -596,8 +598,10 @@ public class EquipChoicePanel extends JPanel {
                           entity.isMixedTech(),
                           game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT));
                 } else {
-                    boolean isClanTech = atCheck.isClan();
-                    boolean canUseThisAmmo = (canUseNonClanAmmo && !isClanTech) || (unitCanUseClanAmmo && isClanTech);
+                    // This is the way MegaMek is intended to use tech levels.
+                    boolean isClanAccessibleTech = atCheck.isClan() || atCheck.isMixedTech();
+                    boolean isIsAccessibleTech = !atCheck.isClan() || atCheck.isMixedTech();
+                    boolean canUseThisAmmo = (canUseISAmmo && isIsAccessibleTech) || (canUseClanAmmo && isClanAccessibleTech);
                     bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal() && canUseThisAmmo;
                 }
 
@@ -605,7 +609,7 @@ public class EquipChoicePanel extends JPanel {
                 // munition type gets removed here for reasons unknown.
                 EnumSet<AmmoType.Munitions> munitionsTypes = atCheck.getMunitionType();
                 munitionsTypes.remove(AmmoType.Munitions.M_INCENDIARY_LRM);
-                if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS) &&
+                if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH) &&
                           entity.isClan() &&
                           atCheck.notAllowedByClanRules()) {
                     bTechMatch = false;

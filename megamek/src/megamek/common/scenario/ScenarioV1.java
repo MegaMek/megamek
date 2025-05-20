@@ -356,7 +356,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                   TechConstants.getGameTechLevel(game, entity.isClan()));
             return null;
         } else if (entity.isClan() &&
-                         !game.getOptions().booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS)) {
+                         !game.getOptions().booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH)) {
             // Check for clan weapon restrictions
             if (newAmmoType.notAllowedByClanRules()) {
                 LOGGER.warn("Ammo type {} not allowed by Clan rules", newAmmoType.getName());

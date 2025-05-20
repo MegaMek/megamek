@@ -2123,6 +2123,14 @@ public class AmmoType extends EquipmentType {
         return EnumSet.copyOf(munitionType);
     }
 
+    /**
+     * @return true if this munition type is not allowed by clan rules
+     * @deprecated since 0.50.06, the rules that don't allow some ammo for clan units
+     * should be based on tech access/availability, not a hardcoded list of ammo types.
+     * As soon as the tech rules for munition variations are working completely then
+     * this will be removed.
+     */
+    @Deprecated(since="0.50.06", forRemoval = true)
     public boolean notAllowedByClanRules() {
         return (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED) ||
                       (munitionType.contains(AmmoType.Munitions.M_SWARM_I)) ||
@@ -2268,7 +2276,6 @@ public class AmmoType extends EquipmentType {
         int techLevelYear = mounted.getEntity().getTechLevelYear();
         int techLevel = mounted.getType().getTechLevel(techLevelYear);
         boolean mixedTech = mounted.getEntity().isMixedTech();
-
         AmmoType ammoType;
         for (int i = 0; i < vAmmo.size(); i++) {
             ammoType = vAmmo.elementAt(i);

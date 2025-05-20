@@ -55,7 +55,8 @@ import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.AmmoType.Munitions;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDAndList;
@@ -71,6 +72,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.internationalization.I18n;
+import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.IBasicOption;
@@ -10647,6 +10649,40 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
+    void resolveBoobyTraps() {
+        Vector<Report> vDesc = new Vector<>();
+        Report r;
+        for (Entity e : game.getEntitiesVector()) {
+            if (e.hasBoobyTrap() &&
+                      e.getBoobyTrap().curMode().isArmed() &&
+                      e.isBoobyTrapInitiated()) {
+                int damage = e.getBoobyTrapDamage();
+                r = new Report(11000, Report.PUBLIC);
+                r.subject = e.getId();
+                r.addDesc(e);
+                r.indent(2);
+                r.add(damage);
+                vDesc.add(r);
+                if (e instanceof Mek mek) {
+                    // considers that you will always eject
+                    if (mek.hasEjectSeat()) {
+                        vDesc.addAll(ejectEntity(e, true));
+                    }
+                }
+                e.setSelfDestructedThisTurn(true);
+                e.setBoobyTrapInitiated(false);
+                doBoobyTrapExplosion(damage, e.getPosition(), vDesc, null);
+                Report.addNewline(vDesc);
+                r = new Report(5410, Report.PUBLIC);
+                r.subject = e.getId();
+                r.indent(2);
+                Report.addNewline(vDesc);
+                vDesc.add(r);
+            }
+        }
+        addReport(vDesc);
+    }
+
     /*
      * Called during the weapons firing phase to initiate self destruction.
      */
@@ -20555,11 +20591,19 @@ public class TWGameManager extends AbstractGameManager {
                 r.subject = en.getId();
                 r.indent(2);
                 vDesc.add(r);
-
             }
         }
 
         return didExplode;
+    }
+
+    /**
+     * Extract explosion functionality for generalized explosions in areas.
+     */
+    public void doBoobyTrapExplosion(int engineRating, Coords position, Vector<Report> vDesc,
+          Vector<Integer> vUnits) {
+        int[] myDamages = { engineRating, (engineRating / 2), (engineRating / 4), (engineRating / 8) };
+        doExplosion(myDamages, false, position, false, vDesc, vUnits, 5, -1, true, true);
     }
 
     /**
@@ -27328,6 +27372,17 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         try {
+            if ((m.getType() instanceof MiscType miscType) &&
+                      miscType.isBoobyTrap() &&
+                      mode != 0 &&
+                      e.hasBoobyTrap()) {
+                sendServerChat("There is no turning back now...");
+                e.setBoobyTrapInitiated(true);
+                m.setMode(mode);
+                m.setModeSwitchable(false);
+                entityUpdate(e.getId());
+            }
+
             // Check for BA dumping body mounted missile launchers
             if ((e instanceof BattleArmor) &&
                       (!m.isMissing()) &&
@@ -27366,7 +27421,6 @@ public class TWGameManager extends AbstractGameManager {
                         logger.error(message);
                         sendServerChat(message);
                     }
-
                 }
             }
         } catch (Exception ex) {
@@ -30574,6 +30628,9 @@ public class TWGameManager extends AbstractGameManager {
         }
         if (autoEject) {
             rollTarget.addModifier(1, "automatic ejection");
+        }
+        if (entity.isBoobyTrapInitiated()) {
+            rollTarget.addModifier(4, "Booby trap activated");
         }
         // Per SO p27, Large Craft roll too, to see how many escape pods launch successfully
         if (entity instanceof IAero aeroEntity) {

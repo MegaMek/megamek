@@ -26,8 +26,8 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 
 import megamek.common.Entity;
-import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.utils.MockGenerators;
 
 /**

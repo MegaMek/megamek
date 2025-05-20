@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -638,12 +639,8 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
-                if ((atCheck.getAmmoType() == AmmoType.T_LRM) && entity.isBattleArmor() &&
-                          !atCheck.hasFlag(AmmoTypeFlag.F_BATTLEARMOR)) {
-                    continue;
-                }
-
-                if ((atCheck.getAmmoType() == AmmoType.T_SRM) && entity.isBattleArmor() &&
+                if (Set.of(AmmoType.T_LRM, AmmoType.T_SRM).contains(atCheck.getAmmoType()) &&
+                          entity.isBattleArmor() &&
                           !atCheck.hasFlag(AmmoTypeFlag.F_BATTLEARMOR)) {
                     continue;
                 }

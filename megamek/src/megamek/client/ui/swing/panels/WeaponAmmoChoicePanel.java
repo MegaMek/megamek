@@ -109,10 +109,10 @@ public class WeaponAmmoChoicePanel extends JPanel {
 
         int currentIndex = 0;
         for (Mounted<?> ammoBin : matchingAmmoBins) {
-            String ammoBinName = ((ammoBin.isOneShotAmmo() || ammoBin.isOneShot() || (ammoBin.getLocation() == -1))  ?
-                                        "[Internal] " :
-                "(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") " ) + ammoBin.getName();
-
+            boolean isInternal = ammoBin.isOneShotAmmo() || ammoBin.isOneShot() || (ammoBin.getLocation() == -1);
+            String prefix = isInternal ? "(Internal) " :
+                                  "(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") ";
+            String ammoBinName = prefix + ammoBin.getName();
             comboAmmoBins.addItem(ammoBinName);
 
             if (weaponMounted.getLinked() == ammoBin) {

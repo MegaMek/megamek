@@ -91,6 +91,6 @@ class MoveCommandTest {
 
     @Test
     void testDefaultHotKeyString() {
-        assertEquals("<BR>", MoveCommand.MOVE_GET_UP.getHotKeyDesc());
+        assertEquals("<BR>U", MoveCommand.MOVE_GET_UP.getHotKeyDesc());
     }
 }

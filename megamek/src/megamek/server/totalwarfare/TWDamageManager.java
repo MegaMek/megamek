@@ -66,6 +66,23 @@ public class TWDamageManager implements IDamageManager {
         );
     }
 
+    /**
+     * Deals the listed damage to an entity. Returns a vector of Reports for the phase report
+     *
+     * @param te            the target entity
+     * @param hit           the hit data for the location hit
+     * @param damage        the damage to apply
+     * @param ammoExplosion ammo explosion type damage is applied directly to the IS, hurts the pilot, causes
+     *                      auto-ejects, and can blow the unit to smithereens
+     * @param damageType    The DamageType of the attack.
+     * @param damageIS      Should the target location's internal structure be damaged directly?
+     * @param areaSatArty   Is the damage from an area saturating artillery attack?
+     * @param throughFront  Is the damage coming through the hex the unit is facing?
+     * @param underWater    Is the damage coming from an underwater attack?
+     * @param nukeS2S       is this a ship-to-ship nuke?
+     *
+     * @return a <code>Vector</code> of <code>Report</code>s
+     */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType damageType,
           boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S,
           Vector<Report> vDesc) {
@@ -291,7 +308,6 @@ public class TWDamageManager implements IDamageManager {
         }
 
         // check for critical hit/miss vs. a BA
-        // TODO: match 1579
         if ((crits > 0) && (te instanceof BattleArmor)) {
             // possible critical miss if the rerolled location isn't alive
             if ((hit.getLocation() >= te.locations()) || (te.getInternal(hit.getLocation()) <= 0)) {
@@ -984,6 +1000,7 @@ public class TWDamageManager implements IDamageManager {
                           (hit.getLocation() == VTOL.LOC_ROTOR) &&
                           te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) &&
                           (damage > 0)) {
+                    r = new Report(6081);
                     r.subject = te_n;
                     r.indent(2);
                     vDesc.addElement(r);

@@ -59,13 +59,6 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             return vDesc;
         }
 
-        // Battle Armor takes full damage to each trooper from area-effect.
-        if (areaSatArty && (te instanceof BattleArmor)) {
-            damageMultipleBAs(vDesc, te, hit, damage, ammoExplosion, damageType, damageIS,
-                  areaSatArty, throughFront, underWater, nukeS2S);
-            return vDesc;
-        }
-
         int damage_orig = damage;
 
         // show Locations which have rerolled with Edge
@@ -100,6 +93,13 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         // Store information to pass around
         ModsInfo mods = createDamageModifiers(te, hit, damageIS, damage_orig, crits);
         mods.critBonus = calcCritBonus(game.getEntity(hit.getAttackerId()), te, damage_orig, areaSatArty);
+
+        // Battle Armor takes full damage to each trooper from area-effect.
+        if (areaSatArty && (te instanceof BattleArmor)) {
+            damageMultipleBAs(vDesc, te, hit, damage, ammoExplosion, damageType, damageIS,
+                  areaSatArty, throughFront, underWater, nukeS2S, mods);
+            return vDesc;
+        }
 
         // Some "hits" on a ProtoMek are actually misses.
         if ((te instanceof ProtoMek proto) && (hit.getLocation() == ProtoMek.LOC_NMISS)) {
@@ -1557,17 +1557,19 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
     public void damageMultipleBAs(Vector<Report> vDesc, Entity te, HitData hit, int damage,
           boolean ammoExplosion, DamageType damageType, boolean damageIS,
           boolean areaSatArty, boolean throughFront, boolean underWater,
-          boolean nukeS2S) {
+          boolean nukeS2S, ModsInfo mods) {
+        BattleArmor battleArmor = (BattleArmor) te;
         Report r;
         r = new Report(6044);
         r.subject = te.getId();
         r.indent(2);
         vDesc.add(r);
-        for (int i = 0; i < ((BattleArmor) te).getTroopers(); i++) {
+        for (int i = 0; i < (battleArmor).getTroopers(); i++) {
             hit.setLocation(BattleArmor.LOC_TROOPER_1 + i);
-            if (te.getInternal(hit) > 0) {
-                vDesc.addAll(damageEntity(te, hit, damage, ammoExplosion, damageType,
-                      damageIS, false, throughFront, underWater, nukeS2S, vDesc));
+            if (battleArmor.getInternal(hit) > 0) {
+                // damageBA writes to vDesc on its own.
+                damageBA(vDesc, battleArmor, hit, damage, ammoExplosion, damageType,
+                      areaSatArty, throughFront, underWater, nukeS2S, mods);
             }
         }
     }

@@ -5,6 +5,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.DamageType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,6 +58,13 @@ class TWDamageManagerTest {
         return e;
     }
 
+    BattleArmor loadBA(String filename) throws FileNotFoundException {
+        BattleArmor battleArmor = (BattleArmor) loadEntityFromFile(filename);
+        battleArmor.setId(game.getNextEntityId());
+        game.addEntity(battleArmor);
+        return battleArmor;
+    }
+
     BipedMek loadMek(String filename) throws FileNotFoundException {
         BipedMek mek = (BipedMek) loadEntityFromFile(filename);
         mek.setId(game.getNextEntityId());
@@ -74,7 +82,7 @@ class TWDamageManagerTest {
     @Test
     void damageBAComparison() throws FileNotFoundException {
         String unit = "Elemental BA [Laser] (Sqd5).blk";
-        BattleArmor battleArmor = (BattleArmor) loadEntityFromFile(unit);
+        BattleArmor battleArmor = loadBA(unit);
 
         // Validate starting armor
         assertEquals(10, battleArmor.getArmor(BattleArmor.LOC_TROOPER_1));
@@ -96,6 +104,26 @@ class TWDamageManagerTest {
         damageInfo = new DamageInfo(battleArmor2, hit, 5);
         newMan.damageEntity(damageInfo);
         assertEquals(5, battleArmor2.getArmor(BattleArmor.LOC_TROOPER_1));
+    }
+
+    @Test
+    void damageReactiveArmorBA() throws FileNotFoundException {
+        String unit = "Black Wolf BA (ER Pulse) (Sqd5).blk";
+        BattleArmor battleArmor = loadBA(unit);
+
+        // Validate starting armor
+        assertEquals(11, battleArmor.getArmor(BattleArmor.LOC_TROOPER_1));
+
+        // Deal "20" points of damage (should fill 10 circles)
+        HitData hit = new HitData(BattleArmor.LOC_TROOPER_1);
+        // All AmmoWeaponHandlers (including artillery) use Ballistic damage type
+        hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
+        // Set areaSatArty so all suits take damage
+        DamageInfo damageInfo = new DamageInfo(battleArmor, hit, 20, false, DamageType.NONE,
+              false, true);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(1, battleArmor.getArmor(BattleArmor.LOC_TROOPER_1));
     }
 
     @Test

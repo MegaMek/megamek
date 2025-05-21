@@ -203,7 +203,6 @@ public class BulldozerMovePath extends MovePath {
                 movementMode == EntityMovementMode.QUAD;
 
         double damageNeeded = 0;
-        Building building = board.getBuildingAt(finalCoords);
 
         // tracked tanks can move through light woods, rough and rubble, so any terrain
         // that can be reduced to that
@@ -219,8 +218,8 @@ public class BulldozerMovePath extends MovePath {
                         Terrains.getTerrainFactor(Terrains.WOODS, 1);
             }
 
-            if (destHex.containsTerrain(Terrains.BLDG_CF) && building != null) {
-                damageNeeded += building.getCurrentCF(finalCoords);
+            if (destHex.containsTerrain(Terrains.BLDG_CF)) {
+                damageNeeded += board.getBuildingAt(finalCoords).getCurrentCF(finalCoords);
             }
         }
 
@@ -237,8 +236,8 @@ public class BulldozerMovePath extends MovePath {
                         Terrains.getTerrainFactor(Terrains.WOODS, 2);
             }
 
-            if (destHex.containsTerrain(Terrains.BLDG_CF) && building != null) {
-                damageNeeded += building.getCurrentCF(finalCoords);
+            if (destHex.containsTerrain(Terrains.BLDG_CF)) {
+                damageNeeded += board.getBuildingAt(finalCoords).getCurrentCF(finalCoords);
             }
         }
 
@@ -254,8 +253,8 @@ public class BulldozerMovePath extends MovePath {
                 damageNeeded += Terrains.getTerrainFactor(Terrains.WOODS, destHex.terrainLevel(Terrains.WOODS));
             }
 
-            if (destHex.containsTerrain(Terrains.BLDG_CF) && building != null) {
-                damageNeeded += building.getCurrentCF(finalCoords);
+            if (destHex.containsTerrain(Terrains.BLDG_CF)) {
+                damageNeeded += board.getBuildingAt(finalCoords).getCurrentCF(finalCoords);
             }
         }
 

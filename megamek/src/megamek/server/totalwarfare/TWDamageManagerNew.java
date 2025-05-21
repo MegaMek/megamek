@@ -17,7 +17,6 @@ import java.util.Vector;
 public class TWDamageManagerNew extends TWDamageManager implements IDamageManager {
     private static final MMLogger logger = MMLogger.create(TWDamageManagerNew.class);
 
-
     public TWDamageManagerNew() {
         super();
     }
@@ -30,6 +29,22 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         super(manager, game);
     }
 
+    /**
+     * Top-level damage function; calls specialized functions to deal damage to specific unit types.
+     *
+     * @param te            Entity being damaged
+     * @param hit           HitData recording aspects of the incoming damage
+     * @param damage        Actual amount of incoming damage
+     * @param ammoExplosion Whether damage was caused by an ammo explosion
+     * @param damageType    Type of damage, mainly used for specialized armor
+     * @param damageIS      Whether damage is going straight to internal structure
+     * @param areaSatArty   Whether damage is caused by AE attack
+     * @param throughFront  Through front arc or no, for some specialized armors
+     * @param underWater    Whether damage is being dealt underwater, for breach check
+     * @param nukeS2S       Whether damage is from a nuclear weapon
+     * @param vDesc         Vector of Reports containing prior reports; usually modded and returned
+     * @return
+     */
     @Override
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType damageType,
           boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S,
@@ -230,7 +245,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
 
         while (damage > 0) {
             // Apply damage to armor
-            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, modsMap);
 
             // is there damage remaining?
             if (damage > 0) {
@@ -424,9 +439,6 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         boolean autoEject = false;
         boolean damageIS = (boolean) modsMap.get("damageIS");
 
-        // save EI status, in case sensors crit destroys it
-        final boolean eiStatus = te.hasActiveEiCockpit();
-
         if (ammoExplosion) {
             if (te.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                            || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
@@ -605,7 +617,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             }
 
             // Apply damage to armor
-            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, modsMap);
 
             // Apply CASE II first
             damage = applyCASEIIDamageReduction(te, hit, damage, ammoExplosion, vDesc);
@@ -960,15 +972,12 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
           boolean nukeS2S, Map<String, Object> modsMap) {
         int te_n = te.getId();
         Report r;
-        boolean autoEject = false;
         boolean damageIS = (boolean) modsMap.get("damageIS");
-        final boolean eiStatus = te.hasActiveEiCockpit();
 
         if (ammoExplosion) {
             if (te.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                            || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                                      && te.isCondEjectAmmo()))) {
-                autoEject = true;
                 vDesc.addAll(manager.ejectEntity(te, true));
             }
         }
@@ -977,12 +986,13 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         boolean critSI = false;
         boolean critThresh = false;
 
-        // get the relevant damage for damage thresholding
-        int threshDamage = damage;
+        // save the relevant damage for damage thresholding
+        int damageThisAttack = te.damageThisPhase;
+
         // weapon groups only get the damage of one weapon
         if ((hit.getSingleAV() > -1)
                   && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
-            threshDamage = hit.getSingleAV();
+            damage = hit.getSingleAV();
         }
 
         // is this capital-scale damage
@@ -993,15 +1003,12 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                   && (!te.isCapitalScale() || game.getOptions().booleanOption(
               OptionsConstants.ADVAERORULES_AERO_SANITY))) {
             damage = 10 * damage;
-            threshDamage = 10 * threshDamage;
         }
         if (!isCapital && te.isCapitalScale()
                   && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage = (int) Math.round(damage / 10.0);
-            threshDamage = (int) Math.round(threshDamage / 10.0);
         }
         int damage_orig = damage;
-        HitData nextHit = null;
 
         damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, modsMap);
 
@@ -1033,12 +1040,6 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                         mAmmo.setHit(true);
                     }
                 }
-            }
-
-            // chance of a critical if damage greater than threshold
-            if ((threshDamage > te.getThresh(hit.getLocation()))) {
-                critThresh = true;
-                te.setCritThresh(true);
             }
 
             // Report this either way
@@ -1092,7 +1093,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                       critSI, ammoExplosion, nukeS2S);
             }
 
-            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, modsMap);
 
             if (damage > 0) {
                 // if this is an Aero then I need to apply internal damage
@@ -1216,11 +1217,19 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                         manager.creditKill(a, game.getEntity(hit.getAttackerId()));
                     }
                 }
-                manager.checkAeroCrits(vDesc, a, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
-                return;
             }
         }
-        return;
+
+        // Damage _applied_ by this attack should be original damageThisPhase minus current value
+        damageThisAttack = te.damageThisPhase - damageThisAttack;
+
+        // chance of a critical if total suffered damage greater than threshold
+        if ((damageThisAttack > te.getThresh(hit.getLocation()))) {
+            critThresh = true;
+            te.setCritThresh(true);
+        }
+
+        manager.checkAeroCrits(vDesc, te, hit, damageThisAttack, critThresh, critSI, ammoExplosion, nukeS2S);
     }
 
     public void damageTank(Vector<Report> vDesc, Tank te, HitData hit, int damage,
@@ -1231,7 +1240,6 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         boolean damageIS = (boolean) modsMap.get("damageIS");
         Report r;
 
-        final boolean eiStatus = te.hasActiveEiCockpit();
         HitData nextHit = null;
 
         damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, modsMap);
@@ -1333,7 +1341,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 }
             }
 
-            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, modsMap);
 
             // For optional tank damage thresholds, the overthresh flag won't
             // be set if IS is damaged, so set it here.
@@ -1636,7 +1644,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             if (!ammoExplosion && (te.getArmor(hit) > 0) && !damageIS) {
                 int origDamage = damage;
 
-                damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty, vDesc, modsMap);
+                damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, modsMap);
             }
 
             if (damage > 0) {
@@ -2482,8 +2490,20 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         return Math.max(extantDamage, 0);
     }
 
-    public int applyEntityArmorDamage(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType damageType,
-          boolean damageIS, boolean areaSatArty, Vector<Report> vDesc,
+    /**
+     * Apply damage to the armor in the hit location; remaining damage will be applied elsewhere.
+     *
+     * @param te            Entity being damaged
+     * @param hit           HitData recording aspects of the incoming damage
+     * @param damage        Actual amount of incoming damage
+     * @param ammoExplosion Whether damage was caused by an ammo explosion
+     * @param damageIS      Whether damage is going straight to internal structure
+     * @param areaSatArty   Whether damage is caused by AE attack
+     * @param vDesc         Vector of Reports containing prior reports; usually modded and returned
+     * @return int          Remaining damage not absorbed by armor
+     */
+    public int applyEntityArmorDamage(Entity te, HitData hit, int damage, boolean ammoExplosion, boolean damageIS,
+          boolean areaSatArty, Vector<Report> vDesc,
           Map<String, Object> modsMap) {
         boolean ferroLamellorArmor = (boolean) modsMap.get("ferroLamellorArmor");
         boolean ballisticArmor = (boolean) modsMap.get("ballisticArmor");

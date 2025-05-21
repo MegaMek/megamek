@@ -140,6 +140,37 @@ class TWDamageManagerTest {
     }
 
     @Test
+    void damageMekHardenedArmorNoCritAP() throws FileNotFoundException {
+        String unit = "Hachiwara HCA-6P.mtf";
+        BipedMek mek = loadMek(unit);
+
+        // Deal "20" points of AP damage (should fill 20 circles against Hardened)
+        HitData hit = new HitData(BipedMek.LOC_CT, false, 0, false,
+              -1, true,true, HitData.DAMAGE_ARMOR_PIERCING, 0);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 20);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(13, mek.getArmor(BipedMek.LOC_CT));
+        assertTrue(gameMan.checkForPSRFromDamage(mek));
+    }
+
+    @Test
+    void damageMekStandardArmorCritFromAP() throws FileNotFoundException {
+        String unit = "Cyclops CP-10-Z.mtf";
+        BipedMek mek = loadMek(unit);
+        mek.setOwner(new Player(1, "Test"));
+
+        // Deal "20" points of AP damage (should fill 20 circles against Standard)
+        HitData hit = new HitData(BipedMek.LOC_CT, false, 0, false,
+              -1, true,true, HitData.DAMAGE_ARMOR_PIERCING, 0);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 20);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(10, mek.getArmor(BipedMek.LOC_CT));
+        assertTrue(gameMan.checkForPSRFromDamage(mek));
+    }
+
+    @Test
     void damageMekBallisticReinforcedArmorNoPSR() throws FileNotFoundException {
         String unit = "Dervish DV-11DK.mtf";
         BipedMek mek = loadMek(unit);

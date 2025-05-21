@@ -9,9 +9,7 @@ import megamek.logging.MMLogger;
 import megamek.server.IDamageManager;
 import megamek.server.ServerHelper;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 public class TWDamageManagerNew extends TWDamageManager implements IDamageManager {
@@ -100,8 +98,8 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         }
 
         // Store information to pass around
-        Map<String, Object> modsMap = createDamageModifierMap(te, hit, damageIS, damage_orig, crits);
-        modsMap.put("critBonus", calcCritBonus(game.getEntity(hit.getAttackerId()), te, damage_orig, areaSatArty));
+        ModsInfo mods = createDamageModifiers(te, hit, damageIS, damage_orig, crits);
+        mods.critBonus = calcCritBonus(game.getEntity(hit.getAttackerId()), te, damage_orig, areaSatArty);
 
         // Some "hits" on a ProtoMek are actually misses.
         if ((te instanceof ProtoMek proto) && (hit.getLocation() == ProtoMek.LOC_NMISS)) {
@@ -122,27 +120,27 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         // Don't pass vDesc back and forth, that's wasteful.
         if (te instanceof ProtoMek teCast) {
             damageProtoMek(vDesc, teCast, hit, damage, ammoExplosion, damageType,
-                  areaSatArty, throughFront, underWater, nukeS2S, modsMap);
+                  areaSatArty, throughFront, underWater, nukeS2S, mods);
         } else if (te instanceof Mek teCast) {
             damageMek(vDesc, teCast, hit, damage, ammoExplosion, damageType,
-                  areaSatArty, throughFront, underWater, nukeS2S, modsMap);
+                  areaSatArty, throughFront, underWater, nukeS2S, mods);
         } else if (te instanceof Aero teCast) {
             damageAeroSpace(vDesc, teCast, hit, damage, ammoExplosion, damageType,
-                  areaSatArty, throughFront, underWater, nukeS2S, modsMap);
+                  areaSatArty, throughFront, underWater, nukeS2S, mods);
         } else if (te instanceof Tank teCast) {
             damageTank(vDesc, teCast, hit, damage, ammoExplosion, damageType,
-                  areaSatArty, throughFront, underWater, nukeS2S, modsMap);
+                  areaSatArty, throughFront, underWater, nukeS2S, mods);
         } else if (te instanceof BattleArmor teCast) {
             damageBA(vDesc, teCast, hit, damage, ammoExplosion, damageType,
-                  areaSatArty, throughFront, underWater, nukeS2S, modsMap);
+                  areaSatArty, throughFront, underWater, nukeS2S, mods);
         } else if (te instanceof Infantry teCast && teCast.isConventionalInfantry()) {
             damageInfantry(vDesc, teCast, hit, damage, ammoExplosion, damageType,
-                  areaSatArty, throughFront, underWater, nukeS2S, modsMap);
+                  areaSatArty, throughFront, underWater, nukeS2S, mods);
         } else {
             logger.error(new UnknownEntityTypeException(te.toString()));
         }
 
-        boolean tookInternalDamage = (boolean) modsMap.get("tookInternalDamage");
+        boolean tookInternalDamage = mods.tookInternalDamage;
 
         // Meks using EI implants take pilot damage each time a hit
         // inflicts IS damage
@@ -222,7 +220,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         }
 
         // This flag indicates the hit was directly to IS
-        if ((boolean) modsMap.get("wasDamageIS")) {
+        if (mods.wasDamageIS) {
             Report.addNewline(vDesc);
         }
         return vDesc;
@@ -232,20 +230,20 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
     public void damageProtoMek(Vector<Report> vDesc, ProtoMek te, HitData hit, int damage,
           boolean ammoExplosion, DamageType damageType,
           boolean areaSatArty, boolean throughFront, boolean underWater,
-          boolean nukeS2S, Map<String, Object> modsMap)
+          boolean nukeS2S, ModsInfo mods)
     {
         int te_n = te.getId();
         Report r;
         boolean autoEject = false;
         HitData nextHit = null;
-        boolean damageIS = (boolean) modsMap.get("damageIS");
+        boolean damageIS = mods.damageIS;
 
         // Accumulate crits here.
-        int crits = (int) modsMap.get("crits");
+        int crits = mods.crits;
 
         while (damage > 0) {
             // Apply damage to armor
-            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, modsMap);
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, mods);
 
             // is there damage remaining?
             if (damage > 0) {
@@ -260,7 +258,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                         te.setInternal(te.getInternal(hit) - damage, hit);
                         // Triggers a critical hit on Vehicles and Meks.
                         crits++;
-                        modsMap.put("tookInternalDamage", true);
+                        mods.tookInternalDamage = true;
                         // Alternate structures don't affect our damage total
                         // for later PSR purposes, so use the previously stored
                         // value here as necessary.
@@ -381,20 +379,17 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                if (!((boolean) modsMap.get("hardenedArmor")
-                            || (boolean) modsMap.get("ferroLamellorArmor")
-                            || (boolean) modsMap.get("reactiveArmor"))
-                ) {
-                    modsMap.put("specCrits", (int) modsMap.get("specCrits") + 1);
+                if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
+                    mods.specCrits = mods.specCrits + 1;
                 }
             }
-            modsMap.put("crits", crits);
+            mods.crits = crits;
 
             // check for breaching
             vDesc.addAll(manager.breachCheck(te, hit.getLocation(), null, underWater));
 
             // Deal special effect damage and crits
-            dealSpecialCritEffects(te, vDesc, hit, modsMap, underWater, damageType);
+            dealSpecialCritEffects(te, vDesc, hit, mods, underWater, damageType);
 
             // If the location has run out of internal structure, finally
             // actually
@@ -412,10 +407,10 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             // loop terminates anyway.)
             if (damage > 0) {
                 hit = nextHit;
-                updateArmorTypeMap(modsMap, te, hit);
+                updateArmorTypeMap(mods, te, hit);
             }
             if (damageIS) {
-                modsMap.put("wasDamageIS", true);
+                mods.wasDamageIS = true;
                 damageIS = false;
             }
         }
@@ -425,19 +420,20 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
     public void damageMek(Vector<Report> vDesc, Mek te, HitData hit, int damage,
           boolean ammoExplosion, DamageType damageType,
           boolean areaSatArty, boolean throughFront, boolean underWater,
-          boolean nukeS2S, Map<String, Object> modsMap) {
+          boolean nukeS2S, ModsInfo mods) {
         // This is good for shields if a shield absorbs the hit it shouldn't
         // effect the pilot.
         // TC SRM's that hit the head do external and internal damage but its
         // one hit and shouldn't cause 2 hits to the pilot.
-        modsMap.put("isHeadHit", ((te.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)
+        mods.isHeadHit = ((te.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)
                                         && (hit.getLocation() == Mek.LOC_HEAD)
-                                        && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)));
+                                        && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) !=
+                                                  HitData.EFFECT_NO_CRITICALS));
         int te_n = te.getId();
         Entity ae = game.getEntity(hit.getAttackerId());
         Report r;
         boolean autoEject = false;
-        boolean damageIS = (boolean) modsMap.get("damageIS");
+        boolean damageIS = mods.damageIS;
 
         if (ammoExplosion) {
             if (te.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
@@ -450,10 +446,10 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
 
         HitData nextHit = null;
 
-        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, modsMap);
+        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, mods);
 
         // Accumulate crits here.
-        int crits = (int) modsMap.get("crits");
+        int crits = mods.crits;
 
         // Allocate the damage
         while (damage > 0) {
@@ -522,7 +518,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             // was the section destroyed earlier this phase?
             if (te.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
                 // cannot transfer a through armor crit if so
-                modsMap.put("crits", 0);
+                mods.crits = 0;
             }
 
             // here goes the fun :)
@@ -545,9 +541,9 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                     vDesc.addElement(r);
 
                     if (damage <= 0) {
-                        modsMap.put("crits", 0);
-                        modsMap.put("specCrits", 0);
-                        modsMap.put("isHeadHit", false);
+                        mods.crits = 0;
+                        mods.specCrits = 0;
+                        mods.isHeadHit = false;
                     }
                 }
             }
@@ -617,7 +613,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             }
 
             // Apply damage to armor
-            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, modsMap);
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, mods);
 
             // Apply CASE II first
             damage = applyCASEIIDamageReduction(te, hit, damage, ammoExplosion, vDesc);
@@ -651,7 +647,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                         te.setInternal(te.getInternal(hit) - damage, hit);
                         // Triggers a critical hit on Vehicles and Meks.
                         crits++;
-                        modsMap.put("tookInternalDamage", true);
+                        mods.tookInternalDamage = true;
                         // Alternate structures don't affect our damage total
                         // for later PSR purposes, so use the previously stored
                         // value here as necessary.
@@ -884,23 +880,19 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                if (!((boolean) modsMap.get("hardenedArmor")
-                            || (boolean) modsMap.get("ferroLamellorArmor")
-                            || (boolean) modsMap.get("reactiveArmor"))
-                ) {
-                    modsMap.put("specCrits", (int) modsMap.get("specCrits") + 1);
+                if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
+                    mods.specCrits = mods.specCrits + 1;
                 }
             }
-            modsMap.put("crits", crits);
+            mods.crits = crits;
 
             // check for breaching
             vDesc.addAll(manager.breachCheck(te, hit.getLocation(), null, underWater));
 
             // Deal special effect damage and crits
-            dealSpecialCritEffects(te, vDesc, hit, modsMap, underWater, damageType);
+            dealSpecialCritEffects(te, vDesc, hit, mods, underWater, damageType);
 
-            if ((boolean) modsMap.get("isHeadHit")
-                      && !te.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
+            if (mods.isHeadHit && !te.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
                 Report.addNewline(vDesc);
                 vDesc.addAll(manager.damageCrew(te, 1));
             }
@@ -957,10 +949,10 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             // loop terminates anyway.)
             if (damage > 0) {
                 hit = nextHit;
-                updateArmorTypeMap(modsMap, te, hit);
+                updateArmorTypeMap(mods, te, hit);
             }
             if (damageIS) {
-                modsMap.put("wasDamageIS", true);
+                mods.wasDamageIS = true;
                 damageIS = false;
             }
         }
@@ -969,10 +961,10 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
     public void damageAeroSpace(Vector<Report> vDesc, Aero te, HitData hit, int damage,
           boolean ammoExplosion, DamageType damageType,
           boolean areaSatArty, boolean throughFront, boolean underWater,
-          boolean nukeS2S, Map<String, Object> modsMap) {
+          boolean nukeS2S, ModsInfo mods) {
         int te_n = te.getId();
         Report r;
-        boolean damageIS = (boolean) modsMap.get("damageIS");
+        boolean damageIS = mods.damageIS;
 
         if (ammoExplosion) {
             if (te.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
@@ -1010,7 +1002,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         }
         int damage_orig = damage;
 
-        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, modsMap);
+        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, mods);
 
         if (ammoExplosion && te.hasCase()) {
             // damage should be reduced by a factor of 2 for ammo explosions
@@ -1093,7 +1085,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                       critSI, ammoExplosion, nukeS2S);
             }
 
-            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, modsMap);
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, mods);
 
             if (damage > 0) {
                 // if this is an Aero then I need to apply internal damage
@@ -1235,14 +1227,14 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
     public void damageTank(Vector<Report> vDesc, Tank te, HitData hit, int damage,
           boolean ammoExplosion, DamageType damageType,
           boolean areaSatArty, boolean throughFront, boolean underWater,
-          boolean nukeS2S, Map<String, Object> modsMap) {
+          boolean nukeS2S, ModsInfo mods) {
         int te_n = te.getId();
-        boolean damageIS = (boolean) modsMap.get("damageIS");
+        boolean damageIS = mods.damageIS;
         Report r;
 
         HitData nextHit = null;
 
-        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, modsMap);
+        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, mods);
 
         // adjust VTOL rotor damage
         if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)
@@ -1252,7 +1244,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         }
 
         // Accumulate crits here.
-        int crits = (int) modsMap.get("crits");
+        int crits = mods.crits;
 
         // Allocate the damage
         while (damage > 0) {
@@ -1341,7 +1333,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 }
             }
 
-            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, modsMap);
+            damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, mods);
 
             // For optional tank damage thresholds, the overthresh flag won't
             // be set if IS is damaged, so set it here.
@@ -1367,7 +1359,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                         te.setInternal(te.getInternal(hit) - damage, hit);
                         // Triggers a critical hit on Vehicles and Meks.
                         crits++;
-                        modsMap.put("tookInternalDamage", true);
+                        mods.tookInternalDamage = true;
                         // Alternate structures don't affect our damage total
                         // for later PSR purposes, so use the previously stored
                         // value here as necessary.
@@ -1504,20 +1496,17 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                if (!((boolean) modsMap.get("hardenedArmor")
-                            || (boolean) modsMap.get("ferroLamellorArmor")
-                            || (boolean) modsMap.get("reactiveArmor"))
-                ) {
-                    modsMap.put("specCrits", (int) modsMap.get("specCrits") + 1);
+                if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
+                    mods.specCrits = mods.specCrits + 1;
                 }
             }
-            modsMap.put("crits", crits);
+            mods.crits = crits;
 
             // check for breaching
             vDesc.addAll(manager.breachCheck(te, hit.getLocation(), null, underWater));
 
             // Deal special effect damage and crits
-            dealSpecialCritEffects(te, vDesc, hit, modsMap, underWater, damageType);
+            dealSpecialCritEffects(te, vDesc, hit, mods, underWater, damageType);
 
             // If the location has run out of internal structure, finally
             // actually
@@ -1535,10 +1524,10 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             // loop terminates anyway.)
             if (damage > 0) {
                 hit = nextHit;
-                updateArmorTypeMap(modsMap, te, hit);
+                updateArmorTypeMap(mods, te, hit);
             }
             if (damageIS) {
-                modsMap.put("wasDamageIS", true);
+                mods.wasDamageIS = true;
                 damageIS = false;
             }
         }
@@ -1586,17 +1575,17 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
     public void damageBA(Vector<Report> vDesc, BattleArmor te, HitData hit, int damage,
           boolean ammoExplosion, DamageType damageType,
           boolean areaSatArty, boolean throughFront, boolean underWater,
-          boolean nukeS2S, Map<String, Object> modsMap) {
+          boolean nukeS2S, ModsInfo mods) {
         final boolean eiStatus = te.hasActiveEiCockpit();
         final boolean vacuum = game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN);
         int te_n = te.getId();
-        boolean damageIS = (boolean) modsMap.get("damageIS");
+        boolean damageIS = mods.damageIS;
         HitData nextHit = null;
         Report r;
 
         // check for critical hit/miss vs. a BA
         // TODO: discover why BA reports are causing OOM errors.
-        if ((int) modsMap.get("crits") > 0) {
+        if (mods.crits > 0) {
             // possible critical miss if the rerolled location isn't alive
             if ((hit.getLocation() >= te.locations()) || (te.getInternal(hit.getLocation()) <= 0)) {
                 r = new Report(6037);
@@ -1613,7 +1602,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             r.indent(2);
             vDesc.addElement(r);
 
-            modsMap.put("crits", 0);
+            mods.crits = 0;
 
             damage = Math.max(te.getInternal(hit.getLocation()) + te.getArmor(hit.getLocation()), damage);
         }
@@ -1628,7 +1617,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             vDesc.addElement(r);
         }
 
-        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, modsMap);
+        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, false, mods);
 
         // BA using EI implants receive +1 damage from attacks
         damage += (eiStatus) ? 1 : 0;
@@ -1639,12 +1628,12 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             // was the section destroyed earlier this phase?
             if (te.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
                 // cannot transfer a through armor crit if so
-                modsMap.put("crits", 0);
+                mods.crits = 0;
             }
             if (!ammoExplosion && (te.getArmor(hit) > 0) && !damageIS) {
                 int origDamage = damage;
 
-                damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, modsMap);
+                damage = applyEntityArmorDamage(te, hit, damage, ammoExplosion, damageIS, areaSatArty, vDesc, mods);
             }
 
             if (damage > 0) {
@@ -1668,7 +1657,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                     if ((te.getInternal(hit) > damage) && (damage > 0)) {
                         // internal structure absorbs all damage
                         te.setInternal(te.getInternal(hit) - damage, hit);
-                        modsMap.put("tookInternalDamage", true);
+                        mods.tookInternalDamage = true;
                         // Alternate structures don't affect our damage total
                         // for later PSR purposes, so use the previously stored
                         // value here as necessary.
@@ -1794,18 +1783,15 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                if (!((boolean) modsMap.get("hardenedArmor")
-                            || (boolean) modsMap.get("ferroLamellorArmor")
-                            || (boolean) modsMap.get("reactiveArmor"))
-                ) {
-                    modsMap.put("specCrits", (int) modsMap.get("specCrits") + 1);
+                if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
+                    mods.specCrits = mods.specCrits + 1;
                 }
             }
             // check for breaching
             vDesc.addAll(manager.breachCheck(te, hit.getLocation(), null, underWater));
 
             // Special crits
-            dealSpecialCritEffects(te, vDesc, hit, modsMap, underWater, damageType);
+            dealSpecialCritEffects(te, vDesc, hit, mods, underWater, damageType);
 
             // If the location has run out of internal structure, finally
             // actually
@@ -1824,10 +1810,10 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             if (damage > 0) {
                 hit = nextHit;
                 // Need to update armor status for the new location
-                updateArmorTypeMap(modsMap, te, hit);
+                updateArmorTypeMap(mods, te, hit);
             }
             if (damageIS) {
-                modsMap.put("wasDamageIS", true);
+                mods.wasDamageIS = true;
                 damageIS = false;
             }
         }
@@ -1836,11 +1822,11 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
     public void damageInfantry(Vector<Report> vDesc, Infantry te, HitData hit, int damage,
           boolean ammoExplosion, DamageType damageType,
           boolean areaSatArty, boolean throughFront, boolean underWater,
-          boolean nukeS2S, Map<String, Object> modsMap){
+          boolean nukeS2S, ModsInfo mods){
         boolean isPlatoon = true;
         int te_n = te.getId();
         Hex te_hex = game.getBoard().getHex(te.getPosition());
-        boolean damageIS = (boolean) modsMap.get("damageIS");
+        boolean damageIS = mods.damageIS;
         Report r;
 
         // Infantry with TSM implants get 2d6 burst damage from ATSM munitions
@@ -1886,7 +1872,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             vDesc.addElement(r);
         }
 
-        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, true, modsMap);
+        damage = manageDamageTypeReports(te, vDesc, damage, damageType, hit, true, mods);
 
         // infantry armor can reduce damage
         if (te.calcDamageDivisor() != 1.0) {
@@ -1972,7 +1958,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                     if ((te.getInternal(hit) > damage) && (damage > 0)) {
                         // internal structure absorbs all damage
                         te.setInternal(te.getInternal(hit) - damage, hit);
-                        modsMap.put("tookInternalDamage", true);
+                        mods.tookInternalDamage = true;
                         // Alternate structures don't affect our damage total
                         // for later PSR purposes, so use the previously stored
                         // value here as necessary.
@@ -2077,11 +2063,8 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                if (!((boolean) modsMap.get("hardenedArmor")
-                            || (boolean) modsMap.get("ferroLamellorArmor")
-                            || (boolean) modsMap.get("reactiveArmor"))
-                ) {
-                    modsMap.put("specCrits", (int) modsMap.get("specCrits") + 1);
+                if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
+                    mods.specCrits = mods.specCrits + 1;
                 }
             }
         }
@@ -2234,11 +2217,11 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
         return damage;
     }
 
-    public void dealSpecialCritEffects(Entity te, Vector<Report> vDesc, HitData hit, Map<String, Object> modsMap,
+    public void dealSpecialCritEffects(Entity te, Vector<Report> vDesc, HitData hit, ModsInfo mods,
           boolean underWater, DamageType damageType
     ) {
 
-        int crits = (int) modsMap.get("crits");
+        int crits = mods.crits;
 
         // resolve special results
         if ((hit.getEffect() & HitData.EFFECT_VEHICLE_MOVE_DAMAGED) == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
@@ -2256,19 +2239,19 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                   && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
             for (int i = 0; i < crits; i++) {
                 vDesc.addAll(manager.criticalEntity(te, hit.getLocation(), hit.isRear(),
-                      hit.glancingMod() + (int) modsMap.get("critBonus"),
-                      (int) modsMap.get("damageOriginal"), damageType));
+                      hit.glancingMod() + mods.critBonus,
+                      mods.damageOriginal, damageType));
             }
             crits = 0;
 
-            for (int i = 0; i < (int) modsMap.get("specCrits"); i++) {
+            for (int i = 0; i < mods.specCrits; i++) {
                 // against BAR or reflective armor, we get a +2 mod
                 int critMod = te.hasBARArmor(hit.getLocation()) ? 2 : 0;
-                critMod += (((boolean) modsMap.get("reflectiveArmor")) && !((boolean) modsMap.get("isBattleArmor"))) ? 2 : 0; // BA
+                critMod += ((mods.reflectiveArmor) && !(mods.isBattleArmor)) ? 2 : 0; // BA
                 // against impact armor, we get a +1 mod
-                critMod += ((boolean) modsMap.get("impactArmor")) ? 1 : 0;
+                critMod += (mods.impactArmor) ? 1 : 0;
                 // hardened armour has no crit penalty
-                if (!(boolean) modsMap.get("hardenedArmor")) {
+                if (!mods.hardenedArmor) {
                     // non-hardened armor gets modifiers
                     // the -2 for hardened is handled in the critBonus
                     // variable
@@ -2276,52 +2259,50 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                     critMod += hit.glancingMod();
                 }
                 vDesc.addAll(manager.criticalEntity(te, hit.getLocation(), hit.isRear(),
-                      critMod + (int) modsMap.get("critBonus"), (int) modsMap.get("damageOriginal")));
+                      critMod + mods.critBonus, mods.damageOriginal));
             }
-            modsMap.put("specCrits", 0);
+            mods.specCrits = 0;
         }
-        modsMap.put("crits", crits);
+        mods.crits = crits;
     }
 
-    public Map<String, Object> createDamageModifierMap(Entity te, HitData hit, boolean damageIS, int damageOriginal, int crits) {
+    protected ModsInfo createDamageModifiers(Entity te, HitData hit, boolean damageIS, int damageOriginal, int crits) {
         // Map that stores various values for passing and mutating.
-        HashMap<String, Object> map = new HashMap<>();
+        ModsInfo mods = new ModsInfo();
 
-        map.put("critBonus", 0);
-        map.put("crits", crits);
-        map.put("specCrits", 0);
-        map.put("damageOriginal", damageOriginal);
-        map.put("isHeadHit", false);
-        map.put("damageIS", damageIS);
-        map.put("wasDamageIS", false);
-        map.put("tookInternalDamage", damageIS);
-        updateArmorTypeMap(map, te, hit);
-        return map;
+        mods.crits = crits;
+        mods.damageOriginal = damageOriginal;
+        mods.damageIS = damageIS;
+        mods.tookInternalDamage = damageIS;
+        updateArmorTypeMap(mods, te, hit);
+        return mods;
     }
 
-    public void updateArmorTypeMap(Map<String, Object> map, Entity te, HitData hit) {
+    protected void updateArmorTypeMap(ModsInfo mods, Entity te, HitData hit) {
         boolean isBattleArmor = (te instanceof BattleArmor);
 
-        map.put("isFerroFibrousTarget", (checkFerroFibrous(te, hit)));
-        map.put("bar5", (te.getBARRating(hit.getLocation()) <= 5));
-        map.put("ballisticArmor", ((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
-                                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED));
-        map.put("ferroLamellorArmor", ((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
-                                            && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR));
-        map.put("hardenedArmor", ((te instanceof Mek) || (te instanceof Tank))
-                                       && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED));
-        map.put("impactArmor", (te instanceof Mek)
-                                     && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT));
-        map.put("reactiveArmor", (((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
+        mods.isBattleArmor = isBattleArmor;
+
+        mods.ferroFibrousArmor = (checkFerroFibrous(te, hit));
+        mods.bar5 =(te.getBARRating(hit.getLocation()) <= 5);
+        mods.ballisticArmor =((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
+                                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
+        mods.ferroLamellorArmor =((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
+                                            && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
+        mods.hardenedArmor =((te instanceof Mek) || (te instanceof Tank))
+                                       && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
+        mods.impactArmor =(te instanceof Mek)
+                                     && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
+        mods.reactiveArmor =(((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
                                         && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE))
-                                       || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE)));
-        map.put("reflectiveArmor", (((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
+                                       || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE));
+        mods.reflectiveArmor =(((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
                                           && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))
-                                         || isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE));
+                                         || isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE);
     }
 
     public int manageDamageTypeReports(Entity te, Vector<Report> vDesc, int damage, DamageType damageType,  HitData hit,
-          boolean isPlatoon, Map<String, Object> modsMap) {
+          boolean isPlatoon, ModsInfo mods) {
         Report r;
         int te_n = te.getId();
 
@@ -2371,11 +2352,11 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 break;
             case ACID:
                 if (
-                      (boolean) modsMap.get("isFerroFibrousTarget")
-                            || (boolean) modsMap.get("reactiveArmor")
-                            || (boolean) modsMap.get("reflectiveArmor")
-                            || (boolean) modsMap.get("ferroLamellorArmor")
-                            || (boolean) modsMap.get("bar5")
+                      mods.ferroFibrousArmor
+                            || mods.reactiveArmor
+                            || mods.reflectiveArmor
+                            || mods.ferroLamellorArmor
+                            || mods.bar5
                 ) {
                     if (te.getArmor(hit) <= 0) {
                         break; // hitting IS, not acid-affected armor
@@ -2504,16 +2485,16 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
      */
     public int applyEntityArmorDamage(Entity te, HitData hit, int damage, boolean ammoExplosion, boolean damageIS,
           boolean areaSatArty, Vector<Report> vDesc,
-          Map<String, Object> modsMap) {
-        boolean ferroLamellorArmor = (boolean) modsMap.get("ferroLamellorArmor");
-        boolean ballisticArmor = (boolean) modsMap.get("ballisticArmor");
-        boolean hardenedArmor = (boolean) modsMap.get("hardenedArmor");
-        boolean impactArmor = (boolean) modsMap.get("impactArmor");
-        boolean reflectiveArmor = (boolean) modsMap.get("reflectiveArmor");
-        boolean reactiveArmor = (boolean) modsMap.get("reactiveArmor");
+          ModsInfo mods) {
+        boolean ferroLamellorArmor = mods.ferroLamellorArmor;
+        boolean ballisticArmor = mods.ballisticArmor;
+        boolean hardenedArmor = mods.hardenedArmor;
+        boolean impactArmor = mods.impactArmor;
+        boolean reflectiveArmor = mods.reflectiveArmor;
+        boolean reactiveArmor = mods.reactiveArmor;
         boolean isBattleArmor = (te instanceof BattleArmor);
-        int damageOriginal = (int) modsMap.get("damageOriginal");
-        int critBonus = (int) modsMap.get("critBonus");
+        int damageOriginal = mods.damageOriginal;
+        int critBonus = mods.critBonus;
 
         int te_n = te.getId();
         Report r;
@@ -2531,8 +2512,8 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 tmpDamageHold = damage;
                 damage = (int) Math.floor((((double) damage) * 4) / 5);
                 if (damage <= 0) {
-                    modsMap.put("isHeadHit", false);
-                    modsMap.put("crits", 0);
+                    mods.isHeadHit = false;
+                    mods.crits = 0;
                 }
                 r = new Report(6073);
                 r.subject = te_n;
@@ -2643,13 +2624,11 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                     hit.setEffect(((Tank) te).getPotCrit());
                     ((Tank) te).setOverThresh(true);
                     // TACs from the hit location table
-                    modsMap.put("crits", (
-                          ((hit.getEffect() & HitData.EFFECT_CRITICAL)
-                                 == HitData.EFFECT_CRITICAL) ? 1 : 0)
-                    );
+                    mods.crits = (((hit.getEffect() & HitData.EFFECT_CRITICAL)
+                                 == HitData.EFFECT_CRITICAL) ? 1 : 0);
                 } else {
                     ((Tank) te).setOverThresh(false);
-                    modsMap.put("crits", 0);
+                    mods.crits = 0;
                 }
             }
 
@@ -2720,7 +2699,7 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 // if the armor is hardened, any penetrating crits are
                 // rolled at -2
                 if (hardenedArmor) {
-                    modsMap.put("critBonus", critBonus - 2);
+                    mods.critBonus = critBonus - 2;
                 }
 
                 // We should only record the applied damage, although original and tmpDamageHold
@@ -2802,5 +2781,26 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
             }
         }
         return damage;
+    }
+
+    public class ModsInfo {
+        public boolean ballisticArmor = false;
+        public boolean ferroFibrousArmor = false;
+        public boolean ferroLamellorArmor = false;
+        public boolean hardenedArmor = false;
+        public boolean impactArmor = false;
+        public boolean reactiveArmor = false;
+        public boolean reflectiveArmor = false;
+        public boolean isBattleArmor = false;
+        public boolean isHeadHit = false;
+        public boolean damageIS = false;
+        public boolean wasDamageIS = false;
+        public boolean bar5 = false;
+        public boolean tookInternalDamage = false;
+        public int critBonus = 0;
+        public int crits = 0;
+        public int specCrits = 0;
+        public int damageOriginal = 0;
+
     }
 }

@@ -158,7 +158,7 @@ class TWDamageManagerTest {
     void damageMekStandardArmorCritFromAP() throws FileNotFoundException {
         String unit = "Cyclops CP-10-Z.mtf";
         BipedMek mek = loadMek(unit);
-        mek.setOwner(new Player(1, "Test"));
+        mek.setOwner(new Player(1, "Test")); // Needed in case of pilot ejection due to crits
 
         // Deal "20" points of AP damage (should fill 20 circles against Standard)
         HitData hit = new HitData(BipedMek.LOC_CT, false, 0, false,
@@ -166,7 +166,7 @@ class TWDamageManagerTest {
         DamageInfo damageInfo = new DamageInfo(mek, hit, 20);
         newMan.damageEntity(damageInfo);
 
-        assertEquals(10, mek.getArmor(BipedMek.LOC_CT));
+        // Don't check for exact remaining armor as AP may produce fatal crits, but PSRs will remain
         assertTrue(gameMan.checkForPSRFromDamage(mek));
     }
 

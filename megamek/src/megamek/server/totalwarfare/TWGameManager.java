@@ -18535,18 +18535,20 @@ public class TWGameManager extends AbstractGameManager {
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType damageType,
           boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S) {
 
-        return damager.damageEntity(new DamageInfo(
-              te,
-              hit,
-              damage,
-              ammoExplosion,
-              damageType,
-              damageIS,
-              areaSatArty,
-              throughFront,
-              underWater,
-              nukeS2S
-        ));
+        DamageInfo damageInfo = new DamageInfo(
+            te,
+            hit,
+            damage,
+            ammoExplosion,
+            damageType,
+            damageIS,
+            areaSatArty,
+            throughFront,
+            underWater,
+            nukeS2S
+        );
+        logger.debug("Compiled damage info: '{}'", damageInfo.toString());
+        return damager.damageEntity(damageInfo);
     }
 
     /**

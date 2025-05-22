@@ -1226,6 +1226,8 @@ public class TWDamageManagerNew extends TWDamageManager implements IDamageManage
                 reportVec.addElement(report);
                 // check to see if this would destroy the ASF
                 if (aero.getSI() <= 0) {
+                    // Set damage to 0 to avoid infinite loop!
+                    damage = 0;
                     // Lets auto-eject if we can!
                     if (aero.isAutoEject()
                               && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)

@@ -24,7 +24,7 @@ import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 import megamek.common.Targetable;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.message.ParameterizedMessage;

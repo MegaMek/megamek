@@ -23,6 +23,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import org.apache.logging.log4j.Level;
 
 import megamek.common.*;

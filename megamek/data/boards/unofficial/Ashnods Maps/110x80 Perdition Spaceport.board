@@ -1,6 +1,7 @@
 size 110 80
 tag "Water (Auto)"
 tag "Roads (Auto)"
+tag "FuelTank (Auto)"
 tag "MultipleTheme (Auto)"
 tag "ArmoredBuilding (Auto)"
 tag "TropicalTheme (Auto)"

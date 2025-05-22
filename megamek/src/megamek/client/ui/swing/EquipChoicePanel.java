@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -559,6 +560,7 @@ public class EquipChoicePanel extends JPanel {
             AmmoType at = ammoMounted.getType();
             ArrayList<AmmoType> vTypes = new ArrayList<>();
             Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
+
             if (vAllTypes == null) {
                 continue;
             }
@@ -575,6 +577,12 @@ public class EquipChoicePanel extends JPanel {
                 continue;
             }
 
+            boolean considerAllAmmoMixedTech = gameOpts.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH);
+            boolean isClan = entity.isClan();
+            boolean isIs = !isClan;
+            boolean canUseISAmmo = isIs || considerAllAmmoMixedTech;
+            boolean canUseClanAmmo = isClan || considerAllAmmoMixedTech;
+
             for (AmmoType atCheck : vAllTypes) {
                 if (entity.hasETypeFlag(Entity.ETYPE_AERO) &&
                           !atCheck.canAeroUse(game.getOptions()
@@ -590,14 +598,18 @@ public class EquipChoicePanel extends JPanel {
                           entity.isMixedTech(),
                           game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT));
                 } else {
-                    bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal();
+                    // This is the way MegaMek is intended to use tech levels.
+                    boolean isClanAccessibleTech = atCheck.isClan() || atCheck.isMixedTech();
+                    boolean isIsAccessibleTech = !atCheck.isClan() || atCheck.isMixedTech();
+                    boolean canUseThisAmmo = (canUseISAmmo && isIsAccessibleTech) || (canUseClanAmmo && isClanAccessibleTech);
+                    bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal() && canUseThisAmmo;
                 }
 
                 // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo. "Incendiary"
                 // munition type gets removed here for reasons unknown.
                 EnumSet<AmmoType.Munitions> munitionsTypes = atCheck.getMunitionType();
                 munitionsTypes.remove(AmmoType.Munitions.M_INCENDIARY_LRM);
-                if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS) &&
+                if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH) &&
                           entity.isClan() &&
                           atCheck.notAllowedByClanRules()) {
                     bTechMatch = false;
@@ -628,6 +640,12 @@ public class EquipChoicePanel extends JPanel {
                 if ((entity instanceof ProtoMek) &&
                           atCheck.hasFlag(AmmoType.F_MG) &&
                           !atCheck.hasFlag(AmmoType.F_PROTOMEK)) {
+                    continue;
+                }
+
+                if (Set.of(AmmoType.T_LRM, AmmoType.T_SRM).contains(atCheck.getAmmoType()) &&
+                          entity.isBattleArmor() &&
+                          !atCheck.hasFlag(AmmoTypeFlag.F_BATTLEARMOR)) {
                     continue;
                 }
 

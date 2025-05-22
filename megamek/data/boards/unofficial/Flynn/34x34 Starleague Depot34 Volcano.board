@@ -1,12 +1,13 @@
 size 34 34
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "Roads (Auto)"
-tag "LightForest (Auto)"
 tag "Cliffs (Auto)"
+tag "Roads (Auto)"
 tag "HighHills (Auto)"
 tag "Lava (Auto)"
+tag "LightForest (Auto)"
 tag "Woods (Auto)"
+tag "MetalContent (Auto)"
 hex 0101 1 "" "volcano"
 hex 0201 1 "" "volcano"
 hex 0301 1 "" "volcano"

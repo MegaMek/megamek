@@ -2,6 +2,7 @@ size 65 68
 tag "Rough (Auto)"
 tag "Water (Auto)"
 tag "Roads (Auto)"
+tag "FuelTank (Auto)"
 tag "HighHills (Auto)"
 tag "Woods (Auto)"
 hex 0101 1 "rough:1" "grassy"

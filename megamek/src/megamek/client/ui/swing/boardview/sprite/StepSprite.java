@@ -21,7 +21,8 @@ import megamek.client.ui.swing.boardview.HexDrawUtilities;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

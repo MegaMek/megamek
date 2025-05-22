@@ -34,6 +34,7 @@ import static megamek.client.ui.swing.lobby.LobbyUtility.extractSurpriseMaps;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -109,7 +110,7 @@ public class ServerBoardHelper {
     public static Board getPossibleGameBoard(MapSettings mapSettings, boolean onlyFixedBoards) {
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
         Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-        List<Boolean> rotateBoard = new ArrayList<>();
+
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
 
@@ -143,8 +144,7 @@ public class ServerBoardHelper {
         Board finalBoard;
         try {
             finalBoard = BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
-                  mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards, rotateBoard,
-                  mapSettings.getMedium());
+                  mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards, mapSettings.getMedium());
         } catch (IllegalArgumentException ex) {
             int totalWidth = mapSettings.getMapWidth() * mapSettings.getBoardWidth();
             int totalHeight = mapSettings.getMapHeight() * mapSettings.getBoardHeight();

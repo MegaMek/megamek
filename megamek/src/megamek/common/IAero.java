@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 

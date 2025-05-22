@@ -118,7 +118,12 @@ public class Hex implements Serializable {
      * @return An array that contains an id for each terrain present in this hex.
      */
     public int[] getTerrainTypes() {
-        return terrains.keySet().stream().mapToInt(Integer::intValue).toArray();
+        int[] result = new int[terrains.size()];
+        int i = 0;
+        for (Integer key : terrains.keySet()) {
+            result[i++] = key.intValue();
+        }
+        return result;
     }
 
     /**

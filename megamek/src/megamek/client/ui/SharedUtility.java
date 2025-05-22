@@ -20,9 +20,11 @@ import java.util.List;
 
 import megamek.client.Client;
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.internationalization.I18n;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
@@ -478,7 +480,7 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            // Handle non-infantry moving into a building.
+            // Handle non-protomek moving into a building.
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
             if ((buildingMove > 1) && !(entity instanceof ProtoMek)) {
                 // Get the building being entered.

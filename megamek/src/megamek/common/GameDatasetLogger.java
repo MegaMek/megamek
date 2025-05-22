@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import megamek.ai.dataset.*;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.moves.MovePath;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;

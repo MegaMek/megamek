@@ -38,7 +38,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -81,7 +80,7 @@ public class MunitionChoicePanel extends JPanel {
     }
 
     public MunitionChoicePanel(AmmoMounted ammoMounted, ArrayList<AmmoType> vTypes,
-            List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels, Entity entity, Game game) {
+          List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels, Entity entity, Game game) {
         ammoTypes = vTypes;
         this.ammoMounted = ammoMounted;
         gameOptions = game.getOptions();
@@ -233,29 +232,5 @@ public class MunitionChoicePanel extends JPanel {
     @Override
     public void setEnabled(boolean enabled) {
         comboAmmoTypes.setEnabled(enabled);
-    }
-
-    /**
-     * Get the number of shots in the mount.
-     *
-     * @return the <code>int</code> number of shots in the mount.
-     *
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    int getShotsLeft() {
-        return ammoMounted.getBaseShotsLeft();
-    }
-
-    /**
-     * Set the number of shots in the mount.
-     *
-     * @param shots the <code>int</code> number of shots for the mount.
-     *
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    void setShotsLeft(int shots) {
-        ammoMounted.setShotsLeft(shots);
     }
 }

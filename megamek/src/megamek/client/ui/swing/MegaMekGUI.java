@@ -36,8 +36,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BaseMultiResolutionImage;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -1180,47 +1178,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         return img;
-    }
-
-    /**
-     * MultiResolutionImage is supposed to allow Swing to choose the right res to display based on DPI, but does not
-     * work as expected for ImageIcon
-     *
-     * @param splashScreens List of Splash Screens.
-     *
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    private BaseMultiResolutionImage getMultiResolutionSplashScreen(final List<String> splashScreens) {
-        List<String> filenames = new ArrayList<>();
-        if (splashScreens.size() > 3) {
-            filenames.add(splashScreens.get(0));
-            filenames.add(splashScreens.get(2));
-            filenames.add(splashScreens.get(3));
-        } else {
-            filenames.add(splashScreens.get(0));
-        }
-
-        List<Image> images = new ArrayList<>();
-
-        for (String filename : filenames) {
-            File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
-            if (!file.exists()) {
-                LOGGER.error("MainMenu Error: background icon doesn't exist: {}", file.getAbsolutePath());
-            } else {
-                BufferedImage img = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
-                images.add(img);
-                // wait for splash image to load completely
-                MediaTracker tracker = new MediaTracker(frame);
-                tracker.addImage(img, 0);
-                try {
-                    tracker.waitForID(0);
-                } catch (InterruptedException ignored) {
-                    // really should never come here
-                }
-            }
-        }
-        return new BaseMultiResolutionImage(images.toArray(new Image[0]));
     }
 
     public static void updateGuiScaling() {

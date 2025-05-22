@@ -60,14 +60,6 @@ public class DialogOptionComponent extends FixedYPanel
     /** Value used to force a change */
     private boolean hasOptionChanged = false;
 
-    /**
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public DialogOptionComponent(DialogOptionListener parent, IOption option) {
-        this(parent, option, true);
-    }
-
     public DialogOptionComponent(DialogOptionListener parent, IOption option, boolean editable) {
         this(parent, option, editable, false);
     }

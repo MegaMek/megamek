@@ -188,7 +188,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      */
     public CustomMekDialog(ClientGUI clientgui, Client client, List<Entity> entities, boolean editable,
           boolean editableDeployment) {
-            
+
         super(clientgui.getFrame(), "CustomizeMekDialog", "CustomMekDialog.title");
         this.entities = entities;
         this.clientGUI = clientgui;
@@ -225,16 +225,6 @@ public class CustomMekDialog extends AbstractButtonDialog
 
     public String getSelectedTab() {
         return tabAll.getTitleAt(tabAll.getSelectedIndex());
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void setSelectedTab(int idx) {
-        if (idx < tabAll.getTabCount()) {
-            tabAll.setSelectedIndex(idx);
-        }
     }
 
     public void setSelectedTab(String tabName) {
@@ -736,17 +726,26 @@ public class CustomMekDialog extends AbstractButtonDialog
             if ((velocity > (2 * entities.get(0).getWalkMP())) || (velocity < 0)) {
                 msg = Messages.getString("CustomMekDialog.EnterCorrectVelocity");
                 title = Messages.getString("CustomMekDialog.NumberFormatError");
-                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                      msg,
+                      title,
+                      JOptionPane.ERROR_MESSAGE);
                 return;
             } else if ((altitude < 0) || (altitude > 10)) {
                 msg = Messages.getString("CustomMekDialog.EnterCorrectAltitude");
                 title = Messages.getString("CustomMekDialog.NumberFormatError");
-                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                      msg,
+                      title,
+                      JOptionPane.ERROR_MESSAGE);
                 return;
             } else if ((currentFuel < 0) || (currentFuel > fuel)) {
                 msg = (Messages.getString("CustomMekDialog.EnterCorrectFuel") + fuel + ".");
                 title = Messages.getString("CustomMekDialog.NumberFormatError");
-                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                      msg,
+                      title,
+                      JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
@@ -754,7 +753,10 @@ public class CustomMekDialog extends AbstractButtonDialog
         if ((isVTOL && height > 50) || (isAirMek && height > 25) || (isGlider && height > 12)) {
             msg = Messages.getString("CustomMekDialog.EnterCorrectHeight");
             title = Messages.getString("CustomMekDialog.NumberFormatError");
-            JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                  msg,
+                  title,
+                  JOptionPane.ERROR_MESSAGE);
             return;
         }
         // Apply single-entity settings
@@ -824,7 +826,10 @@ public class CustomMekDialog extends AbstractButtonDialog
                           (artillery > 8)) {
                     msg = Messages.getString("CustomMekDialog.EnterSkillsBetween0_8");
                     title = Messages.getString("CustomMekDialog.NumberFormatError");
-                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                          msg,
+                          title,
+                          JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -930,7 +935,10 @@ public class CustomMekDialog extends AbstractButtonDialog
                 if (offBoardDistance < 17) {
                     msg = Messages.getString("CustomMekDialog.OffboardDistance");
                     title = Messages.getString("CustomMekDialog.NumberFormatError");
-                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                          msg,
+                          title,
+                          JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 entity.setOffBoard(offBoardDistance,
@@ -1182,9 +1190,9 @@ public class CustomMekDialog extends AbstractButtonDialog
                                                             (e.getAltitude() == 0) &&
                                                             !(e instanceof GunEmplacement) &&
                                                             e.getWeaponList()
-                                                                .stream()
-                                                                .map(Mounted::getType)
-                                                                .anyMatch(weaponType -> weaponType.hasFlag(WeaponType.F_ARTILLERY) ||
+                                                                  .stream()
+                                                                  .map(Mounted::getType)
+                                                                  .anyMatch(weaponType -> weaponType.hasFlag(WeaponType.F_ARTILLERY) ||
                                                                                                 (weaponType instanceof CapitalMissileBayWeapon));
             eligibleForOffBoard &= entityEligibleForOffBoard;
         }

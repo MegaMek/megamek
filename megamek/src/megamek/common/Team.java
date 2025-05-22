@@ -22,14 +22,12 @@ package megamek.common;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.common.annotations.Nullable;
-import megamek.common.options.OptionsConstants;
 
 /**
  * The Team class holds information about a team. It holds the initiative for the team, and contains a list of players
@@ -188,11 +186,6 @@ public final class Team extends TurnOrdered {
     @Override
     public int getAeroTurns() {
         return players.stream().mapToInt(Player::getAeroTurns).sum();
-    }
-
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-        clearInitiative(bUseInitComp, new HashMap<>());
     }
 
     /** Two teams are equal if their ids and players are equal. */

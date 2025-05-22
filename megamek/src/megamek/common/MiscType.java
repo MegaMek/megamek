@@ -7846,14 +7846,14 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.instantModeSwitch = true;
         misc.rulesRefs = "109, TO:AUE";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_PS, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, false, false, false)
-              .setProductionFactions(F_WB)
+              .setProductionFactions(Faction.WB)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }

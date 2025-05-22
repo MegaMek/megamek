@@ -214,38 +214,38 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_MPM_MUNITION_MUTATOR = new MunitionMutator("(Clan) Multi-Purpose",
           1,
           Munitions.M_MULTI_PURPOSE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CGS)
-                .setProductionFactions(F_CGS)
+                .setPrototypeFactions(Faction.CGS)
+                .setProductionFactions(Faction.CGS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "229, TW");
 
     private static final MunitionMutator INFERNO_MUNITION_MUTATOR = new MunitionMutator("Inferno",
           1,
           Munitions.M_INFERNO,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2370, 2380, 2400, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "231, TM");
 
     private static final MunitionMutator CLAN_TORPEDO_MUNITION_MUTATOR = new MunitionMutator("(Clan) Torpedo",
           1,
           Munitions.M_TORPEDO,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2828, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
@@ -254,10 +254,10 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator TORPEDO_MUNITION_MUTATOR = new MunitionMutator("Torpedo",
           1,
           Munitions.M_TORPEDO,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
@@ -266,40 +266,40 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator ACID_MUNITION_MUTATOR = new MunitionMutator("Acid",
           2,
           Munitions.M_AX_HEAD,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setISAdvancement(3053)
-                .setPrototypeFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "367, TO");
 
     private static final MunitionMutator HEAT_SEEKING_MUNITION_MUTATOR = new MunitionMutator("Heat-Seeking",
           2,
           Munitions.M_HEAT_SEEKING,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_E, RATING_E, RATING_E, RATING_F)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F)
                 .setISAdvancement(2365, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "369, TO");
 
     private static final MunitionMutator SMOKE_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE_WARHEAD,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2333, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "371, TO");
 
@@ -307,148 +307,148 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator TANDEM_CHARGE_MUNITION_MUTATOR = new MunitionMutator("Tandem-Charge",
           2,
           Munitions.M_TANDEM_CHARGE,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(2757, DATE_NONE, DATE_NONE, 2784, 3062)
                 .setISApproximate(true, false, false, true, true)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_FS)
-                .setReintroductionFactions(F_FS)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.FS)
+                .setReintroductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "372, TO");
 
     private static final MunitionMutator ANTI_TSM_MUNITION_MUTATOR = new MunitionMutator("Anti-TSM",
           1,
           Munitions.M_ANTI_TSM,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setISAdvancement(3026, 3027, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "104, IO");
 
     private static final MunitionMutator ARTEMIS_CAPABLE_MUNITION_MUTATOR = new MunitionMutator("Artemis-capable",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2592, 2598, 3045, 2855, 3035)
                 .setISApproximate(false, false, false, true, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "230, TM");
 
     private static final MunitionMutator DEAD_FIRE_MUNITION_MUTATOR = new MunitionMutator("Dead-Fire",
           1,
           Munitions.M_DEAD_FIRE,
-          new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+          new TechAdvancement(TechBase.IS).setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3052)
-                .setPrototypeFactions(F_DC)
+                .setPrototypeFactions(Faction.DC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "131, IO");
 
     private static final MunitionMutator FRAGMENTATION_MUNITION_MUTATOR = new MunitionMutator("Fragmentation",
           1,
           Munitions.M_FRAGMENTATION,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2375, 2377, 3058, 2790, 3054)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "230, TM");
 
     private static final MunitionMutator LISTEN_KILL_MUNITION_MUTATOR = new MunitionMutator("Listen-Kill",
           1,
           Munitions.M_LISTEN_KILL,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "105, IO");
 
     private static final MunitionMutator MINE_CLEARANCE_MUNITION_MUTATOR = new MunitionMutator("Mine Clearance",
           1,
           Munitions.M_MINE_CLEARANCE,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3065, 3069, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "370, TO");
 
     private static final MunitionMutator NARC_CAPABLE_MUNITION_MUTATOR = new MunitionMutator("Narc-capable",
           1,
           Munitions.M_NARC_CAPABLE,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2520, 2587, 3049, 2795, 3035)
                 .setISApproximate(true, false, false, true, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "142, TW");
 
     private static final MunitionMutator CLAN_ACID_MUNITION_MUTATOR = new MunitionMutator("(Clan) Acid",
           2,
           Munitions.M_AX_HEAD,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setClanAdvancement(3053)
-                .setPrototypeFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "367, TO");
 
     private static final MunitionMutator CLAN_HEAT_SEEKING_MUNITIONS_MUTATOR = new MunitionMutator("(Clan) Heat-Seeking",
           2,
           Munitions.M_HEAT_SEEKING,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_E, RATING_E, RATING_E, RATING_F)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F)
                 .setClanAdvancement(2365, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "369, TO");
 
     private static final MunitionMutator CLAN_INFERNO_MUNITION_MUTATOR = new MunitionMutator("(Clan) Inferno",
           1,
           Munitions.M_INFERNO,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2370, 2380, 2400, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "231, TM");
 
@@ -456,14 +456,14 @@ public class AmmoType extends EquipmentType {
           "(Clan) Smoke",
           1,
           Munitions.M_SMOKE_WARHEAD,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2333, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "371, TO");
 
@@ -471,14 +471,14 @@ public class AmmoType extends EquipmentType {
           "(Clan) Tandem-Charge",
           2,
           Munitions.M_TANDEM_CHARGE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(2757, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "372, TO");
 
@@ -486,14 +486,14 @@ public class AmmoType extends EquipmentType {
           "(Clan) Anti-TSM",
           1,
           Munitions.M_ANTI_TSM,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setClanAdvancement(3026, 3027, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "104, IO");
 
@@ -501,14 +501,14 @@ public class AmmoType extends EquipmentType {
           "(Clan) Artemis-capable",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2818, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CSA)
-                .setProductionFactions(F_CSA)
+                .setPrototypeFactions(Faction.CSA)
+                .setProductionFactions(Faction.CSA)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "207, TM");
 
@@ -517,14 +517,14 @@ public class AmmoType extends EquipmentType {
           "(Clan) Artemis V-capable",
           1,
           Munitions.M_ARTEMIS_V_CAPABLE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3061, 3085, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_CGS)
-                .setProductionFactions(F_CSF, F_RD)
+                .setPrototypeFactions(Faction.CGS)
+                .setProductionFactions(Faction.CSF, Faction.RD)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "283, TO");
     
@@ -532,24 +532,24 @@ public class AmmoType extends EquipmentType {
           "(Clan) Dead-Fire",
           1,
           Munitions.M_DEAD_FIRE,
-          new TechAdvancement(TECH_BASE_CLAN).setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+          new TechAdvancement(TechBase.CLAN).setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3052)
-                .setPrototypeFactions(F_DC)
+                .setPrototypeFactions(Faction.DC)
                 .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL),
           "131, IO");
     
     private static final MunitionMutator CLAN_FRAGMENTATION_MUNITION_MUTATOR = new MunitionMutator("(Clan) Fragmentation",
           1,
           Munitions.M_FRAGMENTATION,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(2375, 2377, 3058, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "230, TM");
     
@@ -557,13 +557,13 @@ public class AmmoType extends EquipmentType {
           "(Clan) Listen-Kill",
           1,
           Munitions.M_LISTEN_KILL,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)
                 .setClanAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL),
           "230, TM");
     
@@ -571,14 +571,14 @@ public class AmmoType extends EquipmentType {
           "(Clan) Mine Clearance",
           1,
           Munitions.M_MINE_CLEARANCE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(3065, 3069, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "370, TO");
     
@@ -586,10 +586,10 @@ public class AmmoType extends EquipmentType {
           "(Clan) Narc-capable",
           1,
           Munitions.M_NARC_CAPABLE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2828, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
@@ -598,26 +598,26 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator FOLLOW_THE_LEADER_MUNITION_MUTATOR = new MunitionMutator("Follow The Leader",
           2,
           Munitions.M_FOLLOW_THE_LEADER,
-          new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+          new TechAdvancement(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
                 .setISAdvancement(2750, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
                 .setISApproximate(true, false, false, true, false)
-                .setPrototypeFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "368, TO");
     
     private static final MunitionMutator SEMI_GUIDED_MUNITION_MUTATOR = new MunitionMutator("Semi-guided",
           1,
           Munitions.M_SEMIGUIDED,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(3053, 3057, 3065, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW)
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "231, TM");
 
@@ -627,114 +627,114 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SWARM_MUNITION_MUTATOR = new MunitionMutator("Swarm",
           1,
           Munitions.M_SWARM,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2615, 2621, 3058, 2833, 3053)
                 .setISApproximate(true, false, false, false, true)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "371, TO");
     
     private static final MunitionMutator SWARM_I_MUNITION_MUTATOR = new MunitionMutator("Swarm-I",
           1,
           Munitions.M_SWARM_I,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(3052, 3057, 3066, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW)
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "371, TO");
     
     private static final MunitionMutator THUNDER_MUNITION_MUTATOR = new MunitionMutator("Thunder",
           1,
           Munitions.M_THUNDER,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2618, 2620, 2650, 2840, 3052)
                 .setISApproximate(true, false, false, true, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_LC, F_FS)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.LC, Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
     
     private static final MunitionMutator THUNDER_ACTIVE_MUNITION_MUTATOR = new MunitionMutator("Thunder-Active",
           2,
           Munitions.M_THUNDER_ACTIVE,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3054, 3058, 3064, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
     
     private static final MunitionMutator THUNDER_AUGMENTED_MUNITION_MUTATOR = new MunitionMutator("Thunder-Augmented",
           2,
           Munitions.M_THUNDER_AUGMENTED,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3054, 3057, 3064, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
     
     private static final MunitionMutator THUNDER_BIBRABOMB_MUNITION_MUTATOR = new MunitionMutator("Thunder-Vibrabomb",
           2,
           Munitions.M_THUNDER_VIBRABOMB,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3054, 3056, 3064, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
     
     private static final MunitionMutator THUNDER_INFERNO_MUTATION_MUTATOR = new MunitionMutator("Thunder-Inferno",
           2,
           Munitions.M_THUNDER_INFERNO,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3054, 3056, 3062, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
     
     private static final MunitionMutator FRAGMENTATION_MUNITION_MUTATOR_FOR_LRM = new MunitionMutator("Fragmentation",
           1,
           Munitions.M_FRAGMENTATION,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2375, 2377, 3058, 2790, 3054)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
-                .setReintroductionFactions(F_FW)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
+                .setReintroductionFactions(Faction.FW)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "230, TM");
 
@@ -742,85 +742,85 @@ public class AmmoType extends EquipmentType {
           "(Clan) Follow The Leader",
           2,
           Munitions.M_FOLLOW_THE_LEADER,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_X, RATING_E, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X)
                 .setClanAdvancement(2750, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
-                .setPrototypeFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "368, TO");
 
     private static final MunitionMutator CLAN_SEMI_GUIDED = new MunitionMutator("(Clan) Semi-guided",
           1,
           Munitions.M_SEMIGUIDED,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(3053, 3057, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW)
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "231, TM");
 
     private static final MunitionMutator CLAN_SMOKE_STANDARD_MUNITION_MUTATOR = new MunitionMutator("(Clan) Smoke",
           1,
           Munitions.M_SMOKE_WARHEAD,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2333, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "371, TO");
 
     private static final MunitionMutator CLAN_SWARM_MUNITION_MUTATOR = new MunitionMutator("(Clan) Swarm",
           1,
           Munitions.M_SWARM,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2615, 2621, 3058, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "371, TO");
 
     private static final MunitionMutator CLAN_SWARM_I_ADV_MUNITION_MUTATOR = new MunitionMutator("(Clan) Swarm-I",
           1,
           Munitions.M_SWARM_I,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(3052, 3057, 3066, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW)
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "371, TO");
 
     private static final MunitionMutator CLAN_THUNDER_ADV_MUNITION_MUTATOR = new MunitionMutator("(Clan) Thunder",
           1,
           Munitions.M_THUNDER,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2618, 2620, 2650, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_LC, F_FS)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.LC, Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
 
@@ -828,14 +828,14 @@ public class AmmoType extends EquipmentType {
           "(Clan) Thunder-Active",
           2,
           Munitions.M_THUNDER_ACTIVE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3054, 3058, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
 
@@ -843,14 +843,14 @@ public class AmmoType extends EquipmentType {
           "(Clan) Thunder-Augmented",
           2,
           Munitions.M_THUNDER_AUGMENTED,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3054, 3057, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
 
@@ -858,14 +858,14 @@ public class AmmoType extends EquipmentType {
           "(Clan) Thunder-Vibrabomb",
           2,
           Munitions.M_THUNDER_VIBRABOMB,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3054, 3056, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
 
@@ -873,14 +873,14 @@ public class AmmoType extends EquipmentType {
           "(Clan) Thunder-Inferno",
           2,
           Munitions.M_THUNDER_INFERNO,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3054, 3056, 3062, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
 
@@ -888,14 +888,14 @@ public class AmmoType extends EquipmentType {
           "(Clan) Artemis-capable",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(2592, 2598, 3045, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "207, TM");
 
@@ -904,41 +904,41 @@ public class AmmoType extends EquipmentType {
           "(Clan) Artemis V-capable",
           1,
           Munitions.M_ARTEMIS_V_CAPABLE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3061, 3085, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_CGS)
-                .setProductionFactions(F_CSF, F_RD)
+                .setPrototypeFactions(Faction.CGS)
+                .setProductionFactions(Faction.CSF, Faction.RD)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "283, TO");
 
     private static final MunitionMutator CLAN_DEAD_FIRE_MUNITION_MUTATOR = new MunitionMutator("(Clan) Dead-Fire",
           1,
           Munitions.M_DEAD_FIRE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3052, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_DC)
+                .setPrototypeFactions(Faction.DC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "131, IO");
 
     private static final MunitionMutator ARMOR_PIERCING_MUNITION_MUTATOR = new MunitionMutator("Armor-Piercing",
           2,
           Munitions.M_ARMOR_PIERCING,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3055, 3059, 3063, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
@@ -946,70 +946,70 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CASELESS_MUNITION_MUTATOR = new MunitionMutator("Caseless",
           1,
           Munitions.M_CASELESS,
-          new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false)
+          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, 3056, 3079, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3109, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "352, TO");
 
     private static final MunitionMutator FLAK_MUNITION_MUTATOR = new MunitionMutator("Flak",
           1,
           Munitions.M_FLAK,
-          new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false)
+          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
                 .setAdvancement(DATE_ES, 2310, 3070, DATE_NONE, DATE_NONE)
                 .setApproximate(false, false, true, false, false)
-                .setProductionFactions(F_TA)
+                .setProductionFactions(Faction.TA)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "352, TO");
 
     private static final MunitionMutator FLECHETTE_MUNITION_MUTATOR = new MunitionMutator("Flechette",
           1,
           Munitions.M_FLECHETTE,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3053, 3055, 3058, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
     private static final MunitionMutator PRECISION_MUNITION_MUTATOR = new MunitionMutator("Precision",
           2,
           Munitions.M_PRECISION,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3058, 3062, 3066, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
     private static final MunitionMutator TRACER_MUNITION_MUTATOR = new MunitionMutator("Tracer",
           1,
           Munitions.M_TRACER,
-          new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false)
+          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_D, RATING_E, RATING_F, RATING_E)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(DATE_ES, 2300, 3060, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
-                .setProductionFactions(F_TA)
+                .setProductionFactions(Faction.TA)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "353, TO");
 
@@ -1017,28 +1017,28 @@ public class AmmoType extends EquipmentType {
           "Armor-Piercing",
           2,
           Munitions.M_ARMOR_PIERCING,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3109, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CLAN)
-                .setProductionFactions(F_CLAN)
+                .setPrototypeFactions(Faction.CLAN)
+                .setProductionFactions(Faction.CLAN)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
     private static final MunitionMutator CLAN_IMPROVED_FLECHETTE_MUNITION_MUTATOR = new MunitionMutator("Flechette",
           1,
           Munitions.M_FLECHETTE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3105, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CLAN)
-                .setProductionFactions(F_CLAN)
+                .setPrototypeFactions(Faction.CLAN)
+                .setProductionFactions(Faction.CLAN)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
@@ -1046,10 +1046,10 @@ public class AmmoType extends EquipmentType {
           "Precision",
           2,
           Munitions.M_PRECISION,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3053, 3055, 3058, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL),
@@ -1058,14 +1058,14 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_IMPROVED_TRACER_MUNITION_MUTATOR = new MunitionMutator("Tracer",
           1,
           Munitions.M_TRACER,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_D, RATING_E, RATING_F, RATING_E)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
                 .setClanApproximate(false, true, false, true, false)
-                .setPrototypeFactions(F_CLAN)
-                .setProductionFactions(F_CLAN)
+                .setPrototypeFactions(Faction.CLAN)
+                .setProductionFactions(Faction.CLAN)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "353, TO");
 
@@ -1073,13 +1073,13 @@ public class AmmoType extends EquipmentType {
           "Armor-Piercing",
           2,
           Munitions.M_ARMOR_PIERCING,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3095, 3105, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setProductionFactions(F_CJF)
+                .setProductionFactions(Faction.CJF)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
@@ -1087,157 +1087,157 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_FLECHETTE_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Flechette",
           1,
           Munitions.M_FLECHETTE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3095, 3105, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setProductionFactions(F_CHH)
+                .setProductionFactions(Faction.CHH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
     private static final MunitionMutator CLAN_PRECISION_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Precision",
           2,
           Munitions.M_PRECISION,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_F)
+                .setTechRating(TechRating.F)
                 .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CBS)
-                .setProductionFactions(F_CBS)
+                .setPrototypeFactions(Faction.CBS)
+                .setProductionFactions(Faction.CBS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "208, TM");
 
     private static final MunitionMutator CLAN_TRACER_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Tracer",
           1,
           Munitions.M_TRACER,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CBS)
-                .setProductionFactions(F_CBS)
+                .setPrototypeFactions(Faction.CBS)
+                .setProductionFactions(Faction.CBS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "353, TO");
 
     private static final MunitionMutator ADA_MUNITION_MUTATOR = new MunitionMutator("Air-Defense Arrow (ADA) Missiles",
           1,
           Munitions.M_ADA,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setPrototypeFactions(F_CC)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
+                .setPrototypeFactions(Faction.CC)
                 .setISAdvancement(3068, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setApproximate(false, false, false, false, false)
-                .setTechRating(RATING_E)
-                .setProductionFactions(F_CC)
+                .setTechRating(TechRating.E)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "165, TO:AU&E");
 
     private static final MunitionMutator CLUSTER_MUNITION_MUTATOR = new MunitionMutator("Cluster",
           1,
           Munitions.M_CLUSTER,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2594, 2600, DATE_NONE, 2830, 3047)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "354, TO");
 
     private static final MunitionMutator HOMING_MUNITION_MUTATOR = new MunitionMutator("Homing",
           1,
           Munitions.M_HOMING,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2593, 2600, DATE_NONE, 2830, 3045)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "354, TO");
 
     private static final MunitionMutator ILLUMINATION_MUNITION_MUTATOR = new MunitionMutator("Illumination",
           1,
           Munitions.M_FLARE,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2615, 2621, DATE_NONE, 2800, 3047)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "355, TO");
 
     private static final MunitionMutator INFERNO_IV_MUNITION_MUTATOR = new MunitionMutator("Inferno-IV",
           1,
           Munitions.M_INFERNO_IV,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "355, TO");
 
     private static final MunitionMutator LASER_INHIBITING_MUNITION_MUTATOR = new MunitionMutator("Laser Inhibiting",
           1,
           Munitions.M_LASER_INHIB,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setISAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "355, TO");
 
     private static final MunitionMutator SMOKE_MUNITION_MUTATOR_FOR_ARROW = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2595, 2600, DATE_NONE, 2840, 3044)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "356, TO");
 
     private static final MunitionMutator THUNDER_FASCAM_MUNITION_MUTATOR = new MunitionMutator("Thunder (FASCAM)",
           1,
           Munitions.M_FASCAM,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2621, 2844, DATE_NONE, 2770, 3051)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_CHH)
-                .setReintroductionFactions(F_CC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.CHH)
+                .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "356, TO");
 
@@ -1245,22 +1245,22 @@ public class AmmoType extends EquipmentType {
           "Thunder Vibrabomb-IV",
           1,
           Munitions.M_VIBRABOMB_IV,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "357, TO");
 
     private static final MunitionMutator DAVY_CROCKETT_M_MUNITION_MUTATOR = new MunitionMutator("Davy Crockett-M",
           5,
           Munitions.M_DAVY_CROCKETT_M,
-          new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_D)
-                .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+          new TechAdvancement(TechBase.IS).setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
                 .setISAdvancement(2412, DATE_NONE, DATE_NONE, 2830, 3044)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "174, IO");
@@ -1268,10 +1268,10 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator FUEL_AIR_MUNITION_MUTATOR = new MunitionMutator("Fuel-Air",
           1,
           Munitions.M_FAE,
-          new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false)
+          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -1281,73 +1281,73 @@ public class AmmoType extends EquipmentType {
           "Air-Defense Arrow (ADA) Missiles",
           1,
           Munitions.M_ADA,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(3068, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "165, TO:AU&E");
 
     private static final MunitionMutator CLAN_CLUSTER_MUNITION_MUTATOR_FOR_ARROW = new MunitionMutator("Cluster",
           1,
           Munitions.M_CLUSTER,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(2594, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "354, TO");
 
     private static final MunitionMutator CLAN_HOMING_MUNITION_MUTATOR = new MunitionMutator("Homing",
           1,
           Munitions.M_HOMING,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(2593, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "354, TO");
 
     private static final MunitionMutator CLAN_ILLUMINATION_MUNITION_MUTATOR = new MunitionMutator("Illumination",
           1,
           Munitions.M_FLARE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2615, 2621, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "355, TO");
 
     private static final MunitionMutator CLAN_INFERNO_IV_MUNITION_MUTATOR = new MunitionMutator("Inferno-IV",
           1,
           Munitions.M_INFERNO_IV,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "355, TO");
 
@@ -1355,43 +1355,43 @@ public class AmmoType extends EquipmentType {
           "Laser Inhibiting",
           1,
           Munitions.M_LASER_INHIB,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setClanAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "355, TO");
 
     private static final MunitionMutator CLAN_SMOKE_MUNITION_MUTATOR_FOR_ARROW_IV = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(2595, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "356, TO");
 
     private static final MunitionMutator CLAN_THUNDER_FASCAM_MUNITION_MUTATOR = new MunitionMutator("Thunder (FASCAM)",
           1,
           Munitions.M_FASCAM,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2621, 2844, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_CHH)
-                .setReintroductionFactions(F_CC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.CHH)
+                .setReintroductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "356, TO");
 
@@ -1399,66 +1399,66 @@ public class AmmoType extends EquipmentType {
           "Thunder Vibrabomb-IV",
           1,
           Munitions.M_VIBRABOMB_IV,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "357, TO");
 
     private static final MunitionMutator CLAN_CHAFF_VEE_MUNITION_MUTATOR = new MunitionMutator("Chaff",
           1,
           Munitions.M_CHAFF,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_CLAN)
-                .setProductionFactions(F_CLAN)
+                .setPrototypeFactions(Faction.CLAN)
+                .setProductionFactions(Faction.CLAN)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "363, TO");
 
     private static final MunitionMutator CLAN_INDENCIARY_VEE_MUNITION_MUTATOR = new MunitionMutator("Incendiary",
           1,
           Munitions.M_INCENDIARY,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setClanAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_CLAN)
-                .setProductionFactions(F_CLAN)
+                .setPrototypeFactions(Faction.CLAN)
+                .setProductionFactions(Faction.CLAN)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "364, TO");
 
     private static final MunitionMutator CLAN_SMOKE_VEE_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setClanAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_CLAN)
-                .setProductionFactions(F_CLAN)
+                .setPrototypeFactions(Faction.CLAN)
+                .setProductionFactions(Faction.CLAN)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "364, TO");
 
     private static final MunitionMutator CHAFF_VEE_MUNITION_MUTATOR = new MunitionMutator("Chaff",
           1,
           Munitions.M_CHAFF,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
@@ -1467,10 +1467,10 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator INCENDIARY_VEE_MUNITION_MUTATOR = new MunitionMutator("Incendiary",
           1,
           Munitions.M_INCENDIARY,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
@@ -1479,10 +1479,10 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SMOKE_VEE_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
@@ -1491,8 +1491,8 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLUSTER_ARTY_MUNITION_MUTATOR = new MunitionMutator("Cluster",
           1,
           Munitions.M_CLUSTER,
-          new TechAdvancement(TECH_BASE_ALL).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "354, TO");
@@ -1500,30 +1500,30 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator COPPERHEAD_ARTY_MUNITION_MUTATOR = new MunitionMutator("Copperhead",
           1,
           Munitions.M_HOMING,
-          new TechAdvancement(TECH_BASE_ALL).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2640, 2645, DATE_NONE, 2800, 3051)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "354, TO");
 
     private static final MunitionMutator FASCAM_ARTY_MUNITION_MUTATOR = new MunitionMutator("FASCAM",
           1,
           Munitions.M_FASCAM,
-          new TechAdvancement(TECH_BASE_ALL).setTechRating(RATING_C)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2621, 2844, DATE_NONE, 2770, 3051)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "355, TO");
 
     private static final MunitionMutator FLECHETTE_ARTY_MUNITION_MUTATOR = new MunitionMutator("Flechette",
           1,
           Munitions.M_FLECHETTE,
-          new TechAdvancement(TECH_BASE_ALL).setTechRating(RATING_C)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "355, TO");
@@ -1531,8 +1531,8 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator ILLUMINATION_ARTY_MUNITION_MUTATOR = new MunitionMutator("Illumination",
           1,
           Munitions.M_FLARE,
-          new TechAdvancement(TECH_BASE_ALL).setTechRating(RATING_C)
-                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "355, TO");
@@ -1540,8 +1540,8 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SMOKE_ARTY_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE,
-          new TechAdvancement(TECH_BASE_ALL).setTechRating(RATING_B)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "355, TO");
@@ -1549,10 +1549,10 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator FUEL_AIR_ARTY_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator("Fuel-Air",
           1,
           Munitions.M_FAE,
-          new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false)
+          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
                 .setUnofficial(false) // Should be marked true here
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Or marked unnoficial here
@@ -1561,38 +1561,38 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SMOKE_MUNITION_MUTATOR_FOR_BA_TUBE = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3070, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CS)
-                .setProductionFactions(F_CS),
+                .setPrototypeFactions(Faction.CS)
+                .setProductionFactions(Faction.CS),
           "375, TO");
 
     private static final MunitionMutator CLAN_ARTEMIS_CAPABLE_MUNTION_MUTATOR_FOR_TORPEDO = new MunitionMutator(
           "Artemis-capable",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(2592, 2598, 3045, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "230, TM");
 
     private static final MunitionMutator COOLANT_MUNITION_MUTATOR = new MunitionMutator("Coolant",
           1,
           Munitions.M_COOLANT,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -1601,10 +1601,10 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_COOLANT_MUNITION_MUTATOR = new MunitionMutator("(Clan) Coolant",
           1,
           Munitions.M_COOLANT,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -1613,10 +1613,10 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator COOLANT_MUNITION_MUTATOR_FOR_HEAVY_FLAMER = new MunitionMutator("Coolant",
           1,
           Munitions.M_COOLANT,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -1626,10 +1626,10 @@ public class AmmoType extends EquipmentType {
           "(Clan) Coolant",
           1,
           Munitions.M_COOLANT,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -1639,38 +1639,38 @@ public class AmmoType extends EquipmentType {
           "(Clan) Narc-capable",
           1,
           Munitions.M_NARC_CAPABLE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(2520, 2587, 3049, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "142, TW");
 
     private static final MunitionMutator CLAN_SMOKE_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE_WARHEAD,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                 .setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "375, TO");
 
     private static final MunitionMutator CLAN_SEMI_GUIDED_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Semi-Guided",
           1,
           Munitions.M_SEMIGUIDED,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(3055, 3064, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -1679,14 +1679,14 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_FLARE_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Flare",
           1,
           Munitions.M_FLARE,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                 .setClanAdvancement(2533, 2536, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "374, TO");
 
@@ -1694,101 +1694,101 @@ public class AmmoType extends EquipmentType {
           "Anti-personnel",
           1,
           Munitions.M_ANTI_PERSONNEL,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setClanAdvancement(2540, 2544, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
 
     private static final MunitionMutator CLAN_AIRBURST_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Airburst",
           1,
           Munitions.M_AIRBURST,
-          new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false)
+          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_D, RATING_C, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.D)
                 .setClanAdvancement(2540, 2544, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
 
     private static final MunitionMutator SMOKE_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE_WARHEAD,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                 .setISAdvancement(2526, 2531, DATE_NONE, 2819, 3043)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "375, TO");
 
     private static final MunitionMutator SEMI_GUIDED_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Semi-Guided",
           1,
           Munitions.M_SEMIGUIDED,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3055, 3064, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW)
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "374, TO");
 
     private static final MunitionMutator FLARE_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Flare",
           1,
           Munitions.M_FLARE,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                 .setISAdvancement(2533, 2536, DATE_NONE, 2819, 3043)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "374, TO");
 
     private static final MunitionMutator ANTI_PERSONNEL_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Anti-personnel",
           1,
           Munitions.M_ANTI_PERSONNEL,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(2526, 2531, 3052, 2819, 3043)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
 
     private static final MunitionMutator AIRBURST_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Airburst",
           1,
           Munitions.M_AIRBURST,
-          new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
+          new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_D, RATING_C, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.D)
                 .setISAdvancement(2540, 2544, DATE_NONE, 2819, 3043)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
 

@@ -47,7 +47,7 @@ import megamek.logging.MMLogger;
 
 import static megamek.common.AmmoType.F_BATTLEARMOR;
 import static megamek.common.AmmoType.F_PROTOMEK;
-import static megamek.common.AmmoType.TechBase;
+import static megamek.common.ITechnology.TechBase;
 
 /**
  * @author Neoancient

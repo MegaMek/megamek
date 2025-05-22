@@ -39,8 +39,6 @@ import java.io.FileWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.yaml.snakeyaml.Yaml;
-
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.weapons.autocannons.HVACWeapon;
@@ -1142,6 +1140,27 @@ public class EquipmentType implements ITechnology {
     }
 
 
+    /**
+     * Constructs a map containing the YAML-serializable data for this equipment type.
+     * 
+     * <p>The returned map contains the following keys:
+     * <ul>
+     *   <li><b>"id"</b>: The internal name of the equipment (String).</li>
+     *   <li><b>"name"</b>: The display name of the equipment (String).</li>
+     *   <li><b>"shortName"</b>: The short name of the equipment, if available (String).</li>
+     *   <li><b>"aliases"</b>: A list of alias names for the equipment, excluding duplicates (List&lt;String&gt;).</li>
+     *   <li><b>"sortingName"</b>: The sorting name of the equipment, if available (String).</li>
+     *   <li><b>"tonnage"</b>: The tonnage of the equipment, or a variable indicator (Object).</li>
+     *   <li><b>"criticals"</b>: The number of critical slots required, or a variable indicator (Object).</li>
+     *   <li><b>"cost"</b>: The cost of the equipment, or a variable indicator (Object).</li>
+     *   <li><b>"bv"</b>: The battle value of the equipment, or a variable indicator (Object).</li>
+     *   <li><b>"rulesRefs"</b>: References to the rules governing this equipment, if available (String).</li>
+     * </ul>
+     * 
+     * <p>Variable indicators are represented by {@code YamlEncDec.VARIABLE}.
+     * 
+     * @return A map containing the YAML-serializable data for this equipment type.
+     */
     protected Map<String, Object> getYamlData() {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("id", this.internalName);

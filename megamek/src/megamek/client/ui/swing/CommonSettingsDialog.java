@@ -481,6 +481,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox planetaryConditionsShowIndicators = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.planetaryConditionsShowIndicators"));
     private JSpinner planetaryConditionsBackgroundTransparency;
+    private JLabel traceOverlayTransparencyLabel;
+    private JSlider traceOverlayTransparencySlider;
+    private JLabel traceOverlayScaleLabel;
+    private JSlider traceOverlayScaleSlider;
+    private JSlider traceOverlayOriginXSlider;
+    private JSlider traceOverlayOriginYSlider;
+    private JTextField traceOverlayImageFile;
 
     /**
      * Maps command strings to a JTextField for updating the modifier for the command.
@@ -1623,7 +1630,128 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               "CommonSettingsDialog.colors.PlanetaryConditionsBackgroundTransparency.tooltip"));
         comps.add(row);
 
+        addLineSpacer(comps);
+
+        addSpacer(comps, 1);
+
+        traceOverlayTransparencyLabel = new JLabel( Messages.getString("CommonSettingsDialog.TraceOverlayTransparency"));
+        traceOverlayTransparencyLabel.setToolTipText(Messages.getString("CommonSettingsDialog.TraceOverlayTransparency.tooltip"));
+
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
+        row.add(traceOverlayTransparencyLabel);
+        comps.add(row);
+
+        traceOverlayTransparencySlider = new JSlider(0, 255);
+        traceOverlayTransparencySlider.setMajorTickSpacing(32);
+        traceOverlayTransparencySlider.setMinorTickSpacing(4);
+        traceOverlayTransparencySlider.setPaintTicks(true);
+        traceOverlayTransparencySlider.setPaintLabels(true);
+        traceOverlayTransparencySlider.setMaximumSize(new Dimension(1000, 100));
+        traceOverlayTransparencySlider.addChangeListener(this);
+        traceOverlayTransparencySlider.setToolTipText(Messages.getString("CommonSettingsDialog.TraceOverlayTransparency.tooltip"));
+        traceOverlayTransparencySlider.setValue(GUIP.getTraceOverlayTransparency());
+
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(traceOverlayTransparencySlider);
+        comps.add(row);
+
+        addSpacer(comps, 1);
+
+        traceOverlayScaleLabel = new JLabel( Messages.getString("CommonSettingsDialog.TraceOverlayScale"));
+        traceOverlayScaleLabel.setToolTipText(Messages.getString("CommonSettingsDialog.TraceOverlayScale.tooltip"));
+
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
+        row.add(traceOverlayScaleLabel);
+        comps.add(row);
+
+        traceOverlayScaleSlider = new JSlider(30, 150);
+        traceOverlayScaleSlider.setMajorTickSpacing(5);
+        traceOverlayScaleSlider.setMinorTickSpacing(1);
+        traceOverlayScaleSlider.setPaintTicks(true);
+        traceOverlayScaleSlider.setPaintLabels(true);
+        Hashtable<Integer, JComponent> labelTable = new Hashtable<>();
+        labelTable.put(50, new JLabel("0.5"));
+        labelTable.put(75, new JLabel("0.75"));
+        labelTable.put(100, new JLabel("1"));
+        labelTable.put(125, new JLabel("1.25"));
+        labelTable.put(150, new JLabel("1.5"));
+        traceOverlayScaleSlider.setLabelTable(labelTable);
+        traceOverlayScaleSlider.setMaximumSize(new Dimension(1000, 100));
+        traceOverlayScaleSlider.addChangeListener(this);
+        traceOverlayScaleSlider.setToolTipText(Messages.getString("CommonSettingsDialog.TraceOverlayScale.tooltip"));
+        traceOverlayScaleSlider.setValue((int) GUIP.getTraceOverlayScale());
+
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(traceOverlayScaleSlider);
+        comps.add(row);
+
+        JLabel traceOverlayOriginLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayOrigin"));
+
+        row = new ArrayList<>();
+        row.add(traceOverlayOriginLabel);
+        comps.add(row);
+
+        traceOverlayOriginXSlider = new JSlider(-1000, 2000);
+        traceOverlayOriginXSlider.setMajorTickSpacing(200);
+        traceOverlayOriginXSlider.setMinorTickSpacing(10);
+        traceOverlayOriginXSlider.setPaintTicks(true);
+        traceOverlayOriginXSlider.setPaintLabels(true);
+        traceOverlayOriginXSlider.setMaximumSize(new Dimension(1000, 100));
+        traceOverlayOriginXSlider.addChangeListener(this);
+        traceOverlayOriginXSlider.setToolTipText(Messages.getString("CommonSettingsDialog.TraceOverlayOrigin.tooltip"));
+        traceOverlayOriginXSlider.setValue(GUIP.getTraceOverlayOriginX());
+
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(traceOverlayOriginXSlider);
+        comps.add(row);
+
+        traceOverlayOriginYSlider = new JSlider(-1000, 2000);
+        traceOverlayOriginYSlider.setMajorTickSpacing(200);
+        traceOverlayOriginYSlider.setMinorTickSpacing(10);
+        traceOverlayOriginYSlider.setPaintTicks(true);
+        traceOverlayOriginYSlider.setPaintLabels(true);
+        traceOverlayOriginYSlider.setMaximumSize(new Dimension(1000, 100));
+        traceOverlayOriginYSlider.addChangeListener(this);
+        traceOverlayOriginYSlider.setToolTipText(Messages.getString("CommonSettingsDialog.TraceOverlayOrigin.tooltip"));
+        traceOverlayOriginYSlider.setValue(GUIP.getTraceOverlayOriginY());
+
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(traceOverlayOriginYSlider);
+        comps.add(row);
+
+        JLabel traceOverlayImageFileLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayImageFile"));
+        traceOverlayImageFile = new JTextField(20);
+        traceOverlayImageFile.setMaximumSize(new Dimension(250, 40));
+        traceOverlayImageFile.setText(GUIP.getTraceOverlayImageFile());
+        JButton traceOverlayImageFileChooser = new JButton("...");
+        traceOverlayImageFileChooser.addActionListener(e -> selectTraceOverlayImageFile(traceOverlayImageFile, getFrame()));
+
+        row = new ArrayList<>();
+        row.add(traceOverlayImageFileLabel);
+        row.add(traceOverlayImageFile);
+        row.add(Box.createHorizontalStrut(10));
+        row.add(traceOverlayImageFileChooser);
+        row.add(Box.createHorizontalStrut(10));
+        comps.add(row);
+
+        addLineSpacer(comps);
+
         return createSettingsPanel(comps);
+    }
+
+    private static void selectTraceOverlayImageFile(JTextField textField, JFrame frame) {
+        fileChoose(textField, frame, Messages.getString("CommonSettingsDialog.TraceOverlayImageFile"), false);
+        GUIP.setTraceOverlayImageFile(textField.getText());
     }
 
     private BufferedImage boardImage;
@@ -2407,6 +2535,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         planetaryConditionsShowIndicators.setSelected(GUIP.getPlanetaryConditionsShowIndicators());
         planetaryConditionsBackgroundTransparency.setValue(GUIP.getPlanetaryConditionsBackgroundTransparency());
 
+        traceOverlayTransparencySlider.setValue(GUIP.getTraceOverlayTransparency());
+        traceOverlayScaleSlider.setValue((int) GUIP.getTraceOverlayScale());
+        traceOverlayOriginXSlider.setValue(GUIP.getTraceOverlayOriginX());
+        traceOverlayOriginYSlider.setValue(GUIP.getTraceOverlayOriginY());
+        traceOverlayImageFile.setText(GUIP.getTraceOverlayImageFile());
+
         setVisible(false);
     }
 
@@ -2919,6 +3053,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setPlanetaryConditionsShowValues(planetaryConditionsShowValues.isSelected());
         GUIP.setPlanetaryConditionsShowIndicators(planetaryConditionsShowIndicators.isSelected());
         GUIP.setPlanetaryConditionsBackgroundTransparency((Integer) planetaryConditionsBackgroundTransparency.getValue());
+
+        GUIP.setTraceOverlayTransparency(traceOverlayTransparencySlider.getValue());
+        GUIP.setTraceOverlayScale(traceOverlayScaleSlider.getValue());
+        GUIP.setTraceOverlayOriginX(traceOverlayOriginXSlider.getValue());
+        GUIP.setTraceOverlayOriginY(traceOverlayOriginYSlider.getValue());
+        GUIP.setTraceOverlayImageFile(traceOverlayImageFile.getText());
 
         setVisible(false);
     }
@@ -3581,6 +3721,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             GUIP.setFovDarkenAlpha(Math.max(0, Math.min(255, fovDarkenAlpha.getValue())));
         } else if (evt.getSource().equals(numStripesSlider)) {
             GUIP.setFovStripes(numStripesSlider.getValue());
+        } else if (evt.getSource().equals(traceOverlayTransparencySlider)) {
+            GUIP.setTraceOverlayTransparency(traceOverlayTransparencySlider.getValue());
+        } else if (evt.getSource().equals(traceOverlayScaleSlider)) {
+            GUIP.setTraceOverlayScale(traceOverlayScaleSlider.getValue());
+        } else if (evt.getSource().equals(traceOverlayOriginXSlider)) {
+            GUIP.setTraceOverlayOriginX(traceOverlayOriginXSlider.getValue());
+        } else if (evt.getSource().equals(traceOverlayOriginYSlider)) {
+            GUIP.setTraceOverlayOriginY(traceOverlayOriginYSlider.getValue());
         }
     }
 

@@ -39,8 +39,6 @@ import java.io.FileWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.yaml.snakeyaml.Yaml;
-
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.weapons.autocannons.HVACWeapon;

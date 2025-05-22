@@ -17679,7 +17679,7 @@ TargetRoll nTargetRoll,
     public void doBoobyTrapExplosion(int engineRating, Coords position, Vector<Report> vDesc,
           Vector<Integer> vUnits) {
         int[] myDamages = { engineRating, (engineRating / 2), (engineRating / 4), (engineRating / 8) };
-        doExplosion(myDamages, false, position, false, vDesc, vUnits, 5, -1, true, true);
+        doExplosion(myDamages, false, position, 0, false, vDesc, vUnits, 5, -1, true, true);
     }
 
     /**

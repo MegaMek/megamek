@@ -18,6 +18,8 @@
  */
 package megamek.common;
 
+import megamek.common.moves.MovePath;
+
 public class AtmosphericLandingMovePath extends MovePath {
 
     private final BoardLocation groundMapLandingLocation;

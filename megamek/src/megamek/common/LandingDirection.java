@@ -18,6 +18,8 @@
  */
 package megamek.common;
 
+import megamek.common.moves.MovePath;
+
 /**
  * This enum is used to indicate whether a landing is horizontal or vertical.
  */

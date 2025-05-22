@@ -34,8 +34,8 @@
 package megamek.common.weapons;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Vector;
 
 import megamek.common.*;
@@ -150,7 +150,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         final int playerId = artilleryAttackAction.getPlayerId();
         boolean isFlak = targetIsEntity && Compute.isFlakAttack(ae, (Entity) target);
         boolean asfFlak = isFlak && target.isAirborne();
-        Entity bestSpotter = null;
         if (ae == null) {
             logger.error("Artillery Entity is null!");
             return true;
@@ -171,65 +170,23 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // third printing of A Time of War.
         boolean useArtillerySkill = game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL);
 
-        // Are there any valid spotters?
-        if ((null != spottersBefore) && !isFlak) {
-            // fetch possible spotters now
-            Iterator<Entity> spottersAfter = game
-                    .getSelectedEntities(new EntitySelector() {
-                        public int player = playerId;
-
-                        public Targetable targ = target;
-
-                        @Override
-                        public boolean accept(Entity entity) {
-                            Integer id = entity.getId();
-                            return (player == entity.getOwnerId())
-                                    && spottersBefore.contains(id)
-                                    && !LosEffects.calculateLOS(game, entity, targ, true).isBlocked()
-                                    && entity.isActive()
-                            // airborne aeros can't spot for arty
-                                    && !((entity.isAero()) && entity.isAirborne())
-                                    && !entity.isINarcedWith(INarcPod.HAYWIRE);
-                        }
-                    });
-
-            // Out of any valid spotters, pick the best.
-            while (spottersAfter.hasNext()) {
-                Entity ent = spottersAfter.next();
-                if (bestSpotter == null) {
-                    bestSpotter = ent;
-                } else if (ent.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)
-                        && !bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
-                    bestSpotter = ent;
-                } else if ((useArtillerySkill ? (ent.getCrew().getArtillery() < bestSpotter.getCrew().getArtillery())
-                        : (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()))
-                        && !bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
-                    bestSpotter = ent;
-                } else if (bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)
-                        && ent.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
-                    if (useArtillerySkill ? (ent.getCrew().getArtillery() < bestSpotter.getCrew().getArtillery())
-                            : (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery())) {
-                        bestSpotter = ent;
-                    }
-                }
-            }
-        }
-
         // If at least one valid spotter, then get the benefits thereof.
-        if (null != bestSpotter) {
-            int foMod = 0;
-            if (bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
-                foMod = -1;
-            }
-            int mod = ((useArtillerySkill ? bestSpotter.getCrew().getArtillery() : bestSpotter.getCrew().getGunnery())
-                    - 4) / 2;
-            mod += foMod;
-            toHit.addModifier(mod, "Spotting modifier");
-        }
-
-        // Is the attacker still alive and we're not shooting FLAK?
-        // then adjust the target
         if (!isFlak) {
+            Optional<Entity> bestSpotter = ArtilleryHandlerHelper.findSpotter(spottersBefore,
+                  artilleryAttackAction.getPlayerId(), game, target);
+
+            // If at least one valid spotter, then get the benefits thereof.
+            if (bestSpotter.isPresent()) {
+                int foMod = 0;
+                if (bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
+                    foMod = -1;
+                }
+                int mod = ((useArtillerySkill ?
+                      bestSpotter.get().getCrew().getArtillery() :
+                      bestSpotter.get().getCrew().getGunnery()) - 4) / 2;
+                mod += foMod;
+                toHit.addModifier(mod, "Spotting modifier");
+            }
 
             // If the shot hit the target hex, then all subsequent
             // fire will hit the hex automatically.
@@ -248,10 +205,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // shot (not salvo!) previously fired at the target hex, this would
             // in fact appear to be correct.
             // Only apply these modifiers to indirect artillery
-            else if ((null != bestSpotter) && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
+            else if ((bestSpotter.isPresent()) && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
                 // only add mods if it's not an automatic success
                 if (ae.aTracker.getModifier(weapon, targetPos) != TargetRoll.AUTOMATIC_SUCCESS) {
-                    if (bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
+                    if (bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                         ae.aTracker.setSpotterHasForwardObs(true);
                     }
                     ae.aTracker.setModifier(ae.aTracker.getModifier(weapon, targetPos) - 1, targetPos);

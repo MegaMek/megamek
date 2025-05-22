@@ -261,6 +261,20 @@ public class SpecialHexDisplay implements Serializable {
         return new SpecialHexDisplay(Type.ARTILLERY_INCOMING, landingGameRound, owner, message, SHD_VISIBLETO_TEAM);
     }
 
+    /**
+     * Creates an Artillery Missmarker for the given owner and the given round in which it landed. It has no
+     * round limitation and is visible to everyone.
+     *
+     * @param owner   The owner of this artillery attack
+     * @param round   The game round in which the attack landed and scattered
+     * @param message The message to display for this board marker
+     *
+     * @return A SpecialHexDisplay Artillery Miss marker
+     */
+    public static SpecialHexDisplay createArtyMiss(Player owner, int round, String message) {
+        return new SpecialHexDisplay(Type.ARTILLERY_MISS, round, owner, message, SHD_VISIBLETO_ALL);
+    }
+
     public boolean thisRound(int testRound) {
         if (NO_ROUND == round) {
             return true;

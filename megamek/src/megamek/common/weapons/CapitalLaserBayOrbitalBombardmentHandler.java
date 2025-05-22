@@ -22,16 +22,15 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
+
+import static megamek.common.weapons.ArtilleryHandlerHelper.*;
 
 public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
 
@@ -52,9 +51,7 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
 
     @Override
     public boolean handle(GamePhase phase, Vector<Report> reports) {
-        if (!cares(phase)) {
-            return true;
-        } else if (ae == null || target == null || wtype == null || !game.hasBoardLocationOf(target)) {
+        if (ae == null || target == null || wtype == null || !game.hasBoardLocationOf(target)) {
             LOGGER.error("Attack info incomplete!");
             return false;
         }
@@ -67,16 +64,18 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
         }
 
         if (phase.isTargeting()) {
-            // I have no clue how this is used:
+            // I have no clue how/why this is used:
             setAnnouncedEntityFiring(false);
             return true;
         }
 
         // If at least one valid spotter, then get the benefits thereof.
-        Optional<Entity> bestSpotter = findSpotter(attackAction.getSpotterIds(), attackAction.getPlayerId());
-        if (bestSpotter.isPresent()) {
-            int modifier = (bestSpotter.get().getCrew().getGunnery() - 4) / 2;
-            modifier += isForwardObserver(bestSpotter.get()) ? -1 : 0;
+        Optional<Entity> spotter = findSpotter(attackAction.getSpotterIds(), attackAction.getPlayerId(), game,
+              target);
+
+        if (spotter.isPresent()) {
+            int modifier = (spotter.get().getCrew().getGunnery() - 4) / 2;
+            modifier += isForwardObserver(spotter.get()) ? -1 : 0;
             toHit.addModifier(modifier, "Spotting modifier");
         }
 
@@ -88,18 +87,12 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
         // If the shot hit the target hex, then all subsequent fire will hit the hex automatically.
         if (!bMissed) {
             ae.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, target.getPosition());
-        } else if (bestSpotter.isPresent()) {
+        } else if (spotter.isPresent()) {
             // If the shot missed, but was adjusted by a spotter, future shots are more likely to hit.
-            // Note: Because artillery fire is adjusted on a per-unit basis, this can result in
-            // a unit firing multiple artillery weapons at the same hex getting this bonus more
-            // than once per turn. Since the Artillery Modifiers Table on TacOps p. 180 lists a
-            // -1 per shot (not salvo!) previously fired at the target hex, this would in fact
-            // appear to be correct.
-
             // only add mods if it's not an automatic success
             int currentModifier = ae.aTracker.getModifier(weapon, target.getPosition());
             if (currentModifier != TargetRoll.AUTOMATIC_SUCCESS) {
-                if (isForwardObserver(bestSpotter.get())) {
+                if (isForwardObserver(spotter.get())) {
                     ae.aTracker.setSpotterHasForwardObs(true);
                 }
                 ae.aTracker.setModifier(currentModifier - 1, target.getPosition());
@@ -133,39 +126,28 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
         if (!bMissed) {
             report = new Report(3203).subject(subjectId).add(nweaponsHit).add(target.getPosition().getBoardNum());
             reports.addElement(report);
-            String artyMsg = "Artillery hit here on round " + game.getRoundCount()
-                  + ", fired by " + game.getPlayer(attackAction.getPlayerId()).getName()
-                  + " (this hex is now an auto-hit)";
+            String message = "Orbital Bombardment by %s hit here on round %d (this hex is now an auto-hit)"
+                  .formatted(owner().getName(), game.getRoundCount());
+
             board.addSpecialHexDisplay(target.getPosition(),
-                  new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
-                        game.getRoundCount(), game.getPlayer(attackAction.getPlayerId()), artyMsg));
+                  new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT, game.getRoundCount(), owner(), message));
             for (int i = 0; i < nweaponsHit; i++) {
                 actualHits.add(target.getPosition());
             }
         } else {
-            int moF = toHit.getMoS();
-            if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)) {
-                // getMoS returns a negative MoF
-                // simple math is better so lets make it positive
-                if ((-moF - 2) < 1) {
-                    moF = 0;
-                } else {
-                    moF += 2;
-                }
-            }
             // We're only going to display one missed shot hex on the board, at the intended target
             // Any drifted shots will be indicated at their end points
-            String artyMsg = "Orbital Bombardment missed here on round "
-                  + game.getRoundCount() + ", by "
-                  + game.getPlayer(attackAction.getPlayerId()).getName();
+            String message = "Orbital Bombardment by %s missed here on round %d"
+                  .formatted(owner().getName(), game.getRoundCount());
             board.addSpecialHexDisplay(target.getPosition(),
-                  new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(),
-                        game.getPlayer(attackAction.getPlayerId()), artyMsg));
+                  SpecialHexDisplay.createArtyMiss(owner(), game.getRoundCount(), message));
 
-            // Typically, nweaponsHit is exactly 1
             while (nweaponsHit > 0) {
-                // We'll generate a new report and scatter for each weapon fired
-                Coords scatteredPosition = Compute.scatterDirectArty(target.getPosition(), moF);
+                // Scatter individual weapons (not sure where this is applicable)
+                // Scatter distance, see SO:AA, p.91; I decided to have Oblique Artilleryman (CO, p.78) not apply to
+                // Capital Laser Weapons as they are not "artillery pieces"
+                int scatterDistance = 2 * Math.abs(toHit.getMoS());
+                Coords scatteredPosition = Compute.scatterDirectArty(target.getPosition(), scatterDistance);
                 if (board.contains(scatteredPosition)) {
                     actualHits.add(scatteredPosition);
                     // misses and scatters to another hex
@@ -177,9 +159,9 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
                 nweaponsHit--;
             }
 
-            // If we managed to land everything off the board, stop
+            // If we managed to land everything off the board, this handler is finished for good
             if (actualHits.isEmpty()) {
-                return !bMissed;
+                return false;
             }
         }
 
@@ -190,7 +172,7 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
         falloff.clusterMunitionsFlag = false;
 
         for (Coords actualHit : actualHits) {
-            clearMines(reports, actualHit);
+            clearMines(reports, actualHit, game, ae, gameManager);
 
             Vector<Integer> alreadyHit = new Vector<>();
             var blastShape = AreaEffectHelper.shapeBlast(null, actualHit, falloff, board.getHex(actualHit).getLevel(),
@@ -206,20 +188,8 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
         return false;
     }
 
-    private void clearMines(Vector<Report> reports, Coords coords) {
-        if (game.containsMinefield(coords)) {
-            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<>();
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (gameManager.clearMinefield(mf, ae, 10, reports)) {
-                    mfRemoved.add(mf);
-                }
-            }
-            for (Minefield mf : mfRemoved) {
-                gameManager.removeMinefield(mf);
-            }
-        }
+    private Player owner() {
+        return game.getPlayer(attackAction.getPlayerId());
     }
 
     private void reportFiring(Vector<Report> reports, ArtilleryAttackAction aaa) {
@@ -234,51 +204,5 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
         String message = "Orbital Bombardment incoming, landing this round, fired by " + owner.getName();
         SpecialHexDisplay incomingMarker = SpecialHexDisplay.createIncomingFire(owner, landingRound, message);
         game.getBoard(target).addSpecialHexDisplay(target.getPosition(), incomingMarker);
-    }
-
-    private Optional<Entity> findSpotter(List<Integer> spottersBefore, int playerId) {
-        Entity bestSpotter = null;
-
-        // Are there any valid spotters?
-        if (null != spottersBefore) {
-            // fetch possible spotters now
-            Iterator<Entity> spottersAfter = game.getSelectedEntities(entity -> {
-                Integer id = entity.getId();
-                return (playerId == entity.getOwnerId())
-                      && spottersBefore.contains(id)
-                      && !LosEffects.calculateLOS(game, entity, target, true).isBlocked()
-                      && entity.isActive()
-                      // airborne aeros can't spot for arty
-                      && !(entity.isAero() && entity.isAirborne())
-                      && !entity.isINarcedWith(INarcPod.HAYWIRE);
-            });
-
-            // Out of any valid spotters, pick the best.
-            while (spottersAfter.hasNext()) {
-                Entity spotter = spottersAfter.next();
-                if (bestSpotter == null) {
-                    bestSpotter = spotter;
-                } else if (isForwardObserver(spotter) && !isForwardObserver(bestSpotter)) {
-                    bestSpotter = spotter;
-                } else if (spotter.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()
-                      && !isForwardObserver(bestSpotter)) {
-                    bestSpotter = spotter;
-                } else if (isForwardObserver(bestSpotter) && isForwardObserver(spotter)) {
-                    if (spotter.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()) {
-                        bestSpotter = spotter;
-                    }
-                }
-            }
-        }
-        return Optional.ofNullable(bestSpotter);
-    }
-
-    /**
-     * @param entity The unit in question
-     * @return True when the given unit has the Forward Observer ability
-     * @see OptionsConstants#MISC_FORWARD_OBSERVER
-     */
-    public static boolean isForwardObserver(Entity entity) {
-        return entity.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER);
     }
 }

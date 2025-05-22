@@ -116,10 +116,10 @@ factions:
     board: 1
     facing: 2
 
-#  - fullname: Bulldog Medium Tank
-#    at: [ 13,10 ]
-#    board: 0
-#    facing: 2
+  - fullname: Atlas AS7-D #Bulldog Medium Tank
+    at: [ 13,10 ]
+    board: 5
+    facing: 2
 
 #  - fullname: Bulldog Medium Tank
 #    at: [ 11,11 ]
@@ -144,7 +144,7 @@ factions:
 #    status:
 #      - shutdown doesnt work well on grounded Aero
 
-  - fullname: Atlas AS7-D
+  - fullname: Bulldog Medium Tank #Atlas AS7-D
     board: 5
     at: [ 26,14 ]
     facing: 5

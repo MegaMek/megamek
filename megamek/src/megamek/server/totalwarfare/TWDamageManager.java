@@ -43,6 +43,7 @@ public class TWDamageManager implements IDamageManager {
      * @param damageInfo {@link megamek.common.DamageInfo}  for details
      * @return Vector of reports detailing damage dealt.
      */
+    @Override
     public Vector<Report> damageEntity(DamageInfo damageInfo){
         if (!initialized) {
             String message = (game == null && manager == null) ? "Game Manager and Game not initialized" :

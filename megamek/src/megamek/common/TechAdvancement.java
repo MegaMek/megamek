@@ -911,6 +911,11 @@ public class TechAdvancement implements ITechnology {
         return staticTechLevel;
     }
 
+    /**
+     * Set RULES LEVEL
+     * @param level can be any of {@link SimpleTechLevel}
+     * @return itself
+     */
     public TechAdvancement setStaticTechLevel(SimpleTechLevel level) {
         staticTechLevel = level;
         return this;

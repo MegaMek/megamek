@@ -30,7 +30,8 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -57,6 +58,7 @@ import megamek.common.force.Force;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
@@ -321,6 +323,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean unjammingRAC = false;
     protected boolean selfDestructing = false;
     protected boolean selfDestructInitiated = false;
+    protected boolean boobyTrapInitiated = false;
     protected boolean selfDestructedThisTurn = false;
 
     /**
@@ -1350,16 +1353,9 @@ public abstract class Entity extends TurnOrdered
                                                                             AvailabilityValue.E)
                                                                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    protected static final TechAdvancement TA_MIXED_TECH = new TechAdvancement(TechBase.ALL).setISAdvancement(DATE_NONE,
-                3050,
-                3082,
-                DATE_NONE,
-                DATE_NONE)
-                                                                 .setClanAdvancement(DATE_NONE,
-                                                                       2820,
-                                                                       3082,
-                                                                       DATE_NONE,
-                                                                       DATE_NONE)
+    protected static final TechAdvancement TA_MIXED_TECH = new TechAdvancement(TechBase.ALL)
+                                                                 .setISAdvancement(DATE_NONE, 3050, 3082)
+                                                                 .setClanAdvancement(DATE_NONE, 2820, 3082)
                                                                  .setApproximate(false, true, true, false, false)
                                                                  .setPrototypeFactions(Faction.CLAN, Faction.DC, Faction.FS, Faction.LC)
                                                                  .setTechRating(TechRating.A)
@@ -1369,22 +1365,17 @@ public abstract class Entity extends TurnOrdered
                                                                        AvailabilityValue.D)
                                                                  .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TechBase.ALL).setISAdvancement(
-                3061,
-                3082,
-                DATE_NONE,
-                DATE_NONE,
-                DATE_NONE)
+    protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TechBase.ALL)
+                                                                        .setISAdvancement(
+                                                                              3061,
+                                                                              3082)
                                                                         .setISApproximate(false,
                                                                               true,
                                                                               false,
                                                                               false,
                                                                               false)
                                                                         .setClanAdvancement(3061,
-                                                                              3082,
-                                                                              DATE_NONE,
-                                                                              DATE_NONE,
-                                                                              DATE_NONE)
+                                                                              3082)
                                                                         .setClanApproximate(false,
                                                                               true,
                                                                               false,
@@ -2206,7 +2197,11 @@ public abstract class Entity extends TurnOrdered
                     BasementType nextBasement = BasementType.getType(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
                     int collapsedBasement = next.terrainLevel(Terrains.BLDG_BASE_COLLAPSED);
                     if (climb || isJumpingNow) {
-                        retVal = bldnex + next.getLevel();
+                        if ((bldnex + next.getLevel()) > this.getMaxElevationChange() && next.containsTerrain(Terrains.BUILDING) && climb) {
+                            retVal = next.getLevel();
+                        } else {
+                            retVal = bldnex + next.getLevel();
+                        }
                         // If the basement is collapsed, there is no level 0
                     } else if ((assumedElevation == 0) && !nextBasement.isUnknownOrNone() && (collapsedBasement > 0)) {
                         retVal -= nextBasement.getDepth();
@@ -7861,8 +7856,8 @@ public abstract class Entity extends TurnOrdered
      *       within a building
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep, Coords curPos, Coords prevPos) {
-        if ((prevPos == null) || (prevPos.equals(curPos) && !(this instanceof ProtoMek)) ||
-                  (prevPos.equals(curPos) && !(this instanceof Infantry))) {
+        if ((prevPos == null) ||
+                  (prevPos.equals(curPos) && (!(this instanceof ProtoMek) && !(this instanceof Infantry)))) {
             return 0;
         }
         Hex curHex = game.getBoard().getHex(curPos);
@@ -7926,6 +7921,7 @@ public abstract class Entity extends TurnOrdered
 
         // Check for changing levels within a building
         if (curPos.equals(prevPos) &&
+                  !step.isJumping() &&
                   (curBldg != null) &&
                   (prevStep != null) &&
                   (step.getElevation() != prevStep.getElevation()) &&
@@ -13446,7 +13442,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * @return non-supercharger MASC mounted on this entity
      */
-    public MiscMounted getMASC() {
+    public @Nullable MiscMounted getMASC() {
         for (MiscMounted m : getMisc()) {
             MiscType miscType = m.getType();
             if (miscType.hasFlag(MiscType.F_MASC) &&
@@ -13470,6 +13466,36 @@ public abstract class Entity extends TurnOrdered
             }
         }
         return null;
+    }
+
+    /**
+     * @return an operable Booby Trap if there is one on this unit.
+     */
+    public @Nullable MiscMounted getBoobyTrap() {
+        for (MiscMounted m : getMisc()) {
+            MiscType miscType = m.getType();
+            if (miscType.hasFlag(MiscType.F_BOOBY_TRAP) && m.isReady()) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasBoobyTrap() {
+        return getBoobyTrap() != null;
+    }
+
+    // Mobile Structures need this overriden if ever implemented
+    public int getBoobyTrapDamage() {
+        int damage = 0;
+        if (hasBoobyTrap()) {
+            if (getEngine() != null){
+                damage = getEngine().getRating();
+            } else {
+                damage = (int) getWeight() * getOriginalWalkMP();
+            }
+        }
+        return Math.min(500, damage);
     }
 
     public abstract int getEngineHits();
@@ -13727,12 +13753,20 @@ public abstract class Entity extends TurnOrdered
         this.camouflage = camouflage;
     }
 
+    public boolean isBoobyTrapInitiated() {
+        return boobyTrapInitiated;
+    }
+
+    public void setBoobyTrapInitiated(boolean boobyTrapInitiated) {
+        this.boobyTrapInitiated = boobyTrapInitiated;
+    }
+
     public boolean getSelfDestructing() {
         return selfDestructing;
     }
 
-    public void setSelfDestructing(boolean tf) {
-        selfDestructing = tf;
+    public void setSelfDestructing(boolean selfDestructing) {
+        this.selfDestructing = selfDestructing;
     }
 
     public boolean getSelfDestructInitiated() {

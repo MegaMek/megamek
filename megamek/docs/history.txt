@@ -1,6 +1,8 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.06 (2025-05-19 1830 UTC)
+0.50.07
+
+0.50.06 (2025-05-19 1830 UTC) (MILESTONE RELEASE) - DEV NOTE - Starting with this release the History file is built on release rather than on going.
 DEV NOTE - Starting with this release the History file is built on release rather than on going.
 * Move sprite, spriteHandler, overlay, and phaseDisplay classes into … by @kuronekochomusuke in https://github.com/MegaMek/megamek/pull/6901
 * Added Heroic and Legendary Skill Levels by @IllianiBird in https://github.com/MegaMek/megamek/pull/6864

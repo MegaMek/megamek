@@ -634,6 +634,18 @@ public abstract class Mek extends Entity {
     }
 
     /**
+     * @return true if the Mek has at least one leg that is destroyed or breached.
+     */
+    public boolean atLeastOneBadLeg() {
+        for (int i = 0; i < locations(); i++) {
+            if (locationIsLeg(i) && isLocationBad(i)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns true if the entity has a hip crit.
      */
     @Override

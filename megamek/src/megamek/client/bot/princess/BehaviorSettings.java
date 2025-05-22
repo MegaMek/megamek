@@ -138,6 +138,7 @@ public class BehaviorSettings implements Serializable {
     private int allowFacingTolerance = DEFAULT_ALLOW_FACING_TOLERANCE; // How much tolerance do I want to allow for facing?
     private boolean exclusiveHerding = false; // should I only herd with my units or consider also friends?
     private boolean iAmAPirate = false; // Am I a pirate?
+    private boolean ignoreDamageOutput = false;
     private boolean experimental = false; // running experimental features?
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     // endregion Variable Declarations
@@ -168,16 +169,11 @@ public class BehaviorSettings implements Serializable {
         copy.setAllowFacingTolerance(getAllowFacingTolerance());
         copy.setExclusiveHerding(isExclusiveHerding());
         copy.setIAmAPirate(iAmAPirate());
+        copy.setIgnoreDamageOutput(isIgnoreDamageOutput());
         copy.setExperimental(isExperimental());
-        for (final String t : getStrategicBuildingTargets()) {
-            copy.addStrategicTarget(t);
-        }
-        for (final Integer p : getPriorityUnitTargets()) {
-            copy.addPriorityUnit(p);
-        }
-        for (final Integer i : getIgnoredUnitTargets()) {
-            copy.addIgnoredUnitTarget(i);
-        }
+        getStrategicBuildingTargets().forEach(copy::addStrategicTarget);
+        getPriorityUnitTargets().forEach(copy::addPriorityUnit);
+        getIgnoredUnitTargets().forEach(copy::addIgnoredUnitTarget);
 
         return copy;
     }
@@ -200,6 +196,20 @@ public class BehaviorSettings implements Serializable {
      */
     public void setExperimental(String experimental) {
         this.experimental = Boolean.parseBoolean(experimental);
+    }
+
+    /**
+     * @return TRUE if I am running experimental features.
+     */
+    public boolean isIgnoreDamageOutput() {
+        return ignoreDamageOutput;
+    }
+
+    /**
+     * @param ignoreDamageOutput Set TRUE if I am running experimental features.
+     */
+    public void setIgnoreDamageOutput(boolean ignoreDamageOutput) {
+        this.ignoreDamageOutput = ignoreDamageOutput;
     }
 
     /**
@@ -889,6 +899,8 @@ public class BehaviorSettings implements Serializable {
                 setExclusiveHerding(child.getTextContent());
             } else if ("iAmAPirate".equalsIgnoreCase(child.getNodeName())) {
                 setIAmAPirate(child.getTextContent());
+            } else if ("ignoreDamageOutput".equalsIgnoreCase(child.getNodeName())) {
+                setIgnoreDamageOutput(Boolean.parseBoolean(child.getTextContent()));
             } else if ("experimental".equalsIgnoreCase(child.getNodeName())) {
                 setExperimental(child.getTextContent());
             } else if ("strategicTargets".equalsIgnoreCase(child.getNodeName())) {
@@ -999,6 +1011,10 @@ public class BehaviorSettings implements Serializable {
             experimentalNode.setTextContent("" + isExperimental());
             behavior.appendChild(experimentalNode);
 
+            final Element ignoreDamageOutput = doc.createElement("ignoreDamageOutput");
+            ignoreDamageOutput.setTextContent("" + isIgnoreDamageOutput());
+            behavior.appendChild(ignoreDamageOutput);
+
             final Element targetsNode = doc.createElement("strategicBuildingTargets");
             if (includeTargets) {
                 for (final String t : getStrategicBuildingTargets()) {
@@ -1051,6 +1067,7 @@ public class BehaviorSettings implements Serializable {
                 .append(getHerdMentalityValue(getHerdMentalityIndex()));
         out.append("\n\t Exclusive Herding: ").append(isExclusiveHerding());
         out.append("\n\t I am a Pirate: ").append(iAmAPirate());
+        out.append("\n\t I Ignore Damage Output: ").append(isIgnoreDamageOutput());
         out.append("\n\t Experimental: ").append(isExperimental());
         out.append("\n\t Targets:");
         out.append("\n\t\t Priority Coords: ");
@@ -1115,6 +1132,8 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (iAmAPirate != that.iAmAPirate) {
             return false;
+        } else if (ignoreDamageOutput != that.ignoreDamageOutput) {
+            return false;
         }
         return experimental == that.experimental;
     }
@@ -1141,6 +1160,7 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + (exclusiveHerding ? 1 : 0);
         result = 31 * result + (iAmAPirate ? 1 : 0);
         result = 31 * result + (experimental ? 1 : 0);
+        result = 31 * result + (ignoreDamageOutput ? 1 : 0);
         return result;
     }
 }

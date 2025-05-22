@@ -14,16 +14,14 @@
 package megamek.server.commands;
 
 import megamek.client.ui.Messages;
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.commands.arguments.UnitArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Luana Coppio

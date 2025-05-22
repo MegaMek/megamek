@@ -324,7 +324,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * Sets the equipment mode to the mode denoted by the given mode number
-     *
+     * TODO: Refactor so the equipment knows the phase they can be armed/disarmed
      * @param newMode the number of the desired new mode
      */
     public boolean setMode(int newMode) {

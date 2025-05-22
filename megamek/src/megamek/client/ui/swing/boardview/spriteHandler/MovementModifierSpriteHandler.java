@@ -21,7 +21,7 @@ package megamek.client.ui.swing.boardview.spriteHandler;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.sprite.MovementModifierEnvelopeSprite;
 import megamek.common.Game;
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 import megamek.common.event.GamePhaseChangeEvent;
 
 import java.util.Collection;

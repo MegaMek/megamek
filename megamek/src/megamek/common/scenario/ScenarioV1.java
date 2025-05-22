@@ -356,7 +356,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                   TechConstants.getGameTechLevel(game, entity.isClan()));
             return null;
         } else if (entity.isClan() &&
-                         !game.getOptions().booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS)) {
+                         !game.getOptions().booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH)) {
             // Check for clan weapon restrictions
             if (newAmmoType.notAllowedByClanRules()) {
                 LOGGER.warn("Ammo type {} not allowed by Clan rules", newAmmoType.getName());
@@ -1027,7 +1027,6 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         Board[] ba = new Board[nWidth * nHeight];
         Queue<String> maps = new LinkedList<>(Arrays.asList(scenarioV1.getString(PARAM_MAPS)
                                                                   .split(SEPARATOR_COMMA, -1)));
-        List<Boolean> rotateBoard = new ArrayList<>();
         for (int x = 0; x < nWidth; x++) {
             for (int y = 0; y < nHeight; y++) {
                 int n = (y * nWidth) + x;
@@ -1067,7 +1066,6 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 }
 
                 BoardUtilities.flip(ba[n], isRotated, isRotated);
-                rotateBoard.add(isRotated);
             }
         }
 
@@ -1077,7 +1075,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         // construct the big board
-        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, rotateBoard, MapSettings.MEDIUM_GROUND);
+        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, MapSettings.MEDIUM_GROUND);
     }
 
     /**

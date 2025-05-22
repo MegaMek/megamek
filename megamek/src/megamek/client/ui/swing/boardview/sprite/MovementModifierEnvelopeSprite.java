@@ -30,6 +30,7 @@ import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.moves.MovePath;
 
 /**
  * Sprite for displaying information about movement modifier that can be

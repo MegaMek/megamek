@@ -19,6 +19,20 @@
  */
 package megamek.client.bot.princess;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Stream;
+
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
@@ -32,14 +46,28 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.logging.MMLogger;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.stream.Stream;
-
 /**
- * A very "basic" path ranker
+ * A path ranker implementation for most units that evaluates and prioritizes movement paths with the highest score.
+ *
+ * <p>This class evaluates potential movement paths for units controlled by Princess and assigns utility scores based
+ * on tactical considerations. It ranks paths according to their overall desirability, considering multiple weighted
+ * factors including:</p>
+ *
+ * <ul>
+ *   <li><b>Fall risk</b> - Probability of failing piloting skill rolls and falling</li>
+ *   <li><b>Combat effectiveness</b> - Potential damage output vs. damage taken</li>
+ *   <li><b>Strategic positioning</b> - Maintaining appropriate distance to enemies</li>
+ *   <li><b>Tactical advantage</b> - Facing, movement modifiers, and clustering</li>
+ *   <li><b>Self-preservation</b> - Avoiding hazardous terrain and managing retreat</li>
+ *   <li><b>Unit cohesion</b> - Maintaining proximity to friendly units</li>
+ * </ul>
+ *
+ * <p>The ranker implements Princess's core movement decision-making logic for most ground units, calculating a final
+ * utility score where higher values represent more desirable paths. The relative importance of different factors is
+ * determined by the bot's behavior settings (aggression, bravery, herd mentality, etc.).</p>
+ *
+ * <p>Path evaluation also considers terrain hazards like building collapses, water, magma, ice, swamp, and other that
+ * could damage or immobilize the unit.</p>
  */
 public class BasicPathRanker extends PathRanker {
     private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
@@ -114,7 +142,7 @@ public class BasicPathRanker extends PathRanker {
         Set<CoordFacingCombo> enemyFacingSet = pathEnumerator.getUnitPotentialLocations().get(enemy.getId());
 
         if (enemyFacingSet == null) {
-            logger.warn("no facing set for %s", enemy.getDisplayName());
+            logger.debug("no facing set for {}", enemy.getDisplayName());
             return false;
         }
 
@@ -208,6 +236,32 @@ public class BasicPathRanker extends PathRanker {
         return super.getPSRList(path);
     }
 
+    /**
+     * Calculates a penalty modifier for paths with a risk of causing the unit to fall over.
+     * <p>
+     * This method evaluates the risk associated with a movement path based on the probability of failing
+     * any required piloting skill rolls (PSRs). The penalty is calculated by multiplying the probability
+     * of failure by a "shame factor" that represents how much the AI dislikes falling.
+     * <p>
+     * The penalty formula is:
+     * <pre>
+     *    penalty = pilotingFailureChance * (guaranteed failure ? UNIT_DESTRUCTION_FACTOR : fallShameValue)
+     * </pre>
+     * <p>
+     * This creates a graduated response where:
+     * <ul>
+     *   <li>Paths with no chance of falling have no penalty (0)</li>
+     *   <li>Paths with some chance of falling have a proportional penalty</li>
+     *   <li>Paths with guaranteed falling are heavily penalized (treated as potential unit destruction)</li>
+     * </ul>
+     * <p>
+     * The method accounts for the AI's risk tolerance through the fallShame setting - higher values
+     * make the AI more cautious about potential falls.
+     *
+     * @param successProbability The probability (0.0 to 1.0) that the unit will successfully complete
+     *                           all piloting skill rolls required by the movement path
+     * @return The calculated fall penalty value to be subtracted from the path's utility
+     */
     private double calculateFallMod(double successProbability) {
         double pilotingFailure = (1 - successProbability);
         double fallShame = getOwner().getBehaviorSettings().getFallShameValue();
@@ -326,7 +380,7 @@ public class BasicPathRanker extends PathRanker {
                 PhysicalAttackType.RIGHT_KICK, game, getOwner(), true);
 
         if (myKick.getProbabilityToHit() <= 0.5) {
-            return 0;
+            return 0.0;
         }
 
         return myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
@@ -359,8 +413,29 @@ public class BasicPathRanker extends PathRanker {
         return returnResponse;
     }
 
-    // The further I am from a target, the lower this path ranks (weighted by
-    // Hyper Aggression.
+    /**
+     * Calculates an aggression modifier that penalizes paths keeping the unit far from enemies.
+     * 
+     * <p>This method implements the tactical preference for closing with the enemy based on:
+     * <ul>
+     *   <li>The distance to the closest enemy from the path's final position</li>
+     *   <li>The AI's configured hyper-aggression value</li>
+     * </ul>
+     * 
+     * <p>The aggression modifier follows this formula:
+     * <pre>
+     * aggressionMod = distanceToClosestEnemy * hyperAggressionValue
+     * </pre>
+     * 
+     * <p>Since this value is subtracted in the final utility calculation, higher values represent
+     * stronger penalties for staying distant from enemies. A high hyperAggressionValue will strongly
+     * push units toward closing with enemies regardless of other tactical considerations.
+     * 
+     * @param movingUnit The entity being moved
+     * @param path The movement path being evaluated
+     * @param game The current game state
+     * @return An aggression modifier value (higher is worse) to be used in path ranking
+     */
     protected double calculateAggressionMod(Entity movingUnit, MovePath path, Game game) {
 
         double distToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
@@ -375,7 +450,28 @@ public class BasicPathRanker extends PathRanker {
         return aggressionMod;
     }
 
-    // Lower this path ranking if I am moving away from my friends (weighted by Herd Mentality).
+    /**
+     * Calculates a herding modifier that penalizes paths taking the unit away from friendly forces.
+     * 
+     * <p>This method implements the tactical preference for maintaining formation with friendly units based on:
+     * <ul>
+     *   <li>The distance from the path's final position to the center of friendly forces</li>
+     *   <li>The AI's configured herd mentality value</li>
+     * </ul>
+     * 
+     * <p>The herding modifier follows this formula:
+     * <pre>
+     * herdingMod = distanceToFriends * herdMentalityValue
+     * </pre>
+     * 
+     * <p>Since this value is subtracted in the final utility calculation, higher values represent
+     * stronger penalties for straying from the friendly force. If no friendly forces are present
+     * (friendsCoords is null), the method returns 0, applying no penalty.
+     * 
+     * @param friendsCoords The coordinate representing the center of friendly forces, or null if no friends
+     * @param path The movement path being evaluated
+     * @return A herding modifier value (higher is worse) to be used in path ranking
+     */
     protected double calculateHerdingMod(Coords friendsCoords, MovePath path) {
         if (friendsCoords == null) {
             logger.trace(" herdingMod [-0 no friends]");
@@ -390,6 +486,36 @@ public class BasicPathRanker extends PathRanker {
         return herdingMod;
     }
 
+    /**
+     * Calculates a facing modifier that penalizes paths where the unit is not facing threats.
+     * 
+     * <p>This method evaluates how well the unit's final facing aligns with the direction
+     * it should optimally face to confront enemies. The method:
+     * <ul>
+     *   <li>Determines the ideal facing based on the position of the closest enemies</li>
+     *   <li>Calculates how far off the unit's final facing is from this ideal</li>
+     *   <li>Applies a penalty proportional to how far off the facing is</li>
+     *   <li>Considers armor distribution to bias facing toward better-protected sides</li>
+     * </ul>
+     * 
+     * <p>Facing differences are measured in hexside rotations (0-3), where:
+     * <ul>
+     *   <li>0 = Perfect facing toward threat</li>
+     *   <li>1 = Off by one hexside (60°)</li>
+     *   <li>2 = Off by two hexsides (120°)</li>
+     *   <li>3 = Facing directly away (180°)</li>
+     * </ul>
+     * 
+     * <p>The facing penalty is calculated as: 50 * (facingDiff - 1), with a minimum of 0.
+     * This means perfect facing has no penalty, while the worst facing incurs a -100 penalty.
+     * 
+     * @param movingUnit The entity being moved
+     * @param game The current game state
+     * @param path The movement path being evaluated
+     * @param enemyMedianPosition The coordinates of the median position of enemies, or null to use board center
+     * @param closestEnemyPosition The coordinates of the closest enemy, or null to use board center
+     * @return A facing modifier value (higher is worse) to be used in path ranking
+     */
     protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,
           @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition) {
         int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit, path, game.getBoard().getCenter(),
@@ -403,6 +529,25 @@ public class BasicPathRanker extends PathRanker {
     /**
      * If intentionally attempting to reach some board edge, favor paths that take
      * me closer to it.
+     */
+    /**
+     * Calculates a self-preservation modifier that encourages units to retreat when appropriate.
+     * 
+     * <p>This method applies penalties or bonuses based on the unit's movement toward safety:
+     * <ul>
+     *   <li>For units in forced withdrawal or moving to a destination, encourages movement toward home edge</li>
+     *   <li>Applies a substantial bonus ({@link #ARRIVED_AT_DESTINATION_FACTOR}) if the path reaches the home edge</li>
+     *   <li>Applies a penalty proportional to distance from home edge otherwise</li>
+     * </ul>
+     * 
+     * <p>The method only applies these modifiers when the unit is in forced withdrawal or deliberately
+     * moving to a designated location. For normal combat operations, it returns 0 to indicate
+     * self-preservation is not a priority factor.
+     * 
+     * @param movingUnit The entity being moved
+     * @param path The movement path being evaluated
+     * @param game The current game state
+     * @return A self-preservation modifier value (negative values are better) to be used in path ranking
      */
     protected double calculateSelfPreservationMod(Entity movingUnit, MovePath path, Game game) {
         BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
@@ -429,10 +574,22 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
-     * Tells me whether this path will result in me flying to a location from which
-     * there is absolutely no way to remain on the board the following turn.
-     *
-     * Not applicable for ground units, so the default behavior is to return 0.
+     * Calculates a modifier that penalizes paths risking an aerospace unit flying off the board.
+     * 
+     * <p>This method evaluates the risk of aerospace units inadvertently leaving the game board
+     * on subsequent turns due to their movement characteristics. The method:
+     * <ul>
+     *   <li>Analyzes the path's final position, velocity, and facing</li>
+     *   <li>Calculates whether the unit might be forced off-board on following turns</li>
+     *   <li>Returns a multiplier that severely penalizes paths with high off-board risk</li>
+     * </ul>
+     * 
+     * <p>For non-aerospace units, this method always returns 0 as they don't face this particular risk.
+     * For aerospace units, a non-zero return value serves as a multiplier to other penalties,
+     * effectively eliminating dangerous paths from consideration.
+     * 
+     * @param path The movement path being evaluated
+     * @return A multiplier value (0 for no risk, positive for risk of flying off-board)
      */
     protected double calculateOffBoardMod(MovePath path) {
         return 0.0;
@@ -447,7 +604,65 @@ public class BasicPathRanker extends PathRanker {
 
 
     /**
-     * A path ranking
+     * Evaluates and ranks movement paths for MegaMek units based on multiple strategic factors.
+     * Returns a utility score where higher values represent more desirable paths.
+     *
+     * <p>The utility score calculation combines several weighted factors:</p>
+     * <pre>
+     *   utility = -fallMod + braveryMod - aggressionMod - herdingMod + movementMod
+     *             - crowdingTolerance - facingMod - selfPreservationMod - (utility * offBoardMod)
+     * </pre>
+     *
+     * <p><strong>Key Components:</strong></p>
+     * <ul>
+     *   <li><strong>fallMod</strong>: Penalty for paths with risk of failing piloting rolls
+     *     <ul><li>Calculated as {@code pilotingFailure * fallShame}</li>
+     *         <li>Higher values = worse paths (more likely to fall)</li></ul>
+     *   </li>
+     *   <li><strong>braveryMod</strong>: Reward for paths balancing damage output vs. incoming damage
+     *     <ul><li>Based on potential damage to enemies vs. expected damage received</li>
+     *         <li>Higher values = better paths (can do more damage than take)</li></ul>
+     *   </li>
+     *   <li><strong>aggressionMod</strong>: Penalty for staying far from enemies
+     *     <ul><li>Calculated as {@code distanceToEnemy * aggressionValue}</li>
+     *         <li>Higher values = worse paths (too far from enemies when aggression is high)</li></ul>
+     *   </li>
+     *   <li><strong>herdingMod</strong>: Penalty for moving away from friendly units
+     *     <ul><li>Calculated as {@code distanceToFriends * herdingValue}</li>
+     *         <li>Higher values = worse paths (isolated from allies)</li></ul>
+     *   </li>
+     *   <li><strong>facingMod</strong>: Penalty for not facing toward enemies
+     *     <ul><li>Based on facing direction relative to enemies</li>
+     *         <li>Higher values = worse paths (facing away from threats)</li></ul>
+     *   </li>
+     *   <li><strong>selfPreservationMod</strong>: Penalty for not moving toward retreat edge when needed
+     *     <ul><li>Special case: if reaching the home edge, gives a large bonus of {@code ARRIVED_AT_DESTINATION_FACTOR}</li>
+     *         <li>Higher values = worse paths (not retreating when damaged)</li></ul>
+     *   </li>
+     *   <li><strong>movementMod</strong>: Reward for using movement effectively
+     *     <ul><li>Based on multiple strategic factors</li>
+     *         <li>Higher values = better paths (using speed effectively)</li></ul>
+     *   </li>
+     *   <li><strong>crowdingTolerance</strong>: Penalty for ending in crowded areas
+     *     <ul><li>Based on nearby threats relative to maximum weapon range</li>
+     *         <li>Higher values = worse paths (too many enemies nearby)</li></ul>
+     *   </li>
+     *   <li><strong>offBoardMod</strong>: Penalty for aerospace units at risk of flying off the board
+     *     <ul><li>Applies as a multiplier to existing penalties</li>
+     *         <li>Higher values = worse paths (likely to fly off the board)</li></ul>
+     *   </li>
+     * </ul>
+     *
+     * <p>The function uses behavior settings like bravery, aggression, and herd mentality to adjust
+     * the relative importance of these factors based on the AI's configured personality.</p>
+     *
+     * @param path The movement path to be evaluated
+     * @param game The current game state
+     * @param maxRange Entity max weapon range
+     * @param fallTolerance maximum PSR failure chance to be acceptable
+     * @param enemies List of enemy units visible
+     * @param friendsCoords Center of Gravity of friendly units (average coordinate position)
+     * @return A double representing the utility/desirability of the path (higher is better)
      */
     @Override
     protected RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance, List<Entity> enemies,
@@ -475,6 +690,7 @@ public class BasicPathRanker extends PathRanker {
         scores.put("friendsCoords_y", friendsCoords == null ? -1.0 : friendsCoords.getY());
         scores.put("entityId", (double) movingUnit.getId());
         scores.put("entityBehaviorState", (double) getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner()).ordinal());
+        
         // Worry about how badly we can damage ourselves on this path!
         double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy);
         expectedDamageTaken += checkPathForHazards(pathCopy, movingUnit, game);
@@ -546,13 +762,20 @@ public class BasicPathRanker extends PathRanker {
 
         damageEstimate = calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
 
-        // If I cannot kick because I am a clan unit and "No physical attacks for the
-        // clans"
+        // If I cannot kick because I am a clan unit and "No physical attacks for the clans"
         // is enabled, set maximum physical damage for this path to zero.
         if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
                 && path.getEntity().getCrew().isClanPilot()) {
             damageEstimate.physicalDamage = 0;
         }
+
+        // In case we are ignoring damage output, set the damage to zero.
+        if (getOwner().getBehaviorSettings().isIgnoreDamageOutput()) {
+            damageEstimate.physicalDamage = 0;
+            damageEstimate.firingDamage = 0;
+        }
+
+        scores.put("ignoreDamageOutput", getOwner().getBehaviorSettings().isIgnoreDamageOutput() ? 1.0 : 0.0);
         scores.put("damageExpectedTotal", expectedDamageTaken);
         scores.put("myAttackFiring", damageEstimate.firingDamage);
         scores.put("myAttackPhysical", damageEstimate.physicalDamage);
@@ -589,7 +812,7 @@ public class BasicPathRanker extends PathRanker {
         scores.put("herdingMod", herdingMod);
 
         var movementModFormula = new StringBuilder(64);
-        // Movement is good, it gives defense and extends a player power in the game.
+        
         double movementMod = calculateMovementMod(pathCopy, game, enemies, movementModFormula);
         scores.put("enemyHotSpotCount", (double) getOwner().getEnemyHotSpots().size());
         scores.put("selfPreservationValue", getOwner().getBehaviorSettings().getSelfPreservationValue());
@@ -608,9 +831,11 @@ public class BasicPathRanker extends PathRanker {
 
         var formula = new StringBuilder(256);
         var crowdingToleranceFormula = new StringBuilder(64);
+        
         double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, maxRange, crowdingToleranceFormula);
-        // If I need to flee the board, I want to get closer to my home edge.
-        double selfPreservationMod= calculateSelfPreservationMod(movingUnit, pathCopy, game);
+        
+        double selfPreservationMod = calculateSelfPreservationMod(movingUnit, pathCopy, game);
+        
         double offBoardMod = calculateOffBoardMod(pathCopy);
         // if we're an aircraft, we want to de-value paths that will force us off the
         // board
@@ -686,6 +911,29 @@ public class BasicPathRanker extends PathRanker {
         return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
     }
 
+    /**
+     * Calculates a bravery modifier for path evaluation based on potential damage and risk.
+     * 
+     * <p>This method determines how "brave" the AI should be when considering a path by weighing:
+     * <ul>
+     *   <li>The probability of successfully completing the move (avoiding falls)</li>
+     *   <li>The maximum potential damage the unit can inflict from the final position</li>
+     *   <li>The expected damage the unit might receive</li>
+     * </ul>
+     * 
+     * <p>The bravery modifier follows this formula:
+     * <pre>
+     * braveryMod = (successProbability * maximumDamageDone * braveryValue) - expectedDamageTaken
+     * </pre>
+     * 
+     * <p>Higher bravery values make the AI more willing to accept risks if it can deal significant damage.
+     * A positive bravery modifier indicates the path is tactically advantageous despite potential risks.
+     * 
+     * @param successProbability The probability (0.0 to 1.0) of making all required piloting rolls
+     * @param damageEstimate Container with estimates of damage that can be done
+     * @param expectedDamageTaken Expected damage to be received in this position
+     * @return A bravery modifier value (higher is better) to be used in path ranking
+     */
     protected double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
         double maximumDamageDone = damageEstimate.getMaximumDamageEstimate();
         // My bravery modifier is based on my chance of getting to the
@@ -698,7 +946,42 @@ public class BasicPathRanker extends PathRanker {
         return braveryMod;
     }
 
-    // Only forces unit to move if there are no units around
+    /**
+     * Calculates a movement modifier that rewards paths making units harder to hit.
+     * This serves as a key positive modifier in the overall utility calculation.
+     *
+     * <p>The function encourages units to:</p>
+     * <ul>
+     *   <li>Keep moving when tactically beneficial</li>
+     *   <li>Choose paths with optimal movement types</li>
+     *   <li>Use movement as a defensive strategy</li>
+     * </ul>
+     *
+     * <p>The modifier is calculated as:</p>
+     * <pre>
+     *   movementFactor = TMM × (selfPreservation + favorHigherTMM)
+     * </pre>
+     *
+     * <p>Where:</p>
+     * <ul>
+     *   <li><strong>TMM</strong>: Target Movement Modifier - higher values make units harder to hit</li>
+     *   <li><strong>selfPreservation</strong>: AI setting for valuing survival</li>
+     *   <li><strong>favorHigherTMM</strong>: AI setting specifically for valuing movement as defense</li>
+     * </ul>
+     *
+     * <p>The modifier is applied when either:</p>
+     * <ul>
+     *   <li>No enemies are visible (encouraging exploration/positioning)</li>
+     *   <li>OR {@code favorHigherTMM} setting is enabled (encouraging defensive movement)</li>
+     * </ul>
+     *
+     * @param pathCopy The movement path to evaluate
+     * @param game The current game state
+     * @param enemies List of enemy units visible
+     * @param formula StringBuilder to append the formula for logging
+     * @return A positive double value representing the movement modifier
+     * @author Luana Coppio
+     */
     protected double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies, StringBuilder formula) {
         var favorHigherTMM = getOwner().getBehaviorSettings().getFavorHigherTMM();
         boolean noEnemiesInSight = enemies.isEmpty() && getOwner().getEnemyHotSpots().isEmpty();
@@ -716,6 +999,34 @@ public class BasicPathRanker extends PathRanker {
         return 0.0;
     }
 
+    /**
+     * Calculates a crowding tolerance modifier that penalizes paths ending in densely populated areas.
+     * 
+     * <p>This method evaluates the tactical risks of positioning in areas with many units nearby:
+     * <ul>
+     *   <li>Counts friendly units within a short radius (depends on antiCrowding setting)</li>
+     *   <li>Counts enemy units within a medium radius (typically 60% of max weapon range)</li>
+     *   <li>Applies penalties based on these counts and the AI's antiCrowding preference</li>
+     * </ul>
+     * 
+     * <p>The crowding penalty increases as more units (friendly or enemy) are present near the final position.
+     * This encourages units to maintain tactical spacing rather than clumping together, which helps avoid:
+     * <ul>
+     *   <li>Becoming easy targets for area effect weapons</li>
+     *   <li>Blocking each other's line of fire</li>
+     *   <li>Creating movement bottlenecks</li>
+     * </ul>
+     * 
+     * <p>The crowding penalty is only applied to Mechs and Tanks, as other unit types have different
+     * tactical positioning requirements.
+     * 
+     * @param movePath The movement path being evaluated
+     * @param enemies List of enemy units visible
+     * @param maxRange Entity's maximum weapon range
+     * @param formula StringBuilder to append the formula explanation for logging
+     * @return A crowding tolerance value (higher is worse) to be used in path ranking
+     * @author Luana Coppio
+     */
     protected double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies, double maxRange, StringBuilder formula) {
         var self = movePath.getEntity();
         formula.append(" crowdingTolerance ");

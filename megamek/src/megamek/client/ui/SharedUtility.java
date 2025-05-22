@@ -480,7 +480,7 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            // Handle non-infantry moving into a building.
+            // Handle non-protomek moving into a building.
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
             if ((buildingMove > 1) && !(entity instanceof ProtoMek)) {
                 // Get the building being entered.

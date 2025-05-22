@@ -19,25 +19,30 @@
 
 package megamek.client.bot.princess;
 
+import static megamek.client.bot.princess.EnemyTracker.hitChance;
+import static megamek.codeUtilities.MathUtility.clamp01;
+import static megamek.codeUtilities.MathUtility.clampUlp1;
+
+import java.util.List;
+import java.util.TreeSet;
+
 import megamek.codeUtilities.MathUtility;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.EjectedCrew;
+import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.UnitRole;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
-
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
-
-import static megamek.client.bot.princess.EnemyTracker.hitChance;
 
 public class UtilityPathRanker extends BasicPathRanker {
     private final static MMLogger logger = MMLogger.create(UtilityPathRanker.class);
 
     private static final double COVERAGE_RATIO = 0.6;
-
 
     public UtilityPathRanker(Princess owningPrincess) {
         super(owningPrincess);
@@ -59,8 +64,7 @@ public class UtilityPathRanker extends BasicPathRanker {
         if (ps.isEmpty()) {
             return null;
         }
-        RankedPath bestRankedPath = ps.first();
-        return bestRankedPath;
+        return ps.first();
     }
 
     /**
@@ -87,6 +91,7 @@ public class UtilityPathRanker extends BasicPathRanker {
 
         boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+
         for (Entity enemy : enemies) {
             // Skip ejected pilots.
             if (enemy instanceof EjectedCrew) {
@@ -130,30 +135,21 @@ public class UtilityPathRanker extends BasicPathRanker {
             expectedDamageTaken += eval.getEstimatedEnemyDamage();
         }
 
-        // if we're not in the air, we may get hit by friendly artillery
-        if (!path.getEntity().isAirborne() && !path.getEntity().isAirborneVTOLorWIGE()) {
-            Map<Coords, Double> artyDamage = getOwner().getPathRankerState().getIncomingFriendlyArtilleryDamage();
-
-            double friendlyArtilleryDamage;
-            if (!artyDamage.containsKey(path.getFinalCoords())) {
-                friendlyArtilleryDamage = ArtilleryTargetingControl
-                    .evaluateIncomingArtilleryDamage(path.getFinalCoords(), getOwner());
-                artyDamage.put(path.getFinalCoords(), friendlyArtilleryDamage);
-            } else {
-                friendlyArtilleryDamage = artyDamage.get(path.getFinalCoords());
-            }
-
-            expectedDamageTaken += friendlyArtilleryDamage;
-        }
-
         damageEstimate = calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
 
         // If I cannot kick because I am a clan unit and "No physical attacks for the
         // clans"
         // is enabled, set maximum physical damage for this path to zero.
         if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
-            && path.getEntity().getCrew().isClanPilot()) {
+                  && path.getEntity().getCrew().isClanPilot()
+        ) {
             damageEstimate.physicalDamage = 0;
+        }
+
+        // In case we are ignoring damage output, set the damage to zero.
+        if (getOwner().getBehaviorSettings().isIgnoreDamageOutput()) {
+            damageEstimate.physicalDamage = 0;
+            damageEstimate.firingDamage = 0;
         }
 
         double braveryMod = getBraveryMod(successProbability, damageEstimate, expectedDamageTaken);
@@ -185,20 +181,10 @@ public class UtilityPathRanker extends BasicPathRanker {
         double strategicMod = calculateStrategicGoalMod(pathCopy);
         double formationMod = calculateFormationModifier(path, maxRange);
         double exposurePenalty = calculateExposurePenalty(movingUnit, pathCopy, enemies);
-
         double fallBack = shouldFallBack(pathCopy, movingUnit, enemies.get(0)) ? 0.5 : 1.0;
 
-        double utility = clamp01(calculateGeometricMean(new double[] {
-              braveryMod,
-              fallMod,
-              formationMod,
-              aggressionMod,
-              movementMod,
-              selfPreservationMod,
-              strategicMod,
-              exposurePenalty,
-              fallBack
-        })) * facingMod;
+        double utility = clamp01(braveryMod * fallMod * formationMod * aggressionMod * movementMod *
+                                       selfPreservationMod * strategicMod * exposurePenalty * fallBack * facingMod);
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy,
             "utility = " + utility + " :: geometricMean( [fallMod(" + fallMod + "), formationMod("+ formationMod +
@@ -212,17 +198,6 @@ public class UtilityPathRanker extends BasicPathRanker {
         return rankedPath;
     }
 
-    private double calculateGeometricMean(double[] values) {
-        int n = values.length;
-        double accumulator = 0.0d;
-        for (double value : values) {
-            if (value == 0d) {
-                return 0.0d;
-            }
-            accumulator += Math.log(value);
-        }
-        return Math.exp(accumulator / n);
-    }
 
     private void checkBlackIcePresence(Game game) {
         if (blackIce == -1) {
@@ -249,7 +224,7 @@ public class UtilityPathRanker extends BasicPathRanker {
             double utility = (10.0 / (distance + 1.0));
             maxGoalUtility = Math.max(maxGoalUtility, utility);
         }
-        return clamp01(maxGoalUtility);
+        return clampUlp1(maxGoalUtility);
     }
 
     /**
@@ -263,7 +238,7 @@ public class UtilityPathRanker extends BasicPathRanker {
     protected double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
         double maximumDamageDone = damageEstimate.getMaximumDamageEstimate();
         double braveryFactor = getOwner().getBehaviorSettings().getBraveryIndex() / 10.0;
-        return clamp01(1.1 - braveryFactor + (successProbability * (maximumDamageDone / Math.max(1.0, expectedDamageTaken))) * braveryFactor);
+        return clampUlp1(1.1 - braveryFactor + (successProbability * (maximumDamageDone / Math.max(1.0, expectedDamageTaken))) * braveryFactor);
     }
 
     /**
@@ -276,12 +251,12 @@ public class UtilityPathRanker extends BasicPathRanker {
         var tmmFactor = getOwner().getBehaviorSettings().getFavorHigherTMM() / 10.0;
         var tmm = Compute.getTargetMovementModifier(pathCopy.getHexesMoved(), pathCopy.isJumping(), pathCopy.isAirborne(), game);
         var tmmValue = MathUtility.clamp(tmm.getValue() / 8.0, 0.0, 1.0);
-        return tmmValue * tmmFactor;
+        return clampUlp1(tmmValue * tmmFactor);
     }
 
     protected double calculateFallMod(double successProbability) {
         double fallShameFactor = getOwner().getBehaviorSettings().getFallShameIndex() / 10.0;
-        return clamp01((1 - fallShameFactor) + successProbability * fallShameFactor);
+        return clampUlp1((1 - fallShameFactor) + successProbability * fallShameFactor);
     }
 
     private int getFacingDiff(MovePath path) {
@@ -320,7 +295,7 @@ public class UtilityPathRanker extends BasicPathRanker {
         var facingMod = 1 / Math.pow(10, facingDiff);
 
         logger.trace("facing mod [{} = 1 / (10 ^ {})", facingMod, facingDiff);
-        return clamp01(facingMod);
+        return clampUlp1(facingMod);
     }
 
     private double calculateFormationModifier(MovePath path, int maxRange) {
@@ -330,7 +305,7 @@ public class UtilityPathRanker extends BasicPathRanker {
         double coverageMod = calculateCoverageModifier(path);
         double spacingMod = calculateOptimalSpacingMod(path, cluster);
 
-        return clamp01(lineMod * coverageMod * spacingMod);
+        return clampUlp1(lineMod * coverageMod * spacingMod);
     }
 
     private double calculateCoverageModifier(MovePath path) {
@@ -367,7 +342,7 @@ public class UtilityPathRanker extends BasicPathRanker {
 
         double weight = getOwner().getBehaviorSettings().getHyperAggressionIndex() / 10.0;
         double aggression = clamp01(maxRange / distToEnemy);
-        return clamp01(1.1 - weight + aggression * weight);
+        return clampUlp1(1.1 - weight + aggression * weight);
     }
 
     @Override
@@ -390,10 +365,10 @@ public class UtilityPathRanker extends BasicPathRanker {
                 selfPreservationMod = 1.0;
             }
 
-            return clamp01(1.1 - weight + selfPreservationMod * weight);
+            return clampUlp1(1.1 - weight + selfPreservationMod * weight);
         }
         logger.trace("self preservation mod [1] - not moving nor forced to withdraw");
-        return clamp01(1.0);
+        return 1.0;
     }
 
     private double calculateExposurePenalty(Entity unit, MovePath movePath, List<Entity> enemies) {
@@ -408,10 +383,10 @@ public class UtilityPathRanker extends BasicPathRanker {
                     .count();
             if (getOwner().getCoverageValidator().validateUnitCoverage(unit, movePath.getFinalCoords())) {
                 double exposureScore = 1 + (threateningEnemies * 0.3 + somewhatThreateningEnemies * 0.15);
-                return 1.0 / exposureScore;
+                return clampUlp1(1.0 / exposureScore);
             } else {
                 double exposureScore = 1 + (threateningEnemies * 0.5 + somewhatThreateningEnemies * 0.25);
-                return 1.0 / exposureScore;
+                return clampUlp1(1.0 / exposureScore);
             }
         }
         return 1.0;
@@ -429,10 +404,6 @@ public class UtilityPathRanker extends BasicPathRanker {
                 .map(Entity::getPosition)
                 .toList();
         return Coords.average(positions);
-    }
-
-    static double clamp01(double value) {
-        return Math.min(1.0, Math.max(0.0, value));
     }
 
     private double calculateLineFormationMod(MovePath path, int maxRange, SwarmContext.SwarmCluster cluster) {
@@ -466,7 +437,7 @@ public class UtilityPathRanker extends BasicPathRanker {
                 (forwardBias * 0.2) -
                 borderPenalty;
 
-        return clamp01(positionQuality);
+        return clampUlp1(positionQuality);
     }
 
     private Coords calculateLinePosition(Coords centroid, int threatDirection, int unitIndex, double optimalRange) {
@@ -505,7 +476,7 @@ public class UtilityPathRanker extends BasicPathRanker {
         double newDistance = newPos.distance(threatPos);
 
         // Reward moving closer to threat, penalize retreating
-        return clamp01(1.5 - (newDistance / currentDistance));
+        return clampUlp1(1.5 - (newDistance / currentDistance));
     }
 
     private double calculateBorderPenalty(Coords position) {

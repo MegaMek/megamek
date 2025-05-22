@@ -2,6 +2,7 @@ size 55 55
 tag "GrassTheme (Auto)"
 tag "Water (Auto)"
 tag "Roads (Auto)"
+tag "FuelTank (Auto)"
 tag "Flat (Auto)"
 tag "MediumForest (Auto)"
 tag "ArmoredBuilding (Auto)"

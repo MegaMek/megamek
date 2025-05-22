@@ -1,6 +1,7 @@
 size 150 110
 tag "Cliffs (Auto)"
 tag "Roads (Auto)"
+tag "FuelTank (Auto)"
 tag "HighHills (Auto)"
 tag "ArmoredBuilding (Auto)"
 hex 0101 -1 "" ""

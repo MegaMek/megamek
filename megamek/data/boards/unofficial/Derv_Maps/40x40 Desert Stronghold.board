@@ -1,8 +1,9 @@
 size 40 40
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "DesertTheme (Auto)"
+tag "FuelTank (Auto)"
 tag "Flat (Auto)"
+tag "DesertTheme (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "" "desert"
 hex 0301 0 "" "desert"

@@ -135,6 +135,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLANETARY_CONDITIONS_SHOW_INDICATORS = "PlanetaryConditionsShowIndicators";
     public static final String PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY = "PlanetaryConditionsBackgroundTransparency";
 
+    public static final String TRACE_OVERLAY_TRANSPARENCY = "TraceOverlayTransparency";
+    public static final String TRACE_OVERLAY_SCALE = "TraceOverlayScale";
+    public static final String TRACE_OVERLAY_ORIGIN_X = "TraceOverlayOriginX";
+    public static final String TRACE_OVERLAY_ORIGIN_Y = "TraceOverlayOriginY";
+    public static final String TRACE_OVERLAY_IMAGE_FILE = "TraceOverlayImageFile";
+
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
     public static final String BUTTONS_PER_ROW = "ButtonsPerRow";
     public static final String DOCK_ON_LEFT = "DockOnLeft";
@@ -397,6 +403,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
     public static final String SHOW_KEYBINDS_OVERLAY = "ShowKeybindsOverlay";
     public static final String SHOW_PLANETARYCONDITIONS_OVERLAY = "ShowPlanetaryConditionsOverlay";
+    public static final String SHOW_TRACE_OVERLAY = "ShowTraceOverlay";
     public static final String UNIT_LABEL_STYLE = "UnitLabelStyle";
     public static final String AS_CARD_FONT = "AsCardFont";
     public static final String AS_CARD_SIZE = "AsCardSize";
@@ -507,6 +514,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(PLANETARY_CONDITIONS_SHOW_VALUES, true);
         setDefault(PLANETARY_CONDITIONS_SHOW_INDICATORS, true);
         setDefault(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY, 200);
+
+        setDefault(TRACE_OVERLAY_TRANSPARENCY, 64);
+        setDefault(TRACE_OVERLAY_SCALE, 100);
+        setDefault(TRACE_OVERLAY_ORIGIN_X, 0);
+        setDefault(TRACE_OVERLAY_ORIGIN_Y, 0);
+        setDefault(TRACE_OVERLAY_IMAGE_FILE, "");
 
         setDefault(WARNING_COLOR, DEFAULT_RED);
         setDefault(CAUTION_COLOR, Color.yellow);
@@ -846,6 +859,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         setDefault(SHOW_KEYBINDS_OVERLAY, true);
         setDefault(SHOW_PLANETARYCONDITIONS_OVERLAY, true);
+        setDefault(SHOW_TRACE_OVERLAY, false);
 
         setDefault(AS_CARD_FONT, "");
         setDefault(AS_CARD_SIZE, 0.75f);
@@ -3218,6 +3232,46 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY, i);
     }
 
+    public int getTraceOverlayTransparency() {
+        return getInt(TRACE_OVERLAY_TRANSPARENCY);
+    }
+
+    public void setTraceOverlayTransparency(int i) {
+        store.setValue(TRACE_OVERLAY_TRANSPARENCY, i);
+    }
+
+    public int getTraceOverlayScale() {
+        return getInt(TRACE_OVERLAY_SCALE);
+    }
+
+    public void setTraceOverlayScale(int i) {
+        store.setValue(TRACE_OVERLAY_SCALE, i);
+    }
+
+    public int getTraceOverlayOriginX() {
+        return getInt(TRACE_OVERLAY_ORIGIN_X);
+    }
+
+    public void setTraceOverlayOriginX(int i) {
+        store.setValue(TRACE_OVERLAY_ORIGIN_X, i);
+    }
+
+    public int getTraceOverlayOriginY() {
+        return getInt(TRACE_OVERLAY_ORIGIN_Y);
+    }
+
+    public void setTraceOverlayOriginY(int i) {
+        store.setValue(TRACE_OVERLAY_ORIGIN_Y, i);
+    }
+
+    public String getTraceOverlayImageFile() {
+        return getString(TRACE_OVERLAY_IMAGE_FILE);
+    }
+
+    public void setTraceOverlayImageFile(String s) {
+        store.setValue(TRACE_OVERLAY_IMAGE_FILE, s);
+    }
+
     public void setUnitToolTipSeenByResolution(int i) {
         store.setValue(UNIT_TOOLTIP_SEENBYRESOLUTION, i);
     }
@@ -3375,6 +3429,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShowPlanetaryConditionsOverlay() {
         return getBoolean(SHOW_PLANETARYCONDITIONS_OVERLAY);
+    }
+
+    public void toggleTraceConditionsOverlay() {
+        store.setValue(SHOW_TRACE_OVERLAY, !getBoolean(SHOW_TRACE_OVERLAY));
+    }
+
+    public boolean getShowTraceOverlay() {
+        return getBoolean(SHOW_TRACE_OVERLAY);
     }
 
     public void setShowPlanetaryConditionsOverlay(boolean b) {

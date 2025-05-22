@@ -85,7 +85,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(allowed, OptionsConstants.ALLOWED_ERA_BASED, false);
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false);
         addOption(allowed, OptionsConstants.ALLOWED_SHOW_EXTINCT, true);
-        addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false);
+        addOption(allowed, OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH, false);
         addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false);
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false);
         addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false);

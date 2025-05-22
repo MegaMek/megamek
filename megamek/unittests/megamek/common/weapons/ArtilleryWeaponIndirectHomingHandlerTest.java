@@ -18,6 +18,19 @@
  */
 package megamek.common.weapons;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Random;
+import java.util.Vector;
+import java.util.stream.Collectors;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.*;
@@ -34,18 +47,6 @@ import megamek.server.totalwarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Random;
-import java.util.Vector;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class ArtilleryWeaponIndirectHomingHandlerTest {
     private Player aPlayer;
@@ -91,8 +92,13 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         when(mockBoard.getSpecialHexDisplayTable()).thenReturn(new Hashtable<>());
         game.setBoard(mockBoard);
 
-        server = new Server(null, random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
-            gameManager, false, "", null, true);
+        server = new Server(null,
+              random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
+              gameManager,
+              false,
+              "",
+              null,
+              true);
     }
 
     Mek createMek(String chassis, String model, String crewName, Player owner) {
@@ -108,8 +114,8 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         mockMek.setModel(model);
 
         Crew mockCrew = new Crew(CrewType.SINGLE);
-        mockCrew.setGunnery(gSkill);
-        mockCrew.setPiloting(pSkill);
+        mockCrew.setGunnery(gSkill, mockCrew.getCrewType().getGunnerPos());
+        mockCrew.setPiloting(pSkill, mockCrew.getCrewType().getPilotPos());
         PilotOptions pOpt = new PilotOptions();
         mockCrew.setName(crewName, 0);
         mockCrew.setOptions(pOpt);
@@ -137,8 +143,8 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         mockInfantry.setModel(model);
 
         Crew mockCrew = new Crew(CrewType.INFANTRY_CREW);
-        mockCrew.setGunnery(gSkill);
-        mockCrew.setPiloting(pSkill);
+        mockCrew.setGunnery(gSkill, mockCrew.getCrewType().getGunnerPos());
+        mockCrew.setPiloting(pSkill, mockCrew.getCrewType().getPilotPos());
         PilotOptions pOpt = new PilotOptions();
         mockCrew.setName(crewName, 0);
         mockCrew.setOptions(pOpt);
@@ -149,9 +155,8 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         mockInfantry.autoSetInternal();
         try {
             mockInfantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
-                Infantry.LOC_INFANTRY);
-            mockInfantry.setPrimaryWeapon((InfantryWeapon) InfantryWeapon
-                .get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
+                  Infantry.LOC_INFANTRY);
+            mockInfantry.setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
         } catch (LocationFullException ex) {
             // do nothing
         }
@@ -179,8 +184,8 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         mockAeroSpaceFighter.setModel(model);
 
         Crew mockCrew = new Crew(CrewType.SINGLE);
-        mockCrew.setGunnery(gSkill);
-        mockCrew.setPiloting(pSkill);
+        mockCrew.setGunnery(gSkill, mockCrew.getCrewType().getGunnerPos());
+        mockCrew.setPiloting(pSkill, mockCrew.getCrewType().getPilotPos());
         PilotOptions pOpt = new PilotOptions();
         mockCrew.setName(crewName, 0);
         mockCrew.setOptions(pOpt);
@@ -222,19 +227,15 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
     }
 
     WeaponAttackAction makeWAA(Entity attacker, Entity defender, Mounted weapon) {
-        return new WeaponAttackAction(
-            attacker.getId(),
-            defender.getId(),
-            attacker.getEquipmentNum(weapon));
+        return new WeaponAttackAction(attacker.getId(), defender.getId(), attacker.getEquipmentNum(weapon));
     }
 
     ArtilleryAttackAction makeArtilleryWAA(Entity attacker, Entity defender, Mounted weapon) {
-        return new ArtilleryAttackAction(
-            attacker.getId(),
-            defender.getTargetType(),
-            defender.getId(),
-            attacker.getEquipmentNum(weapon),
-            game);
+        return new ArtilleryAttackAction(attacker.getId(),
+              defender.getTargetType(),
+              defender.getId(),
+              attacker.getEquipmentNum(weapon),
+              game);
     }
 
     void loadBombOnASF(Entity bomber, int bombType) {
@@ -249,8 +250,9 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
     }
 
     /**
-     * This test actually exists to quickly iterate through artillery handling code, for debugging purposes. It iterates through one Homing
-     * Arrow IV bomb launch, the subsequent tagging turn, and the homing attack conversion / handling.
+     * This test actually exists to quickly iterate through artillery handling code, for debugging purposes. It iterates
+     * through one Homing Arrow IV bomb launch, the subsequent tagging turn, and the homing attack conversion /
+     * handling.
      */
     @Test
     void handleArrowIVHomingBombTargetMekWithTAG() throws LocationFullException {
@@ -277,8 +279,10 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
 
         // Create Artillery WAA and handler
         ArtilleryAttackAction awaa = makeArtilleryWAA(attacker, defender, attacker.getWeapon(0));
-        ArtilleryWeaponIndirectHomingHandler artie = new ArtilleryWeaponIndirectHomingHandler(
-            makeAutoHitHomingTHD(), awaa, game, gameManager);
+        ArtilleryWeaponIndirectHomingHandler artie = new ArtilleryWeaponIndirectHomingHandler(makeAutoHitHomingTHD(),
+              awaa,
+              game,
+              gameManager);
 
         // Set game phase and run handler to simulate initial firing
         game.setPhase(GamePhase.TARGETING);
@@ -303,9 +307,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         assertFalse(crunchies.isDestroyed());
 
         // for debugging purposes only. Use debug mode, place breakpoint above, evaluate manually
-        reports.stream()
-            .map(Report::text)
-            .collect(Collectors.joining(",\n"));
+        reports.stream().map(Report::text).collect(Collectors.joining(",\n"));
 
     }
 
@@ -328,8 +330,10 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
 
         // Create Artillery WAA and handler
         ArtilleryAttackAction awaa = makeArtilleryWAA(attacker, defender, attacker.getWeapon(0));
-        ArtilleryWeaponIndirectHomingHandler artie = new ArtilleryWeaponIndirectHomingHandler(
-            makeAutoHitHomingTHD(), awaa, game, gameManager);
+        ArtilleryWeaponIndirectHomingHandler artie = new ArtilleryWeaponIndirectHomingHandler(makeAutoHitHomingTHD(),
+              awaa,
+              game,
+              gameManager);
 
         // Set game phase and run handler to simulate initial firing
         game.setPhase(GamePhase.TARGETING);
@@ -355,9 +359,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         assertTrue(defender.isDestroyed());
 
         // for debugging purposes only. Use debug mode, place breakpoint above, evaluate manually
-        reports.stream()
-            .map(Report::text)
-            .collect(Collectors.joining(",\n"));
+        reports.stream().map(Report::text).collect(Collectors.joining(",\n"));
 
     }
 }

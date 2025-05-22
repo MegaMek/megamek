@@ -189,20 +189,6 @@ public final class Version implements Comparable<Version>, Serializable {
     // endregion Getters
 
     /**
-     * Use this method to determine if this version is higher than the version passed
-     *
-     * @param other The version we want to see if it is lower than this version
-     *
-     * @return true if this is higher than checkVersion
-     *
-     * @deprecated use {@link #isHigherThan(Version)} instead.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public boolean isHigherThan(final String other) {
-        return isHigherThan(new Version(other));
-    }
-
-    /**
      * Use this method to determine if the version passed is less than this Version object.
      *
      * @param other The version we want to see if is less than this version
@@ -212,21 +198,7 @@ public final class Version implements Comparable<Version>, Serializable {
     public boolean isHigherThan(final Version other) {
         return compareTo(other) > 0;
     }
-
-    /**
-     * Use this method to determine if this version is lower than the version passed
-     *
-     * @param other The version we want to see if it is higher than this version.
-     *
-     * @return true if this is lower than checkVersion
-     *
-     * @deprecated use {@link #isLowerThan(Version) instead}
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public boolean isLowerThan(final String other) {
-        return isLowerThan(new Version(other));
-    }
-
+    
     /**
      * Use this method to determine if this version is lower than the version passed
      *

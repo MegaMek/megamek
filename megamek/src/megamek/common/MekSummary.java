@@ -278,31 +278,6 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return unitSubType;
     }
 
-    /**
-     * @deprecated No indicated Uses
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public static String determineETypeName(MekSummary ms) {
-        return switch (ms.getUnitType()) {
-            case "BattleArmor", "Infantry" -> Entity.getEntityMajorTypeName(Entity.ETYPE_INFANTRY);
-            case "VTOL" -> Entity.getEntityMajorTypeName(Entity.ETYPE_VTOL);
-            case "Naval", "Gun Emplacement", "Tank" -> Entity.getEntityMajorTypeName(Entity.ETYPE_TANK);
-            case "Mek" -> Entity.getEntityMajorTypeName(Entity.ETYPE_MEK);
-            case "ProtoMek" -> Entity.getEntityMajorTypeName(Entity.ETYPE_PROTOMEK);
-            case "Space Station", "Jumpship", "Dropship", "Small Craft", "Aero" ->
-                  Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
-            case "Conventional Fighter", "AeroSpaceFighter" ->
-                  Entity.getEntityMajorTypeName(Entity.ETYPE_AEROSPACEFIGHTER);
-            default -> Entity.getEntityMajorTypeName(-1);
-        };
-    }
-
-    // This is here for legacy purposes to not break the API
-    @Deprecated(since = "0.50.4", forRemoval = true)
-    public static String determineUnitType(Entity e) {
-        return UnitType.getTypeName(e.getUnitType());
-    }
-
     public File getSourceFile() {
         return sourceFile;
     }
@@ -341,14 +316,6 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public int getType() {
         return type;
-    }
-
-    /**
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int[] getAltTypes() {
-        return altTypes;
     }
 
     public int getType(int year) {

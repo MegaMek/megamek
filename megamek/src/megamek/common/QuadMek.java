@@ -851,9 +851,4 @@ public class QuadMek extends Mek {
     protected int legCount() {
         return 4;
     }
-
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-
-    }
 }

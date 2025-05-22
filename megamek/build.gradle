@@ -2,7 +2,7 @@ import java.time.LocalDateTime
 
 plugins {
     id 'application'
-    id 'com.palantir.git-version' version '3.2.0'
+    id 'com.palantir.git-version' version '3.3.0'
     id 'edu.sc.seis.launch4j' version '3.0.6'
     id "io.sentry.jvm.gradle" version '5.5.0'
     id 'jacoco'
@@ -75,12 +75,12 @@ dependencies {
 application {
     mainClass = 'megamek.MegaMek'
     applicationDefaultJvmArgs = [
-        '-Xmx4096m',
-        '--add-opens',
-        'java.base/java.util=ALL-UNNAMED',
-        '--add-opens',
-        'java.base/java.util.concurrent=ALL-UNNAMED',
-        '-Dsun.awt.disablegrab=true'
+            '-Xmx4096m',
+            '--add-opens',
+            'java.base/java.util=ALL-UNNAMED',
+            '--add-opens',
+            'java.base/java.util.concurrent=ALL-UNNAMED',
+            '-Dsun.awt.disablegrab=true'
     ]
 }
 

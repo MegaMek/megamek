@@ -410,20 +410,6 @@ public class MMXMLUtility {
     }
 
     /**
-     * Formats a Date suitable for writing to an XML node.
-     *
-     * @param date The date to format for XML.
-     *
-     * @return A String suitable for writing a date to an XML node.
-     *
-     * @deprecated Use {@link LocalDate#toString()} instead. Mitigated in 0.50.06, remove in 0.50.07
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public static String saveFormattedDate(final LocalDate date) {
-        return date.toString(); // ISO-8601
-    }
-
-    /**
      * Escapes a string to store in an XML element.
      *
      * @param string The string to be encoded

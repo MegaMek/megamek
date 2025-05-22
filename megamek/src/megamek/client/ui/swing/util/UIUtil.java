@@ -1185,17 +1185,6 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a Font object using the "Dialog" logic font. The font size 14. legacy from manual gui scaling. This
-     * method should eventually be removed
-     *
-     * @deprecated {@link #getDefaultFont()} Remediated in 0.50.06, remove in 0.50.07
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public static Font getScaledFont() {
-        return getDefaultFont();
-    }
-
-    /**
      * Returns a Font object using the "Dialog" logic font. The font size 14.
      */
     public static Font getDefaultFont() {

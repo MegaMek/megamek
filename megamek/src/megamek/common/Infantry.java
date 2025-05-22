@@ -965,12 +965,12 @@ public class Infantry extends Entity {
 
     @Override
     public PilotingRollData checkBogDown(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos,
-                                         Coords curPos, int lastElev, boolean isPavementStep) {
+          Coords curPos, int lastElev, boolean isPavementStep) {
         return checkBogDown(step, curHex, lastPos, curPos, isPavementStep);
     }
 
     public PilotingRollData checkBogDown(MoveStep step, Hex curHex, Coords lastPos, Coords curPos,
-                                         boolean isPavementStep) {
+          boolean isPavementStep) {
         PilotingRollData roll = new PilotingRollData(getId(), 4, "entering boggy terrain");
         int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
         final boolean onBridge = (curHex.terrainLevel(Terrains.BRIDGE) > 0) &&
@@ -1952,13 +1952,8 @@ public class Infantry extends Entity {
 
     @Override
     public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
-                                      MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing,
-                                      Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
+          MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+          boolean isInfantry, int distance) {
         return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "Infantry can't skid");
-    }
-
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-
     }
 }

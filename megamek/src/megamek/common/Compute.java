@@ -6007,8 +6007,8 @@ public class Compute {
      */
     public static boolean canMoveOnPavement(Game game, Coords src,
             Coords dest, MoveStep moveStep) {
-        final Hex srcHex = game.getBoard().getHex(src);
-        final Hex destHex = game.getBoard().getHex(dest);
+        final Hex srcHex = game.getBoard(moveStep.getBoardId()).getHex(src);
+        final Hex destHex = game.getBoard(moveStep.getBoardId()).getHex(dest);
         return canMoveOnPavement(srcHex, destHex, moveStep);
     }
 

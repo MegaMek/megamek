@@ -3351,11 +3351,11 @@ public class MoveStep implements Serializable {
 
         // Jumping inside a building to another hex of the same building is illegal
         Coords startingPosition = getEntity().getPosition();
-        Hex startingHex = game.getBoard().getHex(startingPosition);
+        Hex startingHex = game.getHexOf(getEntity());
         if (!destHex.getCoords().equals(startingPosition) && isJumping() && startingHex.containsTerrain(Terrains.BUILDING) &&
                   destHex.containsTerrain(Terrains.BUILDING) &&
                   srcEl < srcHex.terrainLevel(Terrains.BLDG_ELEV) &&
-                  (game.getBoard().getBuildingAt(startingPosition).equals(game.getBoard().getBuildingAt(getPosition())))) {
+                  (game.getBoard(getEntity()).getBuildingAt(startingPosition).equals(game.getBoard(getEntity()).getBuildingAt(getPosition())))) {
             return false;
         }
 

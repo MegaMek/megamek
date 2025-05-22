@@ -154,7 +154,7 @@ factions:
 #    board: 5
 #    at: [ 35, 29 ]
 #
-#  - fullname: Cheetah IIC
+    #  - fullname: Cheetah IIC
 #    at: [5, 6]
 #    board: 6
 #    facing: 2

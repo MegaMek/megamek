@@ -2,6 +2,7 @@ size 48 48
 tag "Cliffs (Auto)"
 tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
+tag "FuelTank (Auto)"
 tag "HardenedBuilding (Auto)"
 tag "Elevator (Auto)"
 tag "LightForest (Auto)"

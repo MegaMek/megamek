@@ -419,7 +419,10 @@ public class WeaponType extends EquipmentType {
         if (flag instanceof WeaponTypeFlag) {
             return super.hasFlag(flag);
         } else {
-            LOGGER.warn("Incorrect flag check: make sure to test only WeaponTypeFlags on a WeaponType.", new Throwable("Invalid WeaponType"));
+            LOGGER.warn("Incorrect flag check: tested {} instead of WeaponTypeFlag",
+                  flag.getClass().getSimpleName(),
+                  new Throwable("Incorrect flag tested " + flag.getClass().getSimpleName() + " instead of " +
+                                      "WeaponTypeFlag"));
             return false;
         }
     }

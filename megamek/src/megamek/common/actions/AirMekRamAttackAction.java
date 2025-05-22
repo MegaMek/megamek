@@ -16,7 +16,9 @@ package megamek.common.actions;
 import java.util.Enumeration;
 
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 
 /**

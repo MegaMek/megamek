@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
@@ -155,6 +157,12 @@ public interface IAero {
     void setCurrentFuel(int gas);
 
     double getFuelPointsPerTon();
+
+    boolean isFlyingOff();
+
+    void setFlyingOff(OffBoardDirection obd);
+
+    OffBoardDirection getFlyingOffDirection();
 
     /**
      * @return True when this aero requires fuel to move. Note that the result is

@@ -91,9 +91,9 @@ import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -175,6 +175,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
     public static final String VIEW_PLANETARYCONDITIONS_OVERLAY = "viewPlanetaryConditions";
+    public static final String VIEW_TRACE_OVERLAY = "viewTraceOverlay";
     public static final String VIEW_MINI_MAP = "viewMinimap";
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
     public static final String VIEW_ZOOM_IN = "viewZoomIn";
@@ -1635,6 +1636,7 @@ public class ClientGUI extends AbstractClientGUI
         if (getMiniMapDialog() != null) {
             getMiniMapDialog().setVisible(visible);
             conditionalRequestFocus(visible);
+            getMiniMapDialog().setAlwaysOnTop(visible);
         }
     }
 
@@ -1642,6 +1644,7 @@ public class ClientGUI extends AbstractClientGUI
         if (getMiniReportDisplayDialog() != null) {
             setMiniReportLocation(visible);
             conditionalRequestFocus(visible);
+            getMiniReportDisplayDialog().setAlwaysOnTop(false);
         }
     }
 
@@ -1722,6 +1725,7 @@ public class ClientGUI extends AbstractClientGUI
 
         if (getUnitDisplayDialog() != null) {
             setUnitDisplayLocation(visible);
+            getUnitDisplayDialog().setAlwaysOnTop(visible);
         }
     }
 

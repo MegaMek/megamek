@@ -1,7 +1,8 @@
 size 30 17
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
+tag "FuelTank (Auto)"
 tag "Jungle (Auto)"
 tag "DenseForest (Auto)"
 hex 0101 0 "" "grass"

@@ -303,22 +303,26 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
-        if ((attackerHeight == targetElevation) && !ae.isHullDown()) {
-            if (target.getHeight() == 0) {
-                toHit.setHitTable(ToHitData.HIT_NORMAL);
-            } else {
-                toHit.setHitTable(ToHitData.HIT_KICK);
-            }
+        if(isConvertedQuadVee(target, game)){
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else {
-            if (ae.isHullDown()) {
-                // If we are above the target, use punch chart
-                if (attackerHeight > targetElevation) {
-                    toHit.setHitTable(ToHitData.HIT_PUNCH);
-                } else { // If on the same level, it's a punch to the legs
+            if ((attackerHeight == targetElevation) && !ae.isHullDown()) {
+                if (target.getHeight() == 0) {
+                    toHit.setHitTable(ToHitData.HIT_NORMAL);
+                } else {
                     toHit.setHitTable(ToHitData.HIT_KICK);
-                } // Target can't be above, as it wouldn't be legal
+                }
             } else {
-                toHit.setHitTable(ToHitData.HIT_PUNCH);
+                if (ae.isHullDown()) {
+                    // If we are above the target, use punch chart
+                    if (attackerHeight > targetElevation) {
+                        toHit.setHitTable(ToHitData.HIT_PUNCH);
+                    } else { // If on the same level, it's a punch to the legs
+                        toHit.setHitTable(ToHitData.HIT_KICK);
+                    } // Target can't be above, as it wouldn't be legal
+                } else {
+                    toHit.setHitTable(ToHitData.HIT_PUNCH);
+                }
             }
         }
 

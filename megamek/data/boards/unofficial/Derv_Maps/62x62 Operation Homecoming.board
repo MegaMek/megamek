@@ -2,6 +2,7 @@ size 62 62
 tag "Rough (Auto)"
 tag "Swamp (Auto)"
 tag "Roads (Auto)"
+tag "FuelTank (Auto)"
 tag "MultipleTheme (Auto)"
 tag "IceTerrain (Auto)"
 tag "HardenedBuilding (Auto)"

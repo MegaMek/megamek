@@ -29,8 +29,8 @@ import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
-import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 
 /**
  * The Flight Path Indicator Sprite paints a path in front of an aerospace movement path

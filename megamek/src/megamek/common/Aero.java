@@ -153,6 +153,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     // are we tracking any altitude loss due to air-to-ground assaults
     private int altLoss = 0;
 
+    // track leaving the ground map
+    private OffBoardDirection flyingOff = OffBoardDirection.NONE;
+
     /**
      * Track how much altitude has been lost this turn. This is important for properly making weapon attacks, so
      * WeaponAttackActions knows what the altitude was before the attack happened, since the altitude lose is applied
@@ -248,28 +251,20 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return UnitType.AERO;
     }
 
-    protected static final TechAdvancement TA_ASF = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_NONE,
-                2470,
-                2490)
+    protected static final TechAdvancement TA_ASF = new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_NONE,2470,2490)
                                                           .setProductionFactions(F_TH)
                                                           .setTechRating(RATING_D)
                                                           .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
                                                           .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
-                                                                    // Per MUL team and per availability codes should exist to around 2781
-                                                                    .setISAdvancement(DATE_ES,
-                                                                          2200,
-                                                                          DATE_NONE,
-                                                                          2781,
-                                                                          DATE_NONE)
-                                                                    .setISApproximate(false, true, false, true, false)
-                                                                    .setProductionFactions(F_TA)
-                                                                    .setTechRating(RATING_D)
-                                                                    .setAvailability(RATING_D,
-                                                                          RATING_X,
-                                                                          RATING_F,
-                                                                          RATING_F)
-                                                                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                                                        // Per MUL team and per availability codes should exist to around 2781
+                                                        .setISAdvancement(DATE_ES,2200,DATE_NONE,2781,DATE_NONE)
+                                                        .setISApproximate(false, true, false, true, false)
+                                                        .setPrototypeFactions(F_TA)
+                                                        .setProductionFactions(F_TA)
+                                                        .setTechRating(RATING_D)
+                                                        .setAvailability(RATING_D,RATING_X,RATING_F,RATING_F)
+                                                        .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -284,7 +279,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
           new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2491)
                 .setApproximate(true, false, false)
                 .setPrototypeFactions(F_TH)
-                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
                 .setTechRating(RATING_C)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C).setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Standard
@@ -292,7 +287,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3080)
                 .setISApproximate(true, false, false)
                 .setPrototypeFactions(F_WB)
-                .setPrototypeFactions(F_WB, F_CSR)
+                .setProductionFactions(F_WB, F_CSR)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D).setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Small
@@ -300,9 +295,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 .setISApproximate(true, false, false, true, true)
                 .setClanAdvancement(2625, 2631)
                 .setClanApproximate(true, false)
-                .setClanApproximate(true, false)
                 .setPrototypeFactions(F_TH)
-                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_FS)
                 .setTechRating(RATING_D)
                 .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D).setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -310,6 +304,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
           new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, 2300, DATE_NONE, 2520)
                 .setISApproximate(false, true, false, false)
                 .setPrototypeFactions(F_TA)
+                .setProductionFactions(F_TA)
                 .setTechRating(RATING_C)
                 .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F).setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Primitive
@@ -1079,6 +1074,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
         // Reset usedInternalBombs
         setUsedInternalBombs(0);
+
+        // Reset flying off dir
+        flyingOff = OffBoardDirection.NONE;
     }
 
     /**
@@ -3250,5 +3248,20 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public void setEnginesLostRound(int enginesLostRound) {
         this.enginesLostRound = enginesLostRound;
+    }
+
+    @Override
+    public boolean isFlyingOff() {
+        return flyingOff != OffBoardDirection.NONE;
+    }
+
+    @Override
+    public void setFlyingOff(OffBoardDirection direction) {
+        this.flyingOff = direction;
+    }
+
+    @Override
+    public OffBoardDirection getFlyingOffDirection() {
+        return this.flyingOff;
     }
 }

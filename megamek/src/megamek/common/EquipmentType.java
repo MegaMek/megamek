@@ -626,7 +626,7 @@ public class EquipmentType implements ITechnology {
     /**
      * Sets the modes that this type of equipment can be in. By default, the EquipmentType doesn't have the modes, so
      * don't try to call this method with null or empty argument.
-     *
+     * TODO: Refactor so the equipment knows the phase they can be armed/disarmed
      * @param modes non null, non empty list of available mode names.
      */
     protected void setModes(String... modes) {
@@ -654,7 +654,7 @@ public class EquipmentType implements ITechnology {
 
     /**
      * Add a mode to the Equipment
-     *
+     * TODO: Refactor so the equipment knows the phase they can be armed/disarmed
      * @param mode The mode to be added
      *
      * @return true if the mode was added; false if modes was null or the mode was already present

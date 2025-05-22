@@ -31,13 +31,13 @@
  * affiliated with Microsoft.
  */
 
-package megamek.server;
+package megamek.server.totalwarfare;
 
-import megamek.common.DamageInfo;
-import megamek.common.Report;
+class UnknownEntityTypeException extends Exception {
+    public UnknownEntityTypeException() {}
 
-import java.util.Vector;
-
-public interface IDamageManager {
-    public Vector<Report> damageEntity(DamageInfo damageInfo);
+    public UnknownEntityTypeException(String message)
+    {
+        super(message);
+    }
 }

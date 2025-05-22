@@ -105,16 +105,6 @@ import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
 
-class UnknownEntityTypeException extends Exception
-{
-    public UnknownEntityTypeException() {}
-
-    public UnknownEntityTypeException(String message)
-    {
-        super(message);
-    }
-}
-
 /**
  * Manages the Game and processes player actions.
  */

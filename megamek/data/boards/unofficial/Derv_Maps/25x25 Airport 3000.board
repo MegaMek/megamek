@@ -2,6 +2,7 @@ size 25 25
 option exit_roads_to_pavement false
 tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
+tag "FuelTank (Auto)"
 tag "HardenedBuilding (Auto)"
 tag "Hangar (Auto)"
 hex 0101 0 "fuel_tank_cf:40;fuel_tank_elev:2;fuel_tank_magn:100;pavement:1;fuel_tank:2:0" ""

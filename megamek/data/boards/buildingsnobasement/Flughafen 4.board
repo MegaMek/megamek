@@ -2,6 +2,7 @@ size 16 17
 option exit_roads_to_pavement false
 tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
+tag "FuelTank (Auto)"
 tag "Flat (Auto)"
 tag "HeavyBuilding (Auto)"
 hex 0101 0 "pavement:1" ""

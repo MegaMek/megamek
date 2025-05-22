@@ -18691,7 +18691,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param en    - the <code>Entity</code> in question. This value must not be
      *              <code>null</code>.
      * @param vDesc - the <code>Vector</code> that this function should add its
-     *              <code>Report<code>s to.  It may be empty, but not
+     *              <code>Report</code>s to.  It may be empty, but not
      *              <code>null</code>.
      * @param hits  - the number of criticals on the engine
      *

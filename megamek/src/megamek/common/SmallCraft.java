@@ -936,9 +936,4 @@ public class SmallCraft extends Aero {
     public boolean hasPatchworkArmor() {
         return false;
     }
-
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-
-    }
 }

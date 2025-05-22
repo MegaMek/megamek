@@ -94,12 +94,6 @@ public interface ITurnOrdered extends Serializable {
     InitiativeRoll getInitiative();
 
     /**
-     * @deprecated use {@link #clearInitiative(boolean, Map)} instead
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    void clearInitiative(boolean bUseInitComp);
-
-    /**
      * Clear the initiative of this object.
      */
     void clearInitiative(boolean bUseInitComp, Map<Team, Integer> initiativeAptitude);

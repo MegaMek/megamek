@@ -1169,7 +1169,7 @@ public class ForceDescriptor {
         ForceDescriptor transports = createChild(subforces.size() + attached.size());
         transports.setUnitType(null);
         transports.setName("Transport");
-        
+
         // TODO: put this in the faction files
         transports.setEschelon(3);
         transports.setCoRank(35);
@@ -1682,14 +1682,6 @@ public class ForceDescriptor {
 
     public void setElement(boolean element) {
         this.element = element;
-    }
-
-    /**
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int getPositionIndex() {
-        return positionIndex;
     }
 
     public int getNameIndex() {

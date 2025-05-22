@@ -55,8 +55,6 @@ import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.AmmoType.Munitions;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDAndList;
@@ -72,6 +70,8 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.internationalization.I18n;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -388,24 +388,6 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * request the change of a player from a team to another
      *
-     * @param team   Team Number player is wanting to be on.
-     * @param player Player to switch teams.
-     *
-     * @deprecated Planned to be removed. Use {@link #requestTeamChangeForPlayer(int, Player)} instead. One usage in in
-     *       a remediated method. Remove in 0.50.07
-     */
-    @Override
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void requestTeamChange(int team, Player player) {
-        requestedTeam = team;
-        playerChangingTeam = player;
-        changePlayersTeam = false;
-        playersChangingTeam.add(new TeamChangeRequest(team, player));
-    }
-
-    /**
-     * request the change of a player from a team to another
-     *
      * @param teamID Team ID to request a change to.
      * @param player Player requesting change.
      */
@@ -437,32 +419,8 @@ public class TWGameManager extends AbstractGameManager {
         // Change requested by a GM must execute.
         playersChangingTeam.forEach(this::changePlayerTeams);
         playersChangingTeam.clear();
-        // Changes requested by players follow the default behavior
-        legacyProcessTeamChangeRequest();
     }
 
-    /**
-     * Changes the team of the player specified in the team change request and updates the game state.
-     *
-     * @deprecated Planned to be removed at version 0.50.07
-     */
-    @Deprecated(since = "0.50.04", forRemoval=true)
-    private void legacyProcessTeamChangeRequest() {
-        if (playerChangingTeam != null && changePlayersTeam) {
-            playerChangingTeam.setTeam(requestedTeam);
-            getGame().setupTeams();
-            transmitPlayerUpdate(playerChangingTeam);
-            String teamString = "Team " + requestedTeam + "!";
-            if (requestedTeam == Player.TEAM_UNASSIGNED) {
-                teamString = " unassigned!";
-            } else if (requestedTeam == Player.TEAM_NONE) {
-                teamString = " lone wolf!";
-            }
-            sendServerChat(playerChangingTeam.getName() + " has changed teams to " + teamString);
-            playerChangingTeam = null;
-        }
-        changePlayersTeam = false;
-    }
 
     /**
      * Changes the team of the player specified in the team change request and updates the game state.
@@ -5789,9 +5747,10 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Compile report for Aerospace unit flying off the map at the end of the round,
-     * and finalize the unit's state.
+     * Compile report for Aerospace unit flying off the map at the end of the round, and finalize the unit's state.
+     *
      * @param aero Unit leaving the map using Thrust MPs
+     *
      * @return Vector of reports
      */
     protected Report processFlyingOff(Aero aero) {
@@ -10653,9 +10612,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vDesc = new Vector<>();
         Report r;
         for (Entity e : game.getEntitiesVector()) {
-            if (e.hasBoobyTrap() &&
-                      e.getBoobyTrap().curMode().isArmed() &&
-                      e.isBoobyTrapInitiated()) {
+            if (e.hasBoobyTrap() && e.getBoobyTrap().curMode().isArmed() && e.isBoobyTrapInitiated()) {
                 int damage = e.getBoobyTrapDamage();
                 r = new Report(11000, Report.PUBLIC);
                 r.subject = e.getId();
@@ -15431,7 +15388,9 @@ public class TWGameManager extends AbstractGameManager {
         } else {
             // Target isn't building.
             if (glancing && (targetEntity != null)) {
-                damage = (int) (targetEntity.isConventionalInfantry() ? Math.ceil(damage / 2.0) : Math.floor(damage / 2.0));
+                damage = (int) (targetEntity.isConventionalInfantry() ?
+                                      Math.ceil(damage / 2.0) :
+                                      Math.floor(damage / 2.0));
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -15459,7 +15418,14 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     damage -= cluster;
                     cluster = checkForSpikes(targetEntity, hit.getLocation(), cluster, ae, Mek.LOC_LLEG, Mek.LOC_RLEG);
-                    addReport(damageEntity(targetEntity, hit, cluster, false, DamageType.NONE, false, false, throughFront));
+                    addReport(damageEntity(targetEntity,
+                          hit,
+                          cluster,
+                          false,
+                          DamageType.NONE,
+                          false,
+                          false,
+                          throughFront));
                 }
             }
 
@@ -15483,7 +15449,10 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     // ack! automatic death! Tanks suffer an ammo/power plant hit.
                     // TODO : a Mek suffers a Head Blown Off crit.
-                    addReport(destroyEntity(targetEntity, "impossible displacement", targetEntity instanceof Mek, targetEntity instanceof Mek));
+                    addReport(destroyEntity(targetEntity,
+                          "impossible displacement",
+                          targetEntity instanceof Mek,
+                          targetEntity instanceof Mek));
                 }
             }
 
@@ -19413,9 +19382,10 @@ public class TWGameManager extends AbstractGameManager {
 
                 // if there's a mast mount in the rotor, it and all other equipment on it get destroyed if it takes
                 // any amount of damage (0 is no damage)
-                if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR) &&
-                          te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) && (damage > 0))
-                {
+                if ((te instanceof VTOL) &&
+                          (hit.getLocation() == VTOL.LOC_ROTOR) &&
+                          te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) &&
+                          (damage > 0)) {
                     r = new Report(6081);
                     r.subject = te_n;
                     r.indent(2);
@@ -20600,8 +20570,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Extract explosion functionality for generalized explosions in areas.
      */
-    public void doBoobyTrapExplosion(int engineRating, Coords position, Vector<Report> vDesc,
-          Vector<Integer> vUnits) {
+    public void doBoobyTrapExplosion(int engineRating, Coords position, Vector<Report> vDesc, Vector<Integer> vUnits) {
         int[] myDamages = { engineRating, (engineRating / 2), (engineRating / 4), (engineRating / 8) };
         doExplosion(myDamages, false, position, false, vDesc, vUnits, 5, -1, true, true);
     }
@@ -24856,7 +24825,7 @@ public class TWGameManager extends AbstractGameManager {
         // drop cargo
         dropCargo(entity, curPos, vDesc);
 
-        // update our entity, so clients have correct data needed for MekWars stuff
+        // update our entity, so clients have correct data
         entityUpdate(entity.getId());
 
         return vDesc;
@@ -26098,22 +26067,6 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         return false;
-    }
-
-    /**
-     * Returns true if the hex is set on fire with the specified roll. Of course, also checks to see that fire is
-     * possible in the specified hex. This version of the method will not report the attempt roll.
-     *
-     * @param c        - the <code>Coords</code> to be lit.
-     * @param roll     - the <code>int</code> target number for the ignition roll
-     * @param bInferno - <code>true</code> if the fire can be lit in any terrain. If this value is <code>false</code>
-     *                 the hex will be lit only if it contains Woods, jungle or a Building.
-     *
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public boolean checkIgnition(Coords c, TargetRoll roll, boolean bInferno) {
-        return checkIgnition(c, roll, bInferno, Entity.NONE, null);
     }
 
     /**
@@ -27372,10 +27325,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         try {
-            if ((m.getType() instanceof MiscType miscType) &&
-                      miscType.isBoobyTrap() &&
-                      mode != 0 &&
-                      e.hasBoobyTrap()) {
+            if ((m.getType() instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0 && e.hasBoobyTrap()) {
                 sendServerChat("There is no turning back now...");
                 e.setBoobyTrapInitiated(true);
                 m.setMode(mode);
@@ -32427,8 +32377,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Cycle through entities on team and collect all the airborne VTOL/WIGE vehicles
-     * Only vehicles can be affected by Blowing Sand (TO:AR 6th Ed. pg. 60)
+     * Cycle through entities on team and collect all the airborne VTOL/WIGE vehicles Only vehicles can be affected by
+     * Blowing Sand (TO:AR 6th Ed. pg. 60)
+     *
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOLForSand(Team team) {

@@ -30,8 +30,6 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -58,6 +56,8 @@ import megamek.common.force.Force;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
@@ -920,8 +920,7 @@ public abstract class Entity extends TurnOrdered
 
         // set a random UUID for external ID, this will help us sort enemy salvage and
         // prisoners in MHQ
-        // and should have no effect on MM (but need to make sure it doesn't screw up
-        // MekWars)
+        // and should have no effect on MM
         externalId = UUID.randomUUID().toString();
         initTechAdvancement();
         offBoardShotObservers = new HashSet<>();
@@ -997,8 +996,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * This returns the external ID.
      * <p>
-     * Taharqa: I am changing externalId to a string so I can use UUIDs in MHQ. It should only require a simple parseInt
-     * to be added to it to return an integer for other programs (i.e. MekWars).
+     * Taharqa: I am changing externalId to a string so I can use UUIDs in MHQ.
      *
      * @return the ID settable by external sources (such as mm.net)
      *
@@ -1374,8 +1372,7 @@ public abstract class Entity extends TurnOrdered
                                                                               false,
                                                                               false,
                                                                               false)
-                                                                        .setClanAdvancement(3061,
-                                                                              3082)
+                                                                        .setClanAdvancement(3061, 3082)
                                                                         .setClanApproximate(false,
                                                                               true,
                                                                               false,
@@ -1592,9 +1589,10 @@ public abstract class Entity extends TurnOrdered
      * <p>Unfortunately, entities freshly created may not have the game set. Therefore, fall back to the old
      * version when game == null or the player is no longer in the game</p>
      * <p>Server and other central classes already used {@link Game#getPlayer(int)}. It is noted that
-     * {@link Entity#owner} property is not reliable and should be avoided except in special
-     * situations like when entities freshly created may not have the game set
+     * {@link Entity#owner} property is not reliable and should be avoided except in special situations like when
+     * entities freshly created may not have the game set
      * </p>
+     *
      * @return The player that owns this entity. Null if the entity is not owned by anyone.
      */
     public @Nullable Player getOwner() {
@@ -2079,19 +2077,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @deprecated wigeEndClimbPrevious wasn't used so deprecating with only parameters that are used.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int calcElevation(Hex current, Hex next, int assumedElevation, boolean climb, boolean wigeEndClimbPrevious) {
-        return calcElevation(current, next, assumedElevation, climb);
-    }
-
-    /**
      * Calculates the elevation of the entity in the next hex.
-     * @param current The current hex
-     * @param next The next hex
+     *
+     * @param current          The current hex
+     * @param next             The next hex
      * @param assumedElevation The assumed elevation from the previous hex
-     * @param climb Whether the entity is climbing or not
+     * @param climb            Whether the entity is climbing or not
+     *
      * @return The elevation of the entity in the next hex
      *
      * @see Entity#setElevation(int)
@@ -2106,8 +2098,11 @@ public abstract class Entity extends TurnOrdered
         }
 
         // Special case for DFA attacks into water - we want to land on the bottom of the hex
-        if (isMakingDfa() && (assumedElevation == 0) && next.containsTerrain(Terrains.WATER)
-                  && !next.containsTerrain(Terrains.ICE) && !climb) {
+        if (isMakingDfa() &&
+                  (assumedElevation == 0) &&
+                  next.containsTerrain(Terrains.WATER) &&
+                  !next.containsTerrain(Terrains.ICE) &&
+                  !climb) {
             return next.floor();
         }
 
@@ -2152,8 +2147,8 @@ public abstract class Entity extends TurnOrdered
                           next.containsTerrain(Terrains.WATER) &&
                           current.containsTerrain(Terrains.WATER)) ||
                          getMovementMode().isVTOL() ||
-                         (getMovementMode().isQuadSwim() && hasUMU()) || (getMovementMode().isBipedSwim() && hasUMU()))
-        {
+                         (getMovementMode().isQuadSwim() && hasUMU()) ||
+                         (getMovementMode().isBipedSwim() && hasUMU())) {
             retVal += current.getLevel();
             retVal -= next.getLevel();
         } else {
@@ -2197,7 +2192,9 @@ public abstract class Entity extends TurnOrdered
                     BasementType nextBasement = BasementType.getType(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
                     int collapsedBasement = next.terrainLevel(Terrains.BLDG_BASE_COLLAPSED);
                     if (climb || isJumpingNow) {
-                        if ((bldnex + next.getLevel()) > this.getMaxElevationChange() && next.containsTerrain(Terrains.BUILDING) && climb) {
+                        if ((bldnex + next.getLevel()) > this.getMaxElevationChange() &&
+                                  next.containsTerrain(Terrains.BUILDING) &&
+                                  climb) {
                             retVal = next.getLevel();
                         } else {
                             retVal = bldnex + next.getLevel();
@@ -2248,7 +2245,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public int calcElevation(Hex current, Hex next) {
-        return calcElevation(current, next, elevation, false, false);
+        return calcElevation(current, next, elevation, false);
     }
 
     /**
@@ -3117,24 +3114,25 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns this entity's running/flank mp as a string.
-     * Includes both the base mp and the potential mp with speed enhancers,
-     * including the current status of such speed enhancers.
-     * @return A string like <code>9(15)</code> if there is no current {@link Game},
-     * or a string like <code>9(15) MASC:0(3+)</code> if there is one.
+     * Returns this entity's running/flank mp as a string. Includes both the base mp and the potential mp with speed
+     * enhancers, including the current status of such speed enhancers.
+     *
+     * @return A string like <code>9(15)</code> if there is no current {@link Game}, or a string like <code>9(15)
+     *       MASC:0(3+)</code> if there is one.
      */
     public String getRunMPasString() {
         return getRunMPasString(true);
     }
 
     /**
-     * Returns this entity's running/flank mp as a string.
-     * Includes both the base mp and the potential mp with speed enhancers,
-     * optionally including the current status of such speed enhancers.
-     * @param gameState Set this to <code>true</code> to include information about the current state of equipment
-     *                  like MASC.
-     * @return A string like <code>9(15)</code> if <code>gameState</code> is <code>false</code> or there is no
-     * current {@link Game}, or a string like <code>9(15) MASC:0(3+)</code> otherwise.
+     * Returns this entity's running/flank mp as a string. Includes both the base mp and the potential mp with speed
+     * enhancers, optionally including the current status of such speed enhancers.
+     *
+     * @param gameState Set this to <code>true</code> to include information about the current state of equipment like
+     *                  MASC.
+     *
+     * @return A string like <code>9(15)</code> if <code>gameState</code> is <code>false</code> or there is no current
+     *       {@link Game}, or a string like <code>9(15) MASC:0(3+)</code> otherwise.
      */
     public String getRunMPasString(boolean gameState) {
         return Integer.toString(getRunMP());
@@ -4204,7 +4202,9 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns the Rules.ARC that the weapon, specified by number, fires into.
+     *
      * @param weaponNumber integer equipment number, index from equipment list
+     *
      * @return arc the specified weapon is in
      */
     public abstract int getWeaponArc(int weaponNumber);
@@ -4279,7 +4279,8 @@ public abstract class Entity extends TurnOrdered
                   (!mounted.getType().hasFlag(WeaponType.F_AMSBAY)) &&
                   (!(mounted.hasModes() && mounted.curMode().equals("Point Defense"))) &&
                   ((mounted.getLinked() == null) ||
-                         ((mounted.getLinked().getType() instanceof MiscType) && mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT)) ||
+                         ((mounted.getLinked().getType() instanceof MiscType) &&
+                                mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT)) ||
                          (mounted.getLinked().getUsableShotsLeft() > 0))) {
 
             // TAG only in the correct phase...
@@ -5961,6 +5962,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Checks if the unit has a hierarchic C3 system. (Inverse of {@link #hasNhC3}
+     *
      * @return {@code true} if the unit has a C3 system that is not a C3i, NC3 or Nova CEWS.
      */
     public boolean hasHierarchicalC3() {
@@ -6046,9 +6048,11 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Explicitly set the C3 Net ID using a string.
+     *
+     * @param c3NetId string value the id should be set to
+     *
      * @see megamek.common.util.C3Util
      * @see #setC3NetId(Entity)
-     * @param c3NetId string value the id should be set to
      */
     public void setC3NetId(@Nullable String c3NetId) {
         c3NetIdString = c3NetId;
@@ -7178,9 +7182,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // okay, let's figure out the stuff then
-        roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType), (this instanceof Infantry) ?
-                                                                                     "Anti-Mek skill":
-                                                                                     "Base piloting skill");
+        roll = new PilotingRollData(entityId,
+              getCrew().getPiloting(moveType),
+              (this instanceof Infantry) ? "Anti-Mek skill" : "Base piloting skill");
 
         // Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll object and adjust as necessary
         roll = addEntityBonuses(roll);
@@ -12442,20 +12446,6 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int getIMPMoveMod() {
-        // this function needs to be added to the MP calculating functions however, since no function calls super, it
-        // seems unnecessary complicated really.
-        int max = 2;
-        int modifier = impThisTurn + impLastTurn;
-        modifier = modifier - (modifier % 3);
-        modifier = modifier / 3;
-        return (modifier > max) ? -max : -modifier;
-    }
-
-    /**
      * returns whether the unit is a military unit (as opposed to a civilian unit).
      */
     public boolean isMilitary() {
@@ -13489,7 +13479,7 @@ public abstract class Entity extends TurnOrdered
     public int getBoobyTrapDamage() {
         int damage = 0;
         if (hasBoobyTrap()) {
-            if (getEngine() != null){
+            if (getEngine() != null) {
                 damage = getEngine().getRating();
             } else {
                 damage = (int) getWeight() * getOriginalWalkMP();
@@ -14439,14 +14429,6 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void setMpUsedLastRound(int mpUsedLastRound) {
-        this.mpUsedLastRound = mpUsedLastRound;
-    }
-
-    /**
      * @return Whether the unit uses primitive or retro tech construction rules
      */
     public boolean isPrimitive() {
@@ -14644,24 +14626,6 @@ public abstract class Entity extends TurnOrdered
             }
         }
         return trailerPos;
-    }
-
-    /**
-     * Matches up a trailer hitch transporter with its Id #
-     *
-     * @param bayNumber - the index of the transporter we're trying to find.
-     *
-     * @return the {@link TankTrailerHitch} corresponding to the passed-in value
-     *
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public TankTrailerHitch getHitchById(int bayNumber) {
-        Transporter transporter = transports.get(bayNumber);
-        if (transporter instanceof TankTrailerHitch tankTrailerHitch) {
-            return tankTrailerHitch;
-        }
-        return null;
     }
 
     /**
@@ -15659,18 +15623,6 @@ public abstract class Entity extends TurnOrdered
     public void setFleeZone(HexArea fleeZone) {
         this.fleeZone = fleeZone;
         hasFleeZone = true;
-    }
-
-    /**
-     * Resets the flee information this unit has. After calling this method, the unit will no longer consider to have
-     * its own flee area; the game will refer to the unit's owner to see if it can flee from a hex.
-     *
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void removeFleeZone() {
-        fleeZone = HexArea.EMPTY_AREA;
-        hasFleeZone = false;
     }
 
     public void setInvalidSourceBuildReasons(List<InvalidSourceBuildReason> invalidSourceBuildReasons) {

@@ -445,14 +445,6 @@ public class ECMInfo {
         return strength;
     }
 
-    /**
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void setECMStrength(double strength) {
-        this.strength = Math.max(0, strength);
-    }
-
     public int getAngelECMStrength() {
         return angelStrength;
     }

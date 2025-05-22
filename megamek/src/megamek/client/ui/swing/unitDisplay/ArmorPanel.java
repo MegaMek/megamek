@@ -18,7 +18,6 @@
  */
 package megamek.client.ui.swing.unitDisplay;
 
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.Serial;
 import java.util.Enumeration;
@@ -44,7 +43,6 @@ class ArmorPanel extends PicMap {
     private QuadMapSet quad;
     private TripodMekMapSet tripod;
     private GunEmplacementMapSet gunEmplacement;
-    private ArmlessMekMapSet armless;
     private LargeSupportTankMapSet largeSupportTank;
     private SuperHeavyTankMapSet superHeavyTank;
     private AeroMapSet aero;
@@ -92,7 +90,6 @@ class ArmorPanel extends PicMap {
         quad = new QuadMapSet(this, unitDisplay);
         tripod = new TripodMekMapSet(this, unitDisplay);
         gunEmplacement = new GunEmplacementMapSet(this);
-        armless = new ArmlessMekMapSet(this, unitDisplay);
         largeSupportTank = new LargeSupportTankMapSet(this, unitDisplay);
         superHeavyTank = new SuperHeavyTankMapSet(this, unitDisplay);
         aero = new AeroMapSet(this, unitDisplay);

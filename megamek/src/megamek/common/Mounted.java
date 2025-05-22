@@ -325,6 +325,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     /**
      * Sets the equipment mode to the mode denoted by the given mode number
      * TODO: Refactor so the equipment knows the phase they can be armed/disarmed
+     *
      * @param newMode the number of the desired new mode
      */
     public boolean setMode(int newMode) {
@@ -1082,28 +1083,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         crossLinkedBy = linker;
     }
 
-    /**
-     * Used for associating the equipment mount with a cargo bay. This is for dumpers and transient bays created on load
-     * for use by `Mek cargo equipment.
-     *
-     * @return The index of the bay this mount is linked to, or -1 if it is not linked.
-     *
-     * @see Entity#getBayById(int)
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int getLinkedBayId() {
-        return linkedBayId;
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void setLinkedBayId(int id) {
-        linkedBayId = id;
-    }
-
     public int getFoundCrits() {
         return nFoundCrits;
     }
@@ -1246,14 +1225,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         byShot = b;
     }
 
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public boolean byShot() {
-        return byShot;
-    }
-
     // bomb related
     public boolean isBombMounted() {
         return bombMounted;
@@ -1340,14 +1311,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             i = 40;
         }
         nweapons = i;
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void unlink() {
-        linked = null;
     }
 
     /**

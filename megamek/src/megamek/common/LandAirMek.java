@@ -941,14 +941,6 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     /**
-     * @deprecated No indicated Uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public boolean canConvertTo(int fromMode, EntityMovementMode toMode) {
-        return canConvertTo(fromMode, getConversionModeFor(toMode));
-    }
-
-    /**
      * Determines whether it is possible to assume a particular mode based on damage and type of map.
      *
      * @param fromMode The mode to convert from (one of CONV_MODE_MEK, CONV_MODE_AIRMEK, or CONV_MODE_FIGHTER)
@@ -1088,14 +1080,6 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public void setWhoFirst() {
         whoFirst = Compute.randomInt(500);
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int getWhoFirst() {
-        return whoFirst;
     }
 
     public int getMaxBombPoints() {

@@ -171,10 +171,8 @@ public class MekFileParser {
                     case "Tank", "Naval", "Surface", "Hydrofoil" -> new BLKTankFile(bb);
                     case "Infantry" -> new BLKInfantryFile(bb);
                     case "BattleArmor" -> new BLKBattleArmorFile(bb);
-                    case "ProtoMek", "ProtoMech" ->  // Remove Milestone after 0.49.19
-                          new BLKProtoMekFile(bb);
-                    case "Mek", "Mech" ->  // Remove Milestone after 0.49.19
-                          new BLKMekFile(bb);
+                    case "ProtoMek" -> new BLKProtoMekFile(bb);
+                    case "Mek" -> new BLKMekFile(bb);
                     case "VTOL" -> new BLKVTOLFile(bb);
                     case "GunEmplacement" -> new BLKGunEmplacementFile(bb);
                     case "SupportTank" -> new BLKSupportTankFile(bb);
@@ -205,8 +203,9 @@ public class MekFileParser {
 
     /**
      * Parse a string containing the representation of a unit.
-     * 
+     *
      * @param content String containing the unit representation
+     *
      * @throws Exception
      */
     public void parse(String content) throws Exception {
@@ -289,10 +288,8 @@ public class MekFileParser {
                 Predicate<Mounted<?>> linkable = mount -> (mount.getLinkedBy() == null) &&
                                                                 (mount.getLocation() == m.getLocation()) &&
                                                                 (mount.getType() instanceof WeaponType) &&
-                                                                (
-                                                                      mount.getType().hasFlag(WeaponType.F_LASER) ||
-                                                                      mount.getType() instanceof CLChemicalLaserWeapon
-                                                                );
+                                                                (mount.getType().hasFlag(WeaponType.F_LASER) ||
+                                                                       mount.getType() instanceof CLChemicalLaserWeapon);
                 // The laser pulse module is also restricted to non-pulse lasers, IS only
                 if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                     linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponType.F_PULSE) &&

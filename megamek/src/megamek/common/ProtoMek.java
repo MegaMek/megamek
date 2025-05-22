@@ -1127,8 +1127,8 @@ public class ProtoMek extends Entity {
 
     @Override
     public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
-                                      MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing,
-                                      Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
+          MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+          boolean isInfantry, int distance) {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE, "ProtoMeks can't skid");
     }
 
@@ -1418,10 +1418,5 @@ public class ProtoMek extends Entity {
     @Override
     public boolean hasPatchworkArmor() {
         return false;
-    }
-
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-
     }
 }

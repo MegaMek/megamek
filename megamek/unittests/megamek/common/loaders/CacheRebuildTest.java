@@ -21,12 +21,12 @@ package megamek.common.loaders;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.util.Map;
 
+import megamek.common.MekSummaryCache;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import megamek.common.MekSummaryCache;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CacheRebuildTest {
@@ -42,11 +42,16 @@ class CacheRebuildTest {
         }
 
         MekSummaryCache cache = MekSummaryCache.getInstance(true);
-
         MekSummaryCache.refreshUnitData(true);
 
-        // Make sure no units failed loading
+        // This is here as a safety measure when this breaks.
+        for (Map.Entry<String, String> entry : cache.getFailedFiles().entrySet()) {
+            System.out.println("Failed to load " + entry.getKey() + ": " + entry.getValue());
+        }
+
+        // Make sure no units failed to load
         assertTrue(cache.getFailedFiles().isEmpty());
+
         // Sanity check to make sure the loader thread didn't fail outright
         assertTrue(cache.getAllMeks().length > 0);
     }

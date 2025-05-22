@@ -268,9 +268,4 @@ public class HandheldWeapon extends Entity {
     public double getArmorWeight() {
         return RoundWeight.nextHalfTon(getOArmor(LOC_GUN) / 16.0);
     }
-
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-
-    }
 }

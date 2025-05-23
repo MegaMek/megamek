@@ -1993,7 +1993,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         return entity.getIndividualWeaponList().stream()
               .map(Mounted::getType)
               .filter(type -> type.hasFlag(WeaponType.F_ENERGY))
-              .anyMatch(type -> type.getAmmoType() == AmmoType.F_NONE);
+              .anyMatch(type -> type.getAmmoType() == AmmoType.T_NA);
     }
 
     private void updateActivateSPA() {

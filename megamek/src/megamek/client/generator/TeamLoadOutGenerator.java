@@ -36,6 +36,7 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+import megamek.common.ITechnology.Faction;
 
 /**
  * Notes: check out - RATGenerator.java - ForceDescriptor.java for era-based search examples
@@ -375,9 +376,10 @@ public class TeamLoadOutGenerator {
 
         if (eraBasedTechLevel) {
             // Check if tech is available to this specific faction with the current year and tech base.
-            boolean eraBasedLegal = aType.isAvailableIn(allowedYear, clan, ITechnology.getCodeFromMMAbbr(faction));
+            final Faction factionEntry = Faction.fromMMAbbr(faction);
+            boolean eraBasedLegal = aType.isAvailableIn(allowedYear, clan, factionEntry);
             if (mixedTech) {
-                eraBasedLegal |= aType.isAvailableIn(allowedYear, !clan, ITechnology.getCodeFromMMAbbr(faction));
+                eraBasedLegal |= aType.isAvailableIn(allowedYear, !clan, factionEntry);
             }
             legal &= eraBasedLegal;
         }

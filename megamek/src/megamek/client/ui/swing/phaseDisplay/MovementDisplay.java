@@ -286,6 +286,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
+    private void moveBackUp() {
+        buttons.get(MoveCommand.MOVE_BACK_UP).doClick();
+    }
+
+    private void moveGoProne() {
+        buttons.get(MoveCommand.MOVE_GO_PRONE).doClick();
+    }
+
+    private void moveGetUp() {
+        buttons.get(MoveCommand.MOVE_GET_UP).doClick();
+    }
+
     private void performToggleConversionMode() {
         final Entity currentlySelectedEntity = ce();
 
@@ -332,6 +344,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::cancel);
         controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE, this, this::performToggleMovementMode);
+        controller.registerCommandAction(KeyCommandBind.MOVE_BACKUP, this, this::moveBackUp);
+        controller.registerCommandAction(KeyCommandBind.MOVE_GOPRONE, this, this::moveGoProne);
+        controller.registerCommandAction(KeyCommandBind.MOVE_GETUP, this, this::moveGetUp);
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE, this, this::performToggleConversionMode);
     }
 

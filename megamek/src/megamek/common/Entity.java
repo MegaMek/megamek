@@ -31,8 +31,6 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -59,6 +57,8 @@ import megamek.common.force.Force;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
@@ -85,6 +85,7 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.ITechnology.TechBase;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
@@ -182,8 +183,6 @@ public abstract class Entity extends TurnOrdered
     public static final int DMG_HEAVY = 3;
     public static final int DMG_CRIPPLED = 4;
 
-    public static final int USE_STRUCTURAL_RATING = -1;
-
     protected transient Game game;
     protected transient IGame iGame;
 
@@ -220,21 +219,21 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Used by support vehicles to define the structural tech rating (TM pg 117). The values should come from
-     * EquipmentType.RATING_A-X.
+     * EquipmentType.TechRating.A-X.
      */
-    protected int structuralTechRating = EquipmentType.RATING_A;
+    protected TechRating structuralTechRating = EquipmentType.TechRating.A;
 
     /**
      * Used by support vehicles to define tech rating of armor. Default value indicates that structural tech rating
      * should be used, as in most cases the armor and structural tech ratings match.
      */
-    protected int armorTechRating = USE_STRUCTURAL_RATING;
+    protected TechRating armorTechRating = null;
 
     /**
      * Used by support vehicles to define tech rating of armor. Default value indicates that structural tech rating
      * should be used, as in most cases the engine and structural tech ratings match.
      */
-    protected int engineTechRating = USE_STRUCTURAL_RATING;
+    protected TechRating engineTechRating = null;
 
     /**
      * Used by omni support vehicles to track the weight of optional fire control systems.
@@ -924,8 +923,7 @@ public abstract class Entity extends TurnOrdered
 
         // set a random UUID for external ID, this will help us sort enemy salvage and
         // prisoners in MHQ
-        // and should have no effect on MM (but need to make sure it doesn't screw up
-        // MekWars)
+        // and should have no effect on MM
         externalId = UUID.randomUUID().toString();
         initTechAdvancement();
         offBoardShotObservers = new HashSet<>();
@@ -1001,8 +999,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * This returns the external ID.
      * <p>
-     * Taharqa: I am changing externalId to a string so I can use UUIDs in MHQ. It should only require a simple parseInt
-     * to be added to it to return an integer for other programs (i.e. MekWars).
+     * Taharqa: I am changing externalId to a string so I can use UUIDs in MHQ.
      *
      * @return the ID settable by external sources (such as mm.net)
      *
@@ -1158,12 +1155,12 @@ public abstract class Entity extends TurnOrdered
      * Sets initial TechAdvancement without equipment based on construction options.
      */
     protected void initTechAdvancement() {
-        compositeTechLevel = new CompositeTechLevel(this, F_NONE);
+        compositeTechLevel = new CompositeTechLevel(this, Faction.NONE);
         addSystemTechAdvancement(compositeTechLevel);
     }
 
-    public CompositeTechLevel factionTechLevel(int techFaction) {
-        if (techFaction == F_NONE) {
+    public CompositeTechLevel factionTechLevel(Faction techFaction) {
+        if (techFaction == Faction.NONE) {
             return compositeTechLevel;
         }
         CompositeTechLevel retVal = new CompositeTechLevel(this, techFaction);
@@ -1197,7 +1194,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getIntroductionDate(boolean clan, int faction) {
+    public int getIntroductionDate(boolean clan, Faction faction) {
         return year;
     }
 
@@ -1214,7 +1211,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getPrototypeDate(boolean clan, int faction) {
+    public int getPrototypeDate(boolean clan, Faction faction) {
         return compositeTechLevel.getPrototypeDate(clan, faction);
     }
 
@@ -1224,7 +1221,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getProductionDate(boolean clan, int faction) {
+    public int getProductionDate(boolean clan, Faction faction) {
         return compositeTechLevel.getProductionDate(clan, faction);
     }
 
@@ -1239,7 +1236,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getExtinctionDate(boolean clan, int faction) {
+    public int getExtinctionDate(boolean clan, Faction faction) {
         return compositeTechLevel.getExtinctionDate(clan, faction);
     }
 
@@ -1249,12 +1246,12 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getReintroductionDate(boolean clan, int faction) {
+    public int getReintroductionDate(boolean clan, Faction faction) {
         return compositeTechLevel.getReintroductionDate(clan, faction);
     }
 
     @Override
-    public int getTechRating() {
+    public TechRating getTechRating() {
         return compositeTechLevel.getTechRating();
     }
 
@@ -1293,7 +1290,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getBaseAvailability(int era) {
+    public AvailabilityValue getBaseAvailability(Era era) {
         return compositeTechLevel.getBaseAvailability(era);
     }
 
@@ -1320,53 +1317,56 @@ public abstract class Entity extends TurnOrdered
         }
     }
 
-    protected static final TechAdvancement TA_OMNI = new TechAdvancement(TECH_BASE_ALL)
-                                                           .setISAdvancement(DATE_NONE, DATE_NONE, 3052)
+    protected static final TechAdvancement TA_OMNI = new TechAdvancement(TechBase.ALL).setISAdvancement(DATE_NONE,
+                DATE_NONE,
+                3052)
                                                            .setClanAdvancement(2854, 2856, 2864)
                                                            .setClanApproximate(true)
-                                                           .setPrototypeFactions(F_CCY, F_CSF)
-                                                           .setProductionFactions(F_CCY, F_DC)
-                                                           .setTechRating(RATING_E)
-                                                           .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+                                                           .setPrototypeFactions(Faction.CCY, Faction.CSF)
+                                                           .setProductionFactions(Faction.CCY, Faction.DC)
+                                                           .setTechRating(TechRating.E)
+                                                           .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
                                                            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // This is not in the rules anywhere, but is implied by the existence of the
     // Badger and Bandit
     // tanks used by Wolf's Dragoons and sold to the merc market as early as 3008.
-    private static final TechAdvancement TA_OMNIVEHICLE = new TechAdvancement(TECH_BASE_ALL)
-                                                                .setISAdvancement(3008, DATE_NONE, 3052)
+    private static final TechAdvancement TA_OMNIVEHICLE = new TechAdvancement(TechBase.ALL).setISAdvancement(3008,
+                DATE_NONE,
+                3052)
                                                                 .setISApproximate(true)
                                                                 .setClanAdvancement(2854, 2856, 2864)
                                                                 .setClanApproximate(true)
-                                                                .setPrototypeFactions(F_CCY, F_CSF, F_MERC)
-                                                                .setProductionFactions(F_CCY, F_DC)
-                                                                .setTechRating(RATING_E)
-                                                                .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+                                                                .setPrototypeFactions(Faction.CCY, Faction.CSF, Faction.MERC)
+                                                                .setProductionFactions(Faction.CCY, Faction.DC)
+                                                                .setTechRating(TechRating.E)
+                                                                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
                                                                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    protected static final TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(TECH_BASE_ALL)
-                                                                      .setAdvancement(DATE_PS, 3080, DATE_NONE)
+    protected static final TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(TechBase.ALL).setAdvancement(
+                DATE_PS,
+                3080,
+                DATE_NONE)
                                                                       .setApproximate(false, true, false)
-                                                                      .setTechRating(RATING_A)
-                                                                      .setAvailability(
-                                                                            RATING_E,
-                                                                            RATING_D,
-                                                                            RATING_E,
-                                                                            RATING_E)
+                                                                      .setTechRating(TechRating.A)
+                                                                      .setAvailability(AvailabilityValue.E,
+                                                                            AvailabilityValue.D,
+                                                                            AvailabilityValue.E,
+                                                                            AvailabilityValue.E)
                                                                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    protected static final TechAdvancement TA_MIXED_TECH = new TechAdvancement(TECH_BASE_ALL)
+    protected static final TechAdvancement TA_MIXED_TECH = new TechAdvancement(TechBase.ALL)
                                                                  .setISAdvancement(DATE_NONE, 3050, 3082)
                                                                  .setClanAdvancement(DATE_NONE, 2820, 3082)
                                                                  .setApproximate(false, true, true, false, false)
-                                                                 .setPrototypeFactions(F_CLAN, F_DC, F_FS, F_LC)
-                                                                 .setTechRating(RATING_A)
-                                                                 .setAvailability(RATING_X,
-                                                                       RATING_X,
-                                                                       RATING_E,
-                                                                       RATING_D)
+                                                                 .setPrototypeFactions(Faction.CLAN, Faction.DC, Faction.FS, Faction.LC)
+                                                                 .setTechRating(TechRating.A)
+                                                                 .setAvailability(AvailabilityValue.X,
+                                                                       AvailabilityValue.X,
+                                                                       AvailabilityValue.E,
+                                                                       AvailabilityValue.D)
                                                                  .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TECH_BASE_ALL)
+    protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TechBase.ALL)
                                                                         .setISAdvancement(
                                                                               3061,
                                                                               3082)
@@ -1375,20 +1375,19 @@ public abstract class Entity extends TurnOrdered
                                                                               false,
                                                                               false,
                                                                               false)
-                                                                        .setClanAdvancement(3061,
-                                                                              3082)
+                                                                        .setClanAdvancement(3061, 3082)
                                                                         .setClanApproximate(false,
                                                                               true,
                                                                               false,
                                                                               false,
                                                                               false)
-                                                                        .setPrototypeFactions(F_CSF, F_FW)
-                                                                        .setProductionFactions(F_CJF, F_FW)
-                                                                        .setTechRating(RATING_E)
-                                                                        .setAvailability(RATING_X,
-                                                                              RATING_X,
-                                                                              RATING_F,
-                                                                              RATING_E)
+                                                                        .setPrototypeFactions(Faction.CSF, Faction.FW)
+                                                                        .setProductionFactions(Faction.CJF, Faction.FW)
+                                                                        .setTechRating(TechRating.E)
+                                                                        .setAvailability(AvailabilityValue.X,
+                                                                              AvailabilityValue.X,
+                                                                              AvailabilityValue.F,
+                                                                              AvailabilityValue.E)
                                                                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     public static TechAdvancement getOmniAdvancement() {
@@ -1508,8 +1507,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getTechBase() {
-        return isClan() ? TECH_BASE_CLAN : TECH_BASE_IS;
+    public TechBase getTechBase() {
+        return isClan() ? TechBase.CLAN : TechBase.IS;
     }
 
     @Override
@@ -1593,9 +1592,10 @@ public abstract class Entity extends TurnOrdered
      * <p>Unfortunately, entities freshly created may not have the game set. Therefore, fall back to the old
      * version when game == null or the player is no longer in the game</p>
      * <p>Server and other central classes already used {@link Game#getPlayer(int)}. It is noted that
-     * {@link Entity#owner} property is not reliable and should be avoided except in special
-     * situations like when entities freshly created may not have the game set
+     * {@link Entity#owner} property is not reliable and should be avoided except in special situations like when
+     * entities freshly created may not have the game set
      * </p>
+     *
      * @return The player that owns this entity. Null if the entity is not owned by anyone.
      */
     public @Nullable Player getOwner() {
@@ -2085,19 +2085,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @deprecated wigeEndClimbPrevious wasn't used so deprecating with only parameters that are used.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int calcElevation(Hex current, Hex next, int assumedElevation, boolean climb, boolean wigeEndClimbPrevious) {
-        return calcElevation(current, next, assumedElevation, climb);
-    }
-
-    /**
      * Calculates the elevation of the entity in the next hex.
-     * @param current The current hex
-     * @param next The next hex
+     *
+     * @param current          The current hex
+     * @param next             The next hex
      * @param assumedElevation The assumed elevation from the previous hex
-     * @param climb Whether the entity is climbing or not
+     * @param climb            Whether the entity is climbing or not
+     *
      * @return The elevation of the entity in the next hex
      *
      * @see Entity#setElevation(int)
@@ -2112,8 +2106,11 @@ public abstract class Entity extends TurnOrdered
         }
 
         // Special case for DFA attacks into water - we want to land on the bottom of the hex
-        if (isMakingDfa() && (assumedElevation == 0) && next.containsTerrain(Terrains.WATER)
-                  && !next.containsTerrain(Terrains.ICE) && !climb) {
+        if (isMakingDfa() &&
+                  (assumedElevation == 0) &&
+                  next.containsTerrain(Terrains.WATER) &&
+                  !next.containsTerrain(Terrains.ICE) &&
+                  !climb) {
             return next.floor();
         }
 
@@ -2158,8 +2155,8 @@ public abstract class Entity extends TurnOrdered
                           next.containsTerrain(Terrains.WATER) &&
                           current.containsTerrain(Terrains.WATER)) ||
                          getMovementMode().isVTOL() ||
-                         (getMovementMode().isQuadSwim() && hasUMU()) || (getMovementMode().isBipedSwim() && hasUMU()))
-        {
+                         (getMovementMode().isQuadSwim() && hasUMU()) ||
+                         (getMovementMode().isBipedSwim() && hasUMU())) {
             retVal += current.getLevel();
             retVal -= next.getLevel();
         } else {
@@ -2203,7 +2200,9 @@ public abstract class Entity extends TurnOrdered
                     BasementType nextBasement = BasementType.getType(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
                     int collapsedBasement = next.terrainLevel(Terrains.BLDG_BASE_COLLAPSED);
                     if (climb || isJumpingNow) {
-                        if ((bldnex + next.getLevel()) > this.getMaxElevationChange() && next.containsTerrain(Terrains.BUILDING) && climb) {
+                        if ((bldnex + next.getLevel()) > this.getMaxElevationChange() &&
+                                  next.containsTerrain(Terrains.BUILDING) &&
+                                  climb) {
                             retVal = next.getLevel();
                         } else {
                             retVal = bldnex + next.getLevel();
@@ -2254,7 +2253,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public int calcElevation(Hex current, Hex next) {
-        return calcElevation(current, next, elevation, false, false);
+        return calcElevation(current, next, elevation, false);
     }
 
     /**
@@ -3119,24 +3118,25 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns this entity's running/flank mp as a string.
-     * Includes both the base mp and the potential mp with speed enhancers,
-     * including the current status of such speed enhancers.
-     * @return A string like <code>9(15)</code> if there is no current {@link Game},
-     * or a string like <code>9(15) MASC:0(3+)</code> if there is one.
+     * Returns this entity's running/flank mp as a string. Includes both the base mp and the potential mp with speed
+     * enhancers, including the current status of such speed enhancers.
+     *
+     * @return A string like <code>9(15)</code> if there is no current {@link Game}, or a string like <code>9(15)
+     *       MASC:0(3+)</code> if there is one.
      */
     public String getRunMPasString() {
         return getRunMPasString(true);
     }
 
     /**
-     * Returns this entity's running/flank mp as a string.
-     * Includes both the base mp and the potential mp with speed enhancers,
-     * optionally including the current status of such speed enhancers.
-     * @param gameState Set this to <code>true</code> to include information about the current state of equipment
-     *                  like MASC.
-     * @return A string like <code>9(15)</code> if <code>gameState</code> is <code>false</code> or there is no
-     * current {@link Game}, or a string like <code>9(15) MASC:0(3+)</code> otherwise.
+     * Returns this entity's running/flank mp as a string. Includes both the base mp and the potential mp with speed
+     * enhancers, optionally including the current status of such speed enhancers.
+     *
+     * @param gameState Set this to <code>true</code> to include information about the current state of equipment like
+     *                  MASC.
+     *
+     * @return A string like <code>9(15)</code> if <code>gameState</code> is <code>false</code> or there is no current
+     *       {@link Game}, or a string like <code>9(15) MASC:0(3+)</code> otherwise.
      */
     public String getRunMPasString(boolean gameState) {
         return Integer.toString(getRunMP());
@@ -4272,7 +4272,9 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns the Rules.ARC that the weapon, specified by number, fires into.
+     *
      * @param weaponNumber integer equipment number, index from equipment list
+     *
      * @return arc the specified weapon is in
      */
     public abstract int getWeaponArc(int weaponNumber);
@@ -4347,7 +4349,8 @@ public abstract class Entity extends TurnOrdered
                   (!mounted.getType().hasFlag(WeaponType.F_AMSBAY)) &&
                   (!(mounted.hasModes() && mounted.curMode().equals("Point Defense"))) &&
                   ((mounted.getLinked() == null) ||
-                         ((mounted.getLinked().getType() instanceof MiscType) && mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT)) ||
+                         ((mounted.getLinked().getType() instanceof MiscType) &&
+                                mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT)) ||
                          (mounted.getLinked().getUsableShotsLeft() > 0))) {
 
             // TAG only in the correct phase...
@@ -6033,6 +6036,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Checks if the unit has a hierarchic C3 system. (Inverse of {@link #hasNhC3}
+     *
      * @return {@code true} if the unit has a C3 system that is not a C3i, NC3 or Nova CEWS.
      */
     public boolean hasHierarchicalC3() {
@@ -6118,9 +6122,11 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Explicitly set the C3 Net ID using a string.
+     *
+     * @param c3NetId string value the id should be set to
+     *
      * @see megamek.common.util.C3Util
      * @see #setC3NetId(Entity)
-     * @param c3NetId string value the id should be set to
      */
     public void setC3NetId(@Nullable String c3NetId) {
         c3NetIdString = c3NetId;
@@ -7250,9 +7256,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // okay, let's figure out the stuff then
-        roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType), (this instanceof Infantry) ?
-                                                                                     "Anti-Mek skill":
-                                                                                     "Base piloting skill");
+        roll = new PilotingRollData(entityId,
+              getCrew().getPiloting(moveType),
+              (this instanceof Infantry) ? "Anti-Mek skill" : "Base piloting skill");
 
         // Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll object and adjust as necessary
         roll = addEntityBonuses(roll);
@@ -12435,20 +12441,6 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int getIMPMoveMod() {
-        // this function needs to be added to the MP calculating functions however, since no function calls super, it
-        // seems unnecessary complicated really.
-        int max = 2;
-        int modifier = impThisTurn + impLastTurn;
-        modifier = modifier - (modifier % 3);
-        modifier = modifier / 3;
-        return (modifier > max) ? -max : -modifier;
-    }
-
-    /**
      * returns whether the unit is a military unit (as opposed to a civilian unit).
      */
     public boolean isMilitary() {
@@ -13491,7 +13483,7 @@ public abstract class Entity extends TurnOrdered
     public int getBoobyTrapDamage() {
         int damage = 0;
         if (hasBoobyTrap()) {
-            if (getEngine() != null){
+            if (getEngine() != null) {
                 damage = getEngine().getRating();
             } else {
                 damage = (int) getWeight() * getOriginalWalkMP();
@@ -14441,26 +14433,22 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void setMpUsedLastRound(int mpUsedLastRound) {
-        this.mpUsedLastRound = mpUsedLastRound;
-    }
-
-    /**
      * @return Whether the unit uses primitive or retro tech construction rules
      */
     public boolean isPrimitive() {
         return false;
     }
 
-    public int getStructuralTechRating() {
+    public TechRating getStructuralTechRating() {
         return structuralTechRating;
     }
 
-    public void setStructuralTechRating(int structuralTechRating) {
+    public void setStructuralTechRating(TechRating structuralTechRating) {
         this.structuralTechRating = structuralTechRating;
+    }
+
+    public void setStructuralTechRating(int structuralTechRating) {
+        this.structuralTechRating = TechRating.fromIndex(structuralTechRating);
     }
 
     /**
@@ -14477,26 +14465,34 @@ public abstract class Entity extends TurnOrdered
         return 0;
     }
 
-    public int getArmorTechRating() {
-        if (armorTechRating == USE_STRUCTURAL_RATING) {
+    public TechRating getArmorTechRating() {
+        if (armorTechRating == null) {
             return structuralTechRating;
         }
         return armorTechRating;
     }
 
-    public void setArmorTechRating(int armorTechRating) {
+    public void setArmorTechRating(TechRating armorTechRating) {
         this.armorTechRating = armorTechRating;
     }
 
-    public int getEngineTechRating() {
-        if (engineTechRating == USE_STRUCTURAL_RATING) {
+    public void setArmorTechRating(int armorTechRating) {
+        this.armorTechRating = TechRating.fromIndex(armorTechRating);
+    }
+
+    public TechRating getEngineTechRating() {
+        if (engineTechRating == null) {
             return structuralTechRating;
         }
         return engineTechRating;
     }
 
-    public void setEngineTechRating(int engineTechRating) {
+    public void setEngineTechRating(TechRating engineTechRating) {
         this.engineTechRating = engineTechRating;
+    }
+
+    public void setEngineTechRating(int engineTechRating) {
+        this.engineTechRating = TechRating.fromIndex(engineTechRating);
     }
 
     /**
@@ -14634,24 +14630,6 @@ public abstract class Entity extends TurnOrdered
             }
         }
         return trailerPos;
-    }
-
-    /**
-     * Matches up a trailer hitch transporter with its Id #
-     *
-     * @param bayNumber - the index of the transporter we're trying to find.
-     *
-     * @return the {@link TankTrailerHitch} corresponding to the passed-in value
-     *
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public TankTrailerHitch getHitchById(int bayNumber) {
-        Transporter transporter = transports.get(bayNumber);
-        if (transporter instanceof TankTrailerHitch tankTrailerHitch) {
-            return tankTrailerHitch;
-        }
-        return null;
     }
 
     /**
@@ -15649,18 +15627,6 @@ public abstract class Entity extends TurnOrdered
     public void setFleeZone(HexArea fleeZone) {
         this.fleeZone = fleeZone;
         hasFleeZone = true;
-    }
-
-    /**
-     * Resets the flee information this unit has. After calling this method, the unit will no longer consider to have
-     * its own flee area; the game will refer to the unit's owner to see if it can flee from a hex.
-     *
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void removeFleeZone() {
-        fleeZone = HexArea.EMPTY_AREA;
-        hasFleeZone = false;
     }
 
     public void setInvalidSourceBuildReasons(List<InvalidSourceBuildReason> invalidSourceBuildReasons) {

@@ -592,10 +592,6 @@ public final class Player extends TurnOrdered {
     }
 
     @Override
-    public void clearInitiative(boolean bUseInitComp) {
-    }
-
-    @Override
     public int getInitCompensationBonus() {
         return streakCompensationBonus;
     }
@@ -639,15 +635,13 @@ public final class Player extends TurnOrdered {
         }
         boolean useCommandInit = game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
         // entities are owned by this player, active, and not individual pilots
-        ArrayList<Entity> entities =
-              game.getInGameObjects()
-                    .stream()
-                    .filter(Entity.class::isInstance)
-                    .map(Entity.class::cast)
-                    .filter(entity ->
-                                  (null != entity.getOwner()) &&
-                                        entity.getOwner().equals(this)
-                    ).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Entity> entities = game.getInGameObjects()
+                                           .stream()
+                                           .filter(Entity.class::isInstance)
+                                           .map(Entity.class::cast)
+                                           .filter(entity -> (null != entity.getOwner()) &&
+                                                                   entity.getOwner().equals(this))
+                                           .collect(Collectors.toCollection(ArrayList::new));
         int commandb = 0;
         for (Entity entity : entities) {
             int bonus = getIndividualCommandBonus(entity, useCommandInit);
@@ -661,8 +655,10 @@ public final class Player extends TurnOrdered {
     /**
      * Calculate command bonus for an individual entity within the player's force or team
      * TODO: move all of this into Entity
-     * @param entity being considered
+     *
+     * @param entity         being considered
      * @param useCommandInit boolean based on game options
+     *
      * @return
      */
     public int getIndividualCommandBonus(Entity entity, boolean useCommandInit) {
@@ -673,8 +669,7 @@ public final class Player extends TurnOrdered {
                   !entity.isCaptured() &&
                   !(entity instanceof MekWarrior) &&
                   (entity.isDeployed() && !entity.isOffBoard()) ||
-                  (entity.getDeployRound() == (game.getCurrentRound() + 1))
-        ) {
+                  (entity.getDeployRound() == (game.getCurrentRound() + 1))) {
             if (useCommandInit) {
                 bonus = entity.getCrew().getCommandBonus();
             }

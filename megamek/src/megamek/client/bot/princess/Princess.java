@@ -40,8 +40,6 @@ import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.DisengageAction;
 import megamek.common.actions.EntityAction;
@@ -54,6 +52,8 @@ import megamek.common.enums.AimingMode;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -1224,21 +1224,6 @@ public class Princess extends BotClient {
         plan.sortPlan();
 
         return plan.getEntityActionVector();
-    }
-
-    /**
-     * @deprecated consider {@link BotClient#deployMinefields()}
-     */
-    @Override
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    protected Vector<Minefield> calculateMinefieldDeployment() {
-        try {
-            // currently returns no minefields
-            // make an empty vector
-            return new Vector<>();
-        } catch (Exception ignored) {
-            return new Vector<>();
-        }
     }
 
     /**

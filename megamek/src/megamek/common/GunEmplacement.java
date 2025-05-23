@@ -41,14 +41,14 @@ public class GunEmplacement extends Tank {
     private static final String[] LOCATION_ABBRS = { "GUN" };
     private static final String[] LOCATION_NAMES = { "GUNS" };
 
-    private static final TechAdvancement TA_GUN_EMPLACEMENT = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_GUN_EMPLACEMENT = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setTechRating(TechRating.B).setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
 
-    public static final TechAdvancement TA_LIGHT_BUILDING = new TechAdvancement(TECH_BASE_ALL)
+    public static final TechAdvancement TA_LIGHT_BUILDING = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setTechRating(TechRating.A).setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     private int initialBuildingCF;

@@ -39,12 +39,12 @@ public class HandheldWeapon extends Entity {
         return UnitType.HANDHELD_WEAPON;
     }
 
-    private static final TechAdvancement ADVANCEMENT = new TechAdvancement(TECH_BASE_ALL).setAdvancement(3055, 3083)
+    private static final TechAdvancement ADVANCEMENT = new TechAdvancement(TechBase.ALL).setAdvancement(3055, 3083)
                                                              .setApproximate(false, true)
-                                                             .setPrototypeFactions(F_FS, F_LC)
-                                                             .setProductionFactions(F_FS, F_LC)
-                                                             .setTechRating(RATING_D)
-                                                             .setAvailability(RATING_E, RATING_E, RATING_F, RATING_E)
+                                                             .setPrototypeFactions(Faction.FS, Faction.LC)
+                                                             .setProductionFactions(Faction.FS, Faction.LC)
+                                                             .setTechRating(TechRating.D)
+                                                             .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E)
                                                              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     @Override
@@ -252,10 +252,5 @@ public class HandheldWeapon extends Entity {
     @Override
     public double getArmorWeight() {
         return RoundWeight.nextHalfTon(getOArmor(LOC_GUN) / 16.0);
-    }
-
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-
     }
 }

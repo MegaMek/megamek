@@ -83,7 +83,7 @@ public class FixedWingSupportCostCalculator {
         for (int c = 0; c < structCostIdx; c++) {
             costs[structCostIdx] += costs[c];
         }
-        double techRatingMultiplier = 0.5 + (fixedWingSupport.getStructuralTechRating() * 0.25);
+        double techRatingMultiplier = 0.5 + (fixedWingSupport.getStructuralTechRating().getIndex() * 0.25);
         costs[structCostIdx] *= techRatingMultiplier;
 
         double freeHeatSinks = (fixedWingSupport.hasEngine()

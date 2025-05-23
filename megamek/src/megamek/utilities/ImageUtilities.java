@@ -45,14 +45,6 @@ public class ImageUtilities {
     private static final MMLogger logger = MMLogger.create(ImageUtilities.class);
 
     /**
-     * @deprecated use {@link #scaleImageIcon(ImageIcon, int, boolean)} instead.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public static ImageIcon scaleImageIconToWidth(ImageIcon icon, int width) {
-        return scaleImageIcon(icon, width, true);
-    }
-
-    /**
      * Scales an {@link ImageIcon} proportionally based on either the specified width or height.
      *
      * <p>This method preserves the aspect ratio of the original image while resizing. The size to scale

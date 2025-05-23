@@ -1030,14 +1030,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         private final String nullVal;
         private final Function<T, String> toString;
 
-        /**
-         * @deprecated No indicated uses.
-         */
-        @Deprecated(since = "0.50.05", forRemoval = true)
-        public CBRenderer(String nullVal) {
-            this(nullVal, null);
-        }
-
         public CBRenderer(String nullVal, Function<T, String> strConverter) {
             this.nullVal = nullVal;
             toString = Objects.requireNonNullElseGet(strConverter, () -> Object::toString);

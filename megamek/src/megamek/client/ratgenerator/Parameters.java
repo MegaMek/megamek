@@ -280,14 +280,6 @@ public final class Parameters implements Cloneable {
         return networkMask;
     }
 
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void setNetworkMask(int networkMask) {
-        this.networkMask = networkMask;
-    }
-
     public Collection<EntityMovementMode> getMovementModes() {
         return new ArrayList<>(movementModes);
     }
@@ -312,44 +304,12 @@ public final class Parameters implements Cloneable {
         this.roles = roles;
     }
 
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public Collection<MissionRole> getRolesExcluded() {
-        return rolesExcluded;
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void setRolesExcluded(Collection<MissionRole> rolesExcluded) {
-        this.rolesExcluded = rolesExcluded;
-    }
-
     public int getRoleStrictness() {
         return roleStrictness;
     }
 
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void setRoleStrictness(int roleStrictness) {
-        this.roleStrictness = roleStrictness;
-    }
-
     public FactionRecord getDeployingFaction() {
         return deployingFaction;
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void setDeployingFaction(FactionRecord deployingFaction) {
-        this.deployingFaction = deployingFaction;
     }
 
     public Parameters copy() {

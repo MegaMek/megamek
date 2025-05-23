@@ -303,57 +303,57 @@ public class ProtoMek extends Entity {
         };
     }
 
-    public static final TechAdvancement TA_STANDARD_PROTOMEK = new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(
+    public static final TechAdvancement TA_STANDARD_PROTOMEK = new TechAdvancement(TechBase.CLAN).setClanAdvancement(
                 3055,
                 3059,
                 3060)
                                                                      .setClanApproximate(true, false, false)
-                                                                     .setPrototypeFactions(F_CSJ)
-                                                                     .setProductionFactions(F_CSJ)
-                                                                     .setTechRating(RATING_F)
-                                                                     .setAvailability(RATING_X,
-                                                                           RATING_X,
-                                                                           RATING_E,
-                                                                           RATING_D)
+                                                                     .setPrototypeFactions(Faction.CSJ)
+                                                                     .setProductionFactions(Faction.CSJ)
+                                                                     .setTechRating(TechRating.F)
+                                                                     .setAvailability(AvailabilityValue.X,
+                                                                           AvailabilityValue.X,
+                                                                           AvailabilityValue.E,
+                                                                           AvailabilityValue.D)
                                                                      .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    public static final TechAdvancement TA_QUAD = new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3075,
+    public static final TechAdvancement TA_QUAD = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3083,
                 3100)
                                                         .setClanApproximate(false, true, false)
-                                                        .setPrototypeFactions(F_CLAN)
-                                                        .setProductionFactions(F_CCC)
-                                                        .setTechRating(RATING_F)
-                                                        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                                                        .setPrototypeFactions(Faction.CLAN)
+                                                        .setProductionFactions(Faction.CCC)
+                                                        .setTechRating(TechRating.F)
+                                                        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                                                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    public static final TechAdvancement TA_ULTRA = new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3075,
+    public static final TechAdvancement TA_ULTRA = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3083,
                 3100)
                                                          .setClanApproximate(false, true, false)
-                                                         .setPrototypeFactions(F_CLAN)
-                                                         .setProductionFactions(F_CCY)
-                                                         .setTechRating(RATING_F)
-                                                         .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                                                         .setPrototypeFactions(Faction.CLAN)
+                                                         .setProductionFactions(Faction.CCY)
+                                                         .setTechRating(TechRating.F)
+                                                         .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                                                          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    public static final TechAdvancement TA_GLIDER = new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3075,
+    public static final TechAdvancement TA_GLIDER = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3084,
                 3100)
                                                           .setClanApproximate(false, true, false)
-                                                          .setPrototypeFactions(F_CLAN)
-                                                          .setProductionFactions(F_CSR)
-                                                          .setTechRating(RATING_F)
-                                                          .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                                                          .setPrototypeFactions(Faction.CLAN)
+                                                          .setProductionFactions(Faction.CSR)
+                                                          .setTechRating(TechRating.F)
+                                                          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                                                           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    public static final TechAdvancement TA_INTERFACE_COCKPIT = new TechAdvancement(TECH_BASE_IS).setISAdvancement(3071,
+    public static final TechAdvancement TA_INTERFACE_COCKPIT = new TechAdvancement(TechBase.IS).setISAdvancement(3071,
                 DATE_NONE,
                 DATE_NONE,
                 3085)
                                                                      .setISApproximate(true)
-                                                                     .setPrototypeFactions(F_WB)
-                                                                     .setTechRating(RATING_E)
-                                                                     .setAvailability(RATING_X,
-                                                                           RATING_X,
-                                                                           RATING_F,
-                                                                           RATING_X)
+                                                                     .setPrototypeFactions(Faction.WB)
+                                                                     .setTechRating(TechRating.E)
+                                                                     .setAvailability(AvailabilityValue.X,
+                                                                           AvailabilityValue.X,
+                                                                           AvailabilityValue.F,
+                                                                           AvailabilityValue.X)
                                                                      .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     @Override
@@ -1116,8 +1116,8 @@ public class ProtoMek extends Entity {
 
     @Override
     public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
-                                      MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing,
-                                      Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
+          MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+          boolean isInfantry, int distance) {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE, "ProtoMeks can't skid");
     }
 
@@ -1407,10 +1407,5 @@ public class ProtoMek extends Entity {
     @Override
     public boolean hasPatchworkArmor() {
         return false;
-    }
-
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-
     }
 }

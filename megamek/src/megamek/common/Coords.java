@@ -772,20 +772,6 @@ public class Coords implements Serializable {
     }
 
     /**
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public double cosineSimilarity(Coords other) {
-        double dot = getX() * other.getX() + getY() * other.getY();
-        double magA = magnitude();
-        double magB = other.magnitude();
-        if (magA == 0 || magB == 0) {
-            return 0;
-        }
-        return dot / (magA * magB);
-    }
-
-    /**
      * Returns the hex code for this coordinate on the given board.
      *
      * @param board the board

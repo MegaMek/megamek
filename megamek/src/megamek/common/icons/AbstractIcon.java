@@ -32,10 +32,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * An AbstractIcon is an abstract class that ensures standardized and isolated image code for icons
- * across the suite. It handles creating the images and image icons, scaling and centering them,
- * handles base comparisons and object overrides, and implements basic File I/O. It also gracefully
- * handles any failures to prevent a hard crash when an image or icon cannot be created.
+ * An AbstractIcon is an abstract class that ensures standardized and isolated image code for icons across the suite. It
+ * handles creating the images and image icons, scaling and centering them, handles base comparisons and object
+ * overrides, and implements basic File I/O. It also gracefully handles any failures to prevent a hard crash when an
+ * image or icon cannot be created.
  */
 public abstract class AbstractIcon implements Serializable {
     //region Variable Declarations
@@ -96,8 +96,9 @@ public abstract class AbstractIcon implements Serializable {
     //endregion Boolean Methods
 
     /**
-     * This is used to determine whether the created image should be scaled or not by checking the
-     * Height and Width values. If either is -1, then we need to scale the produced image
+     * This is used to determine whether the created image should be scaled or not by checking the Height and Width
+     * values. If either is -1, then we need to scale the produced image
+     *
      * @return whether to scale the image or not
      */
     protected boolean isScaled(final int width, final int height) {
@@ -105,8 +106,7 @@ public abstract class AbstractIcon implements Serializable {
     }
 
     /**
-     * @return the ImageIcon for the Image stored by the AbstractIcon. May be null for non-existent
-     * files
+     * @return the ImageIcon for the Image stored by the AbstractIcon. May be null for non-existent files
      */
     public @Nullable ImageIcon getImageIcon() {
         final Image image = getImage();
@@ -115,8 +115,8 @@ public abstract class AbstractIcon implements Serializable {
 
     /**
      * @param size the width to scale and center the ImageIcon to
-     * @return the created ImageIcon, scaled and centered to size width. This may be null for
-     * non-existent files
+     *
+     * @return the created ImageIcon, scaled and centered to size width. This may be null for non-existent files
      */
     public @Nullable ImageIcon getImageIcon(final int size) {
         final Image image = getImage(size);
@@ -132,26 +132,29 @@ public abstract class AbstractIcon implements Serializable {
 
     /**
      * @param size the width to scale and center the image to
-     * @return the created image, scaled and centered to size width. This may only be null for a
-     * UnitIcon with no icon selected
+     *
+     * @return the created image, scaled and centered to size width. This may only be null for a UnitIcon with no icon
+     *       selected
      */
     public @Nullable Image getImage(final int size) {
         return getImage(size, -1);
     }
 
     /**
-     * @param width the width of the image, or -1 if this is the non-scaling factor
+     * @param width  the width of the image, or -1 if this is the non-scaling factor
      * @param height the height of the image, or -1 if this is the non-scaling factor
-     * @return the image, scaled and centered if either the width or height are -1. This may only be
-     * null for a UnitIcon with no icon selected
+     *
+     * @return the image, scaled and centered if either the width or height are -1. This may only be null for a UnitIcon
+     *       with no icon selected
      */
     public @Nullable Image getImage(final int width, final int height) {
         return getImage(getBaseImage(), width, height);
     }
 
     /**
-     * This is used to create the proper image and scale it if required. It also handles null
-     * protection by creating a blank image if required.
+     * This is used to create the proper image and scale it if required. It also handles null protection by creating a
+     * blank image if required.
+     *
      * @return the created image
      */
     protected Image getImage(final @Nullable Image image, final int width, final int height) {
@@ -165,8 +168,8 @@ public abstract class AbstractIcon implements Serializable {
     }
 
     /**
-     * @return a square BufferedImage of the given size. Scales the given image to fit into the
-     * square and centers it on a transparent background.
+     * @return a square BufferedImage of the given size. Scales the given image to fit into the square and centers it on
+     *       a transparent background.
      */
     public static BufferedImage scaleAndCenter(Image image, final int size) {
         final BufferedImage result = ImageUtil.createAcceleratedImage(size, size);
@@ -183,6 +186,7 @@ public abstract class AbstractIcon implements Serializable {
 
     /**
      * This is abstract to allow for different formats for determining the image in question
+     *
      * @return the Image stored by the AbstractIcon
      */
     public abstract Image getBaseImage();
@@ -225,12 +229,6 @@ public abstract class AbstractIcon implements Serializable {
         switch (workingNode.getNodeName()) {
             case "category":
                 String category = MMXMLUtility.unEscape(workingNode.getTextContent().trim());
-
-                // <50.01 compatibility handlers,
-                category = category.replaceAll("Aero ", "Aerospace ");
-                category = category.replaceAll("Mech ", "Mek ");
-                category = category.replaceAll("MechWarrior", "MekWarrior");
-                category = category.replaceAll("ProtoMech", "ProtoMek");
 
                 // <50.07 compatibility handlers
                 category = category.replaceAll("Mek Tech", "MekTech");

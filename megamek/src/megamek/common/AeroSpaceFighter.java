@@ -114,10 +114,4 @@ public class AeroSpaceFighter extends Aero {
         super.setWeight(weight);
         autoSetMaxBombPoints();
     }
-
-
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-
-    }
 }

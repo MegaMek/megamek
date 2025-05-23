@@ -39,6 +39,7 @@ import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.mgs.MGWeapon;
+import megamek.common.ITechnology.TechRating;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
@@ -7169,9 +7170,9 @@ public class Compute {
             double tonnage = entity.getWeaponList().stream().filter(m -> !m.getType().hasFlag(WeaponType.F_AMS))
                     .mapToDouble(Mounted::getTonnage).sum();
             if (advFireCon) {
-                if (entity.getStructuralTechRating() == ITechnology.RATING_F) {
+                if (entity.getStructuralTechRating() == TechRating.F) {
                     return (int) Math.ceil(tonnage / 6.0);
-                } else if (entity.getStructuralTechRating() == ITechnology.RATING_E) {
+                } else if (entity.getStructuralTechRating() == TechRating.E) {
                     return (int) Math.ceil(tonnage / 5.0);
                 }
                 return (int) Math.ceil(tonnage / 4.0);

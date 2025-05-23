@@ -955,9 +955,8 @@ public class DamageEntityHandler extends AbstractTWRuleHandler {
                     }
                 }
 
-                // if there's a mast mount in the rotor, it and all other
-                // equipment
-                // on it get destroyed
+                // if there's a mast mount in the rotor, it and all other equipment
+                // on it get destroyed (0 is no damage)
                 if ((te instanceof VTOL) &&
                           (hit.getLocation() == VTOL.LOC_ROTOR) &&
                           te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR)

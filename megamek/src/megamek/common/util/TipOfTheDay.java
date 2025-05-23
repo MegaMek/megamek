@@ -293,7 +293,7 @@ public class TipOfTheDay {
             } else if (position == Position.BOTTOM_RIGHT_CORNER) {
                 bgRectWidth = referenceBounds.width + scaledBgPadding - actualOppositeSidePadding;
                 bgRectWidth = Math.max(0, bgRectWidth);
-                bgRectX = referenceBounds.width - bgRectWidth;
+                bgRectX = referenceBounds.x + referenceBounds.width - bgRectWidth;
 
                 bgRectTopY = startY - scaledBgPadding;
                 bgRectTopY = Math.max(bgRectTopY, referenceBounds.y);

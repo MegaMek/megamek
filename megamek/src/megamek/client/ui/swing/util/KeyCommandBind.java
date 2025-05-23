@@ -42,6 +42,7 @@ public enum KeyCommandBind {
     TOGGLE_CHAT("toggleChat", VK_ENTER),
     // Activates chat box and adds the command character (/)
     TOGGLE_CHAT_CMD("toggleChatCmd", VK_SLASH),
+    DEPLOY_TURNUNIT("deployTurnUnit", VK_T, SHIFT_DOWN_MASK),
     // Move one hex forward
     MOVE_STEPFORWARD("moveStepForward", VK_W, SHIFT_DOWN_MASK),
     // Move one hex backward (back up)

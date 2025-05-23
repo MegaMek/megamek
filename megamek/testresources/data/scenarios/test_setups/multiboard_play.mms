@@ -1,7 +1,11 @@
 MMSVersion: 2
-name: Test Setup no 1 for multiple boards
+name: Playtest sandbox setup for multiple boards
 planet: None
-description: uses several boards
+description:
+  For playing around with multiple boards. Does not use aero on ground move. Orbital Bombardment limited 
+  to Capital Laser Bays. Crossing between space and atmo not possible. Lift-off and landing possible. Strafing from atmo
+  possible. xboard artillery fire possible. No Princess, will get confused atm. For testing, space units may act every 
+  round.
 map:
   - file: Beginner Box/16x17 Grassland 1.board
     name: Grassland
@@ -67,11 +71,11 @@ map:
         id: 2
     id: 6
 
-  - type: space
-    width: 25
-    height: 25
-    name: Interplanetary
-    id: 8
+#  - type: space
+#    width: 25
+#    height: 25
+#    name: Interplanetary
+#    id: 8
 
 
 options:
@@ -137,11 +141,11 @@ factions:
 #    at: [ 4,4 ]
 #    status: hidden
 
-#  - fullname: Sai S-4
-#    at: [ 15, 31 ]
-#    board: 5
-#    facing: 0
-#    altitude: 0
+  - fullname: Sai S-4
+    at: [ 15, 31 ]
+    board: 5
+    facing: 0
+    altitude: 0
 #    status:
 #      - shutdown doesnt work well on grounded Aero
 
@@ -166,17 +170,17 @@ factions:
 #    facing: 4
 #    altitude: 5
 #
-#  - fullname: Cheetah IIC
-#    at: [8, 12]
-#    board: 0
-#    facing: 0
-#    altitude: 5
-#
-#  - fullname: Cheetah IIC
-#    at: [ 8, 2 ]
-#    board: 0
-#    facing: 3
-#    altitude: 5
+  - fullname: Cheetah IIC
+    at: [8, 12]
+    board: 2
+    facing: 0
+    altitude: 5
+
+  - fullname: Cheetah IIC
+    at: [ 8, 2 ]
+    board: 2
+    facing: 3
+    altitude: 5
 #
 #  - fullname: Cheetah IIC
 #    at: [ 24, 14 ]

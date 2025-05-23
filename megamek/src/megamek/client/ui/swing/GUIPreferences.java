@@ -1,15 +1,35 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community. 
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks 
+ * of The Topps Company, Inc. All Rights Reserved.
+ * 
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of 
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.swing;
 
@@ -18,6 +38,7 @@ import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementType;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
@@ -25,6 +46,10 @@ import megamek.common.preference.PreferenceStoreProxy;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -54,7 +79,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
 
     /* --End advanced settings-- */
-
     public static final String BOARD_MOVE_DEFAULT_CLIMB_MODE = "BoardMoveDefaultClimbMode";
     public static final String BOARD_MOVE_DEFAULT_COLOR = "BoardMoveDefaultColor";
     public static final String BOARD_MOVE_ILLEGAL_COLOR = "BoardMoveIllegalColor";
@@ -109,6 +133,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLANETARY_CONDITIONS_SHOW_VALUES = "PlanetaryConditionsShowValues";
     public static final String PLANETARY_CONDITIONS_SHOW_INDICATORS = "PlanetaryConditionsShowIndicators";
     public static final String PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY = "PlanetaryConditionsBackgroundTransparency";
+
+    public static final String TRACE_OVERLAY_TRANSPARENCY = "TraceOverlayTransparency";
+    public static final String TRACE_OVERLAY_SCALE = "TraceOverlayScale";
+    public static final String TRACE_OVERLAY_ORIGIN_X = "TraceOverlayOriginX";
+    public static final String TRACE_OVERLAY_ORIGIN_Y = "TraceOverlayOriginY";
+    public static final String TRACE_OVERLAY_IMAGE_FILE = "TraceOverlayImageFile";
 
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
     public static final String BUTTONS_PER_ROW = "ButtonsPerRow";
@@ -295,6 +325,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_MOVE_PATH_PERSISTENCE = "MinimapMovePathPersistence";
     public static final String FIRE_DISPLAY_TAB_DURING_PHASES = "FireDisplayTabDuringPhases";
     public static final String MOVE_DISPLAY_TAB_DURING_PHASES = "MoveDisplayTabDuringPhases";
+    public static final String HIGH_PERFORMANCE_GRAPHICS = "HighPerformanceGraphics";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
     public static final String MOUSE_WHEEL_ZOOM = "MouseWheelZoom";
@@ -371,6 +402,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
     public static final String SHOW_KEYBINDS_OVERLAY = "ShowKeybindsOverlay";
     public static final String SHOW_PLANETARYCONDITIONS_OVERLAY = "ShowPlanetaryConditionsOverlay";
+    public static final String SHOW_TRACE_OVERLAY = "ShowTraceOverlay";
     public static final String UNIT_LABEL_STYLE = "UnitLabelStyle";
     public static final String AS_CARD_FONT = "AsCardFont";
     public static final String AS_CARD_SIZE = "AsCardSize";
@@ -442,6 +474,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_MAP_RED = new Color(200, 40, 40); // red
     private static final Color DEFAULT_MAP_GREEN = new Color(40, 210, 40); // light green
 
+    private static final String DELIMITER = ";";
+    private static final String _TABORDER = "_tabOrder";
+    private static final String _WINDOW = "_window";
+
     protected static GUIPreferences instance = new GUIPreferences();
 
     public static final int HIDE = 0;
@@ -477,6 +513,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(PLANETARY_CONDITIONS_SHOW_VALUES, true);
         setDefault(PLANETARY_CONDITIONS_SHOW_INDICATORS, true);
         setDefault(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY, 200);
+
+        setDefault(TRACE_OVERLAY_TRANSPARENCY, 64);
+        setDefault(TRACE_OVERLAY_SCALE, 100);
+        setDefault(TRACE_OVERLAY_ORIGIN_X, 0);
+        setDefault(TRACE_OVERLAY_ORIGIN_Y, 0);
+        setDefault(TRACE_OVERLAY_IMAGE_FILE, "");
 
         setDefault(WARNING_COLOR, DEFAULT_RED);
         setDefault(CAUTION_COLOR, Color.yellow);
@@ -701,6 +743,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
         store.setDefault(MINIMUM_SIZE_WIDTH, 120);
 
+        store.setDefault(HIGH_PERFORMANCE_GRAPHICS, false);
         store.setDefault(MINI_REPORT_POS_X, 200);
         store.setDefault(MINI_REPORT_POS_Y, 150);
         store.setDefault(MINI_REPORT_SIZE_HEIGHT, 300);
@@ -814,6 +857,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         setDefault(SHOW_KEYBINDS_OVERLAY, true);
         setDefault(SHOW_PLANETARYCONDITIONS_OVERLAY, true);
+        setDefault(SHOW_TRACE_OVERLAY, false);
 
         setDefault(AS_CARD_FONT, "");
         setDefault(AS_CARD_SIZE, 0.75f);
@@ -3186,6 +3230,46 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY, i);
     }
 
+    public int getTraceOverlayTransparency() {
+        return getInt(TRACE_OVERLAY_TRANSPARENCY);
+    }
+
+    public void setTraceOverlayTransparency(int i) {
+        store.setValue(TRACE_OVERLAY_TRANSPARENCY, i);
+    }
+
+    public int getTraceOverlayScale() {
+        return getInt(TRACE_OVERLAY_SCALE);
+    }
+
+    public void setTraceOverlayScale(int i) {
+        store.setValue(TRACE_OVERLAY_SCALE, i);
+    }
+
+    public int getTraceOverlayOriginX() {
+        return getInt(TRACE_OVERLAY_ORIGIN_X);
+    }
+
+    public void setTraceOverlayOriginX(int i) {
+        store.setValue(TRACE_OVERLAY_ORIGIN_X, i);
+    }
+
+    public int getTraceOverlayOriginY() {
+        return getInt(TRACE_OVERLAY_ORIGIN_Y);
+    }
+
+    public void setTraceOverlayOriginY(int i) {
+        store.setValue(TRACE_OVERLAY_ORIGIN_Y, i);
+    }
+
+    public String getTraceOverlayImageFile() {
+        return getString(TRACE_OVERLAY_IMAGE_FILE);
+    }
+
+    public void setTraceOverlayImageFile(String s) {
+        store.setValue(TRACE_OVERLAY_IMAGE_FILE, s);
+    }
+
     public void setUnitToolTipSeenByResolution(int i) {
         store.setValue(UNIT_TOOLTIP_SEENBYRESOLUTION, i);
     }
@@ -3345,6 +3429,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(SHOW_PLANETARYCONDITIONS_OVERLAY);
     }
 
+    public void toggleTraceConditionsOverlay() {
+        store.setValue(SHOW_TRACE_OVERLAY, !getBoolean(SHOW_TRACE_OVERLAY));
+    }
+
+    public boolean getShowTraceOverlay() {
+        return getBoolean(SHOW_TRACE_OVERLAY);
+    }
+
     public void setShowPlanetaryConditionsOverlay(boolean b) {
         store.setValue(SHOW_PLANETARYCONDITIONS_OVERLAY, b);
     }
@@ -3501,7 +3593,75 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setMovePathPersistenceOnMiniMap(int rounds) {
         store.setValue(MINI_MAP_MOVE_PATH_PERSISTENCE, rounds);
     }
+    
+    /**
+     * Returns the size and position of a saved named window.
+     * @param name The name of the window.
+     * @return An Optional containing the Rectangle representing the size and position, or an empty Optional if not found.
+     */
+    public Optional<Rectangle> getNamedWindowSizeAndPosition(String name) {
+        final String storedData = getString(name + _WINDOW);
+        if (storedData == null) {
+            return Optional.empty();
+        }
+        String[] windowCoords = storedData.split(DELIMITER);
+        if (windowCoords.length < 4) {
+            return Optional.empty();
+        }
+        try {
+            int x = Integer.parseInt(windowCoords[0]);
+            int y = Integer.parseInt(windowCoords[1]);
+            int width = Integer.parseInt(windowCoords[2]);
+            int height = Integer.parseInt(windowCoords[3]);
+            return Optional.of(new Rectangle(x,y,width,height));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
 
+    /**
+     * Saves the size and position of a named window.
+     * @param name The name of the window.
+     * @param component The component representing the window.
+     */
+    public void setNamedWindowSizeAndPosition(String name, Window component) {
+        Dimension size = component.getSize();
+        Point pos = component.getLocation();
+        store.setValue(name + _WINDOW, pos.x + DELIMITER + pos.y + DELIMITER + size.width + DELIMITER + size.height);
+    }
+
+    /**
+     * Returns the tab order for a given saved name (for example: the name of a window).
+     * @param name The name of the tab order.
+     * @return A List of Strings representing the tab order, or null if not found.
+     */
+    public @Nullable List<String> getTabOrder(String name) {
+        final String storedData = getString(name + _TABORDER);
+        if (storedData == null) {
+            return null;
+        }
+        final List<String> storedTabOrder = Arrays.asList(storedData.split(DELIMITER));
+        return storedTabOrder;
+    }
+
+    /**
+     * Saves the tab order for a given name (for example: the name of a window).
+     * @param name The name of the tab order.
+     * @param order A List of Strings representing the tab order.
+     */
+    public void setTabOrder(String name, List<String> order) {
+        final String storedTabOrder = String.join(DELIMITER, order);
+        store.setValue(name + _TABORDER, storedTabOrder);
+    }
+
+    public boolean getHighPerformanceGraphics() {
+        return getBoolean(HIGH_PERFORMANCE_GRAPHICS);
+    }
+
+    public void setHighPerformanceGraphics(boolean value) {
+        store.setValue(HIGH_PERFORMANCE_GRAPHICS, value);
+    }
+  
     public boolean getNagForOddSizedBoard() {
         return getBoolean(NAG_FOR_ODD_SIZED_BOARD);
     }

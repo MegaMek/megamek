@@ -361,7 +361,7 @@ To discuss all things MegaMek, please visit our [Discord](https://discord.gg/meg
 
 MegaMek - Copyright (C) 2002 Ben Mazur
 
-Copyright (c) 2024 - [The MegaMek Team](<megamekteam@gmail.com>). All Rights Reserved.
+Copyright (c) 2024-2025 - [The MegaMek Team](<megamekteam@gmail.com>). All Rights Reserved.
 
 This file is part of MegaMek.
 

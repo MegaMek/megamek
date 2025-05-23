@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moving and Jumping - Special Cases</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            margin-top: 30px;
+            border-left: 4px solid rgba(0, 0, 0, 0.3);
+            padding-left: 10px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .config-image {
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        table.config-table, td.config-image, td.config-details {
+            border: 0;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        code {
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .command {
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: 10px;
+            border-left: 3px solid rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .command code {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .nav-container {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .nav-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .nav-list li {
+            margin-bottom: 5px;
+        }
+
+        .nav-list a {
+            text-decoration: none;
+        }
+
+        .nav-list a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .config-image {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<h1 id="top">Moving and Jumping</h1>
+<h2>Special Cases</h2>
+
+<!-- Table of Contents -->
+<div class="nav-container">
+    <div class="nav-title">Table of Contents</div>
+    <ul class="nav-list">
+        <li><a href="#jumping-into-buildings">Jumping into Buildings</a></li>
+        <li><a href="#jumping-into-bridges">Jumping into Bridges</a></li>
+        <li><a href="#moving-0mp-infantry">Moving 0MP Infantry</a></li>
+        <li><a href="#moving-wige">Moving WiGE</a></li>
+        <!-- Add more sections as needed -->
+    </ul>
+</div>
+
+<!-- Section 1 -->
+<h2 id="jumping-into-buildings">Jumping into Buildings</h2>
+<p>
+    Any unit capable of jumping can jump onto a bridge, the jump will default to landing on top of the building,
+    this is the intended behavior, and you cannot jump into the lower floors if you are not jumping into one of the
+    side of the building.
+</p>
+
+<!-- Section 2 with Image + Text Table Example -->
+<h2 id="jumping-into-bridges">Jumping into Bridges</h2>
+<p>
+    Any unit capable of jumping can jump onto a bridge, the jump will default to landing on top of the bridge, however
+    if you want to land on terra-firma instead, you can click the "go down", if the MP cost shows up as grey it means
+    you moved down to a level that has no ground, you can keep clicking the go down button until you touch the hex
+    floor. a WiGE can be settled 1 elevation above ground, and hover vehicles can be settled on the water level.
+</p>
+<!-- Section 3 with Regular Table -->
+<h2 id="moving-0mp-infantry">Moving 0MP Infantry</h2>
+<p>
+    Infantry with 0MP can still move normaly on the field, however one thing needs to be taken care of, they can't
+    climb more than 1 level at a time, so to enter a building you need to change the climb mode to "Go Through", this
+    will allow them to get inside the building instead of trying to climb it up.
+</p>
+<p>
+    Once inside the building, the 0MP infantry can use Go Up and Go Down to move between floors.
+</p>
+
+<h2 id="moving-wige">Moving WiGE</h2>
+<p>
+    If you are moving a WiGE on a field with some minor changes in height going down, you need to, in each hex where
+    the level decreases, use the "go down" command, otherwise it will try to keep the elevation, which cost a higher
+    MP.
+</p>
+<p><a href="#top">Back to Top</a></p>
+</body>
+</html>

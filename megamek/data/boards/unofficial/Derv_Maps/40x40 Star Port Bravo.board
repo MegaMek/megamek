@@ -1,6 +1,7 @@
 size 40 40
 option exit_roads_to_pavement false
 tag "Roads (Auto)"
+tag "FuelTank (Auto)"
 tag "Flat (Auto)"
 tag "HardenedBuilding (Auto)"
 tag "LightForest (Auto)"

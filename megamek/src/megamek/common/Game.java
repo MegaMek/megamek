@@ -843,16 +843,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * @return an enumeration of all the entities in the game.
-     *
-     * @deprecated Use {@link #inGameTWEntities()}.iterator() instead. usage remediated in 0.50.06. Remove in 0.50.07
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public Iterator<Entity> getEntities() {
-        return inGameTWEntities().iterator();
-    }
-
-    /**
      * @param current The <code>Entity</code> whose list position you wish to start from.
      *
      * @return The previous <code>Entity</code> from the master list of entities. Will wrap around to the end of the
@@ -1235,21 +1225,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Adds a new Entity. The id parameter is ignored and addEntity(Entity) is called instead. This is just to maintain
-     * compatibility.
-     *
-     * @param id     Value that is ignored: the id is pulled from the passed Entity
-     * @param entity The Entity to add to the game.
-     *
-     * @deprecated Use {@link #addEntity(Entity)} instead. Remediated in 0.50.06, remove in 0.50.07
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void addEntity(int id, Entity entity) {
-        // Disregard the passed id, addEntity(Entity) pulls the id from the Entity instance.
-        addEntity(entity);
-    }
-
-    /**
      * Adds a new Entity to this Game object and generates a GameEntityNewEvent.
      *
      * @param entity The Entity to add.
@@ -1308,7 +1283,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 mek.setCondEjectCTDest(true);
                 mek.setCondEjectHeadshot(true);
             } else {
-                mek.setAutoEject(!entity.hasCase() && !entity.hasCASEII());
+                mek.setAutoEject(!entity.hasCase() && !entity.hasCASEII() && mek.isAutoEject());
             }
         }
 
@@ -3531,7 +3506,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     @Override
     public ReportEntry getNewReport(int messageId) {
-        return new Report(messageId);
+        return new Report(messageId).makePublic();
     }
 
     /**

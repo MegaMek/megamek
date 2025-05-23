@@ -31,6 +31,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AreaEffectHelper;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
@@ -139,7 +140,7 @@ public class WeaponFireInfo {
      *
      * @param shooter               The {@link megamek.common.Entity} doing the
      *                              attacking.
-     * @param shooterPath           The {@link megamek.common.MovePath} of the
+     * @param shooterPath           The {@link MovePath} of the
      *                              attacker.
      * @param target                The {@link megamek.common.Targetable} of the
      *                              attack.
@@ -182,7 +183,7 @@ public class WeaponFireInfo {
      * @param shooterState          The current
      *                              {@link megamek.client.bot.princess.EntityState}
      *                              of the attacker.
-     * @param shooterPath           The {@link megamek.common.MovePath} of the
+     * @param shooterPath           The {@link MovePath} of the
      *                              attacker.
      * @param target                The {@link megamek.common.Targetable} of the
      *                              attack.
@@ -532,7 +533,7 @@ public class WeaponFireInfo {
         // For clan plasma cannon, assume 7 "damage".
         final WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
-                TechAdvancement.TECH_BASE_CLAN == weaponType.getTechBase()) {
+                TechAdvancement.TechBase.CLAN == weaponType.getTechBase()) {
             return new double[] {7D, 0D, 0D};
         }
 

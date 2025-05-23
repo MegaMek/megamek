@@ -896,9 +896,4 @@ public class TripodMek extends MekWithArms {
     protected int legCount() {
         return 3;
     }
-
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-
-    }
 }

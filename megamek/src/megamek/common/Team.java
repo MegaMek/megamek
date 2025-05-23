@@ -22,7 +22,6 @@ package megamek.common;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -128,7 +127,7 @@ public final class Team extends TurnOrdered {
 
     /**
      * Return the number of "normal" turns that this item requires. This is normally the sum of multi-unit turns and the
-     * other turns. A team without any "normal" turns must return it's number of even turns to produce a fair
+     * other turns. A team without any "normal" turns must return its number of even turns to produce a fair
      * distribution of moves.
      *
      * @return the <code>int</code> number of "normal" turns this item should take in a phase.
@@ -189,11 +188,6 @@ public final class Team extends TurnOrdered {
         return players.stream().mapToInt(Player::getAeroTurns).sum();
     }
 
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-        clearInitiative(bUseInitComp, new HashMap<>());
-    }
-
     /** Two teams are equal if their ids and players are equal. */
     @Override
     public boolean equals(Object object) {
@@ -224,7 +218,7 @@ public final class Team extends TurnOrdered {
 
         for (Player player : players) {
             dynamicBonus = Math.max(dynamicBonus, player.getTurnInitBonus());
-            dynamicBonus = Math.max(dynamicBonus, player.getCommandBonus());
+            dynamicBonus = Math.max(dynamicBonus, player.getOverallCommandBonus());
 
             // this is a special case: it's an arbitrary bonus associated with a player
             constantBonus = Math.max(constantBonus, player.getConstantInitBonus());

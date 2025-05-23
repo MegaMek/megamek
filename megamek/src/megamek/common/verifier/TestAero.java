@@ -37,6 +37,7 @@ import megamek.common.weapons.missiles.MRMWeapon;
 import megamek.common.weapons.missiles.RLWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
+import megamek.common.ITechnology.Faction;
 
 /**
  * Class for testing and validating instantiations for Conventional Fighters and
@@ -1117,7 +1118,7 @@ public class TestAero extends TestEntity {
      *                of F_NONE will use the least restrictive values (TA/TH).
      * @return The maximum tonnage for the type of unit.
      */
-    public static int getMaxTonnage(Aero aero, int faction) {
+    public static int getMaxTonnage(Aero aero, Faction faction) {
         if (aero.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             return 2500000;
         } else if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
@@ -1149,11 +1150,11 @@ public class TestAero extends TestEntity {
      * @param jumpship
      * @return Max tonnage allowed by construction rules.
      */
-    public static int getPrimitiveJumpshipMaxTonnage(Aero jumpship, int faction) {
+    public static int getPrimitiveJumpshipMaxTonnage(Aero jumpship, Faction faction) {
         switch (faction) {
-            case ITechnology.F_TA:
-            case ITechnology.F_TH:
-            case ITechnology.F_NONE:
+            case TA:
+            case TH:
+            case NONE:
                 if (jumpship.getYear() < 2130) {
                     return 100000;
                 } else if (jumpship.getYear() < 2150) {
@@ -1173,11 +1174,11 @@ public class TestAero extends TestEntity {
                 } else {
                     return 1800000;
                 }
-            case ITechnology.F_CC:
-            case ITechnology.F_DC:
-            case ITechnology.F_FS:
-            case ITechnology.F_FW:
-            case ITechnology.F_LC:
+            case CC:
+            case DC:
+            case FS:
+            case FW:
+            case LC:
                 if (jumpship.getYear() < 2300) {
                     return 350000;
                 } else if (jumpship.getYear() < 2350) {

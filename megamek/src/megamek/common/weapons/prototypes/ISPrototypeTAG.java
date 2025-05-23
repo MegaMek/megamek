@@ -43,15 +43,15 @@ public class ISPrototypeTAG extends TAGWeapon {
         cost = 150000;
         rulesRefs = "73, IO";
         flags = flags.or(F_PROTOTYPE);
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(2593, DATE_NONE, DATE_NONE, 2600, DATE_NONE)
                 .setISApproximate(false, false, false, true, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

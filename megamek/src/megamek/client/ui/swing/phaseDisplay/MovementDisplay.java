@@ -67,7 +67,8 @@ import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -76,6 +77,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
@@ -284,6 +286,28 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
+    private void moveBackUp() {
+        buttons.get(MoveCommand.MOVE_BACK_UP).doClick();
+    }
+
+    private void moveGoProne() {
+        buttons.get(MoveCommand.MOVE_GO_PRONE).doClick();
+    }
+
+    private void moveGetUp() {
+        buttons.get(MoveCommand.MOVE_GET_UP).doClick();
+    }
+  
+    private void moveStepForward() {
+        cmd.addStep(MoveStepType.FORWARDS);
+        updateMove();
+    }
+
+    private void moveStepBackward() {
+        cmd.addStep(MoveStepType.BACKWARDS);
+        updateMove();
+    }
+  
     private void performToggleConversionMode() {
         final Entity currentlySelectedEntity = ce();
 
@@ -330,6 +354,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::cancel);
         controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE, this, this::performToggleMovementMode);
+        controller.registerCommandAction(KeyCommandBind.MOVE_BACKUP, this, this::moveBackUp);
+        controller.registerCommandAction(KeyCommandBind.MOVE_GOPRONE, this, this::moveGoProne);
+        controller.registerCommandAction(KeyCommandBind.MOVE_GETUP, this, this::moveGetUp);
+        controller.registerCommandAction(KeyCommandBind.MOVE_STEPFORWARD, this, this::moveStepForward);
+        controller.registerCommandAction(KeyCommandBind.MOVE_STEPBACKWARD, this, this::moveStepBackward);
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE, this, this::performToggleConversionMode);
     }
 

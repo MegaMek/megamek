@@ -405,4 +405,47 @@ class ComputeTest {
         HexTarget hTarget = new HexTarget(new Coords(5, 5), HexTarget.TYPE_HEX_ARTILLERY);
         assertTrue(Compute.allEnemiesOutsideBlast(hTarget, attacker, mockLTAmmoType, true, false, false, game));
     }
+
+    // Section: Accidental Fall From Above damage
+    @Test
+    void accidentalFallDamage2Levels50Tons() {
+        double weight = 50.0;
+        int elevation = 2;
+        int expectedDamage = (int) ((weight/10.0) * elevation);
+
+        Mek faller = createMek("Faller", "ATK-1", "Alice");
+        faller.setOwnerId(player1.getId());
+        faller.setId(1);
+        faller.setWeight(weight);
+
+        assertEquals(expectedDamage, Compute.getAffaDamageFor(faller, elevation));
+    }
+
+    @Test
+    void accidentalFallDamage5Levels90Tons() {
+        double weight = 90.0;
+        int elevation = 5;
+        int expectedDamage = (int) ((weight/10.0) * elevation);
+
+        Mek faller = createMek("Faller", "ATK-1", "Alice");
+        faller.setOwnerId(player1.getId());
+        faller.setId(1);
+        faller.setWeight(weight);
+
+        assertEquals(expectedDamage, Compute.getAffaDamageFor(faller, elevation));
+    }
+
+    @Test
+    void accidentalFallDamage4Levels75Tons() {
+        double weight = 75.0;
+        int elevation = 4;
+        int expectedDamage = 32;
+
+        Mek faller = createMek("Faller", "ATK-1", "Alice");
+        faller.setOwnerId(player1.getId());
+        faller.setId(1);
+        faller.setWeight(weight);
+
+        assertEquals(expectedDamage, Compute.getAffaDamageFor(faller, elevation));
+    }
 }

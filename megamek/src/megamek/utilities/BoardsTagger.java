@@ -94,7 +94,11 @@ public class BoardsTagger {
         TAG_IMPASSABLE("Impassable"),
         TAG_ELEVATOR("Elevator"),
         TAG_MULTIPLETHEME("MultipleTheme"),
-        TAG_UNDERWATERBRIDGE("UnderWaterBridge");
+        TAG_UNDERWATERBRIDGE("UnderWaterBridge"),
+        TAG_METAL_CONTENT("MetalContent"),
+        TAG_HAZARDOUS_LIQUID("HazardousLiquid"),
+        TAG_ULTRA_SUBLEVEL("UltraSublevel"),
+        TAG_FUEL_TANK("FuelTank");
 
         private String tagName;
         private static final Map<String, Tags> internalTagMap;
@@ -168,6 +172,10 @@ public class BoardsTagger {
         int elevator = 0;
         int multipleTheme = 0;
         int underWaterBridge = 0;
+        int metalContent = 0;
+        int hazardousLiquid = 0;
+        int ultraSublevel = 0;
+        int fuelTank = 0;
 
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -234,6 +242,10 @@ public class BoardsTagger {
                           && (hex.terrainLevel(BRIDGE_ELEV) < hex.terrainLevel(WATER))) {
                     underWaterBridge++;
                 }
+                metalContent += hex.containsTerrain(METAL_CONTENT) ? 1 : 0;
+                hazardousLiquid += hex.containsTerrain(HAZARDOUS_LIQUID) ? 1 : 0;
+                ultraSublevel += hex.containsTerrain(ULTRA_SUBLEVEL) ? 1 : 0;
+                fuelTank += hex.containsTerrain(FUEL_TANK) ? 1 : 0;
             }
         }
 
@@ -292,6 +304,10 @@ public class BoardsTagger {
         matchingTags.put(Tags.TAG_ARMOREDBUILDING, armoredBuilding > 10);
         matchingTags.put(Tags.TAG_IMPASSABLE, impassable > 0);
         matchingTags.put(Tags.TAG_ELEVATOR, elevator > 0);
+        matchingTags.put(Tags.TAG_METAL_CONTENT, metalContent > normSide / 3);
+        matchingTags.put(Tags.TAG_HAZARDOUS_LIQUID, hazardousLiquid > 0);
+        matchingTags.put(Tags.TAG_ULTRA_SUBLEVEL, ultraSublevel > 0);
+        matchingTags.put(Tags.TAG_FUEL_TANK, fuelTank > 0);
 
         multipleTheme += deserts > 0 ? 1 : 0;
         multipleTheme += lunar > 0 ? 1 : 0;

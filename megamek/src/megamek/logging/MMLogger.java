@@ -132,10 +132,11 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * @param args      Variable list of arguments for the message
      */
     public void warn(Throwable exception, String message, Object... args) {
-        Sentry.captureException(exception);
         message = parametrizedStringIfEnabled(Level.WARN, message, args);
+        Sentry.captureException(exception);
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.WARN, null, message, exception);
     }
+
 
     /**
      * Debug Level Logging

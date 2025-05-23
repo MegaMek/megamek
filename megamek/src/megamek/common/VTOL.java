@@ -15,6 +15,7 @@ package megamek.common;
 
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 
@@ -88,8 +89,8 @@ public class VTOL extends Tank implements IBomber {
 
     @Override
     public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
-            MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
-            boolean isInfantry, int distance) {
+                                      MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+                                      boolean isInfantry, int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: VTOLs can't skid");
         return roll;
@@ -696,9 +697,9 @@ public class VTOL extends Tank implements IBomber {
     }
 
     public static TechAdvancement getChinTurretTA() {
-        return new TechAdvancement(TECH_BASE_ALL)
+        return new TechAdvancement(TechBase.ALL)
                 .setAdvancement(DATE_PS, 3079, 3080).setApproximate(false, true, false)
-                .setTechRating(RATING_B).setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
+                .setTechRating(TechRating.B).setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

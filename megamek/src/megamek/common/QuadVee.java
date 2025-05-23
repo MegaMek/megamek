@@ -130,13 +130,13 @@ public class QuadVee extends QuadMek {
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-    return new TechAdvancement(TECH_BASE_CLAN)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+    return new TechAdvancement(TechBase.CLAN)
+            .setTechRating(TechRating.F)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
             .setClanAdvancement(3130, 3135, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(true)
-            .setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CHH)
+            .setPrototypeFactions(Faction.CHH)
+            .setProductionFactions(Faction.CHH)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
@@ -280,7 +280,7 @@ public class QuadVee extends QuadMek {
     }
 
     /**
-     * QuadVees cannot benefit from MASC in vehicle mode
+     * QuadVees cannot benefit from MASC or SuperChargers in vehicle mode
      */
     @Override
     public MPBoosters getArmedMPBoosters() {
@@ -289,11 +289,7 @@ public class QuadVee extends QuadMek {
             return  mpBoosters;
         }
 
-        return switch (mpBoosters) {
-            case MASC_AND_SUPERCHARGER -> MPBoosters.SUPERCHARGER_ONLY;
-            case MASC_ONLY -> MPBoosters.NONE;
-            default -> mpBoosters;
-        };
+        return MPBoosters.NONE;
     }
 
     /**

@@ -1,0 +1,68 @@
+#Saved from version 0.50.06 on 2025-04-28
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Gun Platoon (LCAF)
+</Name>
+
+<Model>
+(Tracked UAC10 3060+)
+</Model>
+
+<year>
+3060
+</year>
+
+<originalBuildYear>
+3060
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISUltraAC10
+IS Ultra AC/10 Ammo
+ISUltraAC10
+IS Ultra AC/10 Ammo
+</Field Guns Equipment>
+
+<capabilities>
+Ultra-class field guns have a longer range and higher rate of fire compared with their standard equivalents.  Even backed with the robust capabilities of Lyran manufacturers, the high ammunition consumption and lack of specialty ammunition types make them a lower priority in Lyran forces.
+</capabilities>
+
+<overview>
+After the removal of historically Lyran systems from the unified Federated Commonwealth, many changes took place to restore and reinforce the Lyran nature of military forces posted there.  Infantry armor production was quickly updated with the first production runs seeing little more than a logo change.  Later production would see more visible changes to resemble the older Lyran style while retaining the protection capabilities of the FedCom model.
+</overview>
+
+<notes>
+Intro date based on common production date of ultra-class autocannon
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+Rifle (TK Assault)
+</Primary>
+

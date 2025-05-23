@@ -1,6 +1,7 @@
 size 64 51
 tag "Rough (Auto)"
 tag "LunarTheme (Auto)"
+tag "FuelTank (Auto)"
 tag "HighHills (Auto)"
 tag "HeavyBuilding (Auto)"
 hex 0101 -1 "" "lunar"

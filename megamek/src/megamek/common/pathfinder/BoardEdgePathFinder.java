@@ -23,8 +23,10 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
+import megamek.common.moves.MoveStep;
 
 /**
  * This class is intended to be used to find a (potentially long) legal path

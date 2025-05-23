@@ -142,7 +142,7 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(-1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(-2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(-3);
-        when(mockPlayer2.getCommandBonus()).thenReturn(2);
+        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         assertEquals(1, initBonus);
@@ -166,8 +166,8 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(-1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(-2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(-3);
-        when(mockPlayer1.getCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getCommandBonus()).thenReturn(2);
+        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
+        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         assertEquals(1, initBonus);
@@ -191,9 +191,9 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(-1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(-2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(-3);
-        when(mockPlayer1.getCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getCommandBonus()).thenReturn(4);
+        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
+        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
+        when(mockPlayer3.getOverallCommandBonus()).thenReturn(4);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         assertEquals(3, initBonus);
@@ -217,9 +217,9 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getCommandBonus()).thenReturn(0);
-        when(mockPlayer2.getCommandBonus()).thenReturn(0);
-        when(mockPlayer3.getCommandBonus()).thenReturn(0);
+        when(mockPlayer1.getOverallCommandBonus()).thenReturn(0);
+        when(mockPlayer2.getOverallCommandBonus()).thenReturn(0);
+        when(mockPlayer3.getOverallCommandBonus()).thenReturn(0);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         assertEquals(3, initBonus);
@@ -243,9 +243,9 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getCommandBonus()).thenReturn(3);
+        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
+        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
+        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         assertEquals(6, initBonus);
@@ -269,9 +269,9 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getCommandBonus()).thenReturn(3);
+        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
+        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
+        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
         when(mockPlayer1.getTurnInitBonus()).thenReturn(1);
         when(mockPlayer2.getTurnInitBonus()).thenReturn(2);
         when(mockPlayer3.getTurnInitBonus()).thenReturn(3);
@@ -298,9 +298,9 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getCommandBonus()).thenReturn(3);
+        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
+        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
+        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
         when(mockPlayer1.getTurnInitBonus()).thenReturn(-1);
         when(mockPlayer2.getTurnInitBonus()).thenReturn(-2);
         when(mockPlayer3.getTurnInitBonus()).thenReturn(-3);
@@ -327,9 +327,9 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getCommandBonus()).thenReturn(3);
+        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
+        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
+        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
         when(mockPlayer1.getTurnInitBonus()).thenReturn(-1);
         when(mockPlayer2.getTurnInitBonus()).thenReturn(-2);
         when(mockPlayer3.getTurnInitBonus()).thenReturn(-3);
@@ -356,9 +356,9 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getCommandBonus()).thenReturn(3);
+        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
+        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
+        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
         when(mockPlayer1.getTurnInitBonus()).thenReturn(-1);
         when(mockPlayer2.getTurnInitBonus()).thenReturn(-2);
         when(mockPlayer3.getTurnInitBonus()).thenReturn(-3);
@@ -388,9 +388,9 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getCommandBonus()).thenReturn(3);
+        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
+        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
+        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
         when(mockPlayer1.getTurnInitBonus()).thenReturn(-1);
         when(mockPlayer2.getTurnInitBonus()).thenReturn(-2);
         when(mockPlayer3.getTurnInitBonus()).thenReturn(-3);
@@ -424,10 +424,10 @@ class TeamTest {
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
         when(mockPlayer4.getConstantInitBonus()).thenReturn(0);
-        when(mockPlayer1.getCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getCommandBonus()).thenReturn(3);
-        when(mockPlayer4.getCommandBonus()).thenReturn(0);
+        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
+        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
+        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
+        when(mockPlayer4.getOverallCommandBonus()).thenReturn(0);
         when(mockPlayer1.getTurnInitBonus()).thenReturn(-1);
         when(mockPlayer2.getTurnInitBonus()).thenReturn(-2);
         when(mockPlayer3.getTurnInitBonus()).thenReturn(-3);

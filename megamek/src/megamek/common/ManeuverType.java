@@ -14,7 +14,9 @@
 
 package megamek.common;
 
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 
 /**
  * Maneuver types for Aeros

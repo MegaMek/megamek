@@ -501,8 +501,9 @@ public class LosEffects {
         }
 
         // this will adjust the effective height of a building target by 1 if the hex
-        // contains a rooftop gun emplacement
-        final int targetHeightAdjustment = game.hasRooftopGunEmplacement(targetHex.getCoords()) ? 1 : 0;
+        // contains a rooftop gun emplacement, unless we are targeting a specific floor, in which case we dont care.
+        final int targetHeightAdjustment = target instanceof FloorTarget ? 0 :
+                                                 game.hasRooftopGunEmplacement(targetHex.getCoords()) ? 1 : 0;
 
         final AttackInfo ai = new AttackInfo();
         ai.attackerIsMek = attacker instanceof Mek;

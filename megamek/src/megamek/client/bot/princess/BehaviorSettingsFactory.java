@@ -87,20 +87,23 @@ public class BehaviorSettingsFactory {
         if (!behaviorMap.containsKey(DEFAULT_BEHAVIOR_DESCRIPTION)) {
             addBehavior(DEFAULT_BEHAVIOR);
         }
-        if (!behaviorMap.containsKey(BERSERK_BEHAVIOR.getDescription())) {
+        if (BERSERK_BEHAVIOR != null && !behaviorMap.containsKey(BERSERK_BEHAVIOR.getDescription())) {
             addBehavior(BERSERK_BEHAVIOR);
         }
-        if (!behaviorMap.containsKey(COWARDLY_BEHAVIOR.getDescription())) {
+        if (COWARDLY_BEHAVIOR != null && !behaviorMap.containsKey(COWARDLY_BEHAVIOR.getDescription())) {
             addBehavior(COWARDLY_BEHAVIOR);
         }
-        if (!behaviorMap.containsKey(ESCAPE_BEHAVIOR.getDescription())) {
+        if (ESCAPE_BEHAVIOR != null && !behaviorMap.containsKey(ESCAPE_BEHAVIOR.getDescription())) {
             addBehavior(ESCAPE_BEHAVIOR);
         }
-        if (!behaviorMap.containsKey(RUTHLESS_BEHAVIOR.getDescription())) {
+        if (RUTHLESS_BEHAVIOR != null && !behaviorMap.containsKey(RUTHLESS_BEHAVIOR.getDescription())) {
             addBehavior(RUTHLESS_BEHAVIOR);
         }
-        if (!behaviorMap.containsKey(PIRATE_BEHAVIOR.getDescription())) {
+        if (PIRATE_BEHAVIOR != null && !behaviorMap.containsKey(PIRATE_BEHAVIOR.getDescription())) {
             addBehavior(PIRATE_BEHAVIOR);
+        }
+        if (CONVOY_BEHAVIOR != null && !behaviorMap.containsKey(CONVOY_BEHAVIOR.getDescription())) {
+            addBehavior(CONVOY_BEHAVIOR);
         }
     }
 
@@ -314,6 +317,9 @@ public class BehaviorSettingsFactory {
             berserkBehavior.setBraveryIndex(9);
             berserkBehavior.setAntiCrowding(0);
             berserkBehavior.setFavorHigherTMM(0);
+            berserkBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
+            berserkBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
+            berserkBehavior.setExclusiveHerding(false);
             return berserkBehavior;
         } catch (Exception e) {
             logger.error(e, "Berserker Behavior Exception");
@@ -354,6 +360,9 @@ public class BehaviorSettingsFactory {
             cowardlyBehavior.setBraveryIndex(2);
             cowardlyBehavior.setAntiCrowding(0);
             cowardlyBehavior.setFavorHigherTMM(0);
+            cowardlyBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
+            cowardlyBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
+            cowardlyBehavior.setExclusiveHerding(false);
             return cowardlyBehavior;
         } catch (Exception e) {
             logger.error(e, "Cowardly Behavior Exception");
@@ -395,6 +404,9 @@ public class BehaviorSettingsFactory {
             escapeBehavior.setBraveryIndex(2);
             escapeBehavior.setAntiCrowding(0);
             escapeBehavior.setFavorHigherTMM(0);
+            escapeBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
+            escapeBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
+            escapeBehavior.setExclusiveHerding(false);
             return escapeBehavior;
         } catch (Exception e) {
             logger.error(e, "Escape Behavior Exception");
@@ -436,13 +448,15 @@ public class BehaviorSettingsFactory {
             ruthlessBehavior.setBraveryIndex(7);
             ruthlessBehavior.setAntiCrowding(10);
             ruthlessBehavior.setFavorHigherTMM(8);
+            ruthlessBehavior.setNumberOfEnemiesToConsiderFacing(2);
+            ruthlessBehavior.setAllowFacingTolerance(0);
+            ruthlessBehavior.setExclusiveHerding(true);
             return ruthlessBehavior;
         } catch (Exception e) {
             logger.error(e, "Ruthless Behavior Exception");
             return null;
         }
     }
-
 
     /**
      * Destination Edge: {@link CardinalEdge#NONE} <br>
@@ -479,9 +493,61 @@ public class BehaviorSettingsFactory {
             pirateBehavior.setAntiCrowding(5);
             pirateBehavior.setFavorHigherTMM(5);
             pirateBehavior.setIAmAPirate(true);
+            pirateBehavior.setNumberOfEnemiesToConsiderFacing(1);
+            pirateBehavior.setAllowFacingTolerance(2);
+            pirateBehavior.setExclusiveHerding(true);
             return pirateBehavior;
         } catch (Exception e) {
             logger.error(e, "Pirate Behavior Exception");
+            return null;
+        }
+    }
+
+    /**
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
+     * Forced Withdrawal: True <br>
+     * Go Home: True <br>
+     * Auto Flee: True <br>
+     * Fall Shame: 6 <br>
+     * Hyper Aggression: 3 <br>
+     * Self Preservation: 10 <br>
+     * Herd Mentality: 5 <br>
+     * Bravery: 2 <br>
+     * Anti-Crowding: 5 <br>
+     * Favor Higher TMM: 10 <br>
+     * Ignore Damage Output: True <br>
+     * Strategic Targets: None
+     */
+    // Used by MekHQ
+    public final BehaviorSettings CONVOY_BEHAVIOR = buildConvoyBehavior();
+    public static final String CONVOY_BEHAVIOR_DESCRIPTION = "CONVOY";
+
+    private BehaviorSettings buildConvoyBehavior() {
+        try {
+            BehaviorSettings convoyBehavior = new BehaviorSettings();
+            convoyBehavior.setDescription(CONVOY_BEHAVIOR_DESCRIPTION);
+            convoyBehavior.setDestinationEdge(CardinalEdge.NONE);
+            convoyBehavior.setRetreatEdge(CardinalEdge.NEAREST);
+
+            convoyBehavior.setIgnoreDamageOutput(true);
+            convoyBehavior.setForcedWithdrawal(true);
+            convoyBehavior.setAutoFlee(true);
+            convoyBehavior.setExclusiveHerding(true);
+
+            convoyBehavior.setFallShameIndex(6);
+            convoyBehavior.setHyperAggressionIndex(3);
+            convoyBehavior.setBraveryIndex(2);
+            convoyBehavior.setSelfPreservationIndex(10);
+            convoyBehavior.setHerdMentalityIndex(5);
+            convoyBehavior.setAntiCrowding(5);
+            convoyBehavior.setFavorHigherTMM(10);
+            convoyBehavior.setNumberOfEnemiesToConsiderFacing(0);
+            convoyBehavior.setAllowFacingTolerance(2);
+
+            return convoyBehavior;
+        } catch (Exception e) {
+            logger.error(e, "Convoy Behavior Exception");
             return null;
         }
     }
@@ -523,6 +589,9 @@ public class BehaviorSettingsFactory {
             defaultBehavior.setBraveryIndex(5);
             defaultBehavior.setAntiCrowding(0);
             defaultBehavior.setFavorHigherTMM(0);
+            defaultBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
+            defaultBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
+            defaultBehavior.setExclusiveHerding(false);
             return defaultBehavior;
         } catch (Exception e) {
             logger.error(e, "Default Behavior Exception");

@@ -287,8 +287,7 @@ public class Crew implements Serializable {
         resetActedFlag();
 
         // set a random UUID for external ID, this will help us sort enemy salvage and
-        // prisoners in MHQ and should have no effect on MM (but need to make sure it
-        // doesn't screw up MekWars)
+        // prisoners in MHQ and should have no effect on MM
         externalId = new String[slots];
         for (int i = 0; i < slots; i++) {
             externalId[i] = UUID.randomUUID().toString();
@@ -1438,24 +1437,4 @@ public class Crew implements Serializable {
         }
     }
     // endregion extraData
-
-    // region MekWars
-    /*
-     * Legacy methods used by MekWars
-     */
-
-    /**
-     * Sets the piloting skill of the crew's default pilot.
-     */
-    public void setPiloting(int piloting) {
-        setPiloting(piloting, crewType.getPilotPos());
-    }
-
-    /**
-     * Sets the gunnery skill of the crew's default gunner.
-     */
-    public void setGunnery(int gunnery) {
-        setGunnery(gunnery, crewType.getGunnerPos());
-    }
-    // endregion MekWars
 }

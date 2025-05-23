@@ -310,9 +310,4 @@ public class BipedMek extends MekWithArms {
                      !weaponFiredFrom(Mek.LOC_RARM) &&
                      !isProne();
     }
-
-    @Override
-    public void clearInitiative(boolean bUseInitComp) {
-
-    }
 }

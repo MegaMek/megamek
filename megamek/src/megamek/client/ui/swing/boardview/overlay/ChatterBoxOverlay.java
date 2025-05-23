@@ -29,6 +29,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Enumeration;
 import java.util.Vector;
+import javax.swing.Timer;
 
 import megamek.MMConstants;
 import megamek.client.Client;
@@ -134,8 +135,18 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
 
     private FontMetrics fm;
 
+    private boolean cursorVisible = true;
+    private Timer cursorBlinkTimer;
+
     public ChatterBoxOverlay(ClientGUI client, BoardView boardview, MegaMekController controller) {
         this.client = client.getClient();
+        bv = boardview;
+
+        cursorBlinkTimer = new Timer(500, e -> {
+            cursorVisible = !cursorVisible;
+            bv.refreshDisplayables();
+        });
+        cursorBlinkTimer.start();
         client.getClient().getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
@@ -158,7 +169,6 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
             }
         });
 
-        bv = boardview;
         adaptToGUIScale();
 
         Toolkit toolkit = bv.getPanel().getToolkit();
@@ -497,8 +507,21 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
 
         // Message box
         graph.drawRect(10 + clipBounds.x, (yOffset + height) - 21, width - 50, 17);
-        if (message != null && bv.getChatterBoxActive()) {
-            printLine(graph, visibleMessage + "_", 13 + clipBounds.x, (yOffset + height) - 7);
+
+        // Draw the input text and/or the cursor
+        if ((!isDown()) && ((bv.getChatterBoxActive()) || (!StringUtility.isNullOrBlank(message)))) {
+            String textToDisplayInInput = "";
+            // If there's an actual message being composed
+            if (!StringUtility.isNullOrBlank(message)) {
+                textToDisplayInInput = visibleMessage;
+            }
+            // Append cursor if the chatbox is active and ready for input
+            if ((bv.getChatterBoxActive()) && (cursorVisible)) {
+                textToDisplayInInput += "_";
+            }
+            if (!textToDisplayInInput.isEmpty()) {
+                printLine(graph, textToDisplayInInput, 13 + clipBounds.x, (yOffset + height) - 7);
+            }
         }
 
         // Text rows
@@ -809,7 +832,6 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
                     clearMessage();
                     cb.setMessage("");
                 }
-                bv.setChatterBoxActive(false);
                 break;
             case KeyEvent.VK_ESCAPE:
                 bv.setChatterBoxActive(false);
@@ -907,6 +929,12 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         max_nbr_rows = (height / fm.getHeight()) - 2;
         bv.refreshDisplayables();
     }
+    
+    private void stopCursorBlinking() {
+        if (cursorBlinkTimer != null) {
+            cursorBlinkTimer.stop();
+        }
+    }
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
@@ -921,4 +949,9 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
 
         }
     }
+
+    public void dispose() {
+        stopCursorBlinking();
+    }
+
 }

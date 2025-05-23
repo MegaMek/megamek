@@ -18,21 +18,23 @@
  */
 package megamek.common;
 
+import megamek.common.ITechnology.TechRating;
+
 /**
  * Fuel type affects costs of refueling (if tracking fuel) and possibly vehicle operating
  * range. See StratOps, p. 179.
  */
 public enum FuelType {
     /** Currently a place holder for "none of the others"; a better option than null */
-    NONE (0, ITechnology.RATING_A),
+    NONE (0, ITechnology.TechRating.A),
     /** Fuel cell */
-    HYRDOGEN (15000, ITechnology.RATING_C),
+    HYRDOGEN (15000, ITechnology.TechRating.C),
     /** Standard non-aerospace ICE fuel */
-    PETROCHEMICALS (1000, ITechnology.RATING_A),
+    PETROCHEMICALS (1000, ITechnology.TechRating.A),
     /** Alternate ICE fuel */
-    ALCOHOL (1500, ITechnology.RATING_A),
+    ALCOHOL (1500, ITechnology.TechRating.A),
     /** Alternal ICE fuel */
-    NATURAL_GAS (1200, ITechnology.RATING_A);
+    NATURAL_GAS (1200, ITechnology.TechRating.A);
 
     /**
      * Cost in C-bills per ton. This is the cost for delivery to a forward military
@@ -42,9 +44,9 @@ public enum FuelType {
     /**
      * Availabilty code, as with equipment
      */
-    public final int availability;
+    public final TechRating availability;
 
-    FuelType(int cost, int availability) {
+    FuelType(int cost, TechRating availability) {
         this.cost = cost;
         this.availability = availability;
     }

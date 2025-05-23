@@ -25,7 +25,7 @@ import java.util.Iterator;
 import megamek.common.Board;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 import megamek.logging.MMLogger;
 
 /**

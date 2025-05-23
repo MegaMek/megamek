@@ -100,7 +100,7 @@ public final class PilotToolTip {
         row = UIUtil.tag("TR", "", cols);
         rows += row;
         String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=2 BORDER=0", rows);
-        result +=  UIUtil.tag("<DIV", "width=100%", table);
+        result +=  UIUtil.tag("DIV", "width=100%", table);
 
         if (!detailed) {
             result += "<HR STYLE=WIDTH:90% />";

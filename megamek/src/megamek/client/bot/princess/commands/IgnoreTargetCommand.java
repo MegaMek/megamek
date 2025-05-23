@@ -39,5 +39,6 @@ public class IgnoreTargetCommand implements ChatCommand {
     public void execute(Princess princess, Arguments arguments) {
         UnitArgument unitArg = arguments.get(UNIT_ID, UnitArgument.class);
         princess.getBehaviorSettings().addIgnoredUnitTarget(unitArg.getValue());
+        princess.sendChat(Messages.getString("Princess.command.ignoreTarget.targetAdded", unitArg.getValue()));
     }
 }

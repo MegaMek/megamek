@@ -40,11 +40,11 @@ public class InfantryLaserPistolKelvin000Lancer3MM extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_D)
-                .setAvailability(new int[]{RATING_D, RATING_C, RATING_C, RATING_C})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_FS);
+                .setProductionFactions(Faction.FS);
     }
 }

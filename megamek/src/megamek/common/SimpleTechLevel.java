@@ -117,7 +117,7 @@ public enum SimpleTechLevel {
     }
 
     public static Map<Integer, String> getAllSimpleTechLevelCodeName() {
-        Map<Integer, String> result = new HashMap();
+        Map<Integer, String> result = new HashMap<>();
 
         for (SimpleTechLevel simpleTechLevel : SimpleTechLevel.values()) {
             result.put(simpleTechLevel.ordinal(), simpleTechLevel.strVal);

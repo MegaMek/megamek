@@ -2,6 +2,7 @@ size 16 17
 tag "Water (Auto)"
 tag "MultipleTheme (Auto)"
 tag "DesertTheme (Auto)"
+tag "HazardousLiquid (Auto)"
 tag "LightForest (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "rough:1" "desert"

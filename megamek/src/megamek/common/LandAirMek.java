@@ -148,6 +148,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     private int currentDamage = 0;
     private final Map<String, Integer> weaponGroups = new HashMap<>();
 
+    // track leaving the ground map
+    private OffBoardDirection flyingOff = OffBoardDirection.NONE;
+
     public LandAirMek(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
         lamType = inLAMType;
@@ -875,6 +878,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
             resetAltLossThisRound();
         }
+
+        // Reset flying off dir
+        flyingOff = OffBoardDirection.NONE;
     }
 
     /**
@@ -932,14 +938,6 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public boolean canConvertTo(EntityMovementMode toMode) {
         return canConvertTo(getConversionMode(), getConversionModeFor(toMode));
-    }
-
-    /**
-     * @deprecated No indicated Uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public boolean canConvertTo(int fromMode, EntityMovementMode toMode) {
-        return canConvertTo(fromMode, getConversionModeFor(toMode));
     }
 
     /**
@@ -1014,24 +1012,24 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     private static final TechAdvancement[] TA_LAM = {
-          new TechAdvancement(TECH_BASE_IS).setISAdvancement(2683, 2688, DATE_NONE, 3085)
+          new TechAdvancement(TechBase.IS).setISAdvancement(2683, 2688, DATE_NONE, 3085)
                 .setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_D,
-                      RATING_E,
-                      RATING_F,
-                      RATING_F).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // standard
-          new TechAdvancement(TECH_BASE_IS).setISAdvancement(2680, 2684, DATE_NONE, 2781)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.D,
+                      AvailabilityValue.E,
+                      AvailabilityValue.F,
+                      AvailabilityValue.F).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // standard
+          new TechAdvancement(TechBase.IS).setISAdvancement(2680, 2684, DATE_NONE, 2781)
                 .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2801)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E,
-                      RATING_F,
-                      RATING_X,
-                      RATING_X).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E,
+                      AvailabilityValue.F,
+                      AvailabilityValue.X,
+                      AvailabilityValue.X).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
     };
 
     @Override
@@ -1082,14 +1080,6 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public void setWhoFirst() {
         whoFirst = Compute.randomInt(500);
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int getWhoFirst() {
-        return whoFirst;
     }
 
     public int getMaxBombPoints() {
@@ -2154,5 +2144,20 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public void setEnginesLostRound(int enginesLostRound) {
         this.enginesLostRound = enginesLostRound;
+    }
+
+    @Override
+    public boolean isFlyingOff() {
+        return flyingOff != OffBoardDirection.NONE;
+    }
+
+    @Override
+    public void setFlyingOff(OffBoardDirection direction) {
+        this.flyingOff = direction;
+    }
+
+    @Override
+    public OffBoardDirection getFlyingOffDirection() {
+        return this.flyingOff;
     }
 }

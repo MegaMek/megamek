@@ -55,7 +55,6 @@ import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.AmmoType.Munitions;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDAndList;
@@ -71,6 +70,9 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.internationalization.I18n;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.IBasicOption;
@@ -386,24 +388,6 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * request the change of a player from a team to another
      *
-     * @param team   Team Number player is wanting to be on.
-     * @param player Player to switch teams.
-     *
-     * @deprecated Planned to be removed. Use {@link #requestTeamChangeForPlayer(int, Player)} instead. One usage in in
-     *       a remediated method. Remove in 0.50.07
-     */
-    @Override
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void requestTeamChange(int team, Player player) {
-        requestedTeam = team;
-        playerChangingTeam = player;
-        changePlayersTeam = false;
-        playersChangingTeam.add(new TeamChangeRequest(team, player));
-    }
-
-    /**
-     * request the change of a player from a team to another
-     *
      * @param teamID Team ID to request a change to.
      * @param player Player requesting change.
      */
@@ -435,32 +419,8 @@ public class TWGameManager extends AbstractGameManager {
         // Change requested by a GM must execute.
         playersChangingTeam.forEach(this::changePlayerTeams);
         playersChangingTeam.clear();
-        // Changes requested by players follow the default behavior
-        legacyProcessTeamChangeRequest();
     }
 
-    /**
-     * Changes the team of the player specified in the team change request and updates the game state.
-     *
-     * @deprecated Planned to be removed at version 0.50.07
-     */
-    @Deprecated(since = "0.50.04", forRemoval=true)
-    private void legacyProcessTeamChangeRequest() {
-        if (playerChangingTeam != null && changePlayersTeam) {
-            playerChangingTeam.setTeam(requestedTeam);
-            getGame().setupTeams();
-            transmitPlayerUpdate(playerChangingTeam);
-            String teamString = "Team " + requestedTeam + "!";
-            if (requestedTeam == Player.TEAM_UNASSIGNED) {
-                teamString = " unassigned!";
-            } else if (requestedTeam == Player.TEAM_NONE) {
-                teamString = " lone wolf!";
-            }
-            sendServerChat(playerChangingTeam.getName() + " has changed teams to " + teamString);
-            playerChangingTeam = null;
-        }
-        changePlayersTeam = false;
-    }
 
     /**
      * Changes the team of the player specified in the team change request and updates the game state.
@@ -2329,7 +2289,6 @@ public class TWGameManager extends AbstractGameManager {
         MapSettings mapSettings = game.getMapSettings();
         mapSettings.chooseSurpriseBoards();
         Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-        List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
             // Need to set map type prior to loading to adjust foliage height, etc.
@@ -2349,14 +2308,12 @@ public class TWGameManager extends AbstractGameManager {
                 sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + ".board").getFile());
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
-            rotateBoard.add(isRotated);
         }
         Board newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(),
               mapSettings.getBoardHeight(),
               mapSettings.getMapWidth(),
               mapSettings.getMapHeight(),
               sheetBoards,
-              rotateBoard,
               mapSettings.getMedium());
         if (game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF).intValue() > 0) {
             newBoard.setBridgeCF(game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF).intValue());
@@ -5658,38 +5615,37 @@ public class TWGameManager extends AbstractGameManager {
         Entity entity = movePath.getEntity();
         Vector<Report> vReport = new Vector<>();
         Report r;
-        // Unit has fled the battlefield.
-        r = new Report(2005, Report.PUBLIC);
-        if (flewOff) {
-            r = new Report(9370, Report.PUBLIC);
-        }
-        r.addDesc(entity);
 
         OffBoardDirection fleeDirection = calculateEdge(movePath.getFinalCoords());
         String retreatEdge = setRetreatEdge(entity, fleeDirection);
+
+        // Aerospace that fly off to return in a later round must be handled
+        // at the end of the round, but set some state here for simplicity
+        if (entity.isAero() && flewOff) {
+            Aero aero = (Aero) entity;
+
+            // Record direction
+            aero.setFlyingOff(fleeDirection);
+
+            // Currently only Aerospace can fly off and return.
+            if (returnable > -1) {
+                entity.setDeployRound(1 + game.getRoundCount() + returnable);
+            }
+
+            // End activation but don't remove from the map yet.
+            entity.setDone(true);
+            return vReport;
+        }
+
+        // Unit has fled the battlefield.
+        r = new Report(2005, Report.PUBLIC);
+        r.addDesc(entity);
         r.add(retreatEdge);
         addReport(r);
 
+        ServerHelper.clearBloodStalkers(game, entity.getId(), this);
+
         entityUpdate(entity.getId());
-
-        if (returnable > -1) {
-            entity.setDeployed(false);
-            entity.setDeployRound(1 + game.getRoundCount() + returnable);
-            entity.setPosition(null);
-            entity.setDone(true);
-            if (entity.isAero()) {
-                // If we're flying off because we're OOC, when we come back we
-                // should no longer be OOC
-                // If we don't, this causes a major problem as aeros tend to
-                // return, re-deploy then
-                // fly off again instantly.
-                ((IAero) entity).setOutControl(false);
-            }
-
-            return vReport;
-        } else {
-            ServerHelper.clearBloodStalkers(game, entity.getId(), this);
-        }
 
         // Is the unit carrying passengers or trailers?
         final List<Entity> passengers = new ArrayList<>(entity.getLoadedUnits());
@@ -5771,6 +5727,53 @@ public class TWGameManager extends AbstractGameManager {
         game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
         send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
         return vReport;
+    }
+
+    public Vector<Report> handleFlyOffs() {
+        Vector<Report> reports = new Vector<>();
+
+        for (Entity entity : game.inGameTWEntities()) {
+            // Handle Aerospace units that flew off the board this round but lingered through the
+            // various phases for full attack opportunities.
+            // TODO: use off-board state with flown-off aerospace units
+            if (entity instanceof Aero aero) {
+                if (aero.isFlyingOff()) {
+                    reports.add(processFlyingOff(aero));
+                }
+            }
+        }
+
+        return reports;
+    }
+
+    /**
+     * Compile report for Aerospace unit flying off the map at the end of the round, and finalize the unit's state.
+     *
+     * @param aero Unit leaving the map using Thrust MPs
+     *
+     * @return Vector of reports
+     */
+    protected Report processFlyingOff(Aero aero) {
+        String retreatEdge = setRetreatEdge(aero, aero.getFlyingOffDirection());
+
+        // Report aeros flying off at the end of the round
+        Report r = new Report(9370, Report.PUBLIC);
+        r.addDesc(aero);
+        r.add(retreatEdge);
+
+        // Set undeployed state
+        aero.setDeployed(false);
+        aero.setPosition(null);
+        aero.setFlyingOff(OffBoardDirection.NONE);
+
+        // If we're flying off because we're OOC, when we come back we
+        // should no longer be OOC
+        // If we don't, this causes a major problem as aeros tend to
+        // return, re-deploy then
+        // fly off again instantly.
+        aero.setOutControl(false);
+
+        return r;
     }
 
     /**
@@ -8840,7 +8843,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (diceRoll.getIntValue() >= toHit.getValue()) {
                     // deal damage to target
-                    int damage = Compute.getAffaDamageFor(entity);
+                    int damage = Compute.getAffaDamageFor(entity, fallElevation);
                     r = new Report(2220);
                     r.subject = affaTarget.getId();
                     r.addDesc(affaTarget);
@@ -10603,6 +10606,38 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
+    }
+
+    void resolveBoobyTraps() {
+        Vector<Report> vDesc = new Vector<>();
+        Report r;
+        for (Entity e : game.getEntitiesVector()) {
+            if (e.hasBoobyTrap() && e.getBoobyTrap().curMode().isArmed() && e.isBoobyTrapInitiated()) {
+                int damage = e.getBoobyTrapDamage();
+                r = new Report(11000, Report.PUBLIC);
+                r.subject = e.getId();
+                r.addDesc(e);
+                r.indent(2);
+                r.add(damage);
+                vDesc.add(r);
+                if (e instanceof Mek mek) {
+                    // considers that you will always eject
+                    if (mek.hasEjectSeat()) {
+                        vDesc.addAll(ejectEntity(e, true));
+                    }
+                }
+                e.setSelfDestructedThisTurn(true);
+                e.setBoobyTrapInitiated(false);
+                doBoobyTrapExplosion(damage, e.getPosition(), vDesc, null);
+                Report.addNewline(vDesc);
+                r = new Report(5410, Report.PUBLIC);
+                r.subject = e.getId();
+                r.indent(2);
+                Report.addNewline(vDesc);
+                vDesc.add(r);
+            }
+        }
+        addReport(vDesc);
     }
 
     /*
@@ -15353,7 +15388,9 @@ public class TWGameManager extends AbstractGameManager {
         } else {
             // Target isn't building.
             if (glancing && (targetEntity != null)) {
-                damage = (int) (targetEntity.isConventionalInfantry() ? Math.ceil(damage / 2.0) : Math.floor(damage / 2.0));
+                damage = (int) (targetEntity.isConventionalInfantry() ?
+                                      Math.ceil(damage / 2.0) :
+                                      Math.floor(damage / 2.0));
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -15381,7 +15418,14 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     damage -= cluster;
                     cluster = checkForSpikes(targetEntity, hit.getLocation(), cluster, ae, Mek.LOC_LLEG, Mek.LOC_RLEG);
-                    addReport(damageEntity(targetEntity, hit, cluster, false, DamageType.NONE, false, false, throughFront));
+                    addReport(damageEntity(targetEntity,
+                          hit,
+                          cluster,
+                          false,
+                          DamageType.NONE,
+                          false,
+                          false,
+                          throughFront));
                 }
             }
 
@@ -15405,7 +15449,10 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     // ack! automatic death! Tanks suffer an ammo/power plant hit.
                     // TODO : a Mek suffers a Head Blown Off crit.
-                    addReport(destroyEntity(targetEntity, "impossible displacement", targetEntity instanceof Mek, targetEntity instanceof Mek));
+                    addReport(destroyEntity(targetEntity,
+                          "impossible displacement",
+                          targetEntity instanceof Mek,
+                          targetEntity instanceof Mek));
                 }
             }
 
@@ -19335,9 +19382,10 @@ public class TWGameManager extends AbstractGameManager {
 
                 // if there's a mast mount in the rotor, it and all other equipment on it get destroyed if it takes
                 // any amount of damage (0 is no damage)
-                if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR) &&
-                          te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) && (damage > 0))
-                {
+                if ((te instanceof VTOL) &&
+                          (hit.getLocation() == VTOL.LOC_ROTOR) &&
+                          te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) &&
+                          (damage > 0)) {
                     r = new Report(6081);
                     r.subject = te_n;
                     r.indent(2);
@@ -20513,11 +20561,18 @@ public class TWGameManager extends AbstractGameManager {
                 r.subject = en.getId();
                 r.indent(2);
                 vDesc.add(r);
-
             }
         }
 
         return didExplode;
+    }
+
+    /**
+     * Extract explosion functionality for generalized explosions in areas.
+     */
+    public void doBoobyTrapExplosion(int engineRating, Coords position, Vector<Report> vDesc, Vector<Integer> vUnits) {
+        int[] myDamages = { engineRating, (engineRating / 2), (engineRating / 4), (engineRating / 8) };
+        doExplosion(myDamages, false, position, false, vDesc, vUnits, 5, -1, true, true);
     }
 
     /**
@@ -24770,7 +24825,7 @@ public class TWGameManager extends AbstractGameManager {
         // drop cargo
         dropCargo(entity, curPos, vDesc);
 
-        // update our entity, so clients have correct data needed for MekWars stuff
+        // update our entity, so clients have correct data
         entityUpdate(entity.getId());
 
         return vDesc;
@@ -25976,10 +26031,6 @@ public class TWGameManager extends AbstractGameManager {
     public boolean checkIgnition(Coords c, TargetRoll roll, boolean bInferno, int entityId,
           Vector<Report> vPhaseReport) {
 
-        if (vPhaseReport == null) {
-            return false;
-        }
-
         Hex hex = game.getBoard().getHex(c);
 
         // The hex might be null due to spreadFire translation
@@ -26000,7 +26051,7 @@ public class TWGameManager extends AbstractGameManager {
         Roll diceRoll = Compute.rollD6(2);
         Report r;
 
-        if (entityId != Entity.NONE) {
+        if ((vPhaseReport != null) && (entityId != Entity.NONE)) {
             r = new Report(3430);
             r.indent(2);
             r.subject = entityId;
@@ -26016,22 +26067,6 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         return false;
-    }
-
-    /**
-     * Returns true if the hex is set on fire with the specified roll. Of course, also checks to see that fire is
-     * possible in the specified hex. This version of the method will not report the attempt roll.
-     *
-     * @param c        - the <code>Coords</code> to be lit.
-     * @param roll     - the <code>int</code> target number for the ignition roll
-     * @param bInferno - <code>true</code> if the fire can be lit in any terrain. If this value is <code>false</code>
-     *                 the hex will be lit only if it contains Woods, jungle or a Building.
-     *
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public boolean checkIgnition(Coords c, TargetRoll roll, boolean bInferno) {
-        return checkIgnition(c, roll, bInferno, Entity.NONE, null);
     }
 
     /**
@@ -26690,9 +26725,8 @@ public class TWGameManager extends AbstractGameManager {
     private Report filterReport(Report r, Player p, boolean omitCheck) {
         if ((r.subject == Entity.NONE) && (r.type != Report.PLAYER) && (r.type != Report.PUBLIC)) {
             // Reports that don't have a subject should be public.
-            logger.error("Attempting to filter a Report object that is not public yet " +
-                               "but has no subject.\n\t\tmessageId: " +
-                               r.messageId);
+            logger.info("Attempting to filter a Report object that is not public yet but has no subject. messageId: {}",
+                  r.messageId);
             return r;
         }
         if ((r.type == Report.PUBLIC) || ((p == null) && !omitCheck)) {
@@ -27291,6 +27325,14 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         try {
+            if ((m.getType() instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0 && e.hasBoobyTrap()) {
+                sendServerChat("There is no turning back now...");
+                e.setBoobyTrapInitiated(true);
+                m.setMode(mode);
+                m.setModeSwitchable(false);
+                entityUpdate(e.getId());
+            }
+
             // Check for BA dumping body mounted missile launchers
             if ((e instanceof BattleArmor) &&
                       (!m.isMissing()) &&
@@ -27329,7 +27371,6 @@ public class TWGameManager extends AbstractGameManager {
                         logger.error(message);
                         sendServerChat(message);
                     }
-
                 }
             }
         } catch (Exception ex) {
@@ -28565,7 +28606,7 @@ public class TWGameManager extends AbstractGameManager {
             // Track the load of each floor (and of the roof) separately.
             // Track all units that fall into the basement in this hex.
             // track all floors, ground at index 0, the first floor is at
-            // index 1, the second is at index 1, etc., and the roof is
+            // index 1, the second is at index 2, etc., and the roof is
             // at index (numFloors).
             // if bridge is present, bridge will be numFloors+1
             double[] loads = new double[numLoads + 1];
@@ -28634,8 +28675,17 @@ public class TWGameManager extends AbstractGameManager {
                         wigeLoad += load;
                         if (wigeLoad > currentCF * 4) {
                             topFloorCollapse = true;
-                            loads[numFloors - 1] += loads[numFloors];
-                            loads[numFloors] = 0;
+                            // There are bridges with 0 elevation, so the numFloors is 0, meaning that
+                            // loads[numFloors-1] would cause an out of bounds exception.
+                            // which is why there are so many checks and safeguards in the next few lines.
+                            if (numFloors < loads.length) {
+                                if (numFloors > 0) {
+                                    loads[numFloors - 1] += loads[numFloors];
+                                }
+                                loads[numFloors] = 0;
+                            }
+
+
                         }
                     } else {
                         loads[floor] += load;
@@ -30529,6 +30579,9 @@ public class TWGameManager extends AbstractGameManager {
         if (autoEject) {
             rollTarget.addModifier(1, "automatic ejection");
         }
+        if (entity.isBoobyTrapInitiated()) {
+            rollTarget.addModifier(4, "Booby trap activated");
+        }
         // Per SO p27, Large Craft roll too, to see how many escape pods launch successfully
         if (entity instanceof IAero aeroEntity) {
             Entity transport = game.getEntity(entity.getTransportId());
@@ -32297,9 +32350,9 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vFullReport = new Vector<>();
         vFullReport.add(new Report(5002, Report.PUBLIC));
         int damage_bonus = Math.max(0, game.getPlanetaryConditions().getWind().ordinal() - Wind.MOD_GALE.ordinal());
-        // cycle through each team and damage 1d6 airborne VTOL/WiGE
+        // cycle through each team and damage 1d6 airborne VTOL/WiGE vehicles
         for (Team team : game.getTeams()) {
-            Vector<Integer> airborne = getAirborneVTOL(team);
+            Vector<Integer> airborne = getAirborneVTOLForSand(team);
             if (!airborne.isEmpty()) {
                 // how many units are affected
                 int unitsAffected = Math.min(Compute.d6(), airborne.size());
@@ -32324,18 +32377,17 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * cycle through entities on team and collect all the airborne VTOL/WIGE
+     * Cycle through entities on team and collect all the airborne VTOL/WIGE vehicles Only vehicles can be affected by
+     * Blowing Sand (TO:AR 6th Ed. pg. 60)
      *
      * @return a vector of relevant entity ids
      */
-    public Vector<Integer> getAirborneVTOL(Team team) {
+    public Vector<Integer> getAirborneVTOLForSand(Team team) {
         Vector<Integer> units = new Vector<>();
         for (Entity entity : game.getEntitiesVector()) {
             for (Player player : team.players()) {
                 if (entity.getOwner().equals(player)) {
-                    if (((entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.WIGE)) &&
-                              (!entity.isDestroyed()) &&
-                              (entity.getElevation() > 0)) {
+                    if (entity.isAirborneVTOLorWIGE() && !(entity instanceof LandAirMek)) {
                         units.add(entity.getId());
                     }
                 }

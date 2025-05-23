@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laying Mines with the Fa Shih</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            margin-top: 30px;
+            border-left: 4px solid rgba(0, 0, 0, 0.3);
+            padding-left: 10px;
+        }
+
+        .quotation {
+            border-left: 4px solid rgba(0, 0, 0, 0.3);
+            padding-left: 10px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .config-image {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        table.config-table, td.config-image, td.config-details {
+            border: 0;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        code {
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .command {
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: 10px;
+            border-left: 3px solid rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .command code {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .nav-container {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .nav-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .nav-list li {
+            margin-bottom: 5px;
+        }
+
+        .nav-list a {
+            text-decoration: none;
+        }
+
+        .nav-list a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .config-image {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<h1 id="top">Laying Mines with the Fa Shih</h1>
+
+<!-- Table of Contents -->
+<div class="nav-container">
+    <div class="nav-title">Table of Contents</div>
+    <ul class="nav-list">
+        <li><a href="#section1">Laying Mines</a></li>
+        <li><a href="#section2">Mines in the starting hex</a></li>
+        <li><a href="#section3">Mines in the final hex</a>
+        <li><a href="#section4">Illustrated Example: Mines in the starting hex</a></li>
+        <!-- Add more sections as needed -->
+    </ul>
+</div>
+
+<!-- Section 1 -->
+<h2 id="section1">Laying Mines</h2>
+<p>
+    The action "Lay mines" can only be done in the Movement Phase. The Fa Shih can lay mines at the beginning or end of
+    its movement, depending on the order of actions taken.
+</p>
+<p>
+    This describes how to use the Fa Shih to lay mines, it only works with those who carry mines.
+</p>
+<h2 id="section2">Mines in the starting hex</h2>
+<ul>
+    <li>Declare jumping mode,</li>
+    <li>Click Lay Mines,</li>
+    <li>In the dialog asking for which Trooper to lay mine you wil select one and hit Okay,</li>
+    <li>Click on the hex to which you want the unit to jump into,</li>
+</ul>
+<h2 id="section3">Mines in the final hex</h2>
+<ul>
+    <li>Declare jumping mode,</li>
+    <li>Click on the hex to which you want the unit to jump into,</li>
+    <li>Click Lay Mines,</li>
+    <li>In the dialog asking for which Trooper to lay mine you wil select one and hit Okay,</li>
+</ul>
+<hr>
+<h2 id="section4">Illustrated Example: Mines in the starting hex</h2>
+<div class="container">
+    <div class="config-image">
+        <img src="01.png" alt="Image after selecting Jump" style="width: 100%;">
+    </div>
+    <div class="config-details">
+        <p>After declaring jumping mode, the "Lay Mines" button will be enabled</p>
+    </div>
+</div>
+<div class="container">
+    <div class="config-image">
+        <img src="02.png" alt="Select the trooper in the dialog" style="width: 100%;">
+    </div>
+    <div class="config-details">
+        <p>Clicking on Lay Mines a dialog will show up asking which trooper you want to choose.</p>
+    </div>
+</div>
+<div class="container">
+    <div class="config-image">
+        <img src="03.png" alt="Select target landing hex" style="width: 100%;">
+    </div>
+    <div class="config-details">
+        <p>After confirming the dialog, you select the hex into which you want to land the jumping infantry.</p>
+    </div>
+</div>
+<div class="container">
+    <div class="config-image">
+        <img src="04.png" alt="Minefield is left in the starting hex" style="width: 100%;">
+    </div>
+    <div class="config-details">
+        <p>The mines will show up in the hex from which the Fa Shih jumped from.</p>
+    </div>
+</div>
+<p><a href="#top">Back to Top</a></p>
+</body>
+</html>

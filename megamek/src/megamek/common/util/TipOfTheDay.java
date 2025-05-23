@@ -72,7 +72,7 @@ public class TipOfTheDay {
 
     private static final int TIP_BORDER_MARGIN = 40;
     private static final int TIP_SIDE_PADDING = 20;
-    private static final float TIP_OPPOSITE_SIDE_PADDING = 0.4f; //% For corner positioning (example: BOTTOM_LEFT_CORNER)
+    private static final float TIP_OPPOSITE_SIDE_PADDING_PERCENT = 0.4f; //% For corner positioning (example: BOTTOM_LEFT_CORNER)
     private static final float TIP_TITLE_FONT_SIZE = 14f;
     private static final float TIP_FONT_SIZE = 18f;
     private static final float STROKE_WIDTH = 3.0f;
@@ -180,7 +180,7 @@ public class TipOfTheDay {
         switch (position) {
             case BOTTOM_LEFT_CORNER:
             case BOTTOM_RIGHT_CORNER:
-            actualOppositeSidePadding = referenceBounds.width * TIP_OPPOSITE_SIDE_PADDING;
+            actualOppositeSidePadding = referenceBounds.width * TIP_OPPOSITE_SIDE_PADDING_PERCENT;
             currentAvailableTextWidth = referenceBounds.width - scaledSidePadding - actualOppositeSidePadding;
             break;
             case TOP_BORDER:

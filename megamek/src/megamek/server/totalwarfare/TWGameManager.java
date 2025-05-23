@@ -112,6 +112,7 @@ public class TWGameManager extends AbstractGameManager {
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
     private Game game = new Game();
+    private TWDamageManager damager = null;
 
     private final Vector<Report> mainPhaseReport = new Vector<>();
 
@@ -201,6 +202,28 @@ public class TWGameManager extends AbstractGameManager {
         terrainProcessors.add(new ScreenProcessor(this));
         terrainProcessors.add(new WeatherProcessor(this));
         terrainProcessors.add(new QuicksandProcessor(this));
+
+        // add damage manager
+        TWDamageManager newDamageManager = (game.getOptions().booleanOption("new_damage_manager")) ?
+                                                       new TWDamageManagerModular() :
+                                                       new TWDamageManager();
+
+        setDamageManager(newDamageManager);
+    }
+
+    public TWGameManager(@Nullable TWDamageManager damageManager) {
+        this();
+        setDamageManager(damageManager);
+    }
+
+    public void setDamageManager(TWDamageManager damageManager) {
+        damageManager.setManager(this);
+        damageManager.setGame(game);
+        damager = damageManager;
+    }
+
+    public TWDamageManager getDamageManager() {
+        return damager;
     }
 
     @Override
@@ -15756,101 +15779,115 @@ TargetRoll nTargetRoll,
      */
     void checkForPSRFromDamage() {
         for (Entity entity : game.inGameTWEntities()) {
-            if (entity.canFall()) {
-                if (entity.isAirborne()) {
-                    // You can't fall over when you are combat dropping because you are already falling!
-                    continue;
-                }
-                // If this mek has 20+ damage, add another roll to the list. Hull down meks ignore this rule, TO Errata
-                int psrThreshold = 20;
-                if ((((Mek) entity).getCockpitType() == Mek.COCKPIT_DUAL) && entity.getCrew().hasDedicatedPilot()) {
-                    psrThreshold = 30;
-                }
-                if ((entity.damageThisPhase >= psrThreshold) && !entity.isHullDown()) {
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE)) {
-                        PilotingRollData damPRD = new PilotingRollData(entity.getId());
-                        int damMod = entity.damageThisPhase / psrThreshold;
-                        damPRD.addModifier(damMod, (damMod * psrThreshold) + "+ damage");
-                        int weightMod = 0;
-                        if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR)) {
-                            weightMod = switch (entity.getWeightClass()) {
-                                case EntityWeightClass.WEIGHT_LIGHT -> 1;
-                                case EntityWeightClass.WEIGHT_MEDIUM -> 0;
-                                case EntityWeightClass.WEIGHT_HEAVY -> -1;
-                                case EntityWeightClass.WEIGHT_ASSAULT -> -2;
-                                default -> weightMod;
-                            };
-                            if (entity.isSuperHeavy()) {
-                                weightMod = -4;
-                            }
-                            // the weight class PSR modifier is not cumulative
-                            damPRD.addModifier(weightMod, "weight class modifier", false);
-                        }
+            checkForPSRFromDamage(entity);
+        }
+    }
 
-                        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
-                                  (entity.getCrew().getPiloting() > 3)) {
-                            damPRD.addModifier(-1, "easy to pilot");
-                        }
-                        getGame().addPSR(damPRD);
-                    } else {
-                        PilotingRollData damPRD = new PilotingRollData(entity.getId(), 1, psrThreshold + "+ damage");
-                        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
-                                  (entity.getCrew().getPiloting() > 3)) {
-                            damPRD.addModifier(-1, "easy to pilot");
-                        }
-                        getGame().addPSR(damPRD);
-                    }
-                }
+    boolean checkForPSRFromDamage(Entity entity) {
+        boolean rollNeeded = false;
+        if (entity.canFall()) {
+            if (entity.isAirborne()) {
+                // You can't fall over when you are combat dropping because you are already falling!
+                return false;
             }
-            if (entity.isAero() && entity.isAirborne() && !entity.isSpaceborne()) {
-                // check if aero unit meets conditions for control rolls and add to the list
-                if (entity.damageThisPhase > 0) {
-                    if (!getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL) &&
-                              !getGame().getOptions().booleanOption(OptionsConstants.UNOFF_ADV_ATMOSPHERIC_CONTROL)) {
-                        int damMod = entity.damageThisPhase / 20;
-                        PilotingRollData damPRD = new PilotingRollData(entity.getId(),
-                              damMod,
-                              entity.damageThisPhase + " damage +" + damMod);
-                        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
-                                  (entity.getCrew().getPiloting() > 3)) {
-                            damPRD.addModifier(-1, "easy to pilot");
-                        }
-                        getGame().addControlRoll(damPRD);
-                    } else {
-                        // was the damage threshold in a single location exceeded this round?
-                        if ((((IAero) entity).wasCritThresh())) {
-                            PilotingRollData damThresh = new PilotingRollData(entity.getId(),
-                                  0,
-                                  "damage threshold exceeded");
-                            if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
-                                      (entity.getCrew().getPiloting() > 3)) {
-                                damThresh.addModifier(-1, "easy to pilot");
-                            }
-                            getGame().addControlRoll(damThresh);
-                        }
-                        if (getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL) &&
-                                  entity.damageThisPhase > ((IAero) entity).getHighestThresh()) {
-                            // did the total damage this round exceed the unit's highest threshold?
-                            PilotingRollData damThresh = new PilotingRollData(entity.getId(),
-                                  0,
-                                  "highest damage threshold exceeded");
-                            if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
-                                      (entity.getCrew().getPiloting() > 3)) {
-                                damThresh.addModifier(-1, "easy to pilot");
-                            }
-                            getGame().addControlRoll(damThresh);
-                        }
-                    }
-                }
+            // If this mek has 20+ damage, add another roll to the list. Hull down meks ignore this rule, TO Errata
+            int psrThreshold = 20;
+            if ((((Mek) entity).getCockpitType() == Mek.COCKPIT_DUAL) && entity.getCrew().hasDedicatedPilot()) {
+                psrThreshold = 30;
             }
-            // Airborne AirMeks that take 20+ damage make a control roll instead of a PSR.
-            if ((entity instanceof LandAirMek) && entity.isAirborneVTOLorWIGE() && (entity.damageThisPhase >= 20)) {
-                PilotingRollData damPRD = new PilotingRollData(entity.getId());
-                int damMod = entity.damageThisPhase / 20;
-                damPRD.addModifier(damMod, (damMod * 20) + "+ damage");
-                getGame().addControlRoll(damPRD);
+            if ((entity.damageThisPhase >= psrThreshold) && !entity.isHullDown()) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE)) {
+                    PilotingRollData damPRD = new PilotingRollData(entity.getId());
+                    int damMod = entity.damageThisPhase / psrThreshold;
+                    damPRD.addModifier(damMod, (damMod * psrThreshold) + "+ damage");
+                    int weightMod = 0;
+                    if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR)) {
+                        weightMod = switch (entity.getWeightClass()) {
+                            case EntityWeightClass.WEIGHT_LIGHT -> 1;
+                            case EntityWeightClass.WEIGHT_MEDIUM -> 0;
+                            case EntityWeightClass.WEIGHT_HEAVY -> -1;
+                            case EntityWeightClass.WEIGHT_ASSAULT -> -2;
+                            default -> weightMod;
+                        };
+                        if (entity.isSuperHeavy()) {
+                            weightMod = -4;
+                        }
+                        // the weight class PSR modifier is not cumulative
+                        damPRD.addModifier(weightMod, "weight class modifier", false);
+                    }
+
+                    if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
+                              (entity.getCrew().getPiloting() > 3)) {
+                        damPRD.addModifier(-1, "easy to pilot");
+                    }
+                    rollNeeded = true;
+                    getGame().addPSR(damPRD);
+                } else {
+                    PilotingRollData damPRD = new PilotingRollData(entity.getId(), 1, psrThreshold + "+ damage");
+                    if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
+                              (entity.getCrew().getPiloting() > 3)) {
+                        damPRD.addModifier(-1, "easy to pilot");
+                    }
+                    rollNeeded = true;
+                    getGame().addPSR(damPRD);
+                }
             }
         }
+        if (entity.isAero() && entity.isAirborne() && !entity.isSpaceborne()) {
+            // check if aero unit meets conditions for control rolls and add to the list
+            if (entity.damageThisPhase > 0) {
+                if (!getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL) &&
+                          !getGame().getOptions().booleanOption(OptionsConstants.UNOFF_ADV_ATMOSPHERIC_CONTROL)) {
+                    int damMod = entity.damageThisPhase / 20;
+                    PilotingRollData damPRD = new PilotingRollData(entity.getId(),
+                          damMod,
+                          entity.damageThisPhase + " damage +" + damMod);
+                    if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
+                              (entity.getCrew().getPiloting() > 3)) {
+                        damPRD.addModifier(-1, "easy to pilot");
+                    }
+                    rollNeeded = true;
+                    getGame().addControlRoll(damPRD);
+                } else {
+                    // was the damage threshold in a single location exceeded this round?
+                    if ((((IAero) entity).wasCritThresh())) {
+                        PilotingRollData damThresh = new PilotingRollData(entity.getId(),
+                              0,
+                              "damage threshold exceeded");
+                        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
+                                  (entity.getCrew().getPiloting() > 3)) {
+                            damThresh.addModifier(-1, "easy to pilot");
+                        }
+                        rollNeeded = true;
+                        getGame().addControlRoll(damThresh);
+                    }
+                    if (getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL) &&
+                              entity.damageThisPhase > ((IAero) entity).getHighestThresh()) {
+                        // did the total damage this round exceed the unit's highest threshold?
+                        PilotingRollData damThresh = new PilotingRollData(entity.getId(),
+                              0,
+                              "highest damage threshold exceeded");
+                        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) &&
+                                  (entity.getCrew().getPiloting() > 3)) {
+                            damThresh.addModifier(-1, "easy to pilot");
+                        }
+                        rollNeeded = true;
+                        getGame().addControlRoll(damThresh);
+                    }
+                }
+            }
+        }
+
+        // Airborne AirMeks that take 20+ damage make a control roll instead of a PSR.
+        if ((entity instanceof LandAirMek) && entity.isAirborneVTOLorWIGE() && (entity.damageThisPhase >= 20)) {
+            PilotingRollData damPRD = new PilotingRollData(entity.getId());
+            int damMod = entity.damageThisPhase / 20;
+            damPRD.addModifier(damMod, (damMod * 20) + "+ damage");
+            rollNeeded = true;
+            getGame().addControlRoll(damPRD);
+        }
+
+        return rollNeeded;
     }
 
     /**
@@ -17262,7 +17299,7 @@ TargetRoll nTargetRoll,
      * @return a <code>Vector<Report></code> containing the phase reports
      */
     private Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
-        return damageEntity(te, hit, damage, ammoExplosion, DamageType.NONE, false, false);
+        return damager.damageEntity(new DamageInfo(te, hit, damage, ammoExplosion));
     }
 
     /**
@@ -17275,7 +17312,7 @@ TargetRoll nTargetRoll,
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage) {
-        return damageEntity(te, hit, damage, false, DamageType.NONE, false, false);
+        return damager.damageEntity(new DamageInfo(te, hit, damage));
     }
 
     /**
@@ -17293,7 +17330,7 @@ TargetRoll nTargetRoll,
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag,
           boolean damageIS) {
-        return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, false);
+        return damager.damageEntity(new DamageInfo(te, hit, damage, ammoExplosion, bFrag, damageIS));
     }
 
     /**
@@ -17312,7 +17349,11 @@ TargetRoll nTargetRoll,
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag,
           boolean damageIS, boolean areaSatArty) {
-        return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, true);
+        return damager.damageEntity(
+              new DamageInfo(
+                  te, hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty
+              )
+        );
     }
 
     /**
@@ -17332,7 +17373,18 @@ TargetRoll nTargetRoll,
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag,
           boolean damageIS, boolean areaSatArty, boolean throughFront) {
-        return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, areaSatArty, throughFront, false, false);
+        return damager.damageEntity(
+              new DamageInfo(
+                  te,
+                  hit,
+                  damage,
+                  ammoExplosion,
+                  bFrag,
+                  damageIS,
+                  areaSatArty,
+                  throughFront
+              )
+        );
     }
 
     /**
@@ -17353,16 +17405,19 @@ TargetRoll nTargetRoll,
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType bFrag,
           boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater) {
-        return damageEntity(te,
-              hit,
-              damage,
-              ammoExplosion,
-              bFrag,
-              damageIS,
-              areaSatArty,
-              throughFront,
-              underWater,
-              false);
+        return damager.damageEntity(
+              new DamageInfo(
+                  te,
+                  hit,
+                  damage,
+                  ammoExplosion,
+                  bFrag,
+                  damageIS,
+                  areaSatArty,
+                  throughFront,
+                  underWater
+              )
+        );
     }
 
     /**
@@ -17384,6 +17439,21 @@ TargetRoll nTargetRoll,
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, DamageType damageType,
           boolean damageIS, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S) {
+
+        DamageInfo damageInfo = new DamageInfo(
+            te,
+            hit,
+            damage,
+            ammoExplosion,
+            damageType,
+            damageIS,
+            areaSatArty,
+            throughFront,
+            underWater,
+            nukeS2S
+        );
+        logger.debug("Compiled damage info: '{}'", damageInfo.toString());
+        return damager.damageEntity(damageInfo);
         return damageEntityHandler.damageEntity(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty,
               throughFront, underWater, nukeS2S);
     }
@@ -17520,7 +17590,7 @@ TargetRoll nTargetRoll,
      * @param en    - the <code>Entity</code> in question. This value must not be
      *              <code>null</code>.
      * @param vDesc - the <code>Vector</code> that this function should add its
-     *              <code>Report<code>s to.  It may be empty, but not
+     *              <code>Report</code>s to.  It may be empty, but not
      *              <code>null</code>.
      * @param hits  - the number of criticals on the engine
      *
@@ -21465,7 +21535,7 @@ TargetRoll nTargetRoll,
      * @param hex    the <code>Hex</code> the entity occupies when checking. This value will be <code>null</code> if the
      *               check is the result of an attack, and non-null if it occurs during movement.
      */
-    private Vector<Report> breachCheck(Entity entity, int loc, Hex hex) {
+    public Vector<Report> breachCheck(Entity entity, int loc, Hex hex) {
         return breachCheck(entity, loc, hex, false);
     }
 
@@ -29148,3 +29218,4 @@ TargetRoll nTargetRoll,
         send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, game.getGroundObjects()));
     }
 }
+

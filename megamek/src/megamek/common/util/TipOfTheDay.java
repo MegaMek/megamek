@@ -178,12 +178,13 @@ public class TipOfTheDay {
         float actualOppositeSidePadding = 0;
         
         switch (position) {
-            case BOTTOM_BORDER:
             case BOTTOM_LEFT_CORNER:
             case BOTTOM_RIGHT_CORNER:
-                actualOppositeSidePadding = referenceBounds.width * TIP_OPPOSITE_SIDE_PADDING;
-                currentAvailableTextWidth = referenceBounds.width - scaledSidePadding - actualOppositeSidePadding;
-                break;
+            actualOppositeSidePadding = referenceBounds.width * TIP_OPPOSITE_SIDE_PADDING;
+            currentAvailableTextWidth = referenceBounds.width - scaledSidePadding - actualOppositeSidePadding;
+            break;
+            case TOP_BORDER:
+            case BOTTOM_BORDER:
             default:
                 currentAvailableTextWidth = referenceBounds.width - (scaledSidePadding * 2);
                 break;

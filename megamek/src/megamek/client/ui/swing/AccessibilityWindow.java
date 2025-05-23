@@ -231,9 +231,20 @@ public class AccessibilityWindow extends JDialog {
         }
     }
 
+    private boolean isScrollAtBottom() {
+        JScrollPane scrollPane = (JScrollPane) chatArea.getParent().getParent();
+        int scrollMax = scrollPane.getVerticalScrollBar().getMaximum();
+        int scrollPos = scrollPane.getVerticalScrollBar().getValue() + scrollPane.getVerticalScrollBar().getVisibleAmount();
+        return scrollMax == scrollPos;
+    }
+
     private void systemEvent(String s) {
         if (s != null) {
+            boolean autoScroll = isScrollAtBottom();
             chatArea.append(s + "\n");
+            if (autoScroll) {
+                moveToEnd();
+            }
         }
     }
 

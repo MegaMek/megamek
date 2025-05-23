@@ -27,6 +27,7 @@ import megamek.client.ui.swing.minimap.BoardviewlessMinimap;
 import megamek.client.ui.swing.overlay.ChatOverlay;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.RawImagePanel;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.enums.GamePhase;
@@ -119,7 +120,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
 
         // Center: Splash image with progress bar
         centerPanel = new JPanel(new BorderLayout());
-        JLabel splashImage = UIUtil.createSplashComponent(splashImages, getFrame());
+        RawImagePanel splashImage = UIUtil.createSplashComponent(splashImages, getFrame());
         MiniReportDisplay miniReportDisplay = new MiniReportDisplay(this);
         miniReportDisplay.setMinimumSize(new Dimension(600, 600));
         miniReportDisplay.setPreferredSize(new Dimension(600, 600));

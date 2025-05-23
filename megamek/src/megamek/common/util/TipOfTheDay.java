@@ -257,7 +257,7 @@ public class TipOfTheDay {
 
             if (position == Position.BOTTOM_LEFT_CORNER) {
                 bgRectX = referenceBounds.x;
-                bgRectWidth = referenceBounds.width + scaledBgPadding - actualOppositeSidePadding;
+                bgRectWidth = referenceBounds.width + scaledBgPadding - (actualOppositeSidePadding/2);
                 bgRectWidth = Math.max(0, bgRectWidth);
 
                 bgRectTopY = startY - scaledBgPadding;
@@ -291,7 +291,7 @@ public class TipOfTheDay {
                     }
                 }
             } else if (position == Position.BOTTOM_RIGHT_CORNER) {
-                bgRectWidth = referenceBounds.width + scaledBgPadding - actualOppositeSidePadding;
+                bgRectWidth = referenceBounds.width + scaledBgPadding - (actualOppositeSidePadding/2);
                 bgRectWidth = Math.max(0, bgRectWidth);
                 bgRectX = referenceBounds.x + referenceBounds.width - bgRectWidth;
 

@@ -53,7 +53,7 @@ class TWDamageManagerTest {
 
     private TWGameManager gameMan = new TWGameManager();
     private TWDamageManager oldMan;
-    private TWDamageManagerNew newMan;
+    private TWDamageManagerModular newMan;
     private Game game;
 
     @BeforeAll
@@ -70,7 +70,7 @@ class TWDamageManagerTest {
 
         // DamageManagers will throw if uninitialized at use
         oldMan = new TWDamageManager(gameMan, game);
-        newMan = new TWDamageManagerNew(gameMan, game);
+        newMan = new TWDamageManagerModular(gameMan, game);
     }
 
     Entity loadEntityFromFile(String filename) throws FileNotFoundException {

@@ -42,23 +42,22 @@ import megamek.common.weapons.DamageType;
 import megamek.logging.MMLogger;
 import megamek.server.IDamageManager;
 import megamek.server.ServerHelper;
-import megamek.server.totalwarfare.UnknownEntityTypeException;
 
 import java.util.List;
 import java.util.Vector;
 
-public class TWDamageManagerNew extends TWDamageManager implements IDamageManager {
-    private static final MMLogger logger = MMLogger.create(TWDamageManagerNew.class);
+public class TWDamageManagerModular extends TWDamageManager implements IDamageManager {
+    private static final MMLogger logger = MMLogger.create(TWDamageManagerModular.class);
 
-    public TWDamageManagerNew() {
+    public TWDamageManagerModular() {
         super();
     }
 
-    public TWDamageManagerNew(TWGameManager manager) {
+    public TWDamageManagerModular(TWGameManager manager) {
         super(manager);
     }
 
-    public TWDamageManagerNew(TWGameManager manager, Game game) {
+    public TWDamageManagerModular(TWGameManager manager, Game game) {
         super(manager, game);
     }
 

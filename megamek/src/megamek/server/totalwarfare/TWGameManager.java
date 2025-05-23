@@ -203,7 +203,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // add damage manager
         TWDamageManager newDamageManager = (game.getOptions().booleanOption("new_damage_manager")) ?
-                                                       new TWDamageManagerNew() :
+                                                       new TWDamageManagerModular() :
                                                        new TWDamageManager();
 
         setDamageManager(newDamageManager);

@@ -86,7 +86,7 @@ public class TWDamageManager implements IDamageManager {
 
         Vector<Report> vDesc = new Vector<>();
         return damageEntity(
-              damageInfo.te(),
+              damageInfo.entity(),
               damageInfo.hit(),
               damageInfo.damage(),
               damageInfo.ammoExplosion(),

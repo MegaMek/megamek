@@ -39,6 +39,9 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import javax.swing.JComponent;
 
+/**
+ * A panel that displays a raw image, scaling it to fit the component's size.
+ */
 public class RawImagePanel extends JComponent {
     private Image image;
 

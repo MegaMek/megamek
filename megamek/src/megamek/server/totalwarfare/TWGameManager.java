@@ -178,7 +178,6 @@ public class TWGameManager extends AbstractGameManager {
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
     final HeatResolver heatResolver = new HeatResolver(this);
-    final DamageEntityHandler damageEntityHandler = new DamageEntityHandler(this);
 
     /**
      * Special packet queue for client feedback requests.
@@ -17454,8 +17453,6 @@ TargetRoll nTargetRoll,
         );
         logger.debug("Compiled damage info: '{}'", damageInfo.toString());
         return damager.damageEntity(damageInfo);
-        return damageEntityHandler.damageEntity(te, hit, damage, ammoExplosion, damageType, damageIS, areaSatArty,
-              throughFront, underWater, nukeS2S);
     }
 
     /**

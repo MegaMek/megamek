@@ -42,6 +42,10 @@ public enum KeyCommandBind {
     TOGGLE_CHAT("toggleChat", VK_ENTER),
     // Activates chat box and adds the command character (/)
     TOGGLE_CHAT_CMD("toggleChatCmd", VK_SLASH),
+    // Move one hex forward
+    MOVE_STEPFORWARD("moveStepForward", VK_W, SHIFT_DOWN_MASK),
+    // Move one hex backward (back up)
+    MOVE_STEPBACKWARD("moveStepBackward", VK_S, SHIFT_DOWN_MASK),
     // Change facing one hexside to the left
     TURN_LEFT("turnLeft", VK_A, SHIFT_DOWN_MASK),
     // Change facing one hexside to the right
@@ -64,6 +68,9 @@ public enum KeyCommandBind {
     PREV_TARGET_NOALLIES("prevTargetNoAllies", VK_LEFT, CTRL_DOWN_MASK),
     NEXT_TARGET_VALID_NO_ALLIES("nextTargetValidNoAllies", VK_RIGHT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     PREV_TARGET_VALID_NO_ALLIES("prevTargetValidNoAllies", VK_LEFT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    PHYS_PUNCH("physPunch", VK_P),
+    PHYS_KICK("physKick", VK_K),
+    PHYS_PUSH("physPush", VK_P, SHIFT_DOWN_MASK),
     // Changes unit display to view acting unit and sets current viewed unit as target
     VIEW_ACTING_UNIT("viewActingUnit", VK_V),
     // Remove the last move step or the last added weapon fire

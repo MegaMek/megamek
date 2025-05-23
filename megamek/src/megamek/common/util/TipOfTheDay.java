@@ -83,7 +83,7 @@ public class TipOfTheDay {
     private static final float TIP_BACKGROUND_PADDING = TIP_BORDER_MARGIN;
     private static final float TIP_BACKGROUND_BASE_OPACITY = 0.8f;
     private static final float TIP_BACKGROUND_FADE_TO_OPACITY = 0.0f;
-    private static final float TIP_BACKGROUND_FADE_AREA_HEIGHT_PERCENT = 1.0f;
+    private static final float TIP_BACKGROUND_FADE_AREA_PERCENT = 1.0f;
     private static final boolean DEFAULT_USE_RADIAL_GRADIENT = false;
 
     private final String bundleName;
@@ -267,7 +267,7 @@ public class TipOfTheDay {
 
                 if (bgRectHeight > 0 && bgRectWidth > 0) {
                     if (!useRadialGradient) {
-                        float fadeRegionPhysicalWidth = bgRectWidth * TIP_BACKGROUND_FADE_AREA_HEIGHT_PERCENT;
+                        float fadeRegionPhysicalWidth = bgRectWidth * TIP_BACKGROUND_FADE_AREA_PERCENT;
                         fadeRegionPhysicalWidth = Math.max(0f, Math.min(fadeRegionPhysicalWidth, bgRectWidth));
                         // Opaque on the left, fades to transparent towards the right
                         bgPaint = new GradientPaint(
@@ -302,7 +302,7 @@ public class TipOfTheDay {
 
                 if (bgRectHeight > 0 && bgRectWidth > 0) {
                     if (!useRadialGradient) {
-                        float fadeRegionPhysicalWidth = bgRectWidth * TIP_BACKGROUND_FADE_AREA_HEIGHT_PERCENT;
+                        float fadeRegionPhysicalWidth = bgRectWidth * TIP_BACKGROUND_FADE_AREA_PERCENT;
                         fadeRegionPhysicalWidth = Math.max(0f, Math.min(fadeRegionPhysicalWidth, bgRectWidth));
                         // Opaque on the right, fades to transparent towards the left
                         bgPaint = new GradientPaint(
@@ -336,7 +336,7 @@ public class TipOfTheDay {
                 bgRectHeight = bgRectBottomY - bgRectTopY;
 
                 if (bgRectHeight > 0 && bgRectWidth > 0) {
-                    float fadeRegionPhysicalHeight = bgRectHeight * TIP_BACKGROUND_FADE_AREA_HEIGHT_PERCENT;
+                    float fadeRegionPhysicalHeight = bgRectHeight * TIP_BACKGROUND_FADE_AREA_PERCENT;
                     fadeRegionPhysicalHeight = Math.max(0f, Math.min(fadeRegionPhysicalHeight, bgRectHeight));
                     
                     // Opaque at its top, fades to transparent towards its bottom
@@ -355,7 +355,7 @@ public class TipOfTheDay {
                 bgRectHeight = bgRectBottomY - bgRectTopY;
 
                 if (bgRectHeight > 0 && bgRectWidth > 0) {
-                    float fadeRegionPhysicalHeight = bgRectHeight * TIP_BACKGROUND_FADE_AREA_HEIGHT_PERCENT;
+                    float fadeRegionPhysicalHeight = bgRectHeight * TIP_BACKGROUND_FADE_AREA_PERCENT;
                     fadeRegionPhysicalHeight = Math.max(0f, Math.min(fadeRegionPhysicalHeight, bgRectHeight));
 
                     // Transparent at its top, fades to opaque towards its bottom

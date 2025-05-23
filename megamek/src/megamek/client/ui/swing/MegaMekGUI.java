@@ -244,6 +244,57 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         return controller;
     }
 
+    private int drawMedal(Graphics2D g2d, int panelWidth, int panelHeight, int padding) {
+        int targetMedalWidth = 0;
+        if (medalImage != null && medalImage.getWidth(null) > 0 && medalImage.getHeight(null) > 0) {
+            double medalHeightScalePercent = 0.15; // Medal height as 15% of panel height
+            int originalMedalWidth = medalImage.getWidth(null);
+            int originalMedalHeight = medalImage.getHeight(null);
+
+            int targetMedalHeight = (int) (panelHeight * medalHeightScalePercent);
+            if (targetMedalHeight < 1) targetMedalHeight = 1; // Ensure minimum size
+
+            double scaleFactor = (double) targetMedalHeight / originalMedalHeight;
+            targetMedalWidth = (int) (originalMedalWidth * scaleFactor);
+            if (targetMedalWidth < 1) targetMedalWidth = 1;
+
+            // Position: bottom-right corner with padding
+            int medalX = panelWidth - targetMedalWidth - padding;
+            int medalY = panelHeight - targetMedalHeight - padding;
+            
+            if (medalX < 0) medalX = 0;
+            if (medalY < 0) medalY = 0;
+
+            g2d.drawImage(medalImage, medalX, medalY, targetMedalWidth, targetMedalHeight, null);
+        }
+        return targetMedalWidth;
+    }
+    
+    private void drawLogo(Graphics2D g2d, int panelWidth, int panelHeight, int targetMedalWidth, int padding) {
+        if (logoImage != null && logoImage.getWidth(null) > 0 && logoImage.getHeight(null) > 0) {
+            double logoWidthScalePercent = 0.25; // Logo width as 25% of panel width
+
+            int originalLogoWidth = logoImage.getWidth(null);
+            int originalLogoHeight = logoImage.getHeight(null);
+
+            int targetLogoWidth = (int) (panelWidth * logoWidthScalePercent);
+            if (targetLogoWidth < 1) targetLogoWidth = 1; // Ensure minimum size
+
+            double scaleFactor = (double) targetLogoWidth / originalLogoWidth;
+            int targetLogoHeight = (int) (originalLogoHeight * scaleFactor);
+            if (targetLogoHeight < 1) targetLogoHeight = 1;
+
+            // Position: bottom-right corner with padding (after the medal)
+            int logoX = panelWidth - targetLogoWidth - padding - targetMedalWidth - padding;
+            int logoY = panelHeight - targetLogoHeight - padding;
+            
+            if (logoX < 0) logoX = 0;
+            if (logoY < 0) logoY = 0;
+
+            g2d.drawImage(logoImage, logoX, logoY, targetLogoWidth, targetLogoHeight, null);
+        }
+    }
+
     /**
      * Display the main menu.
      */
@@ -337,52 +388,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     }
 
                     // Draw medalImage
-                    if (medalImage != null && medalImage.getWidth(null) > 0 && medalImage.getHeight(null) > 0) {
-                        double medalHeightScalePercent = 0.15; // Medal height as 15% of panel height
-
-                        int originalMedalWidth = medalImage.getWidth(null);
-                        int originalMedalHeight = medalImage.getHeight(null);
-
-                        int targetMedalHeight = (int) (panelHeight * medalHeightScalePercent);
-                        if (targetMedalHeight < 1) targetMedalHeight = 1; // Ensure minimum size
-
-                        double scaleFactor = (double) targetMedalHeight / originalMedalHeight;
-                        targetMedalWidth = (int) (originalMedalWidth * scaleFactor);
-                        if (targetMedalWidth < 1) targetMedalWidth = 1;
-
-                        // Position: bottom-right corner with padding
-                        int medalX = panelWidth - targetMedalWidth - padding;
-                        int medalY = panelHeight - targetMedalHeight - padding;
-                        
-                        if (medalX < 0) medalX = 0;
-                        if (medalY < 0) medalY = 0;
-
-                        g2d.drawImage(medalImage, medalX, medalY, targetMedalWidth, targetMedalHeight, null);
-                    }
+                    targetMedalWidth = drawMedal(g2d, panelWidth, panelHeight, padding);
 
                     // Draw logoImage
-                    if (logoImage != null && logoImage.getWidth(null) > 0 && logoImage.getHeight(null) > 0) {
-                        double logoWidthScalePercent = 0.25; // Logo width as 25% of panel width
-
-                        int originalLogoWidth = logoImage.getWidth(null);
-                        int originalLogoHeight = logoImage.getHeight(null);
-
-                        int targetLogoWidth = (int) (panelWidth * logoWidthScalePercent);
-                        if (targetLogoWidth < 1) targetLogoWidth = 1; // Ensure minimum size
-
-                        double scaleFactor = (double) targetLogoWidth / originalLogoWidth;
-                        int targetLogoHeight = (int) (originalLogoHeight * scaleFactor);
-                        if (targetLogoHeight < 1) targetLogoHeight = 1;
-
-                        // Position: bottom-right corner with padding
-                        int logoX = panelWidth - targetLogoWidth - padding - targetMedalWidth - padding;
-                        int logoY = panelHeight - targetLogoHeight - padding;
-                        
-                        if (logoX < 0) logoX = 0;
-                        if (logoY < 0) logoY = 0;
-
-                        g2d.drawImage(logoImage, logoX, logoY, targetLogoWidth, targetLogoHeight, null);
-                    }
+                    drawLogo(g2d, panelWidth, panelHeight, targetMedalWidth, padding);
                 } finally {
                     g2d.dispose();
                 }

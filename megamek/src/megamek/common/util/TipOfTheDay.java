@@ -31,7 +31,11 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.MultipleGradientPaint;
+import java.awt.Paint;
+import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -40,6 +44,7 @@ import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.text.AttributedString;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -60,17 +65,27 @@ public class TipOfTheDay {
     // Enum for positioning the tip text
     public enum Position {
         TOP_BORDER,
-        BOTTOM_BORDER
+        BOTTOM_BORDER,
+        BOTTOM_LEFT_CORNER,
+        BOTTOM_RIGHT_CORNER,
     }
 
     private static final int TIP_BORDER_MARGIN = 40;
     private static final int TIP_SIDE_PADDING = 20;
+    private static final float TIP_OPPOSITE_SIDE_PADDING_PERCENT = 0.4f; //% For corner positioning (example: BOTTOM_LEFT_CORNER)
     private static final float TIP_TITLE_FONT_SIZE = 14f;
     private static final float TIP_FONT_SIZE = 18f;
     private static final float STROKE_WIDTH = 3.0f;
     private static final Color TIP_STROKE_COLOR = Color.BLACK;
     private static final Color TIP_TITLE_FONT_COLOR = Color.WHITE;
     private static final Color TIP_FONT_COLOR = Color.WHITE;
+
+    private static final float TIP_BACKGROUND_PADDING = TIP_BORDER_MARGIN;
+    private static final float TIP_BACKGROUND_BASE_OPACITY = 0.8f;
+    private static final float TIP_BACKGROUND_FADE_TO_OPACITY = 0.0f;
+    private static final float TIP_BACKGROUND_FADE_AREA_PERCENT = 1.0f;
+    private static final boolean DEFAULT_USE_RADIAL_GRADIENT = false;
+
     private final String bundleName;
     private final String tipOfTheDay;
     private final String tipLabel;
@@ -130,17 +145,53 @@ public class TipOfTheDay {
 
     /**
      * Draws the Tip of the Day text with word wrap and styling.
+     * 
+     * @param graphics2D The Graphics2D object to draw on
+     * @param referenceBounds The bounds of the reference component
+     * @param position The position of the tip (TOP_BORDER, BOTTOM_BORDER, etc.)
+
      */
     public void drawTipOfTheDay(Graphics2D graphics2D, Rectangle referenceBounds, Position position) {
+        drawTipOfTheDay(graphics2D, referenceBounds, position, DEFAULT_USE_RADIAL_GRADIENT);
+    }
+    /**
+     * Draws the Tip of the Day text with word wrap and styling.
+     * 
+     * @param graphics2D The Graphics2D object to draw on
+     * @param referenceBounds The bounds of the reference component
+     * @param position The position of the tip (TOP_BORDER, BOTTOM_BORDER, etc.)
+     * @param useRadialGradient Whether to use a radial gradient for the background (only for corners)
+     */
+    public void drawTipOfTheDay(Graphics2D graphics2D, Rectangle referenceBounds, Position position, boolean useRadialGradient) {
         if (tipOfTheDay == null || tipOfTheDay.isEmpty() || tipLabelFont == null || tipFont == null) {
             return;
         }
         if (referenceBounds == null || referenceBounds.width <= 0 || referenceBounds.height <= 0) {
             return; // Cannot draw if referenceBounds is invalid
         }
-        float availableWidth = referenceBounds.width - (TIP_SIDE_PADDING * 2);
-        if (availableWidth <= 0)
-            return; // Not enough space to draw
+        
+        float scaledSidePadding = TIP_SIDE_PADDING * scaleFactor;
+        float scaledBorderMargin = TIP_BORDER_MARGIN * scaleFactor;
+        float scaledBgPadding = TIP_BACKGROUND_PADDING * scaleFactor;
+
+        float currentAvailableTextWidth;
+        float actualOppositeSidePadding = 0;
+        
+        switch (position) {
+            case BOTTOM_LEFT_CORNER:
+            case BOTTOM_RIGHT_CORNER:
+            actualOppositeSidePadding = referenceBounds.width * TIP_OPPOSITE_SIDE_PADDING_PERCENT;
+            currentAvailableTextWidth = referenceBounds.width - scaledSidePadding - actualOppositeSidePadding;
+            break;
+            case TOP_BORDER:
+            case BOTTOM_BORDER:
+            default:
+                currentAvailableTextWidth = referenceBounds.width - (scaledSidePadding * 2);
+                break;
+        }
+        if (currentAvailableTextWidth <= 0) {
+            return; // Not enough space to draw text
+        }
 
         Graphics2D tipGraphics = (Graphics2D) graphics2D.create();
 
@@ -173,7 +224,7 @@ public class TipOfTheDay {
                     break;
                 }
                 previousPosition = measurer.getPosition();
-                TextLayout layout = measurer.nextLayout(availableWidth);
+                TextLayout layout = measurer.nextLayout(currentAvailableTextWidth);
                 if (layout != null) {
                     tipLayouts.add(layout);
                     totalTipHeight += layout.getAscent() + layout.getDescent() + layout.getLeading();
@@ -184,45 +235,205 @@ public class TipOfTheDay {
 
             // Positioning
             float totalBlockHeight = labelHeight + totalTipHeight;
+            float startX = referenceBounds.x + scaledSidePadding;
             float startY;
-            if (position == Position.BOTTOM_BORDER) {
-                startY = referenceBounds.y + referenceBounds.height - (TIP_BORDER_MARGIN * scaleFactor) - totalBlockHeight;
-            } else {
-                startY = referenceBounds.y + (TIP_BORDER_MARGIN * scaleFactor);
+
+            switch (position) {
+                case BOTTOM_BORDER:
+                case BOTTOM_LEFT_CORNER:
+                case BOTTOM_RIGHT_CORNER:
+                    startY = referenceBounds.y + referenceBounds.height - scaledBorderMargin - totalBlockHeight;
+                    break;
+                default:
+                    startY = referenceBounds.y + scaledBorderMargin;
             }
-            float startX = referenceBounds.x + TIP_SIDE_PADDING;
+
+            // Background rectangle ---
+            float bgRectX, bgRectWidth, bgRectTopY, bgRectBottomY, bgRectHeight;
+            Paint bgPaint = null;
+
+            Color baseRectColor = new Color(0f, 0f, 0f, TIP_BACKGROUND_BASE_OPACITY);
+            Color fadeToRectColor = new Color(0f, 0f, 0f, TIP_BACKGROUND_FADE_TO_OPACITY);
+
+            if (position == Position.BOTTOM_LEFT_CORNER) {
+                bgRectX = referenceBounds.x;
+                bgRectWidth = referenceBounds.width + scaledBgPadding - actualOppositeSidePadding;
+                bgRectWidth = Math.max(0, bgRectWidth);
+
+                bgRectTopY = startY - scaledBgPadding;
+                bgRectTopY = Math.max(bgRectTopY, referenceBounds.y);
+                bgRectBottomY = referenceBounds.y + referenceBounds.height;
+                bgRectHeight = bgRectBottomY - bgRectTopY;
+
+                if (bgRectHeight > 0 && bgRectWidth > 0) {
+                    if (!useRadialGradient) {
+                        float fadeRegionPhysicalWidth = bgRectWidth * TIP_BACKGROUND_FADE_AREA_PERCENT;
+                        fadeRegionPhysicalWidth = Math.max(0f, Math.min(fadeRegionPhysicalWidth, bgRectWidth));
+                        // Opaque on the left, fades to transparent towards the right
+                        bgPaint = new GradientPaint(
+                            bgRectX + fadeRegionPhysicalWidth, bgRectTopY, fadeToRectColor,
+                            bgRectX, bgRectTopY, baseRectColor,
+                            false);
+                    } else {
+                        bgRectWidth = bgRectWidth + scaledBgPadding;
+                        bgRectTopY = bgRectTopY - scaledBgPadding;
+                        bgRectHeight = bgRectHeight + scaledBgPadding;
+                        float[] dist = {0.0f, 0.7f, 1.0f};
+                        Color[] colors = {baseRectColor, baseRectColor, fadeToRectColor};
+                        AffineTransform gradientTx = AffineTransform.getTranslateInstance(bgRectX, bgRectBottomY);
+                        gradientTx.scale(bgRectWidth, -bgRectHeight);
+                        Point2D localCenter = new Point2D.Float(0f, 0f);
+                        bgPaint = new RadialGradientPaint(localCenter, 1f, localCenter,
+                                                                            dist, colors,
+                                                                            RadialGradientPaint.CycleMethod.NO_CYCLE,
+                                                                            MultipleGradientPaint.ColorSpaceType.SRGB,
+                                                                            gradientTx);
+                    }
+                }
+            } else if (position == Position.BOTTOM_RIGHT_CORNER) {
+                bgRectWidth = referenceBounds.width + scaledBgPadding - actualOppositeSidePadding;
+                bgRectWidth = Math.max(0, bgRectWidth);
+                bgRectX = referenceBounds.x + referenceBounds.width - bgRectWidth;
+
+                bgRectTopY = startY - scaledBgPadding;
+                bgRectTopY = Math.max(bgRectTopY, referenceBounds.y);
+                bgRectBottomY = referenceBounds.y + referenceBounds.height;
+                bgRectHeight = bgRectBottomY - bgRectTopY;
+
+                if (bgRectHeight > 0 && bgRectWidth > 0) {
+                    if (!useRadialGradient) {
+                        float fadeRegionPhysicalWidth = bgRectWidth * TIP_BACKGROUND_FADE_AREA_PERCENT;
+                        fadeRegionPhysicalWidth = Math.max(0f, Math.min(fadeRegionPhysicalWidth, bgRectWidth));
+                        // Opaque on the right, fades to transparent towards the left
+                        bgPaint = new GradientPaint(
+                            bgRectX, bgRectTopY, fadeToRectColor,
+                            bgRectX + fadeRegionPhysicalWidth, bgRectTopY, baseRectColor,
+                            false);
+                    } else {
+                        // Additional padding for radial gradient
+                        bgRectWidth = bgRectWidth + scaledBgPadding;
+                        bgRectTopY = bgRectTopY - scaledBgPadding;
+                        bgRectHeight = bgRectHeight + scaledBgPadding;
+                        float[] dist = {0.0f, 0.7f, 1.0f};
+                        Color[] colors = {baseRectColor, baseRectColor, fadeToRectColor};
+                        AffineTransform gradientTx = AffineTransform.getTranslateInstance(bgRectX, bgRectBottomY);
+                        gradientTx.scale(bgRectWidth, -bgRectHeight);
+                        Point2D localCenter = new Point2D.Float(1f, 0f);
+                        bgPaint = new RadialGradientPaint(localCenter, 1f, localCenter,
+                                                                            dist, colors,
+                                                                            RadialGradientPaint.CycleMethod.NO_CYCLE,
+                                                                            MultipleGradientPaint.ColorSpaceType.SRGB,
+                                                                            gradientTx);
+                    }
+                }
+            } else if (position == Position.TOP_BORDER) {
+                bgRectX = referenceBounds.x;
+                bgRectWidth = referenceBounds.width;
+
+                bgRectTopY = referenceBounds.y;
+                bgRectBottomY = startY + totalBlockHeight + scaledBgPadding;
+                bgRectBottomY = Math.min(bgRectBottomY, referenceBounds.y + referenceBounds.height); // Don't go below reference bottom
+                bgRectHeight = bgRectBottomY - bgRectTopY;
+
+                if (bgRectHeight > 0 && bgRectWidth > 0) {
+                    float fadeRegionPhysicalHeight = bgRectHeight * TIP_BACKGROUND_FADE_AREA_PERCENT;
+                    fadeRegionPhysicalHeight = Math.max(0f, Math.min(fadeRegionPhysicalHeight, bgRectHeight));
+                    
+                    // Opaque at its top, fades to transparent towards its bottom
+                    bgPaint = new GradientPaint(
+                            bgRectX, bgRectBottomY - fadeRegionPhysicalHeight, baseRectColor,
+                            bgRectX, bgRectBottomY, fadeToRectColor,
+                            false);
+                }
+            } else { // BOTTOM_BORDER
+                bgRectX = referenceBounds.x;
+                bgRectWidth = referenceBounds.width;
+
+                bgRectTopY = startY - scaledBgPadding;
+                bgRectTopY = Math.max(bgRectTopY, referenceBounds.y);
+                bgRectBottomY = referenceBounds.y + referenceBounds.height;
+                bgRectHeight = bgRectBottomY - bgRectTopY;
+
+                if (bgRectHeight > 0 && bgRectWidth > 0) {
+                    float fadeRegionPhysicalHeight = bgRectHeight * TIP_BACKGROUND_FADE_AREA_PERCENT;
+                    fadeRegionPhysicalHeight = Math.max(0f, Math.min(fadeRegionPhysicalHeight, bgRectHeight));
+
+                    // Transparent at its top, fades to opaque towards its bottom
+                    bgPaint = new GradientPaint(
+                            bgRectX, bgRectTopY, fadeToRectColor,
+                            bgRectX, bgRectTopY + fadeRegionPhysicalHeight, baseRectColor,
+                            false);
+                }
+            }
+
+            if (bgPaint != null && bgRectHeight > 0 && bgRectWidth > 0) {
+                java.awt.geom.Rectangle2D.Float fullBackgroundShape =
+                        new java.awt.geom.Rectangle2D.Float(bgRectX, bgRectTopY, bgRectWidth, bgRectHeight);
+                tipGraphics.setPaint(bgPaint);
+                tipGraphics.fill(fullBackgroundShape);
+            }
+            // --- End background rectangle
+
 
             // Draw the text (outline then fill)
             BasicStroke outlineStroke = new BasicStroke(STROKE_WIDTH * scaleFactor, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
             tipGraphics.setStroke(outlineStroke);
 
             // Draw Label
-            float labelDrawX = startX + (availableWidth - labelWidth) / 2; // Center label
+            
+            float labelDrawX;
+            switch (position) {
+                case BOTTOM_LEFT_CORNER:
+                    labelDrawX = startX; // Left align
+                    break;
+                case BOTTOM_RIGHT_CORNER:
+                    labelDrawX = referenceBounds.x + referenceBounds.width - labelWidth - scaledSidePadding; // Right align
+                    break;
+                default:
+                    labelDrawX = startX + (currentAvailableTextWidth - labelWidth) / 2; // Center label
+                    labelDrawX = Math.max(startX, labelDrawX);
+            }
             float labelDrawY = startY + labelLayout.getAscent();
-            Shape labelShape = labelLayout.getOutline(null);
 
+            AffineTransform oldTransform = tipGraphics.getTransform();
             tipGraphics.translate(labelDrawX, labelDrawY);
+            Shape labelShape = labelLayout.getOutline(null);
             tipGraphics.setColor(TIP_STROKE_COLOR);
             tipGraphics.draw(labelShape); // Draw outline
             tipGraphics.setColor(TIP_TITLE_FONT_COLOR); // Fill color
             tipGraphics.fill(labelShape); // Draw fill
-            tipGraphics.translate(-labelDrawX, -labelDrawY); // Translate back
+            tipGraphics.setTransform(oldTransform);
 
             // Draw Tip Lines
             float currentY = startY + labelHeight; // Start drawing tips below the label
             for (TextLayout tipLayout : tipLayouts) {
                 float lineAscent = tipLayout.getAscent();
                 float lineHeight = lineAscent + tipLayout.getDescent() + tipLayout.getLeading();
-                float lineDrawY = currentY + lineAscent; // Baseline for this line
                 float lineWidth = (float) tipLayout.getBounds().getWidth();
 
-                float lineDrawX = startX + (availableWidth - lineWidth) / 2f; // Center line
+                float lineDrawX;
+                switch (position) {
+                    case BOTTOM_LEFT_CORNER:
+                        lineDrawX = startX; // Left align
+                        break;
+                    case BOTTOM_RIGHT_CORNER:
+                        lineDrawX = referenceBounds.x + referenceBounds.width - lineWidth - scaledSidePadding; // Right align
+                        break;
+                    default:
+                        lineDrawX = startX + (currentAvailableTextWidth - lineWidth) / 2f; // Center line
+                        lineDrawX = Math.max(startX, lineDrawX);
+                }
+                float lineDrawY = currentY + lineAscent; // Baseline for this line
+
+                oldTransform = tipGraphics.getTransform();
+                tipGraphics.translate(lineDrawX, lineDrawY);
                 lineDrawX = Math.max(startX, lineDrawX); // Ensure it doesn't go out of bounds
-                Shape tipShape = tipLayout.getOutline(AffineTransform.getTranslateInstance(lineDrawX, lineDrawY));
+                Shape tipShape = tipLayout.getOutline(null);
                 tipGraphics.setColor(TIP_STROKE_COLOR); // Outline color
                 tipGraphics.draw(tipShape); // Draw outline
                 tipGraphics.setColor(TIP_FONT_COLOR); // Fill color
                 tipGraphics.fill(tipShape); // Draw fill
+                tipGraphics.setTransform(oldTransform);
 
                 currentY += lineHeight;
             }

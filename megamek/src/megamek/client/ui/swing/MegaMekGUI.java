@@ -183,7 +183,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 super.paint(g); // Draw background, border, and children first
                 // Now draw the tip on top is the splash is visible
                 if (splash != null && splash.isShowing() && splash.getWidth() > 0 && splash.getHeight() > 0 && tipOfTheDay != null) {
-                    tipOfTheDay.drawTipOfTheDay((Graphics2D) g, splash.getBounds(), TipOfTheDay.Position.TOP_BORDER);
+                    tipOfTheDay.drawTipOfTheDay((Graphics2D) g, splash.getBounds(), TipOfTheDay.Position.BOTTOM_LEFT_CORNER, false);
                 }
             }
         });

@@ -45,10 +45,10 @@ Aerodyne
 </motion_type>
 
 <transporters>
-mechbay:1.0:1
-mechbay:1.0:1
-mechbay:1.0:1
-mechbay:1.0:1
+mekbay:1.0:1
+mekbay:1.0:1
+mekbay:1.0:1
+mekbay:1.0:1
 1stclassquarters:20.0:0
 crewquarters:49.0:0
 cargobay:140.0:1:7

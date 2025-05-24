@@ -331,6 +331,15 @@ public final class UIUtil {
     }
 
     /**
+     * Returns a gray color suitable as a text color.
+     *
+     * <p>The supplied color does is independent of the UI look and feel.</p>
+     */
+    public static Color uiIndependentGray() {
+        return UI_GRAY;
+    }
+
+    /**
      * Returns a light blue color suitable as a text color. The supplied color depends on the UI look and feel and will
      * be lighter for a dark UI LAF than for a light UI LAF.
      */
@@ -1280,6 +1289,7 @@ public final class UIUtil {
 
     private static final Color LIGHTUI_GREEN = new Color(20, 140, 20);
     private static final Color DARKUI_GREEN = new Color(40, 180, 40);
+    private static final Color UI_GRAY = new Color(100, 100, 100);
     private static final Color LIGHTUI_GRAY = new Color(100, 100, 100);
     private static final Color DARKUI_GRAY = new Color(150, 150, 150);
     private static final Color LIGHTUI_LIGHTBLUE = new Color(100, 100, 150);

@@ -13,65 +13,69 @@
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
+import java.util.Vector;
+
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
-import java.util.Vector;
-
 public class PlasmaRifleHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -2092721653693187140L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param m
+     * @param toHitData          The {@link ToHitData} to use.
+     * @param weaponAttackAction The {@link WeaponAttackAction} to use.
+     * @param game               The {@link Game} object to use.
+     * @param twGameManager      A {@link TWGameManager} to use.
      */
-    public PlasmaRifleHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
-        super(toHit, waa, g, m);
+    public PlasmaRifleHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
+          TWGameManager twGameManager) {
+        super(toHitData, weaponAttackAction, game, twGameManager);
         generalDamageType = HitData.DAMAGE_ENERGY;
 
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits,
+          int nCluster, int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         if (!missed && entityTarget.tracksHeat()) {
-            Report r = new Report(3400);
-            r.subject = subjectId;
-            r.indent(2);
+            Report report = new Report(3400);
+            report.subject = subjectId;
+            report.indent(2);
             int extraHeat = 0;
-            // if this is a fighter squadron, we need to account for number of
-            // weapons
-            // should default to one for non squadrons
+            // if this is a fighter squadron, we need to account for the number of weapons should default to one for
+            // non-squadrons
             for (int i = 0; i < nweaponsHit; i++) {
                 extraHeat += Compute.d6();
             }
-            if (entityTarget.getArmor(hit) > 0
-                    && (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) {
+
+            if (entityTarget.getArmor(hit) > 0 &&
+                      (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) {
                 entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
-                r.add(Math.max(1, extraHeat / 2));
-                r.choose(true);
-                r.messageId = 3406;
-                r.add(extraHeat);
-                r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
-            } else if (entityTarget.getArmor(hit) > 0
-                    && (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
+                report.add(Math.max(1, extraHeat / 2));
+                report.choose(true);
+                report.messageId = 3406;
+                report.add(extraHeat);
+                report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
+            } else if (entityTarget.getArmor(hit) > 0 &&
+                             (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                 entityTarget.heatFromExternal += extraHeat / 2;
-                r.add(extraHeat / 2);
-                r.choose(true);
-                r.messageId = 3406;
-                r.add(extraHeat);
-                r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
+                report.add(extraHeat / 2);
+                report.choose(true);
+                report.messageId = 3406;
+                report.add(extraHeat);
+                report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else {
                 entityTarget.heatFromExternal += extraHeat;
-                r.add(extraHeat);
-                r.choose(true);
+                report.add(extraHeat);
+                report.choose(true);
             }
-            vPhaseReport.addElement(r);
+            vPhaseReport.addElement(report);
         }
     }
 
@@ -80,14 +84,12 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         if (target.tracksHeat()) {
             int toReturn = 10;
             toReturn = applyGlancingBlowModifier(toReturn, false);
-            if (game.getOptions().booleanOption(
-                    OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE) &&
+                      (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 toReturn -= 1;
             }
-            if (game.getOptions().booleanOption(
-                    OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
-                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE) &&
+                      (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
             return toReturn;
@@ -101,31 +103,33 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             bSalvo = false;
             return 1;
         }
+
         int toReturn = 5;
+
         if (target.isConventionalInfantry()) {
             toReturn = Compute.d6(2);
         }
+
         bSalvo = true;
-        // pain shunted infantry get half damage
-        if ((target instanceof Infantry)
-                && ((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+        // pain-shunted infantry gets half-damage
+        if ((target instanceof Infantry) && ((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             toReturn = Math.max(toReturn / 2, 1);
         }
+
         return toReturn;
     }
 
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         int toReturn;
-        // against mechs, 1 hit with 10 damage, plus heat
+
+        // against meks, 1 hit with 10 damage, plus heat
         if (target.tracksHeat()) {
             toReturn = 1;
-            // otherwise, 10+2d6 damage
-            // but fireresistant BA armor gets no damage from heat, and half the
-            // normal one, so only 5 damage
+            // otherwise, 10+2d6 damage but fire-resistant BA armor gets no damage from heat, and half the normal
+            // one, so only 5 damage
         } else {
-            if ((target instanceof BattleArmor)
-                    && ((BattleArmor) target).isFireResistant()) {
+            if ((target instanceof BattleArmor) && ((BattleArmor) target).isFireResistant()) {
                 toReturn = 5;
             } else {
                 toReturn = 10 + Compute.d6(2);
@@ -139,16 +143,16 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport, Building bldg, int hits) {
         if (!bSalvo) {
             // hits!
-            Report r = new Report(2270);
-            r.subject = subjectId;
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
+            Report report = new Report(2270);
+            report.subject = subjectId;
+            report.newlines = 0;
+            vPhaseReport.addElement(report);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
-        if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
+
+        TargetRoll targetRoll = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        if (targetRoll.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
-                    tn, true, -1, vPhaseReport);
+            gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false, targetRoll, true, -1, vPhaseReport);
         }
     }
 
@@ -156,34 +160,37 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
-            Report r = new Report(2270);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            Report report = new Report(2270);
+            report.subject = subjectId;
+            vPhaseReport.addElement(report);
         }
 
         nDamage *= 2; // Plasma weapons deal double damage to woods.
 
         // report that damage was "applied" to terrain
-        Report r = new Report(3385);
-        r.indent(2);
-        r.subject = subjectId;
-        r.add(nDamage);
-        vPhaseReport.addElement(r);
+        Report report = new Report(3385);
+        report.indent(2);
+        report.subject = subjectId;
+        report.add(nDamage);
+        vPhaseReport.addElement(report);
 
-        // Any clear attempt can result in accidental ignition, even
-        // weapons that can't normally start fires. that's weird.
-        // Buildings can't be accidentally ignited.
-        // TODO: change this for TacOps - now you roll another 2d6 first and on
-        // a 5 or less
-        // you do a normal ignition as though for intentional fires
-        if ((bldg != null)
-                && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
+        // Any clear attempt can result in accidental ignition, even weapons that can't normally start fires. that's
+        // weird. Buildings can't be accidentally ignited.
+        // TODO: change this for TacOps - now you roll another 2d6 first and on a 5 or less you do a normal ignition
+        //  as though for intentional fires
+        if ((bldg != null) &&
+                  gameManager.tryIgniteHex(target.getPosition(),
+                        subjectId,
+                        true,
                         false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()),
+                        5,
                         vPhaseReport)) {
             return;
         }
+
         Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
+
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
@@ -192,8 +199,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage,
-                                        Coords coords) {
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage, Coords coords) {
         // Plasma weapons deal double damage to buildings.
         super.handleBuildingDamage(vPhaseReport, bldg, nDamage * 2, coords);
     }

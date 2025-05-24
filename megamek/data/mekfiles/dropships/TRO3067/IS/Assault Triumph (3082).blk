@@ -46,7 +46,7 @@ Aerodyne
 
 <transporters>
 asfbay:6.0:2:1
-mechbay:12.0:2
+mekbay:12.0:2
 heavyvehiclebay:12.0:1:3
 battlearmorbay:16.0:1:5
 2ndclassquarters:0.0:0

@@ -19,7 +19,7 @@
 package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.AbstractChoiceDialog;
+import megamek.client.ui.swing.dialog.AbstractChoiceDialog;
 import megamek.client.ui.swing.ButtonEsc;
 import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.util.UIUtil;

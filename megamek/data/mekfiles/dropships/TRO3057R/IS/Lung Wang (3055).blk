@@ -40,7 +40,7 @@ Spheroid
 </motion_type>
 
 <transporters>
-mechbay:4.0:2:-1::-1:0
+mekbay:4.0:2:-1::-1:0
 asfbay:2.0:2:2::-1:0
 cargobay:289.5:2:3::-1:0
 infantrybay:1.0:0:4:Foot:-1:0

@@ -109,9 +109,10 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
         if (entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             assign("TSM implants", TSI);
         }
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
         if ((entity instanceof BattleArmor) && ((BattleArmor) entity).canDoMechanizedBA()) {
             assign("BA / Mech.", MEC);
         }
+
     }
 }

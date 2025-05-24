@@ -635,7 +635,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     // Return
                     return;
                 }
-                // is this a mech dumping ammo being hit in the rear torso?
+                // is this a mek dumping ammo being hit in the rear torso?
                 if (List.of(Mek.LOC_CT, Mek.LOC_RT, Mek.LOC_LT).contains(hit.getLocation())) {
                     for (Mounted<?> mAmmo : mek.getAmmo()) {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed()
@@ -1357,7 +1357,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     // Return our description.
                     return;
                 }
-                // is this a mech/tank dumping ammo being hit in the rear torso?
+                // is this a mek/tank dumping ammo being hit in the rear torso?
                 if ((tank instanceof Tank) &&
                           (hit.getLocation() == (tank instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR : Tank.LOC_REAR))) {
                     for (Mounted<?> mAmmo : tank.getAmmo()) {

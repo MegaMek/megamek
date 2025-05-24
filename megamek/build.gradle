@@ -138,8 +138,6 @@ tasks.withType(Checkstyle).configureEach {
     maxHeapSize = "4g"
 }
 
-run.dependsOn checkstyleMain
-
 tasks.register('generateDynamicFiles') {
     def jvmOptions = project.ext.mmJvmOptions.join('\n')
 
@@ -339,7 +337,8 @@ assembleDist {
 
 test {
     useJUnitPlatform()
-    dependsOn(checkstyle)
+    dependsOn(checkstyleMain)
+
     finalizedBy jacocoTestReport
     jvmArgs = mmJvmOptions
 }

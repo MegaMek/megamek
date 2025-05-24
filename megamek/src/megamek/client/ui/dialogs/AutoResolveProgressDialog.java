@@ -28,6 +28,7 @@ import megamek.common.autoresolve.acar.SimulationOptions;
 import megamek.common.autoresolve.converter.SetupForces;
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
 import megamek.common.internationalization.I18n;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -53,14 +54,16 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
     private final SetupForces setupForces;
     private AutoResolveConcludedEvent event;
     private final Board board;
+    private final PlanetaryConditions planetaryConditions;
 
     private static final TreeMap<Integer, String> splashImages = new TreeMap<>();
     static {
         splashImages.put(0, Configuration.miscImagesDir() + "/acar_splash_hd.png");
     }
 
-    public static AutoResolveConcludedEvent showDialog(JFrame frame, SetupForces setupForces, Board board) {
-        var dialog = new AutoResolveProgressDialog(frame, setupForces, board);
+    public static AutoResolveConcludedEvent showDialog(JFrame frame, SetupForces setupForces, Board board,
+          PlanetaryConditions planetaryConditions) {
+        var dialog = new AutoResolveProgressDialog(frame, setupForces, board, planetaryConditions);
         dialog.setModal(true);
         dialog.getTask().execute();
         dialog.setVisible(true);
@@ -69,10 +72,12 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
         return event;
     }
 
-    private AutoResolveProgressDialog(JFrame frame, SetupForces setupForces, Board board) {
+    private AutoResolveProgressDialog(JFrame frame, SetupForces setupForces, Board board,
+          PlanetaryConditions planetaryConditions) {
         super(frame, true, "AutoResolveMethod.dialog.name","AutoResolveMethod.dialog.title");
         this.setupForces = setupForces;
         this.board = board;
+        this.planetaryConditions = planetaryConditions;
         this.task = new Task(this);
         getTask().addPropertyChangeListener(this);
         progressText = new ArrayList<>();
@@ -198,7 +203,7 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
                 result.getVictoryResult().getWinningPlayer());
             String title = I18n.getText("AutoResolveDialog.title");
 
-            logger.info("AutoResolve simulation took: " + stopWatch.getTime(TimeUnit.MILLISECONDS) + "ms");
+            logger.info("AutoResolve simulation took: {} ms", stopWatch.getTime(TimeUnit.MILLISECONDS));
 
             JOptionPane.showMessageDialog(
                 getFrame(),
@@ -243,7 +248,8 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
                 }));
                 futures.add(executor.submit(() -> {
                     try {
-                        return Resolver.simulationRun(setupForces, SimulationOptions.empty(), board)
+                        return Resolver.simulationRun(setupForces, SimulationOptions.empty(), board,
+                                    new PlanetaryConditions(planetaryConditions))
                             .resolveSimulation();
                     } catch (Exception e) {
                         logger.error(e, e);

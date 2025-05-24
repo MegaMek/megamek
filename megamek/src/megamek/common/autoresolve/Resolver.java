@@ -40,6 +40,7 @@ import megamek.common.autoresolve.acar.phase.*;
 import megamek.common.autoresolve.converter.SetupForces;
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
 import megamek.common.options.AbstractOptions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 
 /**
@@ -50,22 +51,27 @@ public class Resolver {
     private final SimulationOptions options;
     private final SetupForces setupForces;
     private final Board board;
+    private final PlanetaryConditions planetaryConditions;
     private final boolean suppressLog;
 
     public Resolver(SetupForces setupForces,
-                    AbstractOptions gameOptions, Board board, boolean suppressLog) {
+          AbstractOptions gameOptions, Board board, PlanetaryConditions planetaryConditions,
+          boolean suppressLog) {
         this.options = new SimulationOptions(gameOptions);
         this.setupForces = setupForces;
         this.board = board;
+        this.planetaryConditions = planetaryConditions;
         this.suppressLog = suppressLog;
     }
 
-    public static Resolver simulationRun(SetupForces setupForces, AbstractOptions gameOptions, Board board) {
-        return new Resolver(setupForces, gameOptions, board, false);
+    public static Resolver simulationRun(SetupForces setupForces, AbstractOptions gameOptions, Board board,
+          PlanetaryConditions planetaryConditions) {
+        return new Resolver(setupForces, gameOptions, board, planetaryConditions, false);
     }
 
-    public static Resolver simulationRunWithoutLog(SetupForces setupForces, AbstractOptions gameOptions, Board board) {
-        return new Resolver(setupForces, gameOptions, board, true);
+    public static Resolver simulationRunWithoutLog(SetupForces setupForces, AbstractOptions gameOptions, Board board,
+          PlanetaryConditions planetaryConditions) {
+        return new Resolver(setupForces, gameOptions, board, planetaryConditions, true);
     }
 
     private void initializeGameManager(SimulationManager simulationManager) {
@@ -79,7 +85,7 @@ public class Resolver {
     }
 
     public AutoResolveConcludedEvent resolveSimulation() {
-        SimulationContext context = new SimulationContext(options, setupForces, board);
+        SimulationContext context = new SimulationContext(options, setupForces, board, planetaryConditions);
         SimulationManager simulationManager = new SimulationManager(context, suppressLog);
         initializeGameManager(simulationManager);
         return simulationManager.execute();

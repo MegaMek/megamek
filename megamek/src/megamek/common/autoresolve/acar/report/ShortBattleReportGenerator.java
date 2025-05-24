@@ -216,7 +216,7 @@ public class ShortBattleReportGenerator {
     public ShortBattleReportGenerator(SimulationManager simulationManager) {
         this.simulationManager = simulationManager;
         this.context = simulationManager.getGame();
-        this.planetaryConditions = new PlanetaryConditions();
+        this.planetaryConditions = simulationManager.getGame().getPlanetaryConditions();
         this.rand = new Random(context.getSeed());
         this.board = simulationManager.getGame().getBoard();
     }

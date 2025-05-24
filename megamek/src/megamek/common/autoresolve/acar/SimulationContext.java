@@ -31,6 +31,7 @@ import megamek.common.enums.SkillLevel;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.TriggeredEvent;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
 /**
  * @author Luana Coppio
  */
-public class SimulationContext implements IGame {
+public class SimulationContext implements IGame, PlanetaryConditionsUsing {
 
     private static final MMLogger logger = MMLogger.create(SimulationContext.class);
     private static final int MAX_ROUND_LIMIT = 1000;
@@ -79,6 +80,7 @@ public class SimulationContext implements IGame {
     protected int turnIndex = AWAITING_FIRST_TURN;
     private final Map<Integer, List<Formation>> board = new HashMap<>();
     private final Board originalBoard;
+    private final PlanetaryConditions planetaryConditions;
     /**
      * Tools for the game
      */
@@ -91,14 +93,17 @@ public class SimulationContext implements IGame {
      */
     private final Vector<Entity> graveyard = new Vector<>();
 
-    public SimulationContext(SimulationOptions gameOptions, SetupForces setupForces, Board board) {
-        this(gameOptions, setupForces, board, System.nanoTime());
+    public SimulationContext(SimulationOptions gameOptions, SetupForces setupForces, Board board,
+          PlanetaryConditions planetaryConditions) {
+        this(gameOptions, setupForces, board, planetaryConditions, System.nanoTime());
     }
 
-    public SimulationContext(SimulationOptions gameOptions, SetupForces setupForces, Board board, long seed) {
+    public SimulationContext(SimulationOptions gameOptions, SetupForces setupForces, Board board,
+          PlanetaryConditions planetaryConditions, long seed) {
         this.seed = seed;
         this.options = gameOptions;
         this.originalBoard = board;
+        this.planetaryConditions = new PlanetaryConditions(planetaryConditions);
         setBoard(0, board);
         setupForces.createForcesOnSimulation(this);
         setupForces.addOrdersToForces(this);
@@ -764,5 +769,15 @@ public class SimulationContext implements IGame {
 
     public long getSeed() {
         return seed;
+    }
+
+    @Override
+    public PlanetaryConditions getPlanetaryConditions() {
+        return this.planetaryConditions;
+    }
+
+    @Override
+    public void setPlanetaryConditions(PlanetaryConditions conditions) {
+        this.planetaryConditions.alterConditions(planetaryConditions);
     }
 }

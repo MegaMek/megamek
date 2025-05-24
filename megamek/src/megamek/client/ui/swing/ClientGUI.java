@@ -1025,18 +1025,14 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_MOVE_ENV:
                 GUIP.setMoveEnvelope(!GUIP.getMoveEnvelope());
-                if (curPanel instanceof MovementDisplay) {
+                if (curPanel instanceof MovementDisplay movementDisplay) {
                     Entity entity = getUnitDisplay().getCurrentEntity();
-                    if (!entity.isAero()) {
-                        ((MovementDisplay) curPanel).computeMovementEnvelope(entity);
-                    } else {
-                        ((MovementDisplay) curPanel).computeAeroMovementEnvelope(entity);
-                    }
+                    movementDisplay.computeMovementEnvelope(entity);
                 }
                 break;
             case VIEW_MOVE_MOD_ENV:
-                if (curPanel instanceof MovementDisplay) {
-                    ((MovementDisplay) curPanel).computeModifierEnvelope();
+                if (curPanel instanceof MovementDisplay movementDisplay) {
+                    movementDisplay.computeModifierEnvelope();
                 }
                 break;
             case VIEW_CHANGE_THEME:

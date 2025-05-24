@@ -38,11 +38,13 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.Serial;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Stream;
@@ -53,6 +55,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MMToggleButton;
+import megamek.client.ui.swing.widget.RawImagePanel;
 import megamek.common.Player;
 import megamek.common.util.ImageUtil;
 import megamek.logging.MMLogger;
@@ -328,6 +331,15 @@ public final class UIUtil {
      */
     public static Color uiGray() {
         return uiBgBrightness() > 130 ? LIGHTUI_GRAY : DARKUI_GRAY;
+    }
+
+    /**
+     * Returns a gray color suitable as a text color.
+     *
+     * <p>The supplied color does is independent of the UI look and feel.</p>
+     */
+    public static Color uiIndependentGray() {
+        return UI_GRAY;
     }
 
     /**
@@ -629,19 +641,60 @@ public final class UIUtil {
     public static Image constrainImageSize(Image image, ImageObserver observer, int maxWidth, int maxHeight) {
         int w = image.getWidth(observer);
         int h = image.getHeight(observer);
-
+        
+        if (w <= 0 || h <= 0) {
+            return image;
+        }
         if ((w <= maxWidth) && (h <= maxHeight)) {
             return image;
         }
+        int targetWidth;
+        int targetHeight;
 
         // choose resize that fits in bounds
         double scaleW = maxWidth / (double) w;
         double scaleH = maxHeight / (double) h;
+        
         if (scaleW < scaleH) {
-            return ImageUtil.getScaledImage(image, maxWidth, (int) (h * scaleW));
+            // Fit to width
+            targetWidth = maxWidth;
+            targetHeight = (int) Math.round(h * scaleW);
         } else {
-            return ImageUtil.getScaledImage(image, (int) (w * scaleH), maxHeight);
+            // Fit to height
+            targetHeight = maxHeight;
+            targetWidth = (int) Math.round(w * scaleH);
         }
+
+        // Ensure dimensions are at least 1
+        if (targetWidth <= 0) {
+            targetWidth = 1;
+        }
+        if (targetHeight <= 0) {
+            targetHeight = 1;
+        }
+        // Determine the type of the new BufferedImage.
+        int imageType = BufferedImage.TYPE_INT_ARGB;
+        if (image instanceof BufferedImage) {
+            int currentType = ((BufferedImage) image).getType();
+            if ((currentType != BufferedImage.TYPE_CUSTOM) && (currentType != 0)) {
+                imageType = currentType;
+            }
+        }
+        BufferedImage scaledImage = new BufferedImage(targetWidth, targetHeight, imageType);
+        Graphics2D g2d = scaledImage.createGraphics();
+        try {
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+
+            g2d.drawImage(image, 0, 0, targetWidth, targetHeight, observer);
+        } finally {
+            g2d.dispose();
+        }
+
+        return scaledImage;
     }
 
     /**
@@ -650,11 +703,15 @@ public final class UIUtil {
      *
      * @return a JLabel setup to the correct size to act as a splash screen
      */
-    public static JLabel createSplashComponent(TreeMap<Integer, String> multiResImageMap, Component parent) {
+    public static RawImagePanel createSplashComponent(TreeMap<Integer, String> multiResImageMap, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = getScaledScreenSize(parent);
-        Image imgSplash = parent.getToolkit().getImage(multiResImageMap.floorEntry(scaledMonitorSize.width).getValue());
+        Entry<Integer, String> entry = multiResImageMap.ceilingEntry(scaledMonitorSize.width);
+        if (entry == null) {
+            entry = multiResImageMap.lastEntry();
+        }
+        Image imgSplash = parent.getToolkit().getImage(entry.getValue());
 
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(parent);
@@ -677,7 +734,7 @@ public final class UIUtil {
      * @deprecated no indicated uses
      */
     @Deprecated(since = "0.50.06", forRemoval = true)
-    public static JLabel createSplashComponent(String imgSplashFile, Component parent) {
+    public static RawImagePanel createSplashComponent(String imgSplashFile, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = getScaledScreenSize(parent);
@@ -703,21 +760,19 @@ public final class UIUtil {
      *
      * @return a JLabel setup to the correct size to act as a splash screen
      */
-    public static JLabel createSplashComponent(Image imgSplash, ImageObserver observer, Dimension scaledMonitorSize) {
-        JLabel splash;
-        Dimension maxSize = new Dimension((int) (scaledMonitorSize.width * 0.75),
-              (int) (scaledMonitorSize.height * 0.75));
 
-        if (imgSplash != null) {
-            imgSplash = UIUtil.constrainImageSize(imgSplash, null, maxSize.width, maxSize.height);
-            Icon icon = new ImageIcon(imgSplash);
-            splash = new JLabel(icon);
-        } else {
-            splash = new JLabel();
+    public static RawImagePanel createSplashComponent(Image imgSplash, ImageObserver observer, Dimension scaledMonitorSize) {
+        if (imgSplash == null) {
+            return new RawImagePanel(null);
         }
+        Dimension maxSize = new Dimension((int) (scaledMonitorSize.width * 0.75),
+                (int) (scaledMonitorSize.height * 0.75));
 
-        Dimension splashDim = new Dimension(imgSplash == null ? maxSize.width : imgSplash.getWidth(observer),
-              imgSplash == null ? maxSize.height : imgSplash.getHeight(observer));
+        Image constrainedSplashImage = UIUtil.constrainImageSize(imgSplash, observer, maxSize.width, maxSize.height);
+        RawImagePanel splash = new RawImagePanel(constrainedSplashImage);
+        
+        Dimension splashDim = new Dimension(constrainedSplashImage == null ? maxSize.width : constrainedSplashImage.getWidth(observer),
+                constrainedSplashImage == null ? maxSize.height : constrainedSplashImage.getHeight(observer));
 
         splash.setMaximumSize(splashDim);
         splash.setMinimumSize(splashDim);
@@ -1280,6 +1335,7 @@ public final class UIUtil {
 
     private static final Color LIGHTUI_GREEN = new Color(20, 140, 20);
     private static final Color DARKUI_GREEN = new Color(40, 180, 40);
+    private static final Color UI_GRAY = new Color(100, 100, 100);
     private static final Color LIGHTUI_GRAY = new Color(100, 100, 100);
     private static final Color DARKUI_GRAY = new Color(150, 150, 150);
     private static final Color LIGHTUI_LIGHTBLUE = new Color(100, 100, 150);

@@ -21,6 +21,7 @@ package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.RawImagePanel;
 import megamek.common.*;
 import megamek.common.autoresolve.Resolver;
 import megamek.common.autoresolve.acar.SimulationOptions;
@@ -44,7 +45,7 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
     private static final MMLogger logger = MMLogger.create(AutoResolveProgressDialog.class);
 
     private JProgressBar progressBar;
-    private JLabel splash;
+    private RawImagePanel splash;
     private final Task task;
 
     private final List<String> progressText;
@@ -126,11 +127,11 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
         return task;
     }
 
-    public JLabel getSplash() {
+    public RawImagePanel getSplash() {
         return splash;
     }
 
-    public void setSplash(final JLabel splash) {
+    public void setSplash(final RawImagePanel splash) {
         this.splash = splash;
     }
 

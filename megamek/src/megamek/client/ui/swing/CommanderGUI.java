@@ -23,6 +23,7 @@ import megamek.client.ui.dialogs.BotCommandsPanel;
 import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
+import megamek.client.ui.swing.dialog.MiniReport.MiniReportDisplay;
 import megamek.client.ui.swing.minimap.BoardviewlessMinimap;
 import megamek.client.ui.swing.overlay.ChatOverlay;
 import megamek.client.ui.swing.util.MegaMekController;

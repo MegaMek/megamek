@@ -32,7 +32,9 @@
  */
 package megamek.client.ui.dialogs;
 
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplayContainer;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplayDialog;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -53,7 +55,7 @@ public class DisposableDisplayContainer implements UnitDisplayContainer {
      *
      * @param frame the parent frame for the dialog
      */
-    DisposableDisplayContainer(JFrame frame) {
+    public DisposableDisplayContainer(JFrame frame) {
         dialog = new UnitDisplayDialog(frame, null);
         unitDisplay = new UnitDisplay(null, null);
         dialog.add(unitDisplay, BorderLayout.CENTER);

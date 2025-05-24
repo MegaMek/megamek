@@ -64,7 +64,7 @@ import megamek.client.ui.swing.phaseDisplay.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.phaseDisplay.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.swing.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.swing.phaseDisplay.commands.MoveCommand;
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.PlayerColour;

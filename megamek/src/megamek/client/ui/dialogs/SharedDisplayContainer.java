@@ -32,7 +32,9 @@
  */
 package megamek.client.ui.dialogs;
 
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplayContainer;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplayDialog;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;

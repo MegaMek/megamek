@@ -45,7 +45,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-mechbay:4.0:4
+mekbay:4.0:4
 asfbay:2.0:2:2
 cargobay:72.0:0:3
 1stclassquarters:20.0:0

@@ -41,7 +41,7 @@ import java.awt.Toolkit;
 import java.io.Serial;
 import java.util.Objects;
 
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplay;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;

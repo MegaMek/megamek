@@ -43,6 +43,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.MediaTracker;
+import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -66,11 +67,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.client.ui.swing.dialog.CommonAboutDialog;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -138,11 +141,9 @@ import megamek.utilities.xml.MMXMLUtility;
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final MMLogger LOGGER = MMLogger.create(MegaMekGUI.class);
 
-    private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek_splash_spooky_hd.png";
-    private static final List<String> FILENAME_MEGAMEK_SPLASHES = List.of("../misc/megamek_splash_fhd.png",
-          "../misc/megamek_splash_hd.png",
-          "../misc/megamek_splash_uhd.png",
-          "../misc/megamek_splash_hd.png");
+    private static final String FILENAME_MEGAMEK_SPLASH = "../misc/background.jpg";
+    private static final String FILENAME_MEDAL = "../misc/medal.png";
+    private static final String FILENAME_LOGO = "../misc/logo.png";
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
@@ -153,7 +154,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private Server server;
     private IGameManager gameManager;
     private CommonSettingsDialog settingsDialog;
-    JLabel splash;
+    private Image splashImage;
+    private Image logoImage;
+    private Image medalImage;
+    JPanel splashPanel;
     private TipOfTheDay tipOfTheDay;
 
     private static MegaMekController controller;
@@ -188,16 +192,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         });
 
         tipOfTheDay = new TipOfTheDay(Messages.getString("TipOfTheDay.title.text"), "megamek.client.TipOfTheDay", frame);
-        frame.setContentPane(new SkinnedJPanel(UIComponents.MainMenuBorder, 1) {
-            @Override
-            public void paint(Graphics g) {
-                super.paint(g); // Draw background, border, and children first
-                // Now draw the tip on top is the splash is visible
-                if (splash != null && splash.isShowing() && splash.getWidth() > 0 && splash.getHeight() > 0 && tipOfTheDay != null) {
-                    tipOfTheDay.drawTipOfTheDay((Graphics2D) g, splash.getBounds(), TipOfTheDay.Position.BOTTOM_LEFT_CORNER, false);
-                }
-            }
-        });
+        frame.setContentPane(new SkinnedJPanel(UIComponents.MainMenuBorder, 1));
 
         List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit()
@@ -248,6 +243,57 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     public static MegaMekController getKeyDispatcher() {
         return controller;
+    }
+
+    private int drawMedal(Graphics2D g2d, int panelWidth, int panelHeight, int padding) {
+        int targetMedalWidth = 0;
+        if (medalImage != null && medalImage.getWidth(null) > 0 && medalImage.getHeight(null) > 0) {
+            double medalHeightScalePercent = 0.15; // Medal height as 15% of panel height
+            int originalMedalWidth = medalImage.getWidth(null);
+            int originalMedalHeight = medalImage.getHeight(null);
+
+            int targetMedalHeight = (int) (panelHeight * medalHeightScalePercent);
+            if (targetMedalHeight < 1) targetMedalHeight = 1; // Ensure minimum size
+
+            double scaleFactor = (double) targetMedalHeight / originalMedalHeight;
+            targetMedalWidth = (int) (originalMedalWidth * scaleFactor);
+            if (targetMedalWidth < 1) targetMedalWidth = 1;
+
+            // Position: bottom-right corner with padding
+            int medalX = panelWidth - targetMedalWidth - padding;
+            int medalY = panelHeight - targetMedalHeight - padding;
+            
+            if (medalX < 0) medalX = 0;
+            if (medalY < 0) medalY = 0;
+
+            g2d.drawImage(medalImage, medalX, medalY, targetMedalWidth, targetMedalHeight, null);
+        }
+        return targetMedalWidth;
+    }
+    
+    private void drawLogo(Graphics2D g2d, int panelWidth, int panelHeight, int targetMedalWidth, int padding) {
+        if (logoImage != null && logoImage.getWidth(null) > 0 && logoImage.getHeight(null) > 0) {
+            double logoWidthScalePercent = 0.25; // Logo width as 25% of panel width
+
+            int originalLogoWidth = logoImage.getWidth(null);
+            int originalLogoHeight = logoImage.getHeight(null);
+
+            int targetLogoWidth = (int) (panelWidth * logoWidthScalePercent);
+            if (targetLogoWidth < 1) targetLogoWidth = 1; // Ensure minimum size
+
+            double scaleFactor = (double) targetLogoWidth / originalLogoWidth;
+            int targetLogoHeight = (int) (originalLogoHeight * scaleFactor);
+            if (targetLogoHeight < 1) targetLogoHeight = 1;
+
+            // Position: bottom-right corner with padding (after the medal)
+            int logoX = panelWidth - targetLogoWidth - padding - targetMedalWidth - padding;
+            int logoY = panelHeight - targetLogoHeight - padding;
+            
+            if (logoX < 0) logoX = 0;
+            if (logoY < 0) logoY = 0;
+
+            g2d.drawImage(logoImage, logoX, logoY, targetLogoWidth, targetLogoHeight, null);
+        }
     }
 
     /**
@@ -312,9 +358,48 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // Use the current monitor, so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
-        Image imgSplash = getSplashScreen(FILENAME_MEGAMEK_SPLASHES, scaledMonitorSize.width, scaledMonitorSize.height);
-        splash = UIUtil.createSplashComponent(imgSplash, frame, scaledMonitorSize);
+        splashImage = getImage(FILENAME_MEGAMEK_SPLASH, scaledMonitorSize.width, scaledMonitorSize.height);
+        logoImage = getImage(FILENAME_LOGO, scaledMonitorSize.width, scaledMonitorSize.height);
+        medalImage = getImage(FILENAME_MEDAL, scaledMonitorSize.width, scaledMonitorSize.height);
+        Dimension splashPanelPreferredSize = new Dimension((int) (scaledMonitorSize.width * 0.75),
+                (int) (scaledMonitorSize.height * 0.75));
+        // This is an empty panel that will contain the splash image
+        splashPanel = new JPanel() {
+            @Override
+            public void paint(Graphics g) {
+                super.paint(g); // Draw background, border, and children first
+                Graphics2D g2d = (Graphics2D) g.create();
+                try {
+                    int panelWidth = this.getWidth();
+                    int panelHeight = this.getHeight();
+                    int padding = 20;
+                    int targetMedalWidth = 0;
+                    // Draw the main splash image, scaled to fill the panel
+                    if (splashImage != null) {
+                        g2d.drawImage(splashImage, 0, 0, panelWidth, panelHeight, null);
+                    }
 
+                    // Draw Tip of the Day
+                    if (tipOfTheDay != null) {
+                        // Absolute drawing position
+                        Rectangle bounds = this.getBounds();
+                        bounds.x = 0;
+                        bounds.y = 0;
+                        tipOfTheDay.drawTipOfTheDay(g2d, bounds, TipOfTheDay.Position.BOTTOM_LEFT_CORNER, false);
+                    }
+
+                    // Draw medalImage
+                    targetMedalWidth = drawMedal(g2d, panelWidth, panelHeight, padding);
+
+                    // Draw logoImage
+                    drawLogo(g2d, panelWidth, panelHeight, targetMedalWidth, padding);
+                } finally {
+                    g2d.dispose();
+                }
+            }
+        };
+        splashPanel.setPreferredSize(splashPanelPreferredSize);
+        
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());
         int height = metrics.getHeight();
@@ -322,11 +407,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // Strive for no more than ~90% of the screen and use golden ratio to make
         // the button width "look" reasonable.
-        int maximumWidth = (int) (0.9 * scaledMonitorSize.width) - splash.getPreferredSize().width;
+        int maximumWidth = (int) (0.9 * scaledMonitorSize.width) - splashPanel.getPreferredSize().width;
 
         //no more than 50% of image width
-        if (maximumWidth > (int) (0.5 * splash.getPreferredSize().width)) {
-            maximumWidth = (int) (0.5 * splash.getPreferredSize().width);
+        if (maximumWidth > (int) (0.5 * splashPanel.getPreferredSize().width)) {
+            maximumWidth = (int) (0.5 * splashPanel.getPreferredSize().width);
         }
 
         Dimension minButtonDim = new Dimension((int) (maximumWidth / 1.618), 25);
@@ -358,17 +443,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.getContentPane().setLayout(gridBagLayout);
         // Left Column
         c.anchor = GridBagConstraints.WEST;
-        c.insets = new Insets(10, 5, 10, 10);
-        c.ipadx = 10;
-        c.ipady = 5;
+        c.insets = new Insets(0, 0, 0, 10);
         c.gridx = 0;
         c.gridy = 0;
-        c.fill = GridBagConstraints.NONE;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 3.0;
+        c.weighty = 1.0;
         c.gridwidth = 1;
         c.gridheight = 9;
-        addBag(splash, gridBagLayout, c);
+        addBag(splashPanel, gridBagLayout, c);
         // Right Column
         c.insets = new Insets(4, 4, 1, 12);
         c.fill = GridBagConstraints.BOTH;
@@ -1159,52 +1242,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
     }
 
-    /**
-     * Method used to determine the appropriate splash screen to use. This method looks at both the height and the width
-     * of the main monitor.
-     *
-     * @param splashScreens List of available splash screens.
-     * @param screenWidth   Width of the current monitor.
-     * @param screenHeight  Height of the current monitor.
-     *
-     * @return String that represents the splash screen that should be displayed.
-     */
-    private String determineSplashScreen(final List<String> splashScreens, final int screenWidth,
+    private @Nullable Image getImage(final String filename, final int screenWidth,
           final int screenHeight) {
-        // Ensure that the list is of appropriate size to contain HD, FHD, and UHD
-        // splash screens.
-        if (splashScreens.size() > 3) {
-            // Default to the HD splash screen.
-            String splashFileName = splashScreens.get(3);
-            if ((screenWidth > 1920) && (screenHeight > 1080)) {
-                // If both height and width is greater than 1080p use the UHD splash screen.
-                splashFileName = splashScreens.get(2);
-            } else if ((screenWidth > 1280) && (screenHeight > 720)) {
-                // If both height and width is greater than 720p then use the FHD splash screen.
-                splashFileName = splashScreens.get(0);
-            }
-            return splashFileName;
-        }
-        // List of splash screens is not complete so default to the first splash screen.
-        return splashScreens.get(0);
-    }
-
-    private @Nullable Image getSplashScreen(final List<String> splashScreens, final int screenWidth,
-          final int screenHeight) {
-        String filename = determineSplashScreen(splashScreens, screenWidth, screenHeight);
         File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
         if (!file.exists()) {
-            LOGGER.error("MainMenu Error: Splash screen doesn't exist: {}", file.getAbsolutePath());
-            file = new MegaMekFile(Configuration.widgetsDir(), FILENAME_MEGAMEK_SPLASH).getFile();
-        }
-
-        if (!file.exists()) {
-            LOGGER.error("MainMenu Error: Backup splash screen doesn't exist: {}", file.getAbsolutePath());
+            LOGGER.error("MainMenu Error: Image doesn't exist: {}", file.getAbsolutePath());
             return null;
         }
-
         Image img = ImageUtil.loadImageFromFile(file.toString());
-        // wait for splash image to load completely
+        // wait for image to load completely
         MediaTracker tracker = new MediaTracker(frame);
         tracker.addImage(img, 0);
         try {

@@ -24,7 +24,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientDialog;
 import megamek.client.ui.swing.util.UIUtil;
 
 /**

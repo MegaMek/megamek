@@ -154,7 +154,7 @@ public class AmmoType extends EquipmentType {
     public static final int NUM_TYPES = 114; // Should always be at the end with the highest number
 
     /**
-     * Contains the {@code AmmoType}s that could share ammo (e.g. SRM 2 and SRM 6, both fire SRM rounds).
+     * Contains the {@code AmmoType}s that could share ammo (e.g., SRM 2 and SRM 6, both fire SRM rounds).
      */
     private static final Integer[] ALLOWED_BY_TYPE_ARRAY = { AmmoType.T_LRM, AmmoType.T_LRM_PRIMITIVE,
                                                              AmmoType.T_LRM_STREAK, AmmoType.T_LRM_TORPEDO,
@@ -168,7 +168,7 @@ public class AmmoType extends EquipmentType {
                                                              AmmoType.T_IATM };
 
     /**
-     * Contains the set of {@code AmmoType}s which could share ammo (e.g. SRM 2 and SRM 6, both fire SRM rounds), and
+     * Contains the set of {@code AmmoType}s which could share ammo (e.g., SRM 2 and SRM 6, both fire SRM rounds), and
      * conceptually can share ammo.
      */
     public static final Set<Integer> ALLOWED_BY_TYPE = Set.of(ALLOWED_BY_TYPE_ARRAY);
@@ -177,7 +177,7 @@ public class AmmoType extends EquipmentType {
     public static final AmmoTypeFlag F_MG = AmmoTypeFlag.F_MG;
     public static final AmmoTypeFlag F_BATTLEARMOR = AmmoTypeFlag.F_BATTLEARMOR; // only used by BA squads
     public static final AmmoTypeFlag F_PROTOMEK = AmmoTypeFlag.F_PROTOMEK; // only used by ProtoMeks
-    public static final AmmoTypeFlag F_HOTLOAD = AmmoTypeFlag.F_HOTLOAD; // Ammo can be hot loaded
+    public static final AmmoTypeFlag F_HOTLOAD = AmmoTypeFlag.F_HOTLOAD; // Ammo can be hot-loaded
 
     // BA can't jump or make anti-mek until dumped
     public static final AmmoTypeFlag F_ENCUMBERING = AmmoTypeFlag.F_ENCUMBERING;
@@ -527,7 +527,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.CSF, Faction.RD)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "283, TO");
-    
+
     private static final MunitionMutator CLAN_DEAD_FIRE_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
           "(Clan) Dead-Fire",
           1,
@@ -538,8 +538,9 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(Faction.DC)
                 .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL),
           "131, IO");
-    
-    private static final MunitionMutator CLAN_FRAGMENTATION_MUNITION_MUTATOR = new MunitionMutator("(Clan) Fragmentation",
+
+    private static final MunitionMutator CLAN_FRAGMENTATION_MUNITION_MUTATOR = new MunitionMutator(
+          "(Clan) Fragmentation",
           1,
           Munitions.M_FRAGMENTATION,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
@@ -552,7 +553,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "230, TM");
-    
+
     private static final MunitionMutator CLAN_LISTEN_KILL_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
           "(Clan) Listen-Kill",
           1,
@@ -566,7 +567,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL),
           "230, TM");
-    
+
     private static final MunitionMutator CLAN_MINE_CLEARANCE_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
           "(Clan) Mine Clearance",
           1,
@@ -581,7 +582,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "370, TO");
-    
+
     private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
           "(Clan) Narc-capable",
           1,
@@ -594,7 +595,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "370, TO");
-    
+
     private static final MunitionMutator FOLLOW_THE_LEADER_MUNITION_MUTATOR = new MunitionMutator("Follow The Leader",
           2,
           Munitions.M_FOLLOW_THE_LEADER,
@@ -606,7 +607,7 @@ public class AmmoType extends EquipmentType {
                 .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
           "368, TO");
-    
+
     private static final MunitionMutator SEMI_GUIDED_MUNITION_MUTATOR = new MunitionMutator("Semi-guided",
           1,
           Munitions.M_SEMIGUIDED,
@@ -621,9 +622,9 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           "231, TM");
 
-     // Note of Swarms the intro dates in IntOps are off, and it allows Swarm-I to appear before Swarm during the Clan
-     // Invasion. Proposed errata makes 3052 for Swarm-I a hard date, and 3053 for Swarm re-introduction a flexible
-     // date.
+    // Note of Swarms the intro dates in IntOps are off, and it allows Swarm-I to appear before Swarm during the Clan
+    // Invasion. Proposed errata makes 3052 for Swarm-I a hard date, and 3053 for Swarm re-introduction a flexible
+    // date.
     private static final MunitionMutator SWARM_MUNITION_MUTATOR = new MunitionMutator("Swarm",
           1,
           Munitions.M_SWARM,
@@ -637,7 +638,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.TH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "371, TO");
-    
+
     private static final MunitionMutator SWARM_I_MUNITION_MUTATOR = new MunitionMutator("Swarm-I",
           1,
           Munitions.M_SWARM_I,
@@ -651,7 +652,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.FW)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "371, TO");
-    
+
     private static final MunitionMutator THUNDER_MUNITION_MUTATOR = new MunitionMutator("Thunder",
           1,
           Munitions.M_THUNDER,
@@ -666,7 +667,7 @@ public class AmmoType extends EquipmentType {
                 .setReintroductionFactions(Faction.LC, Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
-    
+
     private static final MunitionMutator THUNDER_ACTIVE_MUNITION_MUTATOR = new MunitionMutator("Thunder-Active",
           2,
           Munitions.M_THUNDER_ACTIVE,
@@ -680,7 +681,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
-    
+
     private static final MunitionMutator THUNDER_AUGMENTED_MUNITION_MUTATOR = new MunitionMutator("Thunder-Augmented",
           2,
           Munitions.M_THUNDER_AUGMENTED,
@@ -694,7 +695,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
-    
+
     private static final MunitionMutator THUNDER_BIBRABOMB_MUNITION_MUTATOR = new MunitionMutator("Thunder-Vibrabomb",
           2,
           Munitions.M_THUNDER_VIBRABOMB,
@@ -708,7 +709,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
-    
+
     private static final MunitionMutator THUNDER_INFERNO_MUTATION_MUTATOR = new MunitionMutator("Thunder-Inferno",
           2,
           Munitions.M_THUNDER_INFERNO,
@@ -722,7 +723,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           "373, TO");
-    
+
     private static final MunitionMutator FRAGMENTATION_MUNITION_MUTATOR_FOR_LRM = new MunitionMutator("Fragmentation",
           1,
           Munitions.M_FRAGMENTATION,
@@ -1555,7 +1556,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), // Or marked unnoficial here
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+          // Or marked unnoficial here
           "159, IO");
 
     private static final MunitionMutator SMOKE_MUNITION_MUTATOR_FOR_BA_TUBE = new MunitionMutator("Smoke",
@@ -2007,7 +2009,8 @@ public class AmmoType extends EquipmentType {
      * Gets a value indicating whether this {@code AmmoType} is compatible with another {@code AmmoType}.
      * <p>
      * this roughly means the same ammo type and munition type, but not rack size.
-     *</p>
+     * </p>
+     *
      * @param other The other {@code AmmoType} to determine compatibility with.
      */
     @SuppressWarnings("unused")
@@ -2125,12 +2128,12 @@ public class AmmoType extends EquipmentType {
 
     /**
      * @return true if this munition type is not allowed by clan rules
-     * @deprecated since 0.50.06, the rules that don't allow some ammo for clan units
-     * should be based on tech access/availability, not a hardcoded list of ammo types.
-     * As soon as the tech rules for munition variations are working completely then
-     * this will be removed.
+     *
+     * @deprecated since 0.50.06, the rules that don't allow some ammo for clan units should be based on tech
+     *       access/availability, not a hardcoded list of ammo types. As soon as the tech rules for munition variations
+     *       are working completely then this will be removed.
      */
-    @Deprecated(since="0.50.06", forRemoval = true)
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public boolean notAllowedByClanRules() {
         return (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED) ||
                       (munitionType.contains(AmmoType.Munitions.M_SWARM_I)) ||
@@ -2283,7 +2286,8 @@ public class AmmoType extends EquipmentType {
         AmmoType ammoType;
         for (int i = 0; i < vAmmo.size(); i++) {
             ammoType = vAmmo.elementAt(i);
-            if ((ammoType.getRackSize() == weaponType.getRackSize()) && ammoType.isLegal(techLevelYear, techLevel, mixedTech)) {
+            if ((ammoType.getRackSize() == weaponType.getRackSize()) &&
+                      ammoType.isLegal(techLevelYear, techLevel, mixedTech)) {
                 if (isNotValidBattleArmorMunition(weaponType, ammoType)) {
                     continue;
                 }
@@ -2296,7 +2300,9 @@ public class AmmoType extends EquipmentType {
             ammoType = vAmmo.elementAt(i);
             if ((ammoType.getRackSize() == weaponType.getRackSize()) &&
                       (TechConstants.isLegal(mounted.getType().getTechLevel(3071),
-                            ammoType.getTechLevel(3071), false, mixedTech))) {
+                            ammoType.getTechLevel(3071),
+                            false,
+                            mixedTech))) {
                 if (isNotValidBattleArmorMunition(weaponType, ammoType)) {
                     continue;
                 }
@@ -2307,16 +2313,18 @@ public class AmmoType extends EquipmentType {
     }
 
     /**
-     * Battle Armor Missile munition variations need a special check, otherwise it would select any SRM/LRM missile
-     * as valid to load on it
+     * Battle Armor Missile munition variations need a special check, otherwise it would select any SRM/LRM missile as
+     * valid to load on it
+     *
      * @param weaponType the weaponType being checked against
-     * @param ammoType the ammo type to validate against the weaponType
+     * @param ammoType   the ammo type to validate against the weaponType
+     *
      * @return true if this is a valid missile munition variation for battle armor
      */
     private static boolean isNotValidBattleArmorMunition(WeaponType weaponType, AmmoType ammoType) {
         return (weaponType.hasFlag(WeaponTypeFlag.F_MISSILE) &&
-                  weaponType.hasFlag(WeaponTypeFlag.F_BA_WEAPON) &&
-                  !ammoType.hasFlag(AmmoTypeFlag.F_BATTLEARMOR));
+                      weaponType.hasFlag(WeaponTypeFlag.F_BA_WEAPON) &&
+                      !ammoType.hasFlag(AmmoTypeFlag.F_BATTLEARMOR));
     }
 
     public static void initializeTypes() {
@@ -2359,9 +2367,9 @@ public class AmmoType extends EquipmentType {
 
         // Updated, never used.
         // They need to be implemented
-//        ArrayList<AmmoType> fluidGunAmmos = new ArrayList<>();
-//        ArrayList<AmmoType> clanFluidGunAmmos = new ArrayList<>();
-//        ArrayList<AmmoType> primLongTomAmmos = new ArrayList<>();
+        //        ArrayList<AmmoType> fluidGunAmmos = new ArrayList<>();
+        //        ArrayList<AmmoType> clanFluidGunAmmos = new ArrayList<>();
+        //        ArrayList<AmmoType> primLongTomAmmos = new ArrayList<>();
 
         ArrayList<MunitionMutator> munitions = new ArrayList<>();
 
@@ -2631,7 +2639,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(base);
 
         base = AmmoType.createISPrimitiveLongTomAmmo();
-//        primLongTomAmmos.add(base);
+        //        primLongTomAmmos.add(base);
         EquipmentType.addType(base);
 
         base = AmmoType.createISLongTomCannonAmmo();
@@ -3087,10 +3095,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISCruiseMissile120Ammo());
 
         base = AmmoType.createISFluidGunAmmo();
-//        fluidGunAmmos.add(base);
+        //        fluidGunAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createCLFluidGunAmmo();
-//        clanFluidGunAmmos.add(base);
+        //        clanFluidGunAmmos.add(base);
         EquipmentType.addType(base);
 
         // Rifles
@@ -8152,7 +8160,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 1 Ammo";
         ammo.shortName = "LRM 1";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-1");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-1");
         ammo.addLookupName("Clan Ammo LRM-1");
         ammo.addLookupName("CLLRM1 Ammo");
         ammo.addLookupName("Clan LRM 1 Ammo");
@@ -8185,7 +8193,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 2 Ammo";
         ammo.shortName = "LRM 2";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-2");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-2");
         ammo.addLookupName("Clan Ammo LRM-2");
         ammo.addLookupName("CLLRM2 Ammo");
         ammo.addLookupName("Clan LRM 2 Ammo");
@@ -8218,7 +8226,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 3 Ammo";
         ammo.shortName = "LRM 3";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-3");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-3");
         ammo.addLookupName("Clan Ammo LRM-3");
         ammo.addLookupName("CLLRM3 Ammo");
         ammo.addLookupName("Clan LRM 3 Ammo");
@@ -8251,7 +8259,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 4 Ammo";
         ammo.shortName = "LRM 4";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-4");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-4");
         ammo.addLookupName("Clan Ammo LRM-4");
         ammo.addLookupName("CLLRM4 Ammo");
         ammo.addLookupName("Clan LRM 4 Ammo");
@@ -8284,7 +8292,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 6 Ammo";
         ammo.shortName = "LRM 6";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-6");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-6");
         ammo.addLookupName("Clan Ammo LRM-6");
         ammo.addLookupName("CLLRM6 Ammo");
         ammo.addLookupName("Clan LRM 6 Ammo");
@@ -8317,7 +8325,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 7 Ammo";
         ammo.shortName = "LRM 7";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-7");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-7");
         ammo.addLookupName("Clan Ammo LRM-7");
         ammo.addLookupName("CLLRM7 Ammo");
         ammo.addLookupName("Clan LRM 7 Ammo");
@@ -8350,7 +8358,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 8 Ammo";
         ammo.shortName = "LRM 8";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-8");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-8");
         ammo.addLookupName("Clan Ammo LRM-8");
         ammo.addLookupName("CLLRM8 Ammo");
         ammo.addLookupName("Clan LRM 8 Ammo");
@@ -8383,7 +8391,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 9 Ammo";
         ammo.shortName = "LRM 9";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-9");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-9");
         ammo.addLookupName("Clan Ammo LRM-9");
         ammo.addLookupName("CLLRM9 Ammo");
         ammo.addLookupName("Clan LRM 9 Ammo");
@@ -8416,7 +8424,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 11 Ammo";
         ammo.shortName = "LRM 11";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-11");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-11");
         ammo.addLookupName("Clan Ammo LRM-11");
         ammo.addLookupName("CLLRM11 Ammo");
         ammo.addLookupName("Clan LRM 11 Ammo");
@@ -8448,7 +8456,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 12 Ammo";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-12");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-12");
         ammo.shortName = "LRM 12";
         ammo.addLookupName("Clan Ammo LRM-12");
         ammo.addLookupName("CLLRM12 Ammo");
@@ -8482,7 +8490,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 13 Ammo";
         ammo.shortName = "LRM 13";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-13");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-13");
         ammo.addLookupName("Clan Ammo LRM-13");
         ammo.addLookupName("CLLRM13 Ammo");
         ammo.addLookupName("Clan LRM 13 Ammo");
@@ -8515,7 +8523,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 14 Ammo";
         ammo.shortName = "LRM 14";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-14");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-14");
         ammo.addLookupName("Clan Ammo LRM-14");
         ammo.addLookupName("CLLRM14 Ammo");
         ammo.addLookupName("Clan LRM 14 Ammo");
@@ -8548,7 +8556,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 16 Ammo";
         ammo.shortName = "LRM 16";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-16");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-16");
         ammo.addLookupName("Clan Ammo LRM-16");
         ammo.addLookupName("CLLRM16 Ammo");
         ammo.addLookupName("Clan LRM 16 Ammo");
@@ -8581,7 +8589,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 17 Ammo";
         ammo.shortName = "LRM 17";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-17");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-17");
         ammo.addLookupName("Clan Ammo LRM-17");
         ammo.addLookupName("CLLRM17 Ammo");
         ammo.addLookupName("Clan LRM 17 Ammo");
@@ -8614,7 +8622,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 18 Ammo";
         ammo.shortName = "LRM 18";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-18");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-18");
         ammo.addLookupName("Clan Ammo LRM-18");
         ammo.addLookupName("CLLRM18 Ammo");
         ammo.addLookupName("Clan LRM 18 Ammo");
@@ -8647,7 +8655,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "LRM 19";
         ammo.name = "LRM 19 Ammo";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRM-19");
+        ammo.setInternalName("Clan Ammo ProtoMech LRM-19");
         ammo.addLookupName("Clan Ammo LRM-19");
         ammo.addLookupName("CLLRM19 Ammo");
         ammo.addLookupName("Clan LRM 19 Ammo");
@@ -9904,7 +9912,10 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.IS);
         ammo.techAdvancement.setISAdvancement(2365, 2380, 2400);
         ammo.techAdvancement.setTechRating(TechRating.C);
-        ammo.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
+        ammo.techAdvancement.setAvailability(AvailabilityValue.C,
+              AvailabilityValue.C,
+              AvailabilityValue.C,
+              AvailabilityValue.C);
         return ammo;
     }
 
@@ -9930,7 +9941,10 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.IS);
         ammo.techAdvancement.setISAdvancement(2365, 2380, 2400);
         ammo.techAdvancement.setTechRating(TechRating.C);
-        ammo.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
+        ammo.techAdvancement.setAvailability(AvailabilityValue.C,
+              AvailabilityValue.C,
+              AvailabilityValue.C,
+              AvailabilityValue.C);
         return ammo;
     }
 
@@ -9956,7 +9970,10 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.IS);
         ammo.techAdvancement.setISAdvancement(2365, 2380, 2400);
         ammo.techAdvancement.setTechRating(TechRating.C);
-        ammo.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
+        ammo.techAdvancement.setAvailability(AvailabilityValue.C,
+              AvailabilityValue.C,
+              AvailabilityValue.C,
+              AvailabilityValue.C);
         return ammo;
     }
 
@@ -10055,7 +10072,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 1 Ammo";
         ammo.shortName = "LRT 1";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-1");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-1");
         ammo.addLookupName("Clan Ammo LRTorpedo-1");
         ammo.addLookupName("CLLRTorpedo1 Ammo");
         ammo.addLookupName("Clan LRTorpedo 1 Ammo");
@@ -10088,7 +10105,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 2 Ammo";
         ammo.shortName = "LRT 2";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-2");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-2");
         ammo.addLookupName("Clan Ammo LRTorpedo-2");
         ammo.addLookupName("CLLRTorpedo2 Ammo");
         ammo.addLookupName("Clan LRTorpedo 2 Ammo");
@@ -10121,7 +10138,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 3 Ammo";
         ammo.shortName = "LRT 3";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-3");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-3");
         ammo.addLookupName("Clan Ammo LRTorpedo-3");
         ammo.addLookupName("CLLRTorpedo3 Ammo");
         ammo.addLookupName("Clan LRTorpedo 3 Ammo");
@@ -10154,7 +10171,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 4 Ammo";
         ammo.shortName = "LRT 4";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-4");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-4");
         ammo.addLookupName("Clan Ammo LRTorpedo-4");
         ammo.addLookupName("CLLRTorpedo4 Ammo");
         ammo.addLookupName("Clan LRTorpedo 4 Ammo");
@@ -10216,7 +10233,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 6 Ammo";
         ammo.shortName = "LRT 6";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-6");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-6");
         ammo.addLookupName("Clan Ammo LRTorpedo-6");
         ammo.addLookupName("CLLRTorpedo6 Ammo");
         ammo.addLookupName("Clan LRTorpedo 6 Ammo");
@@ -10249,7 +10266,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 7 Ammo";
         ammo.shortName = "LRT 7";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-7");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-7");
         ammo.addLookupName("Clan Ammo LRTorpedo-7");
         ammo.addLookupName("CLLRTorpedo7 Ammo");
         ammo.addLookupName("Clan LRTorpedo 7 Ammo");
@@ -10282,7 +10299,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 8 Ammo";
         ammo.shortName = "LRT 8";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-8");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-8");
         ammo.addLookupName("Clan Ammo LRTorpedo-8");
         ammo.addLookupName("CLLRTorpedo8 Ammo");
         ammo.addLookupName("Clan LRTorpedo 8 Ammo");
@@ -10315,7 +10332,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 9 Ammo";
         ammo.shortName = "LRT 9";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-9");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-9");
         ammo.addLookupName("Clan Ammo LRTorpedo-9");
         ammo.addLookupName("CLLRTorpedo9 Ammo");
         ammo.addLookupName("Clan LRTorpedo 9 Ammo");
@@ -10377,7 +10394,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 11 Ammo";
         ammo.shortName = "LRT 11";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-11");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-11");
         ammo.addLookupName("Clan Ammo LRTorpedo-11");
         ammo.addLookupName("CLLRTorpedo11 Ammo");
         ammo.addLookupName("Clan LRTorpedo 11 Ammo");
@@ -10410,7 +10427,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 12 Ammo";
         ammo.shortName = "LRT 12";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-12");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-12");
         ammo.addLookupName("Clan Ammo LRTorpedo-12");
         ammo.addLookupName("CLLRTorpedo12 Ammo");
         ammo.addLookupName("Clan LRTorpedo 12 Ammo");
@@ -10443,7 +10460,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 13 Ammo";
         ammo.shortName = "LRT 13";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-13");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-13");
         ammo.addLookupName("Clan Ammo LRTorpedo-13");
         ammo.addLookupName("CLLRTorpedo13 Ammo");
         ammo.addLookupName("Clan LRTorpedo 13 Ammo");
@@ -10476,7 +10493,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 14 Ammo";
         ammo.shortName = "LRT 14";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-14");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-14");
         ammo.addLookupName("Clan Ammo LRTorpedo-14");
         ammo.addLookupName("CLLRTorpedo14 Ammo");
         ammo.addLookupName("Clan LRTorpedo 14 Ammo");
@@ -10538,7 +10555,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 16 Ammo";
         ammo.shortName = "LRT 16";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-16");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-16");
         ammo.addLookupName("Clan Ammo LRTorpedo-16");
         ammo.addLookupName("CLLRTorpedo16 Ammo");
         ammo.addLookupName("Clan LRTorpedo 16 Ammo");
@@ -10571,7 +10588,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 17 Ammo";
         ammo.shortName = "LRT 17";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-17");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-17");
         ammo.addLookupName("Clan Ammo LRTorpedo-17");
         ammo.addLookupName("CLLRTorpedo17 Ammo");
         ammo.addLookupName("Clan LRTorpedo 17 Ammo");
@@ -10604,7 +10621,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 18 Ammo";
         ammo.shortName = "LRT 18";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-18");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-18");
         ammo.addLookupName("Clan Ammo LRTorpedo-18");
         ammo.addLookupName("CLLRTorpedo18 Ammo");
         ammo.addLookupName("Clan LRTorpedo 18 Ammo");
@@ -10637,7 +10654,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRT 19 Ammo";
         ammo.shortName = "LRT 19";
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-19");
+        ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-19");
         ammo.addLookupName("Clan Ammo LRTorpedo-19");
         ammo.addLookupName("CLLRTorpedo19 Ammo");
         ammo.addLookupName("Clan LRTorpedo 19 Ammo");
@@ -12341,7 +12358,10 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.IS);
         ammo.techAdvancement.setISAdvancement(3072, DATE_NONE, DATE_NONE);
         ammo.techAdvancement.setTechRating(TechRating.E);
-        ammo.techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X);
+        ammo.techAdvancement.setAvailability(AvailabilityValue.X,
+              AvailabilityValue.X,
+              AvailabilityValue.F,
+              AvailabilityValue.X);
         return ammo;
     }
 
@@ -13253,7 +13273,10 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.CLAN);
         ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
         ammo.techAdvancement.setTechRating(TechRating.C);
-        ammo.techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.X);
+        ammo.techAdvancement.setAvailability(AvailabilityValue.X,
+              AvailabilityValue.C,
+              AvailabilityValue.C,
+              AvailabilityValue.X);
         return ammo;
     }
 
@@ -14772,7 +14795,10 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.IS);
         ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3067);
         ammo.techAdvancement.setTechRating(TechRating.E);
-        ammo.techAdvancement.setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E);
+        ammo.techAdvancement.setAvailability(AvailabilityValue.E,
+              AvailabilityValue.E,
+              AvailabilityValue.E,
+              AvailabilityValue.E);
         return ammo;
     }
 
@@ -14793,7 +14819,10 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TechBase.IS);
         ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3067);
         ammo.techAdvancement.setTechRating(TechRating.E);
-        ammo.techAdvancement.setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E);
+        ammo.techAdvancement.setAvailability(AvailabilityValue.E,
+              AvailabilityValue.E,
+              AvailabilityValue.E,
+              AvailabilityValue.E);
         return ammo;
     }
 
@@ -15286,9 +15315,9 @@ public class AmmoType extends EquipmentType {
     }
 
     private void addBeforeString(AmmoType base, String keyWord, String modifier) {
-        Enumeration<String> n = base.getNames();
-        while (n.hasMoreElements()) {
-            String s = n.nextElement();
+        Enumeration<String> names = base.getNames();
+        while (names.hasMoreElements()) {
+            String s = names.nextElement();
             StringBuilder sb = new StringBuilder(s);
             sb.insert(s.lastIndexOf(keyWord), modifier);
             addLookupName(sb.toString());
@@ -15699,7 +15728,7 @@ public class AmmoType extends EquipmentType {
             }
 
             // This is just a hack to make it expensive.
-            // We don't actually have a price for this.
+            // We don't have a price for this.
             if (munition.getMunitionType().contains(Munitions.M_DAVY_CROCKETT_M)) {
                 cost *= 50;
             }
@@ -15865,7 +15894,7 @@ public class AmmoType extends EquipmentType {
     }
 
     public String getBaseName() {
-        return (base!=null) ? base.getShortName() : getShortName();
+        return (base != null) ? base.getShortName() : getShortName();
     }
 
     public String getSubMunitionName() {
@@ -15973,11 +16002,11 @@ public class AmmoType extends EquipmentType {
 
     @Override
     protected Map<String, Object> getYamlData() {
-            Map<String, Object> data = super.getYamlData();
-            data.put("type", "ammo");
-            if (kgPerShot > 0) {
-                  data.put("kgPerShot", this.getKgPerShot());
-            }
-            return data;
+        Map<String, Object> data = super.getYamlData();
+        data.put("type", "ammo");
+        if (kgPerShot > 0) {
+            data.put("kgPerShot", this.getKgPerShot());
+        }
+        return data;
     }
 }

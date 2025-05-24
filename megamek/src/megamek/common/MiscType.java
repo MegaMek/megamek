@@ -26,7 +26,6 @@ import megamek.common.weapons.ppc.ISLightPPC;
 import megamek.common.weapons.ppc.ISPPC;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
 import megamek.logging.MMLogger;
-import megamek.common.ITechnology;
 
 
 /**
@@ -422,7 +421,9 @@ public class MiscType extends EquipmentType {
         } else {
             LOGGER.warn("Incorrect flag check: tested {} instead of MiscTypeFlag",
                   flag.getClass().getSimpleName(),
-                  new Throwable("Incorrect flag tested " + flag.getClass().getSimpleName() + " instead of " +
+                  new Throwable("Incorrect flag tested " +
+                                      flag.getClass().getSimpleName() +
+                                      " instead of " +
                                       "MiscTypeFlag"));
             return false;
         }
@@ -2515,7 +2516,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setIntroLevel(true);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A);
         return misc;
     }
 
@@ -3978,7 +3982,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(modes);
         misc.baseDamageAbsorptionRate = 3;
         misc.baseDamageCapacity = 11;
-        misc.rulesRefs = "290, TO";
+        misc.rulesRefs = "103, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -4011,7 +4015,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(modes);
         misc.baseDamageAbsorptionRate = 5;
         misc.baseDamageCapacity = 18;
-        misc.rulesRefs = "290, TO";
+        misc.rulesRefs = "103, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -4044,7 +4048,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(modes);
         misc.baseDamageAbsorptionRate = 7;
         misc.baseDamageCapacity = 25;
-        misc.rulesRefs = "290, TO";
+        misc.rulesRefs = "103, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -4236,7 +4240,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.X);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.X);
         return misc;
     }
 
@@ -4253,7 +4260,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.X);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.X);
         return misc;
     }
 
@@ -4270,7 +4280,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.X);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.X);
         return misc;
     }
 
@@ -5232,8 +5245,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createIMEjectionSeat() {
         MiscType misc = new MiscType();
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-        misc.name = "Ejection Seat (Industrial Mech)";
-
+        misc.name = "Ejection Seat (IndustrialMech)";
         misc.setInternalName(EquipmentTypeLookup.IM_EJECTION_SEAT);
         misc.shortName = "Ejection Seat";
         misc.tonnage = 0.5;
@@ -7262,11 +7274,11 @@ public class MiscType extends EquipmentType {
     public static MiscType createManipulator() {
         MiscType misc = new MiscType();
         // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES
-        misc.name = "Manipulator (Non-Mech/Non-Battle Armor)";
+        misc.name = "Manipulator (Non-Mech/Non-BattleArmor)";
         misc.setInternalName(EquipmentTypeLookup.MANIPULATOR_INDUSTRIAL);
         misc.addLookupName("Manipulator");
         misc.addLookupName("Manipulator [Non-Mech/Non-Battle Armor]");
-
+        misc.addLookupName("Manipulator [Non-Mech/Non-BattleArmor]");
         misc.shortName = "Manipulator";
         misc.flags = misc.flags.or(F_MANIPULATOR)
                            .or(F_SUPPORT_TANK_EQUIPMENT)
@@ -7715,7 +7727,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.C);
-        misc.techAdvancement.setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.X);
+        misc.techAdvancement.setAvailability(AvailabilityValue.E,
+              AvailabilityValue.E,
+              AvailabilityValue.D,
+              AvailabilityValue.X);
         return misc;
     }
 
@@ -7967,7 +7982,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A);
         return misc;
     }
 
@@ -8204,7 +8222,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.B);
-        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.X);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D,
+              AvailabilityValue.E,
+              AvailabilityValue.D,
+              AvailabilityValue.X);
         return misc;
     }
 
@@ -9603,7 +9624,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.C);
-        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C,
+              AvailabilityValue.D,
+              AvailabilityValue.C,
+              AvailabilityValue.C);
         return misc;
     }
 
@@ -9629,7 +9653,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C,
+              AvailabilityValue.E,
+              AvailabilityValue.D,
+              AvailabilityValue.D);
         return misc;
     }
 
@@ -9651,7 +9678,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A);
         return misc;
     }
 
@@ -9673,7 +9703,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A);
         return misc;
     }
 
@@ -9726,7 +9759,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.C);
-        misc.techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
+        misc.techAdvancement.setAvailability(AvailabilityValue.B,
+              AvailabilityValue.D,
+              AvailabilityValue.C,
+              AvailabilityValue.C);
         return misc;
     }
 
@@ -9768,7 +9804,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.B);
-        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C,
+              AvailabilityValue.D,
+              AvailabilityValue.C,
+              AvailabilityValue.C);
         return misc;
     }
 
@@ -9790,7 +9829,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.B);
-        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.D);
         return misc;
     }
 
@@ -9815,7 +9857,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.B);
-        misc.techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B);
+        misc.techAdvancement.setAvailability(AvailabilityValue.B,
+              AvailabilityValue.C,
+              AvailabilityValue.B,
+              AvailabilityValue.B);
         return misc;
     }
 
@@ -9862,7 +9907,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.B);
-        misc.techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.X);
+        misc.techAdvancement.setAvailability(AvailabilityValue.B,
+              AvailabilityValue.C,
+              AvailabilityValue.B,
+              AvailabilityValue.X);
         return misc;
     }
 
@@ -9885,7 +9933,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.B);
-        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D,
+              AvailabilityValue.E,
+              AvailabilityValue.D,
+              AvailabilityValue.D);
         return misc;
     }
 
@@ -9904,7 +9955,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.C);
-        misc.techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B);
+        misc.techAdvancement.setAvailability(AvailabilityValue.B,
+              AvailabilityValue.C,
+              AvailabilityValue.B,
+              AvailabilityValue.B);
         return misc;
     }
 
@@ -9926,7 +9980,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.B);
-        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C,
+              AvailabilityValue.D,
+              AvailabilityValue.C,
+              AvailabilityValue.C);
         return misc;
     }
 
@@ -9950,7 +10007,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A);
         return misc;
     }
 
@@ -9970,7 +10030,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A);
         return misc;
     }
 
@@ -9995,7 +10058,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A);
         return misc;
     }
 
@@ -10013,7 +10079,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.D);
-        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C,
+              AvailabilityValue.E,
+              AvailabilityValue.D,
+              AvailabilityValue.D);
         return misc;
     }
 
@@ -10032,7 +10101,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.C);
-        misc.techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
+        misc.techAdvancement.setAvailability(AvailabilityValue.C,
+              AvailabilityValue.D,
+              AvailabilityValue.C,
+              AvailabilityValue.C);
         return misc;
     }
 
@@ -10673,7 +10745,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
-        misc.techAdvancement.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+        misc.techAdvancement.setAvailability(AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A,
+              AvailabilityValue.A);
         return misc;
     }
 
@@ -10694,7 +10769,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.C);
-        misc.techAdvancement.setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F);
+        misc.techAdvancement.setAvailability(AvailabilityValue.E,
+              AvailabilityValue.E,
+              AvailabilityValue.F,
+              AvailabilityValue.F);
         return misc;
     }
 
@@ -11572,7 +11650,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.IS);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2720, DATE_NONE);
         misc.techAdvancement.setTechRating(TechRating.D);
-        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.X);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.X);
         return misc;
     }
 
@@ -11594,7 +11675,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.IS);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2720, DATE_NONE);
         misc.techAdvancement.setTechRating(TechRating.D);
-        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.X);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.X);
         return misc;
     }
 
@@ -11617,7 +11701,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2720, DATE_NONE);
         misc.techAdvancement.setTechRating(TechRating.D);
-        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.X);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.X);
         return misc;
     }
 
@@ -11638,7 +11725,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setUnofficial(true);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2100, DATE_NONE);
         misc.techAdvancement.setTechRating(TechRating.D);
-        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.X);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.X);
         return misc;
     }
 
@@ -11662,7 +11752,10 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setUnofficial(true);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2720, DATE_NONE);
         misc.techAdvancement.setTechRating(TechRating.D);
-        misc.techAdvancement.setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.X);
+        misc.techAdvancement.setAvailability(AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.D,
+              AvailabilityValue.X);
         return misc;
     }
 

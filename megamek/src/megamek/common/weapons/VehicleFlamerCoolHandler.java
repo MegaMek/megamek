@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.*;
@@ -20,83 +21,82 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * @author Sebastian Brocks
- * Created on Sep 23, 2004
+ * @author Sebastian Brocks Created on Sep 23, 2004
  */
 public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 4856089237895318515L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     * @param toHitData          The {@link ToHitData} to use.
+     * @param weaponAttackAction The {@link WeaponAttackAction} to use.
+     * @param game               The {@link Game} object to use.
+     * @param twGameManager      A {@link TWGameManager} to use.
      */
-    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
-        super(toHit, waa, g, m);
+    public VehicleFlamerCoolHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
+          TWGameManager twGameManager) {
+        super(toHitData, weaponAttackAction, game, twGameManager);
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-                                      Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits,
+          int nCluster, int bldgAbsorbs) {
         if (entityTarget.isConventionalInfantry()) {
             // 1 point direct-fire ballistic
             nDamPerHit = Compute.directBlowInfantryDamage(1,
-                    bDirect ? toHit.getMoS() / 3 : 0,
-                    WeaponType.WEAPON_DIRECT_FIRE,
-                    ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null);
+                  bDirect ? toHit.getMoS() / 3 : 0,
+                  WeaponType.WEAPON_DIRECT_FIRE,
+                  ((Infantry) target).isMechanized(),
+                  toHit.getThruBldg() != null);
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         }
-        Report r = new Report(3390);
-        r.subject = subjectId;
-        vPhaseReport.addElement(r);
-        if (entityTarget.infernos.isStillBurning()
-                || ((target instanceof Tank) && ((Tank) target).isOnFire() && ((Tank) target)
-                        .isInfernoFire())) {
-            r = new Report(3545);
-            r.subject = subjectId;
-            r.addDesc(entityTarget);
-            r.indent(3);
+        Report report = new Report(3390);
+        report.subject = subjectId;
+        vPhaseReport.addElement(report);
+        if (entityTarget.infernos.isStillBurning() ||
+                  ((target instanceof Tank) && ((Tank) target).isOnFire() && ((Tank) target).isInfernoFire())) {
+            report = new Report(3545);
+            report.subject = subjectId;
+            report.addDesc(entityTarget);
+            report.indent(3);
             Roll diceRoll = Compute.rollD6(2);
-            r.add(diceRoll);
+            report.add(diceRoll);
 
             if (diceRoll.getIntValue() == 12) {
-                r.choose(true);
+                report.choose(true);
                 entityTarget.infernos.clear();
             } else {
-                r.choose(false);
+                report.choose(false);
             }
-            vPhaseReport.add(r);
+            vPhaseReport.add(report);
         } else if ((target instanceof Tank) && ((Tank) target).isOnFire()) {
-            r = new Report(3550);
-            r.subject = subjectId;
-            r.addDesc(entityTarget);
-            r.indent(3);
+            report = new Report(3550);
+            report.subject = subjectId;
+            report.addDesc(entityTarget);
+            report.indent(3);
             Roll diceRoll = Compute.rollD6(2);
-            r.add(diceRoll);
+            report.add(diceRoll);
 
             if (diceRoll.getIntValue() >= 4) {
-                r.choose(true);
+                report.choose(true);
                 for (int i = 0; i < entityTarget.locations(); i++) {
                     ((Tank) target).extinguishAll();
                 }
             } else {
-                r.choose(false);
+                report.choose(false);
             }
-            vPhaseReport.add(r);
+            vPhaseReport.add(report);
         }
-        // coolant also reduces heat of mechs
+        // coolant also reduces heat of meks
         if (target instanceof Mek) {
             int nDamage = (nDamPerHit * hits) + 1;
-            r = new Report(3400);
-            r.subject = subjectId;
-            r.indent(2);
-            r.add(nDamage);
-            r.choose(false);
-            vPhaseReport.add(r);
+            report = new Report(3400);
+            report.subject = subjectId;
+            report.indent(2);
+            report.add(nDamage);
+            report.choose(false);
+            vPhaseReport.add(report);
             entityTarget.coolFromExternal += nDamage;
-            hits = 0;
         }
     }
 }

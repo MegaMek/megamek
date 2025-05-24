@@ -15,7 +15,7 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplay;
 
 public interface IHasUnitDisplay {
     UnitDisplay getUnitDisplay();

@@ -14,7 +14,7 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplay;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 

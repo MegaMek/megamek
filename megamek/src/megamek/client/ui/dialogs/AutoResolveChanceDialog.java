@@ -21,6 +21,7 @@ package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.RawImagePanel;
 import megamek.common.Board;
 import megamek.common.Configuration;
 import megamek.common.autoresolve.Resolver;
@@ -51,7 +52,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
 
     private JProgressBar progressBar;
     private final int numberOfSimulations;
-    private JLabel splash;
+    private RawImagePanel splash;
     private final Task task;
 
     private final List<String> progressText;
@@ -188,11 +189,11 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         return task;
     }
 
-    public JLabel getSplash() {
+    public RawImagePanel getSplash() {
         return splash;
     }
 
-    public void setSplash(final JLabel splash) {
+    public void setSplash(final RawImagePanel splash) {
         this.splash = splash;
     }
 

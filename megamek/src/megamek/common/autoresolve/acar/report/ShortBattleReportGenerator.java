@@ -40,6 +40,7 @@ import java.util.Random;
 import java.util.Set;
 
 import megamek.common.Board;
+import megamek.common.Entity;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
@@ -193,6 +194,11 @@ public class ShortBattleReportGenerator {
           "acar.report.status.combat_ineffective"
     };
 
+    private static final String[] FORCE_STATUS_VANQUISHED_KEYS = {
+          "acar.report.status.vanquished",
+          "acar.report.status.annihilated"
+    };
+
     // Report format templates
     private static final String REPORT_FORMAT = "acar.report.format.standard";
 
@@ -255,26 +261,40 @@ public class ShortBattleReportGenerator {
             teamData.teamId = team.getId();
             teamData.teamName = team.toString();
 
-            // Count initial and remaining units
-            int initialUnits = 0;
+            // Count units for all players in the team
             int remainingUnits = 0;
+            int destroyedUnits = 0;
+            int retreatingUnits = 0;
 
             for (var player : team.players()) {
-                // Get destroyed formations for this player
-                long destroyedCount = context.getGraveyard().stream()
-                                            .filter(e -> e instanceof Formation)
-                                            .filter(f -> f.getOwnerId() == player.getId())
-                                            .count();
+                // Get remaining entities (active units)
+                var playerEntities = context.getInGameObjects().stream()
+                                           .filter(e -> e.getOwnerId() == player.getId())
+                                           .filter(Entity.class::isInstance)
+                                           .count();
 
-                int activeCount = context.getActiveFormations(player).size();
+                // Get destroyed entities
+                var deadEntities = context.getGraveyard().stream()
+                                         .filter(e -> e.getOwnerId() == player.getId())
+                                         .filter(Entity.class::isInstance)
+                                         .count();
 
-                remainingUnits += activeCount;
-                initialUnits += activeCount + (int) destroyedCount;
+                // Get retreating entities
+                var retreatingEntities = context.getRetreatingUnits().stream()
+                                               .filter(e -> e.getOwnerId() == player.getId())
+                                               .count();
+
+                remainingUnits += (int) playerEntities;
+                destroyedUnits += (int) deadEntities;
+                retreatingUnits += (int) retreatingEntities;
             }
 
-            teamData.initialUnits = initialUnits;
-            teamData.remainingUnits = remainingUnits;
-            teamData.losses = initialUnits - remainingUnits;
+            // Calculate totals
+            teamData.remainingUnits = remainingUnits; // already counts retreated units
+            teamData.destroyedUnits = destroyedUnits;
+            teamData.retreatingUnits = retreatingUnits;
+            teamData.initialUnits = remainingUnits + destroyedUnits;
+            teamData.losses = destroyedUnits; // Only count destroyed as losses
 
             data.teams.put(team.getId(), teamData);
         }
@@ -286,6 +306,12 @@ public class ShortBattleReportGenerator {
         data.totalRemainingUnits = data.teams.values().stream()
                                          .mapToInt(t -> t.remainingUnits)
                                          .sum();
+        data.totalDestroyedUnits = data.teams.values().stream()
+                                         .mapToInt(t -> t.destroyedUnits)
+                                         .sum();
+        data.totalRetreatingUnits = data.teams.values().stream()
+                                          .mapToInt(t -> t.retreatingUnits)
+                                          .sum();
 
         // Get terrain tags
         data.terrainTags = getTerrainTags();
@@ -295,6 +321,7 @@ public class ShortBattleReportGenerator {
 
         return data;
     }
+
 
     /**
      * Generates the first paragraph describing forces and terrain
@@ -321,15 +348,14 @@ public class ShortBattleReportGenerator {
                                           .text();
 
         // Get atmospheric description
-        String atmosphereKey = selectRandom(ATMOSPHERE_KEYS);
-        String atmosphereDescription = new PublicReportEntry(atmosphereKey)
+        String atmosphereDescription = new PublicReportEntry(data.atmosphericConditions)
                                              .noNL()
                                              .text();
 
         // Combine into first paragraph
         return new PublicReportEntry(forceCompositionKey)
                      .add(data.totalInitialUnits)
-                     .add(String.join(" and ", teamDescriptions))
+                     .add(String.join(new PublicReportEntry("acar.report.and").noNL().text(), teamDescriptions))
                      .add(terrainDescription)
                      .add(atmosphereDescription)
                      .noNL()
@@ -455,8 +481,10 @@ public class ShortBattleReportGenerator {
                 statusKey = selectRandom(FORCE_STATUS_INTACT_KEYS);
             } else if (strengthRatio > 0.4) {
                 statusKey = selectRandom(FORCE_STATUS_REDUCED_KEYS);
-            } else {
+            } else if (strengthRatio > 0.0) {
                 statusKey = selectRandom(FORCE_STATUS_CRITICAL_KEYS);
+            } else {
+                statusKey = selectRandom(FORCE_STATUS_VANQUISHED_KEYS);
             }
 
             statusReports.add(new PublicReportEntry(statusKey)
@@ -536,16 +564,40 @@ public class ShortBattleReportGenerator {
     }
 
     /**
-     * Gets atmospheric conditions
+     * Gets atmospheric conditions, this is a very simplistic atmospheric condition, but should suffice for now
      */
     private String getAtmosphericConditions() {
         // This requires planetary conditions to be present in the simulation context
         // right now it is a placeholder
-        if (planetaryConditions.getWeather().isClear()) {
-            return "clear";
-        } else {
-            return "cloudy"; // Placeholder for other conditions
+        if (planetaryConditions.getWeather().isLightRain()) {
+            return ATMOSPHERE_KEYS[1];
         }
+        if (planetaryConditions.getWeather().isHeavyRainOrGustingRainOrDownpour()) {
+            return ATMOSPHERE_KEYS[2];
+        }
+        if (planetaryConditions.getWeather().isLightSnow()) {
+            return ATMOSPHERE_KEYS[3];
+        }
+        if (planetaryConditions.getWeather().isHeavySnow()) {
+            return ATMOSPHERE_KEYS[4];
+        }
+        if (planetaryConditions.getFog().isFogLight()) {
+            return ATMOSPHERE_KEYS[5];
+        }
+        if (planetaryConditions.getFog().isFogHeavy()) {
+            return ATMOSPHERE_KEYS[6];
+        }
+        if (planetaryConditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
+            return ATMOSPHERE_KEYS[7];
+        }
+        if (planetaryConditions.getLight().isDusk()) {
+            return ATMOSPHERE_KEYS[8];
+        }
+        if (planetaryConditions.getAtmosphere().isVacuum()) {
+            return ATMOSPHERE_KEYS[9];
+        }
+
+        return ATMOSPHERE_KEYS[0]; // Default to clear
     }
 
     private List<String> getUpToThreeTerrainFeatures(List<String> terrainTags) {
@@ -568,6 +620,8 @@ public class ShortBattleReportGenerator {
         int rounds;
         int totalInitialUnits;
         int totalRemainingUnits;
+        int totalDestroyedUnits;
+        int totalRetreatingUnits;
         int winningTeamId = -1;
         Map<Integer, TeamData> teams = new HashMap<>();
         List<String> terrainTags;
@@ -582,6 +636,8 @@ public class ShortBattleReportGenerator {
         String teamName;
         int initialUnits;
         int remainingUnits;
-        int losses;
+        int destroyedUnits;
+        int retreatingUnits;
+        int losses; // destroyed units only
     }
 }

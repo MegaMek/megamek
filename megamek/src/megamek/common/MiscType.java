@@ -7273,7 +7273,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createManipulator() {
         MiscType misc = new MiscType();
-        // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 5 LINES
         misc.name = "Manipulator (Non-Mech/Non-BattleArmor)";
         misc.setInternalName(EquipmentTypeLookup.MANIPULATOR_INDUSTRIAL);
         misc.addLookupName("Manipulator");

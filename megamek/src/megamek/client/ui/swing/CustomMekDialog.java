@@ -36,6 +36,7 @@ import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.swing.dialog.SliderDialog;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
@@ -624,7 +625,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 }
 
             }
-            Slider sl = new Slider(clientGUI.frame,
+            SliderDialog sl = new SliderDialog(clientGUI.frame,
                   Messages.getString("CustomMekDialog.offboardDistanceTitle"),
                   Messages.getString("CustomMekDialog.offboardDistanceQuestion"),
                   Math.min(Math.max(entities.get(0).getOffBoardDistance(), 17), maxDistance),

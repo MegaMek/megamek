@@ -33,7 +33,7 @@ import javax.swing.*;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ButtonEsc;
-import megamek.client.ui.swing.ClientDialog;
+import megamek.client.ui.swing.dialog.ClientDialog;
 import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.OkayAction;
 import megamek.client.ui.swing.dialog.DialogButton;

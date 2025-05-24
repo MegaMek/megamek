@@ -14,7 +14,7 @@
 package megamek.client.ui.swing.phaseDisplay.dialog;
 
 import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.swing.AbstractChoiceDialog;
+import megamek.client.ui.swing.dialog.AbstractChoiceDialog;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;

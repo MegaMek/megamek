@@ -63,8 +63,12 @@ import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BotCommandsPanel;
-import megamek.client.ui.dialogs.MiniReportDisplayDialog;
-import megamek.client.ui.dialogs.UnitDisplayDialog;
+import megamek.client.ui.swing.dialog.LOSDialog;
+import megamek.client.ui.swing.dialog.MiniReport.MiniReportDisplayDialog;
+import megamek.client.ui.swing.dialog.MiniReport.MiniReportDisplay;
+import megamek.client.ui.swing.dialog.RandomNameDialog;
+import megamek.client.ui.swing.dialog.RulerDialog;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.enums.DialogResult;
@@ -80,14 +84,20 @@ import megamek.client.ui.swing.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.swing.boardview.overlay.UnitOverviewOverlay;
 import megamek.client.ui.swing.boardview.spriteHandler.*;
 import megamek.client.ui.swing.boardview.toolTip.TWBoardViewTooltip;
+import megamek.client.ui.swing.dialog.AccessibilityDialog;
+import megamek.client.ui.swing.dialog.CommonAboutDialog;
+import megamek.client.ui.swing.dialog.EditBotsDialog;
+import megamek.client.ui.swing.dialog.InformDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
-import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
-import megamek.client.ui.swing.forceDisplay.ForceDisplayPanel;
+import megamek.client.ui.swing.dialog.PlayerListDialog;
+import megamek.client.ui.swing.dialog.RandomArmy.RandomArmyDialog;
+import megamek.client.ui.swing.dialog.forceDisplay.ForceDisplayDialog;
+import megamek.client.ui.swing.dialog.forceDisplay.ForceDisplayPanel;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.phaseDisplay.*;
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
@@ -256,7 +266,7 @@ public class ClientGUI extends AbstractClientGUI
     protected CommonMenuBar menuBar;
     private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
-    private AccessibilityWindow aw;
+    private AccessibilityDialog aw;
 
     public MegaMekController controller;
     private ChatterBox cb;
@@ -287,7 +297,7 @@ public class ClientGUI extends AbstractClientGUI
 
     public JDialog minimapW;
     private MapMenu popup;
-    private Ruler ruler;
+    private RulerDialog ruler;
     protected JComponent curPanel;
     public ChatLounge chatlounge;
     private OffBoardTargetOverlay offBoardOverlay;
@@ -626,7 +636,7 @@ public class ClientGUI extends AbstractClientGUI
         layoutFrame();
         menuBar.addActionListener(this);
 
-        aw = new AccessibilityWindow(this);
+        aw = new AccessibilityDialog(this);
         aw.setLocation(0, 0);
         aw.setSize(300, 300);
 
@@ -646,9 +656,9 @@ public class ClientGUI extends AbstractClientGUI
 
         setPlayerListDialog(new PlayerListDialog(frame, client, false));
 
-        Ruler.color1 = GUIP.getRulerColor1();
-        Ruler.color2 = GUIP.getRulerColor2();
-        ruler = new Ruler(frame, client, bv, client.getGame());
+        RulerDialog.color1 = GUIP.getRulerColor1();
+        RulerDialog.color2 = GUIP.getRulerColor2();
+        ruler = new RulerDialog(frame, client, bv, client.getGame());
         ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
         ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
         UIUtil.updateWindowBounds(ruler);

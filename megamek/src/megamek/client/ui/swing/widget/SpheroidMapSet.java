@@ -25,7 +25,7 @@ import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplay;
 import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Dropship;

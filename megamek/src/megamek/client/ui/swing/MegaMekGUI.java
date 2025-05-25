@@ -488,6 +488,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Calculates the preferred size for the splash panel
      * 
      * @param scaledMonitorSize the scaled monitor dimensions
+     * @param splashImage the reference image for the aspect ratio
      * @return the calculated preferred size for the splash panel
      */
     private Dimension calculateSplashPanelPreferredSize(Dimension scaledMonitorSize, Image splashImage) {

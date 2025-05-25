@@ -458,7 +458,7 @@ public class TipOfTheDay {
         label.setText(htmlText);
         label.setFont(font);
         label.setForeground(TIP_FONT_COLOR);
-        label.setSize(width, Integer.MAX_VALUE);
+        label.setSize(width, Short.MAX_VALUE);
         return label;
     }
 

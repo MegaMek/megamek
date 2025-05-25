@@ -7276,9 +7276,9 @@ public class MiscType extends EquipmentType {
         // CHECKSTYLE IGNORE ForbiddenWords FOR 5 LINES
         misc.name = "Manipulator (Non-Mech/Non-BattleArmor)";
         misc.setInternalName(EquipmentTypeLookup.MANIPULATOR_INDUSTRIAL);
-        misc.addLookupName("Manipulator");
         misc.addLookupName("Manipulator [Non-Mech/Non-Battle Armor]");
         misc.addLookupName("Manipulator [Non-Mech/Non-BattleArmor]");
+        misc.addLookupName("Manipulator");
         misc.shortName = "Manipulator";
         misc.flags = misc.flags.or(F_MANIPULATOR)
                            .or(F_SUPPORT_TANK_EQUIPMENT)

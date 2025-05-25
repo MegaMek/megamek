@@ -8,6 +8,13 @@
         <property name="file" value="${suppressionFile}"/>
     </module>
 
+    <module name="RegexpSingleline">
+        <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|creating free software for the BattleTech community|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks)).*\b(?i)(mech|mechwarrior|battletech|battlemech|aerotech|protomech|'mech|`Mech|TripodMech|QuadMech|LandAirMech)\b.*$"/>
+        <property name="ignoreCase" value="true"/>
+        <property name="message" value="Forbidden word found"/>
+        <property name="fileExtensions" value="properties, md"/>
+    </module>
+
     <!-- Check that "license" appears at least once in the file -->
     <module name="RegexpSingleline">
         <property name="format" value="(?i)\b(license|copyright)\b"/>

@@ -9,7 +9,7 @@
     </module>
 
     <module name="RegexpSingleline">
-        <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|creating free software for the BattleTech community|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks)).*\b(?i)(mech|mechwarrior|battletech|battlemech|aerotech|protomech|'mech|`Mech|TripodMech|QuadMech|LandAirMech)\b.*$"/>
+        <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks)).*\b(?i)(mech|mechwarrior|battlemech|aerotech|protomech|'mech|`Mech|TripodMech|BipedMech|QuadMech|LandAirMech|OmniMech|’Mechs)\b.*$"/>
         <property name="ignoreCase" value="true"/>
         <property name="message" value="Forbidden word found"/>
         <property name="fileExtensions" value="properties, md"/>
@@ -37,7 +37,7 @@
 
         <module name="RegexpSinglelineJava">
             <property name="id" value="ForbiddenWords"/>
-            <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|creating free software for the BattleTech community|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks)).*\b(?i)(mech|mechwarrior|battletech|battlemech|aerotech|protomech|'mech|`Mech|TripodMech|QuadMech|LandAirMech)\b.*$"/>
+            <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks)).*\b(?i)(mech|mechwarrior|battlemech|aerotech|protomech|'mech|`Mech|TripodMech|BipedMech|QuadMech|LandAirMech|OmniMech|’Mechs)\b.*$"/>
             <property name="ignoreCase" value="true"/>
             <property name="ignoreComments" value="false"/>
             <property name="message" value="Forbidden word found"/>

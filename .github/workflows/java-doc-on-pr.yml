@@ -2,13 +2,13 @@ name: JavaDoc Generation
 
 on:
   pull_request:
-    branches: [master]
+    branches: [ master ]
 
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
 
 jobs:
-  build:
+  pr_java_doc:
     runs-on: ubuntu-latest
 
     steps:

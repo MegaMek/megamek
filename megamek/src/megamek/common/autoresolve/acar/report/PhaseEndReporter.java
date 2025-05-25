@@ -74,12 +74,13 @@ public class PhaseEndReporter implements IPhaseEndReporter {
     }
 
     @Override
-    public void addSummary() {
+    public void addSummary(SimulationManager simulationManager) {
         var logFile = gameLogger.getLogFile();
         var rounds = context.getCurrentRound();
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("<p>").append(new PublicReportEntry("acar.shortBlurb").text()).append("</p><br/>");
+        stringBuilder.append("<p>").append(new ShortBattleReportGenerator(simulationManager).generateReport().text())
+              .append("</p><br/>");
         stringBuilder.append("<a name='summary'>").append(new PublicReportEntry("acar.header.summary").text()).append("</a></p>")
             .append("<ul>");
         for (int i = 0; i <= rounds; i++) {

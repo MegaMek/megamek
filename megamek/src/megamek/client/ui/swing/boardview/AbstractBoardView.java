@@ -135,6 +135,7 @@ public abstract class AbstractBoardView implements IBoardView {
         return Collections.unmodifiableSet(allSprites);
     }
 
+    @Override
     public Player getLocalPlayer() {
         return localPlayer;
     }

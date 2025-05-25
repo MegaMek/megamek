@@ -34,14 +34,17 @@ public class LandingHexNotice extends SimpleNagNotice {
         super(clientGui);
     }
 
+    @Override
     protected String message() {
         return Messages.getString("LandingHexNotice.message");
     }
 
+    @Override
     protected String title() {
         return Messages.getString("LandingHexNotice.title");
     }
 
+    @Override
     protected String preferenceKey() {
         return "ShowLandingHexNotice";
     }

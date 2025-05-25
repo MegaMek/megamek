@@ -1768,8 +1768,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Only bearings-only capital missiles and indirect fire artillery or equivalent (Cap and Subcap atmospheric
         // fire) can be fired in the targeting phase
+        boolean isCapitalOrSubCapital = (wtype != null) && (wtype.isCapital() || wtype.isSubCapital());
         if (game.getPhase().isTargeting() && (isArtilleryFLAK
-              || !(isArtilleryIndirect || isBearingsOnlyMissile || wtype.isCapital() || wtype.isSubCapital()))) {
+              || !(isArtilleryIndirect || isBearingsOnlyMissile || isCapitalOrSubCapital))) {
             return Messages.getString("WeaponAttackAction.NotValidForTargPhase");
         }
         // Only TAG can be fired in the offboard phase
@@ -4552,9 +4553,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Without valid toHit data, the rest of this will fail
             toHit = new ToHitData();
         }
-
-        // Target's hex
-        Hex targHex = game.getHexOf(target);
 
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {

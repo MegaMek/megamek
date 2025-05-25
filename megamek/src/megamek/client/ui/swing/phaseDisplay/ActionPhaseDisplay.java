@@ -304,6 +304,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
     }
 
+    @Override
     public void removeAllListeners() {
         game.removeGameListener(this);
         clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));

@@ -2091,7 +2091,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 return true;
             }
             // Can't deploy on the surface of water
-            if (hex.containsTerrain(Terrains.WATER) && (testAltitude == 0)) {
+            if (hex.containsTerrain(Terrains.WATER)) {
                 return true;
             }
         }

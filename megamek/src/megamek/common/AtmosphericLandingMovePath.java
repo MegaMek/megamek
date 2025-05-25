@@ -52,4 +52,9 @@ public class AtmosphericLandingMovePath extends MovePath {
     public Coords getFinalCoords() {
         return groundMapLandingLocation.coords();
     }
+
+    @Override
+    public MovePath clone() {
+        return super.clone();
+    }
 }

@@ -24,7 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+import java.io.Serial;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -48,13 +48,14 @@ import megamek.common.moves.MovePath;
  * @author suvarov454@sourceforge.net
  */
 public class ManeuverChoiceDialog extends JDialog implements ActionListener {
+    @Serial
     private static final long serialVersionUID = 3093043054221558221L;
 
     private boolean confirm;
 
-    private JPanel panButtons = new JPanel();
-    private JButton butOK = new JButton(Messages.getString("Okay"));
-    private JButton butCancel = new JButton(Messages.getString("Cancel"));
+    private final JPanel panButtons = new JPanel();
+    private final JButton butOK = new JButton(Messages.getString("Okay"));
+    private final JButton butCancel = new JButton(Messages.getString("Cancel"));
 
     /**
      * The checkboxes for available choices.
@@ -65,11 +66,9 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
      * Create and initialize the dialog.
      *
      * @param parent - the <code>Frame</code> that is locked by this dialog.
-     * @param question - <code>String</code> displayed above the choices. The
-     *            question string is tokenised on "\n".
      * @param choices - an array of <code>String</code>s to be displayed.
      */
-    private void initialize(JFrame parent, String question, String[] choices) {
+    private void initialize(JFrame parent, String[] choices) {
         super.setResizable(false);
 
         GridBagLayout gridbag = new GridBagLayout();
@@ -139,16 +138,12 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
 
         pack();
         Dimension size = getSize();
-        boolean updateSize = false;
+
         if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
             size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
         if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
             size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
-        }
-        if (updateSize) {
-            setSize(size);
-            size = getSize();
         }
         setLocation(parent.getLocation().x + parent.getSize().width / 2
                 - size.width / 2, parent.getLocation().y
@@ -188,16 +183,35 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
      *
      * @param parent - the <code>Frame</code> that is locked by this dialog.
      * @param title - the title <code>String</code> for this dialog.
+     */
+    public ManeuverChoiceDialog(JFrame parent, String title) {
+        super(parent, title, true);
+        String[] choices = new String[ManeuverType.MAN_SIZE];
+        for (int type = 0; type < ManeuverType.MAN_SIZE; type++) {
+            choices[type] = ManeuverType.getTypeName(type);
+        }
+        initialize(parent, choices);
+    }
+
+    /**
+     * Create a choice dialog. The player can choose any or all of the choices.
+     * If no choices are passed in, this will be a very boring dialog, but it
+     * will not suffer an exception.
+     *
+     * @param parent - the <code>Frame</code> that is locked by this dialog.
+     * @param title - the title <code>String</code> for this dialog.
      * @param question - <code>String</code> displayed above the choices. The
      *            question string is tokenised on "\n".
+     * @deprecated question is never used, use the other constructor instead.
      */
+    @Deprecated(since = "0.50.07", forRemoval = true)
     public ManeuverChoiceDialog(JFrame parent, String title, String question) {
         super(parent, title, true);
         String[] choices = new String[ManeuverType.MAN_SIZE];
         for (int type = 0; type < ManeuverType.MAN_SIZE; type++) {
             choices[type] = ManeuverType.getTypeName(type);
         }
-        initialize(parent, question, choices);
+        initialize(parent, choices);
     }
 
     @Override

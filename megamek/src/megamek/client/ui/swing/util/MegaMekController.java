@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.panels.BoardEditorPanel;
 
 /**
  * This class implements a KeyEventDispatcher, which handles all generated
@@ -66,7 +67,7 @@ public class MegaMekController implements KeyEventDispatcher {
 
     private static final int MAX_REPEAT_RATE = 100;
 
-    public BoardEditor boardEditor = null;
+    public BoardEditorPanel boardEditor = null;
     public IClientGUI clientgui = null;
 
     /** Maps a key code to a command string. */

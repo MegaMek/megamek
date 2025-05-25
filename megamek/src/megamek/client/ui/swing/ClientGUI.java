@@ -96,6 +96,8 @@ import megamek.client.ui.swing.dialog.forceDisplay.ForceDisplayPanel;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.minimap.Minimap;
+import megamek.client.ui.swing.panels.ReceivingGameDataPanel;
+import megamek.client.ui.swing.panels.WaitingForServerPanel;
 import megamek.client.ui.swing.phaseDisplay.*;
 import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
@@ -1025,18 +1027,14 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_MOVE_ENV:
                 GUIP.setMoveEnvelope(!GUIP.getMoveEnvelope());
-                if (curPanel instanceof MovementDisplay) {
+                if (curPanel instanceof MovementDisplay movementDisplay) {
                     Entity entity = getUnitDisplay().getCurrentEntity();
-                    if (!entity.isAero()) {
-                        ((MovementDisplay) curPanel).computeMovementEnvelope(entity);
-                    } else {
-                        ((MovementDisplay) curPanel).computeAeroMovementEnvelope(entity);
-                    }
+                    movementDisplay.computeMovementEnvelope(entity);
                 }
                 break;
             case VIEW_MOVE_MOD_ENV:
-                if (curPanel instanceof MovementDisplay) {
-                    ((MovementDisplay) curPanel).computeModifierEnvelope();
+                if (curPanel instanceof MovementDisplay movementDisplay) {
+                    movementDisplay.computeModifierEnvelope();
                 }
                 break;
             case VIEW_CHANGE_THEME:

@@ -13,7 +13,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.panels;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -36,6 +36,7 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.PortraitChooserDialog;
+import megamek.client.ui.swing.CustomMekDialog;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Infantry;
@@ -54,7 +55,7 @@ import megamek.common.preference.PreferenceManager;
  *
  * @author Neoancient
  */
-public class CustomPilotView extends JPanel {
+public class CustomPilotViewPanel extends JPanel {
     private static final long serialVersionUID = 345126674612500365L;
 
     private final Entity entity;
@@ -86,7 +87,7 @@ public class CustomPilotView extends JPanel {
 
     private Portrait portrait;
 
-    public CustomPilotView(CustomMekDialog parent, Entity entity, int slot, boolean editable) {
+    public CustomPilotViewPanel(CustomMekDialog parent, Entity entity, int slot, boolean editable) {
         this.entity = entity;
         setLayout(new GridBagLayout());
         JLabel label;
@@ -487,7 +488,7 @@ public class CustomPilotView extends JPanel {
         }
     }
 
-    void enableMissing(boolean enable) {
+    public void enableMissing(boolean enable) {
         chkMissing.setEnabled(enable);
     }
 }

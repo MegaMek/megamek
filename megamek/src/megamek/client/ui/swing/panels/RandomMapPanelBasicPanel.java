@@ -11,7 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -33,8 +33,8 @@ import megamek.logging.MMLogger;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 3/13/14 3:55 PM
  */
-public class RandomMapPanelBasic extends JPanel {
-    private static final MMLogger logger = MMLogger.create(RandomMapPanelBasic.class);
+public class RandomMapPanelBasicPanel extends JPanel {
+    private static final MMLogger logger = MMLogger.create(RandomMapPanelBasicPanel.class);
 
     private static final long serialVersionUID = -6971330721623187856L;
 
@@ -82,7 +82,7 @@ public class RandomMapPanelBasic extends JPanel {
     private final CheckpointComboBox<String> riversCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> iceCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
 
-    public RandomMapPanelBasic(MapSettings mapSettings) {
+    public RandomMapPanelBasicPanel(MapSettings mapSettings) {
         setMapSettings(mapSettings);
 
         initGUI();

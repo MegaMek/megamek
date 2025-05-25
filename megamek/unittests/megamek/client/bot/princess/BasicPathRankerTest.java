@@ -835,7 +835,7 @@ class BasicPathRankerTest {
         friendsCoords = new Coords(10, 10);
         builder.withFriends();
 
-        // TEST CASE 14: Set up to run away (crippled mech)
+        // TEST CASE 14: Set up to run away (crippled mek)
         final double baseFleeingRank = -51.25;
         when(mockMover.isCrippled()).thenReturn(true);
         expected = new RankedPath(baseFleeingRank,

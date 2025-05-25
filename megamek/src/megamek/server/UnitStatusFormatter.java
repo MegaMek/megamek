@@ -20,7 +20,7 @@ import megamek.common.util.StringUtil;
 public abstract class UnitStatusFormatter {
     /**
      * Much of the layout for the status string is heavily inspired by the
-     * BattleTech MUSE/MUX code
+     * BT MUSE/MUX code
      */
     public static String format(Entity e) {
         StringBuilder sb = new StringBuilder(2048);

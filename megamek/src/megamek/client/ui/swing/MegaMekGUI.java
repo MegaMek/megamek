@@ -362,8 +362,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         splashImage = getImage(FILENAME_MEGAMEK_SPLASH, scaledMonitorSize.width, scaledMonitorSize.height);
         logoImage = getImage(FILENAME_LOGO, scaledMonitorSize.width, scaledMonitorSize.height);
         medalImage = getImage(FILENAME_MEDAL, scaledMonitorSize.width, scaledMonitorSize.height);
-        Dimension splashPanelPreferredSize = new Dimension((int) (scaledMonitorSize.width * 0.75),
-                (int) (scaledMonitorSize.height * 0.75));
+        Dimension splashPanelPreferredSize = calculateSplashPanelPreferredSize(scaledMonitorSize, splashImage);
         // This is an empty panel that will contain the splash image
         splashPanel = new JPanel() {
             @Override
@@ -483,6 +482,38 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.pack();
         // center window in screen
         frame.setLocationRelativeTo(null);
+    }
+
+    /**
+     * Calculates the preferred size for the splash panel
+     * 
+     * @param scaledMonitorSize the scaled monitor dimensions
+     * @return the calculated preferred size for the splash panel
+     */
+    private Dimension calculateSplashPanelPreferredSize(Dimension scaledMonitorSize, Image splashImage) {
+        // Calculate max dimensions (75% of screen)
+        int maxWidth = (int) (scaledMonitorSize.width * 0.75);
+        int maxHeight = (int) (scaledMonitorSize.height * 0.75);
+        
+        if (splashImage != null && splashImage.getWidth(null) > 0 && splashImage.getHeight(null) > 0) {
+            // Calculate aspect ratio preserving dimensions
+            double imageWidth = splashImage.getWidth(null);
+            double imageHeight = splashImage.getHeight(null);
+            double imageAspectRatio = imageWidth / imageHeight;
+            
+            int targetWidth = maxWidth;
+            int targetHeight = (int) (targetWidth / imageAspectRatio);
+            
+            if (targetHeight > maxHeight) {
+                targetHeight = maxHeight;
+                targetWidth = (int) (targetHeight * imageAspectRatio);
+            }
+            
+            return new Dimension(targetWidth, targetHeight);
+        } else {
+            // Fallback to original calculation if image is not available
+            return new Dimension(maxWidth, maxHeight);
+        }
     }
 
     /**

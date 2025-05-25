@@ -51,7 +51,7 @@ and [Strategic Operations](https://store.catalystgamelabs.com/collections/battle
 | Type           | MM Status                                                                                                                                                              | MML Status                                                                                                                                                                       | MHQ Status                                                                                                                                                        |
 |----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Latest Release | [![Release](https://img.shields.io/github/release/MegaMek/megamek.svg)](https://gitHub.com/MegaMek/megamek/releases/)                                                  | [![Release](https://img.shields.io/github/release/MegaMek/megameklab.svg)](https://gitHub.com/MegaMek/megameklab/releases/)                                                      | [![Release](https://img.shields.io/github/release/MegaMek/mekhq.svg)](https://gitHub.com/MegaMek/mekhq/releases/)                                                 |
-| Javadocs       | [![javadoc](https://javadoc.io/badge2/org.megamek/megamek/javadoc.svg?color=red)](https://megamek.org/megamek/)                                                        | [![javadoc](https://javadoc.io/badge2/org.megamek/megameklab/javadoc.svg?color=red)](https://megamek.org/megameklab/)                                                            | [![javadoc](https://javadoc.io/badge2/org.megamek/mekhq/javadoc.svg?color=red)](https://megamek.org/mekhq/))                                                      |
+| Javadocs | [![javadoc](https://badgen.net/badge/javadoc/master/red?icon=github)](https://megamek.org/megamek) | [![javadoc](https://badgen.net/badge/javadoc/master/red?icon=github)](https://megamek.org/megameklab) | [![javadoc](https://badgen.net/badge/javadoc/master/red?icon=github)](https://megamek.org/mekhq) |
 | License        | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)                                                     | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)                                                               | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)                                                 |
 | Build (CI)     | [![MM Nightly CI](https://github.com/MegaMek/megamek/workflows/MegaMek%20Nightly%20CI/badge.svg)](https://github.com/MegaMek/megamek/actions/workflows/nightly-ci.yml) | [![MML Nightly CI](https://github.com/MegaMek/megameklab/workflows/MegaMekLab%20Nightly%20CI/badge.svg)](https://github.com/MegaMek/megameklab/actions/workflows/nightly-ci.yml) | [![MHQ Nightly CI](https://github.com/MegaMek/mekhq/workflows/MekHQ%20Nightly%20CI/badge.svg)](https://github.com/MegaMek/mekhq/actions/workflows/nightly-ci.yml) |
 | Issues         | [![GitHub Issues](https://badgen.net/github/open-issues/MegaMek/megamek)](https://gitHub.com/MegaMek/megamek/issues/)                                                  | [![GitHub Issues](https://badgen.net/github/open-issues/MegaMek/megameklab)](https://gitHub.com/MegaMek/megameklab/issues/)                                                      | [![GitHub Issues](https://badgen.net/github/open-issues/MegaMek/mekhq)](https://gitHub.com/MegaMek/mekhq/issues/)                                                 |
@@ -168,11 +168,11 @@ or "high." Except for cities, where you pick a type of city instead.
 - **Road**: chance to have a single road running across the map
 - **Craters**: chance for craters, also the size and number. Good for a "moonscape" map
 - **City:**
-    - **HUB**: roads wander out from the center with plenty of twists and turns. A common pattern for older european
+  - **HUB**: roads wander out from the center with plenty of twists and turns. A common pattern for older european
       cities.
-    - **GRID**: vertical and horizontal roads divide the city into rectangular blocks. A pattern common in newer cities,
+  - **GRID**: vertical and horizontal roads divide the city into rectangular blocks. A pattern common in newer cities,
       especially in North America and asia.
-    - **METRO**: a grid with roads forming a diagonal X from the center as well.
+  - **METRO**: a grid with roads forming a diagonal X from the center as well.
 
 Water and swamp will affect the city plan, as the builders will have to make bridges to cross it or just give up and
 stop the road at the edge. Mountain tops (4+ height) are expensive to build on, so they will only build in the valleys.
@@ -359,45 +359,45 @@ settings._
 - **Theme**: leave blank or enter a theme supported by the tileset. Grass, Lunar, Mars, Snow are themes supported by
   the standard tileset.
 - **Elevation settings:**
-    - **Amount of elevation**: changes the "roughness" of the map, a low number will have fewer elevation changes than a
+  - **Amount of elevation**: changes the "roughness" of the map, a low number will have fewer elevation changes than a
       high number Elevation range: height difference between the lowest and highest hex on the map. Level 0 is set to
       the most common height.
-    - **Probability of inverting**: % chance to make a sinkhole instead of a mountain.
-    - **Algorithm**: 0 generates rolling hills, 1 generates spiky terrain, 2 combines both generators. 0 is likely to
+  - **Probability of inverting**: % chance to make a sinkhole instead of a mountain.
+  - **Algorithm**: 0 generates rolling hills, 1 generates spiky terrain, 2 combines both generators. 0 is likely to
       have less LOS blocking terrain.
-    - **Cliffs**: % chance to change a steep slope into a cliff. For example, if a group of level 1 hexes have level 0
+  - **Cliffs**: % chance to change a steep slope into a cliff. For example, if a group of level 1 hexes have level 0
       and level 2 hexes adjacent, they will all be moved to level 0, giving a cliff for meks to hide behind. The effect
       is quite subtle unless you have quite a high-elevation range to begin with.
 - **Patch terrain settings (woods, roughs, swamps, lakes, pavements, rubble, fortified, ice)**: Each of these works the
   same way, but places a different type of terrain.
-    - **Number of XXX**: the number of patches which would be present on a 16x17 map. scales up if you have a bigger
+  - **Number of XXX**: the number of patches which would be present on a 16x17 map. scales up if you have a bigger
       map.
-    - **XXX size in hexes**: the size of each patch of terrain
-    - **Probability for heavy woods/deep water**: % chance to place instead of light.
-    - **River/road settings**: Probability is a % chance to have one on the map. If a road crosses water, you'll get a
+  - **XXX size in hexes**: the size of each patch of terrain
+  - **Probability for heavy woods/deep water**: % chance to place instead of light.
+  - **River/road settings**: Probability is a % chance to have one on the map. If a road crosses water, you'll get a
       bridge.
 - **Crater settings:**
-    - **Probability for craters**: % chance that craters are present Number of craters: as for the number of woods, the
+  - **Probability for craters**: % chance that craters are present Number of craters: as for the number of woods, the
       number that would be present on a 16x17 map, scaled up for larger maps.
-    - **Crater radius**: size range for each crater.
+  - **Crater radius**: size range for each crater.
 - **Special effects settings**: Each probability is a % chance. FX modifier changes the amount of effect each one has.
   Values should be small, e.g. -3 to +3
-    - **Fires**: woods hexes will be set on fire or already burned down to rough at the start of the game. + modifier
+  - **Fires**: woods hexes will be set on fire or already burned down to rough at the start of the game. + modifier
       increases number of burned down hexes, —modifier increases number of unscathed woods.
-    - **Frozen water**: water hexes are ice-covered. +modifier decreases the water depth, so for example with a
+  - **Frozen water**: water hexes are ice-covered. +modifier decreases the water depth, so for example with a
       modifier of 1, shallow water hexes are frozen solid, and deep water hexes are converted to ice-covered shallow
       water.
-    - **Flooded map**: hexes with negative elevations are converted to water hexes, while level 0 hexes are converted
+  - **Flooded map**: hexes with negative elevations are converted to water hexes, while level 0 hexes are converted
       to swamps. Ideal for hovercraft and naval units. modifier changes the "sea level"
-    - **Drought**: water hexes are dried up, to shallower water, swamp or rough. Modifier changes the severity of the
+  - **Drought**: water hexes are dried up, to shallower water, swamp or rough. Modifier changes the severity of the
       drought.
-    - **Special effects can be combined**: e.g., flood + drought = rocky shore, flood + frozen + high modifier = glacier
+  - **Special effects can be combined**: e.g., flood + drought = rocky shore, flood + frozen + high modifier = glacier
 - **City Settings**: City type is the same as for the basic settings.
-    - **City Blocks (0-) [16 default]**: higher numbers mean more roads on the map. Scales with map size.
-    - **CF min/max (1–150) [10–100 default]**: CF range for generated buildings. The CF determines the building type
+  - **City Blocks (0-) [16 default]**: higher numbers mean more roads on the map. Scales with map size.
+  - **CF min/max (1–150) [10–100 default]**: CF range for generated buildings. The CF determines the building type
       from the table in BMR.
-    - **Floors min/max (1-50) [1-6 default]**: height range for generated buildings
-    - **Density (1–100) [75 default]**: % chance of a building in each hex where a building is possible. Also chance to
+  - **Floors min/max (1-50) [1-6 default]**: height range for generated buildings
+  - **Density (1–100) [75 default]**: % chance of a building in each hex where a building is possible. Also chance to
       try and build multi-hex buildings.
 
 ## DIFFERENCES BETWEEN THE BOARD GAME AND MEGAMEK

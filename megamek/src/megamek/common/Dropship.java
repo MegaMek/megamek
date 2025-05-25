@@ -179,9 +179,13 @@ public class Dropship extends SmallCraft {
         // plus buildings are prohibited
         boolean isProhibited = hexContainsProhibitedTerrain(hex);
         // Also check for any crushable entities
-        isProhibited |= game.getEntities(c).hasNext();
-        if (isProhibited) {
-            return true;
+        var iter = game.getEntities(c);
+        while (iter.hasNext()) {
+            Entity entity = iter.next();
+            isProhibited |= entity.getId() != this.getId();
+            if (isProhibited) {
+                return true;
+            }
         }
 
         HashMap<Integer, Integer> elevations = new HashMap<>();
@@ -189,19 +193,17 @@ public class Dropship extends SmallCraft {
         for (int dir = 0; dir < 6; dir++) {
             Coords secondaryCoord = c.translated(dir);
             Hex secondaryHex = game.getBoard().getHex(secondaryCoord);
-            boolean occupied = game.getEntities(secondaryCoord).hasNext();
-            if (secondaryHex == null) {
-                // Don't allow landed dropships to hang off the board
-                isProhibited = true;
-            } else {
-                isProhibited |= hexContainsProhibitedTerrain(secondaryHex);
-                isProhibited |= occupied;
-
-                int elev = secondaryHex.getLevel();
-                if (elevations.containsKey(elev)) {
-                    elevations.put(elev, elevations.get(elev) + 1);
-                } else {
-                    elevations.put(elev, 1);
+            iter = game.getEntities(secondaryCoord); // reusing the iter again
+            while (iter.hasNext()) {
+                Entity entity = iter.next();
+                isProhibited |= (entity.getId() != this.getId()) || (secondaryHex == null) || hexContainsProhibitedTerrain(secondaryHex);
+                if (secondaryHex != null) {
+                    int elev = secondaryHex.getLevel();
+                    if (elevations.containsKey(elev)) {
+                        elevations.put(elev, elevations.get(elev) + 1);
+                    } else {
+                        elevations.put(elev, 1);
+                    }
                 }
             }
         }

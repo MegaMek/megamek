@@ -74,6 +74,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.ui.swing.dialog.CommonAboutDialog;
+import megamek.client.ui.swing.panels.BoardEditorPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -488,7 +489,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Display the board editor.
      */
     void showEditor() {
-        BoardEditor editor = new BoardEditor(controller);
+        BoardEditorPanel editor = new BoardEditorPanel(controller);
         controller.boardEditor = editor;
         launch(editor.getFrame());
         editor.boardNew(GUIPreferences.getInstance().getBoardEdRndStart());
@@ -498,7 +499,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Display the board editor and load the given board
      */
     void showEditor(String boardFile) {
-        BoardEditor editor = new BoardEditor(controller);
+        BoardEditorPanel editor = new BoardEditorPanel(controller);
         controller.boardEditor = editor;
         launch(editor.getFrame());
         editor.loadBoard(new File(boardFile));
@@ -523,7 +524,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Display the board editor and open an "open" dialog.
      */
     void showEditorOpen() {
-        BoardEditor editor = new BoardEditor(controller);
+        BoardEditorPanel editor = new BoardEditorPanel(controller);
         controller.boardEditor = editor;
         launch(editor.getFrame());
         editor.loadBoard();

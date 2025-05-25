@@ -96,6 +96,8 @@ import megamek.client.ui.swing.dialog.forceDisplay.ForceDisplayPanel;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.minimap.Minimap;
+import megamek.client.ui.swing.panels.ReceivingGameDataPanel;
+import megamek.client.ui.swing.panels.WaitingForServerPanel;
 import megamek.client.ui.swing.phaseDisplay.*;
 import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;

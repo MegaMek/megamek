@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
@@ -861,4 +862,22 @@ public interface IAero {
      * @param round
      */
     void setEnginesLostRound(int round);
+
+    /**
+     * Check if the specified hex is a prohibited terrain for Aero units to taxi into
+     * @param hex the hex to check
+     * @return true if the hex is a prohibited terrain for Aero units to taxi into
+     */
+    default boolean taxingAeroProhibitedTerrains(@Nullable Hex hex) {
+        return (hex == null) || // It is illegal to taxi offboard
+                     hex.containsTerrain(Terrains.WOODS) ||
+                     hex.containsTerrain(Terrains.ROUGH) ||
+                     ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE)) ||
+                     hex.containsTerrain(Terrains.RUBBLE) ||
+                     hex.containsTerrain(Terrains.MAGMA) ||
+                     hex.containsTerrain(Terrains.JUNGLE) ||
+                     (hex.terrainLevel(Terrains.SNOW) > 1) ||
+                     (hex.terrainLevel(Terrains.GEYSER) == 2);
+    }
+
 }

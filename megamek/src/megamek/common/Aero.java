@@ -32,6 +32,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.util.ConditionalStringJoiner;
 import megamek.logging.MMLogger;
 import megamek.common.TechAdvancement.AdvancementPhase;
 
@@ -2097,14 +2098,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         }
 
         // grounded aerospace have the same prohibitions as wheeled tanks
-        return hex.containsTerrain(Terrains.WOODS) ||
-                     hex.containsTerrain(Terrains.ROUGH) ||
-                     ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE)) ||
-                     hex.containsTerrain(Terrains.RUBBLE) ||
-                     hex.containsTerrain(Terrains.MAGMA) ||
-                     hex.containsTerrain(Terrains.JUNGLE) ||
-                     (hex.terrainLevel(Terrains.SNOW) > 1) ||
-                     (hex.terrainLevel(Terrains.GEYSER) == 2);
+        return taxingAeroProhibitedTerrains(hex);
     }
 
     @Override
@@ -2445,84 +2439,34 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     public String getCritDamageString() {
-        StringBuilder toReturn = new StringBuilder();
-        boolean first = true;
-        if (getSensorHits() > 0) {
-            toReturn.append(String.format(Messages.getString("Aero.sensorDamageString"), getSensorHits()));
-            first = false;
-        }
-        if (getAvionicsHits() > 0) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(String.format(Messages.getString("Aero.avionicsDamageString"), getAvionicsHits()));
-            first = false;
-        }
-        if (getFCSHits() > 0) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(String.format(Messages.getString("Aero.fcsDamageString"), getFCSHits()));
-            first = false;
-        }
-        if (getCICHits() > 0) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(String.format(Messages.getString("Aero.cicDamageString"), getCICHits()));
-            first = false;
-        }
-        if (isGearHit()) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(Messages.getString("Aero.landingGearDamageString"));
-            first = false;
-        }
-        if (!hasLifeSupport()) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(Messages.getString("Aero.lifeSupportDamageString"));
-            first = false;
-        }
-        if (getLeftThrustHits() > 0) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(String.format(Messages.getString("Aero.leftThrusterDamageString"), getLeftThrustHits()));
-            first = false;
-        }
-        if (getRightThrustHits() > 0) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(String.format(Messages.getString("Aero.rightThrusterDamageString"), getRightThrustHits()));
-            first = false;
-        }
+        ConditionalStringJoiner conditionalStringJoiner = new ConditionalStringJoiner();
+        conditionalStringJoiner.add(getEngineHits() > 0,
+              () -> String.format(Messages.getString("Aero.engineDamageString"), getEngineHits()));
+        conditionalStringJoiner.add(getSensorHits() > 0,
+              () -> String.format(Messages.getString("Aero.sensorDamageString"), getSensorHits()));
+        conditionalStringJoiner.add(getAvionicsHits() > 0,
+              () -> String.format(Messages.getString("Aero.avionicsDamageString"), getAvionicsHits()));
+        conditionalStringJoiner.add(getFCSHits() > 0,
+              () -> String.format(Messages.getString("Aero.fcsDamageString"), getFCSHits()));
+        conditionalStringJoiner.add(getCICHits() > 0,
+              () -> String.format(Messages.getString("Aero.cicDamageString"), getCICHits()));
+        conditionalStringJoiner.add(isGearHit(),
+              () -> String.format(Messages.getString("Aero.landingGearDamageString"), isGearHit()));
+        conditionalStringJoiner.add(!hasLifeSupport(),
+              () -> Messages.getString("Aero.lifeSupportDamageString"));
+        conditionalStringJoiner.add(getLeftThrustHits() > 0,
+              () -> String.format(Messages.getString("Aero.leftThrusterDamageString"), getLeftThrustHits()));
+        conditionalStringJoiner.add(getRightThrustHits() > 0,
+              () -> String.format(Messages.getString("Aero.rightThrusterDamageString"), getRightThrustHits()));
         // Cargo bays and bay doors for large craft
-        for (Bay next : getTransportBays()) {
-            if (next.getBayDamage() > 0) {
-                if (!first) {
-                    toReturn.append(", ");
-                }
-                toReturn.append(String.format(Messages.getString("Aero.bayDamageString"),
-                      next.getType(),
-                      next.getBayNumber()));
-                first = false;
-            }
-            if (next.getCurrentDoors() < next.getDoors()) {
-                if (!first) {
-                    toReturn.append(", ");
-                }
-                toReturn.append(String.format(Messages.getString("Aero.bayDoorDamageString"),
-                      next.getType(),
-                      next.getBayNumber(),
-                      (next.getDoors() - next.getCurrentDoors())));
-                first = false;
-            }
+        for (Bay transportBay : getTransportBays()) {
+            conditionalStringJoiner.add(transportBay.getBayDamage() > 0,
+                  () -> String.format(Messages.getString("Aero.bayDamageString"), transportBay.getType(), transportBay.getBayNumber()));
+            conditionalStringJoiner.add(transportBay.getCurrentDoors() < transportBay.getDoors(),
+                  () -> String.format(Messages.getString("Aero.bayDoorDamageString"), transportBay.getType(), transportBay.getBayNumber(),
+                        (transportBay.getDoors() - transportBay.getCurrentDoors())));
         }
-        return toReturn.toString();
+        return conditionalStringJoiner.toString();
     }
 
     @Override

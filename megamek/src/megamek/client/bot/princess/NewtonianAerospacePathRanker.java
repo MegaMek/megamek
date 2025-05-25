@@ -25,6 +25,7 @@ import java.util.List;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.common.Board;
 import megamek.common.Compute;
+import megamek.common.ComputeArc;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;

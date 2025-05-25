@@ -277,7 +277,6 @@ public class ClientGUI extends AbstractClientGUI
     private ChatterBox cb;
     public ChatterBoxOverlay cb2;
     private boolean wasBoardFocused = false;
-    private BoardView bv;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
     private FleeZoneSpriteHandler fleeZoneSpriteHandler;
@@ -434,7 +433,7 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     private void initializeFocusTracking() {
-        bv.getPanel().addFocusListener(new FocusListener() {
+        boardViewsContainer.getPanel().addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 wasBoardFocused = true;
@@ -443,7 +442,7 @@ public class ClientGUI extends AbstractClientGUI
             @Override
             public void focusLost(FocusEvent e) {
                 wasBoardFocused = false;
-                bv.setChatterBoxActive(false);
+                setChatBoxActive(false);
             }
         });
     }
@@ -605,6 +604,7 @@ public class ClientGUI extends AbstractClientGUI
             splitPaneA.setRightComponent(panA2);
 
             panTop.add(splitPaneA, BorderLayout.CENTER);
+            initializeFocusTracking();
         } catch (Exception ex) {
             logger.fatal(ex, "initialize");
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
@@ -635,14 +635,8 @@ public class ClientGUI extends AbstractClientGUI
 
         setPlayerListDialog(new PlayerListDialog(frame, client, false));
 
-        Ruler.color1 = GUIP.getRulerColor1();
-        Ruler.color2 = GUIP.getRulerColor2();
         RulerDialog.color1 = GUIP.getRulerColor1();
         RulerDialog.color2 = GUIP.getRulerColor2();
-        ruler = new RulerDialog(frame, client, bv, client.getGame());
-        ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
-        ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
-        UIUtil.updateWindowBounds(ruler);
 
         setBotCommandsDialog(BotCommandsPanel.createBotCommandDialog(frame, this.getClient(), this.audioService, null));
         cb = new ChatterBox(this);
@@ -1503,7 +1497,7 @@ public class ClientGUI extends AbstractClientGUI
 
     private void requestFocus() {
         frame.requestFocusInWindow();
-        bv.getPanel().requestFocusInWindow();
+        boardViewsContainer.getPanel().requestFocusInWindow();
     }
 
     /**
@@ -2491,7 +2485,7 @@ public class ClientGUI extends AbstractClientGUI
                     boardView.setTooltipProvider(
                           new TWBoardViewTooltip(client.getGame(), ClientGUI.this, boardView));
                     boardViewsContainer.updateMapTabs();
-                    ruler = new Ruler(frame, client, boardView, client.getGame());
+                    ruler = new RulerDialog(frame, client, boardView, client.getGame());
                     ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
                     ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
                     UIUtil.updateWindowBounds(ruler);

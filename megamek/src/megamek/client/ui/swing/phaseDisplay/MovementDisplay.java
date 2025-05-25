@@ -4649,7 +4649,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.showMovementEnvelope(entity, movementEnvelopeMP, movementGear);
     }
 
-    private static ShortestPathFinder getShortestPathFinder(Entity en, int maxMP, MoveStepType stepType) {
+    private ShortestPathFinder getShortestPathFinder(Entity en, int maxMP, MoveStepType stepType) {
         ShortestPathFinder shortestPathFinder;
         if (en.isAerodyne() && !en.isAeroLandedOnGroundMap()) {
             shortestPathFinder = ShortestPathFinder.newInstanceOfOneToAllAero(maxMP, stepType, game);

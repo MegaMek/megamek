@@ -13724,7 +13724,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public Camouflage getCamouflageOrElseOwners() {
-        return getCamouflageOrElse(hasOwner() ? getOwner().getCamouflage() : Camouflage.of(PlayerColour.GRAY));
+        return getCamouflageOrElse(getOwner() != null ? getOwner().getCamouflage() : Camouflage.of(PlayerColour.GRAY));
     }
 
     public Camouflage getCamouflageOrElse(final Camouflage camouflage) {

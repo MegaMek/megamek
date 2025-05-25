@@ -572,14 +572,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             }
 
             // grounded aeros have the same prohibitions as wheeled tanks
-            return hex.containsTerrain(Terrains.WOODS) ||
-                         hex.containsTerrain(Terrains.ROUGH) ||
-                         ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE)) ||
-                         hex.containsTerrain(Terrains.RUBBLE) ||
-                         hex.containsTerrain(Terrains.MAGMA) ||
-                         hex.containsTerrain(Terrains.JUNGLE) ||
-                         (hex.terrainLevel(Terrains.SNOW) > 1) ||
-                         (hex.terrainLevel(Terrains.GEYSER) == 2);
+            return taxingAeroProhibitedTerrains(hex);
         } else if (getConversionMode() == CONV_MODE_AIRMEK && testElevation > 0) {
             // Cannot enter woods or a building hex in AirMek mode unless using ground movement or flying over the
             // terrain.

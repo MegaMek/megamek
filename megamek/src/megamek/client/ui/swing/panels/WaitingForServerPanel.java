@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.panels;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
@@ -24,22 +24,24 @@ import megamek.client.ui.swing.util.UIUtil;
 import javax.swing.*;
 import java.awt.*;
 
-public class ReceivingGameDataPanel extends JPanel {
+/**
+ * This panel shows the centered notice saying "Waiting for Server".
+ */
+public class WaitingForServerPanel extends JPanel {
 
     private static final String text = "<HTML><FONT FACE=Anta SIZE=+3>"
-            + Messages.getString("ClientGUI.TransmittingData");
-    private static final String sign = "<HTML><FONT FACE=Anta SIZE=+5>\u279F";
+            + Messages.getString("ClientGUI.waitingOnTheServer");
+    private static final String sign = "<HTML><FONT FACE=Anta SIZE=+5>\u231A";
 
     /**
      * Returns a panel that shows the centered notice saying "Under Construction" with a warning sign above.
      */
-    public ReceivingGameDataPanel() {
+    public WaitingForServerPanel() {
         JPanel textPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.CENTER));
         textPanel.add(new JLabel(text));
 
         JPanel symbolPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel symbolLabel = new JLabel(sign);
-        symbolLabel.setForeground(UIUtil.uiGreen());
         symbolPanel.add(symbolLabel);
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));

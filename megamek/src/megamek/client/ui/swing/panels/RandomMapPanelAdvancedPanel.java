@@ -11,7 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -44,8 +44,8 @@ import megamek.logging.MMLogger;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 3/13/14 3:57 PM
  */
-public class RandomMapPanelAdvanced extends JPanel {
-        private static final MMLogger logger = MMLogger.create(RandomMapPanelAdvanced.class);
+public class RandomMapPanelAdvancedPanel extends JPanel {
+        private static final MMLogger logger = MMLogger.create(RandomMapPanelAdvancedPanel.class);
 
         private static final long serialVersionUID = 7904626306929132645L;
 
@@ -277,7 +277,7 @@ public class RandomMapPanelAdvanced extends JPanel {
          *
          * @param mapSettings The settings for the map to be generated.
          */
-        public RandomMapPanelAdvanced(MapSettings mapSettings) {
+        public RandomMapPanelAdvancedPanel(MapSettings mapSettings) {
                 setMapSettings(mapSettings);
 
                 initGUI();
@@ -450,7 +450,7 @@ public class RandomMapPanelAdvanced extends JPanel {
 
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderRiver")));
-                RandomMapPanelBasic.makeCompactGrid(panel, 1, 2, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 1, 2, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -487,7 +487,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderIce")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -522,7 +522,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderLakes")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -564,7 +564,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 2),
                                 Messages.getString("RandomMapDialog.borderFields")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -600,7 +600,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 2),
                                 Messages.getString("RandomMapDialog.borderRubble")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -614,7 +614,7 @@ public class RandomMapPanelAdvanced extends JPanel {
 
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 2),
                                 Messages.getString("RandomMapDialog.borderRoad")));
-                RandomMapPanelBasic.makeCompactGrid(panel, 1, 2, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 1, 2, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -642,7 +642,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 2),
                                 Messages.getString("RandomMapDialog.borderPavement")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -672,7 +672,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 2),
                                 Messages.getString("RandomMapDialog.borderFortified")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -736,7 +736,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderCity")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 6, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 6, 4, 6, 6, 6, 6);
                 setCityPanelState();
                 return panel;
         }
@@ -779,7 +779,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 specialFxField.setToolTipText(Messages.getString("RandomMapDialog.specialFxField.toolTip"));
                 panel.add(specialFxField);
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 4, 2, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 4, 2, 6, 6, 6, 6);
                 return new JScrollPane(panel);
         }
 
@@ -838,7 +838,7 @@ public class RandomMapPanelAdvanced extends JPanel {
 
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderWoods")));
-                RandomMapPanelBasic.makeCompactGrid(panel, 4, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 4, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -881,7 +881,7 @@ public class RandomMapPanelAdvanced extends JPanel {
 
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderJungle")));
-                RandomMapPanelBasic.makeCompactGrid(panel, 4, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 4, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -931,7 +931,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderFoliage")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -961,7 +961,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderSwamp")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -989,7 +989,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderSand")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -1017,7 +1017,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderSnow")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -1045,7 +1045,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderTundra")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -1081,7 +1081,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderRough")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -1128,7 +1128,7 @@ public class RandomMapPanelAdvanced extends JPanel {
 
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderCrater")));
-                RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -1174,7 +1174,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderMountain")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 4, 4, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 4, 4, 6, 6, 6, 6);
                 return panel;
         }
 
@@ -1217,7 +1217,7 @@ public class RandomMapPanelAdvanced extends JPanel {
                 panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                 Messages.getString("RandomMapDialog.borderGeneral")));
 
-                RandomMapPanelBasic.makeCompactGrid(panel, 6, 2, 6, 6, 6, 6);
+                RandomMapPanelBasicPanel.makeCompactGrid(panel, 6, 2, 6, 6, 6, 6);
                 return panel;
         }
 

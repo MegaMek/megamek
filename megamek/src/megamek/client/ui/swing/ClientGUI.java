@@ -3150,7 +3150,7 @@ public class ClientGUI extends AbstractClientGUI
             // Make this princess a locally owned bot if in the lobby. This way it
             // can be configured, and it will faithfully press Done when the local player
             // does.
-            if ((princess != null) && client.getGame().getPhase().isLounge()) {
+            if (princess != null) {
                 getLocalBots().put(ghostName, princess);
             }
         }

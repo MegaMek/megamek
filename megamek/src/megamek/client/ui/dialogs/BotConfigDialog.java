@@ -818,6 +818,11 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     private void savePrincessProperties() {
         BehaviorSettings tempBehavior = new BehaviorSettings();
+        try {
+            tempBehavior.setDescription(princessBehavior.getDescription());
+        } catch (PrincessException ignore) {
+            // do nothing
+        }
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
         tempBehavior.setAutoFlee(autoFleeCheck.isSelected());

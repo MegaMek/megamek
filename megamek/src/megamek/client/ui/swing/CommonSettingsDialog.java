@@ -3356,8 +3356,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         // Label BOT & PACAR
         favoritePrincessBehaviorSetting = new MMComboBox<>("favoritePrincessBehaviorSetting",
               BehaviorSettingsFactory.getInstance().getBehaviorNameList());
-        favoritePrincessBehaviorSetting.setMaximumSize(new Dimension(150, 25));
-        minimapTheme.setSelectedItem(CLIENT_PREFERENCES.getMinimapTheme().getName());
+        favoritePrincessBehaviorSetting.setMaximumSize(new Dimension(200, 25));
+        favoritePrincessBehaviorSetting.setToolTipText(
+              Messages.getString("CommonSettingsDialog.favoritePrincessBehaviorSettingTooltip"));
+        favoritePrincessBehaviorSetting.setSelectedItem(CLIENT_PREFERENCES.getFavoritePrincessBehaviorSetting());
 
         row = new ArrayList<>();
         row.add(new JLabel(Messages.getString("CommonSettingsDialog.pacarSettingsLabel")));

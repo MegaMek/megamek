@@ -84,6 +84,7 @@ import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
@@ -2152,12 +2153,18 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
 
+    private BehaviorSettings getFavoriteBehaviorSettings() {
+        return BehaviorSettingsFactory.getInstance().getBehaviorOrDefault(
+              CLIENT_PREFERENCES.getFavoritePrincessBehaviorSetting(),
+              BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
+    }
+
     private void configAndCreateBot(@Nullable Player toReplace) {
-        BehaviorSettings behavior = null;
+        BehaviorSettings behavior = getFavoriteBehaviorSettings();
         String botName = null;
         if (toReplace != null) {
-            behavior = game().getBotSettings().get(toReplace.getName());
             botName = toReplace.getName();
+            behavior = game().getBotSettings().getOrDefault(botName, behavior);
         }
         var bcd = new BotConfigDialog(clientgui.getFrame(), botName, behavior, clientgui);
         bcd.setVisible(true);

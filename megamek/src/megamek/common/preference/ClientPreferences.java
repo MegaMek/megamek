@@ -25,6 +25,8 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
 
+import static megamek.client.bot.princess.BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION;
+
 public class ClientPreferences extends PreferenceStoreProxy {
     private static final MMLogger logger = MMLogger.create(ClientPreferences.class);
 
@@ -72,6 +74,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
     public static final String NAG_ASK_FOR_VICTORY_LIST = "AskForVictoryList";
     public static final String SHOW_AUTO_RESOLVE_PANEL = "ShowAutoResolvePanel";
+    public static final String FAVORITE_PRINCESS_BEHAVIOR_SETTING = "FavoritePrincessBehaviorSetting";
 
     /**
      * A user-specified directory, typically outside the MM directory, where content
@@ -123,6 +126,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(DATA_LOGGING, true);
         store.setDefault(SHOW_AUTO_RESOLVE_PANEL, true);
         store.setDefault(STAMP_FILENAMES, false);
+        store.setDefault(FAVORITE_PRINCESS_BEHAVIOR_SETTING, DEFAULT_BEHAVIOR_DESCRIPTION);
 
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
@@ -493,5 +497,13 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public boolean getShowAutoResolvePanel() {
         return store.getBoolean(SHOW_AUTO_RESOLVE_PANEL);
+    }
+
+    public String getFavoritePrincessBehaviorSetting() {
+        return store.getString(FAVORITE_PRINCESS_BEHAVIOR_SETTING);
+    }
+
+    public void setFavoritePrincessBehaviorSetting(String name) {
+        store.setValue(FAVORITE_PRINCESS_BEHAVIOR_SETTING, name);
     }
 }

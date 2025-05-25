@@ -51,6 +51,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
 import megamek.MMConstants;
+import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.FileNameComboBoxModel;
@@ -74,6 +75,7 @@ import megamek.common.KeyBindParser;
 import megamek.common.MapSettings;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
+import megamek.common.internationalization.I18n;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
@@ -243,6 +245,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId"));
     private final JCheckBox showAutoResolvePanel = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showAutoResolvePanel"));
+    private JComboBox<String> favoritePrincessBehaviorSetting;
     private JComboBox<String> displayLocale;
     private final JCheckBox showIPAddressesInChat = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showIPAddressesInChat"));
@@ -590,6 +593,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         overlaysPane.getVerticalScrollBar().setUnitIncrement(16);
         JScrollPane autoDisplayPane = new JScrollPane(getPhasePanel());
         autoDisplayPane.getVerticalScrollBar().setUnitIncrement(16);
+        JScrollPane aiDisplayPane = new JScrollPane(aiDisplayPanel());
+        aiDisplayPane.getVerticalScrollBar().setUnitIncrement(16);
 
         panTabs.add(Messages.getString("CommonSettingsDialog.main"), settingsPane);
         panTabs.add(Messages.getString("CommonSettingsDialog.audio"), audioPane);
@@ -601,6 +606,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         panTabs.add(Messages.getString("CommonSettingsDialog.overlays"), overlaysPane);
         panTabs.add(Messages.getString("CommonSettingsDialog.buttonOrder"), getButtonOrderPanel());
         panTabs.add(Messages.getString("CommonSettingsDialog.autoDisplay"), autoDisplayPane);
+        panTabs.add(Messages.getString("CommonSettingsDialog.aiDisplay"), aiDisplayPane);
         panTabs.add(Messages.getString("CommonSettingsDialog.advanced"), advancedSettingsPane);
 
         return panTabs;
@@ -700,8 +706,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(autoEndFiring, null));
         comps.add(checkboxEntry(autoDeclareSearchlight, null));
         comps.add(checkboxEntry(moveDefaultClimbMode, null));
-        comps.add(checkboxEntry(enableExperimentalBotFeatures,
-              Messages.getString("CommonSettingsDialog.enableExperimentalBotFeatures.tooltip")));
         moveDefaultClimbMode.setToolTipText(Messages.getString("CommonSettingsDialog.moveDefaultClimbMode.tooltip"));
 
         addLineSpacer(comps);
@@ -2051,7 +2055,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(useGPinUnitSelection,
               "This changes the BV/PV displayed in the unit selection list. It does not change the pilot/gunnery of the mek once selected. Request restart of Megamek."));
         comps.add(checkboxEntry(generateNames, null));
-        comps.add(checkboxEntry(showAutoResolvePanel, null));
+
         addLineSpacer(comps);
         comps.add(checkboxEntry(datasetLogging, null));
         comps.add(checkboxEntry(keepGameLog, null));
@@ -2204,6 +2208,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             generateNames.setSelected(CLIENT_PREFERENCES.generateNames());
             showUnitId.setSelected(CLIENT_PREFERENCES.getShowUnitId());
             showAutoResolvePanel.setSelected(CLIENT_PREFERENCES.getShowAutoResolvePanel());
+//            favoritePrincessBehaviorSetting.setSelectedItem(CLIENT_PREFERENCES.getFavoritePrincessBehaviorSetting());
 
             int index = 0;
             if (CLIENT_PREFERENCES.getLocaleString().startsWith("de")) {
@@ -2709,6 +2714,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setGenerateNames(generateNames.isSelected());
         CLIENT_PREFERENCES.setShowUnitId(showUnitId.isSelected());
         CLIENT_PREFERENCES.setShowAutoResolvePanel(showAutoResolvePanel.isSelected());
+        CLIENT_PREFERENCES.setFavoritePrincessBehaviorSetting((String) favoritePrincessBehaviorSetting.getSelectedItem());
         if ((clientgui != null) && (clientgui.getBoardView() != null)) {
             clientgui.getBoardView().updateEntityLabels();
         }
@@ -2736,7 +2742,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         String newSkinFile = (String) skinFiles.getSelectedItem();
         String oldSkinFile = GUIP.getSkinFile();
-        if (!oldSkinFile.equals(newSkinFile)) {
+        if ((oldSkinFile == null) || !(oldSkinFile.equals(newSkinFile))) {
             boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
             if (!success) {
                 SkinXMLHandler.initSkinXMLHandler(oldSkinFile);
@@ -3334,6 +3340,37 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         chkb.setSelected(b);
 
         return chkb;
+    }
+
+    private JPanel aiDisplayPanel() {
+
+        List<List<Component>> comps = new ArrayList<>();
+        List<Component> row = new ArrayList<>();
+
+        // Label ACAR
+        row.add(new JLabel(Messages.getString("CommonSettingsDialog.acarSettingsLabel")));
+        comps.add(row);
+        comps.add(checkboxEntry(showAutoResolvePanel, null));
+
+        addLineSpacer(comps);
+        // Label BOT & PACAR
+        favoritePrincessBehaviorSetting = new MMComboBox<>("favoritePrincessBehaviorSetting",
+              BehaviorSettingsFactory.getInstance().getBehaviorNameList());
+        favoritePrincessBehaviorSetting.setMaximumSize(new Dimension(150, 25));
+        minimapTheme.setSelectedItem(CLIENT_PREFERENCES.getMinimapTheme().getName());
+
+        row = new ArrayList<>();
+        row.add(new JLabel(Messages.getString("CommonSettingsDialog.pacarSettingsLabel")));
+        comps.add(row);
+        row = new ArrayList<>();
+        row.add(new JLabel(Messages.getString("CommonSettingsDialog.favoritePrincessBehaviorSetting")));
+        row.add(favoritePrincessBehaviorSetting);
+        comps.add(row);
+
+        comps.add(checkboxEntry(enableExperimentalBotFeatures,
+              Messages.getString("CommonSettingsDialog.enableExperimentalBotFeatures.tooltip")));
+
+        return createSettingsPanel(comps);
     }
 
     private JPanel getPhasePanel() {

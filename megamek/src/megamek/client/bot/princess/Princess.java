@@ -389,20 +389,19 @@ public class Princess extends BotClient {
         if (behaviorSettings.iAmAPirate() && honorUtil instanceof HonorUtil honorUtilCast) {
             honorUtilCast.setIAmAPirate(behaviorSettings.iAmAPirate());
         }
-        if (getFallBack()) {
-            return;
-        }
-
-        for (final String targetCoords : behaviorSettings.getStrategicBuildingTargets()) {
-            if (!StringUtil.isPositiveInteger(targetCoords) || (4 != targetCoords.length())) {
-                continue;
+        // Fallback do not care for targets
+        if (!getFallBack()) {
+            for (final String targetCoords : behaviorSettings.getStrategicBuildingTargets()) {
+                if (!StringUtil.isPositiveInteger(targetCoords) || (4 != targetCoords.length())) {
+                    continue;
+                }
+                final String x = targetCoords.substring(0, 2);
+                final String y = targetCoords.replaceFirst(x, "");
+                // Need to subtract 1, since we are given a Hex number string,
+                // which is Coords X + 1Y + 1
+                final Coords coords = new Coords(MathUtility.parseInt(x) - 1, MathUtility.parseInt(y) - 1);
+                getStrategicBuildingTargets().add(coords);
             }
-            final String x = targetCoords.substring(0, 2);
-            final String y = targetCoords.replaceFirst(x, "");
-            // Need to subtract 1, since we are given a Hex number string,
-            // which is Coords X + 1Y + 1
-            final Coords coords = new Coords(MathUtility.parseInt(x) - 1, MathUtility.parseInt(y) - 1);
-            getStrategicBuildingTargets().add(coords);
         }
         spinUpThreshold = null;
         if (initialized) {
@@ -410,6 +409,7 @@ public class Princess extends BotClient {
             // propagate any changes the BasicPathRanker needs.
             initializePathRankers();
         }
+        sendPrincessSettings();
     }
 
     /**

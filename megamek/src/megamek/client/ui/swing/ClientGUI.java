@@ -3147,9 +3147,8 @@ public class ClientGUI extends AbstractClientGUI
             StringBuilder message = new StringBuilder();
             Princess princess = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName, client, message);
             systemMessage(message.toString());
-            // Make this princess a locally owned bot if in the lobby. This way it
-            // can be configured, and it will faithfully press Done when the local player
-            // does.
+            // Make this princess a locally owned bot. This way it can be configured, and if on the lobby
+            // it will faithfully press Done when the local player does.
             if (princess != null) {
                 getLocalBots().put(ghostName, princess);
             }

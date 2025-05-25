@@ -130,6 +130,7 @@ import megamek.common.internationalization.I18n;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -2014,21 +2015,24 @@ public class ChatLounge extends AbstractPhaseDisplay
                 var board = TWBoardTransformer.instantiateBoard(client().getMapSettings(),
                       client().getGame().getPlanetaryConditions(),
                       client().getGame().getOptions());
-
+                var planetaryConditions = client().getGame().getPlanetaryConditions();
                 if (chkAutoResolve.isSelected()) {
                     var proceed = AutoResolveChanceDialog.showDialog(clientgui.getFrame(),
                           simulationRuns,
                           threadNumbers,
                           currentTeam,
                           forcesSetups,
-                          board) == JOptionPane.YES_OPTION;
+                          board,
+                          planetaryConditions
+                    ) == JOptionPane.YES_OPTION;
 
                     if (!proceed) {
                         return;
                     }
                 }
 
-                var event = AutoResolveProgressDialog.showDialog(clientgui.getFrame(), forcesSetups, board);
+                var event = AutoResolveProgressDialog.showDialog(clientgui.getFrame(), forcesSetups, board,
+                      new PlanetaryConditions(planetaryConditions));
                 if (event != null) {
                     var autoResolveBattleReport = new AutoResolveSimulationLogDialog(clientgui.getFrame(),
                           event.getLogFile());

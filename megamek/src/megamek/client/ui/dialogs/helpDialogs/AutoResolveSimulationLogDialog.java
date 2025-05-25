@@ -37,4 +37,11 @@ public class AutoResolveSimulationLogDialog extends AbstractHelpDialog {
 
     }
 
+    @Override
+    protected Container createCenterPane() {
+        var container = super.createCenterPane();
+        this.setTitle(I18n.getText("AutoResolveSimulationLogDialog.title"));
+        return container;
+    }
+
 }

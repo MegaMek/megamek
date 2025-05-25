@@ -28,6 +28,7 @@ import megamek.common.autoresolve.acar.SimulationOptions;
 import megamek.common.autoresolve.converter.SetupForces;
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
 import megamek.common.internationalization.I18n;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryResult;
 import org.apache.commons.lang3.time.StopWatch;
@@ -60,6 +61,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
     private final int numberOfThreads;
     private final int currentTeam;
     private final Board board;
+    private final PlanetaryConditions planetaryConditions;
     private int returnCode = JOptionPane.CLOSED_OPTION;
     private final TreeMap<Integer, String> splashImages = new TreeMap<>();
     {
@@ -124,8 +126,10 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         }
     }
 
-    public static int showDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces, Board board) {
-        var dialog = new AutoResolveChanceDialog(frame, numberOfSimulations, numberOfThreads, currentTeam, setupForces, board);
+    public static int showDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam,
+          SetupForces setupForces, Board board, PlanetaryConditions planetaryConditions) {
+        var dialog = new AutoResolveChanceDialog(frame, numberOfSimulations, numberOfThreads, currentTeam,
+              setupForces, board, planetaryConditions);
         dialog.setModal(true);
         dialog.getTask().execute();
         dialog.setVisible(true);
@@ -134,13 +138,15 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         return returnCode;
     }
 
-    private AutoResolveChanceDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces, Board board) {
+    private AutoResolveChanceDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam,
+          SetupForces setupForces, Board board, PlanetaryConditions planetaryConditions) {
         super(frame, true, "AutoResolveMethod.dialog.name","AutoResolveMethod.dialog.title");
         this.numberOfSimulations = numberOfSimulations;
         this.setupForces = setupForces;
         this.numberOfThreads = numberOfThreads;
         this.currentTeam = currentTeam;
         this.board = board;
+        this.planetaryConditions = planetaryConditions;
         this.task = new Task(this);
         getTask().addPropertyChangeListener(this);
         progressText = new ArrayList<>();
@@ -304,7 +310,8 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
                 for (int i = 0; i < numberOfSimulations; i++) {
                     futures.add(executor.submit(() -> {
                         var autoResolveConcludedEvent = Resolver.simulationRunWithoutLog(
-                            setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()))
+                            setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()),
+                                    new PlanetaryConditions(planetaryConditions))
                             .resolveSimulation();
                         setProgress(Math.min(100 * runCounter.incrementAndGet() / numberOfSimulations, 100));
                         return autoResolveConcludedEvent;

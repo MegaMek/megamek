@@ -40,9 +40,11 @@ import megamek.common.autoresolve.acar.phase.*;
 import megamek.common.autoresolve.converter.SetupForces;
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
 import megamek.common.options.AbstractOptions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 
 /**
+ * This class is responsible for resolving the simulation of a battle
  * @author Luana Coppio
  */
 public class Resolver {
@@ -50,22 +52,52 @@ public class Resolver {
     private final SimulationOptions options;
     private final SetupForces setupForces;
     private final Board board;
+    private final PlanetaryConditions planetaryConditions;
     private final boolean suppressLog;
 
+    /**
+     * Constructor for Resolver
+     * @param setupForces the {@link SetupForces} object that converts MegaMek forces to ACAR forces
+     * @param gameOptions the {@link megamek.common.options.GameOptions}
+     * @param board the {@link Board}
+     * @param planetaryConditions the {@link PlanetaryConditions}
+     * @param suppressLog whether to suppress log output, important to keep memory usage low during parallel simulation
+     */
     public Resolver(SetupForces setupForces,
-                    AbstractOptions gameOptions, Board board, boolean suppressLog) {
+          AbstractOptions gameOptions, Board board, PlanetaryConditions planetaryConditions,
+          boolean suppressLog) {
         this.options = new SimulationOptions(gameOptions);
         this.setupForces = setupForces;
         this.board = board;
+        this.planetaryConditions = planetaryConditions;
         this.suppressLog = suppressLog;
     }
 
-    public static Resolver simulationRun(SetupForces setupForces, AbstractOptions gameOptions, Board board) {
-        return new Resolver(setupForces, gameOptions, board, false);
+
+    /**
+     * Instantiates an Auto Resolver object
+     * @param setupForces the {@link SetupForces} object that converts MegaMek forces to ACAR forces
+     * @param gameOptions the {@link megamek.common.options.GameOptions}
+     * @param board the {@link Board}
+     * @param planetaryConditions the {@link PlanetaryConditions}
+     * @return a new {@link Resolver} object ready to run
+     */
+    public static Resolver simulationRun(SetupForces setupForces, AbstractOptions gameOptions, Board board,
+          PlanetaryConditions planetaryConditions) {
+        return new Resolver(setupForces, gameOptions, board, planetaryConditions, false);
     }
 
-    public static Resolver simulationRunWithoutLog(SetupForces setupForces, AbstractOptions gameOptions, Board board) {
-        return new Resolver(setupForces, gameOptions, board, true);
+    /**
+     * Instantiates an Auto Resolver object without log output
+     * @param setupForces the {@link SetupForces} object that converts MegaMek forces to ACAR forces
+     * @param gameOptions the {@link megamek.common.options.GameOptions}
+     * @param board the {@link Board}
+     * @param planetaryConditions the {@link PlanetaryConditions}
+     * @return a new {@link Resolver} object with log output suppressed ready to run
+     */
+    public static Resolver simulationRunWithoutLog(SetupForces setupForces, AbstractOptions gameOptions, Board board,
+          PlanetaryConditions planetaryConditions) {
+        return new Resolver(setupForces, gameOptions, board, planetaryConditions,  true);
     }
 
     private void initializeGameManager(SimulationManager simulationManager) {
@@ -78,8 +110,13 @@ public class Resolver {
         simulationManager.addPhaseHandler(new VictoryPhase(simulationManager));
     }
 
+    /**
+     * This method runs the simulation and returns the result event {@link AutoResolveConcludedEvent}
+     * @return an {@link AutoResolveConcludedEvent} with the detailed result of the simulation, which can be used for
+     * further processing
+     */
     public AutoResolveConcludedEvent resolveSimulation() {
-        SimulationContext context = new SimulationContext(options, setupForces, board);
+        SimulationContext context = new SimulationContext(options, setupForces, board, planetaryConditions);
         SimulationManager simulationManager = new SimulationManager(context, suppressLog);
         initializeGameManager(simulationManager);
         return simulationManager.execute();

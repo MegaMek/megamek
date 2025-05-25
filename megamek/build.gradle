@@ -2,11 +2,12 @@ import java.time.LocalDateTime
 
 plugins {
     id 'application'
-    id 'com.palantir.git-version' version '3.2.0'
+    id 'com.palantir.git-version' version '3.3.0'
     id 'edu.sc.seis.launch4j' version '3.0.6'
     id "io.sentry.jvm.gradle" version '5.5.0'
     id 'jacoco'
     id 'java'
+    id 'checkstyle'
 }
 
 java {
@@ -120,6 +121,21 @@ jar {
         attributes "Build-Date": LocalDateTime.now()
         attributes "Sealed": true
     }
+}
+
+checkstyle {
+    toolVersion = '10.24.0'
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+    configProperties = [
+            'suppressionFile': file("${rootDir}/config/checkstyle/checkstyle-suppressions.xml")
+    ]
+    maxWarnings = 0  // Fail on any warning
+    maxErrors = 0    // Fail on any error
+}
+
+tasks.withType(Checkstyle).configureEach {
+    minHeapSize = "1g"
+    maxHeapSize = "4g"
 }
 
 tasks.register('generateDynamicFiles') {
@@ -330,6 +346,8 @@ assembleDist {
 
 test {
     useJUnitPlatform()
+    dependsOn(checkstyleMain)
+
     finalizedBy jacocoTestReport
     jvmArgs = mmJvmOptions
 }
@@ -369,6 +387,15 @@ tasks.register('extendedEquipmentList', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.MegaMek'
     args = ['-eqedb', "${projectDir}/extended-equipment.txt"]
+}
+
+tasks.register('yamlEquipment', JavaExec) {
+    dependsOn jar
+    description = 'Generate YAML Equipment Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-eqyamldb', "${projectDir}/yaml/"]
 }
 
 tasks.register('weaponsList', JavaExec) {

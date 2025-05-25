@@ -32,6 +32,7 @@ public class ISMekTaser extends AmmoWeapon {
 
     public ISMekTaser() {
         super();
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES
         name = "BattleMech Taser";
         setInternalName("Mek Taser");
         addLookupName("ISMekTaser");
@@ -54,12 +55,12 @@ public class ISMekTaser extends AmmoWeapon {
         flags = flags.or(F_MEK_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)
                 .or(F_TASER).or(F_TANK_WEAPON);
         rulesRefs = "346, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        techAdvancement.setTechBase(TechBase.IS)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3065, 3084)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

@@ -42,6 +42,8 @@ import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.commands.ClientCommandPanel;
+import megamek.client.ui.swing.dialog.NoteDialog;
+import megamek.client.ui.swing.dialog.TurretFacingDialog;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.client.ui.swing.phaseDisplay.FiringDisplay;
 import megamek.client.ui.swing.phaseDisplay.MovementDisplay;

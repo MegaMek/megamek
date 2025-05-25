@@ -171,20 +171,6 @@ public class MunitionTree {
         }
     }
 
-    /**
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void readFromADFFilename(String fName) {
-        try (BufferedReader br = new BufferedReader(new FileReader(fName))) {
-            readFromADF(br);
-        } catch (FileNotFoundException e) {
-            LOGGER.error(e, "File not found: {}", fName);
-        } catch (IOException e) {
-            LOGGER.error(e, "Failed to read file: {}", fName);
-        }
-    }
-
     public void readFromADF(BufferedReader br) throws IOException {
         for (String line = br.readLine(); line != null; line = br.readLine()) {
             // Ignore comments
@@ -289,7 +275,7 @@ public class MunitionTree {
     }
 
     public void insertMangledImperatives(String chassis, String variant, String pilot,
-                                         HashMap<String, String> imperatives) {
+          HashMap<String, String> imperatives) {
         // switch imperative keys to lowercase to avoid case-based matching issues strip out extraneous characters
         // for ammo with sizes, e.g. LRM[ -/]15 -> LRM15
         HashMap<String, String> lcImp = new HashMap<>(imperatives.size());
@@ -302,7 +288,7 @@ public class MunitionTree {
     }
 
     public HashMap<String, Integer> getCountsOfAmmosForKey(String chassis, String variant, String pilot,
-                                                           String binType) {
+          String binType) {
         return root.retrieveAmmoCounts(chassis, variant, pilot, binType);
     }
 

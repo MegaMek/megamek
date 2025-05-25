@@ -89,7 +89,7 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
-import megamek.client.ui.advancedSearchMap.AdvancedSearchMapDialog;
+import megamek.client.ui.swing.dialog.advancedSearchMap.AdvancedSearchMapDialog;
 import megamek.client.ui.dialogs.AutoResolveChanceDialog;
 import megamek.client.ui.dialogs.AutoResolveProgressDialog;
 import megamek.client.ui.dialogs.AutoResolveSimulationLogDialog;
@@ -99,8 +99,13 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.toolTip.TWBoardViewTooltip;
+import megamek.client.ui.swing.dialog.ClientDialog;
 import megamek.client.ui.swing.dialog.DialogButton;
+import megamek.client.ui.swing.dialog.InformDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
+import megamek.client.ui.swing.dialog.RandomMapDialog;
+import megamek.client.ui.swing.dialog.RulerDialog;
+import megamek.client.ui.swing.dialog.SkillGenerationDialog;
 import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.swing.lobby.sorters.*;
 import megamek.client.ui.swing.minimap.Minimap;
@@ -124,6 +129,7 @@ import megamek.common.internationalization.I18n;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -474,7 +480,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (!ccd.showDialog().isConfirmed()) {
                 return;
             }
-    
+
             // Update the player from the camo selection
             player.setCamouflage(ccd.getSelectedItem());
             butCamo.setIcon(player.getCamouflage().getImageIcon());
@@ -914,9 +920,9 @@ public class ChatLounge extends AbstractPhaseDisplay
             boardPreviewW.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escape, closeAction);
             boardPreviewW.getRootPane().getActionMap().put(closeAction, new CloseAction(boardPreviewW));
 
-            Ruler.color1 = GUIP.getRulerColor1();
-            Ruler.color2 = GUIP.getRulerColor2();
-            Ruler ruler = new Ruler(clientgui.getFrame(), client(), previewBV, boardPreviewGame);
+            RulerDialog.color1 = GUIP.getRulerColor1();
+            RulerDialog.color2 = GUIP.getRulerColor2();
+            RulerDialog ruler = new RulerDialog(clientgui.getFrame(), client(), previewBV, boardPreviewGame);
             ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
             ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
             ruler.setAlwaysOnTop(true);
@@ -1599,24 +1605,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
 
-
-    /**
-     * Have the given entity disembark if it is carried by a unit of another player. Entities that were modified and
-     * need an update to be sent to the server are added to the given updateCandidate set.
-     *
-     * @deprecated No indicated Uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    void disembarkDifferentOwner(Entity entity, Collection<Entity> updateCandidates) {
-        if (entity.getTransportId() == Entity.NONE) {
-            return;
-        }
-        Entity carrier = clientgui.getClient().getGame().getEntity(entity.getTransportId());
-        if (carrier != null && (ownerOf(entity) != ownerOf(carrier))) {
-            disembark(entity, updateCandidates);
-        }
-    }
-
     /**
      * Have the given entities offload all the units they are carrying. Returns a set of entities that need to be sent
      * to the server.
@@ -1634,21 +1622,6 @@ public class ChatLounge extends AbstractPhaseDisplay
     void offloadFrom(Entity entity, Collection<Entity> updateCandidates) {
         if (isEditable(entity)) {
             for (Entity carriedUnit : entity.getLoadedUnits()) {
-                disembark(carriedUnit, updateCandidates);
-            }
-        }
-    }
-
-    /**
-     * Have the given entity offload all units of different players it is carrying. Returns a set of entities that need
-     * to be sent to the server.
-     *
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    void offloadFromDifferentOwner(Entity entity, Collection<Entity> updateCandidates) {
-        for (Entity carriedUnit : entity.getLoadedUnits()) {
-            if (ownerOf(carriedUnit) != ownerOf(entity)) {
                 disembark(carriedUnit, updateCandidates);
             }
         }
@@ -1679,24 +1652,6 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     void sendProxyUpdates(Collection<Entity> updateCandidates, Player player) {
         getLocalClient(player).sendUpdateEntity(updateCandidates);
-    }
-
-    /**
-     * Sends the entities in the given Collection to the Server. Sends only those that can be edited, i.e. the player's
-     * own or his bots' units. Will separate the units into update packets for the local player and any local bots so
-     * that the server accepts all changes as the server does not know of local bots and rejects updates that are not
-     * for the sending client or its teammates.
-     *
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    void sendUpdates(Collection<Entity> entities) {
-        java.util.List<Player> owners = entities.stream().map(Entity::getOwner).distinct().toList();
-        for (Player owner : owners) {
-            client().sendUpdateEntity(new ArrayList<>(entities.stream()
-                                                            .filter(e -> e.getOwner().equals(owner))
-                                                            .collect(toList())));
-        }
     }
 
     /**
@@ -1731,18 +1686,6 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     boolean isNotEditable(Entity entity) {
         return !isEditable(entity);
-    }
-
-    /**
-     * Returns true when all given entities may be configured by the local player, i.e. if they are his own units or one
-     * of his bot's units.
-     *
-     * @see #isEditable(Entity)
-     * @deprecated No indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    boolean isEditable(Collection<Entity> entities) {
-        return entities.stream().noneMatch(this::isNotEditable);
     }
 
     /**
@@ -1891,11 +1834,10 @@ public class ChatLounge extends AbstractPhaseDisplay
         boolean isBoardWidthOdd = mapSettings.getBoardWidth() % 2 != 0;
         boolean isMapSizeBiggerThanOne = mapSettings.getMapWidth() > 1;
         if (isBoardWidthOdd && isMapSizeBiggerThanOne && GUIP.getNagForOddSizedBoard()) {
-            InformDialog nag = clientgui.doInformBotherDialog(
-                  I18n.getTextAt("megamek.client.messages", "ChatLounge.board.warning.title"),
-                  I18n.getTextAt("megamek.client.messages","ChatLounge.board.warning.message"),
-                  true
-            );
+            InformDialog nag = clientgui.doInformBotherDialog(I18n.getTextAt("megamek.client.messages",
+                        "ChatLounge.board.warning.title"),
+                  I18n.getTextAt("megamek.client.messages", "ChatLounge.board.warning.message"),
+                  true);
             // do they want to be bothered again?
             if (!nag.getShowAgain()) {
                 GUIP.setNagForOddSizedBoard(false);
@@ -2072,21 +2014,24 @@ public class ChatLounge extends AbstractPhaseDisplay
                 var board = TWBoardTransformer.instantiateBoard(client().getMapSettings(),
                       client().getGame().getPlanetaryConditions(),
                       client().getGame().getOptions());
-
+                var planetaryConditions = client().getGame().getPlanetaryConditions();
                 if (chkAutoResolve.isSelected()) {
                     var proceed = AutoResolveChanceDialog.showDialog(clientgui.getFrame(),
                           simulationRuns,
                           threadNumbers,
                           currentTeam,
                           forcesSetups,
-                          board) == JOptionPane.YES_OPTION;
+                          board,
+                          planetaryConditions
+                    ) == JOptionPane.YES_OPTION;
 
                     if (!proceed) {
                         return;
                     }
                 }
 
-                var event = AutoResolveProgressDialog.showDialog(clientgui.getFrame(), forcesSetups, board);
+                var event = AutoResolveProgressDialog.showDialog(clientgui.getFrame(), forcesSetups, board,
+                      new PlanetaryConditions(planetaryConditions));
                 if (event != null) {
                     var autoResolveBattleReport = new AutoResolveSimulationLogDialog(clientgui.getFrame(),
                           event.getLogFile());
@@ -2640,17 +2585,6 @@ public class ChatLounge extends AbstractPhaseDisplay
             }
         }
         return true;
-    }
-
-    /**
-     * Returns true if the local player can see the given entity. This is true except when a blind drop option is active
-     * and one or more of the entities are not his own.
-     *
-     * @deprecated No indicated Uses
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    boolean canSee(Entity entity) {
-        return canSeeAll(Collections.singletonList(entity));
     }
 
     boolean entityInLocalTeam(Entity entity) {
@@ -3362,16 +3296,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
         header.repaint();
     }
-
-    /**
-     * Returns the owner of the given entity.
-     * Use this one over {@link Entity#getOwner()}.
-     * @return the owner of the entity
-     */
-    private Player ownerOf(Entity entity) {
-        return clientgui.getClient().getGame().getPlayer(entity.getOwnerId());
-    }
-
+    
     /**
      * Sets the column width of the given table column of the MekTable with the value stored in the GUIP.
      */
@@ -3535,12 +3460,14 @@ public class ChatLounge extends AbstractPhaseDisplay
                 try {
                     boards.put(name);
                 } catch (InterruptedException e) {
-                    LOGGER.warn(e, "[Thread=({}){}] Failed to load image {} for board, common on startup",
+                    LOGGER.warn(e,
+                          "[Thread=({}){}] Failed to load image {} for board, common on startup",
                           Thread.currentThread().getId(),
                           Thread.currentThread().getName(),
                           name);
                 } catch (Exception e) {
-                    LOGGER.error(e, "[Thread=({}){}] Failed to load image {} for board",
+                    LOGGER.error(e,
+                          "[Thread=({}){}] Failed to load image {} for board",
                           Thread.currentThread().getId(),
                           Thread.currentThread().getName(),
                           name);
@@ -3652,7 +3579,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                                                      boolean cellHasFocus) {
+              boolean cellHasFocus) {
 
             String board = (String) value;
             // For generated boards, add the size to have different images for different

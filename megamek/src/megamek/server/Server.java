@@ -1150,20 +1150,6 @@ public class Server implements Runnable {
     /**
      * Player can request its own change of team
      *
-     * @param teamId target team id
-     * @param player player requesting the change
-     *
-     * @deprecated Planned to be removed. Use {@link #requestTeamChangeForPlayer(int, Player)} instead. Remediated in
-     *       0.50.06. Remove in 0.50.07
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void requestTeamChange(int teamId, Player player) {
-        gameManager.requestTeamChange(teamId, player);
-    }
-
-    /**
-     * Player can request its own change of team
-     *
      * @param teamID target team id
      * @param player player requesting the change
      */

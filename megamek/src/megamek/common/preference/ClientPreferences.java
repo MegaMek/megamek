@@ -15,7 +15,7 @@ package megamek.common.preference;
 
 import megamek.MMConstants;
 import megamek.common.Configuration;
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 

@@ -13,12 +13,25 @@
  */
 package megamek.common.autoresolve.acar;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import megamek.common.BoardLocation;
 import megamek.common.IGame;
+import megamek.common.MapSettings;
 import megamek.common.Player;
 import megamek.common.ReportEntry;
-import megamek.common.autoresolve.acar.action.*;
-import megamek.common.autoresolve.acar.manager.*;
+import megamek.common.autoresolve.acar.action.Action;
+import megamek.common.autoresolve.acar.action.MoraleCheckAction;
+import megamek.common.autoresolve.acar.action.MoveAction;
+import megamek.common.autoresolve.acar.action.RecoveringNerveAction;
+import megamek.common.autoresolve.acar.action.WithdrawAction;
+import megamek.common.autoresolve.acar.manager.ActionsProcessor;
+import megamek.common.autoresolve.acar.manager.InitiativeHelper;
+import megamek.common.autoresolve.acar.manager.PhaseEndManager;
+import megamek.common.autoresolve.acar.manager.PhasePreparationManager;
+import megamek.common.autoresolve.acar.manager.VictoryHelper;
 import megamek.common.autoresolve.acar.phase.PhaseHandler;
 import megamek.common.autoresolve.acar.report.HtmlGameLogger;
 import megamek.common.autoresolve.acar.report.PublicReportEntry;
@@ -26,6 +39,7 @@ import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
 import megamek.common.enums.GamePhase;
 import megamek.common.net.packets.Packet;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import megamek.server.AbstractGameManager;
@@ -33,14 +47,10 @@ import megamek.server.Server;
 import megamek.server.commands.ServerCommand;
 import megamek.server.victory.VictoryResult;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class SimulationManager extends AbstractGameManager {
     private static final MMLogger logger = MMLogger.create(SimulationManager.class);
-    private final HtmlGameLogger gameLogger = HtmlGameLogger
-        .create(PreferenceManager.getClientPreferences().getAutoResolveGameLogFilename());
+    private final HtmlGameLogger gameLogger = HtmlGameLogger.create(PreferenceManager.getClientPreferences()
+                                                                          .getAutoResolveGameLogFilename());
 
     private final List<ReportEntry> pendingReports = new ArrayList<>();
     private final List<PhaseHandler> phaseHandlers = new ArrayList<>();
@@ -79,11 +89,7 @@ public class SimulationManager extends AbstractGameManager {
     }
 
     public AutoResolveConcludedEvent getConclusionEvent() {
-        return new AutoResolveConcludedEvent(
-            getGame(),
-            getCurrentVictoryResult(),
-            gameLogger.getLogFile()
-        );
+        return new AutoResolveConcludedEvent(getGame(), getCurrentVictoryResult(), gameLogger.getLogFile());
     }
 
     public void setFormationAt(Formation formation, BoardLocation position) {
@@ -227,10 +233,15 @@ public class SimulationManager extends AbstractGameManager {
     @Override
     public void calculatePlayerInitialCounts() {
         for (Player player : getGame().getPlayersList()) {
-            player.setInitialEntityCount(Math.toIntExact(getGame().getActiveFormations(player).stream()
-                .filter(entity -> !entity.isRouted()).count()));
-            getGame().getActiveFormations(player).stream().map(Formation::getPointValue).reduce(Integer::sum)
-                .ifPresent(player::setInitialBV);
+            player.setInitialEntityCount(Math.toIntExact(getGame().getActiveFormations(player)
+                                                               .stream()
+                                                               .filter(entity -> !entity.isRouted())
+                                                               .count()));
+            getGame().getActiveFormations(player)
+                  .stream()
+                  .map(Formation::getPointValue)
+                  .reduce(Integer::sum)
+                  .ifPresent(player::setInitialBV);
         }
     }
 
@@ -275,11 +286,6 @@ public class SimulationManager extends AbstractGameManager {
     }
 
     @Override
-    public void requestTeamChange(int teamId, Player player) {
-        // DO NOTHING
-    }
-
-    @Override
     public void send(Packet packet) {
         // DO NOTHING
     }
@@ -288,5 +294,4 @@ public class SimulationManager extends AbstractGameManager {
     public void send(int connId, Packet p) {
         // DO NOTHING
     }
-
 }

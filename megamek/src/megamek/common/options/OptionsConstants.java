@@ -309,6 +309,7 @@ public class OptionsConstants {
     public static final String BASE_GM_CONTROLS_DONE_REPORT_PHASE = "gm_controls_done_report_phase";
     public static final String BASE_HIDE_UNOFFICIAL = "hide_unofficial";
     public static final String BASE_HIDE_LEGACY = "hide_legacy";
+    public static final String BASE_NEW_DAMAGE_MANAGER = "new_damage_manager";
 
     public static final String VICTORY_SKIP_FORCED_VICTORY = "skip_forced_victory";
     public static final String VICTORY_CHECK_VICTORY = "check_victory";
@@ -329,7 +330,7 @@ public class OptionsConstants {
     public static final String ALLOWED_ERA_BASED = "era_based";
     public static final String ALLOWED_ALLOW_ILLEGAL_UNITS = "allow_illegal_units";
     public static final String ALLOWED_SHOW_EXTINCT = "show_extinct";
-    public static final String ALLOWED_CLAN_IGNORE_EQ_LIMITS = "clan_ignore_eq_limits";
+    public static final String ALLOWED_ALL_AMMO_MIXED_TECH = "clan_ignore_eq_limits";
     public static final String ALLOWED_NO_CLAN_PHYSICAL = "no_clan_physical";
     public static final String ALLOWED_ALLOW_NUKES = "allow_nukes";
     public static final String ALLOWED_REALLY_ALLOW_NUKES = "really_allow_nukes";

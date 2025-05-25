@@ -142,36 +142,12 @@ public class FormationType {
         return category;
     }
 
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int getAllowedUnitTypes() {
-        return allowedUnitTypes;
-    }
-
     public boolean isAllowedUnitType(int ut) {
         return (allowedUnitTypes & (1 << ut)) != 0;
     }
 
     public boolean isGround() {
         return (allowedUnitTypes & FLAG_AERO) == 0;
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public UnitRole getIdealRole() {
-        return idealRole;
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public String getExclusiveFaction() {
-        return exclusiveFaction;
     }
 
     public String getNameWithFaction() {
@@ -202,32 +178,8 @@ public class FormationType {
         return otherCriteria.iterator();
     }
 
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int getOtherCriteriaCount() {
-        return otherCriteria.size();
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public Constraint getConstraint(int index) {
-        return otherCriteria.get(index);
-    }
-
     public GroupingConstraint getGroupingCriteria() {
         return groupingCriteria;
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public int getReportMetricsSize() {
-        return reportMetrics.size();
     }
 
     public Iterator<String> getReportMetricKeys() {
@@ -1164,7 +1116,8 @@ public class FormationType {
         return getRetValForMatchedGroups(list, keyList);
     }
 
-    private static List<List<Map<Integer, Integer>>> getRetValForMatchedGroups(List<int[][]> list, List<Integer> keyList) {
+    private static List<List<Map<Integer, Integer>>> getRetValForMatchedGroups(List<int[][]> list,
+          List<Integer> keyList) {
         List<List<Map<Integer, Integer>>> retVal = new ArrayList<>();
         for (int[][] grouping : list) {
             List<Map<Integer, Integer>> newGrouping = new ArrayList<>();
@@ -2175,16 +2128,6 @@ public class FormationType {
               BiFunction<MekSummary, MekSummary, Boolean> groupConstraint, String description) {
             super(generalConstraint, description);
             this.groupConstraint = groupConstraint;
-        }
-
-        /**
-         * @deprecated no indicated uses.
-         */
-        @Deprecated(since = "0.50.05", forRemoval = true)
-        public GroupingConstraint(int unitTypes, Predicate<MekSummary> generalConstraint,
-              BiFunction<MekSummary, MekSummary, Boolean> groupConstraint, String description) {
-            this(generalConstraint, groupConstraint, description);
-            this.unitTypes = unitTypes;
         }
 
         public GroupingConstraint(int unitTypes, int groupSize, int numGroups, Predicate<MekSummary> generalConstraint,

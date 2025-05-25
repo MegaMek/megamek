@@ -112,17 +112,17 @@ public class MiscMounted extends Mounted<MiscType> {
             }
         }
 
-        if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, location)) {
+        if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, location)) {
             base -= 2;
         }
 
-        if (!entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, location)) {
+        if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, location)) {
             base--;
         }
-        if (!entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, location)) {
+        if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, location)) {
             base--;
         }
-        if (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, location)) {
+        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND, location)) {
             base--;
         }
 
@@ -168,17 +168,17 @@ public class MiscMounted extends Mounted<MiscType> {
                 }
             }
         }
-        if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, location)) {
+        if (entity.hasSystem(Mek.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, location)) {
             base -= 2;
         }
 
-        if (!entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, location)) {
+        if (entity.hasSystem(Mek.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, location)) {
             base--;
         }
-        if (!entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, location)) {
+        if (entity.hasSystem(Mek.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, location)) {
             base--;
         }
-        if (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, location)) {
+        if (entity.hasSystem(Mek.ACTUATOR_HAND, location) && !entity.hasWorkingSystem(Mek.ACTUATOR_HAND, location)) {
             base--;
         }
 

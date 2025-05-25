@@ -36,6 +36,9 @@ import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.swing.dialog.SliderDialog;
+import megamek.client.ui.swing.panels.CustomPilotViewPanel;
+import megamek.client.ui.swing.panels.EquipChoicePanel;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
@@ -70,7 +73,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     public static final int NEXT = 1;
     public static final int PREV = 2;
 
-    private CustomPilotView[] panCrewMember;
+    private CustomPilotViewPanel[] panCrewMember;
     private QuirksPanel panQuirks;
     private JPanel panPartReps;
 
@@ -188,7 +191,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      */
     public CustomMekDialog(ClientGUI clientgui, Client client, List<Entity> entities, boolean editable,
           boolean editableDeployment) {
-            
+
         super(clientgui.getFrame(), "CustomizeMekDialog", "CustomMekDialog.title");
         this.entities = entities;
         this.clientGUI = clientgui;
@@ -225,16 +228,6 @@ public class CustomMekDialog extends AbstractButtonDialog
 
     public String getSelectedTab() {
         return tabAll.getTitleAt(tabAll.getSelectedIndex());
-    }
-
-    /**
-     * @deprecated no indicated uses.
-     */
-    @Deprecated(since = "0.50.05", forRemoval = true)
-    public void setSelectedTab(int idx) {
-        if (idx < tabAll.getTabCount()) {
-            tabAll.setSelectedIndex(idx);
-        }
     }
 
     public void setSelectedTab(String tabName) {
@@ -634,7 +627,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 }
 
             }
-            Slider sl = new Slider(clientGUI.frame,
+            SliderDialog sl = new SliderDialog(clientGUI.frame,
                   Messages.getString("CustomMekDialog.offboardDistanceTitle"),
                   Messages.getString("CustomMekDialog.offboardDistanceQuestion"),
                   Math.min(Math.max(entities.get(0).getOffBoardDistance(), 17), maxDistance),
@@ -651,7 +644,7 @@ public class CustomMekDialog extends AbstractButtonDialog
         if (actionEvent.getActionCommand().equals("missing")) {
             // If we're down to a single crew member, do not allow anymore to be removed.
             final long remaining = Arrays.stream(panCrewMember).filter(p -> !p.getMissing()).count();
-            for (CustomPilotView v : panCrewMember) {
+            for (CustomPilotViewPanel v : panCrewMember) {
                 v.enableMissing(remaining > 1 || v.getMissing());
             }
             return;
@@ -736,17 +729,26 @@ public class CustomMekDialog extends AbstractButtonDialog
             if ((velocity > (2 * entities.get(0).getWalkMP())) || (velocity < 0)) {
                 msg = Messages.getString("CustomMekDialog.EnterCorrectVelocity");
                 title = Messages.getString("CustomMekDialog.NumberFormatError");
-                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                      msg,
+                      title,
+                      JOptionPane.ERROR_MESSAGE);
                 return;
             } else if ((altitude < 0) || (altitude > 10)) {
                 msg = Messages.getString("CustomMekDialog.EnterCorrectAltitude");
                 title = Messages.getString("CustomMekDialog.NumberFormatError");
-                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                      msg,
+                      title,
+                      JOptionPane.ERROR_MESSAGE);
                 return;
             } else if ((currentFuel < 0) || (currentFuel > fuel)) {
                 msg = (Messages.getString("CustomMekDialog.EnterCorrectFuel") + fuel + ".");
                 title = Messages.getString("CustomMekDialog.NumberFormatError");
-                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                      msg,
+                      title,
+                      JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
@@ -754,7 +756,10 @@ public class CustomMekDialog extends AbstractButtonDialog
         if ((isVTOL && height > 50) || (isAirMek && height > 25) || (isGlider && height > 12)) {
             msg = Messages.getString("CustomMekDialog.EnterCorrectHeight");
             title = Messages.getString("CustomMekDialog.NumberFormatError");
-            JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                  msg,
+                  title,
+                  JOptionPane.ERROR_MESSAGE);
             return;
         }
         // Apply single-entity settings
@@ -824,7 +829,10 @@ public class CustomMekDialog extends AbstractButtonDialog
                           (artillery > 8)) {
                     msg = Messages.getString("CustomMekDialog.EnterSkillsBetween0_8");
                     title = Messages.getString("CustomMekDialog.NumberFormatError");
-                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                          msg,
+                          title,
+                          JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -930,7 +938,10 @@ public class CustomMekDialog extends AbstractButtonDialog
                 if (offBoardDistance < 17) {
                     msg = Messages.getString("CustomMekDialog.OffboardDistance");
                     title = Messages.getString("CustomMekDialog.NumberFormatError");
-                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.frame,
+                          msg,
+                          title,
+                          JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 entity.setOffBoard(offBoardDistance,
@@ -1182,9 +1193,9 @@ public class CustomMekDialog extends AbstractButtonDialog
                                                             (e.getAltitude() == 0) &&
                                                             !(e instanceof GunEmplacement) &&
                                                             e.getWeaponList()
-                                                                .stream()
-                                                                .map(Mounted::getType)
-                                                                .anyMatch(weaponType -> weaponType.hasFlag(WeaponType.F_ARTILLERY) ||
+                                                                  .stream()
+                                                                  .map(Mounted::getType)
+                                                                  .anyMatch(weaponType -> weaponType.hasFlag(WeaponType.F_ARTILLERY) ||
                                                                                                 (weaponType instanceof CapitalMissileBayWeapon));
             eligibleForOffBoard &= entityEligibleForOffBoard;
         }
@@ -1193,9 +1204,9 @@ public class CustomMekDialog extends AbstractButtonDialog
         tabAll = new JTabbedPane();
 
         JPanel panCrew = new JPanel(new GridBagLayout());
-        panCrewMember = new CustomPilotView[entity.getCrew().getSlotCount()];
+        panCrewMember = new CustomPilotViewPanel[entity.getCrew().getSlotCount()];
         for (int i = 0; i < panCrewMember.length; i++) {
-            panCrewMember[i] = new CustomPilotView(this, entity, i, editable);
+            panCrewMember[i] = new CustomPilotViewPanel(this, entity, i, editable);
         }
         JPanel panDeploy = new JPanel(new GridBagLayout());
         Quirks quirks = entity.getQuirks();

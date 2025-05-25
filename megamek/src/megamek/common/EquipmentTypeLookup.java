@@ -85,6 +85,7 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String COOLANT_POD = "Coolant Pod";
     @EquipmentName public static final String MEK_TRACKS = "Tracks";
     @EquipmentName public static final String QUADVEE_WHEELS = "QuadVee Wheels";
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
     @EquipmentName public static final String IM_EJECTION_SEAT = "Ejection Seat (Industrial Mech)";
     @EquipmentName public static final String TSM = "Triple Strength Myomer";
     @EquipmentName public static final String SCM = "ISSuperCooledMyomer";
@@ -175,10 +176,12 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String PILE_DRIVER = "Heavy-Duty Pile Driver";
     @EquipmentName public static final String LADDER = "Ladder";
     @EquipmentName public static final String LIFT_HOIST = "Lift Hoist/Arresting Hoist";
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
     @EquipmentName public static final String MANIPULATOR_INDUSTRIAL = "Manipulator (Non-Mech/Non-Battle Armor)";
     @EquipmentName public static final String MINING_DRILL = "MiningDrill";
     @EquipmentName public static final String NAIL_RIVET_GUN = "Nail/Rivet Gun";
     @EquipmentName public static final String REFUELING_DROGUE = "RefuelingDrogue";
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
     @EquipmentName public static final String FLUID_SUCTION_LIGHT_MEK = "Fluid Suction System (Light - Mech)";
     @EquipmentName public static final String FLUID_SUCTION_LIGHT_VEE = "Fluid Suction System (Light - Vehicle)";
     @EquipmentName public static final String FLUID_SUCTION = "Fluid Suction System (Standard)";

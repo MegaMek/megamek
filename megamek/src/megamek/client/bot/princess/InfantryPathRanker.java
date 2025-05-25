@@ -20,6 +20,7 @@ package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.*;
+import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
@@ -36,7 +37,7 @@ public class InfantryPathRanker extends BasicPathRanker {
 
     @Override
     protected RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance,
-            List<Entity> enemies, Coords friendsCoords) {
+                                  List<Entity> enemies, Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder();
 

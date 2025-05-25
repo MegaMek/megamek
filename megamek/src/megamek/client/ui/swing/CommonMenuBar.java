@@ -104,6 +104,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem boardSaveAs = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAs"));
     private final JMenuItem boardSaveAsImage = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImage"));
     private final JMenuItem boardSaveAsImageUnits = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImageUnits"));
+    private final JCheckBoxMenuItem boardTrceOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.boardTraceOverlay"));
     private final JMenuItem boardResize = new JMenuItem(getString("CommonMenuBar.boardResize"));
     private final JMenuItem boardValidate = new JMenuItem(getString("CommonMenuBar.boardValidate"));
     private final JMenuItem boardSourceFile = new JMenuItem(getString("CommonMenuBar.boardSourceFile"));
@@ -262,6 +263,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardSaveAsImage.setToolTipText(Messages.getString("CommonMenuBar.fileBoardSaveAsImage.tooltip"));
         initMenuItem(boardSaveAsImageUnits, menu, BOARD_SAVE_AS_IMAGE_UNITS);
         boardSaveAsImageUnits.setToolTipText(Messages.getString("CommonMenuBar.fileBoardSaveAsImageUnits.tooltip"));
+        initMenuItem(boardTrceOverlay, menu, VIEW_TRACE_OVERLAY, GUIP.getShowTraceOverlay());
         menu.addSeparator();
 
         initMenuItem(boardUndo, menu, BOARD_UNDO);
@@ -408,6 +410,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_PLANETARYCONDITIONS_OVERLAY)) {
             GUIP.togglePlanetaryConditionsOverlay();
 
+        } else if (event.getActionCommand().equals(VIEW_TRACE_OVERLAY)) {
+            GUIP.toggleTraceConditionsOverlay();
+
         } else if (event.getActionCommand().equals(VIEW_KEYBINDS_OVERLAY)) {
             GUIP.toggleKeybindsOverlay();
 
@@ -508,6 +513,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardNew.setEnabled(isBoardEditor || isMainMenu);
         boardOpen.setEnabled(isBoardEditor || isMainMenu);
         boardRecent.setEnabled((isBoardEditor || isMainMenu) && !RecentBoardList.getRecentBoards().isEmpty());
+        boardTrceOverlay.setEnabled(isBoardEditor);
         fileUnitsPaste.setEnabled(isLobby);
         fileUnitsCopy.setEnabled(isLobby);
         fileUnitsReinforce.setEnabled((isInGame) && isNotVictory);

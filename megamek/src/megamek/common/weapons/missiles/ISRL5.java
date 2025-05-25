@@ -19,13 +19,16 @@
  */
 package megamek.common.weapons.missiles;
 
+import java.io.Serial;
+
 /**
- * No Ammo listed in Ammotype for this guy.
- * Duplicate of IS BA RL, not available to mechs at this rack size
- * Commented out in Weapontype
+ * No Ammo listed in {@link megamek.common.AmmoType} for this guy. Duplicate of IS BA RL, not available to meks at this
+ * rack size Commented out in {@link megamek.common.WeaponType}
+ *
  * @author Sebastian Brocks
  */
 public class ISRL5 extends RLWeapon {
+    @Serial
     private static final long serialVersionUID = -6957164916144671184L;
 
     public ISRL5() {
@@ -44,15 +47,15 @@ public class ISRL5 extends RLWeapon {
         tonnage = 7.0;
         criticals = 2;
         rulesRefs = "229, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
-                .setIntroLevel(false)
-                .setUnofficial(true)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-                .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false)
-                .setProductionFactions(F_MH);
+        techAdvancement.setTechBase(TechBase.ALL)
+              .setIntroLevel(false)
+              .setUnofficial(true)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+              .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
+              .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
+              .setProductionFactions(Faction.MH);
     }
 }

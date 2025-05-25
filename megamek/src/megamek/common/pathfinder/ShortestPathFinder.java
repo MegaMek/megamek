@@ -25,7 +25,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 import megamek.logging.MMLogger;
 
 /**
@@ -263,22 +265,22 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * maxMp move points.
      *
      * @param maxMP    maximum MP that entity can use
-     * @param stepType
+     * @param stepType the type of step to use
      * @param game     The current {@link Game}
      */
     public static ShortestPathFinder newInstanceOfOneToAll(final int maxMP, final MoveStepType stepType,
             final Game game) {
-        final ShortestPathFinder spf = new ShortestPathFinder(
+        ShortestPathFinder shortestPathFinder = new ShortestPathFinder(
                 new ShortestPathFinder.MovePathRelaxer(),
                 new ShortestPathFinder.MovePathMPCostComparator(),
                 stepType, game);
-        spf.addFilter(new MovePathLengthFilter(maxMP));
-        spf.addFilter(new MovePathLegalityFilter(game));
-        return spf;
+        shortestPathFinder.addFilter(new MovePathLengthFilter(maxMP));
+        shortestPathFinder.addFilter(new MovePathLegalityFilter(game));
+        return shortestPathFinder;
     }
 
     /**
-     * See {@link newInstanceOfOneToAll} - this returns a customized
+     * See {@link ShortestPathFinder#newInstanceOfOneToAll} - this returns a customized
      * ShortestPathFinder to support Aerodyne units.
      *
      * @param maxMP    maximum MP that entity can use

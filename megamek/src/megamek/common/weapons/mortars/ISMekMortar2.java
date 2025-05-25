@@ -13,17 +13,21 @@
  */
 package megamek.common.weapons.mortars;
 
+import java.io.Serial;
+
 /**
  * @author Jason Tighe
  */
 public class ISMekMortar2 extends MekMortarWeapon {
+    @Serial
     private static final long serialVersionUID = -6644886866545312980L;
 
     public ISMekMortar2() {
         super();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
         name = "'Mech Mortar 2";
         setInternalName("IS Mech Mortar-2");
+
         addLookupName("ISMekMortar2");
         addLookupName("IS Mek Mortar 2");
         rackSize = 2;
@@ -38,17 +42,17 @@ public class ISMekMortar2 extends MekMortarWeapon {
         tonnage = 5;
         cost = 15000;
         rulesRefs = "324, TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_D, RATING_F, RATING_F, RATING_E)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(2526, 2531, 3052, 2819, 3043)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 }

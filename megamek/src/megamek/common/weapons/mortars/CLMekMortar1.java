@@ -21,9 +21,10 @@ public class CLMekMortar1 extends MekMortarWeapon {
 
     public CLMekMortar1() {
         super();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
         name = "'Mech Mortar 1";
         setInternalName("Clan Mech Mortar-1");
+
         addLookupName("CLMekMortar1");
         addLookupName("Clan Mek Mortar 1");
         rackSize = 1;
@@ -38,14 +39,14 @@ public class CLMekMortar1 extends MekMortarWeapon {
         tonnage = 1;
         cost = 7000;
         rulesRefs = "324, TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_D, RATING_F, RATING_E, RATING_E)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CBR)
-                .setProductionFactions(F_CBR);
+                .setPrototypeFactions(Faction.CBR)
+                .setProductionFactions(Faction.CBR);
     }
 }

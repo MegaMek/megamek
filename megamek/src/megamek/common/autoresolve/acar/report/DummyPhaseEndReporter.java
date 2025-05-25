@@ -15,6 +15,8 @@
 
 package megamek.common.autoresolve.acar.report;
 
+import megamek.common.autoresolve.acar.SimulationManager;
+
 public class DummyPhaseEndReporter implements IPhaseEndReporter {
 
     private final static DummyPhaseEndReporter INSTANCE = new DummyPhaseEndReporter();
@@ -35,7 +37,7 @@ public class DummyPhaseEndReporter implements IPhaseEndReporter {
     }
 
     @Override
-    public void addSummary() {
+    public void addSummary(SimulationManager simulationManager) {
 
     }
 

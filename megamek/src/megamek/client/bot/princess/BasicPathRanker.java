@@ -19,37 +19,64 @@
  */
 package megamek.client.bot.princess;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Stream;
+
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.logging.MMLogger;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.stream.Stream;
-
 /**
- * A very "basic" path ranker
+ * A path ranker implementation for most units that evaluates and prioritizes movement paths with the highest score.
+ *
+ * <p>This class evaluates potential movement paths for units controlled by Princess and assigns utility scores based
+ * on tactical considerations. It ranks paths according to their overall desirability, considering multiple weighted
+ * factors including:</p>
+ *
+ * <ul>
+ *   <li><b>Fall risk</b> - Probability of failing piloting skill rolls and falling</li>
+ *   <li><b>Combat effectiveness</b> - Potential damage output vs. damage taken</li>
+ *   <li><b>Strategic positioning</b> - Maintaining appropriate distance to enemies</li>
+ *   <li><b>Tactical advantage</b> - Facing, movement modifiers, and clustering</li>
+ *   <li><b>Self-preservation</b> - Avoiding hazardous terrain and managing retreat</li>
+ *   <li><b>Unit cohesion</b> - Maintaining proximity to friendly units</li>
+ * </ul>
+ *
+ * <p>The ranker implements Princess's core movement decision-making logic for most ground units, calculating a final
+ * utility score where higher values represent more desirable paths. The relative importance of different factors is
+ * determined by the bot's behavior settings (aggression, bravery, herd mentality, etc.).</p>
+ *
+ * <p>Path evaluation also considers terrain hazards like building collapses, water, magma, ice, swamp, and other that
+ * could damage or immobilize the unit.</p>
  */
 public class BasicPathRanker extends PathRanker {
     private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
     public static final int FACING_MOD_MULTIPLIER = 50;
 
-    // this is a value used to indicate how much we value the unit being at its
-    // destination
+    // this is a value used to indicate how much we value the unit being at its destination
     private final int ARRIVED_AT_DESTINATION_FACTOR = 250;
 
-    // this is a value used to indicate how much we dis-value the unit being
-    // destroyed as a result of
-    // what it's doing
+    // this is a value used to indicate how much we dis-value the unit being destroyed as a result of what it's doing
     private final int UNIT_DESTRUCTION_FACTOR = 1000;
 
     private final FacingDiffCalculator facingDiffCalculator;
@@ -59,8 +86,7 @@ public class BasicPathRanker extends PathRanker {
 
     private PathEnumerator pathEnumerator;
 
-    // the best damage enemies could expect were I not here. Used to determine
-    // whether they will target me.
+    // The best damage enemies could expect were I not here. Used to determine whether they would focus on me.
     protected final Map<Integer, Double> bestDamageByEnemies;
 
     protected int blackIce = -1;
@@ -99,32 +125,59 @@ public class BasicPathRanker extends PathRanker {
     }
 
     boolean isInMyLoS(Entity unit, HexLine leftBounds, HexLine rightBounds) {
-        return (leftBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) > 0)
-                && (rightBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) < 0);
+        return (leftBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) > 0) &&
+                     (rightBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) < 0);
     }
 
+    /**
+     * Trying to use a Static Class and Method when we should call it directly.
+     *
+     * @param fireControl     {@link FireControl} Static Instance???
+     * @param shooter         {@link Entity} that is shooting
+     * @param range           Range to target
+     * @param useExtremeRange Whether to use Extreme Range
+     * @param useLOSRange     Line Of Sight Range
+     *
+     * @return Max damage at range.
+     */
+    @Deprecated(since = "0.50.07", forRemoval = true)
     double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range, boolean useExtremeRange,
-            boolean useLOSRange) {
-        return fireControl.getMaxDamageAtRange(shooter, range, useExtremeRange, useLOSRange);
+          boolean useLOSRange) {
+        return getMaxDamageAtRange(shooter, range, useExtremeRange, useLOSRange);
+    }
+
+    /**
+     * Determine max damage at range
+     *
+     * @param shooter         {@link Entity} that is shooting
+     * @param range           Range to target
+     * @param useExtremeRange Whether to use Extreme Range
+     * @param useLOSRange     Line Of Sight Range
+     *
+     * @return Max damage at range.
+     */
+    double getMaxDamageAtRange(Entity shooter, int range, boolean useExtremeRange, boolean useLOSRange) {
+        // It's a static class with a static method. Call directly, no need to pass.
+        return FireControl.getMaxDamageAtRange(shooter, range, useExtremeRange, useLOSRange);
     }
 
     boolean canFlankAndKick(Entity enemy, Coords behind, Coords leftFlank, Coords rightFlank, int myFacing) {
         Set<CoordFacingCombo> enemyFacingSet = pathEnumerator.getUnitPotentialLocations().get(enemy.getId());
 
         if (enemyFacingSet == null) {
-            logger.warn("no facing set for %s", enemy.getDisplayName());
+            logger.debug("no facing set for {}", enemy.getDisplayName());
             return false;
         }
 
-        return enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, myFacing))
-                || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 1) % 6))
-                || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 5) % 6))
-                || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, myFacing))
-                || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 4) % 6))
-                || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 5) % 6))
-                || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, myFacing))
-                || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 1) % 6))
-                || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 2) % 6));
+        return enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, myFacing)) ||
+                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 1) % 6)) ||
+                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 5) % 6)) ||
+                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, myFacing)) ||
+                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 4) % 6)) ||
+                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 5) % 6)) ||
+                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, myFacing)) ||
+                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 1) % 6)) ||
+                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 2) % 6));
     }
 
     /**
@@ -133,7 +186,7 @@ public class BasicPathRanker extends PathRanker {
      * range
      */
     EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange,
-            boolean useLOSRange) {
+          boolean useLOSRange) {
         // some preliminary calculations
         final double damageDiscount = 0.25;
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
@@ -173,29 +226,19 @@ public class BasicPathRanker extends PathRanker {
         }
 
         if (isInMyLoS(enemy, leftBounds, rightBounds)) {
-            returnResponse.addToMyEstimatedDamage(
-                    getMaxDamageAtRange(getFireControl(path.getEntity()),
-                            path.getEntity(),
-                            range,
-                            useExtremeRange,
-                            useLOSRange) * damageDiscount);
+            returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(path.getEntity(),
+                  range,
+                  useExtremeRange,
+                  useLOSRange) * damageDiscount);
         }
 
-        // in general if an enemy can end its position in range, it can hit me
-        returnResponse.addToEstimatedEnemyDamage(
-                getMaxDamageAtRange(getFireControl(enemy),
-                        enemy,
-                        range,
-                        useExtremeRange,
-                        useLOSRange)
-                        * damageDiscount);
+        // in general, if an enemy can end its position in range, it can hit me
+        returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(enemy, range, useExtremeRange, useLOSRange) *
+                                                       damageDiscount);
 
-        // It is especially embarrassing if the enemy can move behind or flank me and
-        // then kick me
+        // It is especially embarrassing if the enemy can move behind or flank me and then kick me
         if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
-            returnResponse.addToEstimatedEnemyDamage(
-                    Math.ceil(enemy.getWeight() / 5.0) *
-                            damageDiscount);
+            returnResponse.addToEstimatedEnemyDamage(Math.ceil(enemy.getWeight() / 5.0) * damageDiscount);
         }
 
         return returnResponse;
@@ -206,6 +249,33 @@ public class BasicPathRanker extends PathRanker {
         return super.getPSRList(path);
     }
 
+    /**
+     * Calculates a penalty modifier for paths with a risk of causing the unit to fall over.
+     * <p>
+     * This method evaluates the risk associated with a movement path based on the probability of failing any required
+     * piloting skill rolls (PSRs). The penalty is calculated by multiplying the probability of failure by a "shame
+     * factor" that represents how much the AI dislikes falling.
+     * <p>
+     * The penalty formula is:
+     * <pre>
+     *    penalty = pilotingFailureChance * (guaranteed failure ? UNIT_DESTRUCTION_FACTOR : fallShameValue)
+     * </pre>
+     * <p>
+     * This creates a graduated response where:
+     * <ul>
+     *   <li>Paths with no chance of falling have no penalty (0)</li>
+     *   <li>Paths with some chance of falling have a proportional penalty</li>
+     *   <li>Paths with guaranteed falling are heavily penalized (treated as potential unit destruction)</li>
+     * </ul>
+     * <p>
+     * The method accounts for the AI's risk tolerance through the fallShame setting - higher values
+     * make the AI more cautious about potential falls.
+     *
+     * @param successProbability The probability (0.0 to 1.0) that the unit will successfully complete all piloting
+     *                           skill rolls required by the movement path
+     *
+     * @return The calculated fall penalty value to be subtracted from the path's utility
+     */
     private double calculateFallMod(double successProbability) {
         double pilotingFailure = (1 - successProbability);
         double fallShame = getOwner().getBehaviorSettings().getFallShameValue();
@@ -215,7 +285,7 @@ public class BasicPathRanker extends PathRanker {
     }
 
     double calculateDamagePotential(Entity enemy, EntityState shooterState, MovePath path, EntityState targetState,
-            int distance, Game game) {
+          int distance, Game game) {
 
         // If they don't have the range, they can't do damage.
         int maxRange = getOwner().getMaxWeaponRange(enemy, path.getEntity().isAirborne());
@@ -224,8 +294,12 @@ public class BasicPathRanker extends PathRanker {
         }
 
         // If they don't have LoS, they can't do damage.
-        final LosEffects losEffects = LosEffects.calculateLOS(game, enemy, path.getEntity(), shooterState.getPosition(),
-                targetState.getPosition(), false);
+        final LosEffects losEffects = LosEffects.calculateLOS(game,
+              enemy,
+              path.getEntity(),
+              shooterState.getPosition(),
+              targetState.getPosition(),
+              false);
 
         if (!losEffects.canSee()) {
             return 0;
@@ -241,13 +315,12 @@ public class BasicPathRanker extends PathRanker {
         }
 
         int maxHeat = (enemy.getHeatCapacity() - enemy.heat) + (enemy.isAero() ? 0 : 5);
-        FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder()
-                .buildGuess(enemy,
-                        shooterState,
-                        actualTarget,
-                        targetState,
-                        maxHeat,
-                        null);
+        FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder().buildGuess(enemy,
+              shooterState,
+              actualTarget,
+              targetState,
+              maxHeat,
+              null);
         return getFireControl(path.getEntity()).determineBestFiringPlan(guess).getUtility();
     }
 
@@ -257,9 +330,14 @@ public class BasicPathRanker extends PathRanker {
         }
 
         // if they can kick me, and probably hit, they probably will.
-        PhysicalInfo theirKick = new PhysicalInfo(enemy, null,
-                path.getEntity(), new EntityState(path),
-                PhysicalAttackType.RIGHT_KICK, game, getOwner(), true);
+        PhysicalInfo theirKick = new PhysicalInfo(enemy,
+              null,
+              path.getEntity(),
+              new EntityState(path),
+              PhysicalAttackType.RIGHT_KICK,
+              game,
+              getOwner(),
+              true);
 
         if (theirKick.getProbabilityToHit() <= 0.5) {
             return 0.0;
@@ -271,7 +349,7 @@ public class BasicPathRanker extends PathRanker {
     double calculateMyDamagePotential(MovePath path, Entity enemy, int distance, Game game) {
         Entity me = path.getEntity();
 
-        // If I don't have range, I can't do damage.
+        // If I don't have a range, I can't do damage.
         // exception: I might, if I'm an aero on a ground map attacking a ground unit
         // because aero unit ranges are a "special case"
         boolean aeroAttackingGroundUnitOnGroundMap = me.isAirborne() && !enemy.isAero() && game.getBoard().onGround();
@@ -282,8 +360,12 @@ public class BasicPathRanker extends PathRanker {
         }
 
         // If I don't have LoS, I can't do damage. ToDo: Account for indirect fire.
-        LosEffects losEffects = LosEffects.calculateLOS(game, me, enemy, path.getFinalCoords(),
-                enemy.getPosition(), false);
+        LosEffects losEffects = LosEffects.calculateLOS(game,
+              me,
+              enemy,
+              path.getFinalCoords(),
+              enemy.getPosition(),
+              false);
         if (!losEffects.canSee()) {
             return 0;
         }
@@ -299,16 +381,19 @@ public class BasicPathRanker extends PathRanker {
         // we're only going to do air to ground attack plans if we're an airborne aero
         // attacking a ground unit
         if (aeroAttackingGroundUnitOnGroundMap) {
-            myFiringPlan = getFireControl(path.getEntity()).guessFullAirToGroundPlan(me, enemy,
-                    new EntityState(enemy), path, game, false);
+            myFiringPlan = getFireControl(path.getEntity()).guessFullAirToGroundPlan(me,
+                  enemy,
+                  new EntityState(enemy),
+                  path,
+                  game,
+                  false);
         } else {
-            FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder()
-                    .buildGuess(path.getEntity(),
-                            new EntityState(path),
-                            enemy,
-                            null,
-                            getFireControl(me).calcHeatTolerance(me, me.isAero()),
-                            null);
+            FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder().buildGuess(path.getEntity(),
+                  new EntityState(path),
+                  enemy,
+                  null,
+                  getFireControl(me).calcHeatTolerance(me, me.isAero()),
+                  null);
             myFiringPlan = getFireControl(me).determineBestFiringPlan(guess);
         }
         return myFiringPlan.getUtility();
@@ -320,11 +405,16 @@ public class BasicPathRanker extends PathRanker {
         }
 
         PhysicalInfo myKick = new PhysicalInfo(path.getEntity(),
-                new EntityState(path), enemy, null,
-                PhysicalAttackType.RIGHT_KICK, game, getOwner(), true);
+              new EntityState(path),
+              enemy,
+              null,
+              PhysicalAttackType.RIGHT_KICK,
+              game,
+              getOwner(),
+              true);
 
         if (myKick.getProbabilityToHit() <= 0.5) {
-            return 0;
+            return 0.0;
         }
 
         return myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
@@ -337,7 +427,11 @@ public class BasicPathRanker extends PathRanker {
 
         // How much damage can they do to me?
         double theirDamagePotential = calculateDamagePotential(enemy,
-                new EntityState(enemy), path, new EntityState(path), distance, game);
+              new EntityState(enemy),
+              path,
+              new EntityState(path),
+              distance,
+              game);
 
         // if they can kick me, and probably hit, they probably will.
         if (distance <= 1) {
@@ -357,8 +451,30 @@ public class BasicPathRanker extends PathRanker {
         return returnResponse;
     }
 
-    // The further I am from a target, the lower this path ranks (weighted by
-    // Hyper Aggression.
+    /**
+     * Calculates an aggression modifier that penalizes paths keeping the unit far from enemies.
+     *
+     * <p>This method implements the tactical preference for closing with the enemy based on:
+     * <ul>
+     *   <li>The distance to the closest enemy from the path's final position</li>
+     *   <li>The AI's configured hyper-aggression value</li>
+     * </ul>
+     *
+     * <p>The aggression modifier follows this formula:
+     * <pre>
+     * aggressionMod = distanceToClosestEnemy * hyperAggressionValue
+     * </pre>
+     *
+     * <p>Since this value is subtracted in the final utility calculation, higher values represent
+     * stronger penalties for staying distant from enemies. A high hyperAggressionValue will strongly
+     * push units toward closing with enemies regardless of other tactical considerations.
+     *
+     * @param movingUnit The entity being moved
+     * @param path       The movement path being evaluated
+     * @param game       The current game state
+     *
+     * @return An aggression modifier value (higher is worse) to be used in path ranking
+     */
     protected double calculateAggressionMod(Entity movingUnit, MovePath path, Game game) {
 
         double distToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
@@ -373,7 +489,29 @@ public class BasicPathRanker extends PathRanker {
         return aggressionMod;
     }
 
-    // Lower this path ranking if I am moving away from my friends (weighted by Herd Mentality).
+    /**
+     * Calculates a herding modifier that penalizes paths taking the unit away from friendly forces.
+     *
+     * <p>This method implements the tactical preference for maintaining formation with friendly units based on:
+     * <ul>
+     *   <li>The distance from the path's final position to the center of friendly forces</li>
+     *   <li>The AI's configured herd mentality value</li>
+     * </ul>
+     *
+     * <p>The herding modifier follows this formula:
+     * <pre>
+     * herdingMod = distanceToFriends * herdMentalityValue
+     * </pre>
+     *
+     * <p>Since this value is subtracted in the final utility calculation, higher values represent
+     * stronger penalties for straying from the friendly force. If no friendly forces are present
+     * (friendsCoords is null), the method returns 0, applying no penalty.
+     *
+     * @param friendsCoords The coordinate representing the center of friendly forces, or null if no friends
+     * @param path          The movement path being evaluated
+     *
+     * @return A herding modifier value (higher is worse) to be used in path ranking
+     */
     protected double calculateHerdingMod(Coords friendsCoords, MovePath path) {
         if (friendsCoords == null) {
             logger.trace(" herdingMod [-0 no friends]");
@@ -388,10 +526,44 @@ public class BasicPathRanker extends PathRanker {
         return herdingMod;
     }
 
+    /**
+     * Calculates a facing modifier that penalizes paths where the unit is not facing threats.
+     *
+     * <p>This method evaluates how well the unit's final facing aligns with the direction
+     * it should optimally face to confront enemies. The method:
+     * <ul>
+     *   <li>Determines the ideal facing based on the position of the closest enemies</li>
+     *   <li>Calculates how far off the unit's final facing is from this ideal</li>
+     *   <li>Applies a penalty proportional to how far off the facing is</li>
+     *   <li>Considers armor distribution to bias facing toward better-protected sides</li>
+     * </ul>
+     *
+     * <p>Facing differences are measured in hexside rotations (0-3), where:
+     * <ul>
+     *   <li>0 = Perfect facing toward threat</li>
+     *   <li>1 = Off by one hexside (60°)</li>
+     *   <li>2 = Off by two hexsides (120°)</li>
+     *   <li>3 = Facing directly away (180°)</li>
+     * </ul>
+     *
+     * <p>The facing penalty is calculated as: 50 * (facingDiff - 1), with a minimum of 0.
+     * This means perfect facing has no penalty, while the worst facing incurs a -100 penalty.
+     *
+     * @param movingUnit           The entity being moved
+     * @param game                 The current game state
+     * @param path                 The movement path being evaluated
+     * @param enemyMedianPosition  The coordinates of the median position of enemies, or null to use the board center
+     * @param closestEnemyPosition The coordinates of the closest enemy, or null to use the board center
+     *
+     * @return A facing modifier value (higher is worse) to be used in path ranking
+     */
     protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,
           @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition) {
-        int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit, path, game.getBoard().getCenter(),
-              enemyMedianPosition, closestEnemyPosition);
+        int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit,
+              path,
+              game.getBoard().getCenter(),
+              enemyMedianPosition,
+              closestEnemyPosition);
         double facingMod = FACING_MOD_MULTIPLIER * facingDiff;
 
         logger.trace("facing mod [(-){} = {} * {}]", facingMod, FACING_MOD_MULTIPLIER, facingDiff);
@@ -399,8 +571,24 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
-     * If intentionally attempting to reach some board edge, favor paths that take
-     * me closer to it.
+     * Calculates a self-preservation modifier that encourages units to retreat when appropriate.
+     *
+     * <p>This method applies penalties or bonuses based on the unit's movement toward safety:
+     * <ul>
+     *   <li>For units in forced withdrawal or moving to a destination, encourages movement toward home edge</li>
+     *   <li>Applies a significant bonus ({@link #ARRIVED_AT_DESTINATION_FACTOR}) if the path reaches the home edge</li>
+     *   <li>Applies a penalty proportional to distance from home edge otherwise</li>
+     * </ul>
+     *
+     * <p>The method only applies these modifiers when the unit is in forced withdrawal or deliberately
+     * moving to a designated location. For normal combat operations, it returns 0 to indicate
+     * self-preservation is not a priority factor.
+     *
+     * @param movingUnit The entity being moved
+     * @param path       The movement path being evaluated
+     * @param game       The current game state
+     *
+     * @return A self-preservation modifier value (negative values are better) to be used in path ranking
      */
     protected double calculateSelfPreservationMod(Entity movingUnit, MovePath path, Game game) {
         BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
@@ -419,7 +607,10 @@ public class BasicPathRanker extends PathRanker {
                 selfPreservationMod = -ARRIVED_AT_DESTINATION_FACTOR;
             }
 
-            logger.trace("self preservation mod [-{} = {} * {}]", selfPreservationMod, newDistanceToHome, selfPreservation);
+            logger.trace("self preservation mod [-{} = {} * {}]",
+                  selfPreservationMod,
+                  newDistanceToHome,
+                  selfPreservation);
             return selfPreservationMod;
         }
         logger.trace("self preservation mod [0] - not moving nor forced to withdraw");
@@ -427,10 +618,23 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
-     * Tells me whether this path will result in me flying to a location from which
-     * there is absolutely no way to remain on the board the following turn.
+     * Calculates a modifier that penalizes paths risking an aerospace unit flying off the board.
      *
-     * Not applicable for ground units, so the default behavior is to return 0.
+     * <p>This method evaluates the risk of aerospace units inadvertently leaving the game board
+     * on subsequent turns due to their movement characteristics. The method:
+     * <ul>
+     *   <li>Analyzes the path's final position, velocity, and facing</li>
+     *   <li>Calculates whether the unit might be forced off-board on the following turns</li>
+     *   <li>Returns a multiplier that severely penalizes paths with high off-board risk</li>
+     * </ul>
+     *
+     * <p>For non-aerospace units, this method always returns 0 as they don't face this particular risk.
+     * For aerospace units, a non-zero return value serves as a multiplier to other penalties,
+     * effectively eliminating dangerous paths from consideration.
+     *
+     * @param path The movement path being evaluated
+     *
+     * @return A multiplier value (0 for no risk, positive for risk of flying off-board)
      */
     protected double calculateOffBoardMod(MovePath path) {
         return 0.0;
@@ -438,18 +642,77 @@ public class BasicPathRanker extends PathRanker {
 
 
     protected void checkBlackIce(Game game) {
-        blackIce = ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
-            && game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP)
-            || game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
+        blackIce = ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE) &&
+                           game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP) ||
+                          game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
     }
 
 
     /**
-     * A path ranking
+     * Evaluates and ranks movement paths for MegaMek units based on multiple strategic factors. Returns a utility score
+     * where higher values represent more desirable paths.
+     *
+     * <p>The utility score calculation combines several weighted factors:</p>
+     * <pre>
+     *   utility = -fallMod + braveryMod - aggressionMod - herdingMod + movementMod
+     *             - crowdingTolerance - facingMod - selfPreservationMod - (utility * offBoardMod)
+     * </pre>
+     *
+     * <p><strong>Key Components:</strong></p>
+     * <ul>
+     *   <li><strong>fallMod</strong>: Penalty for paths with risk of failing piloting rolls
+     *     <ul><li>Calculated as {@code pilotingFailure * fallShame}</li>
+     *         <li>Higher values = worse paths (more likely to fall)</li></ul>
+     *   </li>
+     *   <li><strong>braveryMod</strong>: Reward for paths balancing damage output vs. incoming damage
+     *     <ul><li>Based on potential damage to enemies vs. expected damage received</li>
+     *         <li>Higher values = better paths (can do more damage than take)</li></ul>
+     *   </li>
+     *   <li><strong>aggressionMod</strong>: Penalty for staying far from enemies
+     *     <ul><li>Calculated as {@code distanceToEnemy * aggressionValue}</li>
+     *         <li>Higher values = worse paths (too far from enemies when aggression is high)</li></ul>
+     *   </li>
+     *   <li><strong>herdingMod</strong>: Penalty for moving away from friendly units
+     *     <ul><li>Calculated as {@code distanceToFriends * herdingValue}</li>
+     *         <li>Higher values = worse paths (isolated from allies)</li></ul>
+     *   </li>
+     *   <li><strong>facingMod</strong>: Penalty for not facing toward enemies
+     *     <ul><li>Based on facing direction relative to enemies</li>
+     *         <li>Higher values = worse paths (facing away from threats)</li></ul>
+     *   </li>
+     *   <li><strong>selfPreservationMod</strong>: Penalty for not moving toward retreat edge when needed
+     *     <ul><li>Special case: if reaching the home edge, gives a large bonus of {@code ARRIVED_AT_DESTINATION_FACTOR}</li>
+     *         <li>Higher values = worse paths (not retreating when damaged)</li></ul>
+     *   </li>
+     *   <li><strong>movementMod</strong>: Reward for using movement effectively
+     *     <ul><li>Based on multiple strategic factors</li>
+     *         <li>Higher values = better paths (using speed effectively)</li></ul>
+     *   </li>
+     *   <li><strong>crowdingTolerance</strong>: Penalty for ending in crowded areas
+     *     <ul><li>Based on nearby threats relative to maximum weapon range</li>
+     *         <li>Higher values = worse paths (too many enemies nearby)</li></ul>
+     *   </li>
+     *   <li><strong>offBoardMod</strong>: Penalty for aerospace units at risk of flying off the board
+     *     <ul><li>Applies as a multiplier to existing penalties</li>
+     *         <li>Higher values = worse paths (likely to fly off the board)</li></ul>
+     *   </li>
+     * </ul>
+     *
+     * <p>The function uses behavior settings like bravery, aggression, and herd mentality to adjust
+     * the relative importance of these factors based on the AI's configured personality.</p>
+     *
+     * @param path          The movement path to be evaluated
+     * @param game          The current game state
+     * @param maxRange      Entity max weapon range
+     * @param fallTolerance a maximum PSR failure chance to be acceptable
+     * @param enemies       List of enemy units visible
+     * @param friendsCoords Center of Gravity of friendly units (average coordinate position)
+     *
+     * @return A double representing the utility/desirability of the path (higher is better)
      */
     @Override
     protected RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance, List<Entity> enemies,
-            Coords friendsCoords) {
+          Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
 
         if (blackIce == -1) {
@@ -472,12 +735,14 @@ public class BasicPathRanker extends PathRanker {
         scores.put("friendsCoords_x", friendsCoords == null ? -1.0 : friendsCoords.getX());
         scores.put("friendsCoords_y", friendsCoords == null ? -1.0 : friendsCoords.getY());
         scores.put("entityId", (double) movingUnit.getId());
-        scores.put("entityBehaviorState", (double) getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner()).ordinal());
+        scores.put("entityBehaviorState",
+              (double) getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner()).ordinal());
+
         // Worry about how badly we can damage ourselves on this path!
         double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy);
         expectedDamageTaken += checkPathForHazards(pathCopy, movingUnit, game);
         expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
-        scores.put("damageExpectedPath", (double) expectedDamageTaken);
+        scores.put("damageExpectedPath", expectedDamageTaken);
         // look at all of my enemies
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
 
@@ -489,15 +754,14 @@ public class BasicPathRanker extends PathRanker {
                 continue;
             }
 
-            // Skip units not actually on the board.
-            if (enemy.isOffBoard() || (enemy.getPosition() == null)
-                    || !game.getBoard().contains(enemy.getPosition())) {
-                 continue;
+            // Skip units not on the board.
+            if (enemy.isOffBoard() || (enemy.getPosition() == null) || !game.getBoard().contains(enemy.getPosition())) {
+                continue;
             }
 
             // Skip broken enemies
-            if (getOwner().getHonorUtil().isEnemyBroken(enemy.getId(), enemy.getOwnerId(),
-                    getOwner().getForcedWithdrawal())) {
+            if (getOwner().getHonorUtil()
+                      .isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal())) {
                 continue;
             }
 
@@ -511,7 +775,7 @@ public class BasicPathRanker extends PathRanker {
                 eval = evaluateUnmovedEnemy(enemy, path, extremeRange, losRange);
             }
 
-            // if we're not ignoring the enemy, we consider damage that we may do to them;
+            // if we're not ignoring the enemy, we consider the damage that we may do to them;
             // however, just because we're ignoring them doesn't mean they won't shoot at
             // us.
             if (!getOwner().getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
@@ -528,12 +792,12 @@ public class BasicPathRanker extends PathRanker {
 
         // if we're not in the air, we may get hit by friendly artillery
         if (!path.getEntity().isAirborne() && !path.getEntity().isAirborneVTOLorWIGE()) {
-            double friendlyArtilleryDamage = 0;
+            double friendlyArtilleryDamage;
             Map<Coords, Double> artyDamage = getOwner().getPathRankerState().getIncomingFriendlyArtilleryDamage();
 
             if (!artyDamage.containsKey(path.getFinalCoords())) {
-                friendlyArtilleryDamage = ArtilleryTargetingControl
-                        .evaluateIncomingArtilleryDamage(path.getFinalCoords(), getOwner());
+                friendlyArtilleryDamage = ArtilleryTargetingControl.evaluateIncomingArtilleryDamage(path.getFinalCoords(),
+                      getOwner());
                 artyDamage.put(path.getFinalCoords(), friendlyArtilleryDamage);
             } else {
                 friendlyArtilleryDamage = artyDamage.get(path.getFinalCoords());
@@ -544,13 +808,20 @@ public class BasicPathRanker extends PathRanker {
 
         damageEstimate = calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
 
-        // If I cannot kick because I am a clan unit and "No physical attacks for the
-        // clans"
+        // If I cannot kick because I am a clan unit and "No physical attacks for the clans"
         // is enabled, set maximum physical damage for this path to zero.
-        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
-                && path.getEntity().getCrew().isClanPilot()) {
+        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) &&
+                  path.getEntity().getCrew().isClanPilot()) {
             damageEstimate.physicalDamage = 0;
         }
+
+        // In case we are ignoring damage output, set the damage to zero.
+        if (getOwner().getBehaviorSettings().isIgnoreDamageOutput()) {
+            damageEstimate.physicalDamage = 0;
+            damageEstimate.firingDamage = 0;
+        }
+
+        scores.put("ignoreDamageOutput", getOwner().getBehaviorSettings().isIgnoreDamageOutput() ? 1.0 : 0.0);
         scores.put("damageExpectedTotal", expectedDamageTaken);
         scores.put("myAttackFiring", damageEstimate.firingDamage);
         scores.put("myAttackPhysical", damageEstimate.physicalDamage);
@@ -562,12 +833,11 @@ public class BasicPathRanker extends PathRanker {
         scores.put("braveryIndex", (double) getOwner().getBehaviorSettings().getBraveryIndex());
         scores.put("braveryMod", braveryMod);
         var isNotAirborne = !path.getEntity().isAirborneAeroOnGroundMap();
-        // the only critters not subject to aggression and herding mods are
-        // airborne aeros on ground maps, as they move incredibly fast
+        // The only critters not subject to aggression and herding mods are
+        // airborne aeros on ground maps, as they move incredibly fast.
         // The further I am from a target, the lower this path ranks
         // (weighted by Aggression slider).
-        double aggressionMod = isNotAirborne ?
-            calculateAggressionMod(movingUnit, pathCopy, game) : 0;
+        double aggressionMod = isNotAirborne ? calculateAggressionMod(movingUnit, pathCopy, game) : 0;
         double distToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
         scores.put("closestEnemyDistance", distToEnemy);
         scores.put("aggressionValue", getOwner().getBehaviorSettings().getHyperAggressionValue());
@@ -587,7 +857,7 @@ public class BasicPathRanker extends PathRanker {
         scores.put("herdingMod", herdingMod);
 
         var movementModFormula = new StringBuilder(64);
-        // Movement is good, it gives defense and extends a player power in the game.
+
         double movementMod = calculateMovementMod(pathCopy, game, enemies, movementModFormula);
         scores.put("enemyHotSpotCount", (double) getOwner().getEnemyHotSpots().size());
         scores.put("selfPreservationValue", getOwner().getBehaviorSettings().getSelfPreservationValue());
@@ -596,23 +866,29 @@ public class BasicPathRanker extends PathRanker {
         // Try to face the enemy.
         Coords medianEnemyPosition = unitsMedianCoordinateCalculator.getEnemiesMedianCoordinate(enemies,
               path.getFinalCoords());
-        Coords closestEnemyPositionNotZeroDistance =
-              Optional.ofNullable(findClosestEnemy(movingUnit, pathCopy.getFinalCoords(), game, false, 1))
-                    .map(Targetable::getPosition).orElse(null);
-        double facingMod = calculateFacingMod(movingUnit, game, pathCopy, medianEnemyPosition, closestEnemyPositionNotZeroDistance);
+        Coords closestEnemyPositionNotZeroDistance = Optional.ofNullable(findClosestEnemy(movingUnit,
+              pathCopy.getFinalCoords(),
+              game,
+              false,
+              1)).map(Targetable::getPosition).orElse(null);
+        double facingMod = calculateFacingMod(movingUnit,
+              game,
+              pathCopy,
+              medianEnemyPosition,
+              closestEnemyPositionNotZeroDistance);
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
         scores.put("facingDiff", facingMod / FACING_MOD_MULTIPLIER);
         scores.put("facingMod", facingMod);
 
         var formula = new StringBuilder(256);
         var crowdingToleranceFormula = new StringBuilder(64);
+
         double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, maxRange, crowdingToleranceFormula);
-        // If I need to flee the board, I want to get closer to my home edge.
-        double selfPreservationMod= calculateSelfPreservationMod(movingUnit, pathCopy, game);
+
+        double selfPreservationMod = calculateSelfPreservationMod(movingUnit, pathCopy, game);
+
         double offBoardMod = calculateOffBoardMod(pathCopy);
-        // if we're an aircraft, we want to de-value paths that will force us off the
-        // board
-        // on the subsequent turn.
+        // if we're an aircraft, we want to devalue paths that will force us off the board on the subsequent turn.
         double utility = -fallMod;
         utility += braveryMod;
         utility -= aggressionMod;
@@ -623,33 +899,35 @@ public class BasicPathRanker extends PathRanker {
         utility -= selfPreservationMod;
         utility -= utility * offBoardMod;
 
-        formula.append("Calculation: {fall mod [").append(LOG_DECIMAL.format(fallMod)).append(" = ")
-            .append(LOG_DECIMAL.format(1 - successProbability))
-            .append(" * ")
-            .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getFallShameValue()))
-            .append("] + braveryMod [")
-            .append(LOG_DECIMAL.format(braveryMod))
-            .append(" = ")
-            .append(LOG_PERCENT.format(successProbability))
-            .append(" * ((")
-            .append(LOG_DECIMAL.format(damageEstimate.getMaximumDamageEstimate()))
-            .append(" * ")
-            .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getBraveryValue()))
-            .append(") - ")
-            .append(LOG_DECIMAL.format(expectedDamageTaken))
-            .append(")] - aggressionMod [")
-            .append(LOG_DECIMAL.format(aggressionMod))
-            .append(" = ")
-            .append(LOG_DECIMAL.format(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game)))
-            .append(" * ")
-            .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getHyperAggressionValue()))
-            .append("] - herdingMod [");
+        formula.append("Calculation: {fall mod [")
+              .append(LOG_DECIMAL.format(fallMod))
+              .append(" = ")
+              .append(LOG_DECIMAL.format(1 - successProbability))
+              .append(" * ")
+              .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getFallShameValue()))
+              .append("] + braveryMod [")
+              .append(LOG_DECIMAL.format(braveryMod))
+              .append(" = ")
+              .append(LOG_PERCENT.format(successProbability))
+              .append(" * ((")
+              .append(LOG_DECIMAL.format(damageEstimate.getMaximumDamageEstimate()))
+              .append(" * ")
+              .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getBraveryValue()))
+              .append(") - ")
+              .append(LOG_DECIMAL.format(expectedDamageTaken))
+              .append(")] - aggressionMod [")
+              .append(LOG_DECIMAL.format(aggressionMod))
+              .append(" = ")
+              .append(LOG_DECIMAL.format(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game)))
+              .append(" * ")
+              .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getHyperAggressionValue()))
+              .append("] - herdingMod [");
         if (friendsCoords != null) {
             formula.append(LOG_DECIMAL.format(herdingMod))
-                .append(" = ")
-                .append(LOG_DECIMAL.format(friendsCoords.distance(path.getFinalCoords())))
-                .append(" * ")
-                .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getHerdMentalityValue()));
+                  .append(" = ")
+                  .append(LOG_DECIMAL.format(friendsCoords.distance(path.getFinalCoords())))
+                  .append(" * ")
+                  .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getHerdMentalityValue()));
         } else {
             formula.append("0 no friends");
         }
@@ -662,7 +940,8 @@ public class BasicPathRanker extends PathRanker {
         }
 
         formula.append(" - facingMod [")
-              .append((int) facingMod).append(" = ")
+              .append((int) facingMod)
+              .append(" = ")
               .append(FACING_MOD_MULTIPLIER)
               .append(" * ")
               .append((int) (facingMod / FACING_MOD_MULTIPLIER))
@@ -684,37 +963,148 @@ public class BasicPathRanker extends PathRanker {
         return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
     }
 
-    protected double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
+    /**
+     * Calculates a bravery modifier for path evaluation based on potential damage and risk.
+     *
+     * <p>This method determines how "brave" the AI should be when considering a path by weighing:
+     * <ul>
+     *   <li>The probability of successfully completing the move (avoiding falls)</li>
+     *   <li>The maximum potential damage the unit can inflict from the final position</li>
+     *   <li>The expected damage the unit might receive</li>
+     * </ul>
+     *
+     * <p>The bravery modifier follows this formula:
+     * <pre>
+     * braveryMod = (successProbability * maximumDamageDone * braveryValue) - expectedDamageTaken
+     * </pre>
+     *
+     * <p>Higher bravery values make the AI more willing to accept risks if it can deal significant damage.
+     * A positive bravery modifier indicates the path is tactically advantageous despite potential risks.
+     *
+     * @param successProbability  The probability (0.0 to 1.0) of making all required piloting rolls
+     * @param damageEstimate      Container with estimates of damage that can be done
+     * @param expectedDamageTaken Expected damage to be received in this position
+     *
+     * @return A bravery modifier value (higher is better) to be used in path ranking
+     */
+    protected double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate,
+          double expectedDamageTaken) {
         double maximumDamageDone = damageEstimate.getMaximumDamageEstimate();
         // My bravery modifier is based on my chance of getting to the
         // firing position (successProbability), how much damage I can do
         // (weighted by bravery), less the damage I might take.
         double braveryValue = getOwner().getBehaviorSettings().getBraveryValue();
         double braveryMod = (successProbability * maximumDamageDone * braveryValue) - expectedDamageTaken;
-        logger.trace("bravery mod [{} = {} * (({} * {}) - {})]", braveryMod, successProbability, maximumDamageDone,
-                braveryValue, expectedDamageTaken);
+        logger.trace("bravery mod [{} = {} * (({} * {}) - {})]",
+              braveryMod,
+              successProbability,
+              maximumDamageDone,
+              braveryValue,
+              expectedDamageTaken);
         return braveryMod;
     }
 
-    // Only forces unit to move if there are no units around
+    /**
+     * Calculates a movement modifier that rewards paths making units harder to hit. This serves as a key positive
+     * modifier in the overall utility calculation.
+     *
+     * <p>The function encourages units to:</p>
+     * <ul>
+     *   <li>Keep moving when tactically beneficial</li>
+     *   <li>Choose paths with optimal movement types</li>
+     *   <li>Use movement as a defensive strategy</li>
+     * </ul>
+     *
+     * <p>The modifier is calculated as:</p>
+     * <pre>
+     *   movementFactor = TMM × (selfPreservation + favorHigherTMM)
+     * </pre>
+     *
+     * <p>Where:</p>
+     * <ul>
+     *   <li><strong>TMM</strong>: Target Movement Modifier - higher values make units harder to hit</li>
+     *   <li><strong>selfPreservation</strong>: AI setting for valuing survival</li>
+     *   <li><strong>favorHigherTMM</strong>: AI setting specifically for valuing movement as defense</li>
+     * </ul>
+     *
+     * <p>The modifier is applied when either:</p>
+     * <ul>
+     *   <li>No enemies are visible (encouraging exploration/positioning)</li>
+     *   <li>OR {@code favorHigherTMM} setting is enabled (encouraging defensive movement)</li>
+     * </ul>
+     *
+     * @param pathCopy The movement path to evaluate
+     * @param game     The current game state
+     * @param enemies  List of enemy units visible
+     * @param formula  StringBuilder to append the formula for logging
+     *
+     * @return A positive double value representing the movement modifier
+     *
+     * @author Luana Coppio
+     */
     protected double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies, StringBuilder formula) {
         var favorHigherTMM = getOwner().getBehaviorSettings().getFavorHigherTMM();
         boolean noEnemiesInSight = enemies.isEmpty() && getOwner().getEnemyHotSpots().isEmpty();
         boolean disabledFavorHigherTMM = favorHigherTMM == 0;
         if (noEnemiesInSight || !disabledFavorHigherTMM) {
-            var tmm = Compute.getTargetMovementModifier(pathCopy.getHexesMoved(), pathCopy.isJumping(), pathCopy.isAirborne(), game);
+            var tmm = Compute.getTargetMovementModifier(pathCopy.getHexesMoved(),
+                  pathCopy.isJumping(),
+                  pathCopy.isAirborne(),
+                  game);
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             var tmmValue = tmm.getValue();
             var movementFactor = tmmValue * (selfPreservation + favorHigherTMM);
-            formula.append("movementMod [").append(movementFactor).append(" = ").append(tmmValue).append(" * (")
-                .append(selfPreservation).append(" + ").append(favorHigherTMM).append(")]");
-            logger.trace("movement mod [{} = {} * ({} + {})]", movementFactor, tmmValue, selfPreservation, favorHigherTMM);
+            formula.append("movementMod [")
+                  .append(movementFactor)
+                  .append(" = ")
+                  .append(tmmValue)
+                  .append(" * (")
+                  .append(selfPreservation)
+                  .append(" + ")
+                  .append(favorHigherTMM)
+                  .append(")]");
+            logger.trace("movement mod [{} = {} * ({} + {})]",
+                  movementFactor,
+                  tmmValue,
+                  selfPreservation,
+                  favorHigherTMM);
             return movementFactor;
         }
         return 0.0;
     }
 
-    protected double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies, double maxRange, StringBuilder formula) {
+    /**
+     * Calculates a crowding tolerance modifier that penalizes paths ending in densely populated areas.
+     *
+     * <p>This method evaluates the tactical risks of positioning in areas with many units nearby:
+     * <ul>
+     *   <li>Counts friendly units within a short radius (depends on antiCrowding setting)</li>
+     *   <li>Counts enemy units within a medium radius (typically 60% of max weapon range)</li>
+     *   <li>Applies penalties based on these counts and the AI's antiCrowding preference</li>
+     * </ul>
+     *
+     * <p>The crowding penalty increases as more units (friendly or enemy) are present near the final position.
+     * This encourages units to maintain tactical spacing rather than clumping together, which helps avoid:
+     * <ul>
+     *   <li>Becoming easy targets for area effect weapons</li>
+     *   <li>Blocking each other's line of fire</li>
+     *   <li>Creating movement bottlenecks</li>
+     * </ul>
+     *
+     * <p>The crowding penalty is only applied to Meks and Tanks, as other unit types have different
+     * tactical positioning requirements.
+     *
+     * @param movePath The movement path being evaluated
+     * @param enemies  List of enemy units visible
+     * @param maxRange Entity's maximum weapon range
+     * @param formula  StringBuilder to append the formula explanation for logging
+     *
+     * @return A crowding tolerance value (higher is worse) to be used in path ranking
+     *
+     * @author Luana Coppio
+     */
+    protected double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies, double maxRange,
+          StringBuilder formula) {
         var self = movePath.getEntity();
         formula.append(" crowdingTolerance ");
         if (!(self instanceof Mek) && !(self instanceof Tank)) {
@@ -732,33 +1122,41 @@ public class BasicPathRanker extends PathRanker {
         final double herdingDistance = Math.ceil(antiCrowding * 1.3);
         final double closingDistance = Math.ceil(Math.max(3.0, maxRange * 0.6));
 
-        var crowdingFriends = getOwner().getFriendEntities().stream()
-            .filter(e -> e instanceof Mek || e instanceof Tank)
-            .filter(Entity::isDeployed)
-            .map(Entity::getPosition)
-            .filter(Objects::nonNull)
-            .filter(c -> c.distance(movePath.getFinalCoords()) <= herdingDistance)
-            .count();
+        var crowdingFriends = getOwner().getFriendEntities()
+                                    .stream()
+                                    .filter(e -> e instanceof Mek || e instanceof Tank)
+                                    .filter(Entity::isDeployed)
+                                    .map(Entity::getPosition)
+                                    .filter(Objects::nonNull)
+                                    .filter(c -> c.distance(movePath.getFinalCoords()) <= herdingDistance)
+                                    .count();
 
         var crowdingEnemies = enemies.stream()
-            .filter(e -> e instanceof Mek || e instanceof Tank)
-            .filter(Entity::isDeployed)
-            .map(Entity::getPosition)
-            .filter(Objects::nonNull)
-            .filter(c -> c.distance(movePath.getFinalCoords()) <= closingDistance)
-            .count();
+                                    .filter(e -> e instanceof Mek || e instanceof Tank)
+                                    .filter(Entity::isDeployed)
+                                    .map(Entity::getPosition)
+                                    .filter(Objects::nonNull)
+                                    .filter(c -> c.distance(movePath.getFinalCoords()) <= closingDistance)
+                                    .count();
 
         double friendsCrowdingTolerance = antiCrowdingFactor * crowdingFriends;
         double enemiesCrowdingTolerance = antiCrowdingFactor * crowdingEnemies;
-        formula.append("[").append(friendsCrowdingTolerance + enemiesCrowdingTolerance).append(" = (")
-            .append(antiCrowdingFactor).append(" * ").append(crowdingFriends).append(" friends) + (")
-            .append(antiCrowdingFactor).append(" * ").append(crowdingEnemies).append(" enemies)]");
+        formula.append("[")
+              .append(friendsCrowdingTolerance + enemiesCrowdingTolerance)
+              .append(" = (")
+              .append(antiCrowdingFactor)
+              .append(" * ")
+              .append(crowdingFriends)
+              .append(" friends) + (")
+              .append(antiCrowdingFactor)
+              .append(" * ")
+              .append(crowdingEnemies)
+              .append(" enemies)]");
         return friendsCrowdingTolerance + enemiesCrowdingTolerance;
     }
 
     /**
-     * Worker function that determines if a given enemy entity should be evaluated
-     * as if it has moved.
+     * Worker function that determines if a given enemy entity should be evaluated as if it has moved.
      */
     protected boolean evaluateAsMoved(Entity enemy) {
         // Aerospace units on ground maps can go pretty much anywhere they want, so it's
@@ -781,13 +1179,12 @@ public class BasicPathRanker extends PathRanker {
                     // Docstring says ignore self, so ignore self.
                     max_damage = 0;
                 } else {
-                    FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder()
-                            .buildGuess(e,
-                                    null,
-                                    f,
-                                    null,
-                                    (e.getHeatCapacity() - e.getHeat()) + 5,
-                                    null);
+                    FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder().buildGuess(e,
+                          null,
+                          f,
+                          null,
+                          (e.getHeatCapacity() - e.getHeat()) + 5,
+                          null);
                     double damage = getFireControl(f).determineBestFiringPlan(guess).getExpectedDamage();
                     if (damage > max_damage) {
                         max_damage = damage;
@@ -799,23 +1196,23 @@ public class BasicPathRanker extends PathRanker {
     }
 
     protected FiringPhysicalDamage calcDamageToStrategicTargets(MovePath path, Game game,
-            FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
+          FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
 
         for (int i = 0; i < fireControlState.getAdditionalTargets().size(); i++) {
             Targetable target = fireControlState.getAdditionalTargets().get(i);
 
-            if (target.isOffBoard() || (target.getPosition() == null)
-                    || !game.getBoard().contains(target.getPosition())) {
+            if (target.isOffBoard() ||
+                      (target.getPosition() == null) ||
+                      !game.getBoard().contains(target.getPosition())) {
                 continue; // Skip targets not actually on the board.
             }
 
-            FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder()
-                    .buildGuess(path.getEntity(),
-                            new EntityState(path),
-                            target,
-                            null,
-                            Entity.DOES_NOT_TRACK_HEAT,
-                            null);
+            FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder().buildGuess(path.getEntity(),
+                  new EntityState(path),
+                  target,
+                  null,
+                  Entity.DOES_NOT_TRACK_HEAT,
+                  null);
             FiringPlan myFiringPlan = getFireControl(path.getEntity()).determineBestFiringPlan(guess);
 
             double myDamagePotential = myFiringPlan.getUtility();
@@ -824,13 +1221,15 @@ public class BasicPathRanker extends PathRanker {
             }
 
             if (path.getEntity().isMek()) {
-                PhysicalInfo myKick = new PhysicalInfo(
-                        path.getEntity(), new EntityState(path), target,
-                        null,
-                        PhysicalAttackType.RIGHT_KICK, game, getOwner(),
-                        true);
-                double expectedKickDamage = myKick.getExpectedDamageOnHit() *
-                        myKick.getProbabilityToHit();
+                PhysicalInfo myKick = new PhysicalInfo(path.getEntity(),
+                      new EntityState(path),
+                      target,
+                      null,
+                      PhysicalAttackType.RIGHT_KICK,
+                      game,
+                      getOwner(),
+                      true);
+                double expectedKickDamage = myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
                 if (expectedKickDamage > damageStructure.physicalDamage) {
                     damageStructure.physicalDamage = expectedKickDamage;
                 }
@@ -840,8 +1239,8 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
-     * Gives the distance to the closest enemy unit, or -1 if none exist.
-     * The reason being that the closest enemy unit may be 0 away.
+     * Gives the distance to the closest enemy unit, or -1 if none exist. The reason being that the closest enemy unit
+     * may be 0 away.
      *
      * @param me       {@link Entity} who has enemies
      * @param position {@link Coords} from which the closest enemy is found
@@ -858,7 +1257,10 @@ public class BasicPathRanker extends PathRanker {
 
     /**
      * Gives the distance to the closest edge
+     *
+     * @deprecated Was only used in a test and nowhere else.
      */
+    @Deprecated(since = "0.50.07", forRemoval = true)
     int distanceToClosestEdge(Coords position, Game game) {
         int width = game.getBoard().getWidth();
         int height = game.getBoard().getHeight();
@@ -880,13 +1282,13 @@ public class BasicPathRanker extends PathRanker {
 
         // If we're flying or swimming, we don't care about ground hazards.
         if (EntityMovementType.MOVE_FLYING.equals(path.getLastStepMovementType()) ||
-                EntityMovementType.MOVE_OVER_THRUST.equals(path.getLastStepMovementType()) ||
-                EntityMovementType.MOVE_SAFE_THRUST.equals(path.getLastStepMovementType()) ||
-                EntityMovementType.MOVE_VTOL_WALK.equals(path.getLastStepMovementType()) ||
-                EntityMovementType.MOVE_VTOL_RUN.equals(path.getLastStepMovementType()) ||
-                EntityMovementType.MOVE_VTOL_SPRINT.equals(path.getLastStepMovementType()) ||
-                EntityMovementType.MOVE_SUBMARINE_WALK.equals(path.getLastStepMovementType()) ||
-                EntityMovementType.MOVE_SUBMARINE_RUN.equals(path.getLastStepMovementType())) {
+                  EntityMovementType.MOVE_OVER_THRUST.equals(path.getLastStepMovementType()) ||
+                  EntityMovementType.MOVE_SAFE_THRUST.equals(path.getLastStepMovementType()) ||
+                  EntityMovementType.MOVE_VTOL_WALK.equals(path.getLastStepMovementType()) ||
+                  EntityMovementType.MOVE_VTOL_RUN.equals(path.getLastStepMovementType()) ||
+                  EntityMovementType.MOVE_VTOL_SPRINT.equals(path.getLastStepMovementType()) ||
+                  EntityMovementType.MOVE_SUBMARINE_WALK.equals(path.getLastStepMovementType()) ||
+                  EntityMovementType.MOVE_SUBMARINE_RUN.equals(path.getLastStepMovementType())) {
 
             logger.trace("Move Type ({}) ignores ground hazards.", path.getLastStepMovementType());
             return 0;
@@ -897,9 +1299,7 @@ public class BasicPathRanker extends PathRanker {
             logger.trace("Jumping, only checking landing hex.");
             Coords endCoords = path.getFinalCoords();
             Hex endHex = game.getBoard().getHex(endCoords);
-            return checkHexForHazards(endHex, movingUnit, true,
-                    path.getLastStep(), true,
-                    path, game.getBoard());
+            return checkHexForHazards(endHex, movingUnit, true, path.getLastStep(), true, path, game.getBoard());
         }
 
         double totalHazard = 0;
@@ -911,18 +1311,21 @@ public class BasicPathRanker extends PathRanker {
                 continue;
             }
             Hex hex = game.getBoard().getHex(coords);
-            totalHazard += checkHexForHazards(hex, movingUnit,
-                    lastStep.equals(step), step,
-                    false, path,
-                    game.getBoard());
+            totalHazard += checkHexForHazards(hex,
+                  movingUnit,
+                  lastStep.equals(step),
+                  step,
+                  false,
+                  path,
+                  game.getBoard());
             previousCoords = coords;
         }
         logger.trace("Total Hazard = {}", totalHazard);
         return totalHazard;
     }
 
-    private double checkHexForHazards(Hex hex, Entity movingUnit, boolean endHex, MoveStep step,
-            boolean jumpLanding, MovePath movePath, Board board) {
+    private double checkHexForHazards(Hex hex, Entity movingUnit, boolean endHex, MoveStep step, boolean jumpLanding,
+          MovePath movePath, Board board) {
         logger.trace("Checking Hex ({}) for hazards.", hex.getCoords());
         Set<Integer> hazards = getHazardTerrainIds(hex);
         // No hazards were found, so nothing to worry about.
@@ -1004,7 +1407,10 @@ public class BasicPathRanker extends PathRanker {
     private double calcBuildingHazard(MoveStep step, Entity movingUnit, boolean jumpLanding, Board board) {
         logger.trace("Checking Building ({}) for hazards.", step.getPosition());
         // Protos, BA and Infantry move through buildings freely.
-        if (movingUnit.isProtoMek() || movingUnit.isInfantry() || movingUnit.isConventionalInfantry() || movingUnit.isBattleArmor()) {
+        if (movingUnit.isProtoMek() ||
+                  movingUnit.isInfantry() ||
+                  movingUnit.isConventionalInfantry() ||
+                  movingUnit.isBattleArmor()) {
             logger.trace("Safe for infantry and protos (0).");
             return 0;
         }
@@ -1015,12 +1421,10 @@ public class BasicPathRanker extends PathRanker {
         }
 
         // Get the odds of failing the piloting roll while moving through the building.
-        double odds = (1.0 - (Compute.oddsAbove(movingUnit.getCrew()
-                .getPiloting()) / 100));
+        double odds = (1.0 - (Compute.oddsAbove(movingUnit.getCrew().getPiloting()) / 100));
         logger.trace("Chance to fail piloting roll: {}", odds);
         // Hazard is based on potential damage taken.
-        double dmg = board.getBuildingAt(step.getPosition())
-                .getCurrentCF(step.getPosition()) / 10D;
+        double dmg = board.getBuildingAt(step.getPosition()).getCurrentCF(step.getPosition()) / 10D;
         logger.trace("Potential building damage: {}", dmg);
         double hazard = dmg * odds;
         logger.trace("Total Hazard = {}", hazard);
@@ -1029,12 +1433,12 @@ public class BasicPathRanker extends PathRanker {
 
     private double calcBridgeHazard(Entity movingUnit, Hex hex, MoveStep step, boolean jumpLanding, Board board) {
         logger.trace("Checking Bridge ({}) for hazards.", hex.getCoords());
-        // if we are going to BWONGGG into a bridge from below, then it's treated as a
+        // If we are going to BWONGGG into a bridge from below, then it's treated as a
         // building.
         // Otherwise, bridge collapse checks have already been handled in validatePaths
         int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
         if ((bridgeElevation > step.getElevation()) &&
-                (bridgeElevation <= (step.getElevation() + movingUnit.getHeight()))) {
+                  (bridgeElevation <= (step.getElevation() + movingUnit.getHeight()))) {
             return calcBuildingHazard(step, movingUnit, jumpLanding, board);
         }
 
@@ -1045,45 +1449,43 @@ public class BasicPathRanker extends PathRanker {
         logger.trace("Checking Ice ({}) for hazards.", hex.getCoords());
         // Hover units are above the surface.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above ice (0).");
             return 0;
         }
 
         // Infantry don't break ice.
         if (EntityMovementMode.INF_LEG == movingUnit.getMovementMode() ||
-                EntityMovementMode.INF_MOTORIZED == movingUnit.getMovementMode() ||
-                EntityMovementMode.INF_JUMP == movingUnit.getMovementMode() ||
-                EntityMovementMode.INF_UMU == movingUnit.getMovementMode()) {
+                  EntityMovementMode.INF_MOTORIZED == movingUnit.getMovementMode() ||
+                  EntityMovementMode.INF_JUMP == movingUnit.getMovementMode() ||
+                  EntityMovementMode.INF_UMU == movingUnit.getMovementMode()) {
             logger.trace("Infantry on Ice (0).");
             return 0;
         }
 
-        // Categorize chance to skid / fall
+        // Categorize a chance to skid / fall
         double hazard = 0.0;
         if (!movePath.isCareful()) {
             // Most falling and skidding damage is weight-based...
             double arbitraryHazard = movingUnit.getWeight();
             hazard += Math.round(arbitraryHazard *
-                    (1 - (Compute.oddsAbove(movingUnit.getCrew().getPiloting()) / 100.0)));
+                                       (1 - (Compute.oddsAbove(movingUnit.getCrew().getPiloting()) / 100.0)));
             if (movingUnit.isReckless()) {
                 // Double the hazard for Reckless
                 hazard *= 2;
             }
         }
 
-        // If there is no water under the ice, don't worry about breaking
-        // through.
-        if (hex.depth() < 1) {;
+        // If there is no water under the ice, don't worry about breaking through.
+        if (hex.depth() < 1) {
             logger.trace("No water under ice (0).");
             return hazard;
         }
 
-        // Hazard is based on chance to break through to the water underneath.
+        // Hazard is based on a chance to break through to the water underneath.
         double breakthroughMod = jumpLanding ? 0.5 : 0.1667;
         logger.trace("Chance to break through ice: {}", breakthroughMod);
-        hazard += calcWaterHazard(movingUnit, hex, step, movePath) *
-                breakthroughMod;
+        hazard += calcWaterHazard(movingUnit, hex, step, movePath) * breakthroughMod;
         logger.trace("Total Hazard = {}", hazard);
         // Changed this to UNIT_DESTRUCTION_FACTOR because she suicided too often.
         // No reason to be on the ice at all except as an absolute last resort.
@@ -1100,15 +1502,15 @@ public class BasicPathRanker extends PathRanker {
 
         // Hover units are above the surface.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                EntityMovementMode.WIGE == movingUnit.getMovementMode() ||
-                EntityMovementMode.NAVAL == movingUnit.getMovementMode()) {
+                  EntityMovementMode.WIGE == movingUnit.getMovementMode() ||
+                  EntityMovementMode.NAVAL == movingUnit.getMovementMode()) {
             logger.trace("Hovering or swimming above water (0).");
             return 0;
         }
 
         // Amphibious units are safe (kind of the point).
         if (movingUnit.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
-                movingUnit.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
+                  movingUnit.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
             logger.trace("Amphibious units are safe (0).");
             return 0;
         }
@@ -1119,7 +1521,7 @@ public class BasicPathRanker extends PathRanker {
             return 0;
         }
 
-        // if we are crossing a bridge, then we'll be fine. Trust me.
+        // If we are crossing a bridge, then we'll be fine. Trust me.
         // 1. Determine bridge elevation
         // 2. If unit elevation is equal to bridge elevation, skip.
         if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
@@ -1130,23 +1532,24 @@ public class BasicPathRanker extends PathRanker {
             }
         }
 
-        // Most other units are automatically destroyed. UMU-equipped units _may_ not
-        // drown immediately,
-        // but all other hazards (e.g. breaches, crush depth) still apply.
-        if (!(movingUnit instanceof Mek || movingUnit instanceof ProtoMek ||
-                movingUnit instanceof BattleArmor || movingUnit.hasUMU())) {
+        // Most other units are automatically destroyed. UMU-equipped units _may_ not drown immediately, but all
+        // other hazards (e.g., breaches, crush depth) still apply.
+        if (!(movingUnit instanceof Mek ||
+                    movingUnit instanceof ProtoMek ||
+                    movingUnit instanceof BattleArmor ||
+                    movingUnit.hasUMU())) {
             logger.trace("Drowning (1000).");
             return UNIT_DESTRUCTION_FACTOR;
         }
 
         MoveStep lastStep = movePath.getLastStep();
         // Unsealed unit will drown.
-        if (movingUnit instanceof Mek
-                && ((Mek) movingUnit).isIndustrial()
-                && !movingUnit.hasEnvironmentalSealing()
-                && (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                && hex.depth() >= 1
-                && step.equals(lastStep)) {
+        if (movingUnit instanceof Mek &&
+                  ((Mek) movingUnit).isIndustrial() &&
+                  !movingUnit.hasEnvironmentalSealing() &&
+                  (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
+                  hex.depth() >= 1 &&
+                  step.equals(lastStep)) {
             double destructionFactor = hex.depth() >= 2 ? UNIT_DESTRUCTION_FACTOR : UNIT_DESTRUCTION_FACTOR * 0.5d;
             logger.trace("Industrial Meks drown too ({}).", destructionFactor);
             return destructionFactor;
@@ -1161,20 +1564,17 @@ public class BasicPathRanker extends PathRanker {
                 continue;
             }
 
-            if ((hex.depth() >= 2) || step.isProne() ||
-                    !(movingUnit instanceof Mek)) {
+            if ((hex.depth() >= 2) || step.isProne() || !(movingUnit instanceof Mek)) {
                 submergedLocations.add(loc);
                 continue;
             }
 
-            if (Mek.LOC_RLEG == loc || Mek.LOC_LLEG == loc ||
-                    Mek.LOC_CLEG == loc) {
+            if (Mek.LOC_RLEG == loc || Mek.LOC_LLEG == loc || Mek.LOC_CLEG == loc) {
                 submergedLocations.add(loc);
                 continue;
             }
 
-            if ((movingUnit instanceof QuadMek) && (Mek.LOC_RARM == loc ||
-                    Mek.LOC_LARM == loc)) {
+            if ((movingUnit instanceof QuadMek) && (Mek.LOC_RARM == loc || Mek.LOC_LARM == loc)) {
                 submergedLocations.add(loc);
             }
         }
@@ -1182,7 +1582,7 @@ public class BasicPathRanker extends PathRanker {
 
         int hazardValue = 0;
         for (int loc : submergedLocations) {
-            // Only locations without armor can breach in movement phase.
+            // Only locations without armor can breach in the movement phase.
             if (movingUnit.getArmor(loc) > 0) {
                 logger.trace("Location {} is not breached (0).", loc);
                 continue;
@@ -1192,11 +1592,10 @@ public class BasicPathRanker extends PathRanker {
             // For other units, any breach is deadly.
             // noinspection ConstantConditions
             if ((Mek.LOC_HEAD == loc) ||
-                (Mek.LOC_CT == loc) ||
-                (ProtoMek.LOC_HEAD == loc) ||
-                (ProtoMek.LOC_TORSO == loc) ||
-                (!movingUnit.isMek() && !movingUnit.isProtoMek())
-            ) {
+                      (Mek.LOC_CT == loc) ||
+                      (ProtoMek.LOC_HEAD == loc) ||
+                      (ProtoMek.LOC_TORSO == loc) ||
+                      (!movingUnit.isMek() && !movingUnit.isProtoMek())) {
                 logger.trace("Location {} breached and critical (1000).", loc);
                 return UNIT_DESTRUCTION_FACTOR;
             }
@@ -1214,8 +1613,7 @@ public class BasicPathRanker extends PathRanker {
         double hazardValue = 0;
 
         // Fireproof BA ignores fire.
-        if ((movingUnit instanceof BattleArmor) &&
-                ((BattleArmor) movingUnit).isFireResistant()) {
+        if ((movingUnit instanceof BattleArmor) && ((BattleArmor) movingUnit).isFireResistant()) {
             logger.trace("Fireproof BA ignores fire.");
             return 0;
         }
@@ -1251,7 +1649,7 @@ public class BasicPathRanker extends PathRanker {
         logger.trace("Calculating magma hazard.");
         // Hovers / WiGE are normally unaffected.
         if ((EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                EntityMovementMode.WIGE == movingUnit.getMovementMode()) && !endHex) {
+                   EntityMovementMode.WIGE == movingUnit.getMovementMode()) && !endHex) {
             logger.trace("Hovering above magma (0).");
             return 0;
         }
@@ -1288,16 +1686,14 @@ public class BasicPathRanker extends PathRanker {
 
         // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of
         // losing mobility.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             if (!endHex) {
                 logger.trace("Hovering/VTOL while traversing lava (0).");
                 return 0;
             } else {
-                // Estimate chance of being disabled or immobilized over open lava; this is
-                // fatal!
-                // Calc expected damage as ((current damage level [0 ~ 4]) / 4) *
-                // UNIT_DESTRUCTION_FACTOR
+                // Estimate the chance of being disabled or immobilized over open lava; this is fatal!
+                // Calc expected damage as ((current damage level [0 ~ 4]) / 4) * UNIT_DESTRUCTION_FACTOR
                 dmg = (unitDamageLevel / 4.0) * UNIT_DESTRUCTION_FACTOR;
                 logger.trace("Ending hover/VTOL movement over lava ({}).", dmg);
                 return dmg;
@@ -1315,15 +1711,13 @@ public class BasicPathRanker extends PathRanker {
 
         // Adjust hazard by chance of getting stuck
         if (endHex && jumpLanding) {
-            // Chance of getting stuck in magma is the chance of failing one PSR.
-            // Factor applied to damage should also include the expected number of turns
-            // _not_ escaping.
+            // Chance of getting stuck in magma is the chance of failing one PSR. Factor applied to damage should
+            // also include the expected number of turns _not_ escaping.
             // Former is: %chance _not_ passing PSR
-            // Latter is: N = log(desired failure to escape chance, e.g. 10%)/log(%chance
-            // Fail PSR)
+            // Latter is: N = log(desired failure to escape chance, e.g., 10%) / log(%chance fail PSR)
             logger.trace("Jumping onto lava hex, may get bogged down.");
             int pilotSkill = movingUnit.getCrew().getPiloting();
-            int psrMod = +4;
+            int psrMod = 4;
             double oddsPSR = Compute.oddsAbove(pilotSkill + psrMod) / 100;
             double oddsBogged = (1.0 - oddsPSR);
             double expectedTurns = Math.log10(0.10) / Math.log10(oddsBogged);
@@ -1335,9 +1729,8 @@ public class BasicPathRanker extends PathRanker {
         double heat = endHex ? 10.0 : 5.0;
         hazardValue += heat;
         logger.trace("Heat gain = {}", heat);
-        // Factor in potential to suffer fatal damage.
-        // Dependent on expected average damage / exposed remaining armor *
-        // UNIT_DESTRUCTION_FACTOR
+        // Factor in the potential to suffer fatal damage.
+        // Dependent on expected average damage / exposed remaining armor * UNIT_DESTRUCTION_FACTOR
         int exposedArmor;
         if (step.isProne()) {
             dmg = 7 * movingUnit.locations();
@@ -1348,20 +1741,19 @@ public class BasicPathRanker extends PathRanker {
             exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG).mapToInt(movingUnit::getArmor).sum();
             logger.trace("Biped Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else if (movingUnit instanceof TripodMek) {
-            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG)
-                    .mapToInt(movingUnit::getArmor).sum();
+            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG).mapToInt(movingUnit::getArmor).sum();
             dmg = 21;
             logger.trace("Tripod Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else {
             exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
-                    .mapToInt(movingUnit::getArmor).sum();
+                                 .mapToInt(movingUnit::getArmor)
+                                 .sum();
             dmg = 28;
             logger.trace("Quad Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         }
         hazardValue += (UNIT_DESTRUCTION_FACTOR * (dmg / Math.max(exposedArmor, 1)));
 
-        // Multiply total hazard value by the chance of getting stuck for 1 or more
-        // additional turns
+        // Multiply the total hazard value by the chance of getting stuck for 1 or more additional turns
         logger.trace("Total hazard = {}", hazardValue * psrFactor);
         return Math.round(hazardValue * psrFactor);
     }
@@ -1373,30 +1765,29 @@ public class BasicPathRanker extends PathRanker {
 
         // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of
         // losing mobility.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-            || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             if (!endHex) {
                 logger.trace("Hovering/VTOL while traversing hazardous liquids (0).");
                 return 0;
             } else {
-                // Estimate chance of being disabled or immobilized over open lava; this is
-                // fatal!
-                // Calc expected damage as ((current damage level [0 ~ 4]) / 4) *
-                // UNIT_DESTRUCTION_FACTOR
+                // Estimate the chance of being disabled or immobilized over open lava; this is fatal!
+                // Calc expected damage as ((current damage level [0 ~ 4]) / 4) * UNIT_DESTRUCTION_FACTOR
                 dmg = (unitDamageLevel / 4.0) * UNIT_DESTRUCTION_FACTOR;
                 logger.trace("Ending hover/VTOL movement over lava ({}).", dmg);
                 return dmg;
             }
         }
 
-        dmg = (HazardousLiquidPoolUtil.AVERAGE_DAMAGE_HAZARDOUS_LIQUID_POOL * HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageMultiplierForUnsealed(movingUnit))
-            / (HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageDivisorForInfantry(movingUnit));
+        dmg = (HazardousLiquidPoolUtil.AVERAGE_DAMAGE_HAZARDOUS_LIQUID_POOL *
+                     HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageMultiplierForUnsealed(movingUnit)) /
+                    (HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageDivisorForInfantry(movingUnit));
 
-        // After all that math let's make sure we do at least 1 damage
+        // After all that math, let's make sure we do at least 1 damage
         // (.6 repeating when normalized for the HLP doing no damage 1/3 of the time)
-        dmg = Math.max(dmg, 2.0/3.0);
+        dmg = Math.max(dmg, 2.0 / 3.0);
 
-        // Factor in potential to suffer fatal damage.
+        // Factor in the potential to suffer fatal damage.
         // Dependent on expected average damage / exposed remaining armor *
         // UNIT_DESTRUCTION_FACTOR
         int exposedArmor;
@@ -1408,12 +1799,12 @@ public class BasicPathRanker extends PathRanker {
             exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG).mapToInt(movingUnit::getArmor).sum();
             logger.trace("Biped Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else if (movingUnit instanceof TripodMek) {
-            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG)
-                .mapToInt(movingUnit::getArmor).sum();
+            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG).mapToInt(movingUnit::getArmor).sum();
             logger.trace("Tripod Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
-        } else if (movingUnit instanceof QuadMek){
+        } else if (movingUnit instanceof QuadMek) {
             exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
-                .mapToInt(movingUnit::getArmor).sum();
+                                 .mapToInt(movingUnit::getArmor)
+                                 .sum();
             logger.trace("Quad Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else {
             exposedArmor = movingUnit.getTotalArmor();
@@ -1432,12 +1823,13 @@ public class BasicPathRanker extends PathRanker {
 
         // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of
         // losing mobility.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-            || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             if (!endHex) {
                 logger.trace("Hovering/VTOL while traversing ultra sublevel (0).");
                 return 0;
-            } else if (movingUnit.getElevation() > 0) {  //elevation of 0 is on the ground (not airborne), which would be destroyed
+            } else if (movingUnit.getElevation() >
+                             0) {  //elevation of 0 is on the ground (not airborne), which would be destroyed
                 // Estimate chance of being disabled or immobilized over ultra sublevel; this is
                 // fatal!
                 // Calc expected damage as ((current damage level [0 ~ 4]) / 4) *
@@ -1447,7 +1839,7 @@ public class BasicPathRanker extends PathRanker {
                 return dmg;
             }
         }
-        logger.trace(String.format("Ground unit instant destruction from ultra sublevel (%s).", UNIT_DESTRUCTION_FACTOR));
+        logger.trace("Ground unit instant destruction from ultra sublevel ({}).", UNIT_DESTRUCTION_FACTOR);
         return UNIT_DESTRUCTION_FACTOR;
     }
 
@@ -1456,23 +1848,19 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
-     * Calculate a PSR-related factor for increasing the hazard of terrain where
-     * bogging down is
-     * possible
+     * Calculate a PSR-related factor for increasing the hazard of terrain where bogging down is possible
      *
-     * @param name        Name of terrain type, for logging.
-     * @param endHex      If this is checking the final hex of a movement path or
-     *                    not.
-     * @param jumpLanding Whether unit will be jumping into the end hex or not.
-     * @param pilotSkill  base pilot/driver/etc. skill used for the PSR checks to
-     *                    escape bogging down.
+     * @param name        Name of a terrain type, for logging.
+     * @param endHex      If this is checking the final hex of a movement path or not.
+     * @param jumpLanding Whether the unit will be jumping into the end hex or not.
+     * @param pilotSkill  base pilot/driver/etc. skill used for the PSR checks to escape bogging down.
      * @param modifier    Modifier, based on unit type and terrain type
-     * @param bogPossible whether the unit can actually get bogged own in this
-     *                    terrain type, or just calculating
+     * @param bogPossible whether the unit can actually get bogged own in this terrain type, or just calculating
+     *
      * @return double Factor to multiply by terrain hazards.
      */
-    private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill,
-            int modifier, boolean bogPossible) {
+    private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill, int modifier,
+          boolean bogPossible) {
         double factor;
         int effectiveSkill = pilotSkill + modifier;
         double oddsPSR = Math.max((Compute.oddsAbove(effectiveSkill) / 100.0), 0.0);
@@ -1480,7 +1868,7 @@ public class BasicPathRanker extends PathRanker {
 
         // Adjust hazard by chance of getting stuck
         if (endHex && jumpLanding) {
-            // Chance of getting stuck in swamp/mud is the chance of failing one PSR, or
+            // The chance of getting stuck in swamp/mud is the chance of failing one PSR, or
             // 100% if jumping.
             oddsBogged = 1.0;
             logger.trace("Jumping onto {} hex, would get bogged down.", name);
@@ -1490,8 +1878,9 @@ public class BasicPathRanker extends PathRanker {
         }
         // (Reuse PSR odds to avoid infinite trapped time on turns when jumping into
         // terrain causes 100% bog-down)
-        double expectedTurns = ((1 - oddsPSR) < 1.0) ? Math.log10(0.10) / Math.log10(1 - oddsPSR)
-                : UNIT_DESTRUCTION_FACTOR;
+        double expectedTurns = ((1 - oddsPSR) < 1.0) ?
+                                     Math.log10(0.10) / Math.log10(1 - oddsPSR) :
+                                     UNIT_DESTRUCTION_FACTOR;
 
         if (bogPossible) {
             logger.trace("Chance to bog down = {}, expected turns = {}", oddsBogged, expectedTurns);
@@ -1504,8 +1893,8 @@ public class BasicPathRanker extends PathRanker {
     private double calcSnowHazard(Hex hex, boolean endHex, Entity movingUnit) {
         logger.trace("Checking Snow ({}) for hazards.", hex.getCoords());
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above snow (0).");
             return 0;
         }
@@ -1519,8 +1908,7 @@ public class BasicPathRanker extends PathRanker {
             double hazard;
 
             // Base hazard is arbitrarily set to 10
-            hazard = 10 * calcBogDownFactor(
-                    "Deep Snow", endHex, false, pilotSkill, psrMod);
+            hazard = 10 * calcBogDownFactor("Deep Snow", endHex, false, pilotSkill, psrMod);
 
             logger.trace("Deep snow hazard = {}", hazard);
             return Math.round(hazard);
@@ -1533,8 +1921,8 @@ public class BasicPathRanker extends PathRanker {
     private double calcSwampHazard(Hex hex, boolean endHex, Entity movingUnit, boolean jumpLanding) {
         logger.trace("Checking Swamp ({}) for hazards.", hex.getCoords());
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above swamp (0).");
             return 0;
         }
@@ -1569,8 +1957,8 @@ public class BasicPathRanker extends PathRanker {
     private double calcMudHazard(boolean endHex, Entity movingUnit) {
         logger.trace("Checking Mud for hazards.");
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above Mud (0).");
             return 0;
         }
@@ -1583,7 +1971,7 @@ public class BasicPathRanker extends PathRanker {
         double hazard;
 
         if (movingUnit.isMek()) {
-            // The only hazard is the +1 to PSRs, which are difficult to quantify
+            // The only hazard is the +1 to PSRs, which are challenging to quantify.
             // Even jumping Meks cannot bog down in mud.
             hazard = calcBogDownFactor("Mud", endHex, false, pilotSkill, psrMod, false);
         } else {
@@ -1598,8 +1986,8 @@ public class BasicPathRanker extends PathRanker {
     private double calcTundraHazard(boolean endHex, boolean jumpLanding, Entity movingUnit) {
         logger.trace("Checking Tundra for hazards.");
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above Tundra (0).");
             return 0;
         }
@@ -1620,18 +2008,18 @@ public class BasicPathRanker extends PathRanker {
     private double calcRubbleHazard(Hex hex, boolean endHex, Entity movingUnit, boolean jumpLanding) {
         logger.trace("Checking Rubble ({}) for hazards.", hex.getCoords());
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above Rubble (0).");
             return 0;
         }
 
         double hazard = 0;
 
-        boolean caresAboutRubble = ((!jumpLanding || endHex)
-                && (hex.terrainLevel(Terrains.RUBBLE) > 0)
-                && (hex.terrainLevel(Terrains.PAVEMENT) == Terrain.LEVEL_NONE)
-                && movingUnit.canFall());
+        boolean caresAboutRubble = ((!jumpLanding || endHex) &&
+                                          (hex.terrainLevel(Terrains.RUBBLE) > 0) &&
+                                          (hex.terrainLevel(Terrains.PAVEMENT) == Terrain.LEVEL_NONE) &&
+                                          movingUnit.canFall());
 
         if (caresAboutRubble) {
             // PSR checks are at +0 for Rubble levels up to 6, Ultra, which is +1
@@ -1641,7 +2029,7 @@ public class BasicPathRanker extends PathRanker {
             }
             int pilotSkill = movingUnit.getCrew().getPiloting();
 
-            // The only hazard is the +1 to PSRs, which are difficult to quantify
+            // The only hazard is the +1 to PSRs, which are challenging to quantify
             hazard = calcBogDownFactor("Rubble", endHex, jumpLanding, pilotSkill, psrMod, false);
         }
         logger.trace("Total Hazard = {}", hazard);
@@ -1649,9 +2037,7 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
-     * Simple data structure that holds a separate firing and physical damage
-     * number.
-     *
+     * Simple data structure that holds a separate firing and physical damage number.
      */
     public static class FiringPhysicalDamage {
         public double firingDamage;

@@ -24,7 +24,7 @@ import java.awt.Shape;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.dialog.unitDisplay.UnitDisplay;
 
 /**
  * Class for drawing a simple polygon, used to display the polgyon areas for 

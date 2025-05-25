@@ -18,6 +18,12 @@
  */
 package megamek.client.ui;
 
+import static megamek.client.ui.SharedUtility.predictLeapDamage;
+import static megamek.client.ui.SharedUtility.predictLeapFallDamage;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
@@ -25,12 +31,6 @@ import megamek.common.options.GameOptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static megamek.client.ui.SharedUtility.predictLeapDamage;
-import static megamek.client.ui.SharedUtility.predictLeapFallDamage;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class SharedUtilityTest {
     static GameOptions mockGameOptions = mock(GameOptions.class);
@@ -58,10 +58,10 @@ class SharedUtilityTest {
         quadMek = new QuadMek();
         quadMek.setGame(game);
         quadPilot = new Crew(CrewType.SINGLE);
-        bipedPilot.setPiloting(5);
+        bipedPilot.setPiloting(5, bipedPilot.getCrewType().getPilotPos());
         bipedMek.setCrew(bipedPilot);
         bipedMek.setId(1);
-        quadPilot.setPiloting(5);
+        quadPilot.setPiloting(5, quadPilot.getCrewType().getPilotPos());
         quadMek.setCrew(quadPilot);
         quadMek.setId(2);
     }
@@ -82,14 +82,16 @@ class SharedUtilityTest {
     TargetRoll generateLeapRoll(Entity entity, int leapDistance) {
         TargetRoll rollTarget = entity.getBasePilotingRoll(moveType);
         rollTarget.append(new PilotingRollData(entity.getId(),
-            2 * leapDistance, Messages.getString("TacOps.leaping.leg_damage")));
+              2 * leapDistance,
+              Messages.getString("TacOps.leaping.leg_damage")));
         return rollTarget;
     }
 
     TargetRoll generateLeapFallRoll(Entity entity, int leapDistance) {
         TargetRoll rollTarget = entity.getBasePilotingRoll(moveType);
         rollTarget.append(new PilotingRollData(entity.getId(),
-            leapDistance, Messages.getString("TacOps.leaping.fall_damage")));
+              leapDistance,
+              Messages.getString("TacOps.leaping.fall_damage")));
         return rollTarget;
     }
 

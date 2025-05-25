@@ -2,6 +2,7 @@ size 48 48
 tag "GrassTheme (Auto)"
 tag "HeavyUrban (Auto)"
 tag "Roads (Auto)"
+tag "FuelTank (Auto)"
 tag "Flat (Auto)"
 tag "HardenedBuilding (Auto)"
 tag "LightForest (Auto)"

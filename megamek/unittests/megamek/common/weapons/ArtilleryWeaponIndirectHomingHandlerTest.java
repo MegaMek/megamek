@@ -84,6 +84,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
 
         // Board
         Board mockBoard = mock(Board.class);
+        when(mockBoard.contains(any(Coords.class))).thenReturn(true);
         Hex mockHex = mock(Hex.class);
         when(mockHex.getLevel()).thenReturn(0);
         when(mockHex.containsTerrain(anyInt())).thenReturn(false);

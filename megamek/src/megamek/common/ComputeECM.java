@@ -372,7 +372,7 @@ public class ComputeECM {
 
         Game game = null;
         for (Entity e : entities) {
-            ECMInfo ecmInfo = getECMInfo(e);
+            ECMInfo ecmInfo = e.getECMInfo();
             if (ecmInfo != null) {
                 allEcmInfo.add(ecmInfo);
             }

@@ -161,6 +161,10 @@ class PlanetaryConditionsTest {
         planetaryConditions.setTemperature(100);
         when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
         when(mockGame.getBoard()).thenReturn(mockBoard);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
         when(mockBoard.getHex(any())).thenReturn(mockHex);
         when(mockHex.containsTerrain(Terrains.BLDG_ELEV)).thenReturn(true);
         when(mockHex.containsTerrain(Terrains.BUILDING)).thenReturn(true);
@@ -169,6 +173,7 @@ class PlanetaryConditionsTest {
         when(mockEntity.isConventionalInfantry()).thenReturn(true);
         when(mockEntity.doomedInExtremeTemp()).thenReturn(true);
         when(mockEntity.getPosition()).thenReturn(mockCoords);
+        when(mockEntity.getBoardId()).thenReturn(0);
         when(mockEntity.getElevation()).thenReturn(1);
         assertNull(planetaryConditions.whyDoomed(mockEntity, mockGame));
         reset(mockEntity, mockGame, mockBoard, mockHex);

@@ -76,6 +76,8 @@ public class WeaponAttackActionToHitTest {
         // Mock the board
         mockBoard = mock(Board.class);
         when(mockBoard.isSpace()).thenReturn(false);
+        when(mockBoard.contains(any(Coords.class))).thenReturn(true);
+        when(mockBoard.getHex(any(Coords.class))).thenReturn(new Hex());
 
         // Mock Options
         mockOptions = mock(GameOptions.class);
@@ -89,11 +91,18 @@ public class WeaponAttackActionToHitTest {
         when(mockGame.getOptions()).thenReturn(mockOptions);
         when(mockGame.getActions()).thenReturn(Collections.enumeration(Collections.emptyList()));
         when(mockGame.getPhase()).thenReturn(GamePhase.FIRING);
-
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.onConnectedBoards(any(Targetable.class), any(Targetable.class))).thenReturn(true);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenReturn(true);
 
         // Mock LosEffects
         mockLos = mock(LosEffects.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
         when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
         when(mockGame.getFlares()).thenReturn(new Vector<>());
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPlanetaryConditions);

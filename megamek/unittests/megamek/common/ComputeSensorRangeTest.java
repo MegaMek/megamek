@@ -76,6 +76,11 @@ public class ComputeSensorRangeTest {
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPlanetaryConditions);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
 
         Hex mockTargetHex = mock(Hex.class);
 
@@ -250,6 +255,12 @@ public class ComputeSensorRangeTest {
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPlanetaryConditions);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
+
 
         Hex mockTargetHex = mock(Hex.class);
 
@@ -429,6 +440,12 @@ public class ComputeSensorRangeTest {
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPlanetaryConditions);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
+
 
         Hex mockTargetHex = mock(Hex.class);
 
@@ -605,6 +622,12 @@ public class ComputeSensorRangeTest {
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPlanetaryConditions);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
+
 
         Hex mockTargetHex = mock(Hex.class);
 
@@ -785,6 +808,12 @@ public class ComputeSensorRangeTest {
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPlanetaryConditions);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
+
 
         Hex mockTargetHex = mock(Hex.class);
 

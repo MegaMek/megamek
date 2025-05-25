@@ -42,8 +42,8 @@ import javax.swing.filechooser.FileFilter;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.IMapSettingsObserver;
-import megamek.client.ui.swing.RandomMapPanelAdvanced;
-import megamek.client.ui.swing.RandomMapPanelBasic;
+import megamek.client.ui.swing.panels.RandomMapPanelAdvancedPanel;
+import megamek.client.ui.swing.panels.RandomMapPanelBasicPanel;
 import megamek.client.ui.swing.util.VerifyInRange;
 import megamek.client.ui.swing.widget.VerifiableTextField;
 import megamek.codeUtilities.StringUtility;
@@ -68,8 +68,8 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     private MapSettings mapSettings;
 
     // View switching objects.
-    private final RandomMapPanelBasic basicPanel;
-    private final RandomMapPanelAdvanced advancedPanel;
+    private final RandomMapPanelBasicPanel basicPanel;
+    private final RandomMapPanelAdvancedPanel advancedPanel;
     private final JRadioButton basicButton = new JRadioButton(Messages.getString("RandomMapDialog.Normal"));
     private final JRadioButton advancedButton = new JRadioButton(Messages.getString("RandomMapDialog.Advanced"));
     private final CardLayout cardLayout = new CardLayout(0, 0);
@@ -117,8 +117,8 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         PARENT = parent;
         MAP_SETTINGS_OBSERVER = mapSettingsObserver;
         CLIENT = client;
-        basicPanel = new RandomMapPanelBasic(mapSettings);
-        advancedPanel = new RandomMapPanelAdvanced(mapSettings);
+        basicPanel = new RandomMapPanelBasicPanel(mapSettings);
+        advancedPanel = new RandomMapPanelAdvancedPanel(mapSettings);
 
         initGUI();
         setResizable(true);

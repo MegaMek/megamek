@@ -16,31 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.panels;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * This panel shows the centered notice saying "Under Construction" with a warning sign above.
- */
-public class UnderConstructionPanel extends JPanel {
+public class ReceivingGameDataPanel extends JPanel {
 
-    private static final String text = "<HTML><FONT FACE=Anta SIZE=+3>Under Construction";
-    private static final String sign = "<HTML><FONT SIZE=+5>" + UIUtil.WARNING_SIGN;
+    private static final String text = "<HTML><FONT FACE=Anta SIZE=+3>"
+            + Messages.getString("ClientGUI.TransmittingData");
+    private static final String sign = "<HTML><FONT FACE=Anta SIZE=+5>\u279F";
 
     /**
      * Returns a panel that shows the centered notice saying "Under Construction" with a warning sign above.
      */
-    public UnderConstructionPanel() {
+    public ReceivingGameDataPanel() {
         JPanel textPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.CENTER));
         textPanel.add(new JLabel(text));
 
         JPanel symbolPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel symbolLabel = new JLabel(sign);
-        symbolLabel.setForeground(GUIPreferences.getInstance().getCautionColor());
+        symbolLabel.setForeground(UIUtil.uiGreen());
         symbolPanel.add(symbolLabel);
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));

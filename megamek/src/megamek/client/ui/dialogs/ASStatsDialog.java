@@ -55,7 +55,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
-import megamek.client.ui.swing.ASStatsTablePanel;
+import megamek.client.ui.swing.panels.ASStatsTablePanel;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.alphaStrike.ASCardDisplayable;

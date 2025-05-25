@@ -24,7 +24,7 @@ import java.io.Serializable;
 
 /**
  *  This class represents parachute flares deployed by illumination artillery
- *  or mech mortars.
+ *  or mek mortars.
  */
 public class Flare implements Serializable {
     @Serial

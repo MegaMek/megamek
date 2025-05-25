@@ -26,7 +26,7 @@
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.panels;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -51,6 +51,10 @@ import javax.swing.border.TitledBorder;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.BayMunitionsChoicePanel;
+import megamek.client.ui.swing.BombChoicePanel;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.SmallSVMunitionsChoicePanel;
 import megamek.client.ui.swing.panels.APWeaponChoicePanel;
 import megamek.client.ui.swing.panels.InfantryArmorPanel;
 import megamek.client.ui.swing.panels.MEAChoicePanel;

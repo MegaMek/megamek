@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.panels;
 
 import static megamek.common.Terrains.*;
 
@@ -58,6 +58,14 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
 import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.swing.BoardFileFilter;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.CommonMenuBar;
+import megamek.client.ui.swing.CommonSettingsDialog;
+import megamek.client.ui.swing.ConfirmDialog;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.IMapSettingsObserver;
+import megamek.client.ui.swing.RecentBoardList;
 import megamek.client.ui.swing.boardview.overlay.TraceOverlay;
 import megamek.client.ui.swing.boardview.toolTip.BoardEditorTooltip;
 import megamek.client.ui.swing.boardview.BoardView;
@@ -101,9 +109,9 @@ import megamek.logging.MMLogger;
 // TODO: sluggish hex drawing?
 // TODO: the board validation after a board load seems to be influenced by the former board...
 // TODO: copy/paste hexes
-public class BoardEditor extends JPanel
+public class BoardEditorPanel extends JPanel
       implements ItemListener, ListSelectionListener, ActionListener, DocumentListener, IMapSettingsObserver {
-    private final static MMLogger LOGGER = MMLogger.create(BoardEditor.class);
+    private final static MMLogger LOGGER = MMLogger.create(BoardEditorPanel.class);
 
     /**
      * Class to make terrains in JComboBoxes easier. This enables keeping the terrain type int separate from the name
@@ -359,7 +367,7 @@ public class BoardEditor extends JPanel
     /**
      * Creates and lays out a new Board Editor frame.
      */
-    public BoardEditor(MegaMekController c) {
+    public BoardEditorPanel(MegaMekController c) {
         controller = c;
         try {
             bv = new BoardView(game, controller, null, 0);

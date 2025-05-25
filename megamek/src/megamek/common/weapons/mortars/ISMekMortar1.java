@@ -13,17 +13,21 @@
  */
 package megamek.common.weapons.mortars;
 
+import java.io.Serial;
+
 /**
  * @author Jason Tighe
  */
 public class ISMekMortar1 extends MekMortarWeapon {
+    @Serial
     private static final long serialVersionUID = -5651886218762631122L;
 
     public ISMekMortar1() {
         super();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
         name = "'Mech Mortar 1";
         setInternalName("IS Mech Mortar-1");
+
         addLookupName("ISMekMortar1");
         addLookupName("IS Mek Mortar 1");
         rackSize = 1;

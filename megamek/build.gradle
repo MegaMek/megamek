@@ -7,6 +7,7 @@ plugins {
     id "io.sentry.jvm.gradle" version '5.5.0'
     id 'jacoco'
     id 'java'
+    id 'checkstyle'
 }
 
 java {
@@ -120,6 +121,21 @@ jar {
         attributes "Build-Date": LocalDateTime.now()
         attributes "Sealed": true
     }
+}
+
+checkstyle {
+    toolVersion = '10.24.0'
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+    configProperties = [
+            'suppressionFile': file("${rootDir}/config/checkstyle/checkstyle-suppressions.xml")
+    ]
+    maxWarnings = 0  // Fail on any warning
+    maxErrors = 0    // Fail on any error
+}
+
+tasks.withType(Checkstyle).configureEach {
+    minHeapSize = "1g"
+    maxHeapSize = "4g"
 }
 
 tasks.register('generateDynamicFiles') {
@@ -321,6 +337,8 @@ assembleDist {
 
 test {
     useJUnitPlatform()
+    dependsOn(checkstyleMain)
+
     finalizedBy jacocoTestReport
     jvmArgs = mmJvmOptions
 }

@@ -37,6 +37,8 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.dialog.SliderDialog;
+import megamek.client.ui.swing.panels.CustomPilotViewPanel;
+import megamek.client.ui.swing.panels.EquipChoicePanel;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
@@ -71,7 +73,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     public static final int NEXT = 1;
     public static final int PREV = 2;
 
-    private CustomPilotView[] panCrewMember;
+    private CustomPilotViewPanel[] panCrewMember;
     private QuirksPanel panQuirks;
     private JPanel panPartReps;
 
@@ -642,7 +644,7 @@ public class CustomMekDialog extends AbstractButtonDialog
         if (actionEvent.getActionCommand().equals("missing")) {
             // If we're down to a single crew member, do not allow anymore to be removed.
             final long remaining = Arrays.stream(panCrewMember).filter(p -> !p.getMissing()).count();
-            for (CustomPilotView v : panCrewMember) {
+            for (CustomPilotViewPanel v : panCrewMember) {
                 v.enableMissing(remaining > 1 || v.getMissing());
             }
             return;
@@ -1202,9 +1204,9 @@ public class CustomMekDialog extends AbstractButtonDialog
         tabAll = new JTabbedPane();
 
         JPanel panCrew = new JPanel(new GridBagLayout());
-        panCrewMember = new CustomPilotView[entity.getCrew().getSlotCount()];
+        panCrewMember = new CustomPilotViewPanel[entity.getCrew().getSlotCount()];
         for (int i = 0; i < panCrewMember.length; i++) {
-            panCrewMember[i] = new CustomPilotView(this, entity, i, editable);
+            panCrewMember[i] = new CustomPilotViewPanel(this, entity, i, editable);
         }
         JPanel panDeploy = new JPanel(new GridBagLayout());
         Quirks quirks = entity.getQuirks();

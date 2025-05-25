@@ -54,7 +54,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MMToggleButton;
-import megamek.client.ui.swing.SBFStatsTablePanel;
+import megamek.client.ui.swing.panels.SBFStatsTablePanel;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.StringUtility;

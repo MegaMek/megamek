@@ -24,7 +24,7 @@ import javax.swing.border.EmptyBorder;
 
 
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
-import megamek.client.ui.swing.BoardEditor;
+import megamek.client.ui.swing.panels.BoardEditorPanel;
 import static megamek.client.ui.swing.util.UIUtil.*;
 import static megamek.client.ui.Messages.*;
 
@@ -34,7 +34,7 @@ import static megamek.client.ui.Messages.*;
  */
 public final class LevelChangeDialog extends AbstractButtonDialog {
 
-    private BoardEditor.EditorTextField txtLevelChange = new BoardEditor.EditorTextField("1", 5, -10, 15);
+    private BoardEditorPanel.EditorTextField txtLevelChange = new BoardEditorPanel.EditorTextField("1", 5, -10, 15);
 
     /** Constructs a modal LevelChangeDialog with frame as parent. */
     public LevelChangeDialog(JFrame frame) {

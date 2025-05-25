@@ -54,6 +54,10 @@ public class MovementModifierSpriteHandler extends BoardViewSpriteHandler {
             return;
         }
         movePaths.stream().map(path -> new MovementModifierEnvelopeSprite((BoardView) clientGUI.boardViews().get(0), path)).forEach(currentSprites::add);
+        movePaths.stream()
+              .filter(MovePath::isMoveLegal)
+              .map(path -> new MovementModifierEnvelopeSprite(boardView, path))
+              .forEach(currentSprites::add);
         clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 

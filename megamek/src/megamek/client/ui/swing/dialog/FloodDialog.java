@@ -23,14 +23,14 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
-import megamek.client.ui.swing.BoardEditor;
+import megamek.client.ui.swing.panels.BoardEditorPanel;
 import megamek.client.ui.swing.MMToggleButton;
 import static megamek.client.ui.swing.util.UIUtil.*;
 import static megamek.client.ui.Messages.*;
 
 public final class FloodDialog extends AbstractButtonDialog {
 
-    private BoardEditor.EditorTextField txtLevelChange = new BoardEditor.EditorTextField("0", 5, -5, 15);
+    private BoardEditorPanel.EditorTextField txtLevelChange = new BoardEditorPanel.EditorTextField("0", 5, -5, 15);
     private MMToggleButton butRemove = new MMToggleButton(getString("FloodDialog.removeButton"));
 
     /** Constructs a modal LevelChangeDialog with frame as parent. */

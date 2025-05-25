@@ -15,16 +15,20 @@ package megamek.common.weapons.autocannons;
 
 import megamek.common.SimpleTechLevel;
 
+import java.io.Serial;
+
 /**
  * @author Jason Tighe
  * @since Oct 2, 2004
  */
 public class CLProtoMekAC2 extends ProtoMekACWeapon {
+
+    @Serial
     private static final long serialVersionUID = 4371171653960292873L;
 
     public CLProtoMekAC2() {
         super();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
         name = "ProtoMech AC/2";
         setInternalName("CLProtoMechAC2");
         addLookupName("Clan ProtoMech AC/2");

@@ -1,15 +1,43 @@
 /*
- * MegaAero - Copyright (C) 2007 Jay Lawson This program is free software; you
- * can redistribute it and/or modify it under the terms of the GNU General
- * Public License as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * MegaAero - Copyright (C) 2007 Jay Lawson
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
+
+import java.io.Serial;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Vector;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.DropShipCostCalculator;
@@ -18,21 +46,20 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Vector;
+import megamek.common.util.ConditionalStringJoiner;
 
 /**
  * @author Jay Lawson
  * @since Jun 17, 2007
  */
 public class Dropship extends SmallCraft {
+
+    @Serial
     private static final long serialVersionUID = 1528728632696989565L;
 
     // ASEW Missile Effects, per location
     // Values correspond to Locations: NOS, Left, Right, AFT
-    private int[] asewAffectedTurns = { 0, 0, 0, 0 };
+    private final int[] asewAffectedTurns = { 0, 0, 0, 0 };
 
     /**
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
@@ -149,54 +176,49 @@ public class Dropship extends SmallCraft {
 
     @Override
     public String getCritDamageString() {
-        StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
-        boolean first = toReturn.length() == 0;
-        if (isDockCollarDamaged()) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(Messages.getString("Dropship.collarDamageString"));
-            first = false;
-        }
-        if (isKFBoomDamaged()) {
-            if (!first) {
-                toReturn.append(", ");
-            }
-            toReturn.append(Messages.getString("Dropship.kfBoomDamageString"));
-            first = false;
-        }
-        return toReturn.toString();
+        ConditionalStringJoiner conditionalStringJoiner = new ConditionalStringJoiner();
+        conditionalStringJoiner.add(super.getCritDamageString());
+        conditionalStringJoiner.add(isDockCollarDamaged(), () -> Messages.getString("Dropship.collarDamageString"));
+        conditionalStringJoiner.add(isKFBoomDamaged(), () -> Messages.getString("Dropship.kfBoomDamageString"));
+        return conditionalStringJoiner.toString();
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int currElevation) {
-        Hex hex = game.getBoard().getHex(c);
+    public boolean isLocationProhibited(Coords locationCoords, int currElevation) {
+        Hex hex = game.getBoard().getHex(locationCoords);
         if (currElevation != 0) {
             return hex.containsTerrain(Terrains.IMPASSABLE);
         }
         // Check prohibited terrain
         // treat grounded Dropships like wheeled tanks,
         // plus buildings are prohibited
-        boolean isProhibited = hexContainsProhibitedTerrain(hex);
+        boolean isProhibited = taxingAeroProhibitedTerrains(hex);
         // Also check for any crushable entities
-        isProhibited |= game.getEntities(c).hasNext();
-        if (isProhibited) {
-            return true;
+        var currentEntitiesIter = game.getEntities(locationCoords);
+        while (currentEntitiesIter.hasNext()) {
+            Entity entity = currentEntitiesIter.next();
+            isProhibited = isProhibited || !this.equals(entity);
+            if (isProhibited) {
+                return true;
+            }
         }
 
-        HashMap<Integer, Integer> elevations = new HashMap<>();
+        Map<Integer, Integer> elevations = new HashMap<>();
         elevations.put(hex.getLevel(), 1);
+        boolean secondaryHexPresent;
+        Coords secondaryCoords;
         for (int dir = 0; dir < 6; dir++) {
-            Coords secondaryCoord = c.translated(dir);
-            Hex secondaryHex = game.getBoard().getHex(secondaryCoord);
-            boolean occupied = game.getEntities(secondaryCoord).hasNext();
-            if (secondaryHex == null) {
-                // Don't allow landed dropships to hang off the board
-                isProhibited = true;
-            } else {
-                isProhibited |= hexContainsProhibitedTerrain(secondaryHex);
-                isProhibited |= occupied;
+            secondaryCoords = locationCoords.translated(dir);
+            Hex secondaryHex = game.getBoard().getHex(secondaryCoords);
+            currentEntitiesIter = game.getEntities(secondaryCoords);
+            secondaryHexPresent = secondaryHex != null;
+            isProhibited = isProhibited || !secondaryHexPresent || taxingAeroProhibitedTerrains(secondaryHex);
+            while (!isProhibited && currentEntitiesIter.hasNext()) {
+                Entity entity = currentEntitiesIter.next();
+                isProhibited = !this.equals(entity);
+            }
 
+            if (secondaryHexPresent) {
                 int elev = secondaryHex.getLevel();
                 if (elevations.containsKey(elev)) {
                     elevations.put(elev, elevations.get(elev) + 1);
@@ -222,17 +244,16 @@ public class Dropship extends SmallCraft {
             return true;
         }
 
-        Object[] elevs = elevations.keySet().toArray();
-        int elev1 = (Integer) elevs[0];
-        int elev2 = (Integer) elevs[1];
-        int elevDifference = Math.abs(elev1 - elev2);
+        final Integer[] elevationsKeys = new Integer[elevations.size()];
+        elevations.keySet().toArray(elevationsKeys);
+        int elevDifference = Math.abs(elevationsKeys[0] - elevationsKeys[1]);
         int elevMinCount = 2;
         // Check elevation difference and make sure that the counts of different
         // elevations will allow for a legal deployment to exist
         // TODO: get updated ruling; this code causes a hex with one single lower- or higher-level neighbor
         // to be disqualified, but it would seem that a single lower-level neighbor should be fine.
-        if ((elevDifference > 1) || (elevations.get(elevs[0]) < elevMinCount)
-                || (elevations.get(elevs[1]) < elevMinCount)) {
+        if ((elevDifference > 1) || (elevations.get(elevationsKeys[0]) < elevMinCount)
+                || (elevations.get(elevationsKeys[1]) < elevMinCount)) {
             return true;
         }
 
@@ -241,11 +262,11 @@ public class Dropship extends SmallCraft {
         // The way this is done is we start at the hex directly above the
         // central hex and then move around clockwise and compare the two hexes
         // to see if they share an elevation. We need to have a number of these
-        // adjacencies equal to the number of secondary elevation hexes - 1.
+        // adjacency equal to the number of secondary elevation hexes - 1.
         int numAdjacencies = 0;
         int centralElev = hex.getLevel();
         int secondElev = centralElev;
-        Hex currHex = game.getBoard().getHex(c.translated(5));
+        Hex currHex = game.getBoard().getHex(locationCoords.translated(5));
         // Ensure we aren't trying to deploy off the board
         if (currHex == null) {
             return true;
@@ -254,7 +275,7 @@ public class Dropship extends SmallCraft {
             if (currHex.getLevel() != centralElev) {
                 secondElev = currHex.getLevel();
             }
-            Hex nextHex = game.getBoard().getHex(c.translated(dir));
+            Hex nextHex = game.getBoard().getHex(locationCoords.translated(dir));
             // Ensure we aren't trying to deploy off the board
             if (nextHex == null) {
                 return true;
@@ -269,21 +290,6 @@ public class Dropship extends SmallCraft {
         }
 
         return isProhibited;
-    }
-
-    /**
-     * Worker function that checks if a given hex contains terrain onto which a grounded dropship
-     * cannot deploy.
-     */
-    private boolean hexContainsProhibitedTerrain(Hex hex) {
-        return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH)
-                || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
-                || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA)
-                || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1)
-                || (hex.terrainLevel(Terrains.GEYSER) == 2)
-                || hex.containsTerrain(Terrains.BUILDING) || hex.containsTerrain(Terrains.IMPASSABLE)
-                || hex.containsTerrain(Terrains.BRIDGE);
-
     }
 
     public void setDamageDockCollar(boolean b) {

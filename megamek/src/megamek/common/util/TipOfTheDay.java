@@ -39,6 +39,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JLabel;
+
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
@@ -193,26 +195,35 @@ public class TipOfTheDay {
             float labelHeight = labelLayout.getAscent() + labelLayout.getDescent() + labelLayout.getLeading();
             float labelWidth = (float) labelLayout.getBounds().getWidth();
 
-            // Actual tip text with word wrapping
-            AttributedString tipAS = new AttributedString(tipOfTheDay);
-            tipAS.addAttribute(TextAttribute.FONT, tipFont);
-            LineBreakMeasurer measurer = new LineBreakMeasurer(tipAS.getIterator(), frc);
+            boolean isHtmlContent = isHtmlText(tipOfTheDay);
+            float totalTipHeight;
             List<TextLayout> tipLayouts = new ArrayList<>();
-            float totalTipHeight = 0;
-            measurer.setPosition(0);
-            int previousPosition = -1;
-            while (measurer.getPosition() < tipAS.getIterator().getEndIndex()) {
-                // Check if the position hasn't advanced, indicating a potential infinite loop
-                if (measurer.getPosition() == previousPosition) {
-                    break;
-                }
-                previousPosition = measurer.getPosition();
-                TextLayout layout = measurer.nextLayout(currentAvailableTextWidth);
-                if (layout != null) {
-                    tipLayouts.add(layout);
-                    totalTipHeight += layout.getAscent() + layout.getDescent() + layout.getLeading();
-                } else {
-                    break; // Should not happen with LineBreakMeasurer unless the width is tiny
+
+            if (isHtmlContent) {
+                // Use HTML rendering for tip text
+                JLabel htmlLabel = createHtmlLabel(tipOfTheDay, tipFont, (int) currentAvailableTextWidth);
+                totalTipHeight = htmlLabel.getPreferredSize().height;
+            } else {
+                // Plain text rendering with word wrap
+                AttributedString tipAS = new AttributedString(tipOfTheDay);
+                tipAS.addAttribute(TextAttribute.FONT, tipFont);
+                LineBreakMeasurer measurer = new LineBreakMeasurer(tipAS.getIterator(), frc);
+                totalTipHeight = 0;
+                measurer.setPosition(0);
+                int previousPosition = -1;
+                while (measurer.getPosition() < tipAS.getIterator().getEndIndex()) {
+                    // Check if the position hasn't advanced, indicating a potential infinite loop
+                    if (measurer.getPosition() == previousPosition) {
+                        break;
+                    }
+                    previousPosition = measurer.getPosition();
+                    TextLayout layout = measurer.nextLayout(currentAvailableTextWidth);
+                    if (layout != null) {
+                        tipLayouts.add(layout);
+                        totalTipHeight += layout.getAscent() + layout.getDescent() + layout.getLeading();
+                    } else {
+                        break; // Should not happen with LineBreakMeasurer unless the width is tiny
+                    }
                 }
             }
 
@@ -393,33 +404,137 @@ public class TipOfTheDay {
             AffineTransform oldTransform = tipGraphics.getTransform();
             drawTipWithBackground(tipGraphics, oldTransform, labelLayout, labelDrawX, labelDrawY, TIP_TITLE_FONT_COLOR);
 
-            // Draw Tip Lines
-            float currentY = startY + labelHeight; // Start drawing tips below the label
-            for (TextLayout tipLayout : tipLayouts) {
-                float lineAscent = tipLayout.getAscent();
-                float lineHeight = lineAscent + tipLayout.getDescent() + tipLayout.getLeading();
-                float lineWidth = (float) tipLayout.getBounds().getWidth();
+            float tipStartY = startY + labelHeight;
+            if (isHtmlContent) {
+                // Render HTML content
+                drawHtmlTip(tipGraphics, tipOfTheDay, tipFont, startX, tipStartY, 
+                        (int) currentAvailableTextWidth, position, referenceBounds, scaledSidePadding);
+            } else {
+                // Draw Tip Lines
+                float currentY = tipStartY;
+                for (TextLayout tipLayout : tipLayouts) {
+                    float lineAscent = tipLayout.getAscent();
+                    float lineHeight = lineAscent + tipLayout.getDescent() + tipLayout.getLeading();
+                    float lineWidth = (float) tipLayout.getBounds().getWidth();
 
-                float lineDrawX = switch (position) {
-                    case BOTTOM_LEFT_CORNER -> startX; // Left align
-                    case BOTTOM_RIGHT_CORNER ->
-                          referenceBounds.x + referenceBounds.width - lineWidth - scaledSidePadding; // Right align
-                    default -> {
-                        lineDrawX = startX + (currentAvailableTextWidth - lineWidth) / 2f; // Center line
-                        yield Math.max(startX, lineDrawX);
-                    }
-                };
+                    float lineDrawX = switch (position) {
+                        case BOTTOM_LEFT_CORNER -> startX; // Left align
+                        case BOTTOM_RIGHT_CORNER ->
+                            referenceBounds.x + referenceBounds.width - lineWidth - scaledSidePadding; // Right align
+                        default -> {
+                            lineDrawX = startX + (currentAvailableTextWidth - lineWidth) / 2f; // Center line
+                            yield Math.max(startX, lineDrawX);
+                        }
+                    };
 
-                float lineDrawY = currentY + lineAscent; // Baseline for this line
+                    float lineDrawY = currentY + lineAscent; // Baseline for this line
 
-                oldTransform = tipGraphics.getTransform();
-                drawTipWithBackground(tipGraphics, oldTransform, tipLayout, lineDrawX, lineDrawY, TIP_FONT_COLOR);
+                    oldTransform = tipGraphics.getTransform();
+                    drawTipWithBackground(tipGraphics, oldTransform, tipLayout, lineDrawX, lineDrawY, TIP_FONT_COLOR);
 
-                currentY += lineHeight;
+                    currentY += lineHeight;
+                }
             }
 
         } finally {
             tipGraphics.dispose();
+        }
+    }
+
+    /**
+     * Checks if the given text contains HTML markup
+     */
+    private boolean isHtmlText(String text) {
+        if (text == null) return false;
+        String lowerText = text.toLowerCase().trim();
+        return lowerText.startsWith("<html>") || lowerText.contains("<") && lowerText.contains(">");
+    }
+
+    /**
+     * Creates a JLabel configured for HTML rendering
+     */
+    private JLabel createHtmlLabel(String htmlText, Font font, int width) {
+        JLabel label = new JLabel();
+        label.setText(htmlText);
+        label.setFont(font);
+        label.setForeground(TIP_FONT_COLOR);
+        label.setSize(width, Integer.MAX_VALUE);
+        return label;
+    }
+
+    /**
+     * Draws HTML content with outline and fill
+     */
+    private void drawHtmlTip(Graphics2D graphics, String htmlText, Font font, float startX, float startY,
+                            int availableWidth, Position position, Rectangle referenceBounds, float scaledSidePadding) {
+
+        if (htmlText == null || htmlText.trim().isEmpty()) {
+            return;
+        }
+
+        String effectiveHtmlText = htmlText.trim();
+        if (!effectiveHtmlText.toLowerCase().startsWith("<html>")) {
+            effectiveHtmlText = "<html>" + effectiveHtmlText + "</html>";
+        }
+
+        JLabel htmlLabel = new JLabel(effectiveHtmlText);
+        htmlLabel.setFont(font);
+        htmlLabel.setOpaque(false);
+
+        htmlLabel.setSize(availableWidth, Short.MAX_VALUE);
+        Dimension preferredSize = htmlLabel.getPreferredSize();
+
+        if (preferredSize.width <= 0 || preferredSize.height <= 0) {
+            // No valid size to draw
+            return;
+        }
+
+        int actualWidth = preferredSize.width;
+        int actualHeight = preferredSize.height;
+
+        float drawX;
+        switch (position) {
+            case BOTTOM_LEFT_CORNER:
+                drawX = startX;
+                break;
+            case BOTTOM_RIGHT_CORNER:
+                drawX = referenceBounds.x + referenceBounds.width - actualWidth - scaledSidePadding;
+                break;
+            default: // TOP_BORDER, BOTTOM_BORDER
+                drawX = startX + (availableWidth - actualWidth) / 2f;
+                drawX = Math.max(startX, drawX);
+                break;
+        }
+        htmlLabel.setBounds(0, 0, actualWidth, actualHeight);
+
+        Graphics2D g2d = (Graphics2D) graphics.create();
+        try {
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+
+            g2d.translate(drawX, startY);
+
+            float strokeThickness = STROKE_WIDTH * scaleFactor;
+            int stroke = Math.max(1, (int) Math.ceil(strokeThickness));
+
+            // Outline Pass:
+            htmlLabel.setForeground(TIP_STROKE_COLOR);
+            for (int dy_offset = -stroke; dy_offset <= stroke; dy_offset++) {
+                for (int dx_offset = -stroke; dx_offset <= stroke; dx_offset++) {
+                    if (dx_offset != 0 || dy_offset != 0) {
+                        AffineTransform originalTransform = g2d.getTransform();
+                        g2d.translate(dx_offset, dy_offset);
+                        htmlLabel.paint(g2d);
+                        g2d.setTransform(originalTransform);
+                    }
+                }
+            }
+            htmlLabel.setForeground(TIP_FONT_COLOR);
+            htmlLabel.paint(g2d);
+        } finally {
+            g2d.dispose();
         }
     }
 

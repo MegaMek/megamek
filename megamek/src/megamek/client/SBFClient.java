@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.ForceAssignable;
 import megamek.common.InGameObject;
 import megamek.common.Report;

@@ -19,7 +19,7 @@
 
 package megamek.client.ui.sbf;
 
-import megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip;
+import megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip;
 import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;

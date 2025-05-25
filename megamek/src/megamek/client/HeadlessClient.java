@@ -16,15 +16,9 @@ package megamek.client;
 
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
-import megamek.common.Game;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.EntityAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GameNewActionEvent;
-import megamek.common.net.packets.Packet;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
@@ -35,8 +29,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import static megamek.client.ui.swing.ClientGUI.CG_FILEEXTENTIONMUL;
-import static megamek.client.ui.swing.ClientGUI.CG_FILENAMESALVAGE;
+import static megamek.client.ui.clientGUI.ClientGUI.CG_FILEEXTENTIONMUL;
+import static megamek.client.ui.clientGUI.ClientGUI.CG_FILENAMESALVAGE;
 
 /**
  * This class is instantiated for the player. It allows to communicate with the server with no GUI attached.

@@ -33,9 +33,9 @@ import java.util.Locale;
 import javax.swing.ImageIcon;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.util.FluffImageHelper;
-import megamek.client.ui.swing.util.StringDrawer;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.FluffImageHelper;
+import megamek.client.ui.util.StringDrawer;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASDamageVector;

@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.JumpShipCostCalculator;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;

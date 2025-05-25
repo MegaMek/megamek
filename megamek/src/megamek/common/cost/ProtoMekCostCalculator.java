@@ -18,7 +18,7 @@
  */
 package megamek.common.cost;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.Mounted;
 import megamek.common.ProtoMek;
 import megamek.common.WeaponType;

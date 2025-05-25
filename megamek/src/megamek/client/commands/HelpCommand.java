@@ -20,7 +20,7 @@
 package megamek.client.commands;
 
 import megamek.client.ui.IClientCommandHandler;
-import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.clientGUI.ClientGUI;
 
 /**
  * @author dirk

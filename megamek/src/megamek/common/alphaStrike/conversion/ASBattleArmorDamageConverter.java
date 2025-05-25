@@ -18,7 +18,7 @@
  */
 package megamek.common.alphaStrike.conversion;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.alphaStrike.AlphaStrikeElement.LONG_RANGE;
 import static megamek.common.alphaStrike.AlphaStrikeElement.MEDIUM_RANGE;
 import static megamek.common.alphaStrike.AlphaStrikeElement.SHORT_RANGE;
@@ -30,7 +30,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.FLK;
 import static megamek.common.alphaStrike.BattleForceSUA.HT;
 import static megamek.common.alphaStrike.BattleForceSUA.IF;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;

@@ -18,7 +18,6 @@
  */
 package megamek.client.ui.comboBoxes;
 
-import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.displayWrappers.FontDisplay;
 
 import javax.swing.*;

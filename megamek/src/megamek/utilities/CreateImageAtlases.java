@@ -30,8 +30,8 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import megamek.client.ui.swing.tileset.HexTileset;
-import megamek.client.ui.swing.util.ImageAtlasMap;
+import megamek.client.ui.tileset.HexTileset;
+import megamek.client.ui.util.ImageAtlasMap;
 import megamek.common.Configuration;
 import megamek.logging.MMLogger;
 

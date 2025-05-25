@@ -17,8 +17,8 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Vector;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.cost.BattleArmorCostCalculator;
 import megamek.common.enums.AimingMode;

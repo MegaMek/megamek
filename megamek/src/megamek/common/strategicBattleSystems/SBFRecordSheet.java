@@ -19,8 +19,8 @@
 package megamek.common.strategicBattleSystems;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.util.StringDrawer;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.StringDrawer;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;

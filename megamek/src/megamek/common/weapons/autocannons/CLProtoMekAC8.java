@@ -25,6 +25,7 @@ public class CLProtoMekAC8 extends ProtoMekACWeapon {
     public CLProtoMekAC8() {
         super();
 
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
         name = "ProtoMech AC/8";
         setInternalName("CLProtoMechAC8");
         addLookupName("Clan ProtoMech AC/8");

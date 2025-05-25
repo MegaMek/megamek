@@ -4142,7 +4142,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLPROAC2Ammo() {
 
         AmmoType ammo = new AmmoType();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
         ammo.name = "ProtoMech AC/2 Ammo";
         ammo.shortName = "Proto AC/2";
         ammo.setInternalName("Clan ProtoMech AC/2 Ammo");
@@ -4170,7 +4170,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLPROAC4Ammo() {
         AmmoType ammo = new AmmoType();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
         ammo.name = "ProtoMech AC/4 Ammo";
         ammo.shortName = "Proto AC/4";
         ammo.setInternalName("Clan ProtoMech AC/4 Ammo");
@@ -4198,7 +4198,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLPROAC8Ammo() {
         AmmoType ammo = new AmmoType();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
         ammo.name = "ProtoMech AC/8 Ammo";
         ammo.shortName = "Proto AC/8";
         ammo.setInternalName("Clan ProtoMech AC/8 Ammo");
@@ -8159,6 +8159,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 1 Ammo";
         ammo.shortName = "LRM 1";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-1");
         ammo.addLookupName("Clan Ammo LRM-1");
         ammo.addLookupName("CLLRM1 Ammo");
@@ -8191,6 +8192,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 2 Ammo";
         ammo.shortName = "LRM 2";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-2");
         ammo.addLookupName("Clan Ammo LRM-2");
         ammo.addLookupName("CLLRM2 Ammo");
@@ -8223,6 +8225,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 3 Ammo";
         ammo.shortName = "LRM 3";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-3");
         ammo.addLookupName("Clan Ammo LRM-3");
         ammo.addLookupName("CLLRM3 Ammo");
@@ -8255,6 +8258,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 4 Ammo";
         ammo.shortName = "LRM 4";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-4");
         ammo.addLookupName("Clan Ammo LRM-4");
         ammo.addLookupName("CLLRM4 Ammo");
@@ -8287,6 +8291,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 6 Ammo";
         ammo.shortName = "LRM 6";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-6");
         ammo.addLookupName("Clan Ammo LRM-6");
         ammo.addLookupName("CLLRM6 Ammo");
@@ -8319,6 +8324,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 7 Ammo";
         ammo.shortName = "LRM 7";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-7");
         ammo.addLookupName("Clan Ammo LRM-7");
         ammo.addLookupName("CLLRM7 Ammo");
@@ -8351,6 +8357,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 8 Ammo";
         ammo.shortName = "LRM 8";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-8");
         ammo.addLookupName("Clan Ammo LRM-8");
         ammo.addLookupName("CLLRM8 Ammo");
@@ -8383,6 +8390,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 9 Ammo";
         ammo.shortName = "LRM 9";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-9");
         ammo.addLookupName("Clan Ammo LRM-9");
         ammo.addLookupName("CLLRM9 Ammo");
@@ -8415,6 +8423,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 11 Ammo";
         ammo.shortName = "LRM 11";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-11");
         ammo.addLookupName("Clan Ammo LRM-11");
         ammo.addLookupName("CLLRM11 Ammo");
@@ -8446,6 +8455,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "LRM 12 Ammo";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-12");
         ammo.shortName = "LRM 12";
         ammo.addLookupName("Clan Ammo LRM-12");
@@ -8479,6 +8489,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 13 Ammo";
         ammo.shortName = "LRM 13";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-13");
         ammo.addLookupName("Clan Ammo LRM-13");
         ammo.addLookupName("CLLRM13 Ammo");
@@ -8511,6 +8522,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 14 Ammo";
         ammo.shortName = "LRM 14";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-14");
         ammo.addLookupName("Clan Ammo LRM-14");
         ammo.addLookupName("CLLRM14 Ammo");
@@ -8543,6 +8555,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 16 Ammo";
         ammo.shortName = "LRM 16";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-16");
         ammo.addLookupName("Clan Ammo LRM-16");
         ammo.addLookupName("CLLRM16 Ammo");
@@ -8575,6 +8588,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 17 Ammo";
         ammo.shortName = "LRM 17";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-17");
         ammo.addLookupName("Clan Ammo LRM-17");
         ammo.addLookupName("CLLRM17 Ammo");
@@ -8607,6 +8621,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRM 18 Ammo";
         ammo.shortName = "LRM 18";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-18");
         ammo.addLookupName("Clan Ammo LRM-18");
         ammo.addLookupName("CLLRM18 Ammo");
@@ -8639,6 +8654,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.shortName = "LRM 19";
         ammo.name = "LRM 19 Ammo";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRM-19");
         ammo.addLookupName("Clan Ammo LRM-19");
         ammo.addLookupName("CLLRM19 Ammo");
@@ -10055,6 +10071,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 1 Ammo";
         ammo.shortName = "LRT 1";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-1");
         ammo.addLookupName("Clan Ammo LRTorpedo-1");
         ammo.addLookupName("CLLRTorpedo1 Ammo");
@@ -10087,6 +10104,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 2 Ammo";
         ammo.shortName = "LRT 2";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-2");
         ammo.addLookupName("Clan Ammo LRTorpedo-2");
         ammo.addLookupName("CLLRTorpedo2 Ammo");
@@ -10119,6 +10137,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 3 Ammo";
         ammo.shortName = "LRT 3";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-3");
         ammo.addLookupName("Clan Ammo LRTorpedo-3");
         ammo.addLookupName("CLLRTorpedo3 Ammo");
@@ -10151,6 +10170,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 4 Ammo";
         ammo.shortName = "LRT 4";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-4");
         ammo.addLookupName("Clan Ammo LRTorpedo-4");
         ammo.addLookupName("CLLRTorpedo4 Ammo");
@@ -10212,6 +10232,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 6 Ammo";
         ammo.shortName = "LRT 6";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-6");
         ammo.addLookupName("Clan Ammo LRTorpedo-6");
         ammo.addLookupName("CLLRTorpedo6 Ammo");
@@ -10244,6 +10265,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 7 Ammo";
         ammo.shortName = "LRT 7";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-7");
         ammo.addLookupName("Clan Ammo LRTorpedo-7");
         ammo.addLookupName("CLLRTorpedo7 Ammo");
@@ -10276,6 +10298,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 8 Ammo";
         ammo.shortName = "LRT 8";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-8");
         ammo.addLookupName("Clan Ammo LRTorpedo-8");
         ammo.addLookupName("CLLRTorpedo8 Ammo");
@@ -10308,6 +10331,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 9 Ammo";
         ammo.shortName = "LRT 9";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-9");
         ammo.addLookupName("Clan Ammo LRTorpedo-9");
         ammo.addLookupName("CLLRTorpedo9 Ammo");
@@ -10369,6 +10393,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 11 Ammo";
         ammo.shortName = "LRT 11";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-11");
         ammo.addLookupName("Clan Ammo LRTorpedo-11");
         ammo.addLookupName("CLLRTorpedo11 Ammo");
@@ -10401,6 +10426,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 12 Ammo";
         ammo.shortName = "LRT 12";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-12");
         ammo.addLookupName("Clan Ammo LRTorpedo-12");
         ammo.addLookupName("CLLRTorpedo12 Ammo");
@@ -10433,6 +10459,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 13 Ammo";
         ammo.shortName = "LRT 13";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-13");
         ammo.addLookupName("Clan Ammo LRTorpedo-13");
         ammo.addLookupName("CLLRTorpedo13 Ammo");
@@ -10465,6 +10492,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 14 Ammo";
         ammo.shortName = "LRT 14";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-14");
         ammo.addLookupName("Clan Ammo LRTorpedo-14");
         ammo.addLookupName("CLLRTorpedo14 Ammo");
@@ -10526,6 +10554,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 16 Ammo";
         ammo.shortName = "LRT 16";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-16");
         ammo.addLookupName("Clan Ammo LRTorpedo-16");
         ammo.addLookupName("CLLRTorpedo16 Ammo");
@@ -10558,6 +10587,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 17 Ammo";
         ammo.shortName = "LRT 17";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-17");
         ammo.addLookupName("Clan Ammo LRTorpedo-17");
         ammo.addLookupName("CLLRTorpedo17 Ammo");
@@ -10590,6 +10620,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 18 Ammo";
         ammo.shortName = "LRT 18";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-18");
         ammo.addLookupName("Clan Ammo LRTorpedo-18");
         ammo.addLookupName("CLLRTorpedo18 Ammo");
@@ -10622,6 +10653,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LRT 19 Ammo";
         ammo.shortName = "LRT 19";
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         ammo.setInternalName("Clan Ammo ProtoMech LRTorpedo-19");
         ammo.addLookupName("Clan Ammo LRTorpedo-19");
         ammo.addLookupName("CLLRTorpedo19 Ammo");

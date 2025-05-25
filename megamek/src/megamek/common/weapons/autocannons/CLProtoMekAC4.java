@@ -24,7 +24,7 @@ public class CLProtoMekAC4 extends ProtoMekACWeapon {
 
     public CLProtoMekAC4() {
         super();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
         name = "ProtoMech AC/4";
         setInternalName("CLProtoMechAC4");
         addLookupName("Clan ProtoMech AC/4");

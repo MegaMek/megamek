@@ -1265,7 +1265,7 @@ public class ArmorType extends MiscType {
 
     private static ArmorType createStandardProtomekArmor() {
         ArmorType armor = new ArmorType();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
         armor.name = "Standard ProtoMech";
         armor.setInternalName(armor.name);
         armor.addLookupName("Clan Standard ProtoMech");
@@ -1284,7 +1284,7 @@ public class ArmorType extends MiscType {
 
     private static ArmorType createElectricDischargeArmor() {
         ArmorType armor = new ArmorType();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
         armor.name = "Electric Discharge ProtoMech";
         armor.setInternalName("Clan Electric Discharge ProtoMech");
         armor.addLookupName("CLEDPArmor");

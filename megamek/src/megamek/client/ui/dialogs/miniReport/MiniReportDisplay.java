@@ -51,14 +51,12 @@ import javax.swing.text.Document;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.BASE64ToolKit;
-import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IClientGUI;
 import megamek.client.ui.clientGUI.IHasBoardView;
 import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
 import megamek.client.ui.util.BASE64ToolKit;
+import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.Player;
@@ -235,7 +233,6 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         String filterResult = "";
         String[] keywords = selectedKeyword.split(" ");
         String[] htmlLines = currentClient.phaseReport.split("\r\n|\n|\r");
-        System.out.println(currentClient.phaseReport);
         for (String htmlLine : htmlLines) {
             for (String word : keywords) {
                 if (htmlLine.replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {

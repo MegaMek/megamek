@@ -53,7 +53,7 @@ import megamek.common.actions.DfaAttackAction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.equipment.WeaponMounted;
 
@@ -285,7 +285,7 @@ class EntityTest {
 
     @Test
     public void testCalcElevationDuringDfaIntoWater() {
-        // Create a Mech that is capable of DFA
+        // Create a Mek that is capable of DFA
         Mek mek = new BipedMek();
         int postDfaElevationOnTargetUnderwater = 1;
         int assumedElevationOnDfaIsAlwaysZero = 0;
@@ -304,7 +304,7 @@ class EntityTest {
 
     @Test
     public void testCalcElevationIntoWater() {
-        // Create a mech for normal movement
+        // Create a Mek for normal movement
         BipedMek mek = new BipedMek();
 
         assertAll("Check elevation",

@@ -45,7 +45,7 @@ Spheroid
 </motion_type>
 
 <transporters>
-mechbay:10.0:4
+mekbay:10.0:4
 1stclassquarters:40.0:0
 2ndclassquarters:0.0:0
 crewquarters:119.0:0

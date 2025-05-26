@@ -2,7 +2,7 @@ name: JavaDoc Generation
 
 on:
   push:
-    branches: ["master"]
+    branches: [ "master" ]
 
   workflow_dispatch:
 
@@ -13,7 +13,7 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  java_doc:
     runs-on: ubuntu-latest
 
     steps:
@@ -50,7 +50,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: java_doc
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

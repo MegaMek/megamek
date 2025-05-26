@@ -61,7 +61,7 @@ import com.thoughtworks.xstream.XStream;
 import megamek.MMConstants;
 import megamek.SuiteConstants;
 import megamek.Version;
-import megamek.client.ui.swing.util.PlayerColour;
+import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Game;
 import megamek.common.IGame;

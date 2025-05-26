@@ -21,9 +21,10 @@ public class CLMekMortar1 extends MekMortarWeapon {
 
     public CLMekMortar1() {
         super();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
         name = "'Mech Mortar 1";
         setInternalName("Clan Mech Mortar-1");
+
         addLookupName("CLMekMortar1");
         addLookupName("Clan Mek Mortar 1");
         rackSize = 1;

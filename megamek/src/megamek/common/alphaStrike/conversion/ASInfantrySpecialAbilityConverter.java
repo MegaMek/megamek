@@ -19,7 +19,7 @@
 
 package megamek.common.alphaStrike.conversion;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.OptionsConstants;
@@ -109,9 +109,10 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
         if (entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             assign("TSM implants", TSI);
         }
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
         if ((entity instanceof BattleArmor) && ((BattleArmor) entity).canDoMechanizedBA()) {
             assign("BA / Mech.", MEC);
         }
+
     }
 }

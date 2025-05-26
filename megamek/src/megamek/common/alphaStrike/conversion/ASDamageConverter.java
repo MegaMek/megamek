@@ -18,7 +18,7 @@
  */
 package megamek.common.alphaStrike.conversion;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.MiscType.F_EMERGENCY_COOLANT_SYSTEM;
 import static megamek.common.MiscType.F_RADICAL_HEATSINK;
 import static megamek.common.alphaStrike.AlphaStrikeElement.EXTREME_RANGE;
@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;

@@ -18,7 +18,7 @@
  */
 package megamek.common.battlevalue;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.EquipmentType.T_STRUCTURE_COMPOSITE;
 import static megamek.common.EquipmentType.T_STRUCTURE_INDUSTRIAL;
 import static megamek.common.EquipmentType.T_STRUCTURE_REINFORCED;

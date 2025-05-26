@@ -27,7 +27,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
 import megamek.common.event.BoardEvent;

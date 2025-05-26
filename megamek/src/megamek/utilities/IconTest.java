@@ -20,8 +20,8 @@ package megamek.utilities;
 
 import java.io.IOException;
 
-import megamek.client.ui.swing.tileset.GenerateGenericIconList;
-import megamek.client.ui.swing.tileset.MekSetTest;
+import megamek.client.ui.tileset.GenerateGenericIconList;
+import megamek.client.ui.tileset.MekSetTest;
 import megamek.logging.MMLogger;
 
 /**

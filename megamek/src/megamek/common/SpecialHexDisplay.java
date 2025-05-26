@@ -15,16 +15,13 @@
 package megamek.common;
 
 import java.awt.Image;
-import java.io.File;
 import java.io.Serializable;
 import java.util.Objects;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.enums.GamePhase;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-
-import static megamek.client.ui.swing.tileset.TilesetManager.FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE;
 
 /**
  * @author dirk

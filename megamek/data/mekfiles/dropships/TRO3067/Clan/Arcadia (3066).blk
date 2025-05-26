@@ -45,9 +45,9 @@ Aerodyne
 </motion_type>
 
 <transporters>
-protomechbay:5.0:1:1
-protomechbay:5.0:1:2
-protomechbay:5.0:1:3
+protomekbay:5.0:1:1
+protomekbay:5.0:1:2
+protomekbay:5.0:1:3
 crewquarters:91.0:0
 steeragequarters:0.0:0
 1stclassquarters:30.0:0

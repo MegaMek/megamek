@@ -25,13 +25,12 @@ import java.io.File;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.baseComponents.AbstractDialog;
+import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
 import megamek.logging.MMLogger;
 
 /**

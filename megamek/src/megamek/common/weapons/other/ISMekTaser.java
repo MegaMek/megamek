@@ -32,6 +32,7 @@ public class ISMekTaser extends AmmoWeapon {
 
     public ISMekTaser() {
         super();
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES
         name = "BattleMech Taser";
         setInternalName("Mek Taser");
         addLookupName("ISMekTaser");

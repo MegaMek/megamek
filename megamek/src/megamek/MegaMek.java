@@ -48,9 +48,9 @@ import javax.swing.UIManager;
 
 import io.sentry.Sentry;
 import megamek.client.ui.preferences.SuitePreferences;
-import megamek.client.ui.swing.ButtonOrderPreferences;
-import megamek.client.ui.swing.MegaMekGUI;
-import megamek.client.ui.swing.util.FontHandler;
+import megamek.client.ui.clientGUI.ButtonOrderPreferences;
+import megamek.client.ui.clientGUI.MegaMekGUI;
+import megamek.client.ui.util.FontHandler;
 import megamek.common.annotations.Nullable;
 import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.commandline.ClientServerCommandLineParser;

@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 

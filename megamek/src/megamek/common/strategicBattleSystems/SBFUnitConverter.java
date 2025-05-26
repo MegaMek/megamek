@@ -18,7 +18,7 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.alphaStrike.*;
 import megamek.common.options.OptionsConstants;
@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.*;
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 import static megamek.common.strategicBattleSystems.SBFElementType.*;
 

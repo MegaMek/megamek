@@ -21,7 +21,7 @@ package megamek.client.bot.ui.swing;
 
 import megamek.client.bot.BotClient;
 import megamek.client.ui.dialogs.helpDialogs.BotHelpDialog;
-import megamek.client.ui.dialogs.nagDialogs.BotReadmeNagDialog;
+import megamek.client.ui.dialogs.buttonDialogs.BotReadmeNagDialog;
 import megamek.common.event.*;
 
 import javax.swing.*;

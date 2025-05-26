@@ -28,8 +28,8 @@ import java.util.Objects;
 
 import org.w3c.dom.Node;
 
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
-import megamek.client.ui.swing.util.PlayerColour;
+import megamek.client.ui.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.util.PlayerColour;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 

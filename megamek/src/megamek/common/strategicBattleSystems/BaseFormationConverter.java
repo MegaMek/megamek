@@ -19,12 +19,11 @@
 
 package megamek.common.strategicBattleSystems;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
-import megamek.common.Game;
 import megamek.common.IGame;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;

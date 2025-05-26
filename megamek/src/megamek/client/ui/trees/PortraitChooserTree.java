@@ -18,7 +18,7 @@
  */
 package megamek.client.ui.trees;
 
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.common.icons.AbstractIcon;
 
 import javax.swing.tree.DefaultMutableTreeNode;

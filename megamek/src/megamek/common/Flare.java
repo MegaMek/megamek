@@ -19,13 +19,15 @@
  */
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  *  This class represents parachute flares deployed by illumination artillery
- *  or mech mortars.
+ *  or mek mortars.
  */
 public class Flare implements Serializable {
+    @Serial
     private static final long serialVersionUID = 451911245389504483L;
     public Coords position;
     public int turnsToBurn;

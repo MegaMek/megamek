@@ -171,7 +171,7 @@ public class NarcHandler extends MissileWeaponHandler {
         }
         hit.setAttackerId(getAttackerId());
 
-        // Catch Protomech near-misses here.
+        // Catch protomek near-misses here.
         // So what do we do for a near miss on a glider? Assume attach to wings.
         if (entityTarget instanceof ProtoMek
                 && hit.getLocation() == ProtoMek.LOC_NMISS

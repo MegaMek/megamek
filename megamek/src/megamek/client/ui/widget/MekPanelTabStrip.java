@@ -41,7 +41,7 @@ import java.awt.Toolkit;
 import java.io.Serial;
 import java.util.Objects;
 
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
@@ -72,9 +72,9 @@ public class MekPanelTabStrip extends PicMap {
     private PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[NUM_TABS];
     private Image idleCorner, selectedCorner;
     private int activeTab = 0;
-    UnitDisplay md;
+    UnitDisplayPanel md;
 
-    public MekPanelTabStrip(UnitDisplay md) {
+    public MekPanelTabStrip(UnitDisplayPanel md) {
         super();
         this.md = md;
     }

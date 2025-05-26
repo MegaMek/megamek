@@ -25,7 +25,7 @@ import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Dropship;
@@ -39,7 +39,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  */
 public class SpheroidMapSet implements DisplayMapSet{
 
-    private UnitDisplay unitDisplay;
+    private UnitDisplayPanel unitDisplayPanel;
 
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[5];
@@ -73,8 +73,8 @@ public class SpheroidMapSet implements DisplayMapSet{
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public SpheroidMapSet(JComponent c, UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
+    public SpheroidMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
+        this.unitDisplayPanel = unitDisplayPanel;
         comp = c;
         setAreas();
         setLabels();
@@ -174,11 +174,11 @@ public class SpheroidMapSet implements DisplayMapSet{
     }
 
     private void setAreas() {
-        areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplay, Aero.LOC_NOSE);
-        areas[Aero.LOC_RWING] = new PMSimplePolygonArea(rightWingArmor, unitDisplay, Aero.LOC_RWING);
-        areas[Aero.LOC_LWING] = new PMSimplePolygonArea(leftWingArmor, unitDisplay, Aero.LOC_LWING);
-        areas[Aero.LOC_AFT] = new PMSimplePolygonArea(aftArmor, unitDisplay, Aero.LOC_AFT);
-        areas[4] = new PMSimplePolygonArea(Structure, unitDisplay, Aero.LOC_NOSE);
+        areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplayPanel, Aero.LOC_NOSE);
+        areas[Aero.LOC_RWING] = new PMSimplePolygonArea(rightWingArmor, unitDisplayPanel, Aero.LOC_RWING);
+        areas[Aero.LOC_LWING] = new PMSimplePolygonArea(leftWingArmor, unitDisplayPanel, Aero.LOC_LWING);
+        areas[Aero.LOC_AFT] = new PMSimplePolygonArea(aftArmor, unitDisplayPanel, Aero.LOC_AFT);
+        areas[4] = new PMSimplePolygonArea(Structure, unitDisplayPanel, Aero.LOC_NOSE);
     }
 
     private void setLabels() {

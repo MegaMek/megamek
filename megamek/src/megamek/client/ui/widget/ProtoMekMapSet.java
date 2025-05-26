@@ -26,7 +26,7 @@ import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.ProtoMek;
@@ -38,7 +38,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  */
 public class ProtoMekMapSet implements DisplayMapSet {
 
-    private UnitDisplay unitDisplay;
+    private UnitDisplayPanel unitDisplayPanel;
 
     // Boring list of labels.
     private PMValueLabel[] sectionLabels = new PMValueLabel[ProtoMek.NUM_PROTOMEK_LOCATIONS];
@@ -77,8 +77,8 @@ public class ProtoMekMapSet implements DisplayMapSet {
     /**
      * This constructor can only be called from the addNotify method
      */
-    public ProtoMekMapSet(JComponent c, UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
+    public ProtoMekMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
+        this.unitDisplayPanel = unitDisplayPanel;
         comp = c;
         setAreas();
         setBackGround();
@@ -88,12 +88,12 @@ public class ProtoMekMapSet implements DisplayMapSet {
      * Set the armor diagram on the mapset.
      */
     private void setAreas() {
-        areas[ProtoMek.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay, ProtoMek.LOC_HEAD);
-        areas[ProtoMek.LOC_LEG] = new PMSimplePolygonArea(legs, unitDisplay, ProtoMek.LOC_LEG);
-        areas[ProtoMek.LOC_LARM] = new PMSimplePolygonArea(leftArm, unitDisplay, ProtoMek.LOC_LARM);
-        areas[ProtoMek.LOC_RARM] = new PMSimplePolygonArea(rightArm, unitDisplay, ProtoMek.LOC_RARM);
-        areas[ProtoMek.LOC_TORSO] = new PMSimplePolygonArea(torso, unitDisplay, ProtoMek.LOC_TORSO);
-        areas[ProtoMek.LOC_MAINGUN] = new PMSimplePolygonArea(mainGun, unitDisplay, ProtoMek.LOC_MAINGUN);
+        areas[ProtoMek.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplayPanel, ProtoMek.LOC_HEAD);
+        areas[ProtoMek.LOC_LEG] = new PMSimplePolygonArea(legs, unitDisplayPanel, ProtoMek.LOC_LEG);
+        areas[ProtoMek.LOC_LARM] = new PMSimplePolygonArea(leftArm, unitDisplayPanel, ProtoMek.LOC_LARM);
+        areas[ProtoMek.LOC_RARM] = new PMSimplePolygonArea(rightArm, unitDisplayPanel, ProtoMek.LOC_RARM);
+        areas[ProtoMek.LOC_TORSO] = new PMSimplePolygonArea(torso, unitDisplayPanel, ProtoMek.LOC_TORSO);
+        areas[ProtoMek.LOC_MAINGUN] = new PMSimplePolygonArea(mainGun, unitDisplayPanel, ProtoMek.LOC_MAINGUN);
 
         for (int i = 0; i <= 5; i++) {
             content.addArea(areas[i]);

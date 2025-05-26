@@ -26,7 +26,7 @@ import javax.swing.JComponent;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Tank;
@@ -45,7 +45,7 @@ public class TankMapSet implements DisplayMapSet {
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
 
-    private UnitDisplay unitDisplay;
+    private UnitDisplayPanel unitDisplayPanel;
 
     private static final int INT_STR_OFFSET = 6;
     // Polygons for all areas
@@ -96,8 +96,8 @@ public class TankMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public TankMapSet(JComponent c, UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
+    public TankMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
+        this.unitDisplayPanel = unitDisplayPanel;
         comp = c;
         setAreas();
         setLabels();
@@ -161,16 +161,16 @@ public class TankMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Tank.LOC_FRONT] = new PMSimplePolygonArea(frontArmor, unitDisplay, Tank.LOC_FRONT);
-        areas[Tank.LOC_RIGHT] = new PMSimplePolygonArea(rightArmor, unitDisplay, Tank.LOC_RIGHT);
-        areas[Tank.LOC_LEFT] = new PMSimplePolygonArea(leftArmor, unitDisplay, Tank.LOC_LEFT);
-        areas[Tank.LOC_REAR] = new PMSimplePolygonArea(rearArmor, unitDisplay, Tank.LOC_REAR);
-        areas[Tank.LOC_TURRET] = new PMSimplePolygonArea(turretArmor, unitDisplay, Tank.LOC_TURRET);
-        areas[Tank.LOC_FRONT + INT_STR_OFFSET] = new PMSimplePolygonArea(frontIS, unitDisplay, Tank.LOC_FRONT);
-        areas[Tank.LOC_RIGHT + INT_STR_OFFSET] = new PMSimplePolygonArea(rightIS, unitDisplay, Tank.LOC_FRONT);
-        areas[Tank.LOC_LEFT + INT_STR_OFFSET] = new PMSimplePolygonArea(leftIS, unitDisplay, Tank.LOC_LEFT);
-        areas[Tank.LOC_REAR + INT_STR_OFFSET] = new PMSimplePolygonArea(rearIS, unitDisplay, Tank.LOC_REAR);
-        areas[Tank.LOC_TURRET + INT_STR_OFFSET] = new PMSimplePolygonArea(turretIS, unitDisplay, Tank.LOC_TURRET);
+        areas[Tank.LOC_FRONT] = new PMSimplePolygonArea(frontArmor, unitDisplayPanel, Tank.LOC_FRONT);
+        areas[Tank.LOC_RIGHT] = new PMSimplePolygonArea(rightArmor, unitDisplayPanel, Tank.LOC_RIGHT);
+        areas[Tank.LOC_LEFT] = new PMSimplePolygonArea(leftArmor, unitDisplayPanel, Tank.LOC_LEFT);
+        areas[Tank.LOC_REAR] = new PMSimplePolygonArea(rearArmor, unitDisplayPanel, Tank.LOC_REAR);
+        areas[Tank.LOC_TURRET] = new PMSimplePolygonArea(turretArmor, unitDisplayPanel, Tank.LOC_TURRET);
+        areas[Tank.LOC_FRONT + INT_STR_OFFSET] = new PMSimplePolygonArea(frontIS, unitDisplayPanel, Tank.LOC_FRONT);
+        areas[Tank.LOC_RIGHT + INT_STR_OFFSET] = new PMSimplePolygonArea(rightIS, unitDisplayPanel, Tank.LOC_FRONT);
+        areas[Tank.LOC_LEFT + INT_STR_OFFSET] = new PMSimplePolygonArea(leftIS, unitDisplayPanel, Tank.LOC_LEFT);
+        areas[Tank.LOC_REAR + INT_STR_OFFSET] = new PMSimplePolygonArea(rearIS, unitDisplayPanel, Tank.LOC_REAR);
+        areas[Tank.LOC_TURRET + INT_STR_OFFSET] = new PMSimplePolygonArea(turretIS, unitDisplayPanel, Tank.LOC_TURRET);
     }
 
     private void setLabels() {

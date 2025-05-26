@@ -26,7 +26,7 @@ import javax.swing.JComponent;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.SupportVTOL;
@@ -61,7 +61,7 @@ public class VTOLMapSet implements DisplayMapSet {
     public static final int LABEL_LOC_NUMBER    = 18;
     public static final int LABEL_BAR_RATING    = 18;
 
-    UnitDisplay unitDisplay;
+    UnitDisplayPanel unitDisplayPanel;
 
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[LABEL_LOC_NUMBER];
@@ -124,8 +124,8 @@ public class VTOLMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public VTOLMapSet(JComponent c, UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
+    public VTOLMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
+        this.unitDisplayPanel = unitDisplayPanel;
         comp = c;
         setAreas();
         setLabels();
@@ -231,23 +231,23 @@ public class VTOLMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[LABEL_FRONT_ARMOR] = new PMSimplePolygonArea(frontArmor, unitDisplay, VTOL.LOC_FRONT);
-        areas[LABEL_RIGHT_ARMOR_1] = new PMSimplePolygonArea(rightArmor1, unitDisplay, VTOL.LOC_RIGHT);
-        areas[LABEL_RIGHT_ARMOR_2] = new PMSimplePolygonArea(rightArmor2, unitDisplay, VTOL.LOC_RIGHT);
-        areas[LABEL_LEFT_ARMOR_1] = new PMSimplePolygonArea(leftArmor1, unitDisplay, VTOL.LOC_LEFT);
-        areas[LABEL_LEFT_ARMOR_2] = new PMSimplePolygonArea(leftArmor2, unitDisplay, VTOL.LOC_LEFT);
-        areas[LABEL_REAR_ARMOR] = new PMSimplePolygonArea(rearArmor, unitDisplay, VTOL.LOC_REAR);
-        areas[LABEL_ROTOR_ARMOR_1] = new PMSimplePolygonArea(rotorArmor1, unitDisplay, VTOL.LOC_ROTOR);
-        areas[LABEL_ROTOR_ARMOR_2] = new PMSimplePolygonArea(rotorArmor2, unitDisplay, VTOL.LOC_ROTOR);
-        areas[LABEL_CHIN_TU_ARMOR] = new PMSimplePolygonArea(chinTurretArmor, unitDisplay, VTOL.LOC_TURRET_2);
-        areas[LABEL_FRONT_IS] = new PMSimplePolygonArea(frontIS, unitDisplay, VTOL.LOC_FRONT);
-        areas[LABEL_RIGHT_IS_1] = new PMSimplePolygonArea(rightIS1, unitDisplay, VTOL.LOC_RIGHT);
-        areas[LABEL_RIGHT_IS_2] = new PMSimplePolygonArea(rightIS2, unitDisplay, VTOL.LOC_RIGHT);
-        areas[LABEL_LEFT_IS_1] = new PMSimplePolygonArea(leftIS1, unitDisplay, VTOL.LOC_LEFT);
-        areas[LABEL_LEFT_IS_2] = new PMSimplePolygonArea(leftIS2, unitDisplay, VTOL.LOC_LEFT);
-        areas[LABEL_REAR_IS] = new PMSimplePolygonArea(rearIS, unitDisplay, VTOL.LOC_REAR);
-        areas[LABEL_ROTOR_IS] = new PMSimplePolygonArea(rotorIS, unitDisplay, VTOL.LOC_ROTOR);
-        areas[LABEL_CHIN_TU_IS] = new PMSimplePolygonArea(chinTurretIS, unitDisplay, VTOL.LOC_TURRET);
+        areas[LABEL_FRONT_ARMOR] = new PMSimplePolygonArea(frontArmor, unitDisplayPanel, VTOL.LOC_FRONT);
+        areas[LABEL_RIGHT_ARMOR_1] = new PMSimplePolygonArea(rightArmor1, unitDisplayPanel, VTOL.LOC_RIGHT);
+        areas[LABEL_RIGHT_ARMOR_2] = new PMSimplePolygonArea(rightArmor2, unitDisplayPanel, VTOL.LOC_RIGHT);
+        areas[LABEL_LEFT_ARMOR_1] = new PMSimplePolygonArea(leftArmor1, unitDisplayPanel, VTOL.LOC_LEFT);
+        areas[LABEL_LEFT_ARMOR_2] = new PMSimplePolygonArea(leftArmor2, unitDisplayPanel, VTOL.LOC_LEFT);
+        areas[LABEL_REAR_ARMOR] = new PMSimplePolygonArea(rearArmor, unitDisplayPanel, VTOL.LOC_REAR);
+        areas[LABEL_ROTOR_ARMOR_1] = new PMSimplePolygonArea(rotorArmor1, unitDisplayPanel, VTOL.LOC_ROTOR);
+        areas[LABEL_ROTOR_ARMOR_2] = new PMSimplePolygonArea(rotorArmor2, unitDisplayPanel, VTOL.LOC_ROTOR);
+        areas[LABEL_CHIN_TU_ARMOR] = new PMSimplePolygonArea(chinTurretArmor, unitDisplayPanel, VTOL.LOC_TURRET_2);
+        areas[LABEL_FRONT_IS] = new PMSimplePolygonArea(frontIS, unitDisplayPanel, VTOL.LOC_FRONT);
+        areas[LABEL_RIGHT_IS_1] = new PMSimplePolygonArea(rightIS1, unitDisplayPanel, VTOL.LOC_RIGHT);
+        areas[LABEL_RIGHT_IS_2] = new PMSimplePolygonArea(rightIS2, unitDisplayPanel, VTOL.LOC_RIGHT);
+        areas[LABEL_LEFT_IS_1] = new PMSimplePolygonArea(leftIS1, unitDisplayPanel, VTOL.LOC_LEFT);
+        areas[LABEL_LEFT_IS_2] = new PMSimplePolygonArea(leftIS2, unitDisplayPanel, VTOL.LOC_LEFT);
+        areas[LABEL_REAR_IS] = new PMSimplePolygonArea(rearIS, unitDisplayPanel, VTOL.LOC_REAR);
+        areas[LABEL_ROTOR_IS] = new PMSimplePolygonArea(rotorIS, unitDisplayPanel, VTOL.LOC_ROTOR);
+        areas[LABEL_CHIN_TU_IS] = new PMSimplePolygonArea(chinTurretIS, unitDisplayPanel, VTOL.LOC_TURRET);
     }
 
     private void setLabels() {

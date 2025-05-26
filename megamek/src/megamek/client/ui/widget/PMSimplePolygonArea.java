@@ -24,7 +24,7 @@ import java.awt.Shape;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 
 /**
  * Class for drawing a simple polygon, used to display the polgyon areas for 
@@ -36,7 +36,7 @@ public class PMSimplePolygonArea implements PMHotArea {
     /**
      * References to the UnitDisplay for call-back purposes
      */
-    private UnitDisplay unitDisplay;
+    private UnitDisplayPanel unitDisplayPanel;
     
     /**
      * The location of systems corresponding to this polygon area
@@ -56,7 +56,7 @@ public class PMSimplePolygonArea implements PMHotArea {
     private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
     public PMSimplePolygonArea(Polygon p, Color backColor, Color brdColor,
-            Color hiBrdColor, boolean highlight, UnitDisplay unitDisplay,
+            Color hiBrdColor, boolean highlight, UnitDisplayPanel unitDisplayPanel,
             int loc) {
         this.areaShape = p;
         if (backColor != null) {
@@ -71,17 +71,17 @@ public class PMSimplePolygonArea implements PMHotArea {
             this.highlightBorderColor = hiBrdColor;
         }
         this.highlight = highlight;
-        this.unitDisplay = unitDisplay;
+        this.unitDisplayPanel = unitDisplayPanel;
         this.loc = loc;
     }
 
     public PMSimplePolygonArea(Polygon p, Color backColor, Color brdColor,
-            UnitDisplay unitDisplay, int loc) {
-        this(p, backColor, brdColor, null, false, unitDisplay, loc);
+            UnitDisplayPanel unitDisplayPanel, int loc) {
+        this(p, backColor, brdColor, null, false, unitDisplayPanel, loc);
     }
 
-    public PMSimplePolygonArea(Polygon p, UnitDisplay unitDisplay, int loc) {
-        this(p, null, null, null, true, unitDisplay, loc);
+    public PMSimplePolygonArea(Polygon p, UnitDisplayPanel unitDisplayPanel, int loc) {
+        this(p, null, null, null, true, unitDisplayPanel, loc);
         
     }
 
@@ -145,7 +145,7 @@ public class PMSimplePolygonArea implements PMHotArea {
     @Override
     public void onMouseClick(MouseEvent e) {
         if (e.getClickCount() == 2) {
-            unitDisplay.showSpecificSystem(loc);
+            unitDisplayPanel.showSpecificSystem(loc);
         }
     }
 

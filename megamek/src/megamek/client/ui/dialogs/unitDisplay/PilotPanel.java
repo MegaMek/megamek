@@ -53,7 +53,7 @@ class PilotPanel extends PicMap {
     // We need to hold onto the entity in case the crew slot changes.
     private Entity entity;
 
-    PilotPanel(final UnitDisplay unitDisplay) {
+    PilotPanel(final UnitDisplayPanel unitDisplayPanel) {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(minTopMargin, minLeftMargin, minTopMargin, minLeftMargin);
@@ -70,7 +70,7 @@ class PilotPanel extends PicMap {
         btnSwapRoles.addActionListener(e -> {
             if (null != entity) {
                 entity.getCrew().setSwapConsoleRoles(btnSwapRoles.isSelected());
-                unitDisplay.getClientGUI().getClient().sendUpdateEntity(entity);
+                unitDisplayPanel.getClientGUI().getClient().sendUpdateEntity(entity);
                 updateSwapButtonText();
             }
         });

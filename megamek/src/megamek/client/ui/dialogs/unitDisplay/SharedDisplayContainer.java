@@ -46,7 +46,7 @@ import java.awt.BorderLayout;
 public class SharedDisplayContainer implements UnitDisplayContainer {
     private static SharedDisplayContainer instance;
     private final UnitDisplayDialog dialog;
-    private final UnitDisplay unitDisplay;
+    private final UnitDisplayPanel unitDisplayPanel;
 
     /**
      * Private constructor that creates the dialog and display components
@@ -55,8 +55,8 @@ public class SharedDisplayContainer implements UnitDisplayContainer {
      */
     private SharedDisplayContainer(JFrame frame) {
         dialog = new UnitDisplayDialog(frame, null);
-        unitDisplay = new UnitDisplay(null, null);
-        dialog.add(unitDisplay, BorderLayout.CENTER);
+        unitDisplayPanel = new UnitDisplayPanel(null, null);
+        dialog.add(unitDisplayPanel, BorderLayout.CENTER);
         dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
     }
 
@@ -68,15 +68,15 @@ public class SharedDisplayContainer implements UnitDisplayContainer {
      * @return the shared container instance
      */
     public static SharedDisplayContainer getInstance(JFrame frame) {
-        if (instance == null || instance.dialog == null || instance.unitDisplay == null) {
+        if (instance == null || instance.dialog == null || instance.unitDisplayPanel == null) {
             instance = new SharedDisplayContainer(frame);
         }
         return instance;
     }
 
     @Override
-    public UnitDisplay getUnitDisplay() {
-        return unitDisplay;
+    public UnitDisplayPanel getUnitDisplay() {
+        return unitDisplayPanel;
     }
 
     /**

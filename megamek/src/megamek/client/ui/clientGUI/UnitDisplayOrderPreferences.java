@@ -14,7 +14,7 @@
 
 package megamek.client.ui.clientGUI;
 
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 
@@ -33,12 +33,12 @@ public class UnitDisplayOrderPreferences extends PreferenceStoreProxy {
         store = PreferenceManager.getInstance().getPreferenceStore(
                 getClass().getName());
 
-        store.setDefault(UnitDisplay.NON_TABBED_A1, UnitDisplay.NON_TABBED_GENERAL);
-        store.setDefault(UnitDisplay.NON_TABBED_A2, UnitDisplay.NON_TABBED_PILOT);
-        store.setDefault(UnitDisplay.NON_TABBED_B1, UnitDisplay.NON_TABBED_WEAPON);
-        store.setDefault(UnitDisplay.NON_TABBED_B2, UnitDisplay.NON_TABBED_SYSTEM);
-        store.setDefault(UnitDisplay.NON_TABBED_C1, UnitDisplay.NON_TABBED_EXTRA);
-        store.setDefault(UnitDisplay.NON_TABBED_C2, UnitDisplay.NON_TABBED_ARMOR);
+        store.setDefault(UnitDisplayPanel.NON_TABBED_A1, UnitDisplayPanel.NON_TABBED_GENERAL);
+        store.setDefault(UnitDisplayPanel.NON_TABBED_A2, UnitDisplayPanel.NON_TABBED_PILOT);
+        store.setDefault(UnitDisplayPanel.NON_TABBED_B1, UnitDisplayPanel.NON_TABBED_WEAPON);
+        store.setDefault(UnitDisplayPanel.NON_TABBED_B2, UnitDisplayPanel.NON_TABBED_SYSTEM);
+        store.setDefault(UnitDisplayPanel.NON_TABBED_C1, UnitDisplayPanel.NON_TABBED_EXTRA);
+        store.setDefault(UnitDisplayPanel.NON_TABBED_C2, UnitDisplayPanel.NON_TABBED_ARMOR);
     }
 
     @Override

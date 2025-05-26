@@ -32,10 +32,6 @@
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayContainer;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
-
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
@@ -48,7 +44,7 @@ import java.awt.BorderLayout;
  */
 public class DisposableDisplayContainer implements UnitDisplayContainer {
     private final UnitDisplayDialog dialog;
-    private final UnitDisplay unitDisplay;
+    private final UnitDisplayPanel unitDisplayPanel;
 
     /**
      * Creates a new disposable container with a fresh dialog and display
@@ -57,8 +53,8 @@ public class DisposableDisplayContainer implements UnitDisplayContainer {
      */
     public DisposableDisplayContainer(JFrame frame) {
         dialog = new UnitDisplayDialog(frame, null);
-        unitDisplay = new UnitDisplay(null, null);
-        dialog.add(unitDisplay, BorderLayout.CENTER);
+        unitDisplayPanel = new UnitDisplayPanel(null, null);
+        dialog.add(unitDisplayPanel, BorderLayout.CENTER);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     }
 
@@ -68,8 +64,8 @@ public class DisposableDisplayContainer implements UnitDisplayContainer {
      * @return the UnitDisplay component
      */
     @Override
-    public UnitDisplay getUnitDisplay() {
-        return unitDisplay;
+    public UnitDisplayPanel getUnitDisplay() {
+        return unitDisplayPanel;
     }
 
     /**

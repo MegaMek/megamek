@@ -36,9 +36,9 @@ import javax.imageio.ImageIO;
 import javax.swing.UIManager;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.util.ImageAtlasMap;
-import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.ImageAtlasMap;
+import megamek.client.ui.util.ImprovedAveragingScaleFilter;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Coords;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;

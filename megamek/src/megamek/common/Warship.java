@@ -16,7 +16,7 @@ import static megamek.common.Compute.*;
 
 import java.io.Serial;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.WarShipCostCalculator;
 import megamek.common.options.OptionsConstants;
 

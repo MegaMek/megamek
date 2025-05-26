@@ -18,8 +18,8 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.client.ui.swing.util.PlayerColour;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.PlayerColour;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 
 public class SBFPlayerNameReportEntry extends SBFReportEntry {

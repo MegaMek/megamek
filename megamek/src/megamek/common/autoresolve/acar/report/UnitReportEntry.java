@@ -13,12 +13,11 @@
  */
 package megamek.common.autoresolve.acar.report;
 
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class UnitReportEntry extends PublicReportEntry {
 

@@ -20,7 +20,7 @@ package megamek.common;
 
 import java.awt.Image;
 
-import megamek.client.ui.swing.util.FluffImageHelper;
+import megamek.client.ui.util.FluffImageHelper;
 import megamek.common.annotations.Nullable;
 
 /**

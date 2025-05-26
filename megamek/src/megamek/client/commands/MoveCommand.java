@@ -19,8 +19,8 @@
  */
 package megamek.client.commands;
 
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.common.*;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;

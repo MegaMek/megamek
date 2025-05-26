@@ -12,7 +12,7 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.SpaceStationCostCalculator;
 import megamek.common.options.OptionsConstants;
 

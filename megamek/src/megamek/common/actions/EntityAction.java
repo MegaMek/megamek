@@ -21,9 +21,9 @@ package megamek.common.actions;
 
 import megamek.client.Client;
 import megamek.common.*;
-import megamek.client.ui.swing.dialog.AccessibilityDialog;
-import megamek.client.ui.swing.tooltip.EntityActionLog;
-import megamek.client.ui.swing.boardview.overlay.TurnDetailsOverlay;
+import megamek.client.ui.dialogs.AccessibilityDialog;
+import megamek.client.ui.clientGUI.tooltip.EntityActionLog;
+import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.strategicBattleSystems.SBFFormation;
 

@@ -34,7 +34,7 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.SuiteConstants;
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;

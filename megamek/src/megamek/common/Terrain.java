@@ -32,6 +32,11 @@ import megamek.common.options.OptionsConstants;
 public class Terrain implements Serializable {
     //region Variable Declarations
     private static final long serialVersionUID = -7624691566755134033L;
+
+    /**
+     * A terrain level value for use when the terrain isn't present. Must remain negative as many checks rely on
+     * this.
+     */
     public static final int LEVEL_NONE = Integer.MIN_VALUE;
     public static final int WILDCARD = Integer.MAX_VALUE;
     public static final int ATLEAST = Integer.MAX_VALUE - 1000;

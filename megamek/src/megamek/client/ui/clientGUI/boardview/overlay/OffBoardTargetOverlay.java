@@ -17,6 +17,7 @@ import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
 import megamek.common.*;
@@ -49,7 +50,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    private Game getCurrentGame() {
+    private Game game() {
         return clientgui.getClient().getGame();
     }
 
@@ -81,13 +82,15 @@ public class OffBoardTargetOverlay implements IDisplayable {
      */
     private boolean shouldBeVisible() {
         // only relevant if it's our turn in the targeting phase
-        boolean visible = clientgui.getClient().isMyTurn() && getCurrentGame().getPhase().isTargeting();
+        boolean visible = clientgui.getClient().isMyTurn() && game().getPhase().isTargeting();
 
         if (!visible) {
             return false;
         }
 
-        Mounted<?> selectedArtilleryWeapon = clientgui.getBoardView().getSelectedArtilleryWeapon();
+        Mounted<?> selectedArtilleryWeapon = clientgui.getCurrentBoardView()
+              .map(bv -> ((BoardView) bv).getSelectedArtilleryWeapon())
+              .orElse(null);
 
         // only relevant if we've got an artillery weapon selected for one of our own
         // units
@@ -121,7 +124,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
      * Logic that determines whether to show a specific directional indicator
      */
     private boolean showDirectionalElement(OffBoardDirection direction, Mounted<?> selectedArtilleryWeapon) {
-        for (Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
+        for (Entity entity : game().getAllOffboardEnemyEntities(getCurrentPlayer())) {
             if (entity.isOffBoardObserved(getCurrentPlayer().getTeam()) &&
                     (entity.getOffBoardDirection() == direction) &&
                     (targetingPhaseDisplay.ce() != null &&
@@ -152,10 +155,10 @@ public class OffBoardTargetOverlay implements IDisplayable {
                 break;
             case SOUTH:
                 checkCoords = checkCoords.translated(3,
-                        getCurrentGame().getBoard().getHeight() - checkCoords.getY() + 10);
+                        game().getBoard().getHeight() - checkCoords.getY() + 10);
                 break;
             case EAST:
-                translationDistance = ((getCurrentGame().getBoard().getWidth() - checkCoords.getX()) / 2) + 5;
+                translationDistance = ((game().getBoard().getWidth() - checkCoords.getX()) / 2) + 5;
                 checkCoords = checkCoords.translated(1, translationDistance).translated(2, translationDistance);
                 break;
             case WEST:
@@ -168,12 +171,16 @@ public class OffBoardTargetOverlay implements IDisplayable {
 
         Targetable checkTarget = new HexTarget(checkCoords, Targetable.TYPE_HEX_ARTILLERY);
 
-        return Compute.isInArc(getCurrentGame(), artilleryWeapon.getEntity().getId(),
+        return ComputeArc.isInArc(game(), artilleryWeapon.getEntity().getId(),
                 artilleryWeapon.getEntity().getEquipmentNum(artilleryWeapon), checkTarget);
     }
 
     @Override
     public boolean isHit(Point point, Dimension size) {
+        if (!shouldBeVisible()) {
+            return false;
+        }
+
         point.x = (int) (point.getX() + clientgui.getBoardView().getDisplayablesRect().getX());
         point.y = (int) (point.getY() + clientgui.getBoardView().getDisplayablesRect().getY());
 
@@ -322,7 +329,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private void handleButtonClick(OffBoardDirection direction) {
         List<Targetable> eligibleTargets = new ArrayList<>();
 
-        for (Entity ent : this.getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
+        for (Entity ent : this.game().getAllOffboardEnemyEntities(getCurrentPlayer())) {
             if (ent.getOffBoardDirection() == direction &&
                     ent.isOffBoardObserved(getCurrentPlayer().getTeam())) {
                 eligibleTargets.add(ent);
@@ -355,7 +362,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
 
             // Only add if chance of success.
             // TODO: properly display any toHit "IMPOSSIBLE" reasons
-            if (!waa.toHit(getCurrentGame(), true).cannotSucceed()) {
+            if (!waa.toHit(game(), true).cannotSucceed()) {
                 targetingPhaseDisplay.updateDisplayForPendingAttack(
                       clientgui.getBoardView().getSelectedArtilleryWeapon(),
                       waa

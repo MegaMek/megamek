@@ -29,15 +29,15 @@ import megamek.common.annotations.Nullable;
  * work clockwise around the hex, starting with zero at the top. For a hex with an even x, the hexes in directions 2 and
  * 4 (left and right downward) have the same y.
  * <pre>
- *      -y
- *       0
- *     _____
- *  5 /     \ 1
+ *       -y
+ *        0
+ *      _____
+ *   5 /     \ 1
  * -x /       \ +x
- *   \       /
- *  4 \_____/ 2
- *       3
- *      +y
+ *    \       /
+ *   4 \_____/ 2
+ *        3
+ *       +y
  * </pre>
  */
 public class Coords implements Serializable {

@@ -204,20 +204,20 @@ public class LargeSupportTank extends SupportTank {
         int fa = (effectivePos.degree(src) + ((6 - face) * 60)) % 360;
 
         int leftBetter = 2;
+        Board board = game.getBoard(this);
         // if we're right on the line, we need to special case this
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
         if ((fa % 30) == 0) {
-            Hex srcHex = game.getBoard().getHex(src);
-            Hex curHex = game.getBoard().getHex(getPosition());
+            Hex srcHex = board.getHex(src);
+            Hex curHex = board.getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
-                        getPosition(), 1, getElevation(), srcHex.floor(),
+                        getPosition(), getBoardId(), 1, getElevation(), srcHex.floor(),
                         curHex.floor());
                 ArrayList<Coords> in = Coords.intervening(ai.attackPos,
                         ai.targetPos, true);
-                leftBetter = LosEffects.dividedLeftBetter(in, game, ai,
-                        Compute.isInBuilding(game, this), new LosEffects());
+                leftBetter = LosEffects.dividedLeftBetter(in, game, ai, isInBuilding(), new LosEffects());
             }
         }
 
@@ -390,8 +390,12 @@ public class LargeSupportTank extends SupportTank {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int currElevation) {
-        Hex hex = game.getBoard().getHex(c);
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+        if (!game.hasBoardLocation(c, testBoardId)) {
+            return true;
+        }
+
+        Hex hex = game.getHex(c, testBoardId);
         // Additional restrictions for hidden large support tanks
         if (isHidden()) {
             // Can't deploy in paved hexes
@@ -413,7 +417,7 @@ public class LargeSupportTank extends SupportTank {
                 return true;
             }
         }
-        return super.isLocationProhibited(c, currElevation);
+        return super.isLocationProhibited(c, testBoardId, currElevation);
     }
 
     @Override

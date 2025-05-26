@@ -109,7 +109,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         setupButtonPanel();
 
         clientgui.getClient().getGame().addGameListener(this);
-        clientgui.getBoardView().addBoardViewListener(this);
+//        clientgui.getBoardView().addBoardViewListener(this);
     }
 
     @Override
@@ -151,9 +151,9 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void ready() {
-        if (!clientgui.getBoardView().isTileImagesLoaded()) {
-            return;
-        }
+//        if (!clientgui.getBoardView().isTileImagesLoaded()) {
+//            return;
+//        }
 
         butDone.setEnabled(false);
         setReportEnabled(false);
@@ -250,6 +250,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
-        clientgui.getBoardView().removeBoardViewListener(this);
+        clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
     }
 }

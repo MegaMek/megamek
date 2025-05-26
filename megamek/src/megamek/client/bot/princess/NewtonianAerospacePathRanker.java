@@ -25,6 +25,7 @@ import java.util.List;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.common.Board;
 import megamek.common.Compute;
+import megamek.common.ComputeArc;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -148,7 +149,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
             for (int vertexNum = 0; vertexNum < 6; vertexNum++) {
                 Coords vertex = movableArea.getVertexNum(vertexNum);
 
-                if (vertex != null && Compute.isInArc(finalCoords, path.getFinalFacing(), vertex, arcToUse)) {
+                if (vertex != null && ComputeArc.isInArc(finalCoords, path.getFinalFacing(), vertex, arcToUse)) {
                     inArcVertexCount++;
                 }
             }

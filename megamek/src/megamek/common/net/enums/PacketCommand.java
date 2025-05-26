@@ -140,8 +140,14 @@ public enum PacketCommand {
     SEND_SAVEGAME,
     LOAD_SAVEGAME,
     LOAD_GAME,
+
+    /** A Server to Client packet transmitting SpecialHexDisplays for a board (filtered for visibility) */
     SENDING_SPECIAL_HEX_DISPLAY,
+
+    /** A Client to Server packet adding a new SpecialHexDisplay */
     SPECIAL_HEX_DISPLAY_APPEND,
+
+    /** A Client to Server packet removing a SpecialHexDisplay */
     SPECIAL_HEX_DISPLAY_DELETE,
     CUSTOM_INITIATIVE,
     FORWARD_INITIATIVE,

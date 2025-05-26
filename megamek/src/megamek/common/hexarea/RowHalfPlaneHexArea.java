@@ -55,8 +55,8 @@ public class RowHalfPlaneHexArea extends AbstractHexArea {
     @Override
     public boolean containsCoords(Coords coords, Board board) {
         int comparison = hexLine.isAbsoluteLeftOrRight(coords);
-        return (comparison == 0)
+        return matchesBoardId(board) && ((comparison == 0)
             || ((comparison == 1) && (planeDirection == HalfPlaneType.RIGHT))
-            || ((comparison == -1) && (planeDirection == HalfPlaneType.LEFT));
+            || ((comparison == -1) && (planeDirection == HalfPlaneType.LEFT)));
     }
 }

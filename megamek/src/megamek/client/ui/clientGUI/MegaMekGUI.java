@@ -32,19 +32,7 @@ package megamek.client.ui.clientGUI;
 
 import static megamek.common.Compute.*;
 
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.KeyboardFocusManager;
-import java.awt.MediaTracker;
-import java.awt.Rectangle;
-import java.awt.SystemColor;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -267,7 +255,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             // Position: bottom-right corner with padding
             int medalX = panelWidth - targetMedalWidth - padding;
             int medalY = panelHeight - targetMedalHeight - padding;
-            
+
             if (medalX < 0) medalX = 0;
             if (medalY < 0) medalY = 0;
 
@@ -275,7 +263,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
         return targetMedalWidth;
     }
-    
+
     private void drawLogo(Graphics2D g2d, int panelWidth, int panelHeight, int targetMedalWidth, int padding) {
         if (logoImage != null && logoImage.getWidth(null) > 0 && logoImage.getHeight(null) > 0) {
             double logoWidthScalePercent = 0.25; // Logo width as 25% of panel width
@@ -293,7 +281,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             // Position: bottom-right corner with padding (after the medal)
             int logoX = panelWidth - targetLogoWidth - padding - targetMedalWidth - padding;
             int logoY = panelHeight - targetLogoHeight - padding;
-            
+
             if (logoX < 0) logoX = 0;
             if (logoY < 0) logoY = 0;
 
@@ -403,7 +391,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
         };
         splashPanel.setPreferredSize(splashPanelPreferredSize);
-        
+
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());
         int height = metrics.getHeight();
@@ -931,17 +919,24 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     /**
      * Host a game constructed from a scenario file
      */
-    void scenario() {
-        ScenarioChooserDialog scenarioChooserDialog = new ScenarioChooserDialog(frame);
-        scenarioChooserDialog.setVisible(true);
-        if (scenarioChooserDialog.getSelectedScenarioFilename() == null) {
-            return;
+    void scenario(String fileName) {
+        String chosenFileName;
+        if (fileName.isBlank()) {
+            ScenarioChooserDialog scenarioChooser = new ScenarioChooserDialog(frame);
+            scenarioChooser.setVisible(true);
+            chosenFileName = scenarioChooser.getSelectedScenarioFilename();
+            if (chosenFileName == null) {
+                return;
+            }
+            PreferenceManager.getClientPreferences().setLastScenario(chosenFileName);
+        } else {
+            chosenFileName = fileName;
         }
 
         Scenario scenario;
         IGame game;
         try {
-            ScenarioLoader sl = new ScenarioLoader(new File(scenarioChooserDialog.getSelectedScenarioFilename()));
+            ScenarioLoader sl = new ScenarioLoader(new File(chosenFileName));
             scenario = sl.load();
             game = scenario.createGame();
         } catch (Exception e) {
@@ -1219,7 +1214,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 host();
                 break;
             case ClientGUI.FILE_GAME_SCENARIO:
-                scenario();
+                if ((ev.getModifiers() & Event.CTRL_MASK) != 0) {
+                    // As a dev convenience, start the last scenario again when clicked with CTRL
+                    scenario(PreferenceManager.getClientPreferences().getLastScenario());
+                } else {
+                    scenario("");
+                }
                 break;
             case ClientGUI.FILE_GAME_CONNECT:
                 connect();

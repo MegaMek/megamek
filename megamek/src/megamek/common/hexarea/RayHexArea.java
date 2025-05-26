@@ -44,7 +44,7 @@ public class RayHexArea extends AbstractHexArea {
 
     @Override
     public boolean containsCoords(Coords coords, Board board) {
-        return (direction >= 0) && (direction <= 5)
+        return matchesBoardId(board) && (direction >= 0) && (direction <= 5)
             && (point.equals(coords) || point.isOnHexRow(direction, coords));
     }
 }

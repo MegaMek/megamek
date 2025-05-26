@@ -589,7 +589,7 @@ public class FireControl {
     }
 
     /**
-     * Returns the value of {@link Compute#isInArc(Coords, int, Targetable, int)}.
+     * Returns the value of {@link ComputeArc#isInArc(Coords, int, Targetable, int)}.
      *
      * @param shooterPosition The current {@link Coords} of the shooter.
      * @param shooterFacing   The shooter's current facing.
@@ -602,7 +602,7 @@ public class FireControl {
             final int shooterFacing,
             final Coords targetPosition,
             final int weaponArc) {
-        return Compute.isInArc(shooterPosition, shooterFacing, targetPosition, weaponArc);
+        return ComputeArc.isInArc(shooterPosition, shooterFacing, targetPosition, weaponArc);
     }
 
     /**
@@ -780,7 +780,7 @@ public class FireControl {
         }
         // Bays compute arc differently
         final boolean inArc = (bayWeapon)
-                ? Compute.isInArc(game, shooter.getId(), weapon.getBayWeapons().get(0).getEquipmentNum(), target)
+                ? ComputeArc.isInArc(game, shooter.getId(), weapon.getBayWeapons().get(0).getEquipmentNum(), target)
                 : isInArc(shooterState.getPosition(), shooterFacing, targetState.getPosition(),
                         shooter.getWeaponArc(shooter.getEquipmentNum(weapon)));
         if (!inArc) {
@@ -789,7 +789,7 @@ public class FireControl {
 
         // Check range.
         int distance = shooterState.getPosition().distance(targetState.getPosition());
-        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard().onGround()) {
+        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard().isGround()) {
             // Aerospace firing at each on the ground map have immense range.
             distance /= 16;
         }
@@ -1751,7 +1751,7 @@ public class FireControl {
         if (shooter.isAirborne()
                 && shooter.isLargeCraft()
                 && shooter.isSpheroid()
-                && game.getBoard().onGround()
+                && game.getBoard().isGround()
                 && !target.isAirborne()) {
             // This process takes a long time for no reason; the likelihood of being able to
             // strike or hit an enemy (other than Aero) is next to nil.
@@ -1903,7 +1903,7 @@ public class FireControl {
             return myPlan;
         }
 
-        if (shooter.isAirborne() && shooter.isLargeCraft() && shooter.isSpheroid() && game.getBoard().onGround()) {
+        if (shooter.isAirborne() && shooter.isLargeCraft() && shooter.isSpheroid() && game.getBoard().isGround()) {
             // This process takes a long time for no reason; the likelihood of being able to
             // strike or hit an enemy Aero is next to nil.
             logger.debug(

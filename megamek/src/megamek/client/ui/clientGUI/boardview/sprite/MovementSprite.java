@@ -47,24 +47,17 @@ import megamek.common.Entity;
 public class MovementSprite extends Sprite {
 
     private Point a;
-
     private Point t;
-
     private double an;
-
     private StraightArrowPolygon movePoly;
-
     private Color moveColor;
 
     // private MovementVector mv;
     private int[] vectors;
 
     private Coords start;
-
     private Coords end;
-
     private Entity en;
-
     private int vel;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();

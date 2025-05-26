@@ -50,7 +50,6 @@ public class EntitySprite extends Sprite {
     private static final Color LABEL_CRITICAL_BACK = new Color(200, 0, 0, 200);
     private static final Color LABEL_SPACE_BACK = new Color(0, 0, 200, 200);
     private static final Color LABEL_GROUND_BACK = new Color(50, 50, 50, 200);
-    private static Color LABEL_BACK;
 
     enum Positioning {
         LEFT, RIGHT
@@ -68,6 +67,7 @@ public class EntitySprite extends Sprite {
     private Point hexOrigin;
     private boolean criticalStatus;
     private Positioning labelPos;
+    private final Color labelBack;
     /** Used to color the label when this unit is selected for movement etc. */
     private boolean isSelected;
 
@@ -113,10 +113,10 @@ public class EntitySprite extends Sprite {
         this.entity = entity;
         this.radarBlipImage = radarBlipImage;
         this.secondaryPos = secondaryPos;
-        if (bv.game.getBoard().inSpace()) {
-            LABEL_BACK = LABEL_SPACE_BACK;
+        if (bv.getBoard().isSpace()) {
+            labelBack = LABEL_SPACE_BACK;
         } else {
-            LABEL_BACK = LABEL_GROUND_BACK;
+            labelBack = LABEL_GROUND_BACK;
         }
         getBounds();
     }
@@ -127,7 +127,7 @@ public class EntitySprite extends Sprite {
 
     private String getAdjShortName() {
         Coords position = entity.getPosition();
-        boolean multipleUnits = bv.game.getEntitiesVector(position, true).size() > 4;
+        boolean multipleUnits = bv.game.getEntitiesVector(position, entity.getBoardId(), true).size() > 4;
 
         if (onlyDetectedBySensors()) {
             return Messages.getString("BoardView1.sensorReturn");
@@ -288,18 +288,18 @@ public class EntitySprite extends Sprite {
         Coords position = entity.getPosition();
 
         if (position != null) {
-            if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
+            if (bv.game.getEntitiesVector(position.translated("SE"), entity.getBoardId(), true).isEmpty()) {
                 labelRect.setLocation((int) (bv.getHexSize().width * 0.55), (int) (0.75 * bv.getHexSize().height));
                 labelPos = Positioning.RIGHT;
-            } else if (bv.game.getEntitiesVector(position.translated("NW"), true).isEmpty()) {
+            } else if (bv.game.getEntitiesVector(position.translated("NW"), entity.getBoardId(), true).isEmpty()) {
                 labelRect.setLocation((int) (bv.getHexSize().width * 0.45) - labelRect.width,
                       (int) (0.25 * bv.getHexSize().height) - labelRect.height);
                 labelPos = Positioning.LEFT;
-            } else if (bv.game.getEntitiesVector(position.translated("NE"), true).isEmpty()) {
+            } else if (bv.game.getEntitiesVector(position.translated("NE"), entity.getBoardId(), true).isEmpty()) {
                 labelRect.setLocation((int) (bv.getHexSize().width * 0.55),
                       (int) (0.25 * bv.getHexSize().height) - labelRect.height);
                 labelPos = Positioning.RIGHT;
-            } else if (bv.game.getEntitiesVector(position.translated("SW"), true).isEmpty()) {
+            } else if (bv.game.getEntitiesVector(position.translated("SW"), entity.getBoardId(), true).isEmpty()) {
                 labelRect.setLocation((int) (bv.getHexSize().width * 0.45) - labelRect.width,
                       (int) (0.75 * bv.getHexSize().height));
                 labelPos = Positioning.LEFT;
@@ -312,8 +312,8 @@ public class EntitySprite extends Sprite {
 
         // If multiple units are present in a hex, fan out the labels
         // In the deployment phase; indexOf returns -1 for the current unit
-        int indexEntity = bv.game.getEntitiesVector(position, true).indexOf(entity);
-        int numEntity = bv.game.getEntitiesVector(position, true).size();
+        int indexEntity = bv.game.getEntitiesVector(position, entity.getBoardId(), true).indexOf(entity);
+        int numEntity = bv.game.getEntitiesVector(position, entity.getBoardId(), true).size();
 
         if ((indexEntity != -1) && (numEntity <= 4)) {
             labelRect.y += (bv.getPanel().getFontMetrics(labelFont).getAscent() + 4) * indexEntity;
@@ -400,8 +400,7 @@ public class EntitySprite extends Sprite {
                 } else {
                     rectangle.translate(labelRect.height + 2, 0);
                 }
-
-                graphics2D.setColor(LABEL_BACK);
+                graphics2D.setColor(labelBack);
                 graphics2D.fillRoundRect(rectangle.x, rectangle.y, squareEdge, squareEdge, 5, 5);
                 if (curStatus.status == null) {
                     Color damageColor = getDamageColor();
@@ -457,7 +456,7 @@ public class EntitySprite extends Sprite {
      */
     @Override
     public void prepare() {
-        final Board board = bv.game.getBoard();
+        final Board board = bv.getBoard();
         // recalculate bounds & label
         getBounds();
 
@@ -524,7 +523,7 @@ public class EntitySprite extends Sprite {
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         boolean isSquadron = entity instanceof FighterSquadron;
 
-        if ((isAero && ((IAero) entity).isSpheroid() && !board.inSpace()) && (secondaryPos == 1)) {
+        if ((isAero && ((IAero) entity).isSpheroid() && !board.isSpace()) && (secondaryPos == 1)) {
             graph.setColor(Color.WHITE);
             graph.draw(bv.getFacingPolys()[entity.getFacing()]);
         }
@@ -544,7 +543,7 @@ public class EntitySprite extends Sprite {
 
             // draw elevation/altitude if non-zero
             if (entity.isAirborne()) {
-                if (!board.inSpace()) {
+                if (!board.isSpace()) {
                     stStr.add(new Status(Color.CYAN, "A", SMALL));
                     stStr.add(new Status(Color.CYAN, Integer.toString(entity.getAltitude()), SMALL));
                 }
@@ -716,7 +715,7 @@ public class EntitySprite extends Sprite {
                 if (criticalStatus) {
                     graph.setColor(LABEL_CRITICAL_BACK);
                 } else {
-                    graph.setColor(LABEL_BACK);
+                    graph.setColor(labelBack);
                 }
                 graph.fillRoundRect(labelRect.x, labelRect.y, labelRect.width, labelRect.height, 5, 10);
 
@@ -785,7 +784,7 @@ public class EntitySprite extends Sprite {
                       !((entity instanceof Infantry) &&
                               !((Infantry) entity).hasFieldWeapon() &&
                               !((Infantry) entity).isTakingCover()) &&
-                      !((entity instanceof IAero) && ((IAero) entity).isSpheroid() && !board.inSpace())) {
+                      !((entity instanceof IAero) && ((IAero) entity).isSpheroid() && !board.isSpace())) {
                 // Indicate a stacked unit with the same facing that can still move
                 if (shouldIndicateNotDone() && bv.game.getPhase().isMovement()) {
                     var tr = graph.getTransform();
@@ -898,7 +897,7 @@ public class EntitySprite extends Sprite {
      * and can still move.
      */
     private boolean shouldIndicateNotDone() {
-        var hexEntities = bv.game.getEntitiesVector(entity.getPosition());
+        var hexEntities = bv.game.getEntitiesVector(entity.getPosition(), entity.getBoardId());
         return hexEntities.stream()
                      .filter(e -> hexEntities.indexOf(entity) > hexEntities.indexOf(e))
                      .filter(e -> e.getFacing() == entity.getFacing())

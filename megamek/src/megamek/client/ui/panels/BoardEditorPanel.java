@@ -370,12 +370,12 @@ public class BoardEditorPanel extends JPanel
     public BoardEditorPanel(MegaMekController c) {
         controller = c;
         try {
-            bv = new BoardView(game, controller, null);
+            bv = new BoardView(game, controller, null, 0);
             bv.addOverlay(new KeyBindingsOverlay(bv));
             bv.addOverlay(new TraceOverlay(bv));
             bv.setUseLosTool(false);
             bv.setDisplayInvalidFields(true);
-            bv.setTooltipProvider(new BoardEditorTooltip(game, bv));
+            bv.setTooltipProvider(new BoardEditorTooltip(bv));
             bvc = bv.getComponent(true);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame,
@@ -1106,7 +1106,7 @@ public class BoardEditorPanel extends JPanel
         scrCenterPanel.getVerticalScrollBar().setUnitIncrement(16);
         add(scrCenterPanel, BorderLayout.CENTER);
         add(panButtons, BorderLayout.PAGE_END);
-        minimapW = Minimap.createMinimap(frame, bv, game, null);
+        minimapW = Minimap.createMinimap(frame, bv, game, null, 0);
         minimapW.setVisible(guip.getMinimapEnabled());
     }
 
@@ -1984,7 +1984,7 @@ public class BoardEditorPanel extends JPanel
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_OUT)) {
             bv.zoomOut();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_ISOMETRIC)) {
-            bv.toggleIsometric();
+            GUIPreferences.getInstance().setIsometricEnabled(!GUIPreferences.getInstance().getIsometricEnabled());
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_CHANGE_THEME)) {
             String newTheme = bv.changeTheme();
             if (newTheme != null) {

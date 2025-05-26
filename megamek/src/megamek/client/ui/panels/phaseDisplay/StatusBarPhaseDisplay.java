@@ -174,7 +174,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             clientgui.getClient().sendChat("Pausing the game only works when only bot units remain.");
         } else {
             clientgui.getClient().sendChat("Requesting game pause.");
-            ((AbstractClient) clientgui.getClient()).sendPause();
+            clientgui.getClient().sendPause();
         }
     }
 
@@ -374,7 +374,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             List<Player> remainingPlayers = game.getPlayersList().stream()
                     .filter(p -> !p.isBot() && !p.isObserver() && !p.isDone())
                     .sorted(Comparator.comparingInt(Player::getId))
-                    .collect(Collectors.toList());
+                    .toList();
             if (!remainingPlayers.isEmpty()) {
                 String playersText = remainingPlayers.stream()
                         .limit(playerCountToShow)

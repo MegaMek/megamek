@@ -14,8 +14,12 @@
  */
 package megamek.server;
 
+import java.util.Collection;
 import java.util.Vector;
 
+import megamek.common.Board;
+import megamek.common.BoardLocation;
+import megamek.common.Coords;
 import megamek.common.Report;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -28,8 +32,39 @@ public abstract class DynamicTerrainProcessor {
 
     /**
      * Process terrain changes in the end phase
-     * 
+     *
      * @param vPhaseReport reports for the server to send out
      */
     public abstract void doEndPhaseChanges(Vector<Report> vPhaseReport);
+
+    /**
+     * Marks the given hex as changed. All changes are sent to the clients after terrain processing is completed.
+     *
+     * @param coords  The coords of the hex
+     * @param boardId The board ID of the hex
+     */
+    void markHexUpdate(Coords coords, int boardId) {
+        gameManager.getHexUpdateSet().add(BoardLocation.of(coords, boardId));
+    }
+
+    /**
+     * Marks the given hex on the given Board as changed. All changes are sent to the clients after terrain processing
+     * is completed.
+     *
+     * @param coords The coords of the hex
+     * @param board  The board of the hex
+     */
+    void markHexUpdate(Coords coords, Board board) {
+        markHexUpdate(coords, board.getBoardId());
+    }
+
+    /**
+     * Marks the given hexes as changed. All changes are sent to the clients after terrain processing is completed.
+     *
+     * @param coords  The coords of the hexes
+     * @param boardId The board ID of all hexes
+     */
+    void markHexUpdate(Collection<Coords> coords, int boardId) {
+        coords.forEach(c -> markHexUpdate(c, boardId));
+    }
 }

@@ -51,7 +51,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
         hit.setGeneralDamageType(generalDamageType);
         hit.setAttackerId(getAttackerId());
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
                 .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,

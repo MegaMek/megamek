@@ -7,6 +7,9 @@ map: unofficial/Lucho/50x50  Lagomortis.board
 options:
   on:
     - friendly_fire
+  off:
+    - check_victory
+
 
 factions:
   - name: Test Player

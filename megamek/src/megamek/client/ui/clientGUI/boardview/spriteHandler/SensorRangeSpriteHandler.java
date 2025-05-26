@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
+import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.SensorRangeSprite;
@@ -43,8 +44,8 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
     private Entity currentEntity;
     private Coords currentPosition;
 
-    public SensorRangeSpriteHandler(BoardView boardView, Game game) {
-        super(boardView);
+    public SensorRangeSpriteHandler(AbstractClientGUI clientGUI, Game game) {
+        super(clientGUI);
         this.game = game;
     }
 
@@ -75,6 +76,9 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
 
     public void setSensorRange(Entity entity, Coords assumedPosition) {
         clear();
+        if (clientGUI.boardViews().isEmpty()) {
+            return;
+        }
         currentEntity = entity;
         currentPosition = assumedPosition;
 
@@ -94,7 +98,7 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
             Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
 
             if (srh != null) {
-                if (entity.isAirborne() && entity.getGame().getBoard().onGround()) {
+                if (entity.isAirborne() && entity.getGame().getBoard().isGround()) {
                     minSensorRange = srh.minGroundSensorRange;
                     maxSensorRange = srh.maxGroundSensorRange;
                     minAirSensorRange = srh.minSensorRange;
@@ -171,11 +175,11 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
 
                 // create sprite if there's a border to paint
                 if (edgesToPaint > 0) {
-                    currentSprites.add(new SensorRangeSprite(boardView, b, loc, edgesToPaint));
+                    currentSprites.add(new SensorRangeSprite((BoardView) clientGUI.boardViews().get(0), b, loc, edgesToPaint));
                 }
             }
         }
-        boardView.addSprites(currentSprites);
+        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 
     @Override

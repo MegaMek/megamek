@@ -1200,7 +1200,8 @@ class BasicPathRankerTest {
         final Hex mockHex = new Hex();
         when(mockBoard.getHex(any(Coords.class))).thenReturn(mockHex);
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
+        when(mockBoard.isGround()).thenReturn(true);
 
         return mockBoard;
     }
@@ -1239,6 +1240,7 @@ class BasicPathRankerTest {
         final Coords mockMyCoords = new Coords(x, y);
         when(mockPath.getFinalCoords()).thenReturn(mockMyCoords);
         when(mockPath.getFinalFacing()).thenReturn(0);
+        when(mockPath.getFinalBoardId()).thenReturn(0);
 
         return mockPath;
     }
@@ -1259,6 +1261,10 @@ class BasicPathRankerTest {
         final GameOptions mockGameOptions = mock(GameOptions.class);
         when(mockGame.getOptions()).thenReturn(mockGameOptions);
         when(mockGameOptions.booleanOption(anyString())).thenReturn(false);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
 
         for (int x = 0; x < entities.size(); x++) {
             when(mockGame.getEntity(x + 1)).thenReturn(entities.get(x));

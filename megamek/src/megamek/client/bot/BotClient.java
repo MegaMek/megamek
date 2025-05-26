@@ -272,7 +272,7 @@ public abstract class BotClient extends Client {
      */
     protected abstract MovePath continueMovementFor(Entity entity);
 
-    protected abstract Vector<Coords> calculateArtyAutoHitHexes();
+    protected abstract Vector<BoardLocation> calculateArtyAutoHitHexes();
 
     protected abstract void checkMorale();
 
@@ -303,7 +303,7 @@ public abstract class BotClient extends Client {
                                                         currentEntity.getId(),
                                                         transport.getPosition(),
                                                         currentEntity.climbMode());
-                boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard().getType()) ||
+                boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard()) ||
                                             currentEntity.isLocationProhibited(transport.getPosition()) ||
                                             currentEntity.isLocationDeadly(transport.getPosition());
 
@@ -588,7 +588,7 @@ public abstract class BotClient extends Client {
                 deployMinefields();
             } else if (game.getPhase().isSetArtilleryAutohitHexes()) {
                 // For now, declare no auto hit hexes.
-                Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
+                Vector<BoardLocation> autoHitHexes = calculateArtyAutoHitHexes();
                 sendArtyAutoHitHexes(autoHitHexes);
             } else if (game.getPhase().isTargeting() || game.getPhase().isOffboard()) {
                 // Princess implements arty targeting
@@ -1296,12 +1296,6 @@ public abstract class BotClient extends Client {
      */
     protected MinefieldDeploymentPlanner getMinefieldDeploymentPlanner() {
         return new RandomMinefieldDeploymentPlanner(getBoard());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected void receiveBuildingCollapse(Packet packet) {
-        game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));
     }
 
     /**

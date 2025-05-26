@@ -18,7 +18,9 @@
  */
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
+import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldofFireSprite;
 import megamek.common.Coords;
 
@@ -26,8 +28,8 @@ import java.util.Collection;
 
 public class FleeZoneSpriteHandler extends BoardViewSpriteHandler {
 
-    public FleeZoneSpriteHandler(BoardView boardView) {
-        super(boardView);
+    public FleeZoneSpriteHandler(AbstractClientGUI clientGUI) {
+        super(clientGUI);
     }
 
     @Override
@@ -38,9 +40,14 @@ public class FleeZoneSpriteHandler extends BoardViewSpriteHandler {
         clear();
     }
 
-    public void renewSprites(Collection<Coords> coords) {
+    public void renewSprites(Collection<Coords> coords, int boardId) {
         clear();
-        coords.stream().map(c -> new FieldofFireSprite(boardView, 1, c, 63)).forEach(currentSprites::add);
-        boardView.addSprites(currentSprites);
+        IBoardView iBoardView = clientGUI.getBoardView(boardId);
+        if (iBoardView instanceof BoardView boardView) {
+            coords.stream()
+                  .map(c -> new FieldofFireSprite(boardView, 1, c, 63))
+                  .forEach(currentSprites::add);
+            boardView.addSprites(currentSprites);
+        }
     }
 }

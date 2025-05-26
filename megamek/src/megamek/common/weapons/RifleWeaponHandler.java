@@ -15,16 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.Infantry;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
@@ -104,7 +95,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         hit.setBoxCars(roll.getIntValue() == 12);
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
                 .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,

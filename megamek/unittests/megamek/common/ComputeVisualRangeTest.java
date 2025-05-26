@@ -40,7 +40,7 @@ public class ComputeVisualRangeTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);
@@ -90,7 +90,7 @@ public class ComputeVisualRangeTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);
@@ -158,7 +158,7 @@ public class ComputeVisualRangeTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);

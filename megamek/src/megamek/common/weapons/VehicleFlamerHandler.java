@@ -15,16 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.EquipmentMode;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.flamers.CLHeavyFlamer;
@@ -79,7 +70,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             hit.setAttackerId(getAttackerId());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(), Compute.targetSideTable(ae, entityTarget,
+                    .getCover(), ComputeSideTable.sideTable(ae, entityTarget,
                             weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg,
@@ -141,7 +132,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
+            gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
                     tn, true, -1, vPhaseReport);
         }
     }
@@ -168,13 +159,13 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
+                && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true,
                         false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), target.getBoardId(), nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }

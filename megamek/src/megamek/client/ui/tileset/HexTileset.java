@@ -577,7 +577,9 @@ public class HexTileset implements BoardListener {
     };
 
     private void replacedBoard(GameBoardNewEvent e) {
-        e.getOldBoard().removeBoardListener(this);
+        if (e.getOldBoard() != null) {
+            e.getOldBoard().removeBoardListener(this);
+        }
         e.getNewBoard().addBoardListener(this);
     }
 

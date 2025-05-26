@@ -1017,32 +1017,38 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Returns a <code>Hashtable</code> that maps the <code>Coords</code> of each unit in this <code>Game</code> to a
-     * <code>Vector</code> of
-     * <code>Entity</code>s at that positions. Units that have no position (e.g.
-     * loaded units) will not be in the map.
-     *
-     * @return a <code>Hashtable</code> that maps the <code>Coords</code> positions or each unit in the game to a
-     *       <code>Vector</code> of
-     *       <code>Entity</code>s at that position.
+     * Returns a Hashtable that maps the Coords of each unit in this Game to a Vector of Entitys at that positions.
+     * Units that have no position (e.g. loaded units) will not be in the map.
+     * LEGACY - should be replaced with getPositionMapMulti()
+     * @return a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys at that
+     *       position.
      */
     public Hashtable<Coords, Vector<Entity>> getPositionMap() {
         Hashtable<Coords, Vector<Entity>> positionMap = new Hashtable<>();
-        Vector<Entity> atPos;
-
-        // Walk through the entities in this game.
         for (Entity entity : inGameTWEntities()) {
-            // Get the vector for this entity's position.
             final Coords coords = entity.getPosition();
             if (coords != null) {
-                atPos = positionMap.computeIfAbsent(coords, k -> new Vector<>());
+                Vector<Entity> atPos = positionMap.computeIfAbsent(coords, k -> new Vector<>());
                 // Add the entity to the vector for this position.
                 atPos.addElement(entity);
-
             }
-        } // Handle the next entity.
+        }
+        return positionMap;
+    }
 
-        // Return the map.
+    /**
+     * @return a Map that maps the location of each unit in this game to a list of Entitys at the same location.
+     * Units that have no position (e.g. loaded units) will not be in the map.
+     */
+    public Map<BoardLocation, List<Entity>> getPositionMapMulti() {
+        var positionMap = new HashMap<BoardLocation, List<Entity>>();
+        for (Entity entity : inGameTWEntities()) {
+            final BoardLocation location = entity.getBoardLocation();
+            if (hasBoardLocation(location)) {
+                List<Entity> listForLocation = positionMap.computeIfAbsent(location, k -> new ArrayList<>());
+                listForLocation.add(entity);
+            }
+        }
         return positionMap;
     }
 
@@ -1136,39 +1142,27 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Returns the appropriate target for this game given a type and id
      */
-    public @Nullable Targetable getTarget(int nType, int nID) {
+    public @Nullable Targetable getTarget(int targetType, int targetId) {
         try {
-            switch (nType) {
-                case Targetable.TYPE_ENTITY:
-                    return getEntity(nID);
-                case Targetable.TYPE_HEX_CLEAR:
-                case Targetable.TYPE_HEX_IGNITE:
-                case Targetable.TYPE_HEX_BOMB:
-                case Targetable.TYPE_MINEFIELD_DELIVER:
-                case Targetable.TYPE_FLARE_DELIVER:
-                case Targetable.TYPE_HEX_EXTINGUISH:
-                case Targetable.TYPE_HEX_ARTILLERY:
-                case Targetable.TYPE_HEX_SCREEN:
-                case Targetable.TYPE_HEX_AERO_BOMB:
-                case Targetable.TYPE_HEX_TAG:
-                    return new HexTarget(HexTarget.idToCoords(nID), nType);
-                case Targetable.TYPE_FUEL_TANK:
-                case Targetable.TYPE_FUEL_TANK_IGNITE:
-                case Targetable.TYPE_BUILDING:
-                case Targetable.TYPE_BLDG_IGNITE:
-                case Targetable.TYPE_BLDG_TAG:
-                    if (getBoard().getBuildingAt(BuildingTarget.idToCoords(nID)) != null) {
-                        return new BuildingTarget(BuildingTarget.idToCoords(nID), getBoard(), nType);
-                    } else {
-                        return null;
-                    }
-                case Targetable.TYPE_MINEFIELD_CLEAR:
-                    return new MinefieldTarget(MinefieldTarget.idToCoords(nID));
-                case Targetable.TYPE_INARC_POD:
-                    return INarcPod.idToInstance(nID);
-                default:
-                    return null;
-            }
+            return switch (targetType) {
+                case Targetable.TYPE_ENTITY -> getEntity(targetId);
+
+                case Targetable.TYPE_HEX_CLEAR, Targetable.TYPE_HEX_IGNITE, Targetable.TYPE_HEX_BOMB,
+                     Targetable.TYPE_MINEFIELD_DELIVER, Targetable.TYPE_FLARE_DELIVER, Targetable.TYPE_HEX_EXTINGUISH,
+                     Targetable.TYPE_HEX_ARTILLERY, Targetable.TYPE_HEX_SCREEN, Targetable.TYPE_HEX_AERO_BOMB,
+                     Targetable.TYPE_HEX_TAG -> new HexTarget(HexTarget.idToLocation(targetId), targetType);
+
+                case Targetable.TYPE_FUEL_TANK, Targetable.TYPE_FUEL_TANK_IGNITE, Targetable.TYPE_BUILDING,
+                     Targetable.TYPE_BLDG_IGNITE, Targetable.TYPE_BLDG_TAG -> {
+                    final BoardLocation boardLocation = HexTarget.idToLocation(targetId);
+                    yield getBuildingAt(boardLocation)
+                                .map(b -> new BuildingTarget(this, boardLocation, targetType))
+                                .orElse(null);
+                }
+                case Targetable.TYPE_MINEFIELD_CLEAR -> new MinefieldTarget(MinefieldTarget.idToCoords(targetId));
+                case Targetable.TYPE_INARC_POD -> INarcPod.idToInstance(targetId);
+                default -> null;
+            };
         } catch (Exception e) {
             logger.error("", e);
             return null;
@@ -1535,6 +1529,20 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return Collections.unmodifiableList(vector);
     }
 
+    public List<Entity> getEntitiesVector(BoardLocation location, boolean ignoreTargetable) {
+        return getEntitiesVector(location.coords(), location.boardId(), ignoreTargetable);
+    }
+
+    public List<Entity> getEntitiesVector(Coords coord, int boardId, boolean ignoreTargetable) {
+        return getEntitiesVector(coord, ignoreTargetable).stream()
+                     .filter(entity -> entity.isOnBoard(boardId))
+                     .toList();
+    }
+
+    public List<Entity> getEntitiesVector(Coords coord, int boardId) {
+        return getEntitiesVector(coord, boardId, false);
+    }
+
     /**
      * @param player {@link Player} Object
      *
@@ -1551,6 +1559,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return Collections.unmodifiableList(vector);
     }
 
+    public List<GunEmplacement> getGunEmplacements(Coords c) {
+        // LEGACY use board version
+        return getGunEmplacements(c, 0);
+    }
+
     /**
      * Return a Vector of gun emplacements at Coords <code>c</code>
      *
@@ -1558,19 +1571,19 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return the {@link GunEmplacement} <code>Vector</code>
      */
-    public Vector<GunEmplacement> getGunEmplacements(Coords c) {
-        Vector<GunEmplacement> vector = new Vector<>();
+    public List<GunEmplacement> getGunEmplacements(Coords c, int boardId) {
+        List<GunEmplacement> result = new ArrayList<>();
 
         // Only build the list if the coords are on the board.
-        if (getBoard().contains(c)) {
-            for (Entity entity : getEntitiesVector(c, true)) {
-                if (entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)) {
-                    vector.addElement((GunEmplacement) entity);
+        if (hasBoardLocation(c, boardId)) {
+            for (Entity entity : getEntitiesVector(c, boardId, true)) {
+                if (entity instanceof GunEmplacement gunEmplacement) {
+                    result.add(gunEmplacement);
                 }
             }
         }
 
-        return vector;
+        return result;
     }
 
     /**
@@ -1578,15 +1591,19 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @param c The coordinates to check
      */
-    public boolean hasRooftopGunEmplacement(Coords c) {
-        Building building = getBoard().getBuildingAt(c);
+    public boolean hasRooftopGunEmplacement(Coords c, int boardId) {
+        if (!hasBoardLocation(c, boardId)) {
+            return false;
+        }
+        Board board = getBoard(boardId);
+        Building building = board.getBuildingAt(c);
         if (building == null) {
             return false;
         }
 
-        Hex hex = getBoard().getHex(c);
+        Hex hex = board.getHex(c);
 
-        for (Entity entity : getEntitiesVector(c, true)) {
+        for (Entity entity : getEntitiesVector(c, boardId, true)) {
             if (entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT) && entity.getElevation() == hex.ceiling()) {
                 return true;
             }
@@ -1604,22 +1621,20 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @return The <code>Entity</code> that should be an AFFA target.
      */
     public @Nullable Entity getAffaTarget(Coords coords, Entity ignore) {
-        Vector<Entity> vector = new Vector<>();
-        if (getBoard().contains(coords)) {
-            Hex hex = getBoard().getHex(coords);
-            for (Entity entity : getEntitiesVector(coords)) {
+        List<Entity> candidates = new ArrayList<>();
+        if (hasBoardLocation(coords, ignore.getBoardId())) {
+            Hex hex = getHex(coords, ignore.getBoardId());
+            for (Entity entity : getEntitiesVector(coords, ignore.getBoardId())) {
                 if (entity.isTargetable() && ((entity.getElevation() == 0) // Standing on hex surface
-                                                    || (entity.getElevation() == -hex.depth())) // Standing on hex floor
-                          && (entity.getAltitude() == 0) && !(entity instanceof Infantry) && (entity != ignore)) {
-                    vector.addElement(entity);
+                      || (entity.getElevation() == -hex.depth())) // Standing on hex floor
+                      && (entity.getAltitude() == 0) && !(entity instanceof Infantry) && (entity != ignore)) {
+                    candidates.add(entity);
                 }
             }
         }
-
-        if (!vector.isEmpty()) {
-            int count = vector.size();
-            int random = Compute.randomInt(count);
-            return vector.elementAt(random);
+        if (!candidates.isEmpty()) {
+            int random = Compute.randomInt(candidates.size());
+            return candidates.get(random);
         }
         return null;
     }
@@ -1637,6 +1652,22 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return getSelectedEntities(entity -> coords.equals(entity.getPosition()) &&
                                                    entity.isTargetable() &&
                                                    entity.isEnemyOf(currentEntity));
+    }
+
+    /**
+     * Returns an <code>Iterator</code> of the enemy's active entities at the given coordinates.
+     *
+     * @param coords        the <code>Coords</code> of the hex being examined.
+     * @param currentEntity the <code>Entity</code> whose enemies are needed.
+     *
+     * @return an <code>Enumeration</code> of <code>Entity</code>s at the given coordinates who are enemies of the given
+     *       unit.
+     */
+    public List<Entity> getEnemyEntities(final Coords coords, final int boardId, Entity currentEntity) {
+        return getEntitiesVector(coords, boardId).stream()
+                     .filter(Entity::isTargetable)
+                     .filter(entity -> entity.isEnemyOf(currentEntity))
+                     .toList();
     }
 
     /**
@@ -2572,9 +2603,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Getter for property roundCount.
-     *
-     * @return Value of property roundCount.
+     * @return The current round of the game.
      */
     public int getRoundCount() {
         return getCurrentRound();
@@ -3159,7 +3188,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     // a shortcut function for determining whether vectored movement is
     // applicable
     public boolean useVectorMove() {
-        return getOptions().booleanOption(OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT) && getBoard().inSpace();
+        return getOptions().booleanOption(OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT) && getBoard().isSpace();
     }
 
     /**
@@ -3525,5 +3554,64 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public Optional<Player> playerForPlayername(String playerName) {
         return getPlayersList().stream().filter(p -> p.getName().equals(playerName)).findFirst();
+    }
+
+    /**
+     * Returns the Building at the given location, if any. Shortcut to Board.getBuildingAt().
+     *
+     * @param boardLocation The location to check
+     * @return The building at the location, if any
+     */
+    public Optional<Building> getBuildingAt(@Nullable BoardLocation boardLocation) {
+        return getBuildingAt(boardLocation.coords(), boardLocation.boardId());
+    }
+
+    /**
+     * Returns the Building at the given location, if any. Shortcut to Board.getBuildingAt().
+     *
+     * @param boardId The board ID
+     * @param coords The position on the board
+     * @return The building at the location, if any
+     */
+    public Optional<Building> getBuildingAt(@Nullable Coords coords, int boardId) {
+        if (hasBoardLocation(coords, boardId)) {
+            return Optional.ofNullable(getBoard(boardId).getBuildingAt(coords));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Returns true when there is a building of any type (building, fuel tank, bridge) at the given location. This is
+     * safe to call with any parameter values.
+     *
+     * @param boardId The board ID
+     * @param coords  The position on the board
+     *
+     * @return True when there is a building
+     */
+    public boolean hasBuildingAt(@Nullable Coords coords, int boardId) {
+        return getBuildingAt(coords, boardId).isPresent();
+    }
+
+    /**
+     * @return True if the current game round counts as a round in which spaceborne units may act; when this game has
+     *       only space board(s), this is true for every game round; if it has a mixture of space and other boards, only
+     *       every 7th game round is a space round (TW p.78)
+     */
+    public boolean isSpaceRound() {
+        //FIXME only for testing:
+        return true;
+        // This is correct:
+//        return !hasSpaceAndAtmosphericBoards() || ((getRoundCount() > 0) && (getRoundCount() % 7 == 0));
+    }
+
+    /**
+     * @return True if the current game round counts as a round in which non-spaceborne units may act; when this game
+     *       has no space boards, this is true for every game round; if it has a mixture of space and other boards, six
+     *       atmopsheric game rounds are followed by one space round. (TW p.78)
+     */
+    public boolean isAtmosphericRound() {
+        return !hasSpaceAndAtmosphericBoards() || (getRoundCount() % 7 != 0) || getRoundCount() == 0;
     }
 }

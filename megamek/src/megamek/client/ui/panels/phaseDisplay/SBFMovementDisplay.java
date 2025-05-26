@@ -280,10 +280,6 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         buttons.get(MoveCommand.MOVE_MORE).setEnabled(myTurn && (numButtonGroups > 1));
     }
 
-    private boolean isMyTurn() {
-        return clientgui.getClient().isMyTurn();
-    }
-
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         if (isIgnoringEvents()) {
@@ -346,7 +342,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
      * Returns new MovePath for the currently selected movement type
      */
     private void currentMove(Coords dest) {
-        findPathTo(new BoardLocation(dest, 0), plannedMovement);
+        findPathTo(BoardLocation.of(dest, 0), plannedMovement);
     }
 
     /**

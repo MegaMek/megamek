@@ -228,10 +228,10 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     private void filterReport(String selectedKeyword) {
         String filterResult = "";
         String[] keywords = selectedKeyword.split(" ");
-        String[] htmlLines = currentClient.phaseReport.split(System.lineSeparator());
+        String[] htmlLines = currentClient.phaseReport.split("\r\n|\n|\r");
+        System.out.println(currentClient.phaseReport);
         for (String htmlLine : htmlLines) {
             for (String word : keywords) {
-                //int start = Math.abs(htmlLine.indexOf(">")) - 1; //start searching after HTML unit image
                 if (htmlLine.replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {
                     filterResult += htmlLine + System.lineSeparator();
                 }

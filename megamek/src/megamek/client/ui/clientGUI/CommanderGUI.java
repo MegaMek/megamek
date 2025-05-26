@@ -23,7 +23,7 @@ import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
 import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundManager;
 import megamek.client.ui.clientGUI.audio.SoundType;
-import megamek.client.ui.dialogs.miniReport.MiniReportDisplay;
+import megamek.client.ui.dialogs.miniReport.MiniReportDisplayPanel;
 import megamek.client.ui.dialogs.minimap.BoardviewlessMinimapPanel;
 import megamek.client.ui.clientGUI.overlay.ChatOverlay;
 import megamek.client.ui.util.MegaMekController;
@@ -122,9 +122,9 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         // Center: Splash image with progress bar
         centerPanel = new JPanel(new BorderLayout());
         RawImagePanel splashImage = UIUtil.createSplashComponent(splashImages, getFrame());
-        MiniReportDisplay miniReportDisplay = new MiniReportDisplay(this);
-        miniReportDisplay.setMinimumSize(new Dimension(600, 600));
-        miniReportDisplay.setPreferredSize(new Dimension(600, 600));
+        MiniReportDisplayPanel miniReportDisplayPanel = new MiniReportDisplayPanel(this);
+        miniReportDisplayPanel.setMinimumSize(new Dimension(600, 600));
+        miniReportDisplayPanel.setPreferredSize(new Dimension(600, 600));
 
         progressBar = new JProgressBar(0, 100);
         progressBar.setIndeterminate(true);
@@ -152,7 +152,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         jScroll.setPreferredSize(new Dimension(-1, 300));
 
         rightPanel.add(jScroll, BorderLayout.NORTH);
-        rightPanel.add(miniReportDisplay, BorderLayout.CENTER);
+        rightPanel.add(miniReportDisplayPanel, BorderLayout.CENTER);
         rightPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         mainPanel.add(centerPanel, BorderLayout.CENTER);

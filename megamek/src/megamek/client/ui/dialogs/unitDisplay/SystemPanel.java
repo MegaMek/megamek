@@ -62,7 +62,7 @@ class SystemPanel extends PicMap
     private static int LOC_SPACER = 2;
     private static int LOC_OFFSET = 3;
 
-    private final UnitDisplay unitDisplay;
+    private final UnitDisplayPanel unitDisplayPanel;
 
     private static final long serialVersionUID = 6660316427898323590L;
 
@@ -85,8 +85,8 @@ class SystemPanel extends PicMap
     private int minTopMargin = 8;
     private int minLeftMargin = 8;
 
-    SystemPanel(UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
+    SystemPanel(UnitDisplayPanel unitDisplayPanel) {
+        this.unitDisplayPanel = unitDisplayPanel;
         locLabel = new JLabel(Messages.getString("MekDisplay.Location"), SwingConstants.CENTER);
         locLabel.setOpaque(false);
         locLabel.setForeground(Color.WHITE);
@@ -270,7 +270,7 @@ class SystemPanel extends PicMap
         }
 
         final CriticalSlot cs = getSelectedCritical();
-        if ((cs == null) || (unitDisplay.getClientGUI() == null)) {
+        if ((cs == null) || (unitDisplayPanel.getClientGUI() == null)) {
             return null;
         }
         if (cs.getType() == CriticalSlot.TYPE_SYSTEM) {
@@ -285,7 +285,7 @@ class SystemPanel extends PicMap
             return m;
         }
         if (cs.getMount2() != null) {
-            ChoiceDialog choiceDialog = new ChoiceDialog(unitDisplay.getClientGUI().getFrame(),
+            ChoiceDialog choiceDialog = new ChoiceDialog(unitDisplayPanel.getClientGUI().getFrame(),
                     Messages.getString("MekDisplay.SelectMulti.title"),
                     Messages.getString("MekDisplay.SelectMulti.question"),
                     new String[] { cs.getMount().getName(),
@@ -469,7 +469,7 @@ class SystemPanel extends PicMap
     public void itemStateChanged(ItemEvent ev) {
         removeListeners();
         try {
-            ClientGUI clientgui = unitDisplay.getClientGUI();
+            ClientGUI clientgui = unitDisplayPanel.getClientGUI();
             if (clientgui == null) {
                 return;
             }
@@ -540,9 +540,9 @@ class SystemPanel extends PicMap
                         if (m.canInstantSwitch(nMode)) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.switched",
                                     m.getName(), m.curMode().getDisplayableName()));
-                            int weap = this.unitDisplay.wPan.getSelectedWeaponNum();
-                            this.unitDisplay.wPan.displayMek(en);
-                            this.unitDisplay.wPan.selectWeapon(weap);
+                            int weap = this.unitDisplayPanel.wPan.getSelectedWeaponNum();
+                            this.unitDisplayPanel.wPan.displayMek(en);
+                            this.unitDisplayPanel.wPan.selectWeapon(weap);
                         } else {
                             if (clientgui.getClient().getGame().getPhase().isDeployment()) {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtStart",
@@ -587,7 +587,7 @@ class SystemPanel extends PicMap
     public void actionPerformed(ActionEvent ae) {
         removeListeners();
         try {
-            ClientGUI clientgui = unitDisplay.getClientGUI();
+            ClientGUI clientgui = unitDisplayPanel.getClientGUI();
             if (clientgui == null) {
                 return;
             }
@@ -750,9 +750,9 @@ class SystemPanel extends PicMap
                 m_chMode.setEnabled(false);
                 displaySlots();
             } else if (event.getSource().equals(slotList)
-                    && (unitDisplay.getClientGUI() != null)) {
+                    && (unitDisplayPanel.getClientGUI() != null)) {
 
-                Client client = unitDisplay.getClientGUI().getClient();
+                Client client = unitDisplayPanel.getClientGUI().getClient();
                 m_bDumpAmmo.setEnabled(false);
                 m_chMode.setEnabled(false);
                 Mounted<?> m = getSelectedEquipment();

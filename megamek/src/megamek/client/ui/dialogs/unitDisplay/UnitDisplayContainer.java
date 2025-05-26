@@ -46,7 +46,7 @@ public interface UnitDisplayContainer {
      *
      * @return the UnitDisplay component
      */
-    UnitDisplay getUnitDisplay();
+    UnitDisplayPanel getUnitDisplay();
 
     /**
      * Returns a dialog window

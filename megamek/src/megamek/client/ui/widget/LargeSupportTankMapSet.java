@@ -26,7 +26,7 @@ import javax.swing.JComponent;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.LargeSupportTank;
@@ -39,7 +39,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  */
 public class LargeSupportTankMapSet implements DisplayMapSet {
 
-    private UnitDisplay unitDisplay;
+    private UnitDisplayPanel unitDisplayPanel;
 
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[15];
@@ -127,8 +127,8 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public LargeSupportTankMapSet(JComponent c, UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
+    public LargeSupportTankMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
+        this.unitDisplayPanel = unitDisplayPanel;
         comp = c;
         setAreas();
         setLabels();
@@ -183,20 +183,20 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[1] = new PMSimplePolygonArea(frontArmor, unitDisplay, LargeSupportTank.LOC_FRONT);
-        areas[2] = new PMSimplePolygonArea(rightFrontArmor, unitDisplay, LargeSupportTank.LOC_FRONTRIGHT);
-        areas[3] = new PMSimplePolygonArea(leftFrontArmor, unitDisplay, LargeSupportTank.LOC_FRONTLEFT);
-        areas[4] = new PMSimplePolygonArea(rightRearArmor, unitDisplay, LargeSupportTank.LOC_REARRIGHT);
-        areas[5] = new PMSimplePolygonArea(leftRearArmor, unitDisplay, LargeSupportTank.LOC_REARLEFT);
-        areas[6] = new PMSimplePolygonArea(rearArmor, unitDisplay, LargeSupportTank.LOC_REAR);
-        areas[7] = new PMSimplePolygonArea(turretArmor, unitDisplay, LargeSupportTank.LOC_TURRET);
-        areas[8] = new PMSimplePolygonArea(frontIS, unitDisplay, LargeSupportTank.LOC_FRONT);
-        areas[9] = new PMSimplePolygonArea(rightFrontIS, unitDisplay, LargeSupportTank.LOC_FRONTRIGHT);
-        areas[10] = new PMSimplePolygonArea(leftFrontIS, unitDisplay, LargeSupportTank.LOC_FRONTLEFT);
-        areas[11] = new PMSimplePolygonArea(rightRearIS, unitDisplay, LargeSupportTank.LOC_REARRIGHT);
-        areas[12] = new PMSimplePolygonArea(leftRearIS, unitDisplay, LargeSupportTank.LOC_REARLEFT);
-        areas[13] = new PMSimplePolygonArea(rearIS, unitDisplay, LargeSupportTank.LOC_REAR);
-        areas[14] = new PMSimplePolygonArea(turretIS, unitDisplay, LargeSupportTank.LOC_TURRET);
+        areas[1] = new PMSimplePolygonArea(frontArmor, unitDisplayPanel, LargeSupportTank.LOC_FRONT);
+        areas[2] = new PMSimplePolygonArea(rightFrontArmor, unitDisplayPanel, LargeSupportTank.LOC_FRONTRIGHT);
+        areas[3] = new PMSimplePolygonArea(leftFrontArmor, unitDisplayPanel, LargeSupportTank.LOC_FRONTLEFT);
+        areas[4] = new PMSimplePolygonArea(rightRearArmor, unitDisplayPanel, LargeSupportTank.LOC_REARRIGHT);
+        areas[5] = new PMSimplePolygonArea(leftRearArmor, unitDisplayPanel, LargeSupportTank.LOC_REARLEFT);
+        areas[6] = new PMSimplePolygonArea(rearArmor, unitDisplayPanel, LargeSupportTank.LOC_REAR);
+        areas[7] = new PMSimplePolygonArea(turretArmor, unitDisplayPanel, LargeSupportTank.LOC_TURRET);
+        areas[8] = new PMSimplePolygonArea(frontIS, unitDisplayPanel, LargeSupportTank.LOC_FRONT);
+        areas[9] = new PMSimplePolygonArea(rightFrontIS, unitDisplayPanel, LargeSupportTank.LOC_FRONTRIGHT);
+        areas[10] = new PMSimplePolygonArea(leftFrontIS, unitDisplayPanel, LargeSupportTank.LOC_FRONTLEFT);
+        areas[11] = new PMSimplePolygonArea(rightRearIS, unitDisplayPanel, LargeSupportTank.LOC_REARRIGHT);
+        areas[12] = new PMSimplePolygonArea(leftRearIS, unitDisplayPanel, LargeSupportTank.LOC_REARLEFT);
+        areas[13] = new PMSimplePolygonArea(rearIS, unitDisplayPanel, LargeSupportTank.LOC_REAR);
+        areas[14] = new PMSimplePolygonArea(turretIS, unitDisplayPanel, LargeSupportTank.LOC_TURRET);
     }
 
     private void setLabels() {

@@ -57,8 +57,8 @@ import megamek.logging.MMLogger;
  * Displays the info for a mek. This is also a sort of interface for special
  * movement and firing actions.
  */
-public class UnitDisplay extends JPanel {
-    private static final MMLogger logger = MMLogger.create(UnitDisplay.class);
+public class UnitDisplayPanel extends JPanel {
+    private static final MMLogger logger = MMLogger.create(UnitDisplayPanel.class);
 
     // buttons & gizmos for top level
     @Serial
@@ -125,7 +125,7 @@ public class UnitDisplay extends JPanel {
     /**
      * Creates and lays out a new mek display.
      */
-    public UnitDisplay() {
+    public UnitDisplayPanel() {
         this(null, null);
     }
 
@@ -134,7 +134,7 @@ public class UnitDisplay extends JPanel {
      *
      * @param clientGui The ClientGUI for the GUI that is creating this UnitDisplay.
      */
-    public UnitDisplay(@Nullable ClientGUI clientGui) {
+    public UnitDisplayPanel(@Nullable ClientGUI clientGui) {
         this(clientGui, null);
     }
 
@@ -143,7 +143,7 @@ public class UnitDisplay extends JPanel {
      * @param clientGui The ClientGUI for the GUI that is creating this UnitDisplay.
      * @param controller The MegaMekController for the GUI that is creating this UnitDisplay.
      */
-    public UnitDisplay(@Nullable ClientGUI clientGui,
+    public UnitDisplayPanel(@Nullable ClientGUI clientGui,
             @Nullable MegaMekController controller) {
         super(new GridBagLayout());
         this.clientgui = clientGui;
@@ -355,12 +355,12 @@ public class UnitDisplay extends JPanel {
         sPanScroll.setVisible(true);
         ePanScroll.setVisible(true);
 
-        linkParentChild(UnitDisplay.NON_TABBED_A1, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplay.NON_TABBED_A1));
-        linkParentChild(UnitDisplay.NON_TABBED_B1, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplay.NON_TABBED_B1));
-        linkParentChild(UnitDisplay.NON_TABBED_C1, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplay.NON_TABBED_C1));
-        linkParentChild(UnitDisplay.NON_TABBED_A2, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplay.NON_TABBED_A2));
-        linkParentChild(UnitDisplay.NON_TABBED_B2, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplay.NON_TABBED_B2));
-        linkParentChild(UnitDisplay.NON_TABBED_C2, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplay.NON_TABBED_C2));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_A1, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_B1, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_C1, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_A2, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_B2, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_C2, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2));
 
         displayP.add(splitABC);
 
@@ -388,22 +388,22 @@ public class UnitDisplay extends JPanel {
      */
     private void linkParentChild(String t, String v) {
         switch (t) {
-            case UnitDisplay.NON_TABBED_A1:
+            case UnitDisplayPanel.NON_TABBED_A1:
                 addChildPanel(panA1, v);
                 break;
-            case UnitDisplay.NON_TABBED_A2:
+            case UnitDisplayPanel.NON_TABBED_A2:
                 addChildPanel(panA2, v);
                 break;
-            case UnitDisplay.NON_TABBED_B1:
+            case UnitDisplayPanel.NON_TABBED_B1:
                 addChildPanel(panB1, v);
                 break;
-            case UnitDisplay.NON_TABBED_B2:
+            case UnitDisplayPanel.NON_TABBED_B2:
                 addChildPanel(panB2, v);
                 break;
-            case UnitDisplay.NON_TABBED_C1:
+            case UnitDisplayPanel.NON_TABBED_C1:
                 addChildPanel(panC1, v);
                 break;
-            case UnitDisplay.NON_TABBED_C2:
+            case UnitDisplayPanel.NON_TABBED_C2:
                 addChildPanel(panC2, v);
                 break;
         }
@@ -415,12 +415,12 @@ public class UnitDisplay extends JPanel {
      */
     private void addChildPanel(JPanel p, String v) {
         switch (v) {
-            case UnitDisplay.NON_TABBED_GENERAL -> p.add(mPanScroll, BorderLayout.CENTER);
-            case UnitDisplay.NON_TABBED_PILOT -> p.add(pPanScroll, BorderLayout.CENTER);
-            case UnitDisplay.NON_TABBED_WEAPON -> p.add(wPanScroll, BorderLayout.CENTER);
-            case UnitDisplay.NON_TABBED_SYSTEM -> p.add(sPanScroll, BorderLayout.CENTER);
-            case UnitDisplay.NON_TABBED_EXTRA -> p.add(ePanScroll, BorderLayout.CENTER);
-            case UnitDisplay.NON_TABBED_ARMOR -> p.add(aPanScroll, BorderLayout.CENTER);
+            case UnitDisplayPanel.NON_TABBED_GENERAL -> p.add(mPanScroll, BorderLayout.CENTER);
+            case UnitDisplayPanel.NON_TABBED_PILOT -> p.add(pPanScroll, BorderLayout.CENTER);
+            case UnitDisplayPanel.NON_TABBED_WEAPON -> p.add(wPanScroll, BorderLayout.CENTER);
+            case UnitDisplayPanel.NON_TABBED_SYSTEM -> p.add(sPanScroll, BorderLayout.CENTER);
+            case UnitDisplayPanel.NON_TABBED_EXTRA -> p.add(ePanScroll, BorderLayout.CENTER);
+            case UnitDisplayPanel.NON_TABBED_ARMOR -> p.add(aPanScroll, BorderLayout.CENTER);
         }
     }
 
@@ -434,7 +434,7 @@ public class UnitDisplay extends JPanel {
      * @param ud UnitDisplay
      * @param controller MegaMekController
      */
-    private void registerKeyboardCommands(final UnitDisplay ud,
+    private void registerKeyboardCommands(final UnitDisplayPanel ud,
             final MegaMekController controller) {
         controller.registerCommandAction(KeyCommandBind.UD_GENERAL, ud::isVisible,
                 () -> showPanel(MekPanelTabStrip.SUMMARY));

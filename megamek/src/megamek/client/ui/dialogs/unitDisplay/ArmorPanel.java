@@ -56,7 +56,7 @@ class ArmorPanel extends PicMap {
     private int minBottomMargin;
     private int minRightMargin;
 
-    private UnitDisplay unitDisplay;
+    private UnitDisplayPanel unitDisplayPanel;
 
     private static final int minTankTopMargin = 8;
     private static final int minTankLeftMargin = 8;
@@ -73,30 +73,30 @@ class ArmorPanel extends PicMap {
 
     private final Game game;
 
-    ArmorPanel(Game g, UnitDisplay unitDisplay) {
+    ArmorPanel(Game g, UnitDisplayPanel unitDisplayPanel) {
         game = g;
-        this.unitDisplay = unitDisplay;
+        this.unitDisplayPanel = unitDisplayPanel;
     }
 
     @Override
     public void addNotify() {
         super.addNotify();
-        tank = new TankMapSet(this, unitDisplay);
-        mek = new MekMapSet(this, unitDisplay);
+        tank = new TankMapSet(this, unitDisplayPanel);
+        mek = new MekMapSet(this, unitDisplayPanel);
         infantry = new InfantryMapSet(this);
         battleArmor = new BattleArmorMapSet(this);
-        proto = new ProtoMekMapSet(this, unitDisplay);
-        vtol = new VTOLMapSet(this, unitDisplay);
-        quad = new QuadMapSet(this, unitDisplay);
-        tripod = new TripodMekMapSet(this, unitDisplay);
+        proto = new ProtoMekMapSet(this, unitDisplayPanel);
+        vtol = new VTOLMapSet(this, unitDisplayPanel);
+        quad = new QuadMapSet(this, unitDisplayPanel);
+        tripod = new TripodMekMapSet(this, unitDisplayPanel);
         gunEmplacement = new GunEmplacementMapSet(this);
-        largeSupportTank = new LargeSupportTankMapSet(this, unitDisplay);
-        superHeavyTank = new SuperHeavyTankMapSet(this, unitDisplay);
-        aero = new AeroMapSet(this, unitDisplay);
+        largeSupportTank = new LargeSupportTankMapSet(this, unitDisplayPanel);
+        superHeavyTank = new SuperHeavyTankMapSet(this, unitDisplayPanel);
+        aero = new AeroMapSet(this, unitDisplayPanel);
         capFighter = new CapitalFighterMapSet(this);
-        sphere = new SpheroidMapSet(this, unitDisplay);
-        jump = new JumpshipMapSet(this, unitDisplay);
-        warship = new WarshipMapSet(this, unitDisplay);
+        sphere = new SpheroidMapSet(this, unitDisplayPanel);
+        jump = new JumpshipMapSet(this, unitDisplayPanel);
+        warship = new WarshipMapSet(this, unitDisplayPanel);
         squad = new SquadronMapSet(this, game);
     }
 

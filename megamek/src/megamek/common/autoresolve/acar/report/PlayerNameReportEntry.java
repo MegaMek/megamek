@@ -13,8 +13,8 @@
  */
 package megamek.common.autoresolve.acar.report;
 
-import megamek.client.ui.swing.util.PlayerColour;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.PlayerColour;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 
 public class PlayerNameReportEntry extends PublicReportEntry {

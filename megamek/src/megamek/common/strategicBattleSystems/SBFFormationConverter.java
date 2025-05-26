@@ -18,7 +18,7 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
 import megamek.common.Game;

@@ -19,7 +19,7 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 
 /**
  * @author Jay Lawson

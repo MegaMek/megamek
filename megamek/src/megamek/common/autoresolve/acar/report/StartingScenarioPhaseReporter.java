@@ -13,7 +13,7 @@
  */
 package megamek.common.autoresolve.acar.report;
 
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.IAero;
 import megamek.common.IGame;
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip.ownerColor;
+import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerColor;
 
 public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseReporter {
 

@@ -19,7 +19,6 @@
 package megamek.server;
 
 import megamek.MMConstants;
-import megamek.client.bot.princess.Princess;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Configuration;
@@ -29,12 +28,11 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
-import static megamek.client.ui.swing.lobby.LobbyUtility.extractSurpriseMaps;
+import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.extractSurpriseMaps;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 

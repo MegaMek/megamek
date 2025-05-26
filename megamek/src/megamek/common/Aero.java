@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
@@ -35,7 +35,6 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.util.ConditionalStringJoiner;
 import megamek.logging.MMLogger;
 import megamek.common.TechAdvancement.AdvancementPhase;
-import megamek.common.ITechnology;
 
 /**
  * Taharqa's attempt at creating an Aerospace entity

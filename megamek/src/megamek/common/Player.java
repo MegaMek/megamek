@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import megamek.client.ui.swing.util.PlayerColour;
+import megamek.client.ui.util.PlayerColour;
 import megamek.common.hexarea.BorderHexArea;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;

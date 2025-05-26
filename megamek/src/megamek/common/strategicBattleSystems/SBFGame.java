@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import megamek.client.ui.swing.sbf.SelectDirection;
+import megamek.client.ui.clientGUI.sbf.SelectDirection;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;

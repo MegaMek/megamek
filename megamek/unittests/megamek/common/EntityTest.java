@@ -53,7 +53,7 @@ import megamek.common.actions.DfaAttackAction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.equipment.WeaponMounted;
 

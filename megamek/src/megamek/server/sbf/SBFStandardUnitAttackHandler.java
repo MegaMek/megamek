@@ -25,7 +25,7 @@ import megamek.common.strategicBattleSystems.*;
 
 import java.util.List;
 
-import static megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip.ownerColor;
+import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerColor;
 
 public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
 

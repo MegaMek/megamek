@@ -19,7 +19,7 @@
  */
 package megamek.common;
 
-import static megamek.client.ui.swing.util.UIUtil.uiGray;
+import static megamek.client.ui.util.UIUtil.uiGray;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -30,8 +30,8 @@ import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 

@@ -32,7 +32,7 @@
  */
 package megamek.common.autoresolve.converter;
 
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.alphaStrike.ASDamage;

@@ -18,7 +18,7 @@
  */
 package megamek.common.battlevalue;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 import java.util.ArrayList;
 import java.util.HashMap;

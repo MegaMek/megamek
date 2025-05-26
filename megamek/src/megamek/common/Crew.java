@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
-import megamek.client.ui.swing.tooltip.PilotToolTip;
+import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;

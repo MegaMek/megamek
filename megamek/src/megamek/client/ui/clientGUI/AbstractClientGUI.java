@@ -25,6 +25,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.MMDialogs.MMNarrativeStoryDialog;
 import megamek.client.ui.clientGUI.boardview.*;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.BoardViewSpriteHandler;
+import megamek.client.ui.dialogs.minimap.MinimapDialog;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.BoardLocation;
 import megamek.common.Configuration;
@@ -72,7 +73,7 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
     /**
      * The minimaps of the game with the board ID as the map key
      */
-    protected final Map<Integer, JDialog> miniMaps = new HashMap<>();
+    protected final Map<Integer, MinimapDialog> miniMaps = new HashMap<>();
     protected final BoardViewsContainer boardViewsContainer = new BoardViewsContainer(this);
     protected final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
 

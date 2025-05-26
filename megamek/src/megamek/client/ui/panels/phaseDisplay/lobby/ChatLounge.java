@@ -109,7 +109,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
 import megamek.client.ui.buttons.DialogButton;
 import megamek.client.ui.panels.phaseDisplay.lobby.PlayerTable.PlayerTableModel;
-import megamek.client.ui.dialogs.minimap.Minimap;
+import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.panels.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
@@ -1216,7 +1216,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     if (boardName.startsWith(MapSettings.BOARD_GENERATED) ||
                               (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                         buttonBoard = BoardUtilities.generateRandom(mapSettings);
-                        image = Minimap.getMinimapImageMaxZoom(buttonBoard);
+                        image = MinimapPanel.getMinimapImageMaxZoom(buttonBoard);
                     } else {
                         String boardForImage = boardName;
                         // For a surprise board, just use the first board as example
@@ -1249,11 +1249,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                                 buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(),
                                       mapSettings.getBoardHeight());
                             }
-                            image = Minimap.getMinimapImageMaxZoom(buttonBoard);
+                            image = MinimapPanel.getMinimapImageMaxZoom(buttonBoard);
                         } else {
                             buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(),
                                   mapSettings.getBoardHeight());
-                            BufferedImage emptyBoardMap = Minimap.getMinimapImageMaxZoom(buttonBoard);
+                            BufferedImage emptyBoardMap = MinimapPanel.getMinimapImageMaxZoom(buttonBoard);
                             markServerSideBoard(emptyBoardMap);
                             image = emptyBoardMap;
                         }
@@ -3495,7 +3495,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             // Determine a minimap zoom from the board size and gui scale. This is very magic numbers but currently
             // the minimap has only fixed zoom states.
             int zoom = getZoom(board);
-            BufferedImage bufImage = Minimap.getMinimapImage(board, zoom);
+            BufferedImage bufImage = MinimapPanel.getMinimapImage(board, zoom);
 
             // Add the board name label and the server-side board label if necessary
             String text = LobbyUtility.cleanBoardName(boardName, mapSettings);

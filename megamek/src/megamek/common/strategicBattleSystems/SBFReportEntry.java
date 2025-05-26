@@ -18,8 +18,8 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Report;
 import megamek.common.ReportEntry;
 import megamek.common.Roll;
@@ -31,7 +31,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static megamek.client.ui.swing.util.UIUtil.hexColor;
+import static megamek.client.ui.util.UIUtil.hexColor;
 
 public class SBFReportEntry implements ReportEntry {
 

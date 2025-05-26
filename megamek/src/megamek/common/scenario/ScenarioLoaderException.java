@@ -18,7 +18,7 @@
  */
 package megamek.common.scenario;
 
-import megamek.client.ui.swing.scenario.Messages;
+import megamek.client.ui.dialogs.scenario.Messages;
 
 import java.util.IllegalFormatException;
 

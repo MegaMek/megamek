@@ -51,7 +51,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.clientGUI.GUIPreferences;
 
 /**
  * @author Drake

@@ -217,7 +217,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             int id = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
 
-            if (target.isAirborne() || game.getBoard().inSpace() || ae.usesWeaponBays()) {
+            if (target.isAirborne() || game.getBoard().isSpace() || ae.usesWeaponBays()) {
                 // if we added a line to the phase report for calc hits, remove
                 // it now
                 while (vPhaseReport.size() > id) {

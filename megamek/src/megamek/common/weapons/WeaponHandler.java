@@ -294,10 +294,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 boolean isInArc;
                 // If the defending unit is the target, use attacker for arc
                 if (entityTarget.equals(pdEnt)) {
-                    isInArc = Compute.isInArc(game, pdEnt.getId(), pdEnt.getEquipmentNum(counter), ae);
+                    isInArc = ComputeArc.isInArc(game, pdEnt.getId(), pdEnt.getEquipmentNum(counter), ae);
                 } else { // Otherwise, the attack must pass through an escort unit's hex
                     // TODO: We'll get here, eventually
-                    isInArc = Compute.isInArc(game, pdEnt.getId(),
+                    isInArc = ComputeArc.isInArc(game, pdEnt.getId(),
                             pdEnt.getEquipmentNum(counter),
                             entityTarget);
                 }
@@ -515,14 +515,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 && !entityTarget.isAirborneVTOLorWIGE()
                 && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE
                         && (atype == null || atype.getFireTN() != TargetRoll.IMPOSSIBLE)))) {
-            gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
+            gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false, false,
                     getFireTNRoll(), 3,
                     vPhaseReport);
         }
 
         // shots that miss an entity can also potential cause explosions in a
         // heavy industrial hex
-        gameManager.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
+        gameManager.checkExplodeIndustrialZone(target.getPosition(), target.getBoardId(), vPhaseReport);
 
         // TW, pg. 171 - shots that miss a target in a building don't damage the
         // building, unless the attacker is adjacent
@@ -855,7 +855,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             ae.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        Building bldg = game.getBuildingAt(target.getBoardLocation()).orElse(null);
         String number = nweapons > 1 ? " (" + nweapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Report weapon attack and its to-hit value.
@@ -1092,7 +1092,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int nCluster = calcnCluster();
             int id = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
-            if ((target.isAirborne() && !waa.isGroundToAir(game)) || game.getBoard().inSpace() || ae.usesWeaponBays()) {
+            if ((target.isAirborne() && !waa.isGroundToAir(game)) || game.isOnSpaceMap(target) || ae.usesWeaponBays()) {
                 // if we added a line to the phase report for calc hits, remove
                 // it now
                 while (vPhaseReport.size() > id) {
@@ -1459,7 +1459,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             bSalvo = true;
             // Create new toHitData
             toHit = new ToHitData(0, "", ToHitData.HIT_NORMAL,
-                    Compute.targetSideTable(ae, coverDropShip));
+                    ComputeSideTable.sideTable(ae, coverDropShip));
             // Report cover was damaged
             int sizeBefore = vPhaseReport.size();
             r = new Report(3465);
@@ -1516,7 +1516,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         boolean isIndirect = weapon.hasModes() && weapon.curMode().equals("Indirect");
 
-        Hex targetHex = game.getBoard().getHex(target.getPosition());
+        Hex targetHex = game.getHexOf(target);
         boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
 
         // a very specific situation where a mek is standing in a height 1 building
@@ -1532,7 +1532,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((!isIndirect || partialCoverForIndirectFire)
                 && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                         .getCover(),
-                        Compute.targetSideTable(ae, entityTarget,
+                        ComputeSideTable.sideTable(ae, entityTarget,
                                 weapon.getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
@@ -1711,7 +1711,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         TargetRoll tn = getFireTNRoll();
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
+            gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false, false,
                     tn, true, -1, vPhaseReport);
         }
     }
@@ -1742,11 +1742,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
+                && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false, false,
                         getFireTNRoll(), 5, vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), target.getBoardId(), nDamage,
+              subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
@@ -1969,7 +1970,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (entityTarget == null) {
             return nDamage;
         }
-        Hex hex = game.getBoard().getHex(entityTarget.getPosition());
+        Hex hex = game.getHexOf(entityTarget);
         boolean hasWoods = hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE);
         boolean isAboveWoods = (entityTarget.relHeight() + 1 > hex.terrainLevel(Terrains.FOLIAGE_ELEV))
                 || entityTarget.isAirborne() || !hasWoods;
@@ -1993,7 +1994,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             treeAbsorbs = Math.min(nDamage, treeAbsorbs);
 
             nDamage = Math.max(0, nDamage - treeAbsorbs);
-            gameManager.tryClearHex(entityTarget.getPosition(), treeAbsorbs, ae.getId());
+            gameManager.tryClearHex(entityTarget.getPosition(), entityTarget.getBoardId(), treeAbsorbs, ae.getId());
             Report.addNewline(vPhaseReport);
             Report terrainReport = new Report(6427);
             terrainReport.subject = entityTarget.getId();
@@ -2022,6 +2023,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         ArrayList<Coords> coords = Coords.intervening(ae.getPosition(), entityTarget.getPosition());
+        Board board = game.commonEnclosingBoard(ae, entityTarget).orElse(game.getBoard(ae));
         int refrac = 0;
         double travel = 0;
         double range = ae.getPosition().distance(target.getPosition());
@@ -2035,15 +2037,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // java.util.ArrayList;
         for (Coords curr : coords) {
             // skip hexes not actually on the board
-            if (!game.getBoard().contains(curr)) {
+            if (!board.contains(curr)) {
                 continue;
             }
-            Terrain smokeHex = game.getBoard().getHex(curr).getTerrain(Terrains.SMOKE);
-            if (game.getBoard().getHex(curr).containsTerrain(Terrains.SMOKE)
+            Terrain smokeHex = board.getHex(curr).getTerrain(Terrains.SMOKE);
+            if (board.getHex(curr).containsTerrain(Terrains.SMOKE)
                     && ((smokeHex.getLevel() == SmokeCloud.SMOKE_LI_LIGHT)
                             || (smokeHex.getLevel() == SmokeCloud.SMOKE_LI_HEAVY))) {
 
-                int levit = ((game.getBoard().getHex(curr).getLevel()) + 2);
+                int levit = ((board.getHex(curr).getLevel()) + 2);
 
                 // does the hex contain LASER inhibiting smoke?
                 if ((tarLev > atkLev)
@@ -2276,10 +2278,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
-     * Used by certain artillery handlers to draw drift markers with "hit" graphics
-     * if
-     * anything is caught in the blast, or "drift" marker if nothing is damaged.
-     * No-op for direct hits.
+     * Used by certain artillery handlers to draw drift markers with "hit" graphics if anything is caught in the blast,
+     * or "drift" marker if nothing is damaged. No-op for direct hits.
      *
      * @param targetPos
      * @param finalPos
@@ -2287,26 +2287,22 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @param hitIds
      */
     protected void handleArtilleryDriftMarker(Coords targetPos, Coords finalPos, ArtilleryAttackAction aaa,
-            Vector<Integer> hitIds) {
+          Vector<Integer> hitIds) {
         if (bMissed) {
             String msg = Messages.getString("ArtilleryMessage.drifted") + " " + targetPos.getBoardNum();
             final SpecialHexDisplay shd;
             if (hitIds.isEmpty()) {
-                shd = new SpecialHexDisplay(
-                        SpecialHexDisplay.Type.ARTILLERY_DRIFT, game
-                                .getRoundCount(),
-                        game
-                                .getPlayer(aaa.getPlayerId()),
-                        msg);
+                shd = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_DRIFT,
+                      game.getRoundCount(),
+                      game.getPlayer(aaa.getPlayerId()),
+                      msg);
             } else {
-                shd = new SpecialHexDisplay(
-                        SpecialHexDisplay.Type.ARTILLERY_HIT, game
-                                .getRoundCount(),
-                        game
-                                .getPlayer(aaa.getPlayerId()),
-                        msg);
+                shd = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
+                      game.getRoundCount(),
+                      game.getPlayer(aaa.getPlayerId()),
+                      msg);
             }
-            game.getBoard().addSpecialHexDisplay(finalPos, shd);
+            game.getBoard(aaa.getTarget(game)).addSpecialHexDisplay(finalPos, shd);
         }
     }
 }

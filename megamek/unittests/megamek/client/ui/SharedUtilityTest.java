@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import megamek.client.Client;
-import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.*;
 import megamek.common.options.GameOptions;
 import org.junit.jupiter.api.BeforeAll;

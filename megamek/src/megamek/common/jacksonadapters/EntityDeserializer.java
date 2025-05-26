@@ -39,8 +39,11 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
 
     private static final String ID = "id";
     private static final String AT = "at";
+    private static final String BOARD = "board";
     private static final String X = "x";
     private static final String Y = "y";
+    private static final String OFFBOARD = "offboard";
+    private static final String DISTANCE = "distance";
     private static final String STATUS = "status";
     private static final String PRONE = "prone";
     private static final String SHUTDOWN = "shutdown";
@@ -117,6 +120,13 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
             } else if (node.has(X) || node.has(Y)) {
                 setDeployedPosition(entity, CoordsDeserializer.parseNode(node));
             }
+            if (node.has(BOARD)) {
+                entity.setBoardId(node.get(BOARD).intValue());
+            }
+            if (node.has(OFFBOARD)) {
+                int distance = node.has(DISTANCE) ? node.get(DISTANCE).intValue() : 17;
+                entity.setOffBoard(distance, OffBoardDirection.valueOf(node.get(OFFBOARD).textValue()));
+            }
         } catch (Exception e) {
             throw new IllegalArgumentException("Illegal position information for entity " + entity, e);
         }
@@ -145,7 +155,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private void setDeployedPosition(Entity entity, Coords coords) {
         entity.setDeployed(true);
         // translate the position so "at: 2, 3" will place a unit on 0203 (instead of 0102)
-        entity.setPosition(new Coords(coords.getX() - 1, coords.getY() - 1));
+        entity.setPosition(coords);
     }
 
     private void assignStatus(Entity entity, JsonNode node) {

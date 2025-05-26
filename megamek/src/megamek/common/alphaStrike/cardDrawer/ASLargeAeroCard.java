@@ -18,8 +18,8 @@
  */
 package megamek.common.alphaStrike.cardDrawer;
 
-import megamek.client.ui.swing.util.StringDrawer;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.StringDrawer;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.alphaStrike.*;
 import megamek.common.util.ImageUtil;
 

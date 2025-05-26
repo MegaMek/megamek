@@ -4,6 +4,10 @@ planet: None
 description: A few units on a small map with a few carryable objects for testing; most objects predeployed, some to deploy
 map: buildingsnobasement/dropport2.board
 
+options:
+  off:
+    - check_victory
+
 factions:
 - name: Test Player
 

@@ -32,7 +32,7 @@
  */
 package megamek.common.battlevalue;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.AmmoType.T_AMS;
 import static megamek.common.AmmoType.T_APDS;
 
@@ -45,8 +45,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;

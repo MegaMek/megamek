@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
@@ -43,7 +43,6 @@ import megamek.common.util.DiscordFormat;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import megamek.common.ITechnology;
 
 
 /**

@@ -16,7 +16,7 @@ import static megamek.common.Compute.*;
 
 import java.io.Serial;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.WarShipCostCalculator;
 import megamek.common.options.OptionsConstants;
 
@@ -133,19 +133,8 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public boolean hasActiveECM() {
-        // All warships automatically have ECM if in space
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
-            return super.hasActiveECM();
-        }
-        return getECMRange() >= 0;
-    }
-
-    @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         int range = 2;

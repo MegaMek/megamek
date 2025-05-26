@@ -22,7 +22,7 @@ import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.util.function.Consumer;
 
-import static megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip.ownerColor;
+import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerColor;
 
 public class AttackReporter implements IAttackReporter {
 

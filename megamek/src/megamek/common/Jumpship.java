@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.JumpShipCostCalculator;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
@@ -1091,23 +1091,16 @@ public class Jumpship extends Aero {
      */
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
-                  !game.getBoard().inSpace()) {
+        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) && isSpaceborne()) {
+            return getECMRange() >= 0;
+        } else {
             return super.hasActiveECM();
         }
-        return getECMRange() >= 0;
     }
 
-    /**
-     * What's the range of the ECM equipment?
-     *
-     * @return the <code>int</code> range of this unit's ECM. This value will be
-     *       <code>Entity.NONE</code> if no ECM is active.
-     */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
-                  !game.getBoard().inSpace()) {
+        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {

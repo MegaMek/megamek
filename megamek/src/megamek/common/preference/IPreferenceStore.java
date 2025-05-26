@@ -258,4 +258,6 @@ public interface IPreferenceStore {
     public abstract void putValue(String name, String value);
 
     public abstract String[] getAdvancedProperties();
+
+    boolean hasProperty(String name);
 }

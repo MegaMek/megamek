@@ -22,7 +22,7 @@ import megamek.common.*;
 
 import java.util.function.Predicate;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 public class CombatVehicleBVCalculator extends BVCalculator {
 

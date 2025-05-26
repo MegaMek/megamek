@@ -28,8 +28,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.util.KeyCommandBind;
+import megamek.client.ui.util.MegaMekController;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;

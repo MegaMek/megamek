@@ -13,7 +13,7 @@
  */
 package megamek.common.autoresolve.acar.report;
 
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.UIUtil;
 
 public class ReportEntryWithAnchor extends PublicReportEntry {
 

@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 
 import megamek.common.*;
 import megamek.common.AmmoType.Munitions;
+import megamek.common.annotations.Nullable;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
@@ -135,7 +136,7 @@ public class AreaEffectHelper {
         // sanity check: if this attack is happening in vacuum through very thin atmo,
         // add that to the phase report and terminate early
 
-        if (game.getBoard().inSpace()
+        if (game.getBoard().isSpace()
                 || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             Report r = new Report(9986);
             r.indent(1);
@@ -186,11 +187,19 @@ public class AreaEffectHelper {
                 attacker, null, attacker.getId(), vPhaseReport, gameManager);
     }
 
+    public static Vector<Integer> processFuelAirDamage(
+          Coords center, int height, AmmoType ammo, Entity attacker,
+          Vector<Report> vPhaseReport, TWGameManager gameManager
+    ) {
+        //LEGACY use boardId version
+        return processFuelAirDamage(center, 0, height, ammo, attacker, vPhaseReport, gameManager);
+    }
+
     /**
      * Helper function that processes damage for fuel-air explosives.
      */
     public static Vector<Integer> processFuelAirDamage(
-        Coords center, int height, AmmoType ammo, Entity attacker,
+        Coords center, int boardId, int height, AmmoType ammo, Entity attacker,
             Vector<Report> vPhaseReport, TWGameManager gameManager
     ) {
         Game game = attacker.getGame();
@@ -200,7 +209,7 @@ public class AreaEffectHelper {
 
         // sanity check: if this attack is happening in vacuum through very thin atmo,
         // add that to the phase report and terminate early
-        if (game.getBoard().inSpace()
+        if (game.getBoard(boardId).isSpace()
                 || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             Report r = new Report(9986);
             r.indent(1);
@@ -248,7 +257,8 @@ public class AreaEffectHelper {
                     gameManager);
 
                 TargetRoll fireRoll = new TargetRoll(7, "fuel-air ordnance");
-                gameManager.tryIgniteHex(bCoords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
+                gameManager.tryIgniteHex(bCoords, boardId, attacker.getId(), false, false, fireRoll, true, -1,
+                      vPhaseReport);
 
                 clearMineFields(bCoords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game,
                     gameManager);
@@ -876,7 +886,7 @@ public class AreaEffectHelper {
             if (entity instanceof ProtoMek) {
                 table = ToHitData.HIT_SPECIAL_PROTO;
             }
-            HitData hit = entity.rollHitLocation(table, Compute.targetSideTable(position, entity));
+            HitData hit = entity.rollHitLocation(table, entity.sideTable(position));
             vDesc.addAll(gameManager.damageEntity(entity, hit, cluster, false,
                     DamageType.IGNORE_PASSENGER, false, true));
 
@@ -1017,9 +1027,9 @@ public class AreaEffectHelper {
      * @return                  (height, Coords): damage map.
      */
     public static HashMap<Entry<Integer, Coords>, Integer> shapeBlast(
-        AmmoType ammo, Coords center, DamageFalloff falloff, int height, boolean artillery,
-        boolean flak, boolean asfFlak, Game game, boolean excludeCenter
-    ) {
+          @Nullable AmmoType ammo, Coords center, DamageFalloff falloff, int height, boolean artillery,
+          boolean flak, boolean asfFlak, Game game, boolean excludeCenter) {
+
         HashMap<Entry<Integer, Coords>, Integer> blastShape = new LinkedHashMap<>();
 
         if (game == null) {
@@ -1030,7 +1040,9 @@ public class AreaEffectHelper {
         // Falloff is defined separately for each weapon and ammo type, unfortunately.
         int baseDamage = falloff.damage;
         int radius = falloff.radius;
-        boolean isBomb = (ammo instanceof BombType);
+        boolean isCruiseMissile = (ammo != null) && (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE);
+        boolean isFaeAmmo = (ammo != null) && ammo.getMunitionType().contains(AmmoType.Munitions.M_FAE);
+        boolean isFaeBomb = (ammo instanceof BombType bombType) && bombType.isFaeBomb();
 
         // We may want to calculate the blast zone without the center hex, for separate handling.
         if (!excludeCenter) {
@@ -1053,7 +1065,7 @@ public class AreaEffectHelper {
         // Note that this falloff is separate from horizontal blast falloff, above.
         // Also deal damage downward for Flak shots against VTOLs.
         if (artillery) {
-            int levelMinus = (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) ? 25 : 10;
+            int levelMinus = isCruiseMissile ? 25 : 10;
             if (flak || !effectivelyAE) {
                 // If non-Flak artillery is hitting a building or water hex, use the AE column rules
                 for (int d = (baseDamage - levelMinus), l = height + 1; d > 0; d -= levelMinus, l++) {
@@ -1077,11 +1089,7 @@ public class AreaEffectHelper {
         ));
 
         // 2.1 For FAE munitions, add an additional ring of 5 damage
-        if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FAE) ||
-            (isBomb && List.of(
-                BombType.B_FAE_SMALL, BombType.B_FAE_LARGE).contains(((BombType) ammo).getBombType())
-            )
-        ) {
+        if (isFaeAmmo || isFaeBomb) {
             List<Coords> ringCoords = center.allAtDistance(radius);
             for (Coords c : ringCoords) {
                 blastShape.put(Map.entry(height, c), 5);

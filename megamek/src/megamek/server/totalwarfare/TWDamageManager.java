@@ -1948,7 +1948,8 @@ public class TWDamageManager implements IDamageManager {
             report.indent(2);
             reportVec.add(report);
             int[] damages = { (int) Math.floor(damage_orig / 10.0), (int) Math.floor(damage_orig / 20.0) };
-            manager.doExplosion(damages, false, entity.getPosition(), true, reportVec, null, 5, entity.getId(), false, false);
+            manager.doExplosion(damages, false, entity.getPosition(), 0,true, reportVec, null, 5, entity.getId(),
+              false, false);
             Report.addNewline(reportVec);
             report = new Report(5410, Report.PUBLIC);
             report.subject = entity.getId();

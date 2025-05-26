@@ -21,7 +21,7 @@ package megamek.common.alphaStrike.conversion;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 

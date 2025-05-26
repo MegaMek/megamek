@@ -24,6 +24,7 @@ import static megamek.client.ui.tileset.HexTileset.HEX_W;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
@@ -163,6 +164,9 @@ public final class BoardView extends AbstractBoardView
     public final Game game;
     ClientGUI clientgui;
 
+    // Only for debugging: a unique ID number for each boardview that can be shown on screen
+    private final int boardViewId;
+
     private Dimension boardSize;
 
     // scroll stuff:
@@ -249,9 +253,6 @@ public final class BoardView extends AbstractBoardView
     // Image to hold the complete board shadow map
     BufferedImage shadowMap;
 
-    // the player who owns this BoardView's client
-    private Player localPlayer = null;
-
     /**
      * Stores the currently deploying entity, used for highlighting deployment hexes.
      */
@@ -287,7 +288,6 @@ public final class BoardView extends AbstractBoardView
     private Color rulerEndColor;
 
     private Coords lastCursor;
-    private Coords highlighted;
     Coords selected;
     private Coords firstLOS;
 
@@ -337,11 +337,6 @@ public final class BoardView extends AbstractBoardView
      */
     ImageCache<Coords, HexImageCacheEntry> hexImageCache;
 
-    /**
-     * Keeps track of whether all deployment zones should be shown in the Arty Auto Hit Designation phase
-     */
-    public boolean showAllDeployment = false;
-
     private boolean showLobbyPlayerDeployment = false;
 
     private long paintCompsStartTime;
@@ -387,11 +382,16 @@ public final class BoardView extends AbstractBoardView
 
     private final TerrainShadowHelper shadowHelper = new TerrainShadowHelper(this);
 
-    private final StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID")).color(GUIP.getWarningColor())
-                                                     .font(FontHandler.notoFont().deriveFont(Font.BOLD))
-                                                     .center();
+    /**
+     * Keeps track of whether all deployment zones should be shown in the Arty Auto Hit Designation phase
+     */
+    public boolean showAllDeployment = false;
+
+    private final StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID"))
+            .color(GUIP.getWarningColor()).font(FontHandler.notoFont().deriveFont(Font.BOLD)).center();
 
     BoardViewTooltipProvider boardViewToolTip = (point, movementTarget) -> null;
+    private boolean tooltipSuspended = false;
 
     // Part of the sprites need specialized treatment; as there can be many sprites, filtering them on the spot is a
     // noticeable performance hit (in iso mode), therefore the sprites are copied to specialized lists when created
@@ -401,10 +401,12 @@ public final class BoardView extends AbstractBoardView
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView(final Game game, final MegaMekController controller, @Nullable ClientGUI clientgui)
-          throws java.io.IOException {
+    public BoardView(final Game game, final MegaMekController controller, @Nullable ClientGUI clientgui, int boardId)
+            throws java.io.IOException {
+        super(boardId);
         this.game = game;
         this.clientgui = clientgui;
+        boardViewId = hashCode();
 
         hexImageCache = new ImageCache<>();
         tileManager = new TilesetManager(game);
@@ -495,7 +497,7 @@ public final class BoardView extends AbstractBoardView
                     oldBoard.addBoardListener(BoardView.this);
                 }
 
-                game.getBoard().initializeAllAutomaticTerrain();
+                game.getBoard(boardId).initializeAllAutomaticTerrain();
                 clearHexImageCache();
                 updateBoard();
                 clearShadowMap();
@@ -573,7 +575,7 @@ public final class BoardView extends AbstractBoardView
         };
 
         game.addGameListener(gameListener);
-        game.getBoard().addBoardListener(this);
+        game.getBoard(boardId).addBoardListener(this);
 
         redrawTimerTask = scheduleRedrawTimer(); // call only once
         clearSprites();
@@ -668,10 +670,14 @@ public final class BoardView extends AbstractBoardView
                 wantsPopup = false;
 
                 final Coords mcoords = getCoordsAt(point);
-                if (!mcoords.equals(lastCoords) && game.getBoard().contains(mcoords)) {
-                    lastCoords = mcoords;
-                    boardPanel.setToolTipText(boardViewToolTip.getTooltip(mouseEvent, movementTarget));
-                } else if (!game.getBoard().contains(mcoords)) {
+                if (!mcoords.equals(lastCoords) && game.getBoard(boardId).contains(mcoords)) {
+                    if (tooltipSuspended) {
+                        boardPanel.setToolTipText(null);
+                    } else {
+                        lastCoords = mcoords;
+                        boardPanel.setToolTipText(boardViewToolTip.getTooltip(mouseEvent, movementTarget));
+                    }
+                } else if (!game.getBoard(boardId).contains(mcoords)) {
                     boardPanel.setToolTipText(null);
                 } else {
                     if (prevTipX > 0 && prevTipY > 0) {
@@ -909,6 +915,11 @@ public final class BoardView extends AbstractBoardView
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         switch (e.getName()) {
+            case GUIPreferences.SHOW_DEPLOY_ZONES_ARTY_AUTO:
+                showAllDeployment = (boolean) e.getNewValue();
+                repaint();
+                break;
+
             case ClientPreferences.MAP_TILESET:
                 clearHexImageCache();
                 updateBoard();
@@ -936,6 +947,12 @@ public final class BoardView extends AbstractBoardView
             case GUIPreferences.USE_CAMO_OVERLAY:
                 getTilesetManager().reloadUnitIcons();
                 break;
+
+            case GUIPreferences.USE_ISOMETRIC:
+                drawIsometric = GUIP.getIsometricEnabled();
+                toggleIsometric();
+                break;
+
             case GUIPreferences.AOHEXSHADOWS:
             case GUIPreferences.FLOATINGISO:
             case GUIPreferences.LEVELHIGHLIGHT:
@@ -954,7 +971,7 @@ public final class BoardView extends AbstractBoardView
                 boardPanel.repaint();
                 break;
             case GUIPreferences.INCLINES:
-                game.getBoard().initializeAllAutomaticTerrain();
+                game.getBoard(boardId).initializeAllAutomaticTerrain();
                 clearHexImageCache();
                 boardPanel.repaint();
                 break;
@@ -962,7 +979,7 @@ public final class BoardView extends AbstractBoardView
     }
 
     void addMovingUnit(Entity entity, Vector<UnitLocation> movePath) {
-        if (!movePath.isEmpty()) {
+        if (!movePath.isEmpty() && isOnThisBord(entity)) {
             MovingUnit m = new MovingUnit(entity, movePath);
             movingUnits.add(m);
 
@@ -973,7 +990,7 @@ public final class BoardView extends AbstractBoardView
             UnitLocation loc = movePath.get(0);
 
             if (GUIP.getAutoCenter()) {
-                centerOnHex(loc.getCoords());
+                centerOnHex(loc.coords());
             }
         }
     }
@@ -993,10 +1010,8 @@ public final class BoardView extends AbstractBoardView
         if (!isTileImagesLoaded()) {
             MetalTheme theme = new DefaultMetalTheme();
             graphics2D.setColor(theme.getControl());
-            graphics2D.fillRect(-boardPanel.getX(),
-                  -boardPanel.getY(),
-                  (int) viewRect.getWidth(),
-                  (int) viewRect.getHeight());
+            graphics2D.fillRect(-boardPanel.getX(), -boardPanel.getY(),
+                  (int) viewRect.getWidth(), (int) viewRect.getHeight());
             graphics2D.setColor(theme.getControlTextColor());
             graphics2D.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50);
 
@@ -1062,19 +1077,13 @@ public final class BoardView extends AbstractBoardView
                 y += h - yRem;
             }
         } else if (bvBgImage != null) {
-            graphics2D.drawImage(bvBgImage,
-                  -boardPanel.getX(),
-                  -boardPanel.getY(),
-                  (int) viewRect.getWidth(),
-                  (int) viewRect.getHeight(),
-                  boardPanel);
+            graphics2D.drawImage(bvBgImage, -boardPanel.getX(), -boardPanel.getY(),
+                  (int) viewRect.getWidth(), (int) viewRect.getHeight(), boardPanel);
         } else {
             MetalTheme theme = new DefaultMetalTheme();
             graphics2D.setColor(theme.getControl());
-            graphics2D.fillRect(-boardPanel.getX(),
-                  -boardPanel.getY(),
-                  (int) viewRect.getWidth(),
-                  (int) viewRect.getHeight());
+            graphics2D.fillRect(-boardPanel.getX(), -boardPanel.getY(),
+                  (int) viewRect.getWidth(), (int) viewRect.getHeight());
         }
 
         // Used to pad the board edge
@@ -1122,7 +1131,7 @@ public final class BoardView extends AbstractBoardView
         drawSprites(graphics2D, c3Sprites);
 
         // draw flyover routes
-        if (game.getBoard().onGround()) {
+        if (game.getBoard(boardId).isGround()) {
             drawSprites(graphics2D, vtolAttackSprites);
             drawSprites(graphics2D, flyOverSprites);
         }
@@ -1249,19 +1258,18 @@ public final class BoardView extends AbstractBoardView
         if (getSelectedEntity() != null) {
             Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
             princess.startPrecognition();
-            princess.getGame().setBoard(this.game.getBoard());
-            PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
-            pathEnum.recalculateMovesFor(this.getSelectedEntity());
+            princess.getGame().setBoard(game.getBoard(boardId));
+            PathEnumerator pathEnum = new PathEnumerator(princess, game);
+            pathEnum.recalculateMovesFor(getSelectedEntity());
 
-            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(this.getSelectedEntity().getId());
-            for (int x = 0; x < game.getBoard().getWidth(); x++) {
-                for (int y = 0; y < game.getBoard().getHeight(); y++) {
+            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(getSelectedEntity().getId());
+            for (int x = 0; x < game.getBoard(boardId).getWidth(); x++) {
+                for (int y = 0; y < game.getBoard(boardId).getHeight(); y++) {
                     Point centreHexLocation = getCentreHexLocation(x, y, true);
                     centreHexLocation.translate(HEX_W / 2, HEX_H / 2);
                     Coords coords = new Coords(x, y);
 
                     if (cba.contains(coords)) {
-
                         drawHexBorder(graphics2D, centreHexLocation, Color.PINK, 0, 6);
                     }
                 }
@@ -1328,8 +1336,8 @@ public final class BoardView extends AbstractBoardView
      * Updates the boardSize variable with the proper values for this board.
      */
     void updateBoardSize() {
-        int width = (game.getBoard().getWidth() * (int) (HEX_WC * scale)) + (int) ((HEX_W / 4.0f) * scale);
-        int height = (game.getBoard().getHeight() * (int) (HEX_H * scale)) + (int) ((HEX_H / 2.0f) * scale);
+        int width = (game.getBoard(boardId).getWidth() * (int) (HEX_WC * scale)) + (int) ((HEX_W / 4.0f) * scale);
+        int height = (game.getBoard(boardId).getHeight() * (int) (HEX_H * scale)) + (int) ((HEX_H / 2.0f) * scale);
         boardSize = new Dimension(width, height);
     }
 
@@ -1436,7 +1444,7 @@ public final class BoardView extends AbstractBoardView
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
-        Board board = game.getBoard();
+        Board board = game.getBoard(boardId);
         boolean isAirDeployGround = en_Deployer.getMovementMode().isHover() || en_Deployer.getMovementMode().isVTOL();
         boolean isWiGE = en_Deployer.getMovementMode().isWiGE();
         // loop through the hexes
@@ -1445,15 +1453,17 @@ public final class BoardView extends AbstractBoardView
                 Coords coords = new Coords(j + drawX, i + drawY);
                 if (en_Deployer.isAero()) {
                     if (en_Deployer.getAltitude() > 0) {
-                        // Flying Aerospace are always above it all
+                        // Flying Aeros are always above it all
                         if (board.isLegalDeployment(coords, en_Deployer) &&
-                                  !en_Deployer.isLocationProhibited(coords, board.getMaxElevation())) {
+                                  !en_Deployer.isLocationProhibited(coords, boardId, board.getMaxElevation())
+                        && !en_Deployer.isBoardProhibited(board)) {
                             drawHexBorder(graphics2D, getHexLocation(coords), Color.yellow);
                         }
                     } else if (en_Deployer.getAltitude() == 0) {
                         // Show prospective Altitude 1+ hexes
-                        if (board.isLegalDeployment(coords, en_Deployer) &&
-                                  !en_Deployer.isLocationProhibited(coords, 1)) {
+                        if (board.isLegalDeployment(coords, en_Deployer)
+                                  && !en_Deployer.isLocationProhibited(coords, boardId, 1)
+                                  && !en_Deployer.isBoardProhibited(board)) {
                             drawHexBorder(graphics2D, getHexLocation(coords), Color.cyan);
                         }
                     }
@@ -1462,15 +1472,17 @@ public final class BoardView extends AbstractBoardView
                     Hex hex = board.getHex(coords);
                     // Default to Elevation 1 if ceiling + 1 <= 0.
                     int maxHeight = (isWiGE) ? 1 : (hex != null) ? Math.max(hex.ceiling() + 1, 1) : 1;
-                    if (board.isLegalDeployment(coords, en_Deployer) &&
-                              !en_Deployer.isLocationProhibited(coords, maxHeight)) {
+                    if (board.isLegalDeployment(coords, en_Deployer)
+                              && !en_Deployer.isLocationProhibited(coords, boardId, maxHeight)
+                              && !en_Deployer.isBoardProhibited(board)) {
                         drawHexBorder(graphics2D, getHexLocation(coords), Color.cyan);
                     }
                 }
 
                 if (board.isLegalDeployment(coords, en_Deployer) &&
                           // Draw hexes that are legal at lowest deployment elevation
-                          !en_Deployer.isLocationProhibited(coords)) {
+                          !en_Deployer.isLocationProhibited(BoardLocation.of(coords, boardId))
+                          && !en_Deployer.isBoardProhibited(board)) {
                     drawHexBorder(graphics2D, getHexLocation(coords), Color.yellow);
                 }
             }
@@ -1478,11 +1490,11 @@ public final class BoardView extends AbstractBoardView
 
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
-                Coords coords = new Coords(j + drawX, i + drawY);
-                if (board.isLegalDeployment(coords, en_Deployer) &&
-                          !en_Deployer.isLocationProhibited(coords) &&
-                          en_Deployer.isLocationDeadly(coords)) {
-                    drawHexBorder(graphics2D, getHexLocation(coords), GUIP.getWarningColor());
+                Coords c = new Coords(j + drawX, i + drawY);
+                if (board.isLegalDeployment(c, en_Deployer) &&
+                          !en_Deployer.isLocationProhibited(BoardLocation.of(c, boardId)) &&
+                          en_Deployer.isLocationDeadly(c)) {
+                    drawHexBorder(graphics2D, getHexLocation(c), GUIP.getWarningColor());
                 }
             }
         }
@@ -1516,7 +1528,7 @@ public final class BoardView extends AbstractBoardView
             players = players.stream().filter(player -> !player.isEnemyOf(localPlayer)).collect(Collectors.toList());
         }
 
-        Board board = game.getBoard();
+        Board board = game.getBoard(boardId);
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
@@ -1627,7 +1639,7 @@ public final class BoardView extends AbstractBoardView
             return null;
         }
 
-        if (!getSelectedEntity().getOwner().equals(localPlayer)) {
+        if (!getSelectedEntity().getOwner().equals(getLocalPlayer())) {
             return null; // Not my business to see this
         }
 
@@ -1717,8 +1729,7 @@ public final class BoardView extends AbstractBoardView
         for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             final ArtilleryAttackAction attack = attacks.nextElement();
             final Targetable target = attack.getTarget(game);
-
-            if (target == null) {
+            if (!isOnThisBord(target)) {
                 continue;
             }
 
@@ -1731,22 +1742,6 @@ public final class BoardView extends AbstractBoardView
                 Point location = getHexLocation(coords);
                 artyIconImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING);
                 graphics2D.drawImage(getScaledImage(artyIconImage, true), location.x, location.y, boardPanel);
-            }
-        }
-
-        // Draw pre-designated auto-hit hexes
-        if (localPlayer != null) { // Could be null, like in map-editor
-            for (Coords coords : localPlayer.getArtyAutoHitHexes()) {
-                // Is the Coord within the viewing area?
-                if ((coords.getX() >= drawX) &&
-                          (coords.getX() <= (drawX + drawWidth)) &&
-                          (coords.getY() >= drawY) &&
-                          (coords.getY() <= (drawY + drawHeight))) {
-
-                    Point hexLocation = getHexLocation(coords);
-                    artyIconImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
-                    graphics2D.drawImage(getScaledImage(artyIconImage, true), hexLocation.x, hexLocation.y, boardPanel);
-                }
             }
         }
 
@@ -1791,8 +1786,8 @@ public final class BoardView extends AbstractBoardView
         int maxX = drawX + drawWidth;
         int maxY = drawY + drawHeight;
 
-        Board board = game.getBoard();
-        for (Enumeration<Coords> minedCoords = game.getMinedCoords(); minedCoords.hasMoreElements(); ) {
+        Board board = game.getBoard(boardId);
+        for (Enumeration<Coords> minedCoords = game.getMinedCoords(); minedCoords.hasMoreElements();) {
             Coords coords = minedCoords.nextElement();
             // If the coords aren't visible, skip
             if ((coords.getX() < drawX) ||
@@ -1942,7 +1937,7 @@ public final class BoardView extends AbstractBoardView
             drawSprites(boardGraph, c3Sprites);
 
             // draw flyover routes
-            if (game.getBoard().onGround()) {
+            if (game.getBoard(boardId).isGround()) {
                 drawSprites(boardGraph, vtolAttackSprites);
                 drawSprites(boardGraph, flyOverSprites);
             }
@@ -2011,7 +2006,7 @@ public final class BoardView extends AbstractBoardView
 
         // draw some hexes.
         if (useIsometric()) {
-            Board board = game.getBoard();
+            Board board = game.getBoard(boardId);
             for (int y = 0; y < drawHeight; y++) {
                 // Half of each row is one-half hex farther back (above) the other; draw those first
                 for (int s = 0; s <= 1; s++) {
@@ -2022,14 +2017,14 @@ public final class BoardView extends AbstractBoardView
                         Hex hex = board.getHex(coords);
                         if ((hex != null)) {
                             drawHex(coords, graphics2D, saveBoardImage);
-                            drawOrthography(coords, graphics2D);
+                            drawOrthograph(coords, graphics2D);
                             drawHexSpritesForHex(coords, graphics2D, behindTerrainHexSprites);
 
                             if ((en_Deployer != null) && board.isLegalDeployment(coords, en_Deployer)) {
                                 drawHexBorder(graphics2D, getHexLocation(coords), Color.YELLOW);
                             }
 
-                            drawOrthography(coords, graphics2D);
+                            drawOrthograph(coords, graphics2D);
                         }
                     }
                 }
@@ -2067,11 +2062,11 @@ public final class BoardView extends AbstractBoardView
      * visible.
      */
     private void drawHex(Coords coords, Graphics boardGraph, boolean saveBoardImage) {
-        if (!game.getBoard().contains(coords)) {
+        if (!game.getBoard(boardId).contains(coords)) {
             return;
         }
 
-        final Hex hex = game.getBoard().getHex(coords);
+        final Hex hex = game.getBoard(boardId).getHex(coords);
         if (hex == null) {
             return;
         }
@@ -2120,7 +2115,7 @@ public final class BoardView extends AbstractBoardView
         if (useIsometric()) {
             int largestLevelDiff = 0;
             for (int dir : allDirections) {
-                Hex adjHex = game.getBoard().getHexInDir(coords, dir);
+                Hex adjHex = game.getBoard(boardId).getHexInDir(coords, dir);
                 if (adjHex == null) {
                     continue;
                 }
@@ -2311,6 +2306,77 @@ public final class BoardView extends AbstractBoardView
             }
         }
 
+        AffineTransform scaleTransform = new AffineTransform();
+        scaleTransform.scale(scale, scale);
+
+        int spaceInterfacePosition = BoardHelper.spaceAtmosphereInterfacePosition(game);
+        // Draw in atmosphere in a high-altitude map (unless planetary conditions say its vacuum)
+        if (BoardHelper.isAtmosphericRow(game, getBoard(), coords)) {
+            int atmosphericRow = BoardHelper.effectiveAtmosphericRowNumber(game, getBoard(), coords);
+            // First, fade out the stars
+            int alphaStepStars = 120 / (spaceInterfacePosition - 1);
+            graphics2D.setColor(new Color(0, 0, 0, 250 - atmosphericRow * alphaStepStars));
+            graphics2D.fill(scaleTransform.createTransformedShape(HEX_POLY));
+            // Add atmosphere
+            int alphaStep = 160 / (spaceInterfacePosition - 1);
+            graphics2D.setColor(new Color(0, 250, 250, 190 - atmosphericRow * alphaStep));
+            graphics2D.fill(scaleTransform.createTransformedShape(HEX_POLY));
+        }
+
+        // Draw in the space/atmosphere interface in a high-altitude map
+        if (BoardHelper.isSpaceAtmosphereInterface(game, getBoard(), coords)) {
+            Polygon halfHex = new Polygon();
+            halfHex.addPoint(21, 0);
+            halfHex.addPoint(42, 0);
+            halfHex.addPoint(42, 71);
+            halfHex.addPoint(21, 71);
+            halfHex.addPoint(0, 36);
+            halfHex.addPoint(0, 35);
+            graphics2D.setColor(new Color(0, 250, 250, 15));
+            graphics2D.fill(scaleTransform.createTransformedShape(halfHex));
+            Polygon line = new Polygon();
+            line.addPoint(42, 0);
+            line.addPoint(42, 71);
+            graphics2D.setColor(new Color(130, 130, 130, 100));
+            BasicStroke bs1 = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND,
+                  1.0f, new float[] { 3f, 5f }, 0f);
+            graphics2D.setStroke(bs1);
+            AffineTransform oldTransform = graphics2D.getTransform();
+            graphics2D.transform(scaleTransform);
+            graphics2D.draw(line);
+            graphics2D.setTransform(oldTransform);
+        }
+
+        // Draw in ground in a high-altitude map
+        if (BoardHelper.isGroundRowHex(getBoard(), coords)) {
+            // Atmosphere
+            if (!game.getPlanetaryConditions().getAtmosphere().isVacuum()) {
+                int atmosphericRow = BoardHelper.effectiveAtmosphericRowNumber(game, getBoard(), 1) - 1;
+                // First, fade out the stars
+                int alphaStepStars = 120 / (spaceInterfacePosition - 1);
+                graphics2D.setColor(new Color(0, 0, 0, 250 - atmosphericRow * alphaStepStars));
+                graphics2D.fill(scaleTransform.createTransformedShape(HEX_POLY));
+                // Add atmosphere
+                int alphaStep = 160 / (spaceInterfacePosition - 1);
+                graphics2D.setColor(new Color(0, 250, 250, 190 - atmosphericRow * alphaStep));
+                graphics2D.fill(scaleTransform.createTransformedShape(HEX_POLY));
+            }
+
+            Polygon leftTriangle = new Polygon();
+            leftTriangle.addPoint(21, 0);
+            leftTriangle.addPoint(21, 71);
+            leftTriangle.addPoint(0, 36);
+            leftTriangle.addPoint(0, 35);
+            graphics2D.setColor(new Color(40, 80, 40));
+            graphics2D.fill(scaleTransform.createTransformedShape(leftTriangle));
+            graphics2D.setColor(new Color(40, 140, 40));
+            graphics2D.draw(scaleTransform.createTransformedShape(HexDrawUtilities.getHexCrossLine01(4, 2)));
+        }
+
+        if (getBoard().embeddedBoardCoords().contains(coords)) {
+            drawEmbeddedBoard(graphics2D);
+        }
+
         // Shade and add static noise to hexes that are in an ECM field
         if (ecmHexes != null) {
             Color tint = ecmHexes.get(coords);
@@ -2360,7 +2426,7 @@ public final class BoardView extends AbstractBoardView
 
         // Darken the hex for nighttime, if applicable
         if (GUIP.getDarkenMapAtNight() &&
-                  IlluminationLevel.determineIlluminationLevel(game, coords).isNone() &&
+                  IlluminationLevel.determineIlluminationLevel(game, boardId, coords).isNone() &&
                   conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
             for (int x = 0; x < hexImage.getWidth(); ++x) {
                 for (int y = 0; y < hexImage.getHeight(); ++y) {
@@ -2380,17 +2446,17 @@ public final class BoardView extends AbstractBoardView
 
         // Set the text color according to Preferences or Light Gray in space
         graphics2D.setColor(GUIP.getBoardTextColor());
-        if (game.getBoard().inSpace()) {
+        if (game.getBoard(boardId).isSpace()) {
             graphics2D.setColor(GUIP.getBoardSpaceTextColor());
         }
 
         // draw special stuff for the hex
-        final Collection<SpecialHexDisplay> specialHexDisplays = game.getBoard().getSpecialHexDisplay(coords);
+        final Collection<SpecialHexDisplay> shdList = game.getBoard(boardId).getSpecialHexDisplay(coords);
         try {
-            if (specialHexDisplays != null) {
-                for (SpecialHexDisplay specialHexDisplay : specialHexDisplays) {
-                    if (specialHexDisplay.drawNow(game.getPhase(), game.getRoundCount(), localPlayer, GUIP)) {
-                        scaledImage = getScaledImage(specialHexDisplay.getDefaultImage(), true);
+            if (shdList != null) {
+                for (SpecialHexDisplay shd : shdList) {
+                    if (shd.drawNow(game.getPhase(), game.getRoundCount(), getLocalPlayer(), GUIP)) {
+                        scaledImage = getScaledImage(shd.getDefaultImage(), true);
                         graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
                     }
                 }
@@ -2516,7 +2582,8 @@ public final class BoardView extends AbstractBoardView
 
         }
 
-        boolean hasLoS = fovHighlightingAndDarkening.draw(graphics2D, coords, 0, 0, saveBoardImage);
+        // When the board image is saved, it shouldn't be spoiled by drawing LOS effects
+        boolean hasLoS = saveBoardImage || fovHighlightingAndDarkening.draw(graphics2D, coords);
 
         // draw map sheet borders
         if (GUIP.getShowMapsheets()) {
@@ -2576,12 +2643,12 @@ public final class BoardView extends AbstractBoardView
      * Draws an orthographic hex onto the board buffer. This assumes that drawRect is current, and does not check if the
      * hex is visible.
      */
-    private void drawOrthography(Coords coords, Graphics boardGraph) {
-        if (!game.getBoard().contains(coords)) {
+    private void drawOrthograph(Coords coords, Graphics boardGraph) {
+        if (!game.getBoard(boardId).contains(coords)) {
             return;
         }
 
-        final Hex oHex = game.getBoard().getHex(coords);
+        final Hex oHex = game.getBoard(boardId).getHex(coords);
         final Point oHexLoc = getHexLocation(coords);
         // Adjust the draw height for bridges according to their elevation
         int elevOffset = oHex.terrainLevel(Terrains.BRIDGE_ELEV);
@@ -2598,7 +2665,7 @@ public final class BoardView extends AbstractBoardView
                 // Darken the hex for nighttime, if applicable
                 PlanetaryConditions conditions = game.getPlanetaryConditions();
                 if (GUIP.getDarkenMapAtNight() &&
-                          IlluminationLevel.determineIlluminationLevel(game, coords).isNone() &&
+                          IlluminationLevel.determineIlluminationLevel(game, boardId, coords).isNone() &&
                           conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                     for (int x = 0; x < Objects.requireNonNull(scaledImage).getWidth(null); ++x) {
                         for (int y = 0; y < scaledImage.getHeight(); ++y) {
@@ -2638,10 +2705,9 @@ public final class BoardView extends AbstractBoardView
      * @param direction  The side of the hex to have the elevation drawn on.
      * @param graphics2D {@link Graphics2D} 2D Graphics Context
      */
-    private void drawIsometricElevation(Coords coords, Color color, Point point1, Point point2, int direction,
-          Graphics2D graphics2D) {
-        final Hex dest = game.getBoard().getHexInDir(coords, direction);
-        final Hex src = game.getBoard().getHex(coords);
+    private void drawIsometricElevation(Coords coords, Color color, Point point1, Point point2, int direction, Graphics graphics2D) {
+        final Hex dest = game.getBoard(boardId).getHexInDir(coords, direction);
+        final Hex src = game.getBoard(boardId).getHex(coords);
 
         if (!useIsometric() || GUIP.getFloatingIso()) {
             return;
@@ -2659,7 +2725,7 @@ public final class BoardView extends AbstractBoardView
 
             // Determine the depth of the edge that needs to be drawn.
             int height = elev;
-            Hex southHex = game.getBoard().getHexInDir(coords, 3);
+            Hex southHex = game.getBoard(boardId).getHexInDir(coords, 3);
             if ((direction != 3) && (southHex != null) && (elev > southHex.getLevel())) {
                 height = elev - southHex.getLevel();
             }
@@ -2729,10 +2795,9 @@ public final class BoardView extends AbstractBoardView
      * specified. Results should be transitive, that is, if a line is drawn in one direction, it should be drawn in the
      * opposite direction as well.
      */
-    private boolean drawElevationLine(Coords source, int direction) {
-        final Hex srcHex = game.getBoard().getHex(source);
-        final Hex destHex = game.getBoard().getHexInDir(source, direction);
-
+    private boolean drawElevationLine(Coords src, int direction) {
+        final Hex srcHex = game.getBoard(boardId).getHex(src);
+        final Hex destHex = game.getBoard(boardId).getHexInDir(src, direction);
         if ((destHex == null) && (srcHex.getLevel() != 0)) {
             return true;
         } else if (destHex == null) {
@@ -2789,9 +2854,9 @@ public final class BoardView extends AbstractBoardView
     /**
      * Generates a Shape drawing area for the hex shadow effect in a lower hex when a higher hex is found in direction.
      */
-    private @Nullable Shape getElevationShadowArea(Coords source, int direction) {
-        final Hex srcHex = game.getBoard().getHex(source);
-        final Hex destHex = game.getBoard().getHexInDir(source, direction);
+    private @Nullable Shape getElevationShadowArea(Coords src, int direction) {
+        final Hex srcHex = game.getBoard(boardId).getHex(src);
+        final Hex destHex = game.getBoard(boardId).getHexInDir(src, direction);
 
         // When at the board edge, create a shadow in hexes of level < 0
         if (destHex == null) {
@@ -2819,9 +2884,9 @@ public final class BoardView extends AbstractBoardView
      * Generates a fill gradient which is rotated and aligned properly for the drawing area for a hex shadow effect in a
      * lower hex.
      */
-    private GradientPaint getElevationShadowGP(Coords source, int direction) {
-        final Hex srcHex = game.getBoard().getHex(source);
-        final Hex destHex = game.getBoard().getHexInDir(source, direction);
+    private GradientPaint getElevationShadowGP(Coords src, int direction) {
+        final Hex srcHex = game.getBoard(boardId).getHex(src);
+        final Hex destHex = game.getBoard(boardId).getHexInDir(src, direction);
 
         if (destHex == null) {
             return null;
@@ -2852,7 +2917,7 @@ public final class BoardView extends AbstractBoardView
     private Point getHexLocation(int x, int y, boolean ignoreElevation) {
         float elevationAdjust = 0.0f;
 
-        Hex hex = game.getBoard().getHex(x, y);
+        Hex hex = game.getBoard(boardId).getHex(x, y);
         if ((hex != null) && useIsometric() && !ignoreElevation) {
             elevationAdjust = hex.getLevel() * HEX_ELEV * scale * -1.0f;
         }
@@ -2943,22 +3008,22 @@ public final class BoardView extends AbstractBoardView
         }
 
         if (useIsometric()) {
-            // When using isometric rendering, a lower hex can obscure the normal hex. Iterate over all hexes from
-            // highest to lowest, looking for a hex that contains the selected mouse click point.
-            final int minElev = Math.min(0, game.getBoard().getMinElevation());
-            final int maxElev = Math.max(0, game.getBoard().getMaxElevation());
+            // When using isometric rendering, a lower hex can obscure the
+            // normal hex. Iterate over all hexes from highest to lowest,
+            // looking for a hex that contains the selected mouse click point.
+            final int minElev = Math.min(0, game.getBoard(boardId).getMinElevation());
+            final int maxElev = Math.max(0, game.getBoard(boardId).getMaxElevation());
             final int delta = (int) Math.ceil(((double) maxElev - minElev) / 3.0f);
             final int minHexSpan = Math.max(y - delta, 0);
-            final int maxHexSpan = Math.min(y + delta, game.getBoard().getHeight());
+            final int maxHexSpan = Math.min(y + delta, game.getBoard(boardId).getHeight());
             for (int elev = maxElev; elev >= minElev; elev--) {
                 for (int i = minHexSpan; i <= maxHexSpan; i++) {
                     for (int dx = -1; dx < 2; dx++) {
                         Coords c1 = new Coords(x + dx, i);
-                        Hex hexAlt = game.getBoard().getHex(c1);
-                        if (HexDrawUtilities.getHexFull(getHexLocation(c1), scale).contains(point) &&
-                                  (hexAlt != null) &&
-                                  (hexAlt.getLevel() == elev)) {
-                            // Return immediately with the highest hex found.
+                        Hex hexAlt = game.getBoard(boardId).getHex(c1);
+                        if (HexDrawUtilities.getHexFull(getHexLocation(c1), scale).contains(point)
+                                && (hexAlt != null) && (hexAlt.getLevel() == elev)) {
+                            // Return immediately with highest hex found.
                             return c1;
                         }
                     }
@@ -3023,7 +3088,7 @@ public final class BoardView extends AbstractBoardView
             newMovingSprites.remove(mSprite);
         }
         // Create new movement sprite
-        if (entity.getPosition() != null) {
+        if (isOnThisBord(entity)) {
             mSprite = new MovingEntitySprite(this, entity, position, facing, elevation);
             newMovingSprites.add(mSprite);
             newMovingSpriteIds.put(entityId, mSprite);
@@ -3066,8 +3131,9 @@ public final class BoardView extends AbstractBoardView
         removeSprites(entitySprites);
         removeSprites(isometricSprites);
 
-        // If the entity we are updating doesn't have a position, ensure we remove all of its old sprites
-        if (entity.getPosition() == null) {
+        // If the entity we are updating doesn't have a position, ensure we
+        // remove all of its old sprites
+        if (entity.getPosition() == null || !isOnThisBord(entity)) {
             Iterator<EntitySprite> spriteIter;
 
             // Remove Entity Sprites
@@ -3139,9 +3205,9 @@ public final class BoardView extends AbstractBoardView
 
         // Create the new sprites
         Coords position = entity.getPosition();
-        boolean canSee = EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity);
+        boolean canSee = EntityVisibilityUtils.detectedOrHasVisual(getLocalPlayer(), game, entity);
 
-        if ((position != null) && canSee) {
+        if ((position != null) && canSee && isOnThisBord(entity)) {
             // Add new EntitySprite
             // If no secondary positions, add a sprite for the central position
             if (entity.getSecondaryPositions().isEmpty()) {
@@ -3197,7 +3263,9 @@ public final class BoardView extends AbstractBoardView
         flyOverSprites.removeIf(flyOverSprite -> flyOverSprite.getEntityId() == entity.getId());
 
         // Add Flyover path, if necessary
-        if ((entity.isAirborne() || entity.isMakingVTOLGroundAttack()) && (entity.getPassedThrough().size() > 1)) {
+        if ((boardId == entity.getPassedThroughBoardId())
+              && (entity.isAirborne() || entity.isMakingVTOLGroundAttack())
+              && (entity.getPassedThrough().size() > 1)) {
             addFlyOverPath(entity);
         }
 
@@ -3221,12 +3289,12 @@ public final class BoardView extends AbstractBoardView
         ArrayList<WreckSprite> newWrecks = new ArrayList<>();
         ArrayList<IsometricWreckSprite> newIsometricWrecks = new ArrayList<>();
 
-        Board board = game.getBoard();
-        Enumeration<Entity> wreckedEntities = game.getWreckedEntities();
-        while (wreckedEntities.hasMoreElements()) {
-            Entity entity = wreckedEntities.nextElement();
+        Board board = game.getBoard(boardId);
+        Enumeration<Entity> e = game.getWreckedEntities();
+        while (e.hasMoreElements()) {
+            Entity entity = e.nextElement();
             Coords position = entity.getPosition();
-            if (!(entity instanceof Infantry) && (position != null) && board.contains(position)) {
+            if (isOnThisBord(entity) && !(entity instanceof Infantry) && (position != null) && board.contains(position)) {
                 WreckSprite wreckSprite;
                 IsometricWreckSprite isometricWreckSprite;
                 if (entity.getSecondaryPositions().isEmpty()) {
@@ -3248,7 +3316,11 @@ public final class BoardView extends AbstractBoardView
         clearC3Networks();
         clearFlyOverPaths();
         for (Entity entity : game.getEntitiesVector()) {
-            if (entity.getPosition() == null) {
+            if ((boardId == entity.getPassedThroughBoardId()) && (entity.isAirborne()
+                  || entity.isMakingVTOLGroundAttack()) && (entity.getPassedThrough().size() > 1)) {
+                addFlyOverPath(entity);
+            }
+            if (entity.getPosition() == null || !isOnThisBord(entity)) {
                 continue;
             }
             if ((localPlayer != null) &&
@@ -3285,10 +3357,6 @@ public final class BoardView extends AbstractBoardView
 
             if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
                 addC3Link(entity);
-            }
-
-            if ((entity.isAirborne() || entity.isMakingVTOLGroundAttack()) && (entity.getPassedThrough().size() > 1)) {
-                addFlyOverPath(entity);
             }
         }
 
@@ -3337,7 +3405,10 @@ public final class BoardView extends AbstractBoardView
      * settings.
      */
     public void centerOnSelected() {
-        centerOn(getSelectedEntity());
+        if (isOnThisBord(getSelectedEntity())) {
+            clientgui.showBoardView(boardId);
+            centerOn(getSelectedEntity());
+        }
     }
 
     /**
@@ -3569,25 +3640,25 @@ public final class BoardView extends AbstractBoardView
      * This will add sprites along the forward path for the remaining velocity and indicate what point along it's
      * forward path the unit can turn.
      *
-     * @param md - Current MovePath that represents the current units movement state
+     * @param movePath - Current MovePath that represents the current units movement state
      */
-    private void displayFlightPathIndicator(MovePath md) {
+    private void displayFlightPathIndicator(MovePath movePath) {
         // Don't attempt displaying Flight Path Indicators if using advanced aero movement.
-        if (this.game.useVectorMove()) {
+        if (game.useVectorMove()) {
             return;
         }
 
         // Don't calculate any kind of flight path indicators if the move is not legal.
-        if (md.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL) {
+        if (movePath.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL) {
             return;
         }
 
         // If the unit has remaining aerodyne velocity display the flight path indicators for remaining velocity.
-        if ((md.getFinalVelocityLeft() > 0) && !md.nextForwardStepOffBoard()) {
-            ArrayList<MoveStep> fpiSteps = new ArrayList<>();
+        if ((movePath.getFinalVelocityLeft() > 0) && !movePath.nextForwardStepOffBoard()) {
+            List<MoveStep> fpiSteps = new ArrayList<>();
 
-            // Cloning the current movement path because we don't want to change it's state.
-            MovePath fpiPath = md.clone();
+            // Cloning the current movement path because we don't want to change its state.
+            MovePath fpiPath = movePath.clone();
 
             // While velocity remains, add a forward step to the cloned movement path.
             while (fpiPath.getFinalVelocityLeft() > 0) {
@@ -3600,8 +3671,7 @@ public final class BoardView extends AbstractBoardView
                 }
             }
 
-            // For each hex in the entities forward trajectory, add a flight turn indicator
-            // sprite.
+            // For each hex in the entities forward trajectory, add a flight turn indicator sprite.
             for (MoveStep moveStep : fpiSteps) {
                 fpiSprites.add(new FlightPathIndicatorSprite(this,
                       fpiSteps,
@@ -3627,16 +3697,14 @@ public final class BoardView extends AbstractBoardView
         strafingCoords.add(coords);
     }
 
+    public void setStrafingCoords(Collection<Coords> coords) {
+        strafingCoords.clear();
+        strafingCoords.addAll(coords);
+        repaint();
+    }
+
     public void clearStrafingCoords() {
         strafingCoords.clear();
-    }
-
-    public void setLocalPlayer(Player player) {
-        localPlayer = player;
-    }
-
-    public Player getLocalPlayer() {
-        return localPlayer;
     }
 
     public ClientGUI getClientgui() {
@@ -3675,9 +3743,9 @@ public final class BoardView extends AbstractBoardView
      * Specifies that this should mark the deployment hexes for a player. If the player is set to null, no hexes will be
      * marked.
      */
-    public void markDeploymentHexesFor(Entity entity) {
-        en_Deployer = entity;
-        boardPanel.repaint(100);
+    public void markDeploymentHexesFor(Entity ce) {
+        en_Deployer = ce;
+        repaint();
     }
 
     /**
@@ -3793,19 +3861,23 @@ public final class BoardView extends AbstractBoardView
     /**
      * Adds an attack to the sprite list.
      */
-    public synchronized void addAttack(AttackAction attackAction) {
-        // Don'target make sprites for unknown entities and sensor returns
-        Entity attackingEntity = game.getEntity(attackAction.getEntityId());
+    public void addAttack(AttackAction attackAction) {
+        // Don't make sprites for unknown entities and sensor returns
+        // cross-board attacks don't get attack arrows (for now, must possibly allow some A2G, O2G, A2A attacks later
+        // when target/attacker hexes are not really but effectively on the same board)
+        Entity attacker = game.getEntity(attackAction.getEntityId());
         Targetable target = game.getTarget(attackAction.getTargetType(), attackAction.getTargetId());
-        if ((attackingEntity == null) ||
-                  (target == null) ||
-                  (target.getTargetType() == Targetable.TYPE_INARC_POD) ||
-                  (target.getPosition() == null) ||
-                  (attackingEntity.getPosition() == null)) {
+        if ((attacker == null)
+                  || (target == null)
+                  || (target.getTargetType() == Targetable.TYPE_INARC_POD)
+                  || (target.getPosition() == null)
+                  || (attacker.getPosition() == null)
+                  || !game.onTheSameBoard(attacker, target)
+                  || !isOnThisBord(target)) {
             return;
         }
-        EntitySprite entitySprite = entitySpriteIds.get(getIdAndLoc(attackingEntity.getId(),
-              (attackingEntity.getSecondaryPositions().isEmpty() ? -1 : 0)));
+        EntitySprite entitySprite = entitySpriteIds.get(getIdAndLoc(attacker.getId(),
+              (attacker.getSecondaryPositions().isEmpty() ? -1 : 0)));
         if (entitySprite != null && entitySprite.onlyDetectedBySensors()) {
             return;
         }
@@ -3821,14 +3893,14 @@ public final class BoardView extends AbstractBoardView
                 return;
             }
         }
-        // no re-use possible, add a new one don't target add a sprite for an artillery attack made by the other player
+        // no re-use possible, add a new one don't add a sprite for an artillery attack made by the other player
         if (attackAction instanceof WeaponAttackAction weaponAttackAction) {
             int ownerId = weaponAttackAction.getEntity(game).getOwner().getId();
             int teamId = weaponAttackAction.getEntity(game).getOwner().getTeam();
 
             if (attackAction.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
                 attackSprites.add(new AttackSprite(this, attackAction));
-            } else if (ownerId == localPlayer.getId() || teamId == localPlayer.getTeam()) {
+            } else if (ownerId == getLocalPlayer().getId() || teamId == getLocalPlayer().getTeam()) {
                 attackSprites.add(new AttackSprite(this, attackAction));
             }
         } else {
@@ -3886,22 +3958,26 @@ public final class BoardView extends AbstractBoardView
 
     public void refreshMoveVectors() {
         clearAllMoveVectors();
-        for (Entity entity : game.getEntitiesVector()) {
-            if (entity.getPosition() != null) {
-                movementSprites.add(new MovementSprite(this, entity, entity.getVectors(), Color.GRAY, false));
+        if (game.useVectorMove()) {
+            for (Entity entity : game.getEntitiesVector()) {
+                if (entity.getPosition() != null) {
+                    movementSprites.add(new MovementSprite(this, entity, entity.getVectors(), Color.GRAY, false));
+                }
             }
         }
     }
 
     public void refreshMoveVectors(Entity entity, MovePath movePath, Color color) {
         clearAllMoveVectors();
-        // same as normal but when I find the active entity I used the MovePath to get vector
-        for (Entity entity1 : game.getEntitiesVector()) {
-            if (entity1.getPosition() != null) {
-                if ((entity != null) && (entity1.getId() == entity.getId())) {
-                    movementSprites.add(new MovementSprite(this, entity1, movePath.getFinalVectors(), color, true));
-                } else {
-                    movementSprites.add(new MovementSprite(this, entity1, entity1.getVectors(), color, false));
+        if (game.useVectorMove()) {
+            // same as normal but when I find the active entity I used the MovePath to get vector
+            for (Entity entity1 : game.getEntitiesVector()) {
+                if (entity1.getPosition() != null) {
+                    if ((entity != null) && (entity1.getId() == entity.getId())) {
+                        movementSprites.add(new MovementSprite(this, entity1, movePath.getFinalVectors(), color, true));
+                    } else {
+                        movementSprites.add(new MovementSprite(this, entity1, entity1.getVectors(), color, false));
+                    }
                 }
             }
         }
@@ -3948,13 +4024,8 @@ public final class BoardView extends AbstractBoardView
                 boolean mekInFirst = GUIP.getMekInFirst();
                 boolean mekInSecond = GUIP.getMekInSecond();
 
-                LosEffects.AttackInfo attackInfo = LosEffects.prepLosAttackInfo(game,
-                      attackingEntity,
-                      targetEntity,
-                      attackerCoords,
-                      targetCoords,
-                      mekInFirst,
-                      mekInSecond);
+                LosEffects.AttackInfo attackInfo = LosEffects.prepLosAttackInfo(
+                        game, attackingEntity, targetEntity, attackerCoords, targetCoords, boardId, mekInFirst, mekInSecond);
 
                 losEffects = LosEffects.calculateLos(game, attackInfo);
                 message.append(Messages.getString("BoardView1.Attacker",
@@ -4108,7 +4179,7 @@ public final class BoardView extends AbstractBoardView
                         UnitLocation loc = move.path.get(0);
 
                         if (entity != null) {
-                            redrawMovingEntity(move.entity, loc.getCoords(), loc.getFacing(), loc.getElevation());
+                            redrawMovingEntity(move.entity, loc.coords(), loc.facing(), loc.elevation());
                         }
                         move.path.remove(0);
                     } else {
@@ -4238,20 +4309,9 @@ public final class BoardView extends AbstractBoardView
     }
 
     @Override
-    public void mouseClicked(MouseEvent mouseEvent) {
+    public void mouseClicked(MouseEvent me) { }
 
-    }
-
-    private static class MovingUnit {
-        public Entity entity;
-
-        public ArrayList<UnitLocation> path;
-
-        MovingUnit(Entity entity, Vector<UnitLocation> path) {
-            this.entity = entity;
-            this.path = new ArrayList<>(path);
-        }
-    }
+    private record MovingUnit(Entity entity, Vector<UnitLocation> path) { }
 
     /**
      * Determine if the tile manager's images have been loaded.
@@ -4284,13 +4344,6 @@ public final class BoardView extends AbstractBoardView
      */
     public Coords getLastCursor() {
         return lastCursor;
-    }
-
-    /**
-     * @param highlighted The highlighted to set.
-     */
-    public void setHighlighted(Coords highlighted) {
-        this.highlighted = highlighted;
     }
 
     /**
@@ -4330,12 +4383,12 @@ public final class BoardView extends AbstractBoardView
      * @param coords the Coords.
      */
     public void select(Coords coords) {
-        if ((coords == null) || game.getBoard().contains(coords)) {
+        if ((coords == null) || game.getBoard(boardId).contains(coords)) {
             setSelected(coords);
             moveCursor(selectedSprite, coords);
             moveCursor(firstLOSSprite, null);
             moveCursor(secondLOSSprite, null);
-            processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_SELECTED, 0));
+            processBoardViewEvent(new BoardViewEvent(this, coords, BoardViewEvent.BOARD_HEX_SELECTED, 0));
         }
     }
 
@@ -4355,12 +4408,11 @@ public final class BoardView extends AbstractBoardView
      * @param coords the Coords.
      */
     public void highlight(Coords coords) {
-        if ((coords == null) || game.getBoard().contains(coords)) {
-            setHighlighted(coords);
+        if ((coords == null) || game.getBoard(boardId).contains(coords)) {
             moveCursor(highlightSprite, coords);
             moveCursor(firstLOSSprite, null);
             moveCursor(secondLOSSprite, null);
-            processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
+            processBoardViewEvent(new BoardViewEvent(this, coords, BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
         }
     }
 
@@ -4370,7 +4422,7 @@ public final class BoardView extends AbstractBoardView
     public void setHighlightColor(Color color) {
         highlightSprite.setColor(color);
         highlightSprite.prepare();
-        boardPanel.repaint();
+        repaint();
     }
 
     /**
@@ -4395,13 +4447,13 @@ public final class BoardView extends AbstractBoardView
      * @param coords the Coords.
      */
     public void cursor(Coords coords) {
-        if ((coords == null) || game.getBoard().contains(coords)) {
+        if ((coords == null) || game.getBoard(boardId).contains(coords)) {
             if ((getLastCursor() == null) || (coords == null) || !coords.equals(getLastCursor())) {
                 setLastCursor(coords);
                 moveCursor(cursorSprite, coords);
                 moveCursor(firstLOSSprite, null);
                 moveCursor(secondLOSSprite, null);
-                processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_CURSOR, 0));
+                processBoardViewEvent(new BoardViewEvent(this, coords, BoardViewEvent.BOARD_HEX_CURSOR, 0));
             } else {
                 setLastCursor(coords);
             }
@@ -4418,15 +4470,15 @@ public final class BoardView extends AbstractBoardView
         cursor(new Coords(x, y));
     }
 
-    public void checkLOS(Coords coords) {
-        if ((coords == null) || game.getBoard().contains(coords)) {
+    public void checkLOS(Coords c) {
+        if ((c == null) || game.getBoard(boardId).contains(c)) {
             if (getFirstLOS() == null) {
-                setFirstLOS(coords);
-                firstLOSHex(coords);
-                processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
+                setFirstLOS(c);
+                firstLOSHex(c);
+                processBoardViewEvent(new BoardViewEvent(this, c, BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
             } else {
-                secondLOSHex(coords, getFirstLOS());
-                processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_SECOND_LOS_HEX, 0));
+                secondLOSHex(c, getFirstLOS());
+                processBoardViewEvent(new BoardViewEvent(this, c, BoardViewEvent.BOARD_SECOND_LOS_HEX, 0));
                 setFirstLOS(null);
             }
         }
@@ -4436,45 +4488,29 @@ public final class BoardView extends AbstractBoardView
      * Determines if this Board contains the (x, y) Coords, and if so, notifies listeners about the specified mouse
      * action.
      */
-    public void mouseAction(int x, int y, int mouseEventType, int modifiers, int mouseButton) {
-        if (game.getBoard().contains(x, y)) {
+    public void mouseAction(int x, int y, int mouseActionType, int modifiers, int mouseButton) {
+        if (game.getBoard(boardId).contains(x, y)) {
             Coords coords = new Coords(x, y);
-            switch (mouseEventType) {
+            switch (mouseActionType) {
                 case BOARD_HEX_CLICK:
-                    if ((modifiers & java.awt.event.InputEvent.CTRL_DOWN_MASK) != 0) {
+                    if ((modifiers & InputEvent.CTRL_DOWN_MASK) != 0) {
                         checkLOS(coords);
                     } else {
-                        processBoardViewEvent(new BoardViewEvent(this,
-                              coords,
-                              null,
-                              BoardViewEvent.BOARD_HEX_CLICKED,
-                              modifiers,
-                              mouseButton));
+                        processBoardViewEvent(new BoardViewEvent(this, coords,
+                              BoardViewEvent.BOARD_HEX_CLICKED, modifiers, mouseButton));
                     }
                     break;
                 case BOARD_HEX_DOUBLE_CLICK:
-                    processBoardViewEvent(new BoardViewEvent(this,
-                          coords,
-                          null,
-                          BoardViewEvent.BOARD_HEX_DOUBLE_CLICKED,
-                          modifiers,
-                          mouseButton));
+                    processBoardViewEvent(new BoardViewEvent(this, coords,
+                          BoardViewEvent.BOARD_HEX_DOUBLE_CLICKED, modifiers, mouseButton));
                     break;
                 case BOARD_HEX_DRAG:
-                    processBoardViewEvent(new BoardViewEvent(this,
-                          coords,
-                          null,
-                          BoardViewEvent.BOARD_HEX_DRAGGED,
-                          modifiers,
-                          mouseButton));
+                    processBoardViewEvent(new BoardViewEvent(this, coords,
+                          BoardViewEvent.BOARD_HEX_DRAGGED, modifiers, mouseButton));
                     break;
                 case BOARD_HEX_POPUP:
-                    processBoardViewEvent(new BoardViewEvent(this,
-                          coords,
-                          null,
-                          BoardViewEvent.BOARD_HEX_POPUP,
-                          modifiers,
-                          mouseButton));
+                    processBoardViewEvent(new BoardViewEvent(this, coords,
+                          BoardViewEvent.BOARD_HEX_POPUP, modifiers, mouseButton));
                     break;
             }
         }
@@ -4495,7 +4531,7 @@ public final class BoardView extends AbstractBoardView
     @Override
     public void boardNewBoard(BoardEvent boardEvent) {
         updateBoard();
-        game.getBoard().initializeAllAutomaticTerrain();
+        game.getBoard(boardId).initializeAllAutomaticTerrain();
         clearHexImageCache();
         clearShadowMap();
         boardPanel.repaint();
@@ -4605,6 +4641,7 @@ public final class BoardView extends AbstractBoardView
                 continue;
             }
 
+            Player localPlayer = getLocalPlayer();
             boolean entityIsEnemy = entity.getOwner().isEnemyOf(localPlayer);
 
             // If this unit isn't spotted somehow, it's ECM doesn't show up
@@ -4647,13 +4684,18 @@ public final class BoardView extends AbstractBoardView
         // Keep track of allied ECCM and enemy ECM
         Map<Coords, ECMEffects> eccmAffectedCoords = new HashMap<>();
         for (ECMInfo ecmInfo : allEcmInfo) {
-            // Can't see ECM field of non-spotted unit
-            if ((ecmInfo.getEntity() != null) &&
-                      (localPlayer != null) &&
-                      game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
-                      ecmInfo.getEntity().getOwner().isEnemyOf(localPlayer) &&
-                      !ecmInfo.getEntity().hasSeenEntity(localPlayer) &&
-                      !ecmInfo.getEntity().hasDetectedEntity(localPlayer)) {
+            // only units on this board
+            if (!isOnThisBord(ecmInfo.getEntity())) {
+                continue;
+            }
+
+            // Can't see ECM field of unspotted unit
+            Player localPlayer = getLocalPlayer();
+            if ((ecmInfo.getEntity() != null) && (localPlayer != null)
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                    && ecmInfo.getEntity().getOwner().isEnemyOf(localPlayer)
+                    && !ecmInfo.getEntity().hasSeenEntity(localPlayer)
+                    && !ecmInfo.getEntity().hasDetectedEntity(localPlayer)) {
                 continue;
             }
 
@@ -4674,7 +4716,7 @@ public final class BoardView extends AbstractBoardView
                     int distance = ecmPos.distance(coords);
                     int direction = ecmInfo.getDirection();
                     // Direction is the facing of the owning Entity
-                    boolean inArc = (direction == -1) || Compute.isInArc(ecmPos, direction, coords, Compute.ARC_NOSE);
+                    boolean inArc = (direction == -1) || ComputeArc.isInArc(ecmPos, direction, coords, Compute.ARC_NOSE);
                     if ((distance > range) || !inArc) {
                         continue;
                     }
@@ -4879,7 +4921,6 @@ public final class BoardView extends AbstractBoardView
 
                     bgGraph.dispose();
                 }
-
                 graphics.drawImage(scrollPaneBgBuffer, 0, 0, null);
             }
         };
@@ -4912,10 +4953,6 @@ public final class BoardView extends AbstractBoardView
 
         }
     };
-
-    public void refreshDisplayables() {
-        boardPanel.repaint();
-    }
 
     private void pingMinimap() {
         // send the minimap a hex moused event to make it update the visible area rectangle
@@ -5108,14 +5145,11 @@ public final class BoardView extends AbstractBoardView
         return ImageUtil.getScaledImage(image, width, height, ZOOM_SCALE_TYPES[zoomIndex]);
     }
 
-    public boolean toggleIsometric() {
-        drawIsometric = !drawIsometric;
+    public void toggleIsometric() {
         allSprites.forEach(Sprite::prepare);
-
         clearHexImageCache();
         updateBoard();
-        boardPanel.repaint();
-        return drawIsometric;
+        repaint();
     }
 
     public void updateEntityLabels() {
@@ -5206,10 +5240,8 @@ public final class BoardView extends AbstractBoardView
         if (game == null) {
             return null;
         }
-
-        Board board = game.getBoard();
-
-        if (board.inSpace()) {
+        Board board = game.getBoard(boardId);
+        if (board.isSpace()) {
             return null;
         }
 
@@ -5304,6 +5336,10 @@ public final class BoardView extends AbstractBoardView
                                           .orElse(null);
     }
 
+    /**
+     * @return The unit currently shown in the Unit Display. Note: This can be a another unit than the one that is
+     * selected to move or fire.
+     */
     @Nullable
     public Entity getSelectedEntity() {
         return clientgui != null ? clientgui.getDisplayedUnit() : null;
@@ -5334,7 +5370,7 @@ public final class BoardView extends AbstractBoardView
     public void addSprites(Collection<? extends Sprite> sprites) {
         super.addSprites(sprites);
         sprites.stream()
-              .filter(s -> !(s instanceof HexSprite) || !((HexSprite) s).isBehindTerrain())
+              .filter(s -> !(s instanceof HexSprite hexSprite) || !hexSprite.isBehindTerrain())
               .forEach(overTerrainSprites::add);
         sprites.stream()
               .filter(s -> s instanceof HexSprite)
@@ -5348,5 +5384,94 @@ public final class BoardView extends AbstractBoardView
         super.removeSprites(sprites);
         overTerrainSprites.removeAll(sprites);
         behindTerrainHexSprites.removeAll(sprites);
+    }
+
+    /**
+     * @return This BoardView's displayed board.
+     */
+    public Board getBoard() {
+        return game.getBoard(boardId);
+    }
+
+    /**
+     * @return True when the given Targetable is not null and is on this board as given by its boardId. Does *not*
+     * require the targetable to have a non-null position or a position contained within the board, nor is the
+     * targetable's deployment status checked.
+     */
+    public boolean isOnThisBord(@Nullable Targetable targetable) {
+        return (targetable != null) && targetable.getBoardId() == boardId;
+    }
+
+    /**
+     * @return True when the given boardLocation is on this board according to its boardId only. Does *not*
+     * test the position of the boardLocation.
+     *
+     * @see BoardLocation#isOn(int)
+     */
+    public boolean isOnThisBord(BoardLocation boardLocation) {
+        return boardLocation.isOn(boardId);
+    }
+
+    /**
+     * Draw an outline around legal deployment hexes
+     */
+    private void drawEmbeddedBoards(Graphics g) {
+        Rectangle view = g.getClipBounds();
+        // only update visible hexes
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
+
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
+
+        for (Coords coords : getBoard().embeddedBoardCoords()) {
+            if ((coords.getX() >= drawX) && (coords.getX() <= drawX + drawWidth)
+                      && (coords.getY() >= drawY) && (coords.getY() <= drawY + drawHeight)) {
+                Point p = getHexLocation(coords);
+                AffineTransform oldTransform = ((Graphics2D) g).getTransform();
+                ((Graphics2D) g).transform(AffineTransform.getTranslateInstance(p.x, p.y));
+                ((Graphics2D) g).transform(AffineTransform.getScaleInstance(scale, scale));
+                ((Graphics2D) g).transform(AffineTransform.getTranslateInstance(-p.x, -p.y));
+                g.setColor(new Color(0, 140, 0, 120));
+                g.fillRect(p.x + HEX_W / 4 + 1, p.y + 2, HEX_W / 2 - 2, HEX_H - 4);
+                g.setColor(new Color(0, 140, 0));
+                ((Graphics2D) g).setStroke(new BasicStroke(1.5f));
+                g.drawRect(p.x + HEX_W / 4 + 1, p.y + 2, HEX_W / 2 - 2, HEX_H - 4);
+                ((Graphics2D) g).setTransform(oldTransform);
+            }
+        }
+    }
+
+    /**
+     * Draws an embedded board indicator into the hex image
+     */
+    private void drawEmbeddedBoard(Graphics2D g) {
+        AffineTransform oldTransform = g.getTransform();
+        g.transform(AffineTransform.getScaleInstance(scale, scale));
+        g.setColor(new Color(0, 140, 0, 120));
+        g.fillRect(HEX_W / 4 + 1, 2, HEX_W / 2 - 2, HEX_H - 4);
+        g.setColor(new Color(0, 140, 0));
+        g.setStroke(new BasicStroke(1.5f));
+        g.drawRect(HEX_W / 4 + 1, 2, HEX_W / 2 - 2, HEX_H - 4);
+        g.setTransform(oldTransform);
+    }
+
+    @Override
+    public boolean isShowingAnimation() {
+        return isMovingUnits();
+    }
+
+    public void suspendTooltip() {
+        tooltipSuspended = true;
+        boardPanel.setToolTipText(null);
+    }
+
+    public void activateTooltip() {
+        tooltipSuspended = false;
+    }
+
+    public void toggleShowDeployment() {
+        showAllDeployment = !showAllDeployment;
+        repaint();
     }
 }

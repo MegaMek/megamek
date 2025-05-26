@@ -27,6 +27,7 @@ import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.force.Force;
@@ -63,14 +64,12 @@ public class Client extends AbstractClient {
     private final static MMLogger logger = MMLogger.create(Client.class);
 
     /**
-     * The game state object: this object is not ever replaced during a game, only
-     * updated. A
-     * reference can therefore be cached by other objects.
+     * The game state object: this object is not ever replaced during a game, only updated. A reference can therefore be
+     * cached by other objects.
      */
     protected final Game game = new Game();
 
     private Set<BoardDimensions> availableSizes = new TreeSet<>();
-    private Vector<Coords> artilleryAutoHitHexes = null;
     private AbstractSkillGenerator skillGenerator;
 
     // FIXME: Should ideally be located elsewhere; the client should handle data,
@@ -89,13 +88,6 @@ public class Client extends AbstractClient {
 
     public Game getGame() {
         return game;
-    }
-
-    /**
-     * Get hexes designated for automatic artillery hits.
-     */
-    public Vector<Coords> getArtilleryAutoHit() {
-        return artilleryAutoHitHexes;
     }
 
     public Entity getEntity(int id) {
@@ -150,6 +142,19 @@ public class Client extends AbstractClient {
      */
     public Board getBoard() {
         return game.getBoard();
+    }
+
+    /**
+     * Returns the board with the given boardId or null if the game does not have a board of that boardId. Shortcut
+     * to game.getBoard(int).
+     *
+     * @param boardId The board's ID
+     * @return The board with the given ID
+     * @see IGame#getBoard(int)
+     */
+    @Nullable
+    public Board getBoard(int boardId) {
+        return game.getBoard(boardId);
     }
 
     /**
@@ -219,42 +224,23 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Maintain backwards compatibility.
+     * Deploy an entity at the given coordinates, with the given facing, and starting with the given units already
+     * loaded.
      *
-     * @param id
-     *                - the <code>int</code> ID of the deployed entity
-     * @param c
-     *                - the <code>Coords</code> where the entity should be deployed
-     * @param nFacing
-     *                - the <code>int</code> direction the entity should face
+     * @param id          the ID of the deployed entity
+     * @param c           the Coords where the entity should be deployed
+     * @param nFacing     the direction the entity should face
+     * @param loadedUnits a List of units that start the game being transported by the deployed entity.
+     * @param assaultDrop true if deployment is an assault drop
      */
-    public void deploy(int id, Coords c, int nFacing, int elevation) {
-        this.deploy(id, c, nFacing, elevation, new Vector<>(), false);
-    }
-
-    /**
-     * Deploy an entity at the given coordinates, with the given facing, and
-     * starting with the given units already loaded.
-     *
-     * @param id
-     *                    - the <code>int</code> ID of the deployed entity
-     * @param c
-     *                    - the <code>Coords</code> where the entity should be
-     *                    deployed
-     * @param nFacing
-     *                    - the <code>int</code> direction the entity should face
-     * @param loadedUnits
-     *                    - a <code>List</code> of units that start the game being
-     *                    transported byt the deployed entity.
-     * @param assaultDrop
-     *                    - true if deployment is an assault drop
-     */
-    public void deploy(int id, Coords c, int nFacing, int elevation, List<Entity> loadedUnits, boolean assaultDrop) {
-        int packetCount = 6 + loadedUnits.size();
+    public void deploy(int id, Coords c, int boardId, int nFacing, int elevation, List<Entity> loadedUnits,
+                       boolean assaultDrop) {
+        int packetCount = 7 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
         data[index++] = id;
         data[index++] = c;
+        data[index++] = boardId;
         data[index++] = nFacing;
         data[index++] = elevation;
         data[index++] = loadedUnits.size();
@@ -396,8 +382,7 @@ public class Client extends AbstractClient {
     /**
      * Sends a "set Artillery Autohit Hexes" packet
      */
-    public void sendArtyAutoHitHexes(Vector<Coords> hexes) {
-        artilleryAutoHitHexes = hexes; // save for minimap use
+    public void sendArtyAutoHitHexes(List<BoardLocation> hexes) {
         send(new Packet(PacketCommand.SET_ARTILLERY_AUTOHIT_HEXES, hexes));
     }
 
@@ -641,12 +626,15 @@ public class Client extends AbstractClient {
 
     @SuppressWarnings("unchecked")
     protected void receiveBuildingUpdate(Packet packet) {
-        game.getBoard().updateBuildings((Vector<Building>) packet.getObject(0));
+        for (Building building : (List<Building>) packet.getObject(0)) {
+            game.getBoard(building.getBoardId()).updateBuilding(building);
+        }
     }
 
     @SuppressWarnings("unchecked")
     protected void receiveBuildingCollapse(Packet packet) {
-        game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));
+        int boardId = packet.getIntValue(1);
+        game.getBoard(boardId).collapseBuilding((Vector<Coords>) packet.getObject(0));
     }
 
     /**
@@ -848,12 +836,12 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));
     }
 
-    public void sendSpecialHexDisplayAppend(Coords c, SpecialHexDisplay shd) {
-        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, shd));
+    public void sendSpecialHexDisplayAppend(Coords c, int boardId, SpecialHexDisplay shd) {
+        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, boardId, shd));
     }
 
-    public void sendSpecialHexDisplayDelete(Coords c, SpecialHexDisplay shd) {
-        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_DELETE, c, shd));
+    public void sendSpecialHexDisplayDelete(Coords c, int boardId, SpecialHexDisplay shd) {
+        send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_DELETE, c, boardId, shd));
     }
 
     @SuppressWarnings("unchecked")
@@ -915,12 +903,12 @@ public class Client extends AbstractClient {
                 game.addSmokeCloud(cloud);
                 break;
             case CHANGE_HEX:
-                game.getBoard().setHex((Coords) packet.getObject(0), (Hex) packet.getObject(1));
+                game.getBoard((int) packet.getObject(1)).setHex((Coords) packet.getObject(0),
+                      (Hex) packet.getObject(2));
                 break;
             case CHANGE_HEXES:
-                List<Coords> coords = new ArrayList<>((Set<Coords>) packet.getObject(0));
-                List<Hex> hexes = new ArrayList<>((Set<Hex>) packet.getObject(1));
-                game.getBoard().setHexes(coords, hexes);
+                var changedHexes = (Map<BoardLocation, Hex>) packet.getObject(0);
+                game.getBoards().values().forEach(board -> board.setHexes(changedHexes));
                 break;
             case BLDG_UPDATE:
                 receiveBuildingUpdate(packet);
@@ -1054,8 +1042,9 @@ public class Client extends AbstractClient {
                 }
                 break;
             case SENDING_SPECIAL_HEX_DISPLAY:
-                game.getBoard().setSpecialHexDisplayTable(
-                        (Hashtable<Coords, Collection<SpecialHexDisplay>>) packet.getObject(0));
+                var shdTable = (Map<Coords, Collection<SpecialHexDisplay>>) packet.getObject(0);
+                var boardId = (int) packet.getObject(1);
+                game.getBoard(boardId).setSpecialHexDisplayTable(shdTable);
                 game.processGameEvent(new GameBoardChangeEvent(this));
                 break;
             case SENDING_AVAILABLE_MAP_SIZES:

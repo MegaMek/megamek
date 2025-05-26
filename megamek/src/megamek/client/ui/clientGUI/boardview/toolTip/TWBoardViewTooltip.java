@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -40,6 +41,8 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
+import javax.swing.JDialog;
+
 public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
     private final GUIPreferences GUIP = GUIPreferences.getInstance();
@@ -51,27 +54,32 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
     public TWBoardViewTooltip(Game game, @Nullable ClientGUI clientGui, BoardView boardView) {
         this.clientGui = clientGui;
         this.game = game;
-        this.bv = boardView;
+        bv = boardView;
     }
 
     @Override
     public String getTooltip(Point point, Coords movementTarget) {
         final Coords coords = bv.getCoordsAt(point);
-        if (!game.getBoard().contains(coords)) {
+        if (!bv.getBoard().contains(coords)) {
             return null;
         }
 
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         Entity selectedEntity = (clientGui != null) ? clientGui.getDisplayedUnit() : null;
         Player localPlayer = localPlayer();
-        Hex mhex = game.getBoard().getHex(coords);
+        Hex mhex = bv.getBoard().getHex(coords);
 
         String result = "";
 
         // Hex Terrain
         if (GUIP.getShowMapHexPopup() && (mhex != null)) {
             StringBuffer sbTerrain = new StringBuffer();
-            appendTerrainTooltip(sbTerrain, mhex, GUIP);
+            // Embedded Board
+            if (bv.getBoard().embeddedBoardCoords().contains(coords)) {
+                Board embeddedBoard = game.getBoard(bv.getBoard().getEmbeddedBoardAt(coords));
+                sbTerrain.append("Embedded Map: ").append(embeddedBoard.getBoardName()).append("<BR>");
+            }
+            appendTerrainTooltip(sbTerrain, mhex, bv.getBoardId());
             String sTerrain = sbTerrain.toString();
 
             // Distance from the selected unit and a planned movement end point
@@ -84,7 +92,8 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 int minSensorRange = 0;
 
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
-                    LosEffects los = bv.getFovHighlighting().getCachedLosEffects(selectedEntity.getPosition(), coords);
+                    LosEffects los = bv.getFovHighlighting().getCachedLosEffects(selectedEntity.getPosition(),
+                          coords, bv.getBoardId());
                     int bracket = Compute.getSensorRangeBracket(selectedEntity, null,
                         bv.getFovHighlighting().getCachedECMInfo());
                     int range = Compute.getSensorRangeByBracket(game, selectedEntity, null, los);
@@ -115,7 +124,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             result += table;
 
             StringBuffer sbBuildings = new StringBuffer();
-            appendBuildingsTooltip(sbBuildings, mhex);
+            appendBuildingsTooltip(sbBuildings, mhex, bv.getBoardId());
             result += sbBuildings.toString();
 
             if (bv.displayInvalidFields()) {
@@ -138,7 +147,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         // Show the player(s) that may deploy here
         // in the artillery autohit designation phase
         if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex != null)) {
-            result += HexTooltip.getAttilleryHit(GUIP, game, coords);
+            result += HexTooltip.getArtilleryHit(game, coords, bv.getBoardId());
         }
 
         // check if it's on any flares
@@ -153,7 +162,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         int maxShown = 4;
         boolean hidden = false;
 
-        Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(coords, true));
+        Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(coords, bv.getBoardId(), true));
         for (Entity entity : coordEnts) {
             entityCount++;
 
@@ -206,6 +215,9 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
         // Artillery attacks
         for (ArtilleryAttackAction aaa : getArtilleryAttacksAtLocation(game, coords)) {
+            if (!bv.isOnThisBord(aaa.getTarget(game))) {
+                continue;
+            }
             // Default texts if no real names can be found
             String wpName = Messages.getString("BoardView1.Artillery");
             String ammoName = "Unknown";
@@ -250,7 +262,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             // process targeted hexes
             int amod = 0;
             // Check the predesignated hexes
-            if (selectedEntity.getOwner().getArtyAutoHitHexes().contains(coords)) {
+            if (selectedEntity.getOwner().getArtyAutoHitHexes().contains(BoardLocation.of(coords, bv.getBoardId()))) {
                 amod = TargetRoll.AUTOMATIC_SUCCESS;
             } else {
                 amod = selectedEntity.aTracker.getModifier(curWeapon, coords);
@@ -274,21 +286,17 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             result += UIUtil.tag("TABLE", attr,  row);
         }
 
-        final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(coords);
+        final Collection<SpecialHexDisplay> shdList = bv.getBoard().getSpecialHexDisplay(coords);
         int round = game.getRoundCount();
         if (shdList != null) {
             String sSpecialHex = "";
-            boolean isHexAutoHit = (localPlayer != null) && localPlayer.getArtyAutoHitHexes().contains(coords);
             for (SpecialHexDisplay shd : shdList) {
                 boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
-                // Don't draw if this SHD is obscured from this player
-                // The SHD list may also contain stale SHDs, so don't show
-                // tooltips for SHDs that aren't drawn.
-                // The exception is auto hits.  There will be an icon for auto
-                // hits, so we need to draw a tooltip
+                // Don't draw if this SHD is obscured from this player The SHD list may also contain stale SHDs, so
+                // don't show tooltips for SHDs that aren't drawn. The exception is auto hits.  There will be an icon
+                // for auto hits, so we need to draw a tooltip
                 if (!shd.isObscured(localPlayer)
-                        && (shd.drawNow(game.getPhase(), round, localPlayer, GUIP)
-                        || (isHexAutoHit && isTypeAutoHit))) {
+                        && (shd.drawNow(game.getPhase(), round, localPlayer, GUIP) && isTypeAutoHit)) {
                     if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
                         if (Objects.equals(localPlayer, shd.getOwner())) {
                             sSpecialHex += "Note: ";
@@ -342,20 +350,24 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
     /**
      * Appends HTML describing the terrain of a given hex
      */
-    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex, GUIPreferences GUIP) {
+    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex, int boardId) {
         if (mhex == null) {
             return;
         }
 
-        txt.append(HexTooltip.getTerrainTip(mhex, GUIP, game));
+        txt.append(HexTooltip.getTerrainTip(mhex, boardId, game));
     }
 
+    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
+        // LEGACY replace with board Id version
+        appendBuildingsTooltip(txt, mhex, 0);
+    }
     /**
      * Appends HTML describing the buildings and minefields in a given hex
      */
-    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
+    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex, int boardId) {
         if ((mhex != null) && (clientGui != null)) {
-            String result = HexTooltip.getHexTip(mhex, clientGui.getClient(), GUIP);
+            String result = HexTooltip.getHexTip(mhex, clientGui.getClient(), boardId);
             txt.append(result);
         }
     }

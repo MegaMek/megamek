@@ -92,8 +92,8 @@ public class BotCommandsDialog extends JDialog {
      */
     public void saveSettings() {
         if ((getSize().width * getSize().height) > 0) {
-            GUIP.setMinimapPosX(getLocation().x);
-            GUIP.setMinimapPosY(getLocation().y);
+            GUIP.setBotCommandsPosX(getLocation().x);
+            GUIP.setBotCommandsPosY(getLocation().y);
         }
     }
 

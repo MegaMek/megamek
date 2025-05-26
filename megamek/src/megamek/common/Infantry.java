@@ -534,12 +534,12 @@ public class Infantry extends Entity {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int currElevation) {
-        // Coords off the board aren't legal
-        if (!game.getBoard().contains(c)) {
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+        if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }
-        Hex hex = game.getBoard().getHex(c);
+
+        Hex hex = game.getHex(c, testBoardId);
         // Taharqa: waiting to hear back from Welshie but I am going to assume that
         // units pulling artillery
         // should be treated as wheeled rather than motorized because otherwise
@@ -1137,21 +1137,6 @@ public class Infantry extends Entity {
     }
 
     @Override
-    public boolean doomedOnGround() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInAtmosphere() {
-        return true;
-    }
-
-    @Override
-    public boolean doomedInSpace() {
-        return true;
-    }
-
-    @Override
     public boolean canAssaultDrop() {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS)) {
             return true;
@@ -1186,7 +1171,7 @@ public class Infantry extends Entity {
     public void newRound(int roundNumber) {
         if (turnsLayingExplosives >= 0) {
             turnsLayingExplosives++;
-            if (!Compute.isInBuilding(game, this)) {
+            if (!isInBuilding()) {
                 turnsLayingExplosives = -1; // give up if no longer in a building
             }
         }

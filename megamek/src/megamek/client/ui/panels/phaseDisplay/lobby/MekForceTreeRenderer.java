@@ -20,6 +20,8 @@ package megamek.client.ui.panels.phaseDisplay.lobby;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
+import megamek.client.ui.tileset.EntityImage;
+import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.Entity;
@@ -89,8 +91,9 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             if (showAsUnknown) {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {
-                Camouflage camo = entity.getCamouflageOrElseOwners();
-                Image image = lobby.getClientgui().getBoardView().getTilesetManager().loadPreviewImage(entity, camo);
+                final Camouflage camouflage = entity.getCamouflageOrElseOwners();
+                final Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
+                final Image image = new EntityImage(base, camouflage, this, entity).loadPreviewImage(true);
                 setIconTextGap(UIUtil.scaleForGUI(10));
                 setIcon(image, size);
             }

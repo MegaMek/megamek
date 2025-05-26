@@ -25,6 +25,8 @@ import java.util.List;
 import javax.swing.AbstractAction;
 
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.util.KeyCommandBind;
@@ -32,6 +34,7 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceChangeEvent;
 
@@ -45,10 +48,12 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     private boolean ignoreNoActionNag = false;
 
     protected final ClientGUI clientgui;
+    protected final Game game;
 
     protected ActionPhaseDisplay(ClientGUI cg) {
         super(cg);
         clientgui = cg;
+        game = clientgui.getClient().getGame();
     }
 
     @Override
@@ -70,8 +75,8 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
                         return;
                     }
                     if ((clientgui.getClient().isMyTurn())
-                            || (clientgui.getClient().getGame().getTurn() == null)
-                            || (clientgui.getClient().getGame().getPhase().isReport())) {
+                            || (game.getTurn() == null)
+                            || (game.getPhase().isReport())) {
                         // act like Done button
                         performDoneNoAction();
                         // When the turn is ended, we could miss a key release event
@@ -96,9 +101,9 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
     public boolean shouldReceiveDoneKeyCommand() {
         return ((clientgui.getClient().isMyTurn()
-                || (clientgui.getClient().getGame().getTurn() == null)
-                || (clientgui.getClient().getGame().getPhase().isReport())))
-                && !clientgui.getBoardView().getChatterBoxActive()
+                || (game.getTurn() == null)
+                || (game.getPhase().isReport())))
+                && !clientgui.isChatBoxActive()
                 && !isIgnoringEvents()
                 && isVisible()
                 && (butDone.isEnabled() || butSkipTurn.isEnabled());
@@ -265,9 +270,13 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
             butSkipTurn.setEnabled(true);
         }
 
-        TurnDetailsOverlay turnDetailsOverlay = clientgui.getBoardView().getTurnDetailsOverlay();
-        if (turnDetailsOverlay != null) {
-            turnDetailsOverlay.setLines(turnDetails);
+        for (IBoardView ibv : clientgui.boardViews()) {
+            if (ibv instanceof BoardView bv) {
+                TurnDetailsOverlay turnDetailsOverlay = bv.getTurnDetailsOverlay();
+                if (turnDetailsOverlay != null) {
+                    turnDetailsOverlay.setLines(turnDetails);
+                }
+            }
         }
     }
 
@@ -284,9 +293,22 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
      * @see ClientGUI#getDisplayedUnit()
      */
     public final Entity ce() {
-        return clientgui.getClient().getGame().getEntity(currentEntity);
+        return game.getEntity(currentEntity);
     }
 
+    protected void clearMovementSprites() {
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).clearMovementData());
+    }
+
+    protected void clearMarkedHexes() {
+        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
+    }
+
+    @Override
+    public void removeAllListeners() {
+        game.removeGameListener(this);
+        clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
+    }
     public int getCurrentEntity() {
         return currentEntity;
     }

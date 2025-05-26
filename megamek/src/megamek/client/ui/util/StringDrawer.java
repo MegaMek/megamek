@@ -43,8 +43,9 @@ import megamek.common.annotations.Nullable;
  * {@link #draw(Graphics)} which will draw the string using its settings.
  *
  * Example:
- *
- * <code>new StringDrawer("My Text").at(836, 470).center().font(myFont).draw(g);</code>
+ * <pre>{@code
+ * new StringDrawer("My Text").at(836, 470).center().font(myFont).draw(g);
+ * }</pre>
  *
  * This class also provides a StringDrawerConfig class that can be used in a
  * similar way to assemble settings to a config that can then be used in the
@@ -54,11 +55,12 @@ import megamek.common.annotations.Nullable;
  * afterwards.
  *
  * Example:
- * <code>
- * StringDrawer.StringDrawerConfig myConfig = new StringDrawer.StringDrawerConfig().rightAlign().centerY()
+ * <pre>{@code
+ * StringDrawer.StringDrawerConfig myConfig =
+ *         new StringDrawer.StringDrawerConfig().rightAlign().centerY()
  *                 .color(Color.RED).font(myFont);
  * new StringDrawer("Another Text").at(736, 553).useConfig(myConfig).draw(g);
- * </code>
+ * }</pre>
  *
  * @author Simon (Juliez)
  */
@@ -169,7 +171,7 @@ public class StringDrawer {
      * Note: Vertical text centering does *not* use the actual text to perform
      * centering as this would make it very difficult to keep a common baseline for
      * multiple consecutive texts when these texts contain characters with varying
-     * ascent and descent, such as "A1" and* "jg". Instead, vertical centering is
+     * ascent and descent, such as "A1" and "jg". Instead, vertical centering is
      * done using a placeholder text of capital letters. Therefore, vertical
      * centering will center the text approximately at half the ascent (roughly half
      * the height of capital letters).

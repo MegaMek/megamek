@@ -383,10 +383,13 @@ public interface BTObject {
     }
 
     /**
-     * Returns true when this object uses or can use aerospace movement. This
-     * includes all aerospace units as well as LAMs (in fighter mode when in a TW
-     * game).
-     * Returns false for any type of unit group even if it is of the right type.
+     * Returns true when this object uses or can use aerospace movement. This includes all aerospace units as well as
+     * LAMs (in fighter mode when in a TW game). Returns false for any type of unit group even if it is of the right
+     * type.
+     * <p>
+     * Note that this is not equivalent to "this instanceof Aero" as LAMs are not an Aero subclass. It is also not
+     * equivalent to "this instanceof IAero" as LAMs are always IAero but only return true for isAero() when they are
+     * in fighter conversion mode.
      *
      * @return True when this may use aerospace movement (aerospace and LAM units)
      */

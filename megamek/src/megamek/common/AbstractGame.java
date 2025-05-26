@@ -24,6 +24,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -191,7 +192,7 @@ public abstract class AbstractGame implements IGame {
     public void receiveBoard(int boardId, Board board) {
         Board oldBoard = getBoard(boardId);
         setBoard(boardId, board);
-        fireGameEvent(new GameBoardNewEvent(this, oldBoard, board));
+        fireGameEvent(new GameBoardNewEvent(this, oldBoard, board, boardId));
     }
 
     @Override
@@ -211,6 +212,10 @@ public abstract class AbstractGame implements IGame {
     @Override
     public Map<Integer, Board> getBoards() {
         return Collections.unmodifiableMap(gameBoards);
+    }
+
+    public Set<Integer> getBoardIds() {
+        return gameBoards.keySet();
     }
 
     @Override
@@ -348,22 +353,6 @@ public abstract class AbstractGame implements IGame {
         this.turnIndex = turnIndex;
     }
 
-    public boolean hasBoardLocation(@Nullable BoardLocation boardLocation) {
-        return hasBoardLocation(boardLocation.coords(), boardLocation.boardId());
-    }
-
-    public boolean hasBoardLocation(Coords coords, int boardId) {
-        return hasBoard(boardId) && getBoard(boardId).contains(coords);
-    }
-
-    public boolean hasBoard(@Nullable BoardLocation boardLocation) {
-        return (boardLocation != null) && hasBoard(boardLocation.boardId());
-    }
-
-    public boolean hasBoard(int boardId) {
-        return gameBoards.containsKey(boardId);
-    }
-
     /**
      * Place a carryable object on the ground at the given coordinates
      */
@@ -440,11 +429,11 @@ public abstract class AbstractGame implements IGame {
      * @return True when it can indeed flee
      */
     public boolean canFleeFrom(Deployable unit, Coords coords) {
-        if ((unit == null) || (coords == null)) {
-            LOGGER.warn("Received null unit or coords!");
+        if ((unit == null) || (coords == null) || !hasBoard(unit.getBoardId())) {
+            LOGGER.error("Invalid arguments!");
             return false;
         } else {
-            return getFleeZone(unit).containsCoords(coords, getBoard());
+            return getFleeZone(unit).containsCoords(coords, getBoard(unit.getBoardId()));
         }
     }
 

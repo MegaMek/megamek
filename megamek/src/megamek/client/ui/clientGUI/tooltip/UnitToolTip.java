@@ -202,13 +202,14 @@ public final class UnitToolTip {
     public static String getTargetTipDetail(Targetable target, @Nullable Client client) {
         if (target instanceof Entity) {
             return UnitToolTip.getEntityTipAsTarget((Entity) target, (client != null) ? client.getLocalPlayer() : null)
-                         .toString();
-        } else if (target instanceof BuildingTarget) {
-            return HexTooltip.getBuildingTargetTip((BuildingTarget) target,
-                  (client != null) ? client.getBoard() : null,
-                  GUIP);
-        } else if (target instanceof Hex) {
-            return HexTooltip.getHexTip((Hex) target, client, GUIP);
+                    .toString();
+        } else if (target instanceof BuildingTarget buildingTarget) {
+            Board board =
+                  (client != null) ? client.getBoard(target.getBoardId()) : null;
+            return HexTooltip.getBuildingTargetTip(buildingTarget, board);
+        } else if (target instanceof Hex hex) {
+            // LEGACY replace with real board Id
+            return HexTooltip.getHexTip(hex, client, 0);
         } else {
             return getTargetTipSummary(target, client);
         }
@@ -222,7 +223,8 @@ public final class UnitToolTip {
             result = UnitToolTip.addPlayerColorBoarder(GUIP, targetEntity, result);
             return result;
         } else if (target instanceof BuildingTarget) {
-            return HexTooltip.getOneLineSummary((BuildingTarget) target, (client != null) ? client.getBoard() : null);
+            return HexTooltip.getOneLineSummary((BuildingTarget) target, (client != null)
+                                       ? client.getGame().getBoard(target) : null);
         }
         return target.getDisplayName();
     }
@@ -1533,20 +1535,11 @@ public final class UnitToolTip {
             return Messages.getString("NONE");
         }
 
-        if (e.isAirborne() && e.getGame().getBoard().onGround()) {
-            return e.getActiveSensor().getDisplayName() +
-                         " (" +
-                         srh.minSensorRange +
-                         "-" +
-                         srh.maxSensorRange +
-                         ")" +
-                         " {" +
-                         Messages.getString("BoardView1.Tooltip.sensor_range_vs_ground_target") +
-                         " (" +
-                         srh.minGroundSensorRange +
-                         "-" +
-                         srh.maxGroundSensorRange +
-                         ")}";
+        if (e.isAirborneAeroOnGroundMap()) {
+            return e.getActiveSensor().getDisplayName() + " (" + srh.minSensorRange + "-"
+                    + srh.maxSensorRange + ")" + " {"
+                    + Messages.getString("BoardView1.Tooltip.sensor_range_vs_ground_target")
+                    + " (" + srh.minGroundSensorRange + "-" + srh.maxGroundSensorRange + ")}";
         }
         return e.getActiveSensor().getDisplayName() + " (" + srh.minSensorRange + "-" + srh.maxSensorRange + ")";
     }

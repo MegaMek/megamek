@@ -23,7 +23,6 @@ import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -190,7 +189,7 @@ public class DisasterCommand extends GamemasterServerCommand {
     @Override
     protected void runCommand(int connId, Arguments args) {
         if (args.get(TYPE).getValue().equals(Disaster.RANDOM)) {
-            if (getGameManager().getGame().getBoard().inSpace()) {
+            if (getGameManager().getGame().getBoard().isSpace()) {
                 runDisasterCommand(connId, Disaster.getRandomSpaceDisaster());
             } else {
                 runDisasterCommand(connId, Disaster.getRandomDisaster());

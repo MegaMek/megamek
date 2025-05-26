@@ -753,7 +753,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
         } else if (x < 0) {
             x = 0;
         }
-        return new BoardLocation(new Coords(x, 0), location.boardId());
+        return BoardLocation.of(new Coords(x, 0), location.boardId());
     }
 
     /**

@@ -312,9 +312,10 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
         }
 
         // 8) Draw artillery autohit hexes
-        if (client.getArtilleryAutoHit() != null) {
-            for (int i = 0; i < client.getArtilleryAutoHit().size(); i++) {
-                drawAutoHit(g, client.getArtilleryAutoHit().get(i));
+        Player localPlayer = client.getLocalPlayer();
+        if (localPlayer != null) {
+            for (BoardLocation autoHitHex : localPlayer.getArtyAutoHitHexes()) {
+                drawAutoHit(g, autoHitHex.coords());
             }
         }
 
@@ -614,7 +615,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
     public void addMovePath(List<UnitLocation> unitLocations, Entity entity) {
         Coords previousCoords = entity.getPosition();
         for (var unitLocation : unitLocations) {
-            var coords = unitLocation.getCoords();
+            var coords = unitLocation.coords();
             lines.add(new Line(previousCoords.getX(), previousCoords.getY(),
                 coords.getX(), coords.getY(),
                 Color.GREEN,

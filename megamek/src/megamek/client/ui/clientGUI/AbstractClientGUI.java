@@ -25,8 +25,11 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.MMDialogs.MMNarrativeStoryDialog;
 import megamek.client.ui.clientGUI.boardview.*;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.BoardViewSpriteHandler;
+import megamek.client.ui.dialogs.minimap.MinimapDialog;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.BoardLocation;
 import megamek.common.Configuration;
+import megamek.common.Targetable;
 import megamek.common.event.GameScriptedMessageEvent;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -62,8 +65,15 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
 
     protected Map<String, ClientCommand> clientCommands = new HashMap<>();
 
-    // BoardViews
-    protected final Map<Integer, IBoardView> boardViews = new HashMap<>();
+    /**
+     * The boardviews of the game with the board ID as the map key
+     */
+    public final Map<Integer, IBoardView> boardViews = new HashMap<>();
+
+    /**
+     * The minimaps of the game with the board ID as the map key
+     */
+    protected final Map<Integer, MinimapDialog> miniMaps = new HashMap<>();
     protected final BoardViewsContainer boardViewsContainer = new BoardViewsContainer(this);
     protected final List<BoardViewSpriteHandler> spriteHandlers = new ArrayList<>();
 
@@ -212,5 +222,32 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
                 dialog.setVisible(true);
             }
         }
+    }
+
+    public void showBoardView(int boardId) {
+        boardViewsContainer.showBoardView(boardId);
+    }
+
+    public IBoardView getBoardView(Targetable entity) {
+        return getBoardView(entity.getBoardId());
+    }
+
+    public IBoardView getBoardView(BoardLocation boardLocation) {
+        return getBoardView(boardLocation.boardId());
+    }
+
+    public IBoardView getBoardView(int boardId) {
+        return boardViews.get(boardId);
+    }
+
+    /**
+     * @return The currently shown boardview. If there is only a single boardview (no tabbed pane), this will be
+     * returned. With multiple boardviews, the one in the currently selected tab is returned.
+     * <p>
+     * Unfortunately it is possible to have no selected tab in a JTabbedPane; also, theoretically, there could be no
+     * boardview. Therefore the result is returned as an Optional.
+     */
+    public Optional<IBoardView> getCurrentBoardView() {
+        return boardViewsContainer.getCurrentBoardView();
     }
 }

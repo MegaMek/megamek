@@ -19,6 +19,7 @@
 
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
+import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.SBFStepSprite;
 import megamek.common.annotations.Nullable;
@@ -27,8 +28,8 @@ import megamek.common.strategicBattleSystems.SBFMoveStep;
 
 public class MovePathSpriteHandler extends BoardViewSpriteHandler {
 
-    public MovePathSpriteHandler(BoardView boardView) {
-        super(boardView);
+    public MovePathSpriteHandler(AbstractClientGUI clientGUI) {
+        super(clientGUI);
     }
 
     /**
@@ -36,15 +37,18 @@ public class MovePathSpriteHandler extends BoardViewSpriteHandler {
      */
     public void update(@Nullable SBFMovePath movePath) {
         clear();
+        if (clientGUI.boardViews().isEmpty()) {
+            return;
+        }
         if (movePath == null) {
             return;
         }
 
         for (SBFMoveStep step : movePath.getSteps()) {
-            currentSprites.add(new SBFStepSprite(boardView, step, movePath));
+            currentSprites.add(new SBFStepSprite((BoardView) clientGUI.boardViews().get(0), step, movePath));
         }
 
-        boardView.addSprites(currentSprites);
+        clientGUI.boardViews().get(0).addSprites(currentSprites);
     }
 
     @Override

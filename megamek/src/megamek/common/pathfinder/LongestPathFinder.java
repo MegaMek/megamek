@@ -82,7 +82,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @return a longest path finder for aeros
      */
     public static LongestPathFinder newInstanceOfAeroPath(int maxMP, Game game) {
-        LongestPathFinder lpf = new LongestPathFinder(new AeroMultiPathRelaxer(!game.getBoard().inSpace()),
+        LongestPathFinder lpf = new LongestPathFinder(new AeroMultiPathRelaxer(!game.getBoard().isSpace()),
                 new NextStepsAdjacencyMap(MoveStepType.FORWARDS),
                 new AeroMultiPathComparator(),
                 game);

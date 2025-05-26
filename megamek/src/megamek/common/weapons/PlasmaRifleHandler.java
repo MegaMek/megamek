@@ -152,7 +152,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         TargetRoll targetRoll = new TargetRoll(wtype.getFireTN(), wtype.getName());
         if (targetRoll.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false, targetRoll, true, -1, vPhaseReport);
+            gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false, targetRoll, true, -1, vPhaseReport);
         }
     }
 
@@ -179,8 +179,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         // TODO: change this for TacOps - now you roll another 2d6 first and on a 5 or less you do a normal ignition
         //  as though for intentional fires
         if ((bldg != null) &&
-                  gameManager.tryIgniteHex(target.getPosition(),
-                        subjectId,
+                  gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId,
                         true,
                         false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()),
@@ -189,8 +188,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             return;
         }
 
-        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
-
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), target.getBoardId(), nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }

@@ -264,7 +264,7 @@ class ForceDisplayMekCellFormatter {
                 msg_vel += aero.getCurrentVelocity();
                 String msg_alt = "";
                 String msg_fuel = "";
-                if (!game.getBoard().inSpace()) {
+                if (!game.getBoard().isSpace()) {
                     msg_alt = ", " + Messages.getString("ChatLounge.compact.altitude") + ": ";
                     msg_alt += aero.getAltitude();
                 }

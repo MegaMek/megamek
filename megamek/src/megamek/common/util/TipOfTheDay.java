@@ -429,7 +429,7 @@ public class TipOfTheDay {
     }
 
     /**
-     * Creates a JLabel configured for HTML rendering
+     * Creates a JTextPane configured for HTML rendering
      */
     private JTextPane createHtmlPane(String htmlText, Font font, int width, Position position) {
         JTextPane textPane = new JTextPane();

@@ -198,7 +198,7 @@ public class Dropship extends SmallCraft {
         // plus buildings are prohibited
         boolean isProhibited = taxingAeroProhibitedTerrains(hex);
         // Also check for any crushable entities
-        var currentEntitiesIter = game.getEntities(locationCoords);
+        var currentEntitiesIter = game.getEntities(c);
         while (currentEntitiesIter.hasNext()) {
             Entity entity = currentEntitiesIter.next();
             isProhibited = isProhibited || !this.equals(entity);
@@ -212,7 +212,7 @@ public class Dropship extends SmallCraft {
         boolean secondaryHexPresent;
         Coords secondaryCoords;
         for (int dir = 0; dir < 6; dir++) {
-            secondaryCoords = locationCoords.translated(dir);
+            secondaryCoords = c.translated(dir);
             Hex secondaryHex = game.getBoard(testBoardId).getHex(secondaryCoords);
             currentEntitiesIter = game.getEntities(secondaryCoords);
             secondaryHexPresent = secondaryHex != null;
@@ -270,7 +270,7 @@ public class Dropship extends SmallCraft {
         int numAdjacencies = 0;
         int centralElev = hex.getLevel();
         int secondElev = centralElev;
-        Hex currHex = game.getBoard(testBoardId).getHex(locationCoords.translated(5));
+        Hex currHex = game.getBoard(testBoardId).getHex(c.translated(5));
         // Ensure we aren't trying to deploy off the board
         if (currHex == null) {
             return true;
@@ -279,7 +279,7 @@ public class Dropship extends SmallCraft {
             if (currHex.getLevel() != centralElev) {
                 secondElev = currHex.getLevel();
             }
-            Hex nextHex = game.getBoard(testBoardId).getHex(locationCoords.translated(dir));
+            Hex nextHex = game.getBoard(testBoardId).getHex(c.translated(dir));
             // Ensure we aren't trying to deploy off the board
             if (nextHex == null) {
                 return true;

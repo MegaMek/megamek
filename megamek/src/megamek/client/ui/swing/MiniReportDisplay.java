@@ -85,7 +85,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
 
-    private int filterToggle = 0; // set keyword filter to "off"
+    private boolean filterEnabled = false;
 
     private static final int MRD_MAXNAMELENGHT = 60;
 
@@ -124,7 +124,8 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                 butQuickSearchUp.doClick();
             }
         });
-        butQuickSearchUp.setToolTipText("Find previous Keyword: " +
+        butQuickSearchUp.setToolTipText(Messages.getString("MiniReportDisplay.tooltip.ArrowUp") +
+                                              ": " +
                                               KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_PREV));
 
         butQuickSearchDown = new JButton(Messages.getString("MiniReportDisplay.ArrowDown"));
@@ -157,12 +158,6 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                                             ": " +
                                             KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_FILTER));
 
-
-        /* comboQuick.setEditable(true); // TODO Look into making the Keyword ComboBox editable? Requires a focusable
-                                             parent (see below), a way to inhibit keyboard shortcuts while editing
-                                             and a way to save and update the "Report -> Keywords" Client setting.
-           SwingUtilities.getWindowAncestor(this).setFocusableWindowState(true);
-         */
         comboQuick.addActionListener(this);
         comboQuick.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
               .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_SELNEXT), "MiniReportDisplay.comboQuickNext");
@@ -170,7 +165,9 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                comboQuick.setSelectedIndex((comboQuick.getSelectedIndex() + 1) % comboQuick.getItemCount());
+                if (comboQuick.getItemCount() > 1) {
+                    comboQuick.setSelectedIndex((comboQuick.getSelectedIndex() + 1) % comboQuick.getItemCount());
+                }
             }
         });
         comboQuick.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
@@ -178,11 +175,13 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         comboQuick.getActionMap().put("MiniReportDisplay.comboQuickPrev", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int i = (comboQuick.getSelectedIndex() - 1) % comboQuick.getItemCount();
-                if (i < 0) {
-                    i = comboQuick.getItemCount() - 1;
+                if (comboQuick.getItemCount() > 1) {
+                    int i = (comboQuick.getSelectedIndex() - 1) % comboQuick.getItemCount();
+                    if (i < 0) {
+                        i = comboQuick.getItemCount() - 1;
+                    }
+                    comboQuick.setSelectedIndex(i);
                 }
-                comboQuick.setSelectedIndex(i);
             }
         });
         comboQuick.setToolTipText("<html>" +
@@ -226,37 +225,42 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         doLayout();
     }
 
-    private void filterReport(String k) {
-        if (filterToggle == 0) {
-            String filterResult = "";
-            String[] keywords = k.split(" ");
-            String[] htmlLines = currentClient.phaseReport.split(System.getProperty("line.separator"));
-            for (String htmlLine : htmlLines) {
-                for (String word : keywords) {
-                    int strt = Math.abs(htmlLine.indexOf(">")) - 1; //start searching after HTML unit image
-                    if (htmlLine.substring(strt).replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {
-                        filterResult += htmlLine + System.getProperty("line.separator");
-                    }
+    private void filterReport(String selectedKeyword) {
+        String filterResult = "";
+        String[] keywords = selectedKeyword.split(" ");
+        String[] htmlLines = currentClient.phaseReport.split(System.lineSeparator());
+        for (String htmlLine : htmlLines) {
+            for (String word : keywords) {
+                //int start = Math.abs(htmlLine.indexOf(">")) - 1; //start searching after HTML unit image
+                if (htmlLine.replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {
+                    filterResult += htmlLine + System.lineSeparator();
                 }
             }
-            int phaseTab = tabs.getTabCount() - 1;
-            tabs.removeTabAt(phaseTab);
-            tabs.add(Messages.getString("MiniReportDisplay.Phase"), loadHtmlScrollPane(filterResult));
-            tabs.setSelectedIndex(phaseTab);
-            butQuickFilter.setFont(new Font(butQuickFilter.getFont().getName(),
-                  Font.BOLD | Font.ITALIC,
-                  butQuickFilter.getFont().getSize()));
-            filterToggle = 1;
-        } else {
-            int phaseTab = tabs.getTabCount() - 1;
-            tabs.removeTabAt(phaseTab);
-            tabs.add(Messages.getString("MiniReportDisplay.Phase"), loadHtmlScrollPane(currentClient.phaseReport));
-            tabs.setSelectedIndex(phaseTab);
-            butQuickFilter.setFont(new Font(butQuickFilter.getFont().getName(),
-                  Font.PLAIN,
-                  butQuickFilter.getFont().getSize()));
-            filterToggle = 0;
         }
+
+        filterReportOutput(filterResult);
+
+        butQuickFilter.setFont(new Font(butQuickFilter.getFont().getName(),
+              Font.BOLD | Font.ITALIC,
+              butQuickFilter.getFont().getSize()));
+        filterEnabled = true;
+
+    }
+
+    private void filterReportOutput(String text) {
+        if (tabs.getTabCount() > 0) {
+            int phaseTab = tabs.getTabCount() - 1;
+            tabs.removeTabAt(phaseTab);
+            tabs.add(Messages.getString("MiniReportDisplay.Phase"), loadHtmlScrollPane(text));
+            tabs.setSelectedIndex(phaseTab);
+        }
+    }
+
+    private void filterButtonReset() {
+        butQuickFilter.setFont(new Font(butQuickFilter.getFont().getName(),
+              Font.PLAIN,
+              butQuickFilter.getFont().getSize()));
+        filterEnabled = false;
     }
 
     private void searchTextPane(String searchPattern, Boolean searchDown) {
@@ -415,13 +419,15 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         } else if (ae.getSource().equals(butQuickSearchUp)) {
             searchPattern(comboQuick, false);
         } else if (ae.getSource().equals(butQuickFilter)) {
-            filterReport(comboQuick.getItemAt(comboQuick.getSelectedIndex()));
+            if (!filterEnabled) {
+                filterReport(comboQuick.getItemAt(comboQuick.getSelectedIndex()));
+            } else {
+                filterReportOutput(currentClient.phaseReport);
+                filterButtonReset();
+            }
+
         } else if (ae.getSource().equals(comboQuick)) {
-            // reset Report Keyword Filter Toggle
-            filterToggle = 0;
-            butQuickFilter.setFont(new Font(butQuickFilter.getFont().getName(),
-                  Font.PLAIN,
-                  butQuickFilter.getFont().getSize()));
+            filterButtonReset();
         }
     }
 
@@ -435,11 +441,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     }
 
     private JScrollPane loadHtmlScrollPane(String t) {
-        // reset Report Keyword Filter Toggle
-        filterToggle = 0;
-        butQuickFilter.setFont(new Font(butQuickFilter.getFont().getName(),
-              Font.PLAIN,
-              butQuickFilter.getFont().getSize()));
+        filterButtonReset();
 
         JTextPane ta = new JTextPane();
         Report.setupStylesheet(ta);

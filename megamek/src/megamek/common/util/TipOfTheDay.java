@@ -206,7 +206,7 @@ public class TipOfTheDay {
             float labelWidth = (float) labelLayout.getBounds().getWidth();
             String actualTipContentToRender = mapVariables(tipOfTheDay);
             // We unwrap and wrap the tip content with HTML to ensure it is displayed correctly
-            actualTipContentToRender = wrapTextWithHtml(unwrapHtml(tipOfTheDay));
+            actualTipContentToRender = wrapTextWithHtml(unwrapHtml(actualTipContentToRender));
             JTextPane htmlPane = createHtmlPane(actualTipContentToRender, tipFont, currentAvailableTextWidth, position);
             float totalTipHeight = htmlPane.getPreferredSize().height;
 
